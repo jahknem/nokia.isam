@@ -189,6 +189,7 @@ options:
     - replaced
     - overridden
     - deleted
+    - gathered
 """
 
 EXAMPLES = """

@@ -2,4 +2,4 @@ isam:
   hosts:
     10.190.1.40:
       ansible_connection: ansible.netcommon.network_cli
-      ansible_network_os: nokia.isam
+      ansible_network_os: nokia.isam.isam
