@@ -10,7 +10,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 """
-The isam_interfaces config file.
+The isam_vlans config file.
 It is in this file where the current configuration (as dict)
 is compared to the provided configuration (as dict) and the command set
 necessary to bring the current configuration to its desired end-state is
@@ -29,23 +29,23 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.interfaces import (
-    InterfacesTemplate,
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.vlans import (
+    VlansTemplate,
 )
 
 
-class Interfaces(ResourceModule):
+class Vlans(ResourceModule):
     """
-    The isam_interfaces config class
+    The isam_vlans config class
     """
 
     def __init__(self, module):
-        super(Interfaces, self).__init__(
+        super(Vlans, self).__init__(
             empty_fact_val={},
             facts_module=Facts(module),
             module=module,
-            resource="interfaces",
-            tmplt=InterfacesTemplate(),
+            resource="vlans",
+            tmplt=VlansTemplate(),
         )
         self.parsers = [
         ]
@@ -92,6 +92,6 @@ class Interfaces(ResourceModule):
         """Leverages the base class `compare()` method and
            populates the list of commands to be run by comparing
            the `want` and `have` data with the `parsers` defined
-           for the Interfaces network resource.
+           for the Vlans network resource.
         """
         self.compare(parsers=self.parsers, want=want, have=have)

@@ -10,85 +10,77 @@ The module file for isam_interfaces
 
 from __future__ import absolute_import, division, print_function
 
-import debugpy
-
 __metaclass__ = type
 
 DOCUMENTATION = """
 module: isam_interfaces
-short_description: Interface resource module
-description:
-- This modules creates and manages VLAN configurations for the Interface.
-version_added: 0.0.0
+version_added: 2.9
+short_description: 'Manages interface attributes of Nokia ISAM MSAN devices.'
+description: 'This module manages interface attributes of Nokia ISAM MSAN devices'
+author: Jan Kuehnemund
 notes:
-- Tested against ISAM R6.2.04m
-- This module works with connection C(network_cli)
-author: Jan Hendrik Kühnemund (@jahknem)
+- 'Tested against Nokia ISAM with OS Version R6.2.04m'
 options:
   config:
-    description: A dict of vlan id configuration
+    description: A dictionary of options for interface ports
     type: list
     elements: dict
     suboptions:
-      name:
-        description:
-         - Full name of the interface.
+      id:
         type: str
-        required: true
+        description: 
+        - configure a specific interface port
       admin-up:
         type: bool
         description: 
-          - If the interface has been activated administratevly
+        - If the interface has been activated administratevly
       link-state-trap:
         type: str
         description:
-          - If link-up/link-down traps should be activated or disabled
+        - If link-up/link-down traps should be activated or disabled
         choices:
-          - enable
-          - disable
-          - no-value
+        - enable
+        - disable
+        - no-value
         default: no-value
       link-up-down-trap:
         type: bool
-        description: If the interface has been activated administratevly       
+        description:
+        - If up/down state changes of the interface should be trapped     
       severity:
         type: str
         description:
-          - How the 
+        - How the 
         choices:
-          - indetermiante
-          - warning
-          - minor
-          - major
-          - critical
-          - no-alarms
-          - default
-          - no-value
+        - indetermiante
+        - warning
+        - minor
+        - major
+        - critical
+        - no-alarms
+        - default
+        - no-value
         default: no-value
       port-type:
         description:
-          - The Type of the port this port should be configured as
+        - The Type of port this port should be configured as
         type: str
         choices:
-          - uni
-          - nni
-          - hc-uni
-          - uplink
+        - uni
+        - nni
+        - hc-uni
+        - uplink
         default: uni
+
   state:
     description:
-    - The state the configuration should be left in.
-    - The states C(replaced) and C(overridden) have identical behaviour for this module.
-    - Please refer to examples for more details.
+    - The state the configuration should be left in
     type: str
     choices:
     - merged
     - replaced
     - overridden
     - deleted
-    - parsed
-    - gathered
-    - rendered
     default: merged
 """
 
@@ -144,13 +136,12 @@ parsed:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.argspec.interfaces.interfaces import (
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.interfaces.interfaces import (
     InterfacesArgs,
 )
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.config.interfaces.interfaces import (
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.interfaces.interfaces import (
     Interfaces,
 )
-from ansible_collections.
 
 
 def main():
@@ -159,13 +150,6 @@ def main():
 
     :returns: the result form module invocation
     """
-    debugFile = open("/tmp/isam_facts.log", "w")
-    debugFile.write("Started\n")
-    debugFile.flush()
-    debugFile.close()
-    debugpy.listen(3000)
-    debugpy.wait_for_client()       
-    debugpy.breakpoint()
     module = AnsibleModule(
         argument_spec=InterfacesArgs.argument_spec,
         mutually_exclusive=[["config", "running_config"]],
