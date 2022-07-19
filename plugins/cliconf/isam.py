@@ -19,6 +19,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import debugpy
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -128,6 +130,9 @@ class Cliconf(CliconfBase):
                           given prompt.
         :return: The output from the device after executing the command
         """
+        if not(debugpy.is_client_connected()):
+            debugpy.listen(3000)
+            debugpy.wait_for_client()        
         return self.send_command(
             command=command,
             prompt=prompt,
@@ -229,6 +234,10 @@ class Cliconf(CliconfBase):
             }
         :return: capability as json string
         """
+        if not(debugpy.is_client_connected()):
+            debugpy.listen(3000)
+            debugpy.wait_for_client()
+            debugpy.breakpoint()
         result = {
             'rpc': self.get_isam_rpc(),
             'network_api': 'cliconf',
