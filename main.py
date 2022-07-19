@@ -1,0 +1,1 @@
+result = isam.get_isam_facts()

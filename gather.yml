@@ -1,0 +1,8 @@
+---
+- name: check GATHERED state
+  hosts: all
+  gather_facts: no
+  tasks:
+  - name: Gather logging config
+    nokia.isam.isam_interfaces:
+      state: gathered

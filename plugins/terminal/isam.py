@@ -19,6 +19,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import debugpy
+
 __metaclass__ = type
 
 import re
@@ -64,5 +66,6 @@ class TerminalModule(TerminalBase):
     ]
 
     def on_open_shell(self):
+
         self._exec_cli_command('environment inhibit-alarms')
         self._exec_cli_command('exit')
