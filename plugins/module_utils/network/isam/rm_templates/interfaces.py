@@ -5,8 +5,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import debugpy
-
 __metaclass__ = type
 
 """
@@ -23,10 +21,6 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 
 class InterfacesTemplate(NetworkTemplate):
     def __init__(self, lines=None, module=None):
-        if not(debugpy.is_client_connected()):
-            debugpy.listen(3000)
-            debugpy.wait_for_client()       
-            debugpy.breakpoint()
         super(InterfacesTemplate, self).__init__(lines=lines, tmplt=self, module=module)
 
     # fmt: off

@@ -36,7 +36,7 @@ class InterfacesArgs(object):  # pylint: disable=R0903
             "type": "list",
             "elements": "dict",
             "options": {
-                "name": {"type": "str", "required": True},
+                "id": {"type": "str"},
                 "admin-up": {"type": "bool"},
                 "link-state-trap": {
                     "type": "str",
@@ -67,15 +67,7 @@ class InterfacesArgs(object):  # pylint: disable=R0903
         },
         "state": {
             "type": "str",
-            "choices": [
-                "merged",
-                "replaced",
-                "overridden",
-                "deleted",
-                "parsed",
-                "gathered",
-                "rendered",
-            ],
+            "choices": ["merged", "replaced", "overridden", "deleted"],
             "default": "merged",
         },
     }  # pylint: disable=C0301

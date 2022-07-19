@@ -7,8 +7,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import debugpy
-
 __metaclass__ = type
 
 """
@@ -28,10 +26,10 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
     ResourceModule,
 )
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.facts.facts import (
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.rm_templates.interfaces import (
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.interfaces import (
     InterfacesTemplate,
 )
 
@@ -42,10 +40,6 @@ class Interfaces(ResourceModule):
     """
 
     def __init__(self, module):
-        if not(debugpy.is_client_connected()):
-            debugpy.listen(3000)
-            debugpy.wait_for_client()       
-            debugpy.breakpoint()
         super(Interfaces, self).__init__(
             empty_fact_val={},
             facts_module=Facts(module),

@@ -9,11 +9,10 @@ this file validates each subset of facts and selectively
 calls the appropriate facts gathering function
 """
 
-import debugpy
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.facts.facts import (
     FactsBase,
 )
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.facts.interfaces.interfaces import InterfacesFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.interfaces.interfaces import InterfacesFacts
 
 
 FACT_LEGACY_SUBSETS = {}
@@ -30,10 +29,6 @@ class Facts(FactsBase):
     VALID_RESOURCE_SUBSETS = frozenset(FACT_RESOURCE_SUBSETS.keys())
 
     def __init__(self, module):
-        if not(debugpy.is_client_connected()):
-            debugpy.listen(3000)
-            debugpy.wait_for_client()       
-            debugpy.breakpoint()
         super(Facts, self).__init__(module)
 
     def get_facts(self, legacy_facts_type=None, resource_facts_type=None, data=None):
@@ -45,10 +40,6 @@ class Facts(FactsBase):
         :rtype: dict
         :return: the facts gathered
         """
-        if not(debugpy.is_client_connected()):
-            debugpy.listen(3000)
-            debugpy.wait_for_client()       
-            debugpy.breakpoint()
         if self.VALID_RESOURCE_SUBSETS:
             self.get_network_resources_facts(FACT_RESOURCE_SUBSETS, resource_facts_type, data)
 

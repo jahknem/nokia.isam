@@ -5,8 +5,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import debugpy
-
 __metaclass__ = type
 
 """
@@ -22,10 +20,10 @@ from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.rm_templates.interfaces import (
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.interfaces import (
     InterfacesTemplate,
 )
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.argspec.interfaces.interfaces import (
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.interfaces.interfaces import (
     InterfacesArgs,
 )
 
@@ -34,14 +32,6 @@ class InterfacesFacts(object):
     """
 
     def __init__(self, module, subspec='config', options='options'):
-        debugFile = open("/tmp/interfaces_facts.log", "w")
-        debugFile.write("Started\n")
-        debugFile.flush()
-        debugFile.close()
-        if not(debugpy.is_client_connected()):
-            debugpy.listen(3000)
-            debugpy.wait_for_client()       
-            debugpy.breakpoint()
         self._module = module
         self.argument_spec = InterfacesArgs.argument_spec
 
@@ -55,10 +45,6 @@ class InterfacesFacts(object):
         :rtype: dictionary
         :returns: facts
         """
-        debugFile = open("/tmp/interfaces_facts.log", "w")
-        debugFile.write("Started\n")
-        debugFile.flush()
-        debugFile.close()
         facts = {}
         objs = []
 

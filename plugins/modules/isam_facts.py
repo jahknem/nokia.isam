@@ -77,9 +77,9 @@ See the respective resource module parameters for the tree.
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.argspec.facts.facts import FactsArgs
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.facts.facts import Facts
-import debugpy
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.facts.facts import FactsArgs
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
+
 
 def main():
     """
@@ -87,14 +87,6 @@ def main():
 
     :returns: ansible_facts
     """
-    debugFile = open("/tmp/isam_facts.log", "w")
-    debugFile.write("Started\n")
-    debugFile.flush()
-    debugFile.close() 
-    if not(debugpy.is_client_connected()):
-      debugpy.listen(3000)
-      debugpy.wait_for_client()       
-      debugpy.breakpoint()
     module = AnsibleModule(argument_spec=FactsArgs.argument_spec,
                            supports_check_mode=True)
     warnings = ['default value for `gather_subset` '
