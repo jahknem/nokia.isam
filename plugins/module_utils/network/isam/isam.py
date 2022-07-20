@@ -28,7 +28,7 @@ isam_argument_spec = {
         type="dict",
         options=isam_provider_spec,
         removed_at_date="2022-06-01",
-        removed_from_collection="nokia.isam",
+        removed_from_collection="isam.isam",
     ),
 }
 

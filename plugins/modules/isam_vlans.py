@@ -244,10 +244,10 @@ parsed:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.vlans.vlans import (
+from ansible_collections.isam.isam.plugins.module_utils.network.isam.argspec.vlans.vlans import (
     VlansArgs,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.vlans.vlans import (
+from ansible_collections.isam.isam.plugins.module_utils.network.isam.config.vlans.vlans import (
     Vlans,
 )
 
