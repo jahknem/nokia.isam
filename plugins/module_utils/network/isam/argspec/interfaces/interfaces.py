@@ -67,7 +67,7 @@ class InterfacesArgs(object):  # pylint: disable=R0903
         },
         "state": {
             "type": "str",
-            "choices": ["merged", "replaced", "overridden", "deleted"],
+            "choices": ["merged", "replaced", "overridden", "deleted", "gathered"],
             "default": "merged",
         },
     }  # pylint: disable=C0301

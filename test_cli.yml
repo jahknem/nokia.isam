@@ -3,7 +3,7 @@
   gather_facts: false
 
   vars:
-    ansible_network_os: nokia.isam.isam
+    ansible_network_os: isam.isam.isam
     ansible_persistent_log_messages: True
   tasks:
     - name: Run a command

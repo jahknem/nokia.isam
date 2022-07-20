@@ -77,8 +77,8 @@ See the respective resource module parameters for the tree.
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.facts.facts import FactsArgs
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
+from ansible_collections.isam.isam.plugins.module_utils.network.isam.argspec.facts.facts import FactsArgs
+from ansible_collections.isam.isam.plugins.module_utils.network.isam.facts.facts import Facts
 
 
 def main():

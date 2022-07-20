@@ -19,7 +19,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import debugpy
 
 __metaclass__ = type
 
@@ -35,9 +34,12 @@ version_added: 0.0.0
 """
 
 import json
+import defusedxml.ElementTree as ET
+import debugpy
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
 from ansible.plugins.cliconf import CliconfBase
+from ansible_collections.isam.isam.plugins.cliconf.utils.utils import  getFirstXMLElementText, getXMLElements, removeAlarms, removeCtrlChars
 
 
 
@@ -129,10 +131,10 @@ class Cliconf(CliconfBase):
         :param check_all: Bool value to indicate if all the values in prompt sequence should be matched or any one of
                           given prompt.
         :return: The output from the device after executing the command
-        """
-        if not(debugpy.is_client_connected()):
-            debugpy.listen(3000)
-            debugpy.wait_for_client()        
+        """ 
+        debugpy.listen(3000)
+        debugpy.wait_for_client()
+        debugpy.breakpoint()
         return self.send_command(
             command=command,
             prompt=prompt,
@@ -159,6 +161,9 @@ class Cliconf(CliconfBase):
             'network_os_image': <str>,
             'network_os_platform': <str>,
         },"""
+        def get_version(sys_info_xml):
+            return getFirstXMLElementText(ET.fromstring(sys_info_xml),"info", "isam-release")
+
         device_info = dict()
         device_info['network_os'] = 'isam'
         device_info['network_os_platform'] = 'Nokia 7330'
@@ -167,7 +172,7 @@ class Cliconf(CliconfBase):
         software_xml = self.get("show software-mngt version etsi detail xml")
         serial_number_xml = self.get("show equipment slot nt-a detail xml")
 
-        device_info['network_os_version'] = self.get_version(sys_info_xml)
+        device_info['network_os_version'] = get_version(sys_info_xml)
 
         return super().get_device_info()
 
@@ -234,10 +239,7 @@ class Cliconf(CliconfBase):
             }
         :return: capability as json string
         """
-        if not(debugpy.is_client_connected()):
-            debugpy.listen(3000)
-            debugpy.wait_for_client()
-            debugpy.breakpoint()
+
         result = {
             'rpc': self.get_isam_rpc(),
             'network_api': 'cliconf',

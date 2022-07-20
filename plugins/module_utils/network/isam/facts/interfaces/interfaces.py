@@ -20,10 +20,10 @@ from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.interfaces import (
+from ansible_collections.isam.isam.plugins.module_utils.network.isam.rm_templates.interfaces import (
     InterfacesTemplate,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.interfaces.interfaces import (
+from ansible_collections.isam.isam.plugins.module_utils.network.isam.argspec.interfaces.interfaces import (
     InterfacesArgs,
 )
 

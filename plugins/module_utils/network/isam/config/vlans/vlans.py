@@ -26,10 +26,10 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
     ResourceModule,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
+from ansible_collections.isam.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.vlans import (
+from ansible_collections.isam.isam.plugins.module_utils.network.isam.rm_templates.vlans import (
     VlansTemplate,
 )
 
