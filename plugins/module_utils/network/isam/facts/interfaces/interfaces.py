@@ -53,10 +53,10 @@ class InterfacesFacts(object):
             data = connection.get("info configure interface port detail")
 
         # parse native config using the Interfaces template
-        if not debugpy.is_client_connected():
-            debugpy.listen(("localhost",3000))
-            debugpy.wait_for_client()
-            debugpy.breakpoint()
+        #if not debugpy.is_client_connected():
+        #    debugpy.listen(("localhost",3000))
+        #    debugpy.wait_for_client()
+        #    debugpy.breakpoint()
         lines = data.splitlines()
         interfaces_parser = InterfacesTemplate(lines=lines, module=self._module)
         parsed = interfaces_parser.parse()

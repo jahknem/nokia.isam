@@ -29,24 +29,25 @@ class InterfacesTemplate(NetworkTemplate):
             'name': 'id',
             'getval': re.compile(
                 r'''
-                port\s+(?P<id>(xdsl-line:|vlan-port|ethernet-line|atm-bonding|bonding|ip-gateway|ip-line|shdsl-line|ima-group|vlan-port|pon|ont|uni|voip|epon|eont|ellid|euni|la-group)\S+)
+                port\s+(?P<name>(xdsl-line:|vlan-port|ethernet-line|atm-bonding|bonding|ip-gateway|ip-line|shdsl-line|ima-group|vlan-port|pon|ont|uni|voip|epon|eont|ellid|euni|la-group)\S+)
                 $''', re.VERBOSE,
             ),
-            'setval': 'port {{ name }}',
+            'setval': 'configure interface port {{ name }}',
             'result': {
                 '{{ name }}': {
-                    'name': '{{ name }}',
+                    'id': '{{ name }}',
                 },
             },
+            'shared': True,
         },
         {
             'name': 'admin-up',
             'getval': re.compile(
                 r'''
-                (?P<negate>\sno)?\s(?P<adminup>admin-up)
+                (?P<negate> no)?\s(?P<adminup>admin-up)
                 $''', re.VERBOSE,
             ),
-            'setval': 'description {{ description }}',
+            'setval': 'configure interface port {{ name }} {{ "no" if admin-up is False }} admin-up',
             'result': {
                 '{{ name }}': 
                 {                    
@@ -58,13 +59,13 @@ class InterfacesTemplate(NetworkTemplate):
             'name': 'link-updown-trap',
             'getval': re.compile(
                 r'''
-                (?P<negate>\sno)?\s(?P<linkupdowntrap>link-updown-trap)
+                (?P<negate> no)?\s(?P<linkupdowntrap>link-updown-trap)
                 $''', re.VERBOSE,
             ),
-            'setval': 'description {{ description }}',
+            'setval': 'configure interface port {{ name }} {{ no if link-updown-trap is not defined }} link-updown-trap',
             'result': {
                 '{{ name }}': {
-                    'link-up-down-trap': '{{ True if link-updown-trap is defined and negate is not defined else False }}',
+                    'link-updown-trap': '{{ True if linkupdowntrap is defined and negate is not defined else False }}',
                 },
             },
         },
@@ -72,10 +73,10 @@ class InterfacesTemplate(NetworkTemplate):
             'name': 'user',
             'getval': re.compile(
                 r'''
-                (?P<negate>\sno)?\s+(user\s+(?P<user>[a-zA-Z0-9_]*))
+                (?P<negate> no)?\s+(user\s+(?P<user>[a-zA-Z0-9_]*))
                 $''', re.VERBOSE,
             ),
-            'setval': 'description {{ description }}',
+            'setval': 'configure interface port {{ name }} user {{ user }}',
             'result': {
                 '{{ name }}': {
                     'user': '{{ "available" if negate is defined and user is not defined else user|string}}',
@@ -86,10 +87,10 @@ class InterfacesTemplate(NetworkTemplate):
             'name': 'severity',
             'getval': re.compile(
                 r'''
-                (?P<negate>\sno)?\sseverity\s+(?P<severity>(indeterminate|warning|minor|major|critical|no-alarms|default|no-value))?
+                (?P<negate> no)?\sseverity\s+(?P<severity>(indeterminate|warning|minor|major|critical|no-alarms|default|no-value))?
                 $''', re.VERBOSE,
             ),
-            'setval': 'description {{ description }}',
+            'setval': 'configure interface port {{ name }} severity {{ severity }}',
             'result': {
                 '{{ name }}': {
                     'severity': '{{ "default" if negate is defined and severity is not defined else severity|string}}',
@@ -100,10 +101,10 @@ class InterfacesTemplate(NetworkTemplate):
             'name': 'port-type',
             'getval': re.compile(
                 r'''
-                (?P<negate>\sno)?\sport-type\s(?P<porttype>uni|nni|hc-uni|uplink)?
+                (?P<negate> no)?\sport-type\s(?P<porttype>uni|nni|hc-uni|uplink)?
                 $''', re.VERBOSE,
             ),
-            'setval': 'description {{ description }}',
+            'setval': 'configure interface port {{ name }} port-type {{ port-type }}',
             'result': {
                 '{{ name }}': {
                     'port-type': '{{ "uni" if negate is defined and porttype is not defined else port-type|string}}',
