@@ -26,28 +26,28 @@ class InterfacesTemplate(NetworkTemplate):
     # fmt: off
     PARSERS = [
         {
-            "name": "id",
-            "getval": re.compile(
-                r"""
+            'name': 'id',
+            'getval': re.compile(
+                r'''
                 port\s+(?P<id>(xdsl-line:|vlan-port|ethernet-line|atm-bonding|bonding|ip-gateway|ip-line|shdsl-line|ima-group|vlan-port|pon|ont|uni|voip|epon|eont|ellid|euni|la-group)\S+)
-                $""", re.VERBOSE,
+                $''', re.VERBOSE,
             ),
-            "setval": "description {{ description }}",
-            "result": {
+            'setval': 'port {{ name }}',
+            'result': {
                 '{{ name }}': {
-                    'id': '{{ id }}',
+                    'name': '{{ name }}',
                 },
             },
         },
         {
-            "name": "admin-up",
-            "getval": re.compile(
-                r"""
+            'name': 'admin-up',
+            'getval': re.compile(
+                r'''
                 (?P<negate>\sno)?\s(?P<adminup>admin-up)
-                $""", re.VERBOSE,
+                $''', re.VERBOSE,
             ),
-            "setval": "description {{ description }}",
-            "result": {
+            'setval': 'description {{ description }}',
+            'result': {
                 '{{ name }}': 
                 {                    
                     'admin-up': '{{ True if adminup is defined and negate is not defined else False }}',
@@ -55,56 +55,56 @@ class InterfacesTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "link-updown-trap",
-            "getval": re.compile(
-                r"""
+            'name': 'link-updown-trap',
+            'getval': re.compile(
+                r'''
                 (?P<negate>\sno)?\s(?P<linkupdowntrap>link-updown-trap)
-                $""", re.VERBOSE,
+                $''', re.VERBOSE,
             ),
-            "setval": "description {{ description }}",
-            "result": {
+            'setval': 'description {{ description }}',
+            'result': {
                 '{{ name }}': {
                     'link-up-down-trap': '{{ True if link-updown-trap is defined and negate is not defined else False }}',
                 },
             },
         },
         {
-            "name": "user",
-            "getval": re.compile(
-                r"""
+            'name': 'user',
+            'getval': re.compile(
+                r'''
                 (?P<negate>\sno)?\s+(user\s+(?P<user>[a-zA-Z0-9_]*))
-                $""", re.VERBOSE,
+                $''', re.VERBOSE,
             ),
-            "setval": "description {{ description }}",
-            "result": {
+            'setval': 'description {{ description }}',
+            'result': {
                 '{{ name }}': {
-                    'user': '{{ "available" if negate is defined nd user is not defined else user|string}}',
+                    'user': '{{ "available" if negate is defined and user is not defined else user|string}}',
                 },
             },
         },
         {
-            "name": "severity",
-            "getval": re.compile(
-                r"""
+            'name': 'severity',
+            'getval': re.compile(
+                r'''
                 (?P<negate>\sno)?\sseverity\s+(?P<severity>(indeterminate|warning|minor|major|critical|no-alarms|default|no-value))?
-                $""", re.VERBOSE,
+                $''', re.VERBOSE,
             ),
-            "setval": "description {{ description }}",
-            "result": {
+            'setval': 'description {{ description }}',
+            'result': {
                 '{{ name }}': {
                     'severity': '{{ "default" if negate is defined and severity is not defined else severity|string}}',
                 },
             },
         },
         {
-            "name": "port-type",
-            "getval": re.compile(
-                r"""
+            'name': 'port-type',
+            'getval': re.compile(
+                r'''
                 (?P<negate>\sno)?\sport-type\s(?P<porttype>uni|nni|hc-uni|uplink)?
-                $""", re.VERBOSE,
+                $''', re.VERBOSE,
             ),
-            "setval": "description {{ description }}",
-            "result": {
+            'setval': 'description {{ description }}',
+            'result': {
                 '{{ name }}': {
                     'port-type': '{{ "uni" if negate is defined and porttype is not defined else port-type|string}}',
                 },
