@@ -26,31 +26,16 @@ class InterfacesTemplate(NetworkTemplate):
     # fmt: off
     PARSERS = [
         {
-            "name": "key_a",
-            "getval": re.compile(
-                re.compile(r"""port\s(?P<name>(xdsl-line:|vlan-port|ethernet-line|atm-bonding|bonding|ip-gateway|ip-line|shdsl-line|ima-group|vlan-port|pon|ont|uni|voip|epon|eont|ellid|euni|la-group)\S+)[\S|\n]+\s+(?P<adminup>no admin-up|admin-up)[\S|\n]+\s+(?P<linkupdowntrap>no link-updown-trap|link-updown-trap)[\S|\n]+\s+(?P<user>no user|user \S+)( \# value=available|)[\S|\n]+\s+(?P<severity>no severity|severity \S+)( \# value=default|)[\S|\n]+\s+(?P<porttype>no port-type|port-type \S+)( \# value=uni|)[\S|\n]+exit$""", re.VERBOSE),
-            "setval": "",
-            "result": {
-                "name": "{{ name }}",
-                "admin-up": "{{ 'True' if adminup == 'admin-up' else 'False' }}",
-                "link-state-trap": "no-value",
-                "link-up-down-trap": "{{ 'True' if linkupdowntrap == 'link-updown-trap' else 'False' }}",
-                "severity": "{{ 'no-value' if severity == 'no severity' or 'no severity # value=default' else severity }}",
-                "port-type": "{{ 'no-value' if porttype == 'no port-type' or 'no port-type # value=uni' else porttype }}",
-            },
-            "shared": True
-        },
-        {
             "name": "id",
             "getval": re.compile(
                 r"""
-                (?P<name>(xdsl-line:|vlan-port|ethernet-line|atm-bonding|bonding|ip-gateway|ip-line|shdsl-line|ima-group|vlan-port|pon|ont|uni|voip|epon|eont|ellid|euni|la-group)\S+)
+                port\s+(?P<id>(xdsl-line:|vlan-port|ethernet-line|atm-bonding|bonding|ip-gateway|ip-line|shdsl-line|ima-group|vlan-port|pon|ont|uni|voip|epon|eont|ellid|euni|la-group)\S+)
                 $""", re.VERBOSE,
             ),
             "setval": "description {{ description }}",
             "result": {
                 '{{ name }}': {
-                    'name': '{{ name }}',
+                    'id': '{{ id }}',
                 },
             },
         },
@@ -58,56 +43,42 @@ class InterfacesTemplate(NetworkTemplate):
             "name": "admin-up",
             "getval": re.compile(
                 r"""
-                (?P<adminup>no admin-up|admin-up)
+                (?P<negate>\sno)?\s(?P<adminup>admin-up)
                 $""", re.VERBOSE,
             ),
             "setval": "description {{ description }}",
             "result": {
                 '{{ name }}': 
                 {                    
-                    'admin-up': '{{ True if adminup == "admin-up" else False }}',
+                    'admin-up': '{{ True if adminup is defined and negate is not defined else False }}',
                 },
             },
         },
         {
-            "name": "link-state-trap",
+            "name": "link-updown-trap",
             "getval": re.compile(
                 r"""
-                (?P<linkupdowntrap>no link-updown-trap|link-updown-trap)
+                (?P<negate>\sno)?\s(?P<linkupdowntrap>link-updown-trap)
                 $""", re.VERBOSE,
             ),
             "setval": "description {{ description }}",
             "result": {
                 '{{ name }}': {
-                    "link-state-trap": "no-value",
+                    'link-up-down-trap': '{{ True if link-updown-trap is defined and negate is not defined else False }}',
                 },
             },
         },
         {
-            "name": "link-state-trap",
+            "name": "user",
             "getval": re.compile(
                 r"""
-                (?P<user>no user|user \S+)( \# value=available|)
+                (?P<negate>\sno)?\s+(user\s+(?P<user>[a-zA-Z0-9_]*))
                 $""", re.VERBOSE,
             ),
             "setval": "description {{ description }}",
             "result": {
                 '{{ name }}': {
-                    "link-state-trap": "no-value",
-                },
-            },
-        },
-        {
-            "name": "link-up-down-trap",
-            "getval": re.compile(
-                r"""
-                (?P<linkupdowntrap>no link-updown-trap|link-updown-trap)
-                $""", re.VERBOSE,
-            ),
-            "setval": "description {{ description }}",
-            "result": {
-                '{{ name }}': {
-                    'link-up-down-trap': '{{ True if linkupdowntrap == link-updown-trap else False }}',
+                    'user': '{{ "available" if negate is defined nd user is not defined else user|string}}',
                 },
             },
         },
@@ -115,13 +86,13 @@ class InterfacesTemplate(NetworkTemplate):
             "name": "severity",
             "getval": re.compile(
                 r"""
-                (?P<severity>no severity|severity \S+)( \# value=default|)
+                (?P<negate>\sno)?\sseverity\s+(?P<severity>(indeterminate|warning|minor|major|critical|no-alarms|default|no-value))?
                 $""", re.VERBOSE,
             ),
             "setval": "description {{ description }}",
             "result": {
                 '{{ name }}': {
-                    'severity': '{{ no-value if severity is {%no severity # value=default%} else severity }}',
+                    'severity': '{{ "default" if negate is defined and severity is not defined else severity|string}}',
                 },
             },
         },
@@ -129,13 +100,13 @@ class InterfacesTemplate(NetworkTemplate):
             "name": "port-type",
             "getval": re.compile(
                 r"""
-                (?P<porttype>no port-type|port-type \S+)
+                (?P<negate>\sno)?\sport-type\s(?P<porttype>uni|nni|hc-uni|uplink)?
                 $""", re.VERBOSE,
             ),
             "setval": "description {{ description }}",
             "result": {
                 '{{ name }}': {
-                    'port-type': {{ 'no-value' if porttype is {%no port-type # value=uni%} else porttype }},
+                    'port-type': '{{ "uni" if negate is defined and porttype is not defined else port-type|string}}',
                 },
             },
         },

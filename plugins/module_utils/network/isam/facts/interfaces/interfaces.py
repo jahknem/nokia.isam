@@ -15,6 +15,7 @@ based on the configuration.
 """
 
 from copy import deepcopy
+import debugpy
 
 from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
@@ -49,11 +50,18 @@ class InterfacesFacts(object):
         objs = []
 
         if not data:
-            data = connection.get()
+            data = connection.get("info configure interface port detail")
 
         # parse native config using the Interfaces template
-        interfaces_parser = InterfacesTemplate(lines=data.splitlines(), module=self._module)
-        objs = list(interfaces_parser.parse().values())
+        if not debugpy.is_client_connected():
+            debugpy.listen(("localhost",3000))
+            debugpy.wait_for_client()
+            debugpy.breakpoint()
+        lines = data.splitlines()
+        interfaces_parser = InterfacesTemplate(lines=lines, module=self._module)
+        parsed = interfaces_parser.parse()
+        valued = parsed.values()
+        objs = list(valued)
 
         ansible_facts['ansible_network_resources'].pop('interfaces', None)
 
