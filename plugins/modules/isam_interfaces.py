@@ -34,25 +34,29 @@ options:
         type: bool
         description: 
         - If the interface has been activated administratevly
-      link-state-trap:
-        type: str
-        description:
-        - If link-up/link-down traps should be activated or disabled
-        choices:
-        - enable
-        - disable
-        - no-value
-        default: no-value
-      link-up-down-trap:
+      link-updown-trap:
         type: bool
         description:
         - If up/down state changes of the interface should be trapped     
+      user:
+        type: str
+        description:
+         - description of the user connected to this interface. (only supported for physical interfaces)
       severity:
         type: str
         description:
-        - How the 
+        - set minimum severity for alarm to be reported,If ima is the only interface for which this parameter is not supported
+        - 'Possible values:'
+        - '- indeterminate : not a definite known severity'
+        - '- warning : just to inform as a warning'
+        - '- minor : not service affecting'
+        - '- major : service affecting'
+        - '- critical : service breaking'
+        - '- no-alarms : do not report alarm'
+        - '- default : take default as specified via Interface Alarm Configuration command'
+        - '- no-value : no entry in the table'
         choices:
-        - indetermiante
+        - indeterminate
         - warning
         - minor
         - major
@@ -63,7 +67,7 @@ options:
         default: no-value
       port-type:
         description:
-        - The Type of port this port should be configured as
+        - The whole network service model based on this interface
         type: str
         choices:
         - uni

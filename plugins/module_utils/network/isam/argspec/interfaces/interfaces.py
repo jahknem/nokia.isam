@@ -38,16 +38,12 @@ class InterfacesArgs(object):  # pylint: disable=R0903
             "options": {
                 "id": {"type": "str"},
                 "admin-up": {"type": "bool"},
-                "link-state-trap": {
-                    "type": "str",
-                    "choices": ["enable", "disable", "no-value"],
-                    "default": "no-value",
-                },
-                "link-up-down-trap": {"type": "bool"},
+                "link-updown-trap": {"type": "bool"},
+                "user": {"type": "str"},
                 "severity": {
                     "type": "str",
                     "choices": [
-                        "indetermiante",
+                        "indeterminate",
                         "warning",
                         "minor",
                         "major",

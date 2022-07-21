@@ -6,3 +6,4 @@
   - name: Gather logging config
     isam.isam.isam_interfaces:
       state: gathered
+    timeout: 300

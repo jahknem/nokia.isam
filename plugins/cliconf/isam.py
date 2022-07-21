@@ -35,7 +35,6 @@ version_added: 0.0.0
 
 import json
 import defusedxml.ElementTree as ET
-import debugpy
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
 from ansible.plugins.cliconf import CliconfBase
@@ -132,9 +131,6 @@ class Cliconf(CliconfBase):
                           given prompt.
         :return: The output from the device after executing the command
         """ 
-        debugpy.listen(3000)
-        debugpy.wait_for_client()
-        debugpy.breakpoint()
         return self.send_command(
             command=command,
             prompt=prompt,
