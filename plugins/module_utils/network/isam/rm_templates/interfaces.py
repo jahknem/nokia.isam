@@ -28,9 +28,7 @@ class InterfacesTemplate(NetworkTemplate):
         {
             'name': 'id',
             'getval': re.compile(
-                r'''
-                port\s+(?P<name>(xdsl-line:|vlan-port|ethernet-line|atm-bonding|bonding|ip-gateway|ip-line|shdsl-line|ima-group|vlan-port|pon|ont|uni|voip|epon|eont|ellid|euni|la-group)\S+)
-                $''', re.VERBOSE,
+                r'''port\s+(?P<name>(xdsl-line:|vlan-port|ethernet-line|atm-bonding|bonding|ip-gateway|ip-line|shdsl-line|ima-group|vlan-port|pon|ont|uni|voip|epon|eont|ellid|euni|la-group)\S+)''', re.VERBOSE,
             ),
             'setval': 'configure interface port {{ name }}',
             'result': {
@@ -43,9 +41,7 @@ class InterfacesTemplate(NetworkTemplate):
         {
             'name': 'admin-up',
             'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s(?P<adminup>admin-up)
-                $''', re.VERBOSE,
+                r'''\s+(?P<negate> no)?\s(?P<adminup>admin-up)''', re.VERBOSE,
             ),
             'setval': 'configure interface port {{ name }} {{ "no" if admin-up is False }} admin-up',
             'result': {
@@ -58,9 +54,7 @@ class InterfacesTemplate(NetworkTemplate):
         {
             'name': 'link-updown-trap',
             'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s(?P<linkupdowntrap>link-updown-trap)
-                $''', re.VERBOSE,
+                r'''\s+(?P<negate> no)?\s(?P<linkupdowntrap>link-updown-trap)''', re.VERBOSE,
             ),
             'setval': 'configure interface port {{ name }} {{ no if link-updown-trap is not defined }} link-updown-trap',
             'result': {
@@ -71,24 +65,18 @@ class InterfacesTemplate(NetworkTemplate):
         },
         {
             'name': 'user',
-            'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s+(user\s+(?P<user>[a-zA-Z0-9_]*))
-                $''', re.VERBOSE,
-            ),
+            'getval': re.compile(r'''\s+(?P<negate> no)?\s+(user\s(?P<user>[a-zA-Z0-9_]*))''', re.VERBOSE,),
             'setval': 'configure interface port {{ name }} user {{ user }}',
             'result': {
                 '{{ name }}': {
-                    'user': '{{ "available" if negate is defined and user is not defined else user|string}}',
+                    'user': '{{ "available" if negate is defined else user|string}}',
                 },
             },
         },
         {
             'name': 'severity',
             'getval': re.compile(
-                r'''
-                (?P<negate> no)?\sseverity\s+(?P<severity>(indeterminate|warning|minor|major|critical|no-alarms|default|no-value))?
-                $''', re.VERBOSE,
+                r'''\s+(?P<negate> no)?\sseverity\s+(?P<severity>(indeterminate|warning|minor|major|critical|no-alarms|default|no-value|))''', re.VERBOSE,
             ),
             'setval': 'configure interface port {{ name }} severity {{ severity }}',
             'result': {
@@ -100,9 +88,7 @@ class InterfacesTemplate(NetworkTemplate):
         {
             'name': 'port-type',
             'getval': re.compile(
-                r'''
-                (?P<negate> no)?\sport-type\s(?P<porttype>uni|nni|hc-uni|uplink)?
-                $''', re.VERBOSE,
+                r'''\s+(?P<negate> no)?\sport-type\s(?P<porttype>uni|nni|hc-uni|uplink|)?$''', re.VERBOSE,
             ),
             'setval': 'configure interface port {{ name }} port-type {{ port-type }}',
             'result': {

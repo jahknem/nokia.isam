@@ -1,0 +1,97 @@
+module: isam_ethernet_ont
+short_description: 'Manages provisioning attributes of isam ONT Ethernet ports.'
+description: 'Manages provisioning attributes of isam ONT Ethernet ports.'
+version_added: 1.0.0
+author: Ansible Network Engineer
+notes:
+  - 'Tested against Nokia ISAM with OS Version R6.2.04m'
+options:
+  config:
+    description: The provided configuration
+    type: list
+    elements: dict
+    suboptions:
+      uni_idx:
+        type: str
+        description: identification of the uni interface index
+      cust_info:
+        type: str
+        description:
+        - customizable port information
+      auto_detect:
+        type: str
+        description:
+        - auto detection configuration
+        choices:
+        - 10_100baset-auto
+        - 10baset-fd
+        - 100baset-fd
+        - 1000baset-fd
+        - auto-basetfd
+        - 10gig-fd
+        - 2.5gig-fd
+        - 5gig-fd
+        - 10baset-auto
+        - 10baset-hd
+        - 100baset-hd
+        - 1000baset-hd
+        - autobaset-hd
+        - 10_100_1000baset-auto
+        - 100baset-auto
+        - auto
+        - 1000baset-auto
+      power_control:
+        description:
+        - power control configuration
+        type: bool
+      pse-class:
+        type: int
+        description:
+        - power class configuration
+        - 'Possible values:'
+        - '- 0 : Default output power'
+        - '- 1 : Class 0, the output power is 15.4w'
+        - '- 2 : Class 1, the output power is 4.0w'
+        - '- 3 : Class 2, the output power is 7.0w'
+        - '- 4 : Class 3, the output power is 15.4w'
+        - '- 5 : Class 4, the output power is 30.0w'
+      pse_pw_priority:
+        type: str
+        description:
+        - power supply priority
+        - 'Possible values:'
+        - '- critical : Prevents overcurrent situations by last disconnecting the ports with critical priority'
+        - '- high : Prevents overcurrent situations by disconnecting the ports with high priority'
+        - '- low : Prevents overcurrent situations by first disconnecting the ports with lower priority(Default)'
+        choices:
+        - critical
+        - high
+        - low
+      pwr_override:
+        description:
+        - configure power shedding
+        - 'default: disable'
+        type: bool
+      lpt_mode:
+        description:
+        - LinkPassThrough(LPT) mode configuration
+        - '- not-supported : ignore and don't send the configuration to ONT'
+        - '- enabled : enable the LPT mode on this port'
+        - '- disabled : disable the LPT mode on this port'
+      admin-state:
+        type: bool
+        description:
+        - 'optional parameter with default value: "disable"'
+        - admin state of the port
+
+  state:
+    description:
+    - The state the configuration should be left in
+    type: str
+    choices:
+    - gathered
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    default: merged
