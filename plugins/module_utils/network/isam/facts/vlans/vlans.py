@@ -49,7 +49,7 @@ class VlansFacts(object):
         objs = []
 
         if not data:
-            data = connection.get()
+            data = connection.get("info configure vlan id detail")
 
         # parse native config using the Vlans template
         vlans_parser = VlansTemplate(lines=data.splitlines(), module=self._module)

@@ -56,7 +56,7 @@ class InterfacesFacts(object):
         #if not debugpy.is_client_connected():
         #    debugpy.listen(("localhost",3000))
         #    debugpy.wait_for_client()
-        #    debugpy.breakpoint()
+        #debugpy.breakpoint()
         lines = data.splitlines()
         interfaces_parser = InterfacesTemplate(lines=lines, module=self._module)
         parsed = interfaces_parser.parse()
