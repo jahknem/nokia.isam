@@ -1,0 +1,22 @@
+module: isam_show_equipment_ont_status
+short_description: 'Shows status data of a type of ont interfaces.'
+description: Shows status data of a type of ont interfaces.'
+version_added: 1.0.0
+author: Jan Kühnemund (@jahknem)
+notes:
+  - 'Tested against Nokia ISAM with OS Version R6.2.04m'
+options:
+  port:
+    type: dict
+    port-type:
+      description: The type of port
+      type: str
+      choices:
+      - pon
+      - x-pon
+      - twenty-five-g
+      - channel-pair
+      required: true
+    ont-idx:
+      description: The name & ID of the slot
+      type: str

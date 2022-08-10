@@ -1,0 +1,17 @@
+---
+plugin_routing:
+  modules:
+    isam_bridges:
+      redirect: isam.isam.isam_bridges
+    isam_ethernet_ont:
+      redirect: isam.isam.isam_ethernet_ont
+    isam_facts:
+      redirect: isam.isam.isam_facts
+    isam_interfaces:
+      redirect: isam.isam.isam_interfaces
+    isam_ont_interfaces:
+      redirect: isam.isam.isam_ont_interfaces
+    isam_ont_slots:
+      redirect: isam.isam.isam_ont_slots
+    isam_vlans:
+      redirect: isam.isam.isam_vlans

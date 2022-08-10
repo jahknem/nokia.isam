@@ -1,0 +1,17 @@
+module: isam_show_vlan_bridge-port-fdb
+short_description: 'Shows vlan bridge-port-fdb.'
+description: 'Shows vlan bridge-port-fdb.'
+version_added: 1.0.0
+author: Jan Kühnemund (@jahknem)
+notes:
+  - 'Tested against Nokia ISAM with OS Version R6.2.04m'
+options:
+  name:
+    description: The Shelf / LT Slot / PON / ONT
+    type: str
+  vlan_id:
+    description: The VLAN ID
+    type: str
+  mac:
+    description: The MAC address
+    type: str

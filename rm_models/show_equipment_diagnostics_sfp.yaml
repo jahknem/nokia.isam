@@ -1,0 +1,11 @@
+module: isam_show_equipment_diagnostics_sfp
+short_description: 'Shows diagnostic attributes of an sfp port.'
+description: 'Shows diagnostic attributes of an sfp port.'
+version_added: 1.0.0
+author: Jan Kühnemund (@jahknem)
+notes:
+  - 'Tested against Nokia ISAM with OS Version R6.2.04m'
+options:
+  name:
+    description: The name & ID of the slot
+    type: str

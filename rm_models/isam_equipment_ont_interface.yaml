@@ -91,7 +91,7 @@ options:
         type: str
       plnd_var:
         description: 
-        - 'optional parameter with default value: """"'
+        - 'optional parameter with default value: ""'
         - planned variant of the ONT hardware version.Use DO for Data-only ONTs,SIP for SIP ONTs,H.248 for MEGACO ONTs
         type: str
       rf_filter:

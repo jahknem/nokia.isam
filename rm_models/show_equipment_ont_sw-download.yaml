@@ -1,0 +1,11 @@
+module: isam_show_equipment_ont_sw-download
+short_description: 'Shows sw-download status of ont download activity.'
+description: 'Shows sw-download status of ont download activity.'
+version_added: 1.0.0
+author: Jan Kühnemund (@jahknem)
+notes:
+  - 'Tested against Nokia ISAM with OS Version R6.2.04m'
+options:
+  name:
+    description: The name & ID of the slot
+    type: str

@@ -1,0 +1,14 @@
+module: isam_show_dhcp-relay_session
+short_description: 'Shows attributes of the dhcp-relay session.'
+description: 'Shows attributes of the dhcp-relay session.'
+version_added: 1.0.0
+author: Jan Kühnemund (@jahknem)
+notes:
+  - 'Tested against Nokia ISAM with OS Version R6.2.04m'
+options:
+  name:
+    description: The name & ID of the slot
+    type: str
+  ip-addr:
+    description: The IP address of the session
+    type: str
