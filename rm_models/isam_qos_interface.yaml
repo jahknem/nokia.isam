@@ -1,0 +1,160 @@
+module: isam_qos_interface
+short_description: 'Manages qos attributes of isam interface.'
+description: 'Manages <> attributes of isam <resource>'
+version_added: 1.0.0
+author: Jan Kühnemund (@jahknem)
+notes:
+  - 'Tested against Nokia ISAM with OS Version R6.2.04m'
+options:
+  config:
+    description: The provided configuration
+    type: list
+    elements: dict
+    suboptions:
+      index:
+        type: str
+        description: The name of the interface
+      queue:
+        type: dict
+      upstream_queue:
+        type: dict
+      ds_rm_queue:
+        type: dict
+      scheduler_node:
+        description: 
+        - profile name to be associated with the interface. Data driven field type.
+        type: str
+      ingress_profile:
+        description: 
+        - the name of the ingress profile to be mapped on this user-port Interface. It  only used for EPON ONU interface current. 
+        - Data driven field type.
+        type: str
+      cac_profile:
+        description:
+        - the name of the cac profile to be mapped on this user-portInterface. 
+        - For EPON OLT in downstream, this profile used for CAC on 1G PON bandwidth.
+        type: str
+      ext_cac:
+        description:
+        - the name of the cac profile to be mapped on this user-port Interface. 
+        - For EPON OLT in downstream, this profile used for CAC on 10G PON bandwidth.
+        type: str
+      ds_queue_sharing:
+        description:
+        - enable downstream queue sharing
+        type: bool
+      us_queue_sharing:
+        description:
+        - enable upstream queue sharing
+        type: bool
+      ds_num_queue:
+        description:
+        - number of downstream queues
+        type: bool
+      ds_num_rm_queue:
+        description:
+        - number of remote downstream queues per ont
+        type: str
+        choices:
+        - 'not applicable'
+        - '4'
+        - '8'
+        - '1'
+      us_num_queue:
+        description:
+        - number of upstream queues per uni
+        type: str
+        choices:
+        - 'not applicable'
+        - '4'
+        - '8'
+        - '1'
+      queue_stats_on:
+        description:
+        - enable queue stats collection for ont uni
+        type: bool
+      autoschedule_on:
+        type: bool
+      oper_weight:
+        type: int
+        description:
+        - operational weight of the ONT or UNI scheduler
+      oper_rate:
+        type: int
+        description:
+        - Operational rate limit when autoShape enabled for ONT or UNI
+      us_vlanport_queue: 
+        description: Enable Vlan Port Level Queue Configuration
+        type: bool
+      dsfld_shaper_prof:
+        description:
+        - the name of the shaper profile attached to the pon. 
+        - Data driven field type.
+        type: str
+      bandwidth_profile:
+        description:
+        - the name of the bandwidth profile. 
+        - Data driven field type.
+        type: str
+      bandwidth_sharing:
+        description:
+        - the bandwidth sharing mode. 
+        - Data driven field type.
+        type: str
+        choices:
+        - 'no sharing'
+        - 'ont-sharing'
+      aggr_usq_profile:
+        description:
+        - the name of the aggr usq profile. 
+        - Data driven field type.
+        type: str
+      aggr_dsq_profile:
+        description:
+        - the name of the aggr dsq profile. 
+        - Data driven field type.
+        type: str
+      gem_sharing:
+        description:
+        - the gem sharing mode. 
+        type: str
+        choices:
+        - 'enable'
+        - 'disable'
+        - 'not-applicable'
+      scheduler_mode:
+        description:
+        - specifies which mode is selected for scheduler
+        choices:
+        - 'subscriber-hierarchy'
+        - 'service-hierarchy'
+        - 'service-flat'
+      mc_scheduler_node:
+        description:
+        - the name of the scheduler-node profile to be mapped on multicast port
+        - Data driven field type.
+        type: str
+      bc_scheduler_node:
+        description:
+        - the name of the scheduler-node profile to be mapped on broadcast port
+        - Data driven field type.
+        type: str
+      ds_schedule_tag:
+        description:
+        - specifies downstream scheduler reference
+        type: str
+        choices:
+        - 'egressoutertag'
+        - 'cvlantag'
+        - 'svlabtag'
+  state:
+    description:
+    - The state the configuration should be left in
+    type: str
+    choices:
+    - gathered
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    default: merged

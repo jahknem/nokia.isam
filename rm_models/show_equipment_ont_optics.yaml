@@ -1,0 +1,11 @@
+module: isam_show_equipment_ont_optics
+short_description: 'Shows optical data of ont interfaces.'
+description: 'Shows optical data of ont interfaces.'
+version_added: 1.0.0
+author: Jan Kühnemund (@jahknem)
+notes:
+  - 'Tested against Nokia ISAM with OS Version R6.2.04m'
+options:
+  ont-idx:
+    description: The name & ID of the slot
+    type: str

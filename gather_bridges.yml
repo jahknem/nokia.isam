@@ -1,0 +1,13 @@
+---
+- name: check GATHERED state
+  hosts: all
+  gather_facts: no
+  tasks:
+  - name: Gather bridges config
+    isam.isam.isam_bridges:
+      state: gathered
+    timeout: 300
+    register: isam_bridges
+  - name: output bridges
+    ansible.builtin.debug:
+      msg: "{{ isam_bridges }}" 

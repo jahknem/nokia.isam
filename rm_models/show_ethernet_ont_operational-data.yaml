@@ -1,0 +1,11 @@
+module: isam_show_ethernet_ont_operational-data
+short_description: 'Shows operational-data of ont.'
+description: 'Shows operational-data of ont.'
+version_added: 1.0.0
+author: Jan Kühnemund (@jahknem)
+notes:
+  - 'Tested against Nokia ISAM with OS Version R6.2.04m'
+options:
+  name:
+    description: The name & ID of the slot
+    type: str

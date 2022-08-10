@@ -64,6 +64,6 @@ class TerminalModule(TerminalBase):
     ]
 
     def on_open_shell(self):
-
+        self._exec_cli_command("environment mode batch")
         self._exec_cli_command('environment inhibit-alarms')
         self._exec_cli_command('exit')

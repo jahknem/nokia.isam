@@ -1,50 +1,95 @@
 module: isam_ping
 short_description: 'Runs ping on an ISAM Device.'
-description: 'Manages <xxxx> attributes of <network_os> <resource>'
+description: 'Runs a ping with the given parameters on an ISAM Device against any IP Address.'
 author: Jan Kühnemund
 notes:
-  - 'Tested against <network_os> <version>'
+  - 'Tested against Nokia ISAM with OS Version R6.2.04m'
 options:
-  config:
-    description: The provided configuration
-    type: list
-    elements: dict
-    suboptions:
-      name:
-        type: str
-        description: The name of the <resource>
-      option_string:
-        type: str
-        description:
-        - The some_string_01
-        choices:
-        - choice_a
-        - choice_b
-        - choice_c
-        default: choice_a
-      some_bool:
-        description:
-        - The some_bool.
-        type: bool
-      some_int:
-        description:
-        - The some_int.
-        type: int
-        aliases: ["some_int_2"] # Note: ansible-test sanity requires `aliases` to be a list.
-        version_added: '1.1'
-      some_dict:
-        type: dict
-        description:
-        - The some_dict.
-        suboptions:
-          property_01:
-            description:
-            - The property_01
-            type: str
-  state:
+  ip_address:
+    description: The IP Address to ping.
+    type: str
+    required: true
+  detail_rapid:
     description:
-    - The state the configuration should be left in
+    - detail - show extra information in error cases
+    - rapid  - change the units for 'interval' from seconds to centiseconds
+    - These models are mutually exclusive.
+    type: str
+  time_to_live:
+    description:
+    - The time-to-live for the ping.
+    type: int
+    default: 64
+  type_of_service:
+    description:
+    - The type of service for the ping.
+    type: int
+    default: 0
+  bytes:
+    description:
+    - The number of bytes to send in the ping.
+    type: int
+    default: 56
+  pattern:
+    description:
+    - The pattern to use for the ping.
+    type: int
+    default:  system-generated sequential pattern
+  centisecs:
+    description:
+    - "If 'rapid' is selected, 1..10000 centiseconds, default: 1 centisecond"
+    type: int
+    default: 1
+  secs:
+    description:
+    - "Otherwise, 1..10000 seconds, default: 1 second"
+    type: int
+    default: 1
+  bypass-routing:
+    description:
+    - "Bypass routing for the ping. This is useful for pinging a host on the same subnet as the ISAM device."
+    type: bool
+    default: false
+  requests:
+    description:
+    - The number of requests to send in the ping.
+    type: int
+    default: 1
+  do-not-fragment:
+    description:
+    - "Do not fragment the ping."
+    type: bool
+    default: false
+  interface-name:
+    description:
+    - "The name of the interface to use for the ping"
+    type: str
+  router-instance:
+    description:
+    - "The name of the router instance to use for the ping"
     type: str
     choices:
-    - gathered
-    default: merged
+    - "Base"
+    - "management"
+    - "vpls-management"
+  timeout:
+    description:
+    - "The number of seconds to wait for a response."
+    type: int
+    default: 5
+  service-name:
+    description:
+    - "The name of the service to use for the ping"
+    type: str
+  fc-name:
+    type: str
+    choices:
+    - 'be'
+    - 'l2'
+    - 'af'
+    - 'l1'
+    - 'h2'
+    - 'ef'
+    - 'h1'
+    - 'nc'
+    default: 'nc'

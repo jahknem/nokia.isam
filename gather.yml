@@ -3,7 +3,11 @@
   hosts: all
   gather_facts: no
   tasks:
-  - name: Gather logging config
+  - name: Gather interfaces config
     isam.isam.isam_interfaces:
       state: gathered
     timeout: 300
+    register: isam_interfaces
+  - name: output interfaces
+    ansible.builtin.debug:
+      msg: "{{ isam_interfaces }}" 

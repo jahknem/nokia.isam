@@ -13,11 +13,13 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.f
     FactsBase,
 )
 from ansible_collections.isam.isam.plugins.module_utils.network.isam.facts.interfaces.interfaces import InterfacesFacts
+from ansible_collections.isam.isam.plugins.module_utils.network.isam.facts.bridges.bridges import BridgesFacts
 
 
 FACT_LEGACY_SUBSETS = {}
 FACT_RESOURCE_SUBSETS = dict(
     interfaces=InterfacesFacts,
+    bridges=BridgesFacts,
 )
 
 
