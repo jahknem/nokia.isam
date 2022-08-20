@@ -24,7 +24,6 @@ options:
   config:
     description: The provided configuration
     type: dict
-    elements: dict
     suboptions:
       ageing_time:
         type: int
@@ -149,7 +148,7 @@ options:
             - 'translated'
             - 'transparency'
           vlan_id:
-            type: dict
+            type: list
             elements: dict
             suboptions:
               id:

@@ -9,7 +9,6 @@ options:
   config:
     description: The provided configuration
     type: dict
-    elements: dict
     suboptions:
       ageing_time:
         type: int

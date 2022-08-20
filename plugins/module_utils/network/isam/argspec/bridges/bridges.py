@@ -101,9 +101,10 @@ class BridgesArgs(object):  # pylint: disable=R0903
                             "choices": ["auto", "translated", "transparency"],
                         },
                         "vlan_id": {
-                            "type": "dict",
+                            "type": "list",
                             "elements": "dict",
                             "options": {
+                                "id": {"type": "str"},
                                 "tag": {
                                     "type": "str",
                                     "choices": [
@@ -136,12 +137,12 @@ class BridgesArgs(object):  # pylint: disable=R0903
                                 "in_qos_prof_name": {"type": "str"},
                                 "max_up_qos_policy": {"type": "int"},
                                 "max_ip_antispoof": {"type": "int"},
-                                "max_unicast_mac": {"type": "int"},
+                                "max_unicaast_mac": {"type": "int"},
                                 "max_ipv6_antispf": {"type": "int"},
                                 "mac_learn_ctrl": {"type": "int"},
                                 "min_cvlan_id": {"type": "int"},
                                 "max_cvlan_id": {"type": "int"},
-                                "ds_dedicated_q": {"type": "bool"},
+                                "ds-dedicated-q": {"type": "bool"},
                                 "tpid": {"type": "str"},
                             },
                         },

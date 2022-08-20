@@ -1,0 +1,5 @@
+---
+plugin_routing:
+  modules:
+    isam_bridges:
+      redirect: isam.isam.isam_bridges

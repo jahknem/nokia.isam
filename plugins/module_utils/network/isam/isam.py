@@ -66,3 +66,12 @@ def get_defaults_flag(module):
     except ConnectionError as exc:
         module.fail_json(msg=to_text(exc, errors="surrogate_then_replace"))
     return to_text(out, errors="surrogate_then_replace").strip()
+
+def load_config(module, commands):
+    connection = get_connection(module)
+
+    try:
+        resp = connection.edit_config(commands)
+        return resp.get("response")
+    except ConnectionError as exc:
+        module.fail_json(msg=to_text(exc))

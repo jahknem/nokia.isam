@@ -32,7 +32,7 @@ description:
   anything for cli_config support.
 version_added: 0.0.0
 """
-
+import debugpy
 import json
 import defusedxml.ElementTree as ET
 
@@ -70,18 +70,15 @@ class Cliconf(CliconfBase):
             raise ValueError(
                 "fetching configuration from {source} is not supported" % source,
             )
-        if format not in ("hierachical", "flat", "xml"):
-            raise ValueError(
-                "format {format} is not supported" % format,
-            )
         if not flags:
             flags = []
-        cmd = "info configure"
+        if not debugpy.is_client_connected():
+            debugpy.listen(("localhost",3000))
+            debugpy.wait_for_client()
+        debugpy.breakpoint()
+        cmd = "info configure flat"
         cmd += " ".join(to_list(flags))
         return self.send_command(cmd)
-        
-
-        raise NotImplementedError
 
     def edit_config(self, candidate=None, commit=True, replace=None, diff=False, comment=None):
         """Loads the candidate configuration into the network device
@@ -111,8 +108,33 @@ class Cliconf(CliconfBase):
                }
 
         """
+        if not debugpy.is_client_connected():
+            debugpy.listen(("localhost",3000))
+            debugpy.wait_for_client()
+        debugpy.breakpoint()
+        resp = {}
+        operations = self.get_device_operations()
+        self.check_edit_config_capability(
+            operations,
+            candidate,
+            commit,
+            replace,
+            comment,
+        )
+        result = []
+        request = []
 
-        raise NotImplementedError
+        if commit:
+            for line in to_list(candidate):
+                if not isinstance(line, str):
+                    raise ValueError("candidate configuration is not a string")
+                if not line.endswith('\n'):
+                    line += '\n'
+                result.append(self.send_command(line))
+                request.append(line)
+        resp["request"] = request
+        resp["response"] = result
+        return resp
 
     def get(self, command=None, prompt=None, answer=None, sendonly=False, newline=True, output=None, check_all=False):
         """Execute specified command on remote device
