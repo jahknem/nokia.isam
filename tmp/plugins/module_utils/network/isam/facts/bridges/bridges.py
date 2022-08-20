@@ -4,7 +4,6 @@
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, print_function
-from queue import Empty
 import re
 
 __metaclass__ = type
@@ -55,25 +54,20 @@ class BridgesFacts(object):
             debugpy.listen(("localhost",3000))
             debugpy.wait_for_client()
         if not data:
-            data = connection.get("info configure bridge 1/1/5/1/1/1/1 flat")
+            data = connection.get("info configure bridge flat detail")
         
         data = self._flatten_config(data)
 
-        debugpy.breakpoint()
-
         # parse native config using the Bridges template
         bridges_parser = BridgesTemplate(lines=data, module=self._module)
-        parsed = bridges_parser.parse()
-        values = parsed.values()
-        list_parsed = list(parsed)
-        list_valued = list(values)
-        objs = list(bridges_parser.parse().values())
+        objs = bridges_parser.parse()
+
 
         ansible_facts['ansible_network_resources'].pop('bridges', None)
 
         debugpy.breakpoint()
 
-        params = utils.remove_empties(bridges_parser.validate_config(self.argument_spec, {"config": list_valued}, redact=True))
+        params = utils.remove_empties(bridges_parser.validate_config(self.argument_spec, {"config": objs}, redact=True))
 
         facts['bridges'] = params['config']
         ansible_facts['ansible_network_resources'].update(facts)
@@ -106,10 +100,9 @@ class BridgesFacts(object):
         bridge_id = None
         rest = None
         vlan_tpid = None
-        lines = config.splitlines()
-        for line in lines:
-            
+        for line in config.splitlines():
             # if line contains bridge port id, store it in bridge_id
+            line2 = line
             for regex in parsers:
                 match = regex.match(line)
                 if match:
@@ -129,19 +122,11 @@ class BridgesFacts(object):
                     # for each group matched, add it to the flattened config and prepend the bridge_id. Also prepend vlan_id if it exists
 
                     if bridge_id:
-                        if not flattened_config:
-                            flattened_config.append('configure bridge port ' + bridge_id)
-                        elif 'configure bridge port ' + bridge_id not in flattened_config[-1]:
-                            flattened_config.append('configure bridge port ' + bridge_id)
                         values = match.group("rest").split()
                         for item,item2 in self._divide_chunks(values,2):
                             if vlan_id:
-                                if ('configure bridge port ' + bridge_id + ' vlan-id ' + vlan_id) not in flattened_config[-1]:
-                                    flattened_config.append('configure bridge port ' + bridge_id + ' ' +'vlan-id' + ' ' + vlan_id)
                                 flattened_config.append('configure bridge port ' + bridge_id + ' ' +'vlan-id' + ' ' + vlan_id + ' ' + ' '.join([item, item2]))
                             elif vlan_tpid:
-                                if ('configure bridge port ' + bridge_id + ' vlan_tpid' + vlan_tpid) not in flattened_config[-1]:
-                                    flattened_config.append('configure bridge port ' + bridge_id + ' ' +'vlan_tpid' + vlan_tpid + ' ' + match.group('tpid'))
                                 flattened_config.append('configure bridge port ' + bridge_id + ' ' + 'vlan_tpid'+ vlan_tpid + ' ' + match.group('tpid')+ ' ' + ' '.join([item, item2]))
                             else:
                                 flattened_config.append('configure bridge port ' + bridge_id + ' ' + ' '.join([item, item2]))

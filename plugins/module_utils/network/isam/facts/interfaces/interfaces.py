@@ -49,19 +49,22 @@ class InterfacesFacts(object):
         facts = {}
         objs = []
 
+        if not debugpy.is_client_connected():
+           debugpy.listen(("localhost",3000))
+           debugpy.wait_for_client()
+           
         if not data:
             data = connection.get("info configure interface port detail")
 
+        
         # parse native config using the Interfaces template
-        #if not debugpy.is_client_connected():
-        #    debugpy.listen(("localhost",3000))
-        #    debugpy.wait_for_client()
-        #debugpy.breakpoint()
         lines = data.splitlines()
         interfaces_parser = InterfacesTemplate(lines=lines, module=self._module)
         parsed = interfaces_parser.parse()
         valued = parsed.values()
         objs = list(valued)
+
+        debugpy.breakpoint()
 
         ansible_facts['ansible_network_resources'].pop('interfaces', None)
 

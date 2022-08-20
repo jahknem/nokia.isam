@@ -34,9 +34,8 @@ class BridgesArgs(object):  # pylint: disable=R0903
     argument_spec = {
         "config": {
             "type": "dict",
-            "elements": "dict",
             "options": {
-                "ageing_time": {"type": "int", "default": 300},
+                "ageing_time": {"type": "str"},
                 "port": {
                     "type": "list",
                     "elements": "dict",
@@ -99,52 +98,6 @@ class BridgesArgs(object):  # pylint: disable=R0903
                         "ds-pbit-mode": {
                             "type": "str",
                             "choices": ["auto", "translated", "transparency"],
-                        },
-                        "vlan_id": {
-                            "type": "list",
-                            "elements": "dict",
-                            "options": {
-                                "id": {"type": "str"},
-                                "tag": {
-                                    "type": "str",
-                                    "choices": [
-                                        "untagged",
-                                        "single-tagged",
-                                        "priority-tagged",
-                                    ],
-                                },
-                                "l2fwder_vlan": {"type": "str"},
-                                "vlan_scope": {
-                                    "type": "str",
-                                    "choices": ["local", "l2fwder", "network"],
-                                },
-                                "qos": {"type": "str", "default": "none"},
-                                "qos_profile": {"type": "str", "default": "none"},
-                                "prior_best_effort": {
-                                    "type": "boolean",
-                                    "default": "none",
-                                },
-                                "prior_background": {
-                                    "type": "boolean",
-                                    "default": "none",
-                                },
-                                "prior_spare": {"type": "boolean"},
-                                "prior_exc_effort": {"type": "boolean"},
-                                "prior_ctrl_load": {"type": "boolean"},
-                                "prior_less_100ms": {"type": "boolean"},
-                                "prior_less_10ms": {"type": "boolean"},
-                                "prior_nw_ctrl": {"type": "boolean"},
-                                "in_qos_prof_name": {"type": "str"},
-                                "max_up_qos_policy": {"type": "int"},
-                                "max_ip_antispoof": {"type": "int"},
-                                "max_unicaast_mac": {"type": "int"},
-                                "max_ipv6_antispf": {"type": "int"},
-                                "mac_learn_ctrl": {"type": "int"},
-                                "min_cvlan_id": {"type": "int"},
-                                "max_cvlan_id": {"type": "int"},
-                                "ds-dedicated-q": {"type": "bool"},
-                                "tpid": {"type": "str"},
-                            },
                         },
                     },
                 },
