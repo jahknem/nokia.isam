@@ -39,7 +39,10 @@ import defusedxml.ElementTree as ET
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
 from ansible.plugins.cliconf import CliconfBase
 from ansible_collections.isam.isam.plugins.cliconf.utils.utils import  getFirstXMLElementText, getXMLElements, removeAlarms, removeCtrlChars
-
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.config import (
+    NetworkConfig,
+    dumps,
+)
 
 
 class Cliconf(CliconfBase):
@@ -72,10 +75,6 @@ class Cliconf(CliconfBase):
             )
         if not flags:
             flags = []
-        if not debugpy.is_client_connected():
-            debugpy.listen(("localhost",3000))
-            debugpy.wait_for_client()
-        debugpy.breakpoint()
         cmd = "info configure flat"
         cmd += " ".join(to_list(flags))
         return self.send_command(cmd)
@@ -108,10 +107,6 @@ class Cliconf(CliconfBase):
                }
 
         """
-        if not debugpy.is_client_connected():
-            debugpy.listen(("localhost",3000))
-            debugpy.wait_for_client()
-        debugpy.breakpoint()
         resp = {}
         operations = self.get_device_operations()
         self.check_edit_config_capability(
@@ -128,13 +123,94 @@ class Cliconf(CliconfBase):
             for line in to_list(candidate):
                 if not isinstance(line, str):
                     raise ValueError("candidate configuration is not a string")
-                if not line.endswith('\n'):
-                    line += '\n'
+                # if not line.endswith('\n'):
+                #     line += '\n'
                 result.append(self.send_command(line))
                 request.append(line)
         resp["request"] = request
         resp["response"] = result
         return resp
+    
+    def get_diff(
+        self,
+        candidate=None,
+        running=None,
+        diff_match=None,
+        diff_ignore_lines=None,
+        path=None,
+        diff_replace=None,
+    ):
+        """
+        Generate diff between candidate and running configuration. If the
+        remote host supports onbox diff capabilities ie. supports_onbox_diff in that case
+        candidate and running configurations are not required to be passed as argument.
+        In case if onbox diff capability is not supported candidate argument is mandatory
+        and running argument is optional.
+        :param candidate: The configuration which is expected to be present on remote host.
+        :param running: The base configuration which is used to generate diff.
+        :param diff_match: Instructs how to match the candidate configuration with current device configuration
+                      Valid values are 'line', 'strict', 'exact', 'none'.
+                      'line' - commands are matched line by line
+                      'strict' - command lines are matched with respect to position
+                      'exact' - command lines must be an equal match
+                      'none' - will not compare the candidate configuration with the running configuration
+        :param diff_ignore_lines: Use this argument to specify one or more lines that should be
+                                  ignored during the diff.  This is used for lines in the configuration
+                                  that are automatically updated by the system.  This argument takes
+                                  a list of regular expressions or exact line matches.
+        :param path: The ordered set of parents that uniquely identify the section or hierarchy
+                     the commands should be checked against.  If the parents argument
+                     is omitted, the commands are checked against the set of top
+                    level or global commands.
+        :param diff_replace: Instructs on the way to perform the configuration on the device.
+                        If the replace argument is set to I(line) then the modified lines are
+                        pushed to the device in configuration mode.  If the replace argument is
+                        set to I(block) then the entire command block is pushed to the device in
+                        configuration mode if any line is not correct.
+        :return: Configuration and/or banner diff in json format.
+               {
+                   'config_diff': ''
+               }
+        """
+        diff = {}
+        device_operations = self.get_device_operations()
+        option_values = self.get_option_values()
+
+        if candidate is None and device_operations["supports_generate_diff"]:
+            raise ValueError("candidate configuration is required to generate diff")
+
+        if diff_match not in option_values["diff_match"]:
+            raise ValueError(
+                "'match' value %s in invalid, valid values are %s" 
+                % (diff_match, ", ".join(option_values["diff_match"])),
+            )
+        
+        if diff_replace not in option_values["diff_replace"]:
+            raise ValueError(
+                "'replace' value %s in invalid, valid values are %s"
+                % (diff_replace, ", ".join(option_values["diff_replace"])),
+            )
+
+        # prepare candidate configuration
+        candidate_obj = NetworkConfig(indent=2)
+        candidate_obj.load(candidate)
+
+        if running and diff_match != "none" and diff_replace != "config":
+            # running configuration
+            running_obj = NetworkConfig(indent=2, contents=running, ignore_lines=diff_ignore_lines)
+            configdiffobjs = candidate_obj.difference(
+                running_obj,
+                path=path,
+                match=diff_match,
+                replace=diff_replace,
+            )
+
+        else:
+            configdiffobjs = candidate_obj.items
+
+        diff["config_diff"] = dumps(configdiffobjs, "commands") if configdiffobjs else ""
+        return diff
+
 
     def get(self, command=None, prompt=None, answer=None, sendonly=False, newline=True, output=None, check_all=False):
         """Execute specified command on remote device
@@ -196,17 +272,17 @@ class Cliconf(CliconfBase):
 
     def get_device_operations(self):
         return {
-            "supports_diff_replace": False,
+            "supports_diff_replace": True,
             "supports_commit": False,
             "supports_rollback": False,
             "supports_defaults": False,
             "supports_onbox_diff": False,
             "supports_commit_comment": False,
             "supports_multiline_delimiter": False,
-            "supports_diff_match": False,
+            "supports_diff_match": True,
             "supports_diff_ignore_lines": False,
-            "supports_generate_diff": False,
-            "supports_replace": False,
+            "supports_generate_diff": True,
+            "supports_replace": True,
         }
 
     def get_option_values(self):

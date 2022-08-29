@@ -33,6 +33,7 @@ class TerminalModule(TerminalBase):
     # match the devices you are using.
     terminal_stdout_re = [
         re.compile(rb"[\w-]+>.*#"),
+        re.compile(rb"[\w-]+>.*$"),
     ]
 
     # This list is the only way that network_cli has to know that something
@@ -40,7 +41,10 @@ class TerminalModule(TerminalBase):
     # it issues is a success. In this instance, my prompt changes to a ! when
     # the exit code is non-zero, so I can use that.
     terminal_stderr_re = [
-        re.compile(rb"invalid token", re.I)
+        re.compile(rb"\s+\^"),
+        re.compile(rb"invalid token.*"),
+        re.compile(rb"Error:.*"),
+        re.compile(rb"command is not complete.*"),
     ]
 
     # My terminal uses a lot of ANSI codes. You almost certainly don't need all
