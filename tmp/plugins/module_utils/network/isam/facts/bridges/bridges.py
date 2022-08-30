@@ -16,7 +16,7 @@ based on the configuration.
 """
 
 from copy import deepcopy
-import debugpy
+# import debugpy
 
 from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
@@ -50,9 +50,9 @@ class BridgesFacts(object):
         facts = {}
         objs = []
 
-        if not debugpy.is_client_connected():
-            debugpy.listen(("localhost",3000))
-            debugpy.wait_for_client()
+        # if not debugpy.is_client_connected():
+        #     debugpy.listen(("localhost",3000))
+        #     debugpy.wait_for_client()
         if not data:
             data = connection.get("info configure bridge flat detail")
         
@@ -65,7 +65,7 @@ class BridgesFacts(object):
 
         ansible_facts['ansible_network_resources'].pop('bridges', None)
 
-        debugpy.breakpoint()
+        # debugpy.breakpoint()
 
         params = utils.remove_empties(bridges_parser.validate_config(self.argument_spec, {"config": objs}, redact=True))
 
