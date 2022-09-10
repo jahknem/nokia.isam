@@ -55,7 +55,7 @@ class BridgesFacts(object):
         #     debugpy.listen(("localhost",3000))
         #     debugpy.wait_for_client()
         if not data:
-            data = connection.get("info configure bridge 1/1/5/1/1/1/1 flat")
+            data = connection.get("info configure bridge flat")
         
         data = self._flatten_config(data)
 
