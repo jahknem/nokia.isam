@@ -1,3 +1,4 @@
 paramiko
 defusedxml
+itertools
 debugpy
