@@ -18,6 +18,7 @@
 #
 
 from __future__ import absolute_import, division, print_function
+from xml.etree.ElementTree import ElementTree
 
 
 __metaclass__ = type
@@ -34,7 +35,6 @@ version_added: 0.0.0
 """
 #import debugpy
 import json
-import defusedxml.ElementTree as ET
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
 from ansible.plugins.cliconf import CliconfBase
@@ -256,7 +256,7 @@ class Cliconf(CliconfBase):
             'network_os_platform': <str>,
         },"""
         def get_version(sys_info_xml):
-            return getFirstXMLElementText(ET.fromstring(sys_info_xml),"info", "isam-release")
+            return getFirstXMLElementText(ElementTree.fromstring(sys_info_xml),"info", "isam-release")
 
         device_info = dict()
         device_info['network_os'] = 'isam'

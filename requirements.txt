@@ -1,3 +1,1 @@
 paramiko
-defusedxml
-itertools

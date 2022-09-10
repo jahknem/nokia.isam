@@ -1,4 +1,3 @@
-import itertools
 from more_itertools import pairwise
 import re
 
