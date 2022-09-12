@@ -1,5 +1,0 @@
----
-- hosts: localhost
-  gather_facts: yes
-  roles:
-    - ansible_network.cli_rm_builder.run
