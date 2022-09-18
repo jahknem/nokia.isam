@@ -1,0 +1,17 @@
+DS-LIN-TEST-01>#info  configure interface port flat
+configure interface port xdsl-line:1/1/2/1 admin-up link-updown-trap user kuehnemund
+configure interface port ont:1/1/5/5/16 link-updown-trap user ""
+configure interface port ont:1/1/5/5/17 admin-up link-updown-trap user ""
+configure interface port ont:1/1/5/6/7 admin-up link-updown-trap user ""
+configure interface port uni:1/1/5/1/1/1/1 admin-up user 316333
+configure interface port uni:1/1/5/1/2/1/1 admin-up user UFiber
+configure interface port uni:1/1/5/1/3/1/1 admin-up user YTest
+configure interface port uni:1/1/5/1/4/1/1 admin-up user GPON_Test_FB
+configure interface port uni:1/1/5/1/5/1/1 admin-up
+configure interface port uni:1/1/5/1/6/1/1 admin-up
+configure interface port uni:1/1/5/1/7/1/1 admin-up
+configure interface port uni:1/1/5/1/8/1/1 admin-up
+configure interface port uni:1/1/5/1/9/1/1 admin-up user Y3000159
+configure interface port uni:1/1/5/1/10/1/1 admin-up user y3000156
+#-----------------------------------------------------------------------------------------------------------------------------------------
+DS-LIN-TEST-01>#c
