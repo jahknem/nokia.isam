@@ -42,7 +42,7 @@ To use this collection the following needs to be added to the inventory:
 ansible_connection: ansible.netcommon.network_cli
 ansible_network_os: isam.isam.isam
 ```
-Some modules take a long tiome to complete due to the slow nature of the device. To increase the timeout for these modules the following can be added to the inventory:
+Some modules take a long time to complete due to the slow nature of the device. To increase the timeout for these modules the following can be added to the inventory:
 ```
 ansible_command_timeout : 150
 ```
