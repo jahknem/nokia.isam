@@ -54,7 +54,7 @@ class InterfacesFacts(object):
         #    debugpy.wait_for_client()
            
         if not data:
-            data = connection.get("info configure interface port flat")
+            data = connection.get("info configure interface port detail")
 
         
         # parse native config using the Interfaces template
