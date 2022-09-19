@@ -1,0 +1,457 @@
+module: isam_system
+short_description: 'Manages system attributes of nokia isam.'
+description: |
+  'Manages system attributes of nokia isam.'
+  Command Tree:
+  ----configure
+    ----system
+      - [no] id
+      - name
+      - location
+      - [no] access-oper-id
+      - [no] system-40gkr4
+      - contact-person
+      - [no] en-snmp-auth-trap
+      - nt-intercon-vlan
+      - [no] periph-mgnt-vlan
+      - internal-nw-vlan
+      - [no] periph-mgnt-ctrl
+      - system-mac
+      - [no] port-num-in-proto
+      - [no] ont-trc-dbg-vlan
+      - [no] ntr-ssmout-vlan
+      - [no] ntr-ptp-vlan
+      - [no] customer-id
+      - [no] voiceoswp
+      - [no] scalingmode
+      - [no] arp-polling-inter
+      - [no] bsnap-state
+      - bsnap-server-ip
+      - bsnap-server-port
+      - [no] arp-tca-threshold
+      ----external-leds
+        - [no] status
+      ----sntp
+        - server-ip-addr
+        - [no] server-port
+        - [no] polling-rate
+        - [no] enable
+        - [no] timezone-offset
+        ----server-table
+          ----[no] ip-address
+            - (ip-addr)
+            - [no] port
+            - priority
+          ----[no] ipv6-address
+            - (ip-addr)
+            - [no] port
+            - priority
+        ----dst
+          - [no] enable
+          ----[no] date
+            - timezone-offset
+            - start-time
+            - end-time
+            - [no] offset
+          ----[no] recurring
+            - timezone-offset
+            - start-time
+            - end-time
+            - [no] offset
+      ----loop-id-syntax
+        - [no] atm-based-dsl
+        - [no] efm-based-dsl
+        - [no] efm-based-pon
+        - [no] efm-based-epon
+        - [no] efm-based-ngpon2
+      ----max-lt-link-speed
+        - [no] link-speed
+      ----X pon-ont
+        - [no] slid-mode
+        - [no] pwrbrst-mode
+        - [no] sn-bundle-timer
+        - [no] sw-ver-mis-block
+        - [no] sn-autounlock
+      ----epon
+        - [no] pm-collect
+        - [no] onuidmthd
+        - [no] rogueadmin
+      ----sync-if-timing
+        - [no] revert
+        - [no] wait-time
+        - [no] output-ql-thresh
+        - [no] ssmout-en-bits
+        - [no] ssmout-ceiling
+        - [no] ais-sensitivity
+        
+version_added: 1.0.0
+author: Jan Kühnemund (@jahknem)
+notes:
+  - 'Tested against isam-release: R6.2.04m'
+options:
+  config:
+    id:
+      type: str
+      description: 
+      - optional parameter with default value "" 
+      - the system id.
+    name:
+      type: str
+      description: 
+      - optional parameter with default value "" 
+      - fully-qualified domain name of the system
+    location:
+      type: str
+      description: 
+      - optional parameter with default value "" 
+      - the location of the system.
+    access-oper-id: 
+      type: str
+      description: 
+      - optional parameter with default value "" 
+      - unique access operator id assigned by Nokia, to activate a system reset is needed
+    system-40gkr4:
+      type: bool
+      description: 
+      - optional parameter 
+      - enable ord disable system 40GKR4.
+    contact-person:
+      type: str
+      description: 
+      - optional parameter with default value "" 
+      - the contact person of the system.
+    en-snmp-auth-trap:
+      type: bool
+      description: 
+      - optional parameter 
+      - enable or disable snmp authentication traps.
+    nt-intercon-vlan:
+      type: int
+      description: the value of the nt-interconnect vlan
+    periph-mgnt-vlan:
+      type: int
+      description: the value of the peripheral management vlan
+    internal-nw-vlan:
+      type: int
+      description: the value of the internal network vlan
+    periph-mgnt-ctrl:
+      type: bool
+      description: configure the peripheral management service
+    system-mac:
+      type: str
+      description: 
+      - optional parameter 
+      - the system mac address.
+    port-num-in-proto:
+      type: string
+      description: 
+      - 'optional parameter with default value: "log-slot-num"'
+      - numbering scheme for the Line ID field (all protocols)
+      default: log-slot-num
+    ont-trc-dbg-vlan:
+      type: string
+      description:
+      - ONT trace and debug vlan
+    ntr-ssmout-vlan:
+      type: string
+      description:
+      - ssm out vlan id
+      default: 4088
+    ntr-ptp-vlan:
+      type: string
+      description:
+      - ptp vlan id
+    customer-id:
+      type: string
+      description:
+      - the customer-id assigned in system level
+    voiceoswp:
+      type: string
+      description:
+      - the voice software when system startup
+    scalingmode:
+      type: string
+      description:
+      - the scaling mode of the system
+    arp-polling-inter:
+      type: int
+      description: configure ARP polling interval
+    bsnap-state:
+      type: bool
+      description: enable or disable BSNAP
+    bsnap-server-ip:
+      type: string
+      description: BSNAP server IP address
+    bsnap-server-port:
+      type: int
+      description: BSNAP server port
+      default: 10
+    arp-tca-threshold:
+      type: int
+      description: configure ARP tca threshold
+    external-leds:
+      type: dict
+      description: This command can be used to switch on/off (enable/disable) all the external LEDs of the system.
+      suboptions:
+        status:
+          type: bool
+          description: 
+          - optional parameter 
+          - enable or disable external LEDs.
+    sntp:
+      type: dict
+      description: This command allows the operator to configure the SNTP and its related parameters.
+      suboptions:
+        server-ip-addr:
+          type: str
+          description: 
+          - optional parameter
+          - the IP address of the SNTP server.
+        server-port:
+          type: int
+          description: 
+          - optional parameter with default value 123
+          - the port number of the SNTP server.
+          default: 123
+        polling-rate:
+          type: int
+          description: 
+          - optional parameter with default value 3600
+          - the polling rate of the SNTP server.
+          default: 3600
+        enable:
+          type: bool
+          description: 
+          - optional parameter 
+          - enable or disable SNTP in the NE.
+        timezone-offset:
+          type: int
+          description: 
+          - optional parameter with default value 0
+          - set the offset of the local timezone from GMT/UTC
+          default: 0
+        server-table:
+          type: dict
+          description: This command allows the operator to configure SNTP Server Table and its related parameters.
+          suboptions:
+            ip-addr:
+              type: str
+              description: 
+              - optional parameter
+              - the IP address of the SNTP server.
+            port:
+              type: int
+              description: 
+              - optional parameter with default value 123
+              - the port number of the SNTP server.
+              default: 123
+            priority:
+              type: str
+              description:
+              - configure the priority number of the sntp server
+    dst:
+      type: dict
+      description: This command allows the operator to configure the Daylight Saving Time (DST) and its related parameters.
+      suboptions:
+        enable:
+          type: bool
+          description: 
+          - optional parameter 
+          - enable or disable DST in the NE.
+        date:
+          type: dict
+          suboptions:
+            timezone-offset:
+              type: int
+              description: 
+              - optional parameter 
+              - set the offset of the local timezone from GMT/UTC
+            start-time:
+              type: str
+              description: 
+              - optional parameter
+              - the start time of the DST.
+            end-time:
+              type: str
+              description: 
+              - optional parameter
+              - the end time of the DST.
+            offset:
+              type: int
+              description: 
+              - optional parameter with default value 60
+              - the offset of the DST.
+              default: 60
+        recurring:
+          type: dict
+          suboptions:
+            timezone-offset:
+              type: int
+              description: 
+              - optional parameter 
+              - set the offset of the local timezone from GMT/UTC
+            start-time:
+              type: str
+              description: 
+              - optional parameter
+              - the start time of the DST.
+            end-time:
+              type: str
+              description: 
+              - optional parameter
+              - the end time of the DST.
+            offset:
+              type: int
+              description: 
+              - optional parameter with default value 60
+              - the offset of the DST.
+              default: 60
+
+
+    loop-id-syntax:
+      type: dict
+      description: |
+        This command allows the operator to configure the system loop ID syntax. For atm-based-dsl, default value is
+        "Access_Node_ID atm Rack/Frame/Slot/Port:VPI.VCI". For efm-based-dsl, default value is "Access_Node_ID eth Rack/Frame/Slot/Port".
+        For efm-based-pon, default value is "Access_Node_ID eth Rack/Frame/Slot/Port/ONU/OnuSlt/UNI".
+        For efm-based-epon, default value is "Bras Access_Node_ID/Rack/Frame/Slot/Subslot/Port/ONT Oft". 
+        For efm-based-ngpon2, default value is "Access_Node_ID eth ng2:Channelgroup/Subchannelgroup/ONU/OnuSlt/UNI". 
+        For NT-port, default value is "Access_Node_ID nt Ntslot/PrtType/Port".
+
+        The system loop ID syntax is a concatenation of keywords, separators and free text strings.
+
+        The operator can use the following predefined keywords to construct the system loop ID :
+        • Bras to specify the Bras identifier.
+        • Access_Node_ID to specify the system id.
+        • Rack to specify the rack number.
+        • Frame to specify the shelf number.
+        • Slot to specify the slot number.
+        • Subslot to specify the slot number in ONT. Subslot is only supported for EPON.
+        • ShSlt to specify the slot number without leading zero.
+        • Port to specify the port number.
+        • ShPrt to specify the port number without leading zero.
+        • VPI to specify the vpi.
+        • VCI to specify the vci.
+        • Q-VID to specify the vlan identifier.
+        • LzQVID to specify the vlan identifier with leading zero.
+        • DUVID to specify that user untagged vlan identifier is not added in string.
+        • U-VID to specify that user untagged vlan identifier is not added in string.When it is the last keyword and the value is null, it removes all non-keywords before it.
+        • I-VID to specify the user side inner vlan identifier.
+        • ONT to specify the ONT id which connecting to OLT. Here using the ONUs MAC as id. it is represented with 12 ASCII characters. ONT is only supported for EPON.
+        • ONU to specify the number of the ONU without leading zero.
+        • LzOnu to specify the number of the ONU with leading zero.
+        • OnuSlt to specify the slot number on the ONU without leading zero.
+        • UNI to specify the number of UNI on the ONU without leading zero.
+        • N-VID to specify the network VLAN identifier.
+        • LzNVID to specify the network VLAN identifier with leading zeros (should not be used on GPON/EPON, neither for ANCP).
+        • LzSVID to specify the network S-VLAN identifier in S+C VLAN forwarding model with leading zeros (should not be used on GPON/EPON, neither for ANCP).
+        • Oft to specify the ONU format. It is a string.
+        • OnuSN to specify the ONU with the serial number.
+        • NzOnuSN to specify the ONU with the serial number without leading zeros.
+        • OnuLD to specify the ONU with logial authentication ID.
+        • OntMAC to specify the ONU with the MAC address. OntMAC is only supported for EPON.
+        • Channelgroup to specify the multi-wavelength optical feeder fiber.
+        • Subchannelgroup to specify the administrative domain within a channelgroup.
+        • S-MAC to specify the system MAC address.
+        • Ntslot to specify the nt slot.
+        • PrtType to specify the nt port type.
+
+        Note : the ONT and ONU related keywords are relevant only for the pon and epon syntax.
+
+        Note : according to Broadband Forum TR-156, the ONT always adds a VLAN tag before sending the traffic to the OLT. In such case, the OLT not longer knows if traffic arrived at the ONT untagged or tagged. Therefore for GPON, the keywords "DUVID" and "U-VID" will have the same behavior as "Q-VID".
+      suboptions:
+        atm-based-dsl:
+          type: str
+          description: 
+          - optional parameter
+          - the system loop ID syntax for atm-based-dsl.
+        efm-based-dsl:
+          type: str
+          description: 
+          - optional parameter
+          - the system loop ID syntax for efm-based-dsl.
+        efm-based-pon:
+          type: str
+          description: 
+          - optional parameter
+          - the system loop ID syntax for efm-based-pon.
+        efm-based-epon:
+          type: str
+          description: 
+          - optional parameter
+          - the system loop ID syntax for efm-based-epon.
+        efm-based-ngpon2:
+          type: str
+          description: 
+          - optional parameter
+          - the system loop ID syntax for efm-based-ngpon2.
+    max-lt-link-speed:
+      type: dict
+      description: |
+        This command allows the operator to configure the maximum lt link speed.
+        Note: maxltlinkspeed value 20Gb is not supported on NANT-E, this is only supported on FANT-F.
+        Parameter type: <Sys::MaxLtLinkSpeed>
+        Format:
+        ( one-gb
+        | twodotfive-gb
+        | ten-gb
+        | twenty-gb
+        | twentyfive-gb
+        | forty-gb
+        | fifty-gb
+        | one-hundred-gb )
+        Possible values:
+        - one-gb : enables max 1 Gbps lt link speed
+        - twodotfive-gb : enables max 2.5 Gbps lt link speed
+        - ten-gb : enables max 10 Gbps lt link speed
+        - twenty-gb : enables max 20 Gbps lt link speed
+        - twentyfive-gb : enables max 25 Gbps lt link speed
+        - forty-gb : enables max 40 Gbps lt link speed
+        - fifty-gb : enables max 50 Gbps lt link speed
+        - one-hundred-gb : enables max 100 Gbps lt link speed
+      suboptions:
+        link-speed:
+          type: str
+          description: 
+          - optional parameter
+          - the maximum lt link speed.
+          choices: ['one-gb', 'twodotfive-gb', 'ten-gb', 'twenty-gb', 'twentyfive-gb', 'forty-gb', 'fifty-gb', 'one-hundred-gb']
+    epon:
+      type: dict
+
+
+    sync-if-timing:
+      type: dict
+
+    auto-laser-shutdown:
+      type: dict
+    
+    auto-switch:
+      type: dict
+    
+    zero-touch-provision:
+      type: dict
+    
+    relay-id-syntax:
+      type: dict
+    
+    fips:
+      type: dict
+    
+    nt-sftp:
+      type: dict
+
+
+  state:
+    description:
+    - The state of the configuration after module completion.
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged
