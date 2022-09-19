@@ -1,0 +1,206 @@
+  Command Tree:
+  configure
+    system
+      [no] id
+      name
+      location
+      [no] access-oper-id
+      [no] system-40gkr4
+      contact-person
+      [no] en-snmp-auth-trap
+      nt-intercon-vlan
+      [no] periph-mgnt-vlan
+      internal-nw-vlan
+      [no] periph-mgnt-ctrl
+      system-mac
+      [no] port-num-in-proto
+      [no] ont-trc-dbg-vlan
+      [no] ntr-ssmout-vlan
+      [no] ntr-ptp-vlan
+      [no] customer-id
+      [no] voiceoswp
+      [no] scalingmode
+      [no] arp-polling-inter
+      [no] bsnap-state
+      bsnap-server-ip
+      bsnap-server-port
+      [no] arp-tca-threshold
+      external-leds
+        [no] status
+      sntp
+        server-ip-addr
+        [no] server-port
+        [no] polling-rate
+        [no] enable
+        [no] timezone-offset
+        server-table
+          [no] ip-address
+            (ip-addr)
+            [no] port
+            priority
+          [no] ipv6-address
+            (ip-addr)
+            [no] port
+            priority
+        dst
+          [no] enable
+          [no] date
+            timezone-offset
+            start-time
+            end-time
+            [no] offset
+          [no] recurring
+            timezone-offset
+            start-time
+            end-time
+            [no] offset
+      loop-id-syntax
+        [no] atm-based-dsl
+        [no] efm-based-dsl
+        [no] efm-based-pon
+        [no] efm-based-epon
+        [no] efm-based-ngpon2
+      max-lt-link-speed
+        [no] link-speed
+      X pon-ont
+        [no] slid-mode
+        [no] pwrbrst-mode
+        [no] sn-bundle-timer
+        [no] sw-ver-mis-block
+        [no] sn-autounlock
+      epon
+        [no] pm-collect
+        [no] onuidmthd
+        [no] rogueadmin
+      sync-if-timing
+        [no] revert
+        [no] wait-time
+        [no] output-ql-thresh
+        [no] ssmout-en-bits
+        [no] ssmout-ceiling
+        [no] ais-sensitivity
+        bits
+          (interface-type)
+        ref-order
+          (index)
+          (priority)
+        tod-ref-order
+          (index)
+          (priority)
+        ptp
+          [no] transport-mode
+          [no] dynamic-update
+          [no] tc-step-mode
+          [no] max-steps-removed
+          [no] profile
+          tx-protocol
+            (index)
+            [no] ip-addr
+            [no] gateway-addr
+            [no] vlan
+          ptp-domain
+            (index)
+            [no] domain
+          accept-master
+            (index)
+            [no] ip-addr
+          [no] priority1
+          [no] priority2
+        slave-port-dataset
+          (index)
+          [no] delay-mechanism
+          [no] delay-interval
+          [no] compensation
+          [no] sync-interval
+          [no] announce-interval
+          [no] multicast-mac
+        default-dataset
+          (index)
+          [no] priority1
+          [no] priority2
+          [no] clock-class
+          [no] clock-accuracy
+          [no] domain
+        [no] mstr-port-ds-prof
+          (name)
+          [no] delay-mechanism
+          [no] step-mode
+          [no] announce-interval
+          [no] sync-interval
+          [no] delay-interval
+          [no] multicast-mac
+        [no] master-port
+          (port-idx)
+          [no] admin-state
+          [no] mstr-port-ds-prof
+          [no] vlan-id
+          [no] pbit
+          [no] compensation
+        link-port-compensation
+          (port)
+          [no] compensation
+        [no] l2-ptp-port
+          (port-idx)
+          [no] admin-state
+          [no] priority
+          [no] vlan-id
+          [no] multi-address
+      tod
+        format
+        leapsecond
+        leapsecond-adjust-val
+        leapsecond-adjust-date
+        interface
+          (index)
+          [no] direction
+          [no] admin-state
+          [no] cable-comp
+        serial-param
+          (index)
+          [no] baud-rate
+          [no] data-bit
+          [no] stop-bit
+          [no] parity
+        holdover-spec
+          [no] duration
+          [no] clockclass 
+      ssm
+        (index)
+        [no] ssmenable
+        [no] default-ql
+        [no] target-ql
+      synce
+        (index)
+        (port)
+      force-reference
+        (force-reference)
+      ssmout-synce
+        (index)
+        [no] ssmout-enable
+      [no] ssmout-ltport
+        (index)
+        [no] ssmout-enable
+      t4-out-config
+        [no] t4-mode
+        [no] t4-damping-factor
+        [no] t4-jitter-bw
+        [no] t4-prio-ref1
+        [no] t4-prio-ref2
+      bits-bind
+        [no] bits-a-bind
+        [no] bits-b-bind
+    auto-laser-shutdown
+      [no] action
+    auto-switch
+      [no] xdsl-atm-ptm
+      [no] xdsl-stepup-delay
+    zero-touch-provision
+      [no] action
+    relay-id-syntax
+      [no] atm-based-dsl
+      [no] efm-based-dsl
+    nt-sftp
+      [no] write-enable
+    [no] user-name
+      (name)
+      password
