@@ -1,0 +1,125 @@
+module: isam_system
+short_description: 'Manages system attributes of nokia isam.'
+description: 'Manages system attributes of nokia isam.'
+version_added: 1.0.0
+author: Jan Kühnemund (@jahknem)
+notes:
+  - 'Tested against isam-release: R6.2.04m'
+options:
+  config:
+    id:
+      type: str
+      description: 
+      - optional parameter with default value "" 
+      - the system id.
+    name:
+      type: str
+      description: 
+      - optional parameter with default value "" 
+      - fully-qualified domain name of the system
+    location:
+      type: str
+      description: 
+      - optional parameter with default value "" 
+      - the location of the system.
+    access-oper-id: 
+      type: str
+      description: 
+      - optional parameter with default value "" 
+      - unique access operator id assigned by Nokia, to activate a system reset is needed
+    system-40gkr4:
+      type: bool
+      description: 
+      - optional parameter 
+      - enable ord disable system 40GKR4.
+    contact-person:
+      type: str
+      description: 
+      - optional parameter with default value "" 
+      - the contact person of the system.
+    en-snmp-auth-trap:
+      type: bool
+      description: 
+      - optional parameter 
+      - enable or disable snmp authentication traps.
+    nt-intercon-vlan:
+      type: int
+      description: the value of the nt-interconnect vlan
+    periph-mgnt-vlan:
+      type: int
+      description: the value of the peripheral management vlan
+    internal-nw-vlan:
+      type: int
+      description: the value of the internal network vlan
+    periph-mgnt-ctrl:
+      type: bool
+      description: configure the peripheral management service
+    system-mac:
+      type: str
+      description: 
+      - optional parameter 
+      - the system mac address.
+    port-num-in-proto:
+      type: string
+      description: 
+      - 'optional parameter with default value: "log-slot-num"'
+      - numbering scheme for the Line ID field (all protocols)
+      default: log-slot-num
+    ont-trc-dbg-vlan:
+      type: string
+      description:
+      - ONT trace and debug vlan
+    ntr-ssmout-vlan:
+      type: string
+      description:
+      - ssm out vlan id
+      default: 4088
+    ntr-ptp-vlan:
+      type: string
+      description:
+      - ptp vlan id
+    customer-id:
+      type: string
+      description:
+      - the customer-id assigned in system level
+    voiceoswp:
+      type: string
+      description:
+      - the voice software when system startup
+    scalingmode:
+      type: string
+      description:
+      - the scaling mode of the system
+    arp-polling-inter:
+      type: int
+      description: configure ARP polling interval
+    bsnap-state:
+      type: bool
+      description: enable or disable BSNAP
+    bsnap-server-ip:
+      type: string
+      description: BSNAP server IP address
+    bsnap-server-port:
+      type: int
+      description: BSNAP server port
+      default: 10
+    arp-tca-threshold:
+      type: int
+      description: configure ARP tca threshold
+    external-leds:
+      type: dict
+      description: This command can be used to switch on/off (enable/disable) all the external LEDs of the system.
+      
+  state:
+    description:
+    - The state of the configuration after module completion.
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged
