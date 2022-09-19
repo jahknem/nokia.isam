@@ -86,73 +86,27 @@ class BridgesFacts(object):
 
     def _flatten_config(self, config):
 
-        parsers = [
-            re.compile(
+        parser = re.compile(
                 r"""
-            (?P<rest>^configure\sbridge\s(no\sageing-time)|(ageing-time\s?))
-                """, re.VERBOSE),
-            re.compile(
-                r"""
-                configure\sbridge\sport\s(?P<id>\S+)\s((vlan-id\s(?P<vlan_id>\d+)\s)|(vlan-tpid(?P<vlan_tpid>\d+)\s(?P<tpid>\d+)))?(?P<rest>.*)
-                """, re.VERBOSE),
-            re.compile(
-                r"""
-                configure\sbridge\sport\s(?P<id>\S+)\s
-                ((?P<negate_pvid>no pvid))|(pvid\s(?P<pvid>\S+)s?)
-                $""", re.VERBOSE),
-            ]
+                configure\sbridge\s(port\s(?P<id>\S+)\s)?(vlan-id(?P<vlan_id>\d+)\s)?(?P<rest>.*)
+                """
+            )
+        
         flattened_config = []
-        vlan_id = None
-        bridge_id = None
-        rest = None
-        vlan_tpid = None
+        bridge_string = None        
+        vlan_string = None
         lines = config.splitlines()
-        for line in lines:
-            
-            # if line contains bridge port id, store it in bridge_id
-            for regex in parsers:
-                match = regex.match(line)
-                if match:
-                    regDict = match.groupdict()
-                    for key in regDict.keys():
-                        if key == 'ageing_time':
-                            flattened_config.append(regDict[key])
-                            break
-                        if key == 'id':
-                            bridge_id = match.group(key)
-                        if key == 'vlan_id':
-                            vlan_id = match.group(key)
-                        if key == 'vlan_tpid':
-                            vlan_tpid = match.group(key)
-                        if key == 'rest':
-                            rest = match.group(key)
-                    # for each group matched, add it to the flattened config and prepend the bridge_id. Also prepend vlan_id if it exists
-
-                    if bridge_id:
-                        if not flattened_config:
-                            flattened_config.append('configure bridge port ' + bridge_id)
-                        elif 'configure bridge port ' + bridge_id not in flattened_config[-1]:
-                            flattened_config.append('configure bridge port ' + bridge_id)
-                        values = match.group("rest").split()
-                        for item,item2 in self._divide_chunks(values,2):
-                            if vlan_id:
-                                if ('configure bridge port ' + bridge_id + ' vlan-id ' + vlan_id) not in flattened_config[-1]:
-                                    flattened_config.append('configure bridge port ' + bridge_id + ' ' +'vlan-id' + ' ' + vlan_id)
-                                flattened_config.append('configure bridge port ' + bridge_id + ' ' +'vlan-id' + ' ' + vlan_id + ' ' + ' '.join([item, item2]))
-                            elif vlan_tpid:
-                                if ('configure bridge port ' + bridge_id + ' vlan_tpid' + vlan_tpid) not in flattened_config[-1]:
-                                    flattened_config.append('configure bridge port ' + bridge_id + ' ' +'vlan_tpid' + vlan_tpid + ' ' + match.group('tpid'))
-                                flattened_config.append('configure bridge port ' + bridge_id + ' ' + 'vlan_tpid'+ vlan_tpid + ' ' + match.group('tpid')+ ' ' + ' '.join([item, item2]))
-                            else:
-                                flattened_config.append('configure bridge port ' + bridge_id + ' ' + ' '.join([item, item2]))
-                        bridge_id = None
-                        vlan_id = None
-                        vlan_tpid = None
-                        rest = None
-                    elif rest:
-                        flattened_config.append(match.group('rest'))
-                    bridge_id = None
-                    vlan_id = None
-                    rest = None
-                    break
+        for line in lines:  
+        # if line contains bridge port id, store it in bridge_id
+            match = parser.match(line)
+            if match:
+                regDict = match.groupdict()
+                if 'id' in regDict:
+                    bridge_string = "port" + regDict['id']
+                if 'vlan_id' in regDict:
+                    vlan_string = "vlan-id" + regDict['vlan_id']
+                if 'rest' in regDict:
+                    values = match.group("rest").split()
+                    for item,item2 in self._divide_chunks(values,2):
+                        flattened_config.append("configure bridge ".join([bridge_string, vlan_string, item, item2]))
         return flattened_config

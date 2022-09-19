@@ -1,0 +1,28 @@
+module: isam_error
+short_description: 'Manages error attributes of nokia isam.'
+description: 'Manages error attributes of nokia isam.'
+version_added: 1.0.0
+author: Jan Kühnemund (@jahknem)
+notes:
+  - 'Tested against isam-release: R6.2.04m'
+options:
+  config:
+    log-full-action:
+      type: string
+      description:
+      - 'optional parameter with default value: "wrap"'
+      -  set the action when error log buffer is full
+      default: wrap
+  state:
+    description:
+    - The state of the configuration after module completion.
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged
