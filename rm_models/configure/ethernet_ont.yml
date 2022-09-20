@@ -1,0 +1,248 @@
+module: isam_equipment
+short_description: 'Manages equipment attributes of nokia isam.'
+description: |
+  configure
+    ethernet
+      ont
+        (uni-idx)
+        [no] cust-info
+        auto-detect
+        [no] power-control
+        [no] pse-class
+        [no] pse-pw-priority
+        [no] pwr-override
+        [no] lpt-mode
+        [no] admin-state
+        phy
+          [no] pm
+        l2
+          [no] pm
+          [no] tca
+          [no] dropped-frames-up
+          [no] dropped-frames-dn
+          pm-collect-ext
+            [no] pm-collect
+            [no] p-bits
+            [no] vlan-id
+        cfm
+          [no] portshut-ais
+version_added: 1.0.0
+author: Jan Kühnemund (@jahknem)
+notes:
+  - 'Tested against isam-release: R6.2.04m'
+options:
+  config:
+    description: |
+      This command allows the operator to modify ONT Ethernet port provisioning data.
+      > configure ethernet ont (uni-idx) [ no cust-info | cust-info <Gpon::CustInfo> ] [ auto-detect <Gpon::AutoDetect> ] [ no power-control | power-control  Gpon::PowerControl> ] [ no pse-class | pse-class <Gpon::PSEClass> ] [ no pse-pw-priority | pse-pw-priority <Gpon::PSEPwrPri> ] [ no pwr-override | pwr-override <Gpon::PowerShedOverride> ] [ no lpt-mode | lpt-mode <Gpon::LPTMODE> ] [ no admin-state | admin-state <Gpon::ItfAdminStatus> ]
+    type: list
+    elements: dict
+    suboptions:
+      uni-idx:
+        type: str
+        description: uni index of the port
+        required: true
+      cust-info:
+        type: str
+        description: |
+          optional parameter with default value: "none"
+          port information
+          Format:
+          - a printable string
+          - length: x<=80
+        default: "none"
+      auto-detect:
+        type: str
+        description: |
+          optional parameter with default value: "none"
+          auto-detect mode
+          Possible values:
+          - 10_100baset-auto : 10/100/1000 Base T, auto sensing (note: this auto sensing behavior ensures backward compatibility with older software releases. It may result in the port negotiating to 1 Gbps)
+          - 10baset-fd : 10 Base T, full duplex
+          - 100baset-fd : 100 Base T, full duplex
+          - 1000baset-fd : 1000 Base T, full duplex
+          - auto-basetfd : 10/100/1000 Base T, full duplex
+          - 10gig-fd : 10 Gig, full duplex only
+          - 2.5gig-fd : 2.5 Gig, full duplex only
+          - 5gig-fd : 5 Gig, full duplex only
+          - 10baset-auto : 10 Base T,automatic sensing
+          - 10baset-hd : 10 Base T, half Duplex
+          - 100baset-hd : 100 Base T, half duplex
+          - 1000baset-hd : 1000 Base T, half duplex
+          - autobaset-hd : 10/100/1000 Base T, half duplex
+          - 10_100_1000baset-auto : 10/100/1000 Base T, auto sensing
+          - 100baset-auto : 100 Base T, auto sensing
+          - auto : 10/100/1000 Base T, auto sensing
+          - 1000baset-auto : 1000 Base T auto sensing
+        choices:  ["10_100baset-auto", "10baset-fd", "100baset-fd", "1000baset-fd", "auto-basetfd", "10gig-fd", "2.5gig-fd", "5gig-fd", "10baset-auto", "10baset-hd", "100baset-hd", "1000baset-hd", "autobaset-hd", "10_100_1000baset-auto", "100baset-auto", "auto", "1000baset-auto"]
+        default: "none"
+      power-control:
+        type: bool
+        description: |
+          optional parameter with default value: "disable"
+          power control
+          Possible values:
+          - enable : provide power to external equipment
+          - disable : not provide power to external equipment
+        default: false
+      pse-class:
+        description: |
+          optional parameter with default value: "0"
+          power class configuration
+          Possible values:
+          - 0 : Default output power
+          - 1 : Class 0, the output power is 15.4w
+          - 2 : Class 1, the output power is 4.0w
+          - 3 : Class 2, the output power is 7.0w
+          - 4 : Class 3, the output power is 15.4w
+          - 5 : Class 4, the output power is 30.0w
+        type: int
+        default: 0
+        choices: [0, 1, 2, 3, 4, 5]
+      pse-pw-priority:
+        description: |
+          optional parameter with default value: "low"
+          power priority configuration
+          Possible values:
+          - critical : Prevents overcurrent situations by last
+          disconnecting the ports with critical priority
+          - high : Prevents overcurrent situations by disconnecting the
+          ports with high priority
+          - low : Prevents overcurrent situations by first disconnecting
+          the ports with lower priority(Default)
+        type: int
+        default: 0
+        choices: [0, 1, 2, 3, 4, 5, 6, 7]
+      pwr-override:
+        description: |
+          optional parameter with default value: "disable"
+          configure power shedding
+          Possible values:
+          - enable : port is excluded from data class power shedding
+          - disable : port is included in data class power shedding
+        type: bool
+        default: false
+      lpt-mode:
+        description: |
+          optional parameter with default value: "not-supported"
+          LinkPassThrough(LPT) mode configuration
+          Possible values:
+          - not-supported : ignore and don't send the configuration to ONT
+          - enabled : enable the LPT mode on this port
+          - disabled : disable the LPT mode on this port
+        type: string
+        default: "not-supported"
+        choices: ["not-supported", "enabled", "disabled"]
+      admin-state:
+        description: |
+          optional parameter with default value: "down"
+          The parameter is not visible during creation.
+          administrative status of the interface
+          Possible values:
+          - up : set the admin-state to up
+          - down : set the admin-state to down
+        type: string
+        default: "down"
+        choices: ["up", "down"]
+      phy:
+        description: |
+          This command allows the operator to provision performance monitoring for an Ethernet ONT physical layer UNI.
+          > configure ethernet ont (uni-idx) phy [ no pm | pm <Gpon::OntPmCollect> ]
+        type: dict
+        suboptions:
+          pm:
+            description: |
+              optional parameter with default value: "disable"
+              performance monitoring
+              Possible values:
+              - enable : enable performance monitoring
+              - disable : disable performance monitoring
+            type: bool
+            default: false
+      l2:
+        description: |
+          This command allows the operator to provision performance monitoring and threshold crossing alerts for an Ethernet ONT layer 2 UNI.
+          > configure ethernet ont (uni-idx) l2 [ no pm | pm <Gpon::OntPmCollect> ] [ no tca | tca <Gpon::OntPmCollect> ] [ no dropped-frames-up | dropped-frames-up <Gpon::ErrorCountThreshold> ] [ no dropped-frames-dn | dropped-frames-dn <Gpon::ErrorCountThreshold> ]
+        type: dict
+        suboptions:
+          pm:
+            description: |
+              optional parameter with default value: "disable"
+              l2 performance monitoring collection
+              Possible values:
+              - enable : enable performance monitoring
+              - disable : disable performance monitoring
+            type: bool
+            default: false
+          tca:
+            description: |
+              optional parameter with default value: "disable"
+              l2 performance monitoring threshold crossing alert
+              Possible values:
+              - enable : enable performance monitoring
+              - disable : disable performance monitoring
+            type: bool
+            default: false
+          dropped-frames-up:
+            description: |
+              optional parameter with default value: "disable"
+              l2 performance monitoring threshold crossing alert
+              Possible values:
+              - disable : disable tca
+              Field type <Gpon::ErrorCountThreshold>
+              - error count threshold (0-4294967295)
+              - range: [0...4294967295]
+            type: string
+            default: "disable"
+          dropped-frames-dn:
+            description: |
+              optional parameter with default value: "disable"
+              l2 performance monitoring threshold crossing alert
+              Possible values:
+              - disable : disable tca
+              Field type <Gpon::ErrorCountThreshold>
+              - error count threshold (0-4294967295)
+              - range: [0...4294967295]
+            type: string
+            default: "disable"
+          pm-collect-ext:
+            description: |
+              This command sets the PM EXT parameters.
+              > configure ethernet ont (uni-idx) l2 pm-collect-ext [ no pm-collect | pm-collect <Gpon::OntPmCollect> ] [ no p-bits | p-bits <SignedInteger> ] [ no vlan-id | vlan-id <Vlan::VlanIndexOrZero> ]
+            type: dict
+            suboptions:
+              pm-collect: |
+                optional parameter with default value: "disable"
+                indicates whether enable this pm collect for this Ethernet Port
+                Possible values:
+                - enable : enable PM
+                - disable : disable PM
+              p-bits:
+                description: |
+                  optional parameter with default value: 0xFF
+                  indicates the P bits of the TCI field are used to filter the PM data collected or not\n 0xFF: not used\n 0-7: p-bit used to filter data
+                  Format:
+                  - a signed integer
+                type: int
+                default: 0xFF
+              vlan-id:
+                description: |
+                  optional parameter with default value: 0
+                  indicates the vlan-id bits of the TCI field are used to filter the PM data collected\n 0: not used\n Other value : this vlan-id used to filter data
+                  Format:
+                  - vlan id
+                  - range: [0...4092]
+                type: int
+                default: 0
+          cfm:
+            description: |
+              This attribute is linked to a CFM functionality on the ONU. It indicates if the ONU is programmed to autonomously shut down its UNI upon reception of a downstream AIS PDU on an UP MEP residing on top of the ONU UNI.
+              > configure ethernet ont (uni-idx) cfm [ [ no ] portshut-ais ]
+            type: dict
+            suboptions:
+              portshut-ais:
+                description: |
+                  optional parameter with default value: "disable"
+                  indicates if the ONU is programmed to autonomously shut down its UNI upon reception of a downstream AIS PDU on an UP MEP residing on top of the ONU UNI.
+                type: bool
+                default: false

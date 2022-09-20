@@ -1,0 +1,1415 @@
+module: isam_equipment
+short_description: 'Manages equipment attributes of nokia isam.'
+description: |
+  This chapter gives an overview of nodes that are handled by "Equipment Configuration Commands".
+  Command Tree:
+  configure
+    equipment
+      rack
+        (index)
+        [no] description
+      shelf
+        (index)
+        [no] class
+        [no] planned-type
+        [no] lock
+        [no] mode
+        [no] description
+      slot
+        (index)
+        [no] planned-type
+        [no] power-down
+        [no] unlock
+        [no] alarm-profile
+        [no] capab-profile
+        [no] board-40gkr4
+        [no] operational-mode
+        [no] dual-host-ip
+        [no] dual-host-loc
+      applique
+        (index)
+        [no] planned-type
+        [no] applique-profile
+      protection-group
+        (prot-group-id)
+        [no] admin-status
+        [no] eps-quenchfactor
+      protection-element
+        (index)
+        [no] redcy-ctrl-status
+      external-link-host
+        (faceplate-number)
+        [no] direction
+      external-link-assign
+        (index)
+        [no] remote
+      diagnostics
+        sfp
+          (position)
+          [no] rssi-prof-id
+          [no] rssi-state
+      [no] rssiprof
+        (index)
+        name
+        [no] temp-alm-low
+        [no] temp-alm-high
+        [no] temp-warn-low
+        [no] temp-warn-high
+        [no] voltage-alm-low
+        [no] voltage-alm-high
+        [no] voltage-warn-low
+        [no] voltage-warn-high
+        [no] bias-alm-low
+        [no] bias-alm-high
+        [no] bias-warn-low
+        [no] bias-warn-high
+        [no] tx-pwr-alm-low
+        [no] tx-pwr-alm-high
+        [no] tx-pwr-warn-low
+        [no] tx-pwr-warn-high
+        [no] rx-pwr-alm-low
+        [no] rx-pwr-alm-high
+        [no] rx-pwr-warn-low
+        [no] rx-pwr-warn-high
+        [no] ebias-alm-low
+        [no] ebias-alm-high
+        [no] ebias-warn-low
+        [no] ebias-warn-high
+        [no] etx-alm-low
+        [no] etx-alm-high
+        [no] etx-warn-low
+        [no] etx-warn-high
+        [no] erx-alm-low
+        [no] erx-alm-high
+        [no] erx-warn-low
+        [no] erx-warn-high
+        [no] etemp-alm-low
+        [no] etemp-alm-high
+        [no] etemp-warn-low
+        [no] etemp-warn-high
+        [no] profile-type
+      sfpe1t1
+        [no] clock
+          (position)
+          [no] clocksource
+        tdmintf
+          (position)
+          [no] window-number
+          [no] window-length
+        [no] pwtdm
+          (position)
+          channel
+          packet-length
+          jitter-buff-size
+          vlanid
+          priority
+          conseq-number
+          ecid-rx
+          ecid-tx
+          source-mac
+          dest-mac
+        framer
+          (position)
+          [no] frame-mode
+          [no] iwf-on-liu
+          [no] liu-on-liu
+          [no] pm-to-iwf
+          [no] ais-to-iwf
+          [no] rai-to-iwf
+          [no] rei-to-iwf
+          [no] pm-to-liu
+          [no] ais-to-liu
+          [no] rai-to-liu
+          [no] rei-to-liu
+        liu
+          (position)
+          [no] distance
+          [no] cable-impedance
+      isam
+        [no] description
+      envbox
+        [no] enable-supervise
+      fan-tray
+        fanmode
+      replan
+        boardautoreplan
+version_added: 1.0.0
+author: Jan Kühnemund (@jahknem)
+notes:
+  - 'Tested against isam-release: R6.2.04m'
+options:
+  config:
+    description: A list of equipment configuration commands.
+    type: dict
+    suboptions:
+      rack:
+        description: Rack configuration commands.
+        type: list
+        elements: dict
+        suboptions:
+          index:
+            description: the physical position of the Rack.
+            type: int
+            required: true
+          description:
+            description: any description to be used by the operator.
+            type: str
+      shelf:
+        description: Shelf configuration commands.
+        type: list
+        elements: dict
+        suboptions:
+          index:
+            description: the physical identification of the shelf
+            type: int
+          class:
+            description: |
+              optional parameter with default value: "main-ethernet" 
+              the class to which the shelf belongs
+              Possible values:
+              - main-ethernet : main shelf - supports ethernet-based traffic
+              - ext-ethernet : extension shelf - supports ethernet-based traffic
+            type: str
+            choices: ['main-ethernet', 'ext-ethernet']
+          planned_type:
+            description: |
+              optional parameter with default value: "not-planned"
+              the planned type of the shelf.
+              Format:
+              Data driven field type
+              Possible values are depending on the actual configuration
+              and software.
+              The currently allowed values can be shown with online-help.
+            type: str
+          lock:
+            description: |
+              optional parameter
+              the holder is locked
+            type: bool
+          mode:
+            description: |
+              optional parameter with default value: "no-extended-lt-slots"
+              the shelf mode, applicable to NEP and ARAM-E only
+              Possible values:
+              - no-extended-lt-slots : no extended lt slots
+              - extended-lt-slots : change to extended lt slots
+              - no-ntb-slot : use ntb slot as lt slot
+              - no-extended-slots : no extended slots
+              - no-ntio-slots : not changeable
+              - ngpon : use universal ngpon lt (supports NG-PON2,
+              XGS-PON and XG-PON1 currently)
+              - gpon : use gpon lt
+              - ngpon-port-reduced : use ngpon port reduced mode lt
+              (supports ERPS)
+              - gpon-mng-ngpon : use gpon managed ngpon management
+              model
+              - gpon-mng-reduced : use gpon managed ngpon port
+              reduced mode lt(supports ERPS)
+            type: str
+            choices: ['no-extended-lt-slots', 'extended-lt-slots', 'no-ntb-slot', 'no-extended-slots', 'no-ntio-slots', 'ngpon', 'gpon', 'ngpon-port-reduced', 'gpon-mng-ngpon', 'gpon-mng-reduced']
+          description:
+            description: any description to be used by the operator.
+            type: str
+      slot:
+        description: |
+          This command allows the operator to configure a slot.
+          The slot is identified by the physical slot number. The left-most slot in the shelf is number 1. The following parameters can be configured for the slot:
+          • planned-type: the unit type that will be inserted into the slot. The not-planned parameter indicates that a unit will not be inserted into that slot.
+          • power-down: the operator can power-up or power-down slots. This is only applicable to LSM.
+          • unlock: the operator can lock or unlock a unit. A unit in the locked state cannot be used. This attribute is only supported for the NT (the system will refuse to lock the NT of a simplex system), EXT, and a managed LSM. This attribute is not applicable to sealed remote products (7367 SX).
+          • alarm-profile: the operator can assign a customizable alarm profile to a NT or LSM board. This is applicable for all NTs and LSMs.
+          • capab-profile:This parameter only applies to LSMs,NTIOs and mini-NT NRNT-A.For BCM based LSM boards default capab-profile is "default" for Intel based LSM boards it is "8vc_default".
+          • disable-key: This Paramer should contain string between 8 and 16 characters; must contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character, but cannot contain whitespace.
+        type: list
+        elements: dict
+        suboptions:
+          index:
+            description: the physical identification of the slot
+            type: str
+            required: true
+          planned_type:
+            description: |
+              optional parameter with default value: "not-planned"
+              type of board intended to be in this position
+              Format:
+              Data driven field type
+              Possible values are depending on the actual configuration
+              and software.
+              The currently allowed values can be shown with online-help.
+            type: str
+          power_down:
+            description: |
+              optional parameter
+              power down the board
+            type: bool
+          unlock:
+            description: |
+              optional parameter
+              the holder is unlocked
+            type: bool
+          alarm_profile:
+            description: |
+              optional parameter
+              customized alarm profile assigned to this board
+            type: str
+          capab_profile:
+            description: |
+              optional parameter
+              the capability profile to be used for the line board
+              Data driven field type
+              Possible values are depending on the actual configuration and software.
+              The currently allowed values can be shown with online-help.
+            type: str
+          board-40gkr4:
+            description: |
+              optional parameter
+              inherited, disable or enable board
+              Possible values:
+              - inherited : enable or disable 40G KR4 of the board is controlled by system level parameter
+              - disable : the board should not work in 40GKR4 no matter the value of system level
+              - enable : the board should work in 40GKR4 no matter the value of system level
+            type: string
+            choices: ['inherited', 'disable', 'enable']
+          operational-mode:
+            description: |
+              optional parameter
+              the operational mode of the cage
+              Possible values:
+              - not-set : cage mode not-set
+              - gpon : cage mode set to gpon
+              - xgs : cage mode set to xgs
+              - mpm-gpon-xgs : cage mode set to mpm-gpon-xgs
+              - dual-gpon : cage mode set to dual-gpon
+              - u-ngpon : cage mode set to u-ngpon
+              - twenty-five-g : cage mode set to 25g
+              - ng-pon2 : cage mode set to ng-pon2
+              - mpm-gpon-xgpon : cage mode set to mpm-gpon-xgpon
+            type: string
+            choices: ['not-set', 'gpon', 'xgs', 'mpm-gpon-xgs', 'dual-gpon', 'u-ngpon', 'twenty-five-g', 'ng-pon2', 'mpm-gpon-xgpon']
+          dual-host-ip:
+            description: |
+              optional parameter with default value: "0.0.0.0"
+              dual host ip
+            type: string
+            default: "0.0.0.0"
+          dual-host-loc:
+            description: |
+              optional parameter with default value: "none"
+              dual host lsm location
+              Possible values:
+              - none : no host lsm location
+              Field type <Eqpt::MultiRackId>
+              - the rack number
+              Field type <Eqpt::MultiShelfId>
+              - the shelf number
+            type: string
+            default: "none"
+      applique:
+        description: |
+          This command allows the operator to configure an applique.
+          The applique is identified by the physical slot number. The left-most slot in the shelf is number 1. The following parameter can be configured for the slot:
+          • planned-type: the applique type to be inserted into the slot. The not-planned parameter indicates that an applique will not be inserted into that slot.
+        type: list
+        elements: dict
+        suboptions:
+          index:
+            description: |
+              the physical identification of the slot
+              Possible values:
+              - iont : an nt applique slot
+              - lp : an lt applique slot
+              - ntio-1 : an nt applique slot in a single or multiple-ntio-shelf
+              - ntio-2 : an nt applique slot in a multiple-ntio-shelf
+              Field type <Eqpt::RackId>
+              - the rack number
+              Field type <Eqpt::ShelfId>
+              - the shelf number
+              Field type <Eqpt::AppliqueSlotId>
+              - the applique slot number
+              Field type <Eqpt::LtAppliqueSlotId>
+              - the LT Applique slot number
+            type: str
+            required: true
+          planned_type:
+            description: |
+              optional parameter with default value: "not-planned"
+              type of applique intended to be in this position
+              Format:
+              Data driven field type
+              Possible values are depending on the actual configuration
+              and software.
+              The currently allowed values can be shown with online-help.
+            type: str
+          applique-profile:
+            description: |
+              optional parameter
+              the capability profile to be used for the applique board
+              Data driven field type
+              Possible values are depending on the actual configuration and software.
+              The currently allowed values can be shown with online-help.
+            type: str
+      protection-group:
+        description: |
+          This command allows the operator to configure a protection group.
+          The protection group is identified by the eqptProtGroupId attribute (index). The value 1 is reserved for extension chain protection group which is always present and cannot be deleted.
+          The protection group(s) are created implicitly by the system as part of the default configuration. Use "show equipment protection-group" to display the valid protection group identifier(s). Note that the default admin-status for protection-group 1 at system level is locked where it is always unlocked at cli level.
+        type: list
+        elements: dict
+        suboptions:
+          prot-group-id:
+            description: |
+              Index in eqpt Prot Group Table
+            type: int
+            required: true
+          admin-status:
+            description: |
+              optional parameter with default value: "unlock"
+              changes the administrative-status to lock or unlock
+            type: str
+            default: "unlock"
+            choices: ['lock', 'unlock']
+          eps-quenchfactor:
+            description: |
+              optional parameter with default value: 1440000
+              timervalue of quenching mechanism(unit: 1/100sec), 0 is valid value
+            type: int
+            default: 1440000
+      protection-element:
+        description: |
+          This command allows the operator to configure a protection element.
+          The protection group is identified by the eqptProtGroupId attribute. The value 1 to 9 are reserved for the extension chain protection group which are always present and cannot be deleted. Group 1 corresponding with NT 1+1 group, and Group 2-9 corresponding with possible 8 LT 1+1 groups.
+          The redcy-ctrl-status parameter is used to force a switchover between elements of a protection group or to keep one of the elements active. The forced-active parameter indicates that the NTA or NTB slot or LT slot is configured as active.
+        type: list
+        elements: dict
+        suboptions:
+          index:
+            description: |
+              Index in eqpt Prot Element Table
+            type: int
+            required: true
+          redcy-ctrl-status:
+            description: |
+              optional parameter with default value: "normal"
+              changes the redundancy control status
+              Possible values:
+              - normal : enables redundancy (active or standby)
+              - forced_active : forces the element to be active
+            type: str
+            default: "normal"
+            choices: ['normal', 'forced_active']
+      external-link-host:
+        description: |
+          This command allows the operator to configure the traffic direction of the configurable external-links on the host expansion card. The configurable parameters are:
+          • direction: The traffic direction. Two directions are supported:
+            - network (default): the direction is configured to allow the trafic from the network
+            - remote-lt : the direction is configured to allow the trafic to the remote line termination card
+        type: list
+        elements: dict
+        suboptions:
+          faceplate-number:
+            description: |
+              the faceplate number of the configurable external-link-assign
+              Possible values:
+              - nt : nt-slot
+              - ntio-1 : an nt applique slot in a single or multiple-ntio-shelf
+              - ntio-2 : an nt applique slot in a multiple-ntio-shelf
+              Possible values:
+              - sfp : SFP port
+              - xfp : XFP port
+              Field type <Eqpt::ExtLinkHostPortIndex>
+              - host port number
+              Field type <Eqpt::ExtLinkConfigurableDeviceIndex>
+              - the faceplate number of the configurable external link
+            type: str
+            required: true
+          direction:
+            description: |
+              optional parameter with default value: "network"
+              the external-link traffic direction
+              Possible values:
+              - network : the direction is configured to allow the trafic from the network
+              - remote-lt : the direction is configured to allow the trafic to the remote line termination card
+            type: str
+            default: "network"
+            choices: ['network', 'remote-lt']
+      external-link-assign:
+        description: This command allows the operator to configure the association between a host shelf SFP/XFP and a remote LT.
+        type: list
+        elements: dict
+        suboptions:
+          index:
+            description: |
+              the physical sfp or xfp cage position
+              Possible values:
+              - nt : active nt slot
+              - lt : lt-slot
+              - ntio-1 : an nt applique slot in a single or multiple-ntio-shelf
+              - ntio-2 : an nt applique slot in a multiple-ntio-shelf
+              Field type <Eqpt::HostRackId>
+              - the rack number
+              Field type <Eqpt::HostShelfId>
+              - the shelf number
+              Field type <Eqpt::LtExtSlotId>
+              - the LT slot number
+              Possible values:
+              - sfp : SFP port
+              - xfp : XFP port
+              Field type <Eqpt::ExtSfpFaceplateType>
+              - The faceplate on which remote LT is connected
+            type: str
+            required: true
+          remote-:
+            description: |
+              optional parameter with default
+              value: "0/0/0"
+              the expansion shelf LSM
+              Format:
+              <Eqpt::ExpRack> / <Eqpt::ExpShelf> / <Eqpt::ExpSlot>
+              Field type <Eqpt::ExpRack>
+              - the physical number of the expansion rack, 0 stands for no
+              remote
+              Field type <Eqpt::ExpShelf>
+              - physical nbr of expansion shelf within expansion rack, 0
+              stands for no remote
+              Field type <Eqpt::ExpSlot>
+              - the physical number of the slot within expansion shelf, 0
+              stands for no remote
+            type: str
+      diagnostics:
+        description: |
+          This command allows the operator to configure RSSI profile on SFP/XFP:
+          • The slot index of the sfp
+          • The number of the sfp cage
+          • The index of rssi profile which would be configured on SFP/XFP.
+          The command has the following syntax:
+          > configure equipment diagnostics sfp (position) [ no rssi-prof-id | rssi-prof-id <Eqpt::RssiProfileIndex> ] [ no rssi-state | rssi-state <Eqpt::RssiState> ]
+        type: list
+        elements: dict
+        suboptions:
+          position:
+            description: |
+              the physical sfp cage position
+            type: str
+            required: true
+          rssi-prof-id:
+            description: |
+              optional parameter with default value: "65535"
+              an unique index of the rssi profile(1-200)
+            type: int
+            default: 65535
+          rssi-state:
+            description: |
+              optional parameter with default value: "disable"
+              to enable or disable the rssi functionality of sfp for uplink ports              
+              Possible values:
+              - enable : enable rssi
+              - disable : disable rssi
+            type: str
+            default: "disable"
+            choices: ['enable', 'disable']
+      rssiprof:
+        description: |
+          This command allows the operator to create and configure the RSSI parameters on SFPs.
+          The command has the following syntax:
+          > configure equipment ( no rssiprof (index) ) | ( rssiprof (index) name <Eqpt::DisplayString> [ no temp-alm-low | temp-alm-low <Eqpt::TcaTemp> ] [ no temp-alm-high | temp-alm-high <Eqpt::TcaTemp> ] [ no temp-warn-low | temp-warn-low <Eqpt::TcaTemp> ] [ no temp-warn-high | temp-warn-high <Eqpt::TcaTemp> ] [ no voltage-alm-low | voltage-alm-low <Eqpt::TcaVoltage> ] [ no voltage-alm-high | voltage-alm-high <Eqpt::TcaVoltage> ] [ no voltage-warn-low | voltage-warn-low <Eqpt::TcaVoltage> ] [ no voltage-warn-high | voltage-warn-high <Eqpt::TcaVoltage> ] [ no bias-alm-low | bias-alm-low <Eqpt::TcaBias> ] [ no bias-alm-high | bias-alm-high <Eqpt::TcaBias> ] [ no bias-warn-low | bias-warn-low <Eqpt::TcaBias> ] [ no bias-warn-high | bias-warn-high <Eqpt::TcaBias> ] [ no tx-pwr-alm-low | tx-pwr-alm-low <Eqpt::TcaTxPwr> ] [ no tx-pwr-alm-high | tx-pwr-alm-high <Eqpt::TcaTxPwr> ] [ no tx-pwr-warn-low | tx-pwr-warn-low <Eqpt::TcaTxPwr> ] [ no tx-pwr-warn-high | tx-pwr-warn-high <Eqpt::TcaTxPwr> ] [ no rx-pwr-alm-low | rx-pwr-alm-low <Eqpt::TcaRxPwr> ] [ no rx-pwr-alm-high | rx-pwr-alm-high <Eqpt::TcaRxPwr> ] [ no rx-pwr-warn-low | rx-pwr-warn-low <Eqpt::TcaRxPwr> ] [ no rx-pwr-warn-high | rx-pwr-warn-high <Eqpt::TcaRxPwr> ] [ no ebias-alm-low | ebias-alm-low <Eqpt::TcaBias> ] [ no ebias-alm-high | ebias-alm-high <Eqpt::TcaBias> ] [ no ebias-warn-low | ebias-warn-low <Eqpt::TcaBias> ] [ no ebias-warn-high | ebias-warn-high <Eqpt::TcaBias> ] [ no etx-alm-low | etx-alm-low <Eqpt::TcaTxPwr> ] [ no etx-alm-high | etx-alm-high <Eqpt::TcaTxPwr> ] [ no etx-warn-low | etx-warn-low <Eqpt::TcaTxPwr> ] [ no etx-warn-high | etx-warn-high <Eqpt::TcaTxPwr> ] [ no erx-alm-low | erx-alm-low <Eqpt::TcaRxPwr> ] [ no erx-alm-high | erx-alm-high <Eqpt::TcaRxPwr> ] [ no erx-warn-low | erx-warn-low <Eqpt::TcaRxPwr> ] [ no erx-warn-high | erx-warn-high <Eqpt::TcaRxPwr> ] [ no etemp-alm-low | etemp-alm-low <Eqpt::TcaTemp> ] [ no etemp-alm-high | etemp-alm-high <Eqpt::TcaTemp> ] [ no etemp-warn-low | etemp-warn-low <Eqpt::TcaTemp> ] [ no etemp-warn-high | etemp-warn-high <Eqpt::TcaTemp> ] [ no profile-type | profile-type <Eqpt::RssiProfileType> ] )
+        type: list
+        elements: dict
+        suboptions:
+          index:
+            description: |
+              the index of the rssi profile(1-200)
+            type: int
+            required: true
+          name:
+            description: |
+              the name of the rssi profile
+            type: str
+          temp-alm-low:
+            description: |
+              the low alarm temperature threshold
+              Format:
+              - temperature of SFP
+              - unit: degree C
+              - range: [-128...128]
+            type: float
+            default: 0
+          temp-alm-high:
+            description: |
+              the high alarm temperature threshold
+              Format:
+              - temperature of SFP
+              - unit: degree C
+              - range: [-128...128]
+            type: float
+            default: 0
+          temp-warn-low:
+            description: |
+              the low warning temperature threshold
+              Format:
+              - temperature of SFP
+              - unit: degree C
+              - range: [-128...128]
+            type: float
+            default: 0
+          temp-warn-high:
+            description: |
+              the high warning temperature threshold
+              Format:
+              - temperature of SFP
+              - unit: degree C
+              - range: [-128...128]
+            type: float
+            default: 0
+          voltage-alm-low:
+            description: |
+              the low alarm voltage threshold
+              Format:
+              - voltage of SFP
+              - unit: volts
+              - range: [0...6.55]
+            type: float
+            default: 0
+          voltage-alm-high:
+            description: |
+              the high alarm voltage threshold
+              Format:
+              - voltage of SFP
+              - unit: volts
+              - range: [0...6.55]
+            type: float
+            default: 0
+          voltage-warn-low:
+            description: |
+              the low warning voltage threshold
+              Format:
+              - voltage of SFP
+              - unit: volts
+              - range: [0...6.55]
+            type: float
+            default: 0
+          voltage-warn-high:
+            description: |
+              the high warning voltage threshold
+              Format:
+              - voltage of SFP
+              - unit: volts
+              - range: [0...6.55]
+            type: float
+            default: 0
+          bias-alm-low:
+            description: |
+              the low alarm bias threshold
+              Format:
+              - bias of SFP
+              - unit: mA
+              - range: [0...262]
+            type: float
+            default: 0
+          bias-alm-high:
+            description: |
+              the high alarm bias threshold
+              Format:
+              - bias of SFP
+              - unit: mA
+              - range: [0...262]
+            type: float
+            default: 0
+          bias-warn-low:
+            description: |
+              the low warning bias threshold
+              Format:
+              - bias of SFP
+              - unit: mA
+              - range: [0...262]
+            type: float
+            default: 0
+          bias-warn-high:
+            description: |
+              the high warning bias threshold
+              Format:
+              - bias of SFP
+              - unit: mA
+              - range: [0...262]
+            type: float
+            default: 0
+          tx-pwr-alm-low:
+            description: |
+              the low alarm tx power threshold
+              Format:
+              <Eqpt::TcaTxPwr>
+              Field type <Eqpt::TcaTxPwr>
+              - power of SFP
+              - unit: dbm
+              - range: [-63.5...63.5]
+            type: float
+            default: 0
+          tx-pwr-alm-high:
+            description: |
+              the high alarm tx power threshold
+              Format:
+              <Eqpt::TcaTxPwr>
+              Field type <Eqpt::TcaTxPwr>
+              - power of SFP
+              - unit: dbm
+              - range: [-63.5...63.5]
+            type: float
+            default: 0
+          tx-pwr-warn-low:
+            description: |
+              the low warning tx power threshold
+              Format:
+              <Eqpt::TcaTxPwr>
+              Field type <Eqpt::TcaTxPwr>
+              - power of SFP
+              - unit: dbm
+              - range: [-63.5...63.5]
+            type: float
+            default: 0
+          tx-pwr-warn-high:
+            description: |
+              the high warning tx power threshold
+              Format:
+              <Eqpt::TcaTxPwr>
+              Field type <Eqpt::TcaTxPwr>
+              - power of SFP
+              - unit: dbm
+              - range: [-63.5...63.5]
+            type: float
+            default: 0
+          rx-pwr-alm-low:
+            description: |
+              the low alarm rx power threshold
+              Format:
+              <Eqpt::TcaRxPwr>
+              Field type <Eqpt::TcaRxPwr>
+              - power of SFP
+              - unit: dbm
+              - range: [-127...8.2]
+            type: float
+            default: 0
+          rx-pwr-alm-high:
+            description: |
+              the high alarm rx power threshold
+              Format:
+              <Eqpt::TcaRxPwr>
+              Field type <Eqpt::TcaRxPwr>
+              - power of SFP
+              - unit: dbm
+              - range: [-127...8.2]
+            type: float
+            default: 0
+          rx-pwr-warn-low:
+            description: |
+              the low warning rx power threshold
+              Format:
+              <Eqpt::TcaRxPwr>
+              Field type <Eqpt::TcaRxPwr>
+              - power of SFP
+              - unit: dbm
+              - range: [-127...8.2]
+            type: float
+          rx-pwr-warn-high:
+            description: |
+              the high warning rx power threshold
+              Format:
+              <Eqpt::TcaRxPwr>
+              Field type <Eqpt::TcaRxPwr>
+              - power of SFP
+              - unit: dbm
+              - range: [-127...8.2]
+            type: float
+            default: 0
+          ebias-alm-low:
+            description: |
+              the low alarm ebias threshold
+              Format:
+              - bias of SFP
+              - unit: mA
+              - range: [0...262]
+            type: float
+            default: 0
+          ebias-alm-high:
+            description: |
+              the high alarm ebias threshold
+              Format:
+              - bias of SFP
+              - unit: mA
+              - range: [0...262]
+            type: float
+            default: 0
+          ebias-warn-low:
+            description: |
+              the low warning ebias threshold
+              Format:
+              - bias of SFP
+              - unit: mA
+              - range: [0...262]
+            type: float
+            default: 0
+          ebias-warn-high:
+            description: |
+              the high warning ebias threshold
+              Format:
+              - bias of SFP
+              - unit: mA
+              - range: [0...262]
+            type: float
+            default: 0
+          etx-alm-low:
+            description: |
+              the low alarm etx threshold
+              Format:
+              <Eqpt::TcaTxPwr>
+              Field type <Eqpt::TcaTxPwr>
+              - power of SFP
+              - unit: dbm
+              - range: [-63.5...63.5]
+            type: float
+            default: 0
+          etx-alm-high:
+            description: |
+              the high alarm etx threshold
+              Format:
+              <Eqpt::TcaTxPwr>
+              Field type <Eqpt::TcaTxPwr>
+              - power of SFP
+              - unit: dbm
+              - range: [-63.5...63.5]
+            type: float
+            default: 0
+          etx-warn-low:
+            description: |
+              the low warning etx threshold
+              Format:
+              <Eqpt::TcaTxPwr>
+              Field type <Eqpt::TcaTxPwr>
+              - power of SFP
+              - unit: dbm
+              - range: [-63.5...63.5]
+            type: float
+            default: 0
+          etx-warn-high:
+            description: |
+              the high warning etx threshold
+              Format:
+              <Eqpt::TcaTxPwr>
+              Field type <Eqpt::TcaTxPwr>
+              - power of SFP
+              - unit: dbm
+              - range: [-63.5...63.5]
+            type: float
+            default: 0
+          erx-alm-low:
+            description: |
+              the low alarm erx threshold
+              Format:
+              <Eqpt::TcaRxPwr>
+              Field type <Eqpt::TcaRxPwr>
+              - power of SFP
+              - unit: dbm
+              - range: [-127...8.2]
+            type: float
+            default: 0
+          erx-alm-high:
+            description: |
+              the high alarm erx threshold
+              Format:
+              <Eqpt::TcaRxPwr>
+              Field type <Eqpt::TcaRxPwr>
+              - power of SFP
+              - unit: dbm
+              - range: [-127...8.2]
+            type: float
+            default: 0
+          erx-warn-low:
+            description: |
+              the low warning erx threshold
+              Format:
+              <Eqpt::TcaRxPwr>
+              Field type <Eqpt::TcaRxPwr>
+              - power of SFP
+              - unit: dbm
+              - range: [-127...8.2]
+            type: float
+            default: 0
+          erx-warn-high:
+            description: |
+              the high warning erx threshold
+              Format:
+              <Eqpt::TcaRxPwr>
+              Field type <Eqpt::TcaRxPwr>
+              - power of SFP
+              - unit: dbm
+              - range: [-127...8.2]
+            type: float
+            default: 0
+          etemp-alm-low:
+            description: |
+              the low alarm etemp threshold
+              Format:
+              - temperature of SFP
+              - unit: degree C
+              - range: [-128...128]
+            type: float
+            default: 0  
+          etemp-alm-high:
+            description: |
+              the high alarm etemp threshold
+              Format:
+              - temperature of SFP
+              - unit: degree C
+              - range: [-128...128]
+            type: float
+            default: 0
+          etemp-warn-low:
+            description: |
+              the low warning etemp threshold
+              Format:
+              - temperature of SFP
+              - unit: degree C
+              - range: [-128...128]
+            type: float
+            default: 0
+          etemp-warn-high:
+            description: |
+              the high warning etemp threshold
+              Format:
+              - temperature of SFP
+              - unit: degree C
+              - range: [-128...128]
+            type: float
+            default: 0
+          profile-type:
+            description: |
+              determine if this RSSI Profile is for OLT or ONT
+              Possible values:
+              - olt : This profile is for OLT usage
+              - ont : This profile is for ONT usage
+            type: str
+            choices: ['olt', 'ont']
+            default: 'olt'
+      sfpe1t1:
+        description: |
+          This command allows the operator to configure clock source on the 2xE1/DS1 sfp
+          > configure equipment sfpe1t1 ( no clock (position) ) | ( clock (position) [ no clocksource | clocksource <Eqpt::ClockSource> ] )
+        type: list
+        elements: dict
+        suboptions:
+          clock:
+            type: dict
+            elements: dict
+            description: |
+              This command allows the operator to configure clock source on the 2xE1/DS1 sfp
+              > configure equipment sfpe1t1 ( no clock (position) ) | ( clock (position) [ no clocksource | clocksource <Eqpt::ClockSource> ] )
+            suboptions:
+              position:
+                description: |
+                  the physical sfp cage position
+                  Possible values:
+                  - acu : acu slot
+                  - iont : an nt applique slot
+                  - remote-sfp : remote sfp
+                  - nt : active nt slot
+                  - lt : lt-slot
+                  - ntio-1 : an nt applique slot in a single or multiple-ntio-shelf
+                  - ntio-2 : an nt applique slot in a multiple-ntio-shelf
+                  - nt-a : nt-a slot
+                  - nt-b : nt-b slot
+                  Field type <Eqpt::RackId>
+                  - the rack number
+                  Field type <Eqpt::ExpRack>
+                  - the physical number of the expansion rack, 0 stands for no remote
+                  Field type <Eqpt::ShelfId>
+                  - the shelf number
+                  Field type <Eqpt::ExpShelf>
+                  - physical nbr of expansion shelf within expansion rack, 0 stands for no remote
+                  Field type <Eqpt::EqSlotId>
+                  - the equipment slot number
+                  Field type <Eqpt::SlotId>
+                  - the LT slot number
+                  Possible values:
+                  - sfp : SFP port
+                  - xfp : XFP port
+                  Field type <Eqpt::E1dsx1SfpCageNumber>
+                  - the SFP cage number range NELT-B [1,3..35],
+                  NCNC-B/C/D [2..7], RELT-A/B [1,3..15]
+                type: str
+              clocksource:
+                description: |
+                  optional parameter with default value: "serdes"
+                  Clock source can be tributary1 or tributary2 or serdes
+                  Possible values:
+                  - tributary1 : clock source is from tributary 1
+                  - tributary2 : clock source is from tributary 2
+                  - serdes : clock source is from serdes
+                type: str
+                choices: ['tributary1', 'tributary2', 'serdes']
+                default: 'serdes'
+          tdmintf:
+            description: |
+             This command allows the operator to configure PWTDM interface parameters on the 2xE1/DS1 sfp
+             > configure equipment sfpe1t1 tdmintf (position) [ no window-number | window-number <Eqpt::WindowNumber>] [ no window-length | window-length <Eqpt::Windowlength> ]
+            type: list
+            elements: dict
+            suboptions:
+              position:
+                description: |
+                  the physical sfp cage position
+                  Possible values:
+                  - acu : acu slot
+                  - iont : an nt applique slot
+                  - remote-sfp : remote sfp
+                  - nt : active nt slot
+                  - lt : lt-slot
+                  - ntio-1 : an nt applique slot in a single or multiple-ntio-shelf
+                  - ntio-2 : an nt applique slot in a multiple-ntio-shelf
+                  - nt-a : nt-a slot
+                  - nt-b : nt-b slot
+                  Field type <Eqpt::RackId>
+                  - the rack number
+                  Field type <Eqpt::ExpRack>
+                  - the physical number of the expansion rack, 0 stands for no remote
+                  Field type <Eqpt::ShelfId>
+                  - the shelf number
+                  Field type <Eqpt::ExpShelf>
+                  - physical nbr of expansion shelf within expansion rack, 0 stands for no remote
+                  Field type <Eqpt::EqSlotId>
+                  - the equipment slot number
+                  Field type <Eqpt::SlotId>
+                  - the LT slot number
+                  Possible values:
+                  - sfp : SFP port
+                  - xfp : XFP port
+                  Field type <Eqpt::E1dsx1SfpCageNumber>
+                  - the SFP cage number range NELT-B [1,3..35],
+                  NCNC-B/C/D [2..7], RELT-A/B [1,3..15]
+                type: str
+                required: True
+              window-number:
+                description: |
+                  the window number
+                  Format:
+                  - the window number
+                  - range: [1..255]
+                type: int
+                default: 20
+              window-length:
+                description: |
+                  the window length
+                  Format:
+                  - the window length
+                  - range: [1..255]
+                type: int
+                default: 10
+          pwtdm:
+            description: |
+              This command allows the operator to configure pseudowire TDM parameters on the 2xE1/DS1 sfp
+              The command has the following syntax:
+              > configure equipment sfpe1t1 ( no pwtdm (position) ) | ( pwtdm (position) channel <Eqpt::Channel> packet-length <Eqpt::Packetlength> jitter-buff-size <Eqpt::JitBufSize> vlanid <Eqpt::VlanId> priority <Eqpt::Priority> conseq-number <Eqpt::ConseqNo> ecid-rx <Eqpt::ECID> ecid-tx <Eqpt::ECID> source-mac <Eqpt::PhysicalAddress> dest-mac <Eqpt::PhysicalAddress> )
+            type: list
+            elements: dict
+            suboptions:
+              position:
+                description: |
+                  mandatory parameter
+                  the physical sfp cage position
+                  Possible values:
+                  - acu : acu slot
+                  - iont : an nt applique slot
+                  - remote-sfp : remote sfp
+                  - nt : active nt slot
+                  - lt : lt-slot
+                  - ntio-1 : an nt applique slot in a single or multiple-ntio-shelf
+                  - ntio-2 : an nt applique slot in a multiple-ntio-shelf
+                  - nt-a : nt-a slot
+                  - nt-b : nt-b slot
+                  Field type <Eqpt::RackId>
+                  - the rack number
+                  Field type <Eqpt::ExpRack>
+                  - the physical number of the expansion rack, 0 stands for no
+                  remote
+                  Field type <Eqpt::ShelfId>
+                  - the shelf number
+                  Field type <Eqpt::ExpShelf>
+                  - physical nbr of expansion shelf within expansion rack, 0
+                  stands for no remote
+                  Field type <Eqpt::EqSlotId>
+                  - the equipment slot number
+                  Field type <Eqpt::SlotId>
+                  - the LT slot number
+                  Possible values:
+                  - sfp : SFP port
+                  - xfp : XFP port
+                  Field type <Eqpt::E1dsx1SfpCageNumber>
+                  - the SFP cage number range NELT-B [1,3..35],
+                  NCNC-B/C/D [2..7], RELT-A/B [1,3..15]
+                  Field type <Eqpt::TributaryIndex>
+                  - tributary index
+                  - range: [1...3]
+                type: str
+                required: True
+              channel:
+                description: |
+                  mandatory parameter
+                  open or close the channel
+                  Possible values:
+                  - close : close channel
+                  - open : open channel
+                type: str
+                required: True
+              packet-length:
+                description: |
+                  mandatory parameter
+                  the packet length
+                  packet length can be configured from 0 to 16382, packet length for MEF8 is 256 bytes
+                  Format:
+                  - packet length range
+                  - range: [0...16382]
+                type: int
+                required: True
+              jitter-buff-size:
+                description: |
+                  mandatory parameter
+                  the jitter buffer size
+                  jitter buffer size can be configured from 0 to 1023,units in number of MEF8 packets
+                  Format:
+                  - the jitter buffer size
+                  - range: [1..1023]
+                type: int
+                required: True
+              vlanid:
+                description: |
+                  mandatory parameter
+                  vlan id can be configured from 0to 4095
+                  Format:
+                  - the vlan id
+                  - range: [0...4095]
+                type: int
+                required: True
+              priority:
+                description: |
+                  mandatory parameter
+                  802.1p priority can be configured from 0 to 7
+                  Format:
+                  - the priority
+                  - range: [0...7]
+                type: int
+                required: True
+              conseq-number:
+                description: |
+                  mandatory parameter
+                  consequence number range 0 to 7
+                  Format:
+                  - the consecutive number
+                  - range: [0...7]
+                type: int
+                required: True
+              ecid-rx:
+                description: |
+                  mandatory parameter
+                  the ecid rx
+                  receive emulated circuit identifier range 0 to 1048575
+                  Format:
+                  - the ecid rx
+                  - range: [0...1048575]
+                type: int
+                required: True
+              ecid-tx:
+                description: |
+                  mandatory parameter
+                  the ecid tx
+                  transmit emulated circuit identifier range 0 to 1048575
+                  Format:
+                  - the ecid tx
+                  - range: [0...1048575]
+                type: int
+                required: True
+              source-mac:
+                description: |
+                  mandatory parameter
+                  the source mac address
+                  Format:
+                  - media dependent physical address
+                  - length: 6
+                type: str
+                required: True
+              dest-mac:
+                description: |
+                  mandatory parameter
+                  the destination mac address
+                  Format:
+                  - media dependent physical address
+                  - length: 6
+                type: str
+                required: True
+          framer:
+            description: |
+              This command allows the operator to configure Framer parameters on the 2xE1/DS1 sfp
+              The command has the following syntax:
+              > configure equipment sfpe1t1 framer (position) [ no frame-mode | frame-mode <Eqpt::Framermode> ] [ no iwf-on-liu | iwf-on-liu <Eqpt::IwfOnLiu> ] [ no liu-on-liu | liu-on-liu <Eqpt::LiuOnliu> ] [ no pm-to-iwf | pm-to-iwf <Eqpt::PmToiwf> ] [ no ais-to-iwf | ais-to-iwf <Eqpt::AisToiwf> ] [ no rai-to-iwf | rai-to-iwf <Eqpt::RaiToiwf> ] [ no rei-to-iwf | rei-to-iwf <Eqpt::ReiToiwf> ] [ no pm-to-liu | pm-to-liu <Eqpt::PmToliu> ] [ no ais-to-liu | ais-to-liu <Eqpt::AisToliu> ] [ no rai-to-liu | rai-to-liu <Eqpt::RaiToliu> ] [ no rei-to-liu | rei-to-liu <Eqpt::ReiToliu> ]
+            type: list
+            elements: dict
+            suboptions:
+              position:
+                description: |
+                  Possible values:
+                  - acu : acu slot
+                  - iont : an nt applique slot
+                  - remote-sfp : remote sfp
+                  - nt : active nt slot
+                  - lt : lt-slot
+                  - ntio-1 : an nt applique slot in a single or multiple-ntio-shelf
+                  - ntio-2 : an nt applique slot in a multiple-ntio-shelf
+                  - nt-a : nt-a slot
+                  - nt-b : nt-b slot
+                  Field type <Eqpt::RackId>
+                  - the rack number
+                  Field type <Eqpt::ExpRack>
+                  - the physical number of the expansion rack, 0 stands for no
+                  remote
+                  Field type <Eqpt::ShelfId>
+                  - the shelf number
+                  Field type <Eqpt::ExpShelf>
+                  - physical nbr of expansion shelf within expansion rack, 0
+                  stands for no remote
+                  Field type <Eqpt::EqSlotId>
+                  - the equipment slot number
+                  Field type <Eqpt::SlotId>
+                  - the LT slot number
+                  Possible values:
+                  - sfp : SFP port
+                  - xfp : XFP port
+                  Field type <Eqpt::E1dsx1SfpCageNumber>
+                  - the SFP cage number range NELT-B [1,3..35],
+                  NCNC-B/C/D [2..7], RELT-A/B [1,3..15]
+                  Field type <Eqpt::TributaryIndex>
+                  - tributary index
+                  - range: [1...3]
+                type: str
+                required: True
+              frame-mode:
+                description: |
+                  optional parameter with default value: "unframed"
+                  select line framing mode
+                  Possible values:
+                  - framed : selects framed tdm packet
+                  - unframed : selects unframed tdm packet
+                type: str
+                default: unframed
+              iwf-on-liu:
+                description: |
+                  optional parameter with default value: "disable"
+                  select line framing mode
+                  Possible values:
+                  - enable : enable loop towards iwf on liu
+                  - disable : disable loop towards iwf on liu
+                type: str
+                default: disable
+              liu-on-liu:
+                description: |
+                  optional parameter with default value: "disable"
+                  enable loop towards liu on liu
+                  Possible values:
+                  - enable : enable loop towards liu on liu
+                  - disable : disable loop towards liu on liu
+                type: str
+                default: disable
+              pm-to-iwf:
+                description: |
+                  optional parameter with default value: "disable"
+                  enable performance monitoring towards iwf
+                  Possible values:
+                  - enable : enable performance monitoring towards iwf
+                  - disable : disable performance monitoring towards iwf
+                type: str
+                default: disable
+              ais-to-iwf:
+                description: |
+                  optional parameter with default value: "disable"
+                  enable ais alarm towards iwf
+                  Possible values:
+                  - enable : enable ais towards iwf
+                  - disable : disable ais towards iwf
+                type: str
+                default: disable
+              rai-to-iwf:
+                description: |
+                  optional parameter with default value: "disable"
+                  enable rai alarm towards iwf
+                  Possible values:
+                  - enable : enable rai towards iwf
+                  - disable : disable rai towards iwf
+                type: str
+                default: disable
+              rei-to-iwf:
+                description: |
+                  optional parameter with default value: "disable"
+                  enable rei alarm towards iwf
+                  Possible values:
+                  - enable : enable rei towards iwf
+                  - disable : disable rei towards iwf
+                type: str
+                default: disable
+              pm-to-liu:
+                description: |
+                  optional parameter with default value: "disable"
+                  enable performance monitoring towards liu
+                  Possible values:
+                  - enable : enable performance monitoring towards liu
+                  - disable : disable performance monitoring towards liu
+                type: str
+                default: disable
+              ais-to-liu:
+                description: |
+                  optional parameter with default value: "disable"
+                  enable ais alarm towards liu
+                  Possible values:
+                  - enable : enable ais towards liu
+                  - disable : disable ais towards liu
+                type: str
+                default: disable
+              rai-to-liu:
+                description: |
+                  optional parameter with default value: "disable"
+                  enable rai alarm towards liu
+                  Possible values:
+                  - enable : enable rai towards liu
+                  - disable : disable rai towards liu
+                type: str
+                default: disable
+              rei-to-liu:
+                description: |
+                  optional parameter with default value: "disable"
+                  enable rei alarm towards liu
+                  Possible values:
+                  - enable : enable rei towards liu
+                  - disable : disable rei towards liu
+                type: str
+                default: disable
+          liu:
+            description: |
+              This command allows the operator to configure distance and cable impedance on the 2xE1/DS1 sfp:
+              The command has the following syntax:
+              > configure equipment sfpe1t1 liu (position) [ no distance | distance <Eqpt::distance> ] [ no cable-impedance | cable-impedance <Eqpt::CableImpedance> ]
+            type: list
+            elements: dict
+            suboptions:
+              position:
+                description: |
+                  Possible values:
+                  - acu : acu slot
+                  - iont : an nt applique slot
+                  - remote-sfp : remote sfp
+                  - nt : active nt slot
+                  - lt : lt-slot
+                  - ntio-1 : an nt applique slot in a single or multiple-ntio-shelf
+                  - ntio-2 : an nt applique slot in a multiple-ntio-shelf
+                  - nt-a : nt-a slot
+                  - nt-b : nt-b slot
+                  Field type <Eqpt::RackId>
+                  - the rack number
+                  Field type <Eqpt::ExpRack>
+                  - the physical number of the expansion rack, 0 stands for no
+                  remote
+                  Field type <Eqpt::ShelfId>
+                  - the shelf number
+                  Field type <Eqpt::ExpShelf>
+                  - physical nbr of expansion shelf within expansion rack, 0
+                  stands for no remote
+                  Field type <Eqpt::EqSlotId>
+                  - the equipment slot number
+                  Field type <Eqpt::SlotId>
+                  - the LT slot number
+                  Possible values:
+                  - sfp : SFP port
+                  - xfp : XFP port
+                  Field type <Eqpt::E1dsx1SfpCageNumber>
+                  - the SFP cage number range NELT-B [1,3..35],
+                  NCNC-B/C/D [2..7], RELT-A/B [1,3..15]
+                  Field type <Eqpt::TributaryIndex>
+                  - tributary index
+                  - range: [1...3]
+                type: str
+                required: True
+              distance:
+                description: |
+                  optional parameter with default value: "shorthaul"
+                  distance can be configured as shorthaul or longhaul
+                  Possible values:
+                  - shorthaul : distance shorthaul
+                  - longhaul : distance longhaul
+                type: str
+                default: shorthaul
+              cable-impedance:
+                description: |
+                  optional parameter with default value: "120ohms"
+                  cable impedance can be configured 75ohms or 120ohms
+                  Possible values:
+                  - 75ohms : cable impedance 75 ohms
+                  - 120ohms : cable impedance 120 ohms
+                type: str
+                default: 120ohms
+      isam:
+        description: |
+          This command allows the operator to configure the NE. The operator can configure the following parameter:
+          • description: text that describes the location of the ISAM.
+          > configure equipment isam [ no description | description <Description-127> ]
+        type: dict
+        suboptions:
+          description:
+            description: |
+              optional parameter with default value: ""
+              any description to be used by the operator
+            type: str
+      envbox:
+        description: |
+          This command allows the operator to configure environment monitoring status to enable/disable the data relay from an external monitor box connected on the NTIO board of ISAM to the monitor server. The operator can configure the following parameters:
+          • enable-supervise: enable relay of environment monitoring from an external monitor box.
+          > configure equipment envbox [ [ no ] enable-supervise ]
+        type: dict
+        suboptions:
+          enable-supervise:
+            description: |
+              optional parameter
+              enable relay of environment monitoring from an external monitor box
+              Possible values:
+              - enable : enable relay of environment monitoring from an external monitor box
+              - disable : disable relay of environment monitoring from an external monitor box
+            type: str
+      fan-tray:
+        description: |
+          This command allows the operator to configure the fan tray parameter fanmode.
+          The fanmode determines the applied speed of the fan trays.
+          On 7302 ISAM, 7330 ISAM FTTN and 7360 ISAM the fanmode is effective only if intelligent fan packs are installed. Traditional fan packs (A-fans) do not support speed  hange, the 'classic' mode applies.
+          On 7363 MX intelligent fan packs are by default present. The "classic mode" will change the fan speed, but based on ambient temperature only.
+          > configure equipment fan-tray [ fanmode <Eqpt::FanMode> ]
+        type: dict
+        suboptions:
+          fanmode:
+            description: |
+              optional parameter
+              fanmode determines the applied speed of the fan trays
+              Possible values:
+              - auto : runs in average mode; fan speeds determined by
+              predefined thermal margins
+              - eco : runs in 'green' mode; minimal thermal margins
+              - protect : runs in protected mode; wider thermal settings wrt
+              auto
+              - classic : fixed fan speed; no SW control
+            type: str
+      replan:
+        description: |
+          Parameter indicates whether the system is configured to allow an LT slot to be automatically re-planned into a new slot value upon LT hardware migration. Enabling this feature makes sure that a new compatible LT inserted into an already configured slot becomes operational automatically, without loss of the original configuration database and without requiring any (re-)configuration action. This only
+          applies to certain board replacement scenarios and for a subset of (from/to) LT types.
+          By default, the field is set to false (value 2) i.e. the slot will not be automatically re-planned when the new LT is inserted. When the feature is enabled by the operator, the value is set to True (value 1).
+          > configure equipment replan [ boardautoreplan <Eqpt::BoardAutoReplan> ]
+        type: dict
+        suboptions:
+          boardautoreplan:
+            description: |
+              optional parameter
+              indicates whether the system is configured to allow an LT slot to be automatically re-planned into a new slot value upon LT hardware migration
+              Possible values:
+              - enable : enable automatic replan
+              - disable : disable automatic replan
+            type: str

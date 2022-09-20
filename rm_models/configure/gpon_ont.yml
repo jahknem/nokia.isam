@@ -1,0 +1,637 @@
+module: isam_interfaces
+short_description: 'Manages interface attributes of nokia isam.'
+description: |
+  'Manages interface attributes of nokia isam.'
+  configure
+    equipment
+      ont
+        [no] interface
+          (ont-idx)
+          [no] battery-bkup
+          [no] berint
+          [no] desc1
+          [no] desc2
+          [no] provversion
+          [no] sernum
+          subslocid
+          sw-ver-pland
+          [no] fec-up
+          [no] bridge-map-mode
+          [no] pwr-shed-prof-id
+          [no] ont-enable
+          [no] p2p-enable
+          [no] optics-hist
+          [no] sw-dnload-version
+          [no] plnd-var
+          [no] rf-filter
+          [no] us-police-mode
+          [no] enable-aes
+          [no] voip-allowed
+          [no] iphc-allowed
+          [no] slid-visibility
+          [no] log-auth-id
+          [no] log-auth-pwd
+          [no] cvlantrans-mode
+          [no] sn-bundle-ctrl
+          [no] pland-cfgfile1
+          [no] pland-cfgfile2
+          [no] dnload-cfgfile1
+          [no] dnload-cfgfile2
+          [no] us-tcpolice-mode
+          [no] planned-us-rate
+          admin-state
+          [no] oltdscppbitalign
+          [no] pref-channel-pair
+          [no] prot-channel-pair
+          [no] alt-pref-ch-pair
+          [no] ratelimit-us-dhcp
+          [no] ratelimit-us-arp
+          [no] flush-mac
+          [no] template-name
+          [no] evtocd
+          [no] vtfd
+          onu-tssi-detect
+              [no] poll-interval
+              [no] poll-cnt
+              [no] alm-ctrl
+            tc-layer
+              [no] olt-pm-collect
+              [no] od-pm-collect
+              [no] ont-pm-collect
+            tc-layer-threshold
+              [no] lost-frags-down
+              [no] lost-frags-up
+              [no] bad-headers-down
+            mcast-tc-layer
+              [no] ont-pm-collect
+            fec-tc-layer
+              [no] olt-pm-collect
+              [no] ont-pm-collect
+            ethernet
+              [no] ont-pm-collect
+            xg-tc-layer
+              [no] olt-pm-collect
+              [no] ont-pm-collect
+            phy-layer
+              [no] olt-pm-collect
+            delay-act
+              [no] at
+            cpu-load
+              [no] ont-pm-collect
+            memory-usage
+              [no] ont-pm-collect
+          [no] slot
+            (ont-slot-idx)
+            planned-card-type
+            plndnumdataports
+            plndnumvoiceports
+            [no] port-type
+            [no] transp-mode-rem
+            [no] no-mcast-control
+            [no] admin-state
+          [no] sw-ctrl
+            (sw-ctrl-id)
+            hw-version
+            [no] ont-variant
+            [no] plnd-sw-version
+            [no] plnd-sw-ver-conf
+            [no] sw-dwload-ver
+            [no] pland-cfgfile1
+            [no] pland-cfgfile2
+            [no] dnload-cfgfile1
+            [no] dnload-cfgfile2
+            delay-act
+              [no] at
+          loop
+            (ont-idx)
+            [no] loop-detect
+            [no] loop-portautoshut
+          gis
+            (ont-idx)
+          pm-collect
+            (ont-idx)
+            [no] xg-pm-collect
+version_added: 1.0.0
+author: Jan Kühnemund (@jahknem)
+notes:
+  - 'Tested against isam-release: R6.2.04m'
+options:
+  config:
+    description: The provided configuration.
+    type: dict
+    suboptions:
+      ont:
+        description: |
+          This command allows the operator to create and configure the ONT parameters.
+          provversion - when '*'is set, it detects ONT hardware version on board and is updated accordingly.
+          sernum - User can only set it when admin state is down and admin-state cannot be changed to up with default sernum (ALCL:00000000). The First 4 bytes form the vendorid and the last 8 butes form the serial no.
+          sw-ver-pland - The special string of 'AUTO' is used to indicate that if this ONT's hardware version (eqpt-ver-num in 'show ont interface command) and planned variant (plnd-var) has a matching entry created using 'configure equipment ont sw-ctrl', then the plnd-sw-version from the gponOntSwVerCtlTable table will be downloaded to the
+          ONT. The special string of 'UNPLANNED' is used to avoid any download. The special string of 'DISABLED' is used not to control onu sw version, and not report mismatch alarm. The special string of 'DELAYACTIVATE' is used for non-immediate activation.
+          subslocid - 0 to 12 (36 for ngpon2/xgs/25g) ASCII character string or 0 to 24 (72 for ngpon2/xgs/25g) HEX string depending on slidmode.
+          sw-dnload-version - The special string of 'AUTO' is used to indicate that if this ONT's hardware version (eqpt-ver-num in 'show equipment ont interface command) and planned variant (plnd-var) has a matching entry created using 'configure equipment ont sw-ctrl', then the plnd-sw-version from the gponOntSwVerCtlTable table will be downloaded to the ONT. The special string of 'DISABLED' is used to indicate this feature as blocked. If sw-ver-pland is set to 'DISABLED', sw-dnload-version can only be 'DISABLED'.
+          NOTE: In order to change power-shed-profile, provversion, sernum, fec-up, us-police-mode, us_tcpolice-mode, log-auth-id and log-auth-pwd parameters, the ONT state must be in Out-of-Service. If not specified, the values of the above parameters stay unchanged.
+          admin-state - cannot be modified in the same command execution with any other parameter and vice versa. If not specified, the value of this parameter stays unchanged.
+          The command has the following syntax:
+          > configure equipment ont ( no interface (ont-idx) ) | ( interface (ont-idx) [ no battery-bkup | battery-bkup <Gpon::BatteryBkup> ] [ no berint | berint <Gpon::BertInterval> ] [ no desc1 | desc1 <Gpon::Desc> ] [ no desc2 | desc2 <Gpon::Desc> ] [ no provversion | provversion <Gpon::ProvVersion> ] [ no sernum | sernum <Gpon::SerNum> ] [ subslocid <Gpon::SubsLocId> ] sw-ver-pland <Gpon::SwVerPlnd> [ no fec-up | fec-up <Gpon::FecUp> ] [ no bridge-map-mode | bridge-map-mode <Gpon::BridgeMapMode> ] [ no pwr-shed-prof-id | pwr-shed-prof-id <Gpon::PwrShedProfIndex> ] [ no ont-enable | ont-enable <Gpon::OntEnable> ] [ no p2p-enable | p2p-enable <Gpon::P2PEnable> ] [ no optics-hist | optics-hist <Gpon::OpticsHist> ] [ no sw-dnload-version | sw-dnload-version <Gpon::SwVerDn> ] [ no plnd-var | plnd-var <Gpon::PlndVar> ] [ no rf-filter | rf-filter <Gpon::RfFilter> ] [ no us-police-mode | us-police-mode <Gpon::UsPoliceMode> ] [ no enable-aes | enable-aes <Gpon::EnableAES> ] [ no voip-allowed | voip-allowed <Gpon::VoipAllowed> ] [ no iphc-allowed | iphc-allowed <Gpon::IphcAllowed> ] [ no slid-visibility | slid-visibility <Gpon::SlidAvailabilityStatus> ] [ no log-auth-id | log-auth-id <Gpon::LogAuthId> ] [ no log-auth-pwd | log-auth-pwd <Security::Password6> ] [ no cvlantrans-mode | cvlantrans-mode <Gpon::CVlanTransMode> ] [ no sn-bundle-ctrl | sn-bundle-ctrl <Gpon::SnBundleCtrl> ] [ no pland-cfgfile1 | pland-cfgfile1 <Gpon::CfgFileName> ] [ no pland-cfgfile2 | pland-cfgfile2 <Gpon::CfgFileName> ] [ no dnload-cfgfile1 | dnload-cfgfile1 <Gpon::CfgFileName> ] [ no dnload-cfgfile2 | dnload-cfgfile2 <Gpon::CfgFileName> ] [ no us-tcpolice-mode | us-tcpolice-mode <Gpon::UsTcPoliceMode> ] [ no planned-us-rate | planned-us-rate <Gpon::PlannedUsRate> ] [ admin-state <Gpon::ItfAdminStatus> ] [ no oltdscppbitalign | oltdscppbitalign <Gpon::OltDscpPbitAlign> ] [ no pref-channel-pair | pref-channel-pair <Ng2::PreferredChannelPairIndex> ] [ no prot-channel-pair | prot-channel-pair <Ng2::PreferredChannelPairIndex> ] [ no alt-pref-ch-pair | alt-pref-ch-pair <Ng2::PreferredChannelPairIndex> ] [ no ratelimit-us-dhcp | ratelimit-us-dhcp <Gpon::RateLimitUsDhcp> ] [ no ratelimit-us-arp | ratelimit-us-arp <Gpon::RateLimitUsArp> ] [ no flush-mac | flush-mac <Gpon::FlushMac> ] [ no template-name | template-name <Gpon::OnuProvTemplateName> ] [ no evtocd | evtocd <Gpon::Evtocd> ] [ no vtfd | vtfd <Gpon::Vtfd> ] )
+        type: list
+        elements: dict
+        suboptions:
+          ont_idx:
+            description: |
+              "ONT index"
+              Possible values:
+              - ng2 : ngpon2 style identification
+              Field type <Eqpt::RackId>
+              - the rack number
+              Field type <Eqpt::ShelfId>
+              - the shelf number
+              Field type <Eqpt::SlotId>
+              - the LT slot number
+              Field type <Eqpt::PonId>
+              - the PON identifier
+              Field type <Ng2::ChannelGroup>
+              - channel group number
+              Field type <Ng2::SubchannelGroup>
+              - subchannel group number
+              Field type <Eqpt::OntId>
+              - the ONT identifier
+              Field type <Ng2::OntId>
+            type: string
+            required: true
+          battery_bkup:
+            description: |
+              optional parameter with default value: "disable"
+              Possible values:
+              - disable : ONT is not equiped with battery backup
+              - enable : ONT is equiped with battery backup
+            type: str
+            choices: ['disable', 'enable']
+            default: disable
+          berint:
+            description: |
+              optional parameter with default value: "8000"
+              accumulation interval (in number of downstream frames) for ONU BER calculation
+            type: int
+            default: 8000
+          desc1:
+            description:
+            - "ONT description 1"
+            - free-form textual field for user to describe the ONT
+            type: str
+          desc2:
+            description:
+            - "ONT description 2"
+            - free-form textual field for user to describe the ONT
+            type: str
+          provversion:
+            description:
+            - 'optional parameter with default value: "*"'
+            - the provisioned version number
+            type: str
+            default: "*"
+          sernum:
+            description: |
+              optional parameter with default value: "ALCL : 00000000"
+              the provisioned serial number
+              Format:
+              <Gpon::VendorId> : <Gpon::SerialNo>
+              Field type <Gpon::VendorId>
+              - vendor id - 4 ASCII characters
+              - range: [a-zA-Z0-9]
+              - length: 4
+              Field type <Gpon::SerialNo>
+              - serial num - 8 ASCII characters
+              - range: [a-fA-F0-9]
+              - length: 8
+            type: str
+            default: "ALCL : 00000000"
+          subslocid:
+            description:
+            - "Subscriber location ID"
+            type: str
+          sw_ver_plnd:
+            description: |
+              mandatory parameter
+              planned ONT software version number. If sw-dnload-version is set to disabled, sw-ver-pland cannot be set to delayactivate.
+              Possible values:
+              - auto : download sw to onu using the sw-ctrl version
+              - unplanned : avoid any download related action,but report
+              mismatch alarm
+              - disabled : not to control onu sw version, and not report
+              mismatch alarm
+              - delayactivate : for non-immediate activation
+              Field type <Gpon::SwVerPlnd>
+              - ont sw version
+              - length: 1<=x<=14
+            type: str
+            required: true
+          fec_up:
+            description: |
+              optional parameter with default value: "gpon : disable,ngpon : enable,auto-match : enable"
+              enable/disable use of FEC in Upstream direction
+              Possible values:
+              - disable : Disable use of FEC in Upstream direction
+              - enable : Enable use of FEC in Upstream direction
+              - recommended : Automatically set based on planned ONT
+              technology: gpon=disable,ngpon=enable,auto-match=enable
+            type: str
+            choices: ['disable', 'enable', 'recommended']
+          bridge_map_mode:
+            description: |
+              optional parameter with default value: "1-mp-bridge-map-filter"
+              ont bridge map mode
+              Possible values:
+              - 1-mp-bridge-map-filter: 1:MP bridge map mode
+              - n-p-bridge-map-filter : N:P bridge map mode
+              - n-mp-bridge-map-filter: N:MP bridge map mode
+            type: str
+            choices: ['1-mp-bridge-map-filter', 'n-p-bridge-map-filter', 'n-mp-bridge-map-filter']
+            default: 1-mp-bridge-map-filter
+          pwr-shed-prof-id:
+            description: |
+              optional parameter with default value: "none"
+              power shed profile id
+              Possible values:
+              - none : no profile to associate
+              Field type <Gpon::PwrShedProfIndex>
+              - a pwr shed profile index value
+              - range: [0...50]
+            type: str
+            default: auto
+          ont-enable:
+            description: |
+              optional parameter with default value: "auto"
+              ONT disabling decision for rogue ONTs
+              Possible values:
+              - auto : OLT automatically decided on proper action
+              - disable : ONT is Manually Disabled
+              - enable : ONT is Manually Enabled
+            type: str
+            choices: ['auto', 'disable', 'enable']
+            default: auto
+          p2p-enable:
+            description: |
+              optional parameter with default value: "disable"
+              The parameter is not visible during modification.
+              allow port-to-port traffic exchange between ethernet UNIs on the same ONT
+              Possible values:
+              - disable : Disable Port-to-port traffic exchange
+              - enable : Enable Port-to-port traffic exchange
+            type: str
+            choices: ['disable', 'enable']
+          optics-hist:
+            description: |
+              optional parameter with default value: "disable"
+              daily optical supervision measurements collection
+              Possible values:
+              - disable : Disable daily optical supervision measurements
+              collection
+              - enable : Enable daily optical supervision measurements
+              collection
+            type: str
+            choices: ['disable', 'enable']
+            default: disable
+          sw-dnload-version:
+            description: |
+              optional parameter with default value: "DISABLED"
+              standby ONT software version number to be downloaded. If sw-ver-pland is set to delayactivate, sw-dnload-version cannot be set to disabled.
+              Possible values:
+              - auto : download sw to onu using the sw-ctrl version
+              - disabled : indicate this feature is blocked. If sw-ver-pland
+              is set to disabled, sw-dnload-version can only be disabled
+              Field type <Gpon::SwVerDn>
+              - ont sw version
+              - length: 1<=x<=14
+            type: str
+            default: disabled
+          plnd-var:
+            description: |
+              optional parameter with default value: """"
+              planned variant of the ONT hardware version.Use DO for Data-only ONTs,SIP for SIP ONTs,H.248 for MEGACO ONTs
+              Format: 
+              - planned variant of the ONT hardware version
+              - length: x<=80
+            type: str
+            default: ""
+          rf-filter:
+            description: |
+              optional parameter with default value: "pass-low-high"
+              filter settings for RF video
+              Possible values:
+              - pass-none : Pass Nothing
+              - pass-low : Pass only Low Band
+              - pass-low-high : Pass Low and High Band
+              - pass-low-middle : Pass Low and Middle Band
+            type: str
+            choices: ['pass-none', 'pass-low', 'pass-low-high', 'pass-low-middle']
+            default: pass-low-high
+          us-police-mode:
+            description: |
+              optional parameter with defaultvalue: "local"
+              upstream police mode
+              Possible values:
+              - local : local at OLT
+              - network : remote at OLT
+              obsolete alternative replaced by remote
+              - remote : remote at ONT
+            type: str
+            choices: ['local', 'network', 'remote']
+            default: local
+          enable-aes:
+            description: |
+              optional parameter with default value: "disable"
+              downstream AES encryption for all unicast (X)GEM ports pertaining to the ONT
+              Possible values:
+              - disable : disable downstream AES encryption
+              - enable : enable downstream AES encryption
+            type: bool
+            default: false
+          voip-allowed:
+            description: |
+              optional parameter with default value: "disable"
+              The parameter is not visible during modification.
+              voip support on ONT
+              Possible values:
+              - disable : disable voip support on ONT
+              - enable : enable voip support on ONT
+              - iphost : enable voip support on ONT using iphost
+              - veip : enable voip support on ONT using veip
+            type: str
+            choices: ['disable', 'enable', 'iphost', 'veip']
+            default: disable
+          iphc-allowed:
+            description: |
+              optional parameter with default value: "disable"
+              The parameter is not visible during modification.
+              iphc support on ONT
+              Possible values:
+              - disable : disable iphc support on ONT
+              - enable : enable iphc support on ONT
+            type: bool
+            default: false
+          slid-visibility:
+            description: |
+              optional parameter with default value: "disabled"
+              The parameter is not visible during creation.
+              slid visibility of the interface
+              Possible values:
+              - disabled : no access using http or telnet
+              - enabled-slid-on : read-only access using http or telnet
+              - enabled-all : read-write access using http or telnet
+            type: str
+            choices: ['disabled', 'enabled-slid-on', 'enabled-all']
+            default: disabled
+          log-auth-id:
+            description: |
+              optional parameter with default value: ""
+              the logical id for the ont
+              Format:
+              - ont logical id
+              - length: x<=24
+            type: str
+            default: ""
+          log-auth-pwd:
+            description: |
+              optional parameter with default value: "plain : "
+              the password for the ont
+              Possible values:
+              - prompt : prompts the operator for a password
+              - plain : the password in plain text
+              Field type <Security::PlainPassword6>
+              - ont password
+              - length: x<=12
+            type: str
+          cvlantrans-mode:
+            description: |
+              optional parameter with default value: "remote"
+              cvlan translation settings for all traffic except the configured multicast traffic
+              Possible values:
+              - remote : cvlan translate remote
+              - local : cvlan translate local
+            type: str
+            choices: ['remote', 'local']
+            default: remote
+          sn-bundle-ctrl:
+            description: |
+              optional parameter with default value: "unbundle"
+              sn bundling behavior associated with slid/loid
+              Possible values:
+              - unbundle : no bundle behavior for sn with loid/slid
+              - bundle : manual bundling of sn with loid/slid
+              - auto : automatically bundle the sn with loid/slid when a
+              new sn is learned
+            type: str
+            choices: ['unbundle', 'bundle', 'auto']
+            default: unbundle
+          pland-cfgfile1:
+            description: |
+              optional parameter with default value: "DISABLED"
+              indicate the cfgfile1 version to be planned
+              Possible values:
+              - auto : download configure file to onu using the sw-ctrl
+              version
+              Field type <Gpon::CfgFileName>
+              - ont configure file version
+              - length: 1<=x<=14
+            type: str
+            default: disabled
+          pland-cfgfile2:
+            description: |
+              optional parameter with default value: "DISABLED"
+              indicate the cfgfile2 version to be planned
+              Possible values:
+              - auto : download configure file to onu using the sw-ctrl
+              version
+              Field type <Gpon::CfgFileName>
+              - ont configure file version
+              - length: 1<=x<=14
+            type: str
+            default: disabled
+          dnload-cfgfile1:
+            description: |
+              optional parameter with default value: "DISABLED"
+              indicate the cfgfile1 version to be downloaded
+              Possible values:
+              - auto : download configure file to onu using the sw-ctrl
+              version
+              Field type <Gpon::CfgFileName>
+              - ont configure file version
+              - length: 1<=x<=14
+            type: str
+            default: disabled
+          dnload-cfgfile2:
+            description: |
+              optional parameter with default value: "DISABLED"
+              indicate the cfgfile2 version to be downloaded
+              Possible values:
+              - auto : download configure file to onu using the sw-ctrl
+              version
+              Field type <Gpon::CfgFileName>
+              - ont configure file version
+              - length: 1<=x<=14
+            type: str
+            default: disabled
+          us-tcpolice-mode:
+            description: |
+              optional parameter with default value: "local"
+              upstream tc(gemport) police mode
+              Possible values:
+              - local : local at OLT
+              - remote : remote at ONT
+            type: str
+            choices: ['local', 'remote']
+          planned-us-rate:
+            description: |
+              optional parameter with default value: "nominal-line-rate,cde : auto-match"
+              planned upstream rate
+              Possible values:
+              - nominal-line-rate : ont inherits upstream rate from nominal
+              line rate(default)
+              - 2.5g : 2.5 GBit/sec
+              - 10g : 10 GBit/sec
+              - 1.25g : 1.25 GBit/sec
+              - auto-match : upstream rate is detected when onu activates
+              - 25g : 25 GBit/sec
+            type: str
+            choices: ['nominal-line-rate', '2.5g', '10g', '1.25g', 'auto-match', '25g']
+          admin-state:
+            description: |
+              optional parameter
+              The parameter is not visible during creation.
+              administrative status of the interface
+              Possible values:
+              - up : set the admin-state to up
+              - down : set the admin-state to down
+            type: str
+            choices: ['up', 'down']
+          oltdscppbitalign:
+            description: |
+              optional parameter with default value: "disable"
+              if OLT need perform DSCP to Pbit alignment for this ONU, when the DSCP to Pbit alignment is configured on the vlan port
+              Possible values:
+              - disable : OLT will not do dscp-to-pbit alignment
+              - enable : OLT will do dscp-to-pbit alignment
+            type: bool
+            default: false
+          pref-channel-pair:
+            description: |
+              optional parameter with default value: "none"
+              preferred channel pair in case of ngpon2 ont
+              Possible values:
+              - none : lt board not specified
+              Field type <Eqpt::RackId>
+              - the rack number
+              Field type <Eqpt::ShelfId>
+              - the shelf number
+              Field type <Eqpt::SlotId>
+              - the LT slot number
+              Field type <Eqpt::ChannelPairId>
+              - the channel pair identifier
+            type: str
+            default: none
+          prot-channel-pair:
+            description: |
+              optional parameter with default value: "none"
+              protecting channel pair in case of ngpon2 ont
+              Possible values:
+              - none : lt board not specified
+              Field type <Eqpt::RackId>
+              - the rack number
+              Field type <Eqpt::ShelfId>
+              - the shelf number
+              Field type <Eqpt::SlotId>
+              - the LT slot number
+              Field type <Eqpt::ChannelPairId>
+              - the channel pair identifier
+            type: str
+            default: none
+          alt-pref-ch-pair:
+            description: |
+              optional parameter with default value: "none"
+              alternative preferred channel pair in case of ngpon2 ont
+              Possible values:
+              - none : lt board not specified
+              Field type <Eqpt::RackId>
+              - the rack number
+              Field type <Eqpt::ShelfId>
+              - the shelf number
+              Field type <Eqpt::SlotId>
+              - the LT slot number
+              Field type <Eqpt::ChannelPairId>
+              - the channel pair identifier
+            type: str
+            default: none
+          ratelimit-us-dhcp:
+            description: |
+              optional parameter with default value: "10"
+              upstream rate limit for DHCP packets, unit is pps which means packets per second
+              Format:
+              - ratelimit upstream DHCP packets, 0 - Disabled, 1..16 -
+              Enabled (Packets Per Second limit)
+              - range: [0...16]
+            type: int
+            default: 10
+          ratelimit-us-arp:
+            description: |
+              optional parameter with default value: "10"
+              upstream rate limit for ARP packets, unit is pps which means packets per second
+              Format:
+              - ratelimit upstream ARP packets, 0 - Disabled, 1..16 -
+              Enabled (Packets Per Second limit)
+              - range: [0...16]
+            type: int
+            default: 10
+          flush-mac:
+            description: |
+              optional parameter with default value: "disable"
+              flush MAC decision for UNIs of this ONT
+              Possible values:
+              - disable : the MAC will not be flushed when UNIs go down
+              - enable : the MAC will be flushed when UNIs go down
+            type: bool
+            default: false
+          template-name:
+            description: |
+              optional parameter with default value: "default"
+              Name of the Template to be used for ONU auto-provisioning
+              Format:
+              - Template name to be used for ONU auto provisioning
+              - range: [a-zA-Z0-9-_]
+              - length: x<=20
+            type: str
+            default: default
+          evtocd:
+            description: |
+              optional parameter with default value: "enable"
+              ME Evtocd control
+              Possible values:
+              - disable : Disable ME Extended VLAN tagging operation
+              configuration data
+              - enable : Enable ME Extended VLAN tagging operation
+              configuration data
+            type: bool
+            default: true
+          vtfd:
+            description: |
+              optional parameter with default value: "enable"
+              ME Vtfd control
+              Possible values:
+              - disable : Disable ME VLAN tagging filter data
+              - enable : Enable ME VLAN tagging filter data
+            type: bool
+            default: true
+
+            #ToDO: oper-state & pwr-shed-prof-name
+  state:
+    description:
+    - The state of the configuration after module completion.
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

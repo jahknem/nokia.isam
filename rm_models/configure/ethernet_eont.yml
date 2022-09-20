@@ -1,0 +1,24 @@
+module: isam_equipment
+short_description: 'Manages equipment attributes of nokia isam.'
+description: |
+  configure
+    ethernet
+      eont
+        [no] port
+          (uni-index)
+          [no] filter
+            (filterid)
+            profileid
+            precedence
+            [no] acl
+            [no] dot1p
+            [no] llid
+            queueid
+          [no] snoopmcastvlan
+            (vlanid)
+          [no] usercvlan
+            (usercvlanid)
+            networkcvlan
+          [no] mcastvlan
+            (mcastvlanid)
+            uservlan
