@@ -7,119 +7,122 @@ notes:
   - 'Tested against isam-release: R6.2.04m'
 options:
   config:
-    port:
-      type: dict
-      description: This command allows the operator to configure interface management parameters.
-      suboptions:
-        port:
-          type: str
-          description: The interface index.
-          required: true
-        admin-up:
-          type: bool
-          description: 
-          - optional parameter 
-          - admin status is up (read-only for voicefxs interface).        
-        link-updown-trap:
-          type: bool
-          description: 
-          - optional parameter 
-          - enable link-up/link-down traps.
-        user:
-          type: str
-          description: 
-          - optional parameter with default value "available" user name. 
-          - description of the user connected to this interface.
-        severity:
-          type: str
-          description: 
-          - optional parameter with default value "default" 
-          - set minimum severity for alarm to be reported,If ima is the only interface for which this parameter is not supported.
-          choices:
-          - inderteminate
-          - warning
-          - minor
-          - major
-          - critical
-          - no-alarms
-          - default
-          - no-value
-        port-type:
-          type: str
-          description: 
-          - optional parameter with default value "uni" 
-          - the whole network service model based on this interface.
-          choices:
-          - "uni"
-          - "nni"
-          - "hc-uni"
-          - "uplink"
-    atm-pvc:
-      type: dict
-      description: This command allows the operator to configure extended interface management parameters.
-      suboptions:
-        pvc-index:
-          type: string
-          description: the ATM PVC interface index
-          required: true
-        customer-id:
-          type: string
-          description: 
-          - optional parameter with default value "available" 
-          - the customer ID of the customer to which this PVC belongs.
-          default: "available"
-    alarm:
-      type: dict
-      description: This command allows the operator to configure the default severity for an alarm on this type of interface.
-      suboptions:
-        index:
-          type: string
-          description: index of the IANA ifType
-          required: true
-        default-severity:
-          type: string
-          description: 
-          - optional parameter with default value "major" 
-          - set minimum severity for alarm to be reported.
-          choices:
-          - inderteminate
-          - warning
-          - minor
-          - major
-          - critical
-          default: "major"
-    statistics:
-      type: dict
-      description: This command allows the operator to configure sliding-window traffic statistics on related interface.
-      suboptions:
-        port:
-          type: string
-          description: the interface index
-          required: true
-        sliding-win-stats:
-          type: bool
-          description: 
-          - optional parameter 
-          - enable sliding-window traffic statistics on related interface.
-          default: false
-    cage:
-      type: dict
-      description: 
-      - "This command allows the operator to configure SLOT cage mode:" 
-      - "• The slot index of the cage"
-      - "• The number of the sfp cage"
-      - "• The index of rssi profile which would be configured on cage."
-      suboptions:
-        position:
-          type: int
-          description: 
-          - the physical cage position
-          required: true
-        operational-mode:
-          type: string
-          short_description:
-          - optional parameter
-          - oper-mode of the cage
+    description: the provided Configuration
+    type: dict
+    suboptions:
+      port:
+        type: dict
+        description: This command allows the operator to configure interface management parameters.
+        suboptions:
+          port:
+            type: str
+            description: The interface index.
+            required: true
+          admin-up:
+            type: bool
+            description: 
+            - optional parameter 
+            - admin status is up (read-only for voicefxs interface).        
+          link-updown-trap:
+            type: bool
+            description: 
+            - optional parameter 
+            - enable link-up/link-down traps.
+          user:
+            type: str
+            description: 
+            - optional parameter with default value "available" user name. 
+            - description of the user connected to this interface.
+          severity:
+            type: str
+            description: 
+            - optional parameter with default value "default" 
+            - set minimum severity for alarm to be reported,If ima is the only interface for which this parameter is not supported.
+            choices:
+            - inderteminate
+            - warning
+            - minor
+            - major
+            - critical
+            - no-alarms
+            - default
+            - no-value
+          port-type:
+            type: str
+            description: 
+            - optional parameter with default value "uni" 
+            - the whole network service model based on this interface.
+            choices:
+            - "uni"
+            - "nni"
+            - "hc-uni"
+            - "uplink"
+      atm-pvc:
+        type: dict
+        description: This command allows the operator to configure extended interface management parameters.
+        suboptions:
+          pvc-index:
+            type: string
+            description: the ATM PVC interface index
+            required: true
+          customer-id:
+            type: string
+            description: 
+            - optional parameter with default value "available" 
+            - the customer ID of the customer to which this PVC belongs.
+            default: "available"
+      alarm:
+        type: dict
+        description: This command allows the operator to configure the default severity for an alarm on this type of interface.
+        suboptions:
+          index:
+            type: string
+            description: index of the IANA ifType
+            required: true
+          default-severity:
+            type: string
+            description: 
+            - optional parameter with default value "major" 
+            - set minimum severity for alarm to be reported.
+            choices:
+            - inderteminate
+            - warning
+            - minor
+            - major
+            - critical
+            default: "major"
+      statistics:
+        type: dict
+        description: This command allows the operator to configure sliding-window traffic statistics on related interface.
+        suboptions:
+          port:
+            type: string
+            description: the interface index
+            required: true
+          sliding-win-stats:
+            type: bool
+            description: 
+            - optional parameter 
+            - enable sliding-window traffic statistics on related interface.
+            default: false
+      cage:
+        type: dict
+        description: 
+        - "This command allows the operator to configure SLOT cage mode:" 
+        - "• The slot index of the cage"
+        - "• The number of the sfp cage"
+        - "• The index of rssi profile which would be configured on cage."
+        suboptions:
+          position:
+            type: int
+            description: 
+            - the physical cage position
+            required: true
+          operational-mode:
+            type: string
+            short_description:
+            - optional parameter
+            - oper-mode of the cage
   state:
     description:
     - The state of the configuration after module completion.

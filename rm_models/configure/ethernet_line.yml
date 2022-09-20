@@ -1,0 +1,136 @@
+module: isam_equipment
+short_description: 'Manages equipment attributes of nokia isam.'
+description: |
+  configure
+    ethernet
+      line
+        (if-index)
+        port-type
+        [no] admin-up
+        tca-line-threshold
+          [no] enable
+          [no] los
+          [no] fcs
+          [no] rx-octets
+          [no] tx-octets
+          [no] los-day
+          [no] fcs-day
+          [no] rx-octets-day
+          [no] tx-octets-day
+        mau
+          (index)
+          type
+          power
+          [no] speed-auto-sense
+          [no] autonegotiate
+          [no] cap100base-tfd
+          [no] cap1000base-xfd
+          [no] cap1000base-tfd
+version_added: 1.0.0
+author: Jan Kühnemund (@jahknem)
+notes:
+  - 'Tested against isam-release: R6.2.04m'
+options:
+  config:
+    description: |
+      This command allows the operator to configure the ethernet line.
+      > configure ethernet line (if-index) [ port-type <ETHITF::PortType> ] [ [ no ] admin-up ]
+    type: dict
+    suboptions:
+      line:
+        type: list
+        elements: dict
+        description: This command allows the operator to configure interface management parameters.
+        suboptions:
+          if-index:
+            type: str
+            description: interface index of the port
+            required: true
+          port-type:
+            type: str
+            description: 
+            - optional parameter with default value "uni" 
+            - the whole network service model based on this interface.
+            choices:
+            - "uni"
+            - "nni"
+            - "hc-uni"
+            - "uplink"
+          admin-up:
+            type: bool
+            description: 
+            - optional parameter 
+            - admin status is up (read-only for voicefxs interface).        
+          tca-line-threshold:
+            type: dict
+            description: |
+              This command allows the operator to configure the Threshold Crossing Alert (TCA) thresholds. The configuration is specific per ethernet line.
+              > configure ethernet line (if-index) tca-line-threshold [ [ no ] enable ] [ no los | los <ETHITF::TcaThresholdLOS> ] [ no fcs | fcs <ETHITF::TcaThresholdFCS> ] [ no rx-octets | rx-octets <ETHITF::TcaThresholdMB> ] [ no tx-octets | tx-octets <ETHITF::TcaThresholdMB> ] [ no los-day | los-day <ETHITF::TcaThresholdLOS> ] [ no fcs-day | fcs-day <ETHITF::TcaThresholdFCS> ] [ no rx-octets-day | rx-octets-day <ETHITF::TcaThresholdMB> ] [ no tx-octets-day | tx-octets-day <ETHITF::TcaThresholdMB> ]
+            suboptions:
+              enable:
+                type: bool
+                description: |
+                  optional parameter
+                  enable the reporting of TCA's for this ethernet line
+              los:
+                type: int
+                description: |
+                  optional parameter with default value: 0
+                  loss of signal error in 15 minute
+                default: 0
+              fcs:
+                type: int
+                description: |
+                  optional parameter with default value: 0
+                  frame check sequence error in 15 minute
+                  Format
+                  - the tca threshold value (frames), 0 - disable
+                default: 0
+              rx-octets:
+                type: int
+                description: |
+                  optional parameter with default value: 0
+                  receive octets in 15 minute (specify in MB)
+                  Format:
+                  - the tca threshold value (specify octets in MB), 0 - disable
+                default: 0
+              tx-octets:
+                type: int
+                description: |
+                  optional parameter with default value: 0
+                  transmit octets in 15 minute (specify in MB)
+                  Format:
+                  - the tca threshold value (specify octets in MB), 0 - disable
+                default: 0
+              los-day:
+                type: int
+                description: |
+                  optional parameter with default value: 0
+                  loss of signal error in 24 hour
+                  Format:
+                  - the tca threshold value (times), 0 - disable
+                default: 0
+              fcs-day:
+                type: int
+                description: |
+                  optional parameter with default value: 0
+                  frame check sequence error in 24 hour
+                  Format:
+                  - the tca threshold value (frames), 0 - disable
+                default: 0
+              rx-octets-day:
+                type: int
+                description: |
+                  optional parameter with default value: 0
+                  receive octets in 24 hour (specify in MB)
+                  Format:
+                  - the tca threshold value (specify octets in MB), 0 - disable
+                default: 0
+              tx-octets-day:
+                type: int
+                description: |
+                  optional parameter with default value: 0
+                  transmit octets in 24 hour (specify in MB)
+                  Format:
+                  - the tca threshold value (specify octets in MB), 0 - disable
+                default: 0
