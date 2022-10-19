@@ -1,0 +1,4 @@
+---
+### ISAM 6.02.04ng
+- name: parse 6.02.04ng - ' info configure ethernet-line'
+  command_parser:
