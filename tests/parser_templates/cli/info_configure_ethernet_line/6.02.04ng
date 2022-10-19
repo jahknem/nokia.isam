@@ -1,0 +1,295 @@
+DS-LIN-TEST-01>#info configure ethernet line
+configure ethernet
+#------------------------------------------------------------------------------------------------
+echo "ethernet"
+#------------------------------------------------------------------------------------------------
+line 1/1/8/1
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/2
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/3
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/4
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/5
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/6
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/7
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/8
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/9
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/10
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/11
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/12
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/13
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/14
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/15
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/16
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/17
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/18
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/19
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/20
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/21
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/22
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/23
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/24
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/25
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/26
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/27
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/28
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/29
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/30
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/31
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/32
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/33
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/34
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/35
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/36
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+#------------------------------------------------------------------------------------------------
+DS-LIN-TEST-01>#

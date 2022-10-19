@@ -205,44 +205,57 @@ options:
               - range: [0...4294967295]
             type: string
             default: "disable"
-          pm-collect-ext:
+      pm-collect-ext:
+        description: |
+          This command sets the PM EXT parameters.
+          > configure ethernet ont (uni-idx) l2 pm-collect-ext [ no pm-collect | pm-collect <Gpon::OntPmCollect> ] [ no p-bits | p-bits <SignedInteger> ] [ no vlan-id | vlan-id <Vlan::VlanIndexOrZero> ]
+        type: dict
+        suboptions:
+          pm-collect: |
+            optional parameter with default value: "disable"
+            indicates whether enable this pm collect for this Ethernet Port
+            Possible values:
+            - enable : enable PM
+            - disable : disable PM
+          p-bits:
             description: |
-              This command sets the PM EXT parameters.
-              > configure ethernet ont (uni-idx) l2 pm-collect-ext [ no pm-collect | pm-collect <Gpon::OntPmCollect> ] [ no p-bits | p-bits <SignedInteger> ] [ no vlan-id | vlan-id <Vlan::VlanIndexOrZero> ]
-            type: dict
-            suboptions:
-              pm-collect: |
-                optional parameter with default value: "disable"
-                indicates whether enable this pm collect for this Ethernet Port
-                Possible values:
-                - enable : enable PM
-                - disable : disable PM
-              p-bits:
-                description: |
-                  optional parameter with default value: 0xFF
-                  indicates the P bits of the TCI field are used to filter the PM data collected or not\n 0xFF: not used\n 0-7: p-bit used to filter data
-                  Format:
-                  - a signed integer
-                type: int
-                default: 0xFF
-              vlan-id:
-                description: |
-                  optional parameter with default value: 0
-                  indicates the vlan-id bits of the TCI field are used to filter the PM data collected\n 0: not used\n Other value : this vlan-id used to filter data
-                  Format:
-                  - vlan id
-                  - range: [0...4092]
-                type: int
-                default: 0
-          cfm:
+              optional parameter with default value: 0xFF
+              indicates the P bits of the TCI field are used to filter the PM data collected or not\n 0xFF: not used\n 0-7: p-bit used to filter data
+              Format:
+              - a signed integer
+            type: int
+            default: 0xFF
+          vlan-id:
             description: |
-              This attribute is linked to a CFM functionality on the ONU. It indicates if the ONU is programmed to autonomously shut down its UNI upon reception of a downstream AIS PDU on an UP MEP residing on top of the ONU UNI.
-              > configure ethernet ont (uni-idx) cfm [ [ no ] portshut-ais ]
-            type: dict
-            suboptions:
-              portshut-ais:
-                description: |
-                  optional parameter with default value: "disable"
-                  indicates if the ONU is programmed to autonomously shut down its UNI upon reception of a downstream AIS PDU on an UP MEP residing on top of the ONU UNI.
-                type: bool
-                default: false
+              optional parameter with default value: 0
+              indicates the vlan-id bits of the TCI field are used to filter the PM data collected\n 0: not used\n Other value : this vlan-id used to filter data
+              Format:
+              - vlan id
+              - range: [0...4092]
+            type: int
+            default: 0
+      cfm:   
+        description: |
+          This attribute is linked to a CFM functionality on the ONU. It indicates if the ONU is programmed to autonomously shut down its UNI upon reception of a downstream AIS PDU on an UP MEP residing on top of the ONU UNI.
+          > configure ethernet ont (uni-idx) cfm [ [ no ] portshut-ais ]
+        type: dict
+        suboptions:
+          portshut-ais:
+            description: |
+              optional parameter with default value: "disable"
+              indicates if the ONU is programmed to autonomously shut down its UNI upon reception of a downstream AIS PDU on an UP MEP residing on top of the ONU UNI.
+            type: bool
+            default: false
+  state:
+    description:
+    - The state of the configuration after module completion.
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged
