@@ -1,0 +1,13 @@
+---
+- name: check GATHERED state
+  hosts: all
+  gather_facts: no
+  tasks:
+  - name: Gather ethernet line config
+    isam.isam.isam_ethernet_line:
+      state: gathered
+    timeout: 300
+    register: isam_ethernet_line
+  - name: output ethernet line
+    ansible.builtin.debug:
+      msg: "{{ isam_ethernet_line }}" 
