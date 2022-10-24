@@ -18,6 +18,7 @@ created.
 """
 
 from copy import deepcopy
+import debugpy
 
 from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
@@ -90,8 +91,13 @@ class Ethernet_line(ResourceModule):
         """ Generate configuration commands to send based on
             want, have and desired state.
         """
-        wantd = {entry['name']: entry for entry in self.want}
-        haved = {entry['name']: entry for entry in self.have}
+        wantd = {entry['if_index']: entry for entry in self.want}
+        haved = {entry['if_index']: entry for entry in self.have}
+
+        # if not debugpy.is_client_connected():
+        #     debugpy.listen(("localhost",3000))
+        #     debugpy.wait_for_client()
+        # debugpy.breakpoint()
 
         # if state is merged, merge want onto have and then compare
         if self.state == "merged":
