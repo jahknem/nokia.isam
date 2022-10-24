@@ -4,6 +4,7 @@
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, print_function
+from typing import Tuple
 
 __metaclass__ = type
 
@@ -56,18 +57,15 @@ class Ethernet_lineFacts(object):
         facts = {}
         objs = []
 
-        # if not debugpy.is_client_connected():
-        #     debugpy.listen(("localhost",3000))
-        #     debugpy.wait_for_client()
-        
-
         if not data:
             data = self.get_config(connection)
+        if type(data) == tuple:
+            data = data[0]
         data = self._flatten_config(data)
 
         # parse native config using the Ethernet_line template
         ethernet_line_parser = Ethernet_lineTemplate(lines=data, module=self._module)
-        # debugpy.breakpoint()
+        
         objs = list(ethernet_line_parser.parse().values())
 
         for item in objs:
@@ -127,8 +125,6 @@ class Ethernet_lineFacts(object):
             elif self._count_spaces(line) > last_spaces:
                 parent_node = prev_node
                 prev_node = Node(line.split('#',1)[0].strip(), parent=prev_node)
-
-
             
             # In all other cases the current line is a sibling of the previous line
             else:
