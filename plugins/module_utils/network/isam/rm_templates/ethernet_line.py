@@ -26,7 +26,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
     # fmt: off
     PARSERS = [
         {
-            "name": "port_type",
+            "name": "line.port_type",
             "getval": re.compile(
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\sport-type\s(?P<port_type>\S+)
@@ -40,7 +40,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "admin_up",
+            "name": "line.admin_up",
             "getval": re.compile(
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\s((?P<negate_admin_up>no\sadmin-up)|(?P<admin_up>admin-up))
@@ -54,7 +54,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "tca_line_threshold_enable",
+            "name": "line.tca_line_threshold_enable",
             "getval": re.compile(
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_enable>no\senable)|(?P<tca_line_threshold_enable>enable))
@@ -70,7 +70,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "tca_line_threshold_los",
+            "name": "line.tca_line_threshold_los",
             "getval": re.compile(
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_los>no\slos)|los\s(?P<tca_line_threshold_los>\d+))
@@ -86,7 +86,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "tca_line_threshold_fcs",
+            "name": "line.tca_line_threshold_fcs",
             "getval": re.compile(
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_fcs>no\sfcs)|fcs\s(?P<tca_line_threshold_fcs>\d+))
@@ -102,7 +102,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "tca_line_threshold_rx_octets",
+            "name": "line.tca_line_threshold_rx_octets",
             "getval": re.compile(
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_rx_octets>no\srx-octets)|rx-octets\s(?P<tca_line_threshold_rx_octets>\d+))
@@ -118,7 +118,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "tca_line_threshold_tx_octets",
+            "name": "line.tca_line_threshold_tx_octets",
             "getval": re.compile(
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_tx_octets>no\stx-octets)|tx-octets\s(?P<tca_line_threshold_tx_octets>\d+))
@@ -134,7 +134,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "tca_line_threshold_los_day",
+            "name": "line.tca_line_threshold_los_day",
             "getval": re.compile(
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_los_day>no\slos-day)|los-day\s(?P<tca_line_threshold_los_day>\d+))
@@ -150,7 +150,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "tca_line_threshold_fcs_day",
+            "name": "line.tca_line_threshold_fcs_day",
             "getval": re.compile(
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_fcs_day>no\sfcs-day)|fcs-day\s(?P<tca_line_threshold_fcs_day>\d+))
@@ -166,7 +166,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "tca_line_threshold_rx_octets_day",
+            "name": "line.tca_line_threshold_rx_octets_day",
             "getval": re.compile(
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_rx_octets_day>no\srx-octets-day)|rx-octets-day\s(?P<tca_line_threshold_rx_octets_day>\d+)) 
@@ -182,7 +182,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "tca_line_threshold_tx_octets_day",
+            "name": "line.tca_line_threshold_tx_octets_day",
             "getval": re.compile(
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_tx_octets_day>no\stx-octets-day)|tx-octets-day\s(?P<tca_line_threshold_tx_octets_day>\d+))
@@ -198,7 +198,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "mau_type",
+            "name": "line.mau.mau_type",
             "getval": re.compile(
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\smau\s(?P<index>\d+)\stype\s(?P<mau_type>\S+)
@@ -217,7 +217,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "mau_power",
+            "name": "line.mau.mau_power",
             "getval": re.compile(
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\smau\s(?P<index>\d+)\spower\s(?P<mau_power>\S+)
@@ -236,7 +236,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "mau_speed_auto_sense",
+            "name": "line.mau.mau_speed_auto_sense",
             "getval": re.compile(
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\smau\s(?P<index>\d+)\s((?P<no_mau_speed_auto_sense>no\sspeed-auto-sense)|(?P<mau_speed_auto_sense>speed-auto-sense))
@@ -255,7 +255,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "mau_autonegotiate",
+            "name": "line.mau.mau_autonegotiate",
             "getval": re.compile(
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\smau\s(?P<index>\d+)\s((?P<no_mau_autonegotiate>no\sautonegotiate)|(?P<mau_autonegotiate>autonegotiate))
@@ -274,7 +274,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "mau_cap100base_tfd",
+            "name": "line.mau.mau_cap100base_tfd",
             "getval": re.compile(
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\smau\s(?P<index>\d+)\s((?P<no_mau_cap100base_tfd>no\scap100base-tfd)|(?P<mau_cap100base_tfd>cap100base-tfd))
@@ -293,7 +293,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "mau_cap1000base_xfd",
+            "name": "line.mau.mau_cap1000base_xfd",
             "getval": re.compile(
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\smau\s(?P<index>\d+)\s((?P<no_mau_cap1000base_xfd>no\scap1000base-xfd)|(?P<mau_cap1000base_xfd>cap1000base-xfd))
@@ -312,7 +312,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "mau_cap1000base_tfd",
+            "name": "line.mau.mau_cap1000base_tfd",
             "getval": re.compile(
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\smau\s(?P<index>\d+)\s((?P<no_mau_cap1000base_tfd>no\scap1000base-tfd)|(?P<mau_cap1000base_tfd>cap1000base-tfd))
