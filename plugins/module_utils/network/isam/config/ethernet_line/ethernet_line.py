@@ -23,6 +23,7 @@ import debugpy
 from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
+    get_from_dict,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
     ResourceModule,
@@ -49,24 +50,24 @@ class Ethernet_line(ResourceModule):
             tmplt=Ethernet_lineTemplate(),
         )
         self.parsers = [
-            "port_type",
-            "admin_up",
-            "tca_line_threshold_enable",
-            "tca_line_threshold_los",
-            "tca_line_threshold_fcs",
-            "tca_line_threshold_rx_octets",
-            "tca_line_threshold_tx_octets",
-            "tca_line_threshold_los_day",
-            "tca_line_threshold_fcs_day",
-            "tca_line_threshold_rx_octets_day",
-            "tca_line_threshold_tx_octets_day",
-            "mau_type",
-            "mau_power",
-            "mau_speed_auto_sense",
-            "mau_autonegotiate",
-            "mau_cap100base_tfd",
-            "mau_cap1000base_xfd",
-            "mau_cap1000base_tfd",
+            "line.port_type",
+            "line.admin_up",
+            "line.tca_line_threshold_enable",
+            "line.tca_line_threshold_los",
+            "line.tca_line_threshold_fcs",
+            "line.tca_line_threshold_rx_octets",
+            "line.tca_line_threshold_tx_octets",
+            "line.tca_line_threshold_los_day",
+            "line.tca_line_threshold_fcs_day",
+            "line.tca_line_threshold_rx_octets_day",
+            "line.tca_line_threshold_tx_octets_day",
+            "line.mau.mau_type",
+            "line.mau.mau_power",
+            "line.mau.mau_speed_auto_sense",
+            "line.mau.mau_autonegotiate",
+            "line.mau.mau_cap100base_tfd",
+            "line.mau.mau_cap1000base_xfd",
+            "line.mau.mau_cap1000base_tfd",
         ]
 
         
@@ -94,10 +95,10 @@ class Ethernet_line(ResourceModule):
         wantd = {entry['if_index']: entry for entry in self.want}
         haved = {entry['if_index']: entry for entry in self.have}
 
-        # if not debugpy.is_client_connected():
-        #     debugpy.listen(("localhost",3000))
-        #     debugpy.wait_for_client()
-        # debugpy.breakpoint()
+        if not debugpy.is_client_connected():
+            debugpy.listen(("localhost",3000))
+            debugpy.wait_for_client()
+        debugpy.breakpoint()
 
         # if state is merged, merge want onto have and then compare
         if self.state == "merged":
@@ -126,3 +127,31 @@ class Ethernet_line(ResourceModule):
            for the Ethernet_line network resource.
         """
         self.compare(parsers=self.parsers, want=want, have=have)
+
+    def _compare_entries(self, want, have):
+        """Compares the entries in the `want` and `have` data
+           and populates the list of commands to be run.
+           ToDO!
+        """
+        pass
+    
+    def _compare_lists(self, want, have):
+        """Compares the lists in the `want` and `have` data
+           and populates the list of commands to be run.
+           ToDO!
+        """
+        for x in self.complex_parsers:
+            wx = get_from_dict(want, x) or []
+            hx = get_from_dict(have, x) or []
+
+            if isinstance(wx, list):
+                wx = set(wx)
+            if isinstance(hx, list):
+                hx = set(hx)
+
+            if wx != hx:
+                # negate existing config so that want is not appended
+                # in case of replaced or overridden
+                if self.state in ["replaced", "overridden"] and hx:
+                    self.addcmd(have, x, negate=True)
+                self.addcmd(want, x)
