@@ -334,6 +334,7 @@ parsed:
     This output will always be in the same format as the
     module argspec.
 """
+import debugpy
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.isam.isam.plugins.module_utils.network.isam.argspec.ethernet_line.ethernet_line import (
@@ -350,6 +351,9 @@ def main():
 
     :returns: the result form module invocation
     """
+    debugpy.listen(("localhost",3000))
+    debugpy.wait_for_client()
+    debugpy.breakpoint()
     module = AnsibleModule(
         argument_spec=Ethernet_lineArgs.argument_spec,
         mutually_exclusive=[["config", "running_config"]],

@@ -48,10 +48,6 @@ class InterfacesFacts(object):
         """
         facts = {}
         objs = []
-
-        if not debugpy.is_client_connected():
-           debugpy.listen(("localhost",3000))
-           debugpy.wait_for_client()
            
         if not data:
             data = connection.get("info configure interface port flat")
@@ -64,7 +60,6 @@ class InterfacesFacts(object):
         valued = parsed.values()
         objs = list(valued)
 
-        debugpy.breakpoint()
 
         ansible_facts['ansible_network_resources'].pop('interfaces', None)
 

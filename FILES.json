@@ -1,0 +1,1762 @@
+{
+ "files": [
+  {
+   "name": ".",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": ".gitignore",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "a4c6eca7b77449c0e31ea61173a1c788af19ca6248ffcf94a7c0e6f0f2bde159",
+   "format": 1
+  },
+  {
+   "name": "meta",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "meta/execution-environment.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "c87cde523a6315d613aeca8fe83f4c842cde8c3ac1c046149f3c0c5594b4028d",
+   "format": 1
+  },
+  {
+   "name": "meta/README.md",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "meta/meta_runtime.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "75618a838478cbcbbcf17f1e0d7c184d8f2b260b9e667ce598604318e6f0d396",
+   "format": 1
+  },
+  {
+   "name": "tests",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "tests/test.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "6cd138d9b0c7c60749893ac4a956efc76d09f2d9e97bbd2e4d246c5bf44ed933",
+   "format": 1
+  },
+  {
+   "name": "tests/parser_templates",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "tests/parser_templates/cli",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "tests/parser_templates/cli/info_configure_ethernet_line",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "tests/parser_templates/cli/info_configure_ethernet_line/6.02.04ng",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "1c5457ff45aa71a172b306b2a124d36c94b6faa34a1618541da7e5f0efa9c8d0",
+   "format": 1
+  },
+  {
+   "name": "tests/parser_templates/cli/info_configure_ethernet_line/main.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "cdf081476a489d2c36714489e0298cb0b0bd4f9433abfb25720801fa347c4a47",
+   "format": 1
+  },
+  {
+   "name": "tests/parser_templates/cli/info_configure_interface",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "tests/parser_templates/cli/info_configure_interface/output.txt",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "a416cd94bf08c5e87fa9be28fff32e4c259919a5dfaa9f54425e1673e607c4a2",
+   "format": 1
+  },
+  {
+   "name": "tests/README.md",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "tests/integration",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "tests/integration/rm_interfaces_gather.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "c5001c4be7a4af755650e849b2e673d54760b0fc8b3f9c4ecfe299594ba5adc7",
+   "format": 1
+  },
+  {
+   "name": "tests/integration/rm_ethernet_line_gather.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "a314e9494565544aeb4272ed46b3d781ab561d5921cbd9c7bc16089e26587ed9",
+   "format": 1
+  },
+  {
+   "name": "tests/unit",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "tests/unit/compat",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "tests/unit/compat/builtins.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "1f52d10ae9c840f4fa8b72213507a6f6d6f6ca1e38f7eed50051e5a33afb6ad8",
+   "format": 1
+  },
+  {
+   "name": "tests/unit/compat/mock.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "f0abbe84364bc6647d3134cd2f4c78915fc3b8245670642db4be5f90086f6651",
+   "format": 1
+  },
+  {
+   "name": "tests/unit/compat/unittest.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "a0b587cdadfcd7604ec4c7e29618b23d63f2d796e6949d5ff62b42c4a78ba2e2",
+   "format": 1
+  },
+  {
+   "name": "tests/unit/modules",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "tests/unit/modules/utils.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "8868ff883c1915262307f1182afb45c009530dd5f7c72b6a3319fded2619b24d",
+   "format": 1
+  },
+  {
+   "name": "tests/unit/modules/conftest.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "b65db948930c6a47da2ac508ea92db0138ab3b6f7207097025b9fd7242502f63",
+   "format": 1
+  },
+  {
+   "name": "tests/unit/modules/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "tests/unit/modules/network",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "tests/unit/modules/network/isam",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "tests/unit/modules/network/isam/isam_module.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "47d253ab212c4cf99af5b2d9ed11cc60059695da3cf6c8d71dbdee14ba5a1846",
+   "format": 1
+  },
+  {
+   "name": "tests/unit/modules/network/isam/test_isam_ethernet_line.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "9b616ae12e00ac9f7a8b97f7b3801a4fc729e9005d19fb01b6e64fe61a90145b",
+   "format": 1
+  },
+  {
+   "name": "tests/unit/modules/network/isam/isam_isam_interface.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "tests/unit/modules/network/isam/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "tests/unit/modules/network/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "tests/netbox_inventory.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "6da80f3d6a31475b2a8bf01dd2e96fd9223c492deba9f382ef440691d7ba5412",
+   "format": 1
+  },
+  {
+   "name": "tests/inventory.ini",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "8001ddfd3a47d9fbe548629ea8b32dfe40f81c3eb93ca17ca9f8e6c9aa14d6e4",
+   "format": 1
+  },
+  {
+   "name": "tests/test_ethernet_line.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "ca9e8ce6fc80d135aca7102c5e39c03564da1b091f237cb215886b3204ac503c",
+   "format": 1
+  },
+  {
+   "name": "LICENSE",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+   "format": 1
+  },
+  {
+   "name": "README.md",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "14dcdabbf9df6381f15a363ec159edc96bd138c471b4dd7379016ae877b8c455",
+   "format": 1
+  },
+  {
+   "name": "docs",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "docs/README.md",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/rm_templates",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/rm_templates/ethernet_line.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "4326a3cecc690d9e643ba1e0f9c3034c916603c3a3dc14fa97e5cab48fc56ea2",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/rm_templates/README.md",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "233e69e4b59ab230aff5ce81e75fbb2d271111f29af1e9e00b041b420cef4a87",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/rm_templates/interfaces.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "32a449edc3f50d24279d4b01690abda1632b8a58efe26d6ebc502dc247e2d00b",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/rm_templates/bridges.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "0cb5438a42b5cfacf1bbe505ba90cb815a010ddd7436ec3f49abdbeedefb42f7",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/rm_templates/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/rm_templates/vlans.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "b39f1daee77f72e88a6a34f5af82310878c15c93c4f261d40475f7316e50fe73",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/isam.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "38117bd128acc56f17bc0afa16b9c1e7a4ea638ccfee8d0484eeafc2d9803dd3",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/facts",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/facts/README.md",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "79ec5eb40eb2460b9545afce38218dee9eeaf6ca46f875551127506869a66961",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/facts/bridges",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/facts/bridges/bridges.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "2898dab146a076ddd9b7b4b30724ab738b63518b750d2c1258f5a7b508716b37",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/facts/bridges/bridges.bak.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "3af335c562e300f078407214648302eb493632e1613c675d0568cc6bc67509c2",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/facts/bridges/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/facts/ethernet_line",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/facts/ethernet_line/ethernet_line.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "60752863b81f08bb1c1a80371a79c8a406ee02f6779648f2ca55927d1e0d4383",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/facts/ethernet_line/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/facts/interfaces",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/facts/interfaces/interfaces.py.bak",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "5dfeaf8fa7a444e094f590da28340039075d2458412ddfc22e125bedbf064616",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/facts/interfaces/interfaces.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "749907f13414a06cc5518d9b468a7241104a8aee73a2788862b8bd2373cc94bf",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/facts/interfaces/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/facts/vlans",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/facts/vlans/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/facts/vlans/vlans.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "629f1144d639e5ada4c9aa94c16f24cd9dfa90e7cde0f1d2709297ca7642a6d4",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/facts/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/facts/facts.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "bc6828202924ee17775200a768d8175232c7682ce32efa298f5f8345dc112319",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/config",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/config/README.md",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/config/bridges",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/config/bridges/bridges.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "596e2dcea37a41b40f71123990e989002346c642be6ad83b3735200306917437",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/config/bridges/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/config/ethernet_line",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/config/ethernet_line/ethernet_line.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "d89068fe18b4a1ac0ceb6a25638766352dcc7ef26a48a832cfa2290bc594e5c2",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/config/ethernet_line/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/config/interfaces",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/config/interfaces/interfaces.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "4f72d9e14e75a8295dea8f8184c6dbf47b8e139b99466e850bcde24442b3f45d",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/config/interfaces/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/config/vlans",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/config/vlans/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/config/vlans/vlans.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "0666e070413386c81aed7b1c1e6d4127fba8ad9793565fb2798c47f65c177bd4",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/config/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/argspec",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/argspec/facts",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/argspec/facts/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/argspec/facts/facts.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "0ac049e2c1c1aa35abea94c19a70f810c8c8aea86f62b752aa5cb05a133f3cd6",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/argspec/README.md",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/argspec/bridges",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/argspec/bridges/bridges.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "816281a5cded53cd447ed7ac1fc8cdb8fed424f468be6773ea8c98e227b6fcff",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/argspec/bridges/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/argspec/ethernet_line",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/argspec/ethernet_line/ethernet_line.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "d72c90f3628b478e64d8ee556e5a1fc936484c7b11cc5a9aa7ea21894c940411",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/argspec/ethernet_line/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/argspec/interfaces",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/argspec/interfaces/interfaces.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "58978988ffbfb3ba60ca117746dd7c42783ad394c1e4294f991e3838292ac00f",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/argspec/interfaces/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/argspec/vlans",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/argspec/vlans/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/argspec/vlans/vlans.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "ac1aeb2c1b1f923c0195bea1e5ccb8f82a89f86628099dbe2d5a734f06b077c5",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/argspec/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/utils",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/utils/utils.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "b71f1e51b9326826f048da07cdb94dddea1800e58e6a7af4868a32a6f4f412ee",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/utils/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/isam/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/module_utils/network/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/README.md",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/inventory",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/inventory/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/terminal",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/terminal/isam.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "8d583f385633d11ac56951e007743f58e6308455b7f093f01f4ec5da6523558a",
+   "format": 1
+  },
+  {
+   "name": "plugins/cliconf",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/cliconf/isam.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "37d795faf9d96dd39546718c9d4407a4c9014afdb94933d0e810b5f1b5aec9b4",
+   "format": 1
+  },
+  {
+   "name": "plugins/cliconf/utils",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/cliconf/utils/utils.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "d0b9b4be132680e5e628eff603fc8b2ae4b163152c4622df954fbf5302c70acd",
+   "format": 1
+  },
+  {
+   "name": "plugins/cliconf/utils/textfsm_templates",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/cliconf/utils/textfsm_templates/nokia_sros_show_service_fdb_mac.tpl",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "ff57ff4cecd4189332f71abc92fe7920d782ef9b380fb07c74c3a97e7f4949b9",
+   "format": 1
+  },
+  {
+   "name": "plugins/cliconf/utils/textfsm_templates/.placeholder",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/cliconf/utils/parse_output_to_dict.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "71ed1f7a281a2029153a1650fb12008a5fccb6c706e1a763d6d19c21611fce28",
+   "format": 1
+  },
+  {
+   "name": "plugins/filter",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/filter/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/action",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/action/isam.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "886c2d1ca444f49f73f96ef46ab584b80398d7c3df1016d732b688ae55fcd88c",
+   "format": 1
+  },
+  {
+   "name": "plugins/action/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "plugins/modules",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/modules/isam_interfaces.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "3a8ff5d0c030e04030dd9bfe06fda9e53a6f6b8540a1fa9eefb7c625f185ac1e",
+   "format": 1
+  },
+  {
+   "name": "plugins/modules/isam_ethernet_line.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "f96acc2f5b8c0f3c4ca0b6ecda02830f03858eba5bd4dd9710e4a913e8b14db4",
+   "format": 1
+  },
+  {
+   "name": "plugins/modules/isam_bridges.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "6ba830f109a9d42990f5e4a1cf41a4baefd5292e696f7ec29405efbee6397152",
+   "format": 1
+  },
+  {
+   "name": "plugins/modules/isam_facts.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "0b38d5005643f44f8cf13668f915879707ea930fbdd551bbd619c688a314f529",
+   "format": 1
+  },
+  {
+   "name": "plugins/modules/isam_vlans.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "476f7877ae0a5882fc70d20376ceea5a80e7cd171ce4810b759f451255b7622a",
+   "format": 1
+  },
+  {
+   "name": "plugins/modules/__init__.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_builder_run.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3222e6beafd9c9c676da1551081340e310b78c4758d8777e8572419be0e5b90",
+   "format": 1
+  },
+  {
+   "name": "hk.json",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "cfc2c39fe50e3483ff2dad1ac9fb07e34738808a6ed018fd8ec72a2b8c3c311f",
+   "format": 1
+  },
+  {
+   "name": "rm_models",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "rm_models/show",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/isam_ethernet_ont.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "5ecc1254b1e6fde51bbd3e55a36b7508f017da684869179a3c577b6e8ccbb4b3",
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/isam_equipment_ont_interface.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "ec58768a7018ba662cd8a79e2fea55834aedec674e30449973681c57b1e30384",
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/isam_qos_interface.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "03a6e4c847e40dc6510209c63fa9cd1c0f35f90861003f1dcc8e1cea38883524",
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/show_dhcp-relay_session.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e713c7b5ff66e627fe02363d25e6b0db098576c6b38f9839021c84270bd5ace8",
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/isam_ping.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "9e16f598989a1a43b37ed7eaf3a9193f973e929be71ffc2220211d3698bf9542",
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/show_equipment_diagnostics_sfp.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "d8b46f3d35db0cb62af6e5fb9b2127ee6b0c55d924bd09546f6bbb14b28d1870",
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/show_interface_port.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "24ac3a9be310e32798af59a012f57b2e3bbb04e14fbe42736671c5c3cd3db42b",
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/show_vlan_bridge-port-fdb.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "acf17cca45bb63c5be076f4d027efd8a7c79f4445191af56bbb98f12812a79a8",
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/isam_bridge_vlan.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "f4ba58efc1c56aa56da43e8743d24310c7ef9d1fe8c1a2353c843d46d44314ac",
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/isam_bridge.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "4b6bded234d7267bf4764df4d959b3c20740c8376aa4b822e3d68379e4d6beb0",
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/show_equipment_transceiver-inventory.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "ea3d08dec9a30faeb26a3e40eda0fd5fd67fa5489c0132a9efc8d16312732cff",
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/show_equipment_ont_optics.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "8f56c597c4735ca3d7c9f3bcfef70d11f2ef4960922b698a2ac65a8702205c6b",
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/show_equipment_ont_sw-download.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "d6de7410dd9198c93bb38cf3b01f07c5445f3edc979201e596c030aba4a6724a",
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/show_equipment_ont_operational-data.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "d993a0cc1dff4d4cb56e997f716bf8879708c89b65340f3d7e901eb39149910f",
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/show_equipment_ont_interface.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "b0fda8e74aca9598bbfa54552022517a8d9ab9cabfca5fb6325994dc5d8f1dca",
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/show_ethernet_ont_operational-data.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "87eb36af3510d249f8669e810b8c2c4aae324d59c6297a7c82b74573ae47e0e1",
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/show_equipment_ont_status.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "5c3b76bf096d846f823858b725c217ec724e4c297c31a5aba5b8689e5c70fddc",
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/reference.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "67fcf127d6901be53ac0f7c9f2eefc9162b9911664f901a57517aa2cf21828df",
+   "format": 1
+  },
+  {
+   "name": "rm_models/bak/isam_equipment_ont_slot.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "30ff623f8d23561a05bb242751dc863a66dfefcdb74ba945e2156140d2dcd55b",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/cwmp",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/li_vlan",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/dist-service",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/atm",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/alias",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/trap",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/vlan",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/pppox-relay",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/qos-servicerouter",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/veip",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/ipoa_e-iw",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/cfm",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/eth-cfm",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/dhcp-server",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/xdsl-bonding",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/snmp-agent",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/eth-ring",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/xstp",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/dist-router",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/mcast-control",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/service",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/lldp-med",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/l2uni",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/ces",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/port",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/e1",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/ima",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/port-protection",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/arp-relay",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/ethernet_ont.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "ca1836a6aa9e6f46a182d935e15dc9b1aa5e34aff16921a82b23b6a4f12c8d67",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/equipment.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "caaa287c656459a2739608cc436e8f7159c66063e08f744454f10b1507462c19",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/shdsl",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/xdsl",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/tc-layer",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/ethernet_eont.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "326c67de009455c5b8663425d200e648c1864509ab145aee31893a965e441050",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/l2cp",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/generic-pon",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/mcast",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/ani",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/trouble-shooting",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/lag",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/cpe-management",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/subscriber-mgmt",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/system.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "de3eb08943e3a4afe5727918c7a387a9f9eb22a330e27221a9d2118c2c18aaca",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/iphost",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/hpna",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/pppeol2",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/debug-trace",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/ntp",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/linetest",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/link-agg",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/dual-parenting",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/gpon_ont.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "d8181cba2224ea650eb2d276de711cc59ed28fff8fefe9e3b707dc1b3b841a27",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/software-mngt",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "6a882819b692d41a45c4f048b5a8dfd2692be00772a30ac7aa990afd33ecc60f",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/filter",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/interface.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "6bc871c478b7976a955cc20033921aa3acff41d390afb9dd400545bea0a6d5e0",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/alarm",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/igmp",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/pppoe-client",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/router",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/pon",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/error",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "82c3d44502628689b2600f95dd1097dc8354742d4c81c3d6d7b59824c57b3062",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/moca",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/ipv6-antispoofing",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/voice",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/ai",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/mirror",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/ethernet_line.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "cfbbc74dc471b5982250ee3bafa6ba105108453cf95d0d096e9bf664afc310c5",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/uni",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/log",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/nat",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/efm-oam",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/dhcp-relay",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/tr069serv",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/qos",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "rm_models/configure/bridge",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "format": 1
+  },
+  {
+   "name": "test.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "2c80a286dfa549f48d0a711addc69257a8dee9baa46511cc6056e61734732900",
+   "format": 1
+  },
+  {
+   "name": ".vscode",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": ".vscode/launch.json",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "9b5edbf9fdbda5f725d2287274fb15a322b19aa49edc7d4eb35f2c3da09c573e",
+   "format": 1
+  },
+  {
+   "name": ".vscode/settings.json",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "38a3adcccdf8ed7e84a8b8799e923daf9d2eb335e7ae586edfeb6416cac8b49b",
+   "format": 1
+  },
+  {
+   "name": "requirements.txt",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "47d9fe78273fd64c750e78a317b1a59a6f87ebb93d8d4cf9ae6d98a0f2fc9f9e",
+   "format": 1
+  },
+  {
+   "name": "requirementsdev.txt",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "a6d6ed37bb44d499600066a5a37a55a6108de64a180cc207155ecd0ca5efa156",
+   "format": 1
+  },
+  {
+   "name": ".pytest_cache",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": ".pytest_cache/v",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": ".pytest_cache/v/cache",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": ".pytest_cache/v/cache/stepwise",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "format": 1
+  },
+  {
+   "name": ".pytest_cache/.gitignore",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "3ed731b65d06150c138e2dadb0be0697550888a6b47eb8c45ecc9adba8b8e9bd",
+   "format": 1
+  },
+  {
+   "name": ".pytest_cache/README.md",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "73fd6fccdd802c419a6b2d983d6c3173b7da97558ac4b589edec2dfe443db9ad",
+   "format": 1
+  },
+  {
+   "name": ".pytest_cache/CACHEDIR.TAG",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4",
+   "format": 1
+  },
+  {
+   "name": ".env",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "a2c3f08a257d4016dafbd035660c1bd19551885f3e2bff8ad87cc2ba3b8ef0ee",
+   "format": 1
+  }
+ ],
+ "format": 1
+}
