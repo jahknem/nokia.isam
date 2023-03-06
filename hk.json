@@ -1,0 +1,5033 @@
+{
+    "_meta": {
+        "hostvars": {
+            "DS-ALT1-01": {
+                "ansible_host": "10.190.1.9",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-ALT1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Altenstadt-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.9",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ALT-01_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Altenstadt-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-ALT2-01": {
+                "ansible_host": "10.190.1.17",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-ALT2-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Altenstadt-02"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.17",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ALT-02_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Altenstadt-02"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-ALT3-01": {
+                "ansible_host": "10.190.1.18",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-ALT3-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Altenstadt-03"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.18",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ALT-03_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Altenstadt-03"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-ALT4-01": {
+                "ansible_host": "10.190.1.20",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-ALT4-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Altenstadt-04"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.20",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ALT-04_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Altenstadt-04"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-ALT5-01": {
+                "ansible_host": "10.190.1.27",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-ALT5-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Altenstadt-05"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.27",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ALT-05_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Altenstadt-05"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-ALT6-01": {
+                "ansible_host": "10.190.1.16",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-ALT6-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Altenstadt-06"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.16",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ALT-06_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Altenstadt-06"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-ALT7-01": {
+                "ansible_host": "10.190.1.19",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-ALT7-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Altenstadt-07"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.19",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ALT-07_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Altenstadt-07"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-ALT8-01": {
+                "ansible_host": "10.190.1.32",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-ALT8-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Altenstadt-018"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.32",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ALT-08_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Altenstadt-08"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-ENZ1-01": {
+                "ansible_host": "10.190.1.21",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-ENZ1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "enzheim-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.190.1.21",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ENZ-01_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-enzheim-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-HEG1-01": {
+                "ansible_host": "10.190.1.29",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-HEG1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "heegheim-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.29",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "HEG-01_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-heegheim-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-HOE1-01": {
+                "ansible_host": "10.190.1.26",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-HOE1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "hoechst-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.26",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "HOE-01_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-hoechst-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-HOE2-01": {
+                "ansible_host": "10.190.1.15",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-HOE2-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "hoechst-02"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.15",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "HOE-02_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-hoechst-02"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-HOE3-01": {
+                "ansible_host": "10.190.1.8",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-HOE3-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "hoechst-03"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.8",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "HOE-03_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-hoechst-03"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-LIN-TEST-01": {
+                "ansible_host": "10.190.1.40",
+                "custom_fields": {
+                    "bluenet_url": null,
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": null,
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "blue-networks-lin-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "primary_ip4": "10.190.1.40",
+                "racks": [
+                    "BN-LIN-Rack5_Stageing"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "pop-lindheim"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-LIN1-01": {
+                "ansible_host": "10.190.1.1",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-LIN1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "lindheim-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.190.1.1",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "LIN-01_Rack3"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-lindheim-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-LIN2-01": {
+                "ansible_host": "10.190.1.4",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-LIN2-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "lindheim-02"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.190.1.4",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "LIN-02_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-lindheim-02"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-LIN3-01": {
+                "ansible_host": "10.190.1.6",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-LIN3-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "lindheim-03"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.190.1.6",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "LIN-03_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-lindheim-03"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-LIN4-01": {
+                "ansible_host": "10.190.1.12",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-LIN4-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "lindheim-04"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.190.1.12",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "LIN-04_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-lindheim-04"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-LIN5-01": {
+                "ansible_host": "10.190.1.33",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-LIN5-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "blue-networks-lin-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.33",
+                "racks": [
+                    "BN-LIN-Rack3"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "pop-lindheim"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-MKK-BAD-01": {
+                "ansible_host": "10.192.1.16",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-MKK-Bad1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "bad_soden_salmuenster-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.192.1.16",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "BAD-01_Rack2"
+                ],
+                "regions": [
+                    "bad_soden-salmuenster",
+                    "main-kinzig-kreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Bad_Soden-Salmuenster-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-MKK-BRU-01": {
+                "ansible_host": "10.192.1.5",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-BRU1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "bruchkoebel-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.192.1.5",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "BRU-01_Rack2"
+                ],
+                "regions": [
+                    "bruchkoebel",
+                    "main-kinzig-kreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Bruchkoebel-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-MKK-BRU-PELLER-01": {
+                "ansible_host": "10.192.1.15",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-BRU-PE1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "bruchkoebel-peller-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.192.1.15",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "BRU-PELLER-01_Rack2"
+                ],
+                "regions": [
+                    "bruchkoebel",
+                    "main-kinzig-kreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Bruchkoebel-Peller-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-MKK-ERL-01": {
+                "ansible_host": "10.192.1.8",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-MKK-ERL1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "erlensee-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.192.1.8",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ERL-01_Rack2"
+                ],
+                "regions": [
+                    "erlensee",
+                    "main-kinzig-kreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-erlensee-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-MKK-HAI-01": {
+                "ansible_host": "10.192.1.23",
+                "custom_fields": {
+                    "bluenet_url": null,
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": null,
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "hainchen"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.192.1.23",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "HAI_Rack1"
+                ],
+                "regions": [
+                    "limeshain",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "pop-hainchen"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-MKK-HAS-01": {
+                "ansible_host": "10.192.1.6",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-MKK-HAS1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "neuenhasslau"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.192.1.6",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "NHS_Rack1"
+                ],
+                "regions": [
+                    "hasselroth",
+                    "main-kinzig-kreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-neuenhasslau"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-MKK-HER-WAE-01": {
+                "ansible_host": "10.192.1.21",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-MKK-HER-WAE1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "waechtersbach"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.192.1.21",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "WAE_Rack1"
+                ],
+                "regions": [
+                    "waechtersbach",
+                    "main-kinzig-kreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-waechtersbach"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-MKK-LAN-01": {
+                "ansible_host": "10.192.1.14",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-MKK-LAN1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "langenselbold-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.192.1.14",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "LAN-01_Rack2"
+                ],
+                "regions": [
+                    "langenselbold",
+                    "main-kinzig-kreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-langenselbold-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-MKK-MER-01": {
+                "ansible_host": "10.192.1.9",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-MKK-MER1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "meerholz-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.192.1.9",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "MER-01_Rack2"
+                ],
+                "regions": [
+                    "gelnhausen",
+                    "main-kinzig-kreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Meerholz-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-MKK-NIE-01": {
+                "ansible_host": "10.192.1.3",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-NIH1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "niederisigheim-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.192.1.3",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "NIE-01_Rack2"
+                ],
+                "regions": [
+                    "bruchkoebel",
+                    "main-kinzig-kreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Niederisigheim-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-MKK-RON1-01": {
+                "ansible_host": "10.192.1.10",
+                "custom_fields": {
+                    "bluenet_url": null,
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": null,
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "ronneburg-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.192.1.10",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "RON-01_Rack1"
+                ],
+                "regions": [
+                    "ronneburg",
+                    "main-kinzig-kreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Ronneburg-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-MKK-RON2-01": {
+                "ansible_host": "10.192.1.11",
+                "custom_fields": {
+                    "bluenet_url": null,
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": null,
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "ronneburg-02"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.192.1.11",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "RON-02_Rack1"
+                ],
+                "regions": [
+                    "ronneburg",
+                    "main-kinzig-kreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Ronneburg-02"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-MKK-RON3-01": {
+                "ansible_host": "10.192.1.25",
+                "custom_fields": {
+                    "bluenet_url": null,
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": null,
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "ronneburg"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.192.1.25",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "RON_Rack1"
+                ],
+                "regions": [
+                    "ronneburg",
+                    "main-kinzig-kreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "pop-ronneburg"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-MKK-SEI1-01": {
+                "ansible_host": "10.192.1.18",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-MKK-SEI1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "seidenroth-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.192.1.18",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "SEI-01_Rack2"
+                ],
+                "regions": [
+                    "steinau_an_der_strasse",
+                    "main-kinzig-kreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Seidenroth-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-MKK-SOM-01": {
+                "ansible_host": "10.192.1.7",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-MKK-SOM1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "somborn-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.192.1.7",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "SOM-01_Rack2"
+                ],
+                "regions": [
+                    "freigericht",
+                    "main-kinzig-kreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Somborn-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-ASS1-01": {
+                "ansible_host": "10.191.1.1",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-ASS1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Assenheim-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.191.1.1",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ASS-01_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Assenheim-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-ASS10-01": {
+                "ansible_host": "10.191.1.10",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-ASS10-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Assenheim-10"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.191.1.10",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ASS-10_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Assenheim-10"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-ASS2-01": {
+                "ansible_host": "10.191.1.2",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-ASS2-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Assenheim-02"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.191.1.2",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ASS-02_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Assenheim-02"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-ASS3-01": {
+                "ansible_host": "10.191.1.3",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-ASS3-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Assenheim-03"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.191.1.3",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ASS-03_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Assenheim-03"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-ASS4-01": {
+                "ansible_host": "10.191.1.4",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-ASS4-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Assenheim-04"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.191.1.4",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ASS-04_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Assenheim-04"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-ASS5-01": {
+                "ansible_host": "10.191.1.5",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-ASS5-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Assenheim-05"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.191.1.5",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ASS-05_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Assenheim-05"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-ASS6-01": {
+                "ansible_host": "10.191.1.6",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-ASS6-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Assenheim-06"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.191.1.6",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ASS-06_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Assenheim-06"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-ASS7-01": {
+                "ansible_host": "10.191.1.7",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-ASS7-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Assenheim-07"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.191.1.7",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ASS-07_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Assenheim-07"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-ASS8-01": {
+                "ansible_host": "10.191.1.8",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-ASS8-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Assenheim-018"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.191.1.8",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ASS-08_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Assenheim-08"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-ASS9-01": {
+                "ansible_host": "10.191.1.9",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-ASS9-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Assenheim-09"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.191.1.9",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ASS-09_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Assenheim-09"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-BON1-01": {
+                "ansible_host": "10.191.1.11",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-BON1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Boenstadt-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.191.1.11",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "BON-01_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Boenstadt-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-BON2-01": {
+                "ansible_host": "10.191.1.12",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-BON2-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "boenstadt"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.191.1.12",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "BOE_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "pop-boenstadt"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-BON3-01": {
+                "ansible_host": "10.191.1.13",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-BON3-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Boenstadt-03"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.191.1.13",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "BON-03_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Boenstadt-03"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-BON3-02": {
+                "ansible_host": "10.191.1.27",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-BON3-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Boenstadt-03"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.191.1.27",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "BON-03_Rack1"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Boenstadt-03"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-BON4-01": {
+                "ansible_host": "10.191.1.14",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-BON2-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Boenstadt-04"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.191.1.14",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "BON-04_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Boenstadt-04"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-ILB1-01": {
+                "ansible_host": "10.191.1.15",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-ILB1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Ilbenstadt-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.191.1.15",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ILB-01_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Ilbenstadt-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-ILB1-02": {
+                "ansible_host": "10.191.1.29",
+                "custom_fields": {
+                    "bluenet_url": null,
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": null,
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Ilbenstadt-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.191.1.29",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ILB-01_Rack3"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Ilbenstadt-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-ILB2-01": {
+                "ansible_host": "10.191.1.16",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-ILB2-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Ilbenstadt-02"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.191.1.16",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ILB-02_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Ilbenstadt-02"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-ILB3-01": {
+                "ansible_host": "10.191.1.17",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-ILB2-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Ilbenstadt-03"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.191.1.17",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ILB-03_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Ilbenstadt-03"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-ILB4-01": {
+                "ansible_host": "10.191.1.18",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-ILB5-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Ilbenstadt-04"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.191.1.18",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ILB-04_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Ilbenstadt-04"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-ILB5-01": {
+                "ansible_host": "10.191.1.19",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-ILB6-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Ilbenstadt-05"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.191.1.19",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ILB-05_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Ilbenstadt-05"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-ILB6-01": {
+                "ansible_host": "10.191.1.20",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-ILB2-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Ilbenstadt-06"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.191.1.20",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ILB-06_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Ilbenstadt-06"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-ILB7-01": {
+                "ansible_host": "10.191.1.21",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-ILB8-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Ilbenstadt-07"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.191.1.21",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ILB-07_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Ilbenstadt-07"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-KAI1-01": {
+                "ansible_host": "10.191.1.22",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-KAI1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Kaichen-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.191.1.22",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "KAI-01_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Kaichen-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-KAI2-01": {
+                "ansible_host": "10.191.1.23",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-KAI2-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Kaichen-02"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.191.1.23",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "KAI-02_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Kaichen-02"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-KAI3-01": {
+                "ansible_host": "10.191.1.24",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-KAI2-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Kaichen-03"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.191.1.24",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "KAI-03_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Kaichen-03"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-KAI4-01": {
+                "ansible_host": "10.191.1.25",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-KAI5-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "Kaichen-04"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.191.1.25",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "KAI-04_Rack2"
+                ],
+                "regions": [
+                    "niddatal",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Kaichen-04"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-MIT1-01": {
+                "ansible_host": "10.192.1.17",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-MIB1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "mittelbuchen-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.192.1.17",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "MIT-01_Rack2"
+                ],
+                "regions": [
+                    "hanau",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Mittelbuchen-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-NEU1-01": {
+                "ansible_host": "10.192.1.4",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-NEU1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "neuberg-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.192.1.4",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "NEU-01_Rack2"
+                ],
+                "regions": [
+                    "neuberg",
+                    "main-kinzig-kreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-Neuberg-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-NID-NID1-01": {
+                "ansible_host": "10.192.1.2",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Niddatal.DS-NID-NID1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "heldenbergen"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.192.1.2",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "HEL_Rack1"
+                ],
+                "regions": [
+                    "nidderau",
+                    "main-kinzig-kreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-heldenbergen"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-OBE1-01": {
+                "ansible_host": "10.190.1.7",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-OBE1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "oberau-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.7",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "OBE-01_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-oberau-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-OBE2-01": {
+                "ansible_host": "10.190.1.14",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-OBE2-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "oberau-02"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.14",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "OBE-02_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-oberau-02"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-OBE3-01": {
+                "ansible_host": "10.190.1.13",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-OBE3-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "oberau-03"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.13",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "OBE-03_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-oberau-03"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-ROD1-01": {
+                "ansible_host": "10.190.1.22",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-ROD1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "rodenbach-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.22",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ROD-01_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-rodenbach-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-ROD2-01": {
+                "ansible_host": "10.190.1.5",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-ROD2-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "rodenbach-02"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.5",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ROD-02_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-rodenbach-02"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-ROM2-01": {
+                "ansible_host": "10.190.1.29",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-ROM2-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "rommelhausen-02"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.190.1.29",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ROM-02_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-rommelhausen-02"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-ROM3-01": {
+                "ansible_host": "10.190.1.23",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-ROM3-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "rommelhausen-03"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.190.1.23",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ROM-03_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-rommelhausen-03"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-ROM4-01": {
+                "ansible_host": "10.190.1.30",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-ROM4-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "rommelhausen-04"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.190.1.30",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ROM-04_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-rommelhausen-04"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-ROM5-01": {
+                "ansible_host": "10.190.1.28",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-ROM5-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "rommelhausen-05"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.190.1.28",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ROM-05_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-rommelhausen-05"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-ROM6-01": {
+                "ansible_host": "10.190.1.31",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-ROM6-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "rommelhausen-06"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r6-2-04m"
+                ],
+                "primary_ip4": "10.190.1.31",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "ROM-06_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-rommelhausen-06"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-WAL1-01": {
+                "ansible_host": "10.190.1.24",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-WAL1-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "waldsiedlung-01"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.24",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "WAL-01_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-waldsiedlung-01"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-WAL2-01": {
+                "ansible_host": "10.190.1.10",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-WAL2-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "waldsiedlung-02"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.10",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "WAL-02_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-waldsiedlung-02"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-WAL3-01": {
+                "ansible_host": "10.190.1.11",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-WAL3-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "waldsiedlung-03"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.11",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "WAL-03_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-waldsiedlung-03"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-WAL4-01": {
+                "ansible_host": "10.190.1.25",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-WAL4-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "waldsiedlung-04"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.25",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "WAL-04_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-waldsiedlung-04"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            },
+            "DS-WAL5-01": {
+                "ansible_host": "10.190.1.3",
+                "custom_fields": {
+                    "bluenet_url": "https://blue-networks.atlassian.net/wiki/spaces/NS/pages/457277510",
+                    "checkmk_url": null,
+                    "librenms_url": null,
+                    "smokeping_url": "http://10.199.200.10/smokeping/smokeping.cgi?target=DSLAMs.Altenstadt.DS-WAL5-01",
+                    "zenoss_url": null
+                },
+                "device_roles": [
+                    "msan"
+                ],
+                "device_types": [
+                    "7330-isam-fttn"
+                ],
+                "is_virtual": false,
+                "local_context_data": [
+                    null
+                ],
+                "locations": [
+                    "waldsiedlung-05"
+                ],
+                "manufacturers": [
+                    "nokia"
+                ],
+                "platforms": [
+                    "r5-1-02"
+                ],
+                "primary_ip4": "10.190.1.3",
+                "rack_role": "network-aggregation",
+                "racks": [
+                    "WAL-05_Rack2"
+                ],
+                "regions": [
+                    "altenstadt",
+                    "wetteraukreis",
+                    "hessen",
+                    "deutschland"
+                ],
+                "services": [],
+                "site_groups": [],
+                "sites": [
+                    "mfg-waldsiedlung-05"
+                ],
+                "status": {
+                    "label": "Active",
+                    "value": "active"
+                },
+                "tags": [],
+                "tenants": [
+                    "yplay"
+                ]
+            }
+        }
+    },
+    "all": {
+        "children": [
+            "device_roles_msan",
+            "manufacturers_nokia",
+            "region_deutschland",
+            "ungrouped"
+        ]
+    },
+    "device_roles_msan": {
+        "hosts": [
+            "DS-ALT1-01",
+            "DS-ALT2-01",
+            "DS-ALT3-01",
+            "DS-ALT4-01",
+            "DS-ALT5-01",
+            "DS-ALT6-01",
+            "DS-ALT7-01",
+            "DS-ALT8-01",
+            "DS-ENZ1-01",
+            "DS-HEG1-01",
+            "DS-HOE1-01",
+            "DS-HOE2-01",
+            "DS-HOE3-01",
+            "DS-LIN-TEST-01",
+            "DS-LIN1-01",
+            "DS-LIN2-01",
+            "DS-LIN3-01",
+            "DS-LIN4-01",
+            "DS-LIN5-01",
+            "DS-MKK-BAD-01",
+            "DS-MKK-BRU-01",
+            "DS-MKK-BRU-PELLER-01",
+            "DS-MKK-ERL-01",
+            "DS-MKK-HAI-01",
+            "DS-MKK-HAS-01",
+            "DS-MKK-HER-WAE-01",
+            "DS-MKK-LAN-01",
+            "DS-MKK-MER-01",
+            "DS-MKK-NIE-01",
+            "DS-MKK-RON1-01",
+            "DS-MKK-RON2-01",
+            "DS-MKK-RON3-01",
+            "DS-MKK-SEI1-01",
+            "DS-MKK-SOM-01",
+            "DS-NID-ASS1-01",
+            "DS-NID-ASS10-01",
+            "DS-NID-ASS2-01",
+            "DS-NID-ASS3-01",
+            "DS-NID-ASS4-01",
+            "DS-NID-ASS5-01",
+            "DS-NID-ASS6-01",
+            "DS-NID-ASS7-01",
+            "DS-NID-ASS8-01",
+            "DS-NID-ASS9-01",
+            "DS-NID-BON1-01",
+            "DS-NID-BON2-01",
+            "DS-NID-BON3-01",
+            "DS-NID-BON3-02",
+            "DS-NID-BON4-01",
+            "DS-NID-ILB1-01",
+            "DS-NID-ILB1-02",
+            "DS-NID-ILB2-01",
+            "DS-NID-ILB3-01",
+            "DS-NID-ILB4-01",
+            "DS-NID-ILB5-01",
+            "DS-NID-ILB6-01",
+            "DS-NID-ILB7-01",
+            "DS-NID-KAI1-01",
+            "DS-NID-KAI2-01",
+            "DS-NID-KAI3-01",
+            "DS-NID-KAI4-01",
+            "DS-NID-MIT1-01",
+            "DS-NID-NEU1-01",
+            "DS-NID-NID1-01",
+            "DS-OBE1-01",
+            "DS-OBE2-01",
+            "DS-OBE3-01",
+            "DS-ROD1-01",
+            "DS-ROD2-01",
+            "DS-ROM2-01",
+            "DS-ROM3-01",
+            "DS-ROM4-01",
+            "DS-ROM5-01",
+            "DS-ROM6-01",
+            "DS-WAL1-01",
+            "DS-WAL2-01",
+            "DS-WAL3-01",
+            "DS-WAL4-01",
+            "DS-WAL5-01"
+        ]
+    },
+    "manufacturers_nokia": {
+        "hosts": [
+            "DS-ALT1-01",
+            "DS-ALT2-01",
+            "DS-ALT3-01",
+            "DS-ALT4-01",
+            "DS-ALT5-01",
+            "DS-ALT6-01",
+            "DS-ALT7-01",
+            "DS-ALT8-01",
+            "DS-ENZ1-01",
+            "DS-HEG1-01",
+            "DS-HOE1-01",
+            "DS-HOE2-01",
+            "DS-HOE3-01",
+            "DS-LIN-TEST-01",
+            "DS-LIN1-01",
+            "DS-LIN2-01",
+            "DS-LIN3-01",
+            "DS-LIN4-01",
+            "DS-LIN5-01",
+            "DS-MKK-BAD-01",
+            "DS-MKK-BRU-01",
+            "DS-MKK-BRU-PELLER-01",
+            "DS-MKK-ERL-01",
+            "DS-MKK-HAI-01",
+            "DS-MKK-HAS-01",
+            "DS-MKK-HER-WAE-01",
+            "DS-MKK-LAN-01",
+            "DS-MKK-MER-01",
+            "DS-MKK-NIE-01",
+            "DS-MKK-RON1-01",
+            "DS-MKK-RON2-01",
+            "DS-MKK-RON3-01",
+            "DS-MKK-SEI1-01",
+            "DS-MKK-SOM-01",
+            "DS-NID-ASS1-01",
+            "DS-NID-ASS10-01",
+            "DS-NID-ASS2-01",
+            "DS-NID-ASS3-01",
+            "DS-NID-ASS4-01",
+            "DS-NID-ASS5-01",
+            "DS-NID-ASS6-01",
+            "DS-NID-ASS7-01",
+            "DS-NID-ASS8-01",
+            "DS-NID-ASS9-01",
+            "DS-NID-BON1-01",
+            "DS-NID-BON2-01",
+            "DS-NID-BON3-01",
+            "DS-NID-BON3-02",
+            "DS-NID-BON4-01",
+            "DS-NID-ILB1-01",
+            "DS-NID-ILB1-02",
+            "DS-NID-ILB2-01",
+            "DS-NID-ILB3-01",
+            "DS-NID-ILB4-01",
+            "DS-NID-ILB5-01",
+            "DS-NID-ILB6-01",
+            "DS-NID-ILB7-01",
+            "DS-NID-KAI1-01",
+            "DS-NID-KAI2-01",
+            "DS-NID-KAI3-01",
+            "DS-NID-KAI4-01",
+            "DS-NID-MIT1-01",
+            "DS-NID-NEU1-01",
+            "DS-NID-NID1-01",
+            "DS-OBE1-01",
+            "DS-OBE2-01",
+            "DS-OBE3-01",
+            "DS-ROD1-01",
+            "DS-ROD2-01",
+            "DS-ROM2-01",
+            "DS-ROM3-01",
+            "DS-ROM4-01",
+            "DS-ROM5-01",
+            "DS-ROM6-01",
+            "DS-WAL1-01",
+            "DS-WAL2-01",
+            "DS-WAL3-01",
+            "DS-WAL4-01",
+            "DS-WAL5-01"
+        ]
+    },
+    "region_altenstadt": {
+        "children": [
+            "sites_Lindheim-Blue-Networks",
+            "sites_mfg-Altenstadt-01",
+            "sites_mfg-Altenstadt-02",
+            "sites_mfg-Altenstadt-03",
+            "sites_mfg-Altenstadt-04",
+            "sites_mfg-Altenstadt-05",
+            "sites_mfg-Altenstadt-06",
+            "sites_mfg-Altenstadt-07",
+            "sites_mfg-Altenstadt-08",
+            "sites_mfg-enzheim-01",
+            "sites_mfg-heegheim-01",
+            "sites_mfg-hoechst-01",
+            "sites_mfg-hoechst-02",
+            "sites_mfg-hoechst-03",
+            "sites_mfg-lindheim-01",
+            "sites_mfg-lindheim-02",
+            "sites_mfg-lindheim-03",
+            "sites_mfg-lindheim-04",
+            "sites_mfg-oberau-01",
+            "sites_mfg-oberau-02",
+            "sites_mfg-oberau-03",
+            "sites_mfg-rodenbach-01",
+            "sites_mfg-rodenbach-02",
+            "sites_mfg-rommelhausen-02",
+            "sites_mfg-rommelhausen-03",
+            "sites_mfg-rommelhausen-04",
+            "sites_mfg-rommelhausen-05",
+            "sites_mfg-rommelhausen-06",
+            "sites_mfg-waldsiedlung-01",
+            "sites_mfg-waldsiedlung-02",
+            "sites_mfg-waldsiedlung-03",
+            "sites_mfg-waldsiedlung-04",
+            "sites_mfg-waldsiedlung-05",
+            "sites_pop-lindheim"
+        ]
+    },
+    "region_bad-orb": {
+        "children": [
+            "sites_bad-orb"
+        ]
+    },
+    "region_bad_soden-salmuenster": {
+        "children": [
+            "sites_mfg-Bad_Soden-Salmuenster-01",
+            "sites_pop-bad_soden-salmuenster"
+        ]
+    },
+    "region_badnauheim": {
+        "children": [
+            "sites_pop-badnauheim",
+            "sites_schalthaus-sued_badnauheim"
+        ]
+    },
+    "region_bayern": {
+        "children": [
+            "region_mainaschaff"
+        ]
+    },
+    "region_berlin": {
+        "children": [
+            "sites_berlin_3u-telekom"
+        ]
+    },
+    "region_brachttal": {
+        "children": [
+            "sites_pop-brachttal"
+        ]
+    },
+    "region_bruchkoebel": {
+        "children": [
+            "sites_mfg-Bruchkoebel-01",
+            "sites_mfg-Bruchkoebel-Peller-01",
+            "sites_mfg-Niederisigheim-01"
+        ]
+    },
+    "region_deutschland": {
+        "children": [
+            "region_bayern",
+            "region_berlin",
+            "region_hessen"
+        ]
+    },
+    "region_echzell": {
+        "children": [
+            "sites_pop-echzell"
+        ]
+    },
+    "region_erlensee": {
+        "children": [
+            "sites_mfg-erlensee-01"
+        ]
+    },
+    "region_florstadt": {
+        "children": [
+            "sites_pop-florstadt"
+        ]
+    },
+    "region_frankfurt": {
+        "children": [
+            "sites_frankfurt_equinix",
+            "sites_frankfurt_hvt-lahnstrasse",
+            "sites_frankfurt_hvt-stiftstrasse",
+            "sites_frankfurt_interxion",
+            "sites_frankfurt_telehouse"
+        ]
+    },
+    "region_freigericht": {
+        "children": [
+            "sites_mfg-Somborn-01"
+        ]
+    },
+    "region_gelnhausen": {
+        "children": [
+            "sites_mfg-Meerholz-01"
+        ]
+    },
+    "region_glauburg": {
+        "children": [
+            "sites_pop-glauburg"
+        ]
+    },
+    "region_hammersbach": {
+        "children": [
+            "sites_pop-hammersbach"
+        ]
+    },
+    "region_hanau": {
+        "children": [
+            "sites_mfg-Mittelbuchen-01"
+        ]
+    },
+    "region_hasselroth": {
+        "children": [
+            "sites_mfg-neuenhasslau"
+        ]
+    },
+    "region_hessen": {
+        "children": [
+            "region_frankfurt",
+            "region_hanau",
+            "region_main-kinzig-kreis",
+            "region_main-taunus-kreis",
+            "region_wetteraukreis"
+        ]
+    },
+    "region_karben": {
+        "children": [
+            "sites_pop-karben"
+        ]
+    },
+    "region_langenselbold": {
+        "children": [
+            "sites_mfg-langenselbold-01"
+        ]
+    },
+    "region_limeshain": {
+        "children": [
+            "sites_pop-hainchen"
+        ]
+    },
+    "region_main-kinzig-kreis": {
+        "children": [
+            "region_bad-orb",
+            "region_bad_soden-salmuenster",
+            "region_brachttal",
+            "region_bruchkoebel",
+            "region_erlensee",
+            "region_freigericht",
+            "region_gelnhausen",
+            "region_hammersbach",
+            "region_hasselroth",
+            "region_jossgrund",
+            "region_langenselbold",
+            "region_neuberg",
+            "region_nidderau",
+            "region_rodenbach",
+            "region_ronneburg",
+            "region_steinau_an_der_strasse",
+            "region_waechtersbach",
+            "sites_gemeinde_jossgrund"
+        ]
+    },
+    "region_main-taunus-kreis": {
+        "children": [
+            "region_kelkheim",
+            "sites_open-doors-kelkheim"
+        ]
+    },
+    "region_mainaschaff": {
+        "children": [
+            "sites_rmd-mainaschaff"
+        ]
+    },
+    "region_neuberg": {
+        "children": [
+            "sites_mfg-Neuberg-01",
+            "sites_pop-ravolzhausen"
+        ]
+    },
+    "region_niddatal": {
+        "children": [
+            "sites_mfg-Assenheim-01",
+            "sites_mfg-Assenheim-02",
+            "sites_mfg-Assenheim-03",
+            "sites_mfg-Assenheim-04",
+            "sites_mfg-Assenheim-05",
+            "sites_mfg-Assenheim-06",
+            "sites_mfg-Assenheim-07",
+            "sites_mfg-Assenheim-08",
+            "sites_mfg-Assenheim-09",
+            "sites_mfg-Assenheim-10",
+            "sites_mfg-Boenstadt-01",
+            "sites_mfg-Boenstadt-03",
+            "sites_mfg-Boenstadt-04",
+            "sites_mfg-Ilbenstadt-01",
+            "sites_mfg-Ilbenstadt-02",
+            "sites_mfg-Ilbenstadt-03",
+            "sites_mfg-Ilbenstadt-04",
+            "sites_mfg-Ilbenstadt-05",
+            "sites_mfg-Ilbenstadt-06",
+            "sites_mfg-Ilbenstadt-07",
+            "sites_mfg-Kaichen-01",
+            "sites_mfg-Kaichen-02",
+            "sites_mfg-Kaichen-03",
+            "sites_mfg-Kaichen-04",
+            "sites_pop-boenstadt"
+        ]
+    },
+    "region_nidderau": {
+        "children": [
+            "sites_heldenbergen-heinrich-heine-str_19",
+            "sites_heldenbergen-heinrich-heine-str_21",
+            "sites_mfg-heldenbergen"
+        ]
+    },
+    "region_ortenberg": {
+        "children": [
+            "sites_pop-ortenberg"
+        ]
+    },
+    "region_ranstadt": {
+        "children": [
+            "sites_pop-ranstadt"
+        ]
+    },
+    "region_reichelsheim": {
+        "children": [
+            "sites_pop-reichelsheim"
+        ]
+    },
+    "region_rodenbach": {
+        "children": [
+            "sites_pop-rodenbach"
+        ]
+    },
+    "region_ronneburg": {
+        "children": [
+            "sites_mfg-Ronneburg-01",
+            "sites_mfg-Ronneburg-02",
+            "sites_pop-ronneburg"
+        ]
+    },
+    "region_steinau_an_der_strasse": {
+        "children": [
+            "sites_mfg-Seidenroth-01"
+        ]
+    },
+    "region_waechtersbach": {
+        "children": [
+            "sites_mfg-waechtersbach"
+        ]
+    },
+    "region_wetteraukreis": {
+        "children": [
+            "region_altenstadt",
+            "region_badnauheim",
+            "region_echzell",
+            "region_florstadt",
+            "region_glauburg",
+            "region_karben",
+            "region_limeshain",
+            "region_niddatal",
+            "region_ortenberg",
+            "region_ranstadt",
+            "region_reichelsheim"
+        ]
+    },
+    "sites_mfg-Altenstadt-01": {
+        "hosts": [
+            "DS-ALT1-01"
+        ]
+    },
+    "sites_mfg-Altenstadt-02": {
+        "hosts": [
+            "DS-ALT2-01"
+        ]
+    },
+    "sites_mfg-Altenstadt-03": {
+        "hosts": [
+            "DS-ALT3-01"
+        ]
+    },
+    "sites_mfg-Altenstadt-04": {
+        "hosts": [
+            "DS-ALT4-01"
+        ]
+    },
+    "sites_mfg-Altenstadt-05": {
+        "hosts": [
+            "DS-ALT5-01"
+        ]
+    },
+    "sites_mfg-Altenstadt-06": {
+        "hosts": [
+            "DS-ALT6-01"
+        ]
+    },
+    "sites_mfg-Altenstadt-07": {
+        "hosts": [
+            "DS-ALT7-01"
+        ]
+    },
+    "sites_mfg-Altenstadt-08": {
+        "hosts": [
+            "DS-ALT8-01"
+        ]
+    },
+    "sites_mfg-Assenheim-01": {
+        "hosts": [
+            "DS-NID-ASS1-01"
+        ]
+    },
+    "sites_mfg-Assenheim-02": {
+        "hosts": [
+            "DS-NID-ASS2-01"
+        ]
+    },
+    "sites_mfg-Assenheim-03": {
+        "hosts": [
+            "DS-NID-ASS3-01"
+        ]
+    },
+    "sites_mfg-Assenheim-04": {
+        "hosts": [
+            "DS-NID-ASS4-01"
+        ]
+    },
+    "sites_mfg-Assenheim-05": {
+        "hosts": [
+            "DS-NID-ASS5-01"
+        ]
+    },
+    "sites_mfg-Assenheim-06": {
+        "hosts": [
+            "DS-NID-ASS6-01"
+        ]
+    },
+    "sites_mfg-Assenheim-07": {
+        "hosts": [
+            "DS-NID-ASS7-01"
+        ]
+    },
+    "sites_mfg-Assenheim-08": {
+        "hosts": [
+            "DS-NID-ASS8-01"
+        ]
+    },
+    "sites_mfg-Assenheim-09": {
+        "hosts": [
+            "DS-NID-ASS9-01"
+        ]
+    },
+    "sites_mfg-Assenheim-10": {
+        "hosts": [
+            "DS-NID-ASS10-01"
+        ]
+    },
+    "sites_mfg-Bad_Soden-Salmuenster-01": {
+        "hosts": [
+            "DS-MKK-BAD-01"
+        ]
+    },
+    "sites_mfg-Boenstadt-01": {
+        "hosts": [
+            "DS-NID-BON1-01"
+        ]
+    },
+    "sites_mfg-Boenstadt-03": {
+        "hosts": [
+            "DS-NID-BON3-01",
+            "DS-NID-BON3-02"
+        ]
+    },
+    "sites_mfg-Boenstadt-04": {
+        "hosts": [
+            "DS-NID-BON4-01"
+        ]
+    },
+    "sites_mfg-Bruchkoebel-01": {
+        "hosts": [
+            "DS-MKK-BRU-01"
+        ]
+    },
+    "sites_mfg-Bruchkoebel-Peller-01": {
+        "hosts": [
+            "DS-MKK-BRU-PELLER-01"
+        ]
+    },
+    "sites_mfg-Ilbenstadt-01": {
+        "hosts": [
+            "DS-NID-ILB1-01",
+            "DS-NID-ILB1-02"
+        ]
+    },
+    "sites_mfg-Ilbenstadt-02": {
+        "hosts": [
+            "DS-NID-ILB2-01"
+        ]
+    },
+    "sites_mfg-Ilbenstadt-03": {
+        "hosts": [
+            "DS-NID-ILB3-01"
+        ]
+    },
+    "sites_mfg-Ilbenstadt-04": {
+        "hosts": [
+            "DS-NID-ILB4-01"
+        ]
+    },
+    "sites_mfg-Ilbenstadt-05": {
+        "hosts": [
+            "DS-NID-ILB5-01"
+        ]
+    },
+    "sites_mfg-Ilbenstadt-06": {
+        "hosts": [
+            "DS-NID-ILB6-01"
+        ]
+    },
+    "sites_mfg-Ilbenstadt-07": {
+        "hosts": [
+            "DS-NID-ILB7-01"
+        ]
+    },
+    "sites_mfg-Kaichen-01": {
+        "hosts": [
+            "DS-NID-KAI1-01"
+        ]
+    },
+    "sites_mfg-Kaichen-02": {
+        "hosts": [
+            "DS-NID-KAI2-01"
+        ]
+    },
+    "sites_mfg-Kaichen-03": {
+        "hosts": [
+            "DS-NID-KAI3-01"
+        ]
+    },
+    "sites_mfg-Kaichen-04": {
+        "hosts": [
+            "DS-NID-KAI4-01"
+        ]
+    },
+    "sites_mfg-Meerholz-01": {
+        "hosts": [
+            "DS-MKK-MER-01"
+        ]
+    },
+    "sites_mfg-Mittelbuchen-01": {
+        "hosts": [
+            "DS-NID-MIT1-01"
+        ]
+    },
+    "sites_mfg-Neuberg-01": {
+        "hosts": [
+            "DS-NID-NEU1-01"
+        ]
+    },
+    "sites_mfg-Niederisigheim-01": {
+        "hosts": [
+            "DS-MKK-NIE-01"
+        ]
+    },
+    "sites_mfg-Ronneburg-01": {
+        "hosts": [
+            "DS-MKK-RON1-01"
+        ]
+    },
+    "sites_mfg-Ronneburg-02": {
+        "hosts": [
+            "DS-MKK-RON2-01"
+        ]
+    },
+    "sites_mfg-Seidenroth-01": {
+        "hosts": [
+            "DS-MKK-SEI1-01"
+        ]
+    },
+    "sites_mfg-Somborn-01": {
+        "hosts": [
+            "DS-MKK-SOM-01"
+        ]
+    },
+    "sites_mfg-enzheim-01": {
+        "hosts": [
+            "DS-ENZ1-01"
+        ]
+    },
+    "sites_mfg-erlensee-01": {
+        "hosts": [
+            "DS-MKK-ERL-01"
+        ]
+    },
+    "sites_mfg-heegheim-01": {
+        "hosts": [
+            "DS-HEG1-01"
+        ]
+    },
+    "sites_mfg-heldenbergen": {
+        "hosts": [
+            "DS-NID-NID1-01"
+        ]
+    },
+    "sites_mfg-hoechst-01": {
+        "hosts": [
+            "DS-HOE1-01"
+        ]
+    },
+    "sites_mfg-hoechst-02": {
+        "hosts": [
+            "DS-HOE2-01"
+        ]
+    },
+    "sites_mfg-hoechst-03": {
+        "hosts": [
+            "DS-HOE3-01"
+        ]
+    },
+    "sites_mfg-langenselbold-01": {
+        "hosts": [
+            "DS-MKK-LAN-01"
+        ]
+    },
+    "sites_mfg-lindheim-01": {
+        "hosts": [
+            "DS-LIN1-01"
+        ]
+    },
+    "sites_mfg-lindheim-02": {
+        "hosts": [
+            "DS-LIN2-01"
+        ]
+    },
+    "sites_mfg-lindheim-03": {
+        "hosts": [
+            "DS-LIN3-01"
+        ]
+    },
+    "sites_mfg-lindheim-04": {
+        "hosts": [
+            "DS-LIN4-01"
+        ]
+    },
+    "sites_mfg-neuenhasslau": {
+        "hosts": [
+            "DS-MKK-HAS-01"
+        ]
+    },
+    "sites_mfg-oberau-01": {
+        "hosts": [
+            "DS-OBE1-01"
+        ]
+    },
+    "sites_mfg-oberau-02": {
+        "hosts": [
+            "DS-OBE2-01"
+        ]
+    },
+    "sites_mfg-oberau-03": {
+        "hosts": [
+            "DS-OBE3-01"
+        ]
+    },
+    "sites_mfg-rodenbach-01": {
+        "hosts": [
+            "DS-ROD1-01"
+        ]
+    },
+    "sites_mfg-rodenbach-02": {
+        "hosts": [
+            "DS-ROD2-01"
+        ]
+    },
+    "sites_mfg-rommelhausen-02": {
+        "hosts": [
+            "DS-ROM2-01"
+        ]
+    },
+    "sites_mfg-rommelhausen-03": {
+        "hosts": [
+            "DS-ROM3-01"
+        ]
+    },
+    "sites_mfg-rommelhausen-04": {
+        "hosts": [
+            "DS-ROM4-01"
+        ]
+    },
+    "sites_mfg-rommelhausen-05": {
+        "hosts": [
+            "DS-ROM5-01"
+        ]
+    },
+    "sites_mfg-rommelhausen-06": {
+        "hosts": [
+            "DS-ROM6-01"
+        ]
+    },
+    "sites_mfg-waechtersbach": {
+        "hosts": [
+            "DS-MKK-HER-WAE-01"
+        ]
+    },
+    "sites_mfg-waldsiedlung-01": {
+        "hosts": [
+            "DS-WAL1-01"
+        ]
+    },
+    "sites_mfg-waldsiedlung-02": {
+        "hosts": [
+            "DS-WAL2-01"
+        ]
+    },
+    "sites_mfg-waldsiedlung-03": {
+        "hosts": [
+            "DS-WAL3-01"
+        ]
+    },
+    "sites_mfg-waldsiedlung-04": {
+        "hosts": [
+            "DS-WAL4-01"
+        ]
+    },
+    "sites_mfg-waldsiedlung-05": {
+        "hosts": [
+            "DS-WAL5-01"
+        ]
+    },
+    "sites_pop-boenstadt": {
+        "hosts": [
+            "DS-NID-BON2-01"
+        ]
+    },
+    "sites_pop-hainchen": {
+        "hosts": [
+            "DS-MKK-HAI-01"
+        ]
+    },
+    "sites_pop-lindheim": {
+        "hosts": [
+            "DS-LIN-TEST-01",
+            "DS-LIN5-01"
+        ]
+    },
+    "sites_pop-ronneburg": {
+        "hosts": [
+            "DS-MKK-RON3-01"
+        ]
+    }
+}

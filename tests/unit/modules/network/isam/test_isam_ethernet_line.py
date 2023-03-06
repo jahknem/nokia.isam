@@ -1,4 +1,3 @@
-
 from textwrap import dedent
 from unittest import result
 from ansible_collections.isam.isam.plugins.module_utils.network.isam.config.ethernet_line.ethernet_line import (
@@ -12,10 +11,10 @@ from ansible_collections.isam.isam.tests.unit.compat.mock import patch
 from ansible_collections.isam.isam.tests.unit.modules.utils import AnsibleFailJson
 
 from .isam_module import TestIsamModule, load_fixture, set_module_args
+import debugpy
 
 
 ignore_provider_arg = True
-
 
 class TestIsamEthernetLineModule(TestIsamModule):
     module = isam_ethernet_line

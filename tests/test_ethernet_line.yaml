@@ -1,0 +1,16 @@
+---
+- hosts: isam
+  connection: network_cli
+  gather_facts: false
+  vars:
+    ansible_user: isadmin
+    ansible_password: password
+  tasks:
+    - name: Gather Ethernet Line Facts
+      isam.isam.isam_interfaces:
+        state: gathered
+      timeout: 300
+      register: result
+    - name: Display Ethernet Line Facts
+      debug:
+        msg: "{{ result }}"
