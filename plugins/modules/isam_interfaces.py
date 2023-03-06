@@ -9,6 +9,7 @@ The module file for isam_interfaces
 """
 
 from __future__ import absolute_import, division, print_function
+import debugpy
 
 __metaclass__ = type
 
@@ -166,7 +167,7 @@ def main():
             ["state", "parsed", ["running_config"]],
         ],
         supports_check_mode=True,
-    )
+    )        
 
     result = Interfaces(module).execute_module()
     module.exit_json(**result)
