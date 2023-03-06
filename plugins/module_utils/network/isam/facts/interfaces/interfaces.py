@@ -15,7 +15,7 @@ based on the configuration.
 """
 
 from copy import deepcopy
-# import debugpy
+import debugpy
 
 from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
@@ -49,9 +49,9 @@ class InterfacesFacts(object):
         facts = {}
         objs = []
 
-        # if not debugpy.is_client_connected():
-        #    debugpy.listen(("localhost",3000))
-        #    debugpy.wait_for_client()
+        if not debugpy.is_client_connected():
+           debugpy.listen(("localhost",3000))
+           debugpy.wait_for_client()
            
         if not data:
             data = connection.get("info configure interface port flat")
@@ -64,7 +64,7 @@ class InterfacesFacts(object):
         valued = parsed.values()
         objs = list(valued)
 
-        # debugpy.breakpoint()
+        debugpy.breakpoint()
 
         ansible_facts['ansible_network_resources'].pop('interfaces', None)
 

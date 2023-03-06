@@ -1,0 +1,14 @@
+---
+plugin: netbox.netbox.nb_inventory
+api_endpoint: "https://netbox.hessenkom.net"
+token: "04de24db56abace41ea4c63f481c08af25f3b567"
+validate_certs: False
+group_by:
+  - region
+  - manufacturers
+  - device_roles
+query_filters:
+  - role: msan
+device_query_filters:
+  - has_primary_ip: 'true'
+ansible_network_import_modules: True

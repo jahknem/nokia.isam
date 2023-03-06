@@ -18,7 +18,8 @@
 #
 
 from __future__ import absolute_import, division, print_function
-from xml.etree.ElementTree import ElementTree
+import re
+from xml.etree import ElementTree as ET
 
 
 __metaclass__ = type
@@ -255,18 +256,25 @@ class Cliconf(CliconfBase):
             'network_os_image': <str>,
             'network_os_platform': <str>,
         },"""
-        def get_version(sys_info_xml):
-            return getFirstXMLElementText(ElementTree.fromstring(sys_info_xml),"info", "isam-release")
-
         device_info = dict()
         device_info['network_os'] = 'isam'
         device_info['network_os_platform'] = 'Nokia 7330'
 
-        sys_info_xml = self.get("info configure system xml")
-        software_xml = self.get("show software-mngt version etsi detail xml")
-        serial_number_xml = self.get("show equipment slot nt-a detail xml")
+        # sys_info_text = self.get("info configure system detail")
+        # pattern = r"serial-no\s*:\s*(\S+)"
+        # match = re.search(pattern, sys_info_text)
 
-        device_info['network_os_version'] = get_version(sys_info_xml)
+        show_software_mngt_text = self.get("show software-mngt version etsi detail")
+        pattern = r"isam-release\s*:\s*(\S+)"
+        match = re.search(pattern, show_software_mngt_text)
+        software= match.group(1)
+
+        serial_number_text = self.get("show equipment slot nt-a detail")
+        pattern = r"serial-no\s*:\s*(\S+)"
+        match = re.search(pattern, serial_number_text)
+        serial_number = match.group(1)
+
+        device_info['network_os_version'] = software
 
         return super().get_device_info()
 
