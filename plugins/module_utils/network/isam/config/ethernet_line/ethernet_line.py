@@ -95,10 +95,6 @@ class Ethernet_line(ResourceModule):
         wantd = {entry['if_index']: entry for entry in self.want}
         haved = {entry['if_index']: entry for entry in self.have}
 
-        if not debugpy.is_client_connected():
-            debugpy.listen(("localhost",3000))
-            debugpy.wait_for_client()
-        debugpy.breakpoint()
 
         # if state is merged, merge want onto have and then compare
         if self.state == "merged":
