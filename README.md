@@ -47,3 +47,33 @@ Some modules take a long time to complete due to the slow nature of the device. 
 ansible_command_timeout : 150
 ```
 150 Seconds should be enough to complete a transmission of the complete configuration. As such it should also be enough for most other commands.
+
+   #### Sample Playbook
+   ```
+   ---
+   - name: Nokia Github isam Plugin example test
+     hosts: localhost
+     connection: network_cli
+     gather_facts: false
+   
+     vars:
+       ansible_user: "yourUserNameHere"
+       ansible_ssh_pass: "yourPassword"
+       ansible_persistent_log_messages: false
+       ansible_connection: ansible.netcommon.network_cli
+       ansible_network_os: isam.isam.isam
+       ansible_command_timeout : 150
+       test_olt: "MyLab-TestOLT-1"
+   
+     tasks:
+       - name: Example command to show the software version on the OLT
+         cli_command:
+           command: "show software-mngt version ansi"
+         delegate_to: "{{test_olt}}"
+         register: command_1
+   
+       - name: Print return information
+         ansible.builtin.debug:
+           msg:
+           - "command {{command_1}}"
+   ```
