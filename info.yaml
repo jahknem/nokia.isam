@@ -1,0 +1,10 @@
+---
+- name: Playbook which outputs all facts
+  hosts: DS-ALT1-01
+  gather_facts: false
+  connection: network_cli
+  tasks:
+    - name: Write facts to a file
+      copy: 
+        content: "{{ hostvars[inventory_hostname] | to_nice_json }}"  # This converts the facts to formatted JSON
+        dest: "facts_{{ inventory_hostname }}.json"  # This specifies the destination file

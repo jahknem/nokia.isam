@@ -337,10 +337,10 @@ parsed:
 import debugpy
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.argspec.ethernet_line.ethernet_line import (
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.ethernet_line.ethernet_line import (
     Ethernet_lineArgs,
 )
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.config.ethernet_line.ethernet_line import (
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.ethernet_line.ethernet_line import (
     Ethernet_line,
 )
 
