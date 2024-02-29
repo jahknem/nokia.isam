@@ -1,5 +1,5 @@
 ---
-- hosts: isam
+- hosts: DS-LIN-TEST-01
   connection: network_cli
   gather_facts: false
   vars:
@@ -7,7 +7,7 @@
     ansible_password: password
   tasks:
     - name: Gather Ethernet Line Facts
-      isam.isam.isam_interfaces:
+      nokia.isam.isam_interfaces:
         state: gathered
       timeout: 300
       register: result

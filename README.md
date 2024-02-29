@@ -40,10 +40,17 @@ ansible-galaxy collection install isam-isam-*.tar.gz
 To use this collection the following needs to be added to the inventory:
 ```
 ansible_connection: ansible.netcommon.network_cli
-ansible_network_os: isam.isam.isam
+ansible_network_os: nokia.isam.isam
 ```
 Some modules take a long time to complete due to the slow nature of the device. To increase the timeout for these modules the following can be added to the inventory:
 ```
 ansible_command_timeout : 150
 ```
 150 Seconds should be enough to complete a transmission of the complete configuration. As such it should also be enough for most other commands.
+
+## Development
+
+[This](https://docs.ansible.com/ansible/latest/network/dev_guide/developing_resource_modules_network.html) is a starting point.
+
+Step 1) Create a resource module model
+Step 2) Scaffold it with [resource_module_builder](https://github.com/ansible-network/resource_module_builder) or [cli_rm_builder](https://github.com/ansible-network/cli_rm_builder)

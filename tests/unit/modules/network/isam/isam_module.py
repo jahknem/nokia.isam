@@ -2,12 +2,12 @@
 import json
 import os
 
-from ansible_collections.isam.isam.tests.unit.modules.utils import (
+from ansible_collections.nokia.isam.tests.unit.modules.utils import (
     AnsibleExitJson,
     AnsibleFailJson,
     ModuleTestCase,
 )
-from ansible_collections.isam.isam.tests.unit.modules.utils import (
+from ansible_collections.nokia.isam.tests.unit.modules.utils import (
     set_module_args as _set_module_args,
 )
 

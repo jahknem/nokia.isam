@@ -77,8 +77,8 @@ See the respective resource module parameters for the tree.
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.argspec.facts.facts import FactsArgs
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.facts.facts import Facts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.facts.facts import FactsArgs
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 
 
 def main():
@@ -87,10 +87,9 @@ def main():
 
     :returns: ansible_facts
     """
-    module = AnsibleModule(argument_spec=FactsArgs.argument_spec,
-                           supports_check_mode=True)
-    warnings = ['default value for `gather_subset` '
-                'will be changed to `min` from `!config` v2.11 onwards']
+    argument_spec = FactsArgs.argument_spec
+    module = AnsibleModule(argument_spec=argument_spec, supports_check_mode=True)
+    warnings = []
 
     result = Facts(module).get_facts()
 

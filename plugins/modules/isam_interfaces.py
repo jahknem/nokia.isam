@@ -142,10 +142,10 @@ parsed:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.argspec.interfaces.interfaces import (
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.interfaces.interfaces import (
     InterfacesArgs,
 )
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.config.interfaces.interfaces import (
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.interfaces.interfaces import (
     Interfaces,
 )
 
