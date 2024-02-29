@@ -39,7 +39,7 @@ import json
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
 from ansible.plugins.cliconf import CliconfBase
-from ansible_collections.isam.isam.plugins.cliconf.utils.utils import  getFirstXMLElementText, getXMLElements, removeAlarms, removeCtrlChars
+from ansible_collections.nokia.isam.plugins.cliconf.utils.utils import  getFirstXMLElementText, getXMLElements, removeAlarms, removeCtrlChars
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.config import (
     NetworkConfig,
     dumps,
@@ -47,6 +47,10 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.c
 
 
 class Cliconf(CliconfBase):
+    def __init__(self, *args, **kwargs):
+        super(Cliconf, self).__init__(*args, **kwargs)
+        self._device_info = {}
+
     # These two methods will need to be implemented to support cli_config,
     # which is going to be fairly specific to your device.
     def get_config(self, source='running', flags=None, format=None):
@@ -256,27 +260,34 @@ class Cliconf(CliconfBase):
             'network_os_image': <str>,
             'network_os_platform': <str>,
         },"""
-        device_info = dict()
-        device_info['network_os'] = 'isam'
-        device_info['network_os_platform'] = 'Nokia 7330'
+        raise Exception("This is an example exception.")
+        if not self._device_info:
+            device_info = dict()
+            device_info['network_os'] = 'isam'
+            device_info['network_os_platform'] = 'Nokia 7330'
+            nt_a = self.get("show equipment slot | match exact:nt-a")
+            device_info['network_os_model'] = nt_a.split()[1]
+            
 
-        # sys_info_text = self.get("info configure system detail")
-        # pattern = r"serial-no\s*:\s*(\S+)"
-        # match = re.search(pattern, sys_info_text)
+            # sys_info_text = self.get("info configure system detail")
+            # pattern = r"serial-no\s*:\s*(\S+)"
+            # match = re.search(pattern, sys_info_text)
 
-        show_software_mngt_text = self.get("show software-mngt version etsi detail")
-        pattern = r"isam-release\s*:\s*(\S+)"
-        match = re.search(pattern, show_software_mngt_text)
-        software= match.group(1)
+            show_software_mngt_text = self.get("show software-mngt version etsi detail")
+            pattern = r"isam-release\s*:\s*(\S+)"
+            match = re.search(pattern, show_software_mngt_text)
+            software= match.group(1)
 
-        serial_number_text = self.get("show equipment slot nt-a detail")
-        pattern = r"serial-no\s*:\s*(\S+)"
-        match = re.search(pattern, serial_number_text)
-        serial_number = match.group(1)
+            serial_number_text = self.get("show equipment slot nt-a detail")
+            pattern = r"serial-no\s*:\s*(\S+)"
+            match = re.search(pattern, serial_number_text)
+            serial_number = match.group(1)
 
-        device_info['network_os_version'] = software
+            device_info['network_os_version'] = software
 
-        return super().get_device_info()
+            self._device_info = device_info
+
+        return self._device_info
 
     def get_device_operations(self):
         return {

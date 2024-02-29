@@ -144,4 +144,5 @@ nokia-isam-1.0.0.tar.gz
 
 #test
 hosts
+hosts.ini
 playbook.yml

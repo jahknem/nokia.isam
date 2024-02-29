@@ -4,7 +4,7 @@
   gather_facts: no
   tasks:
   - name: Gather interfaces config
-    isam.isam.isam_interfaces:
+    nokia.isam.isam_interfaces:
       state: gathered
     timeout: 300
     register: isam_interfaces
