@@ -7,7 +7,7 @@
     ansible_password: password
   tasks:
     - name: Gather Ethernet Line Facts
-      nokia.isam.isam_interfaces:
+      isam.isam.isam_vlans:
         state: gathered
       timeout: 300
       register: result

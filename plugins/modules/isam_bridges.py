@@ -347,10 +347,10 @@ parsed:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.argspec.bridges.bridges import (
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.bridges.bridges import (
     BridgesArgs,
 )
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.config.bridges.bridges import (
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.bridges.bridges import (
     Bridges,
 )
 

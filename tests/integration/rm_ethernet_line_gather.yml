@@ -4,7 +4,7 @@
   gather_facts: no
   tasks:
   - name: Gather ethernet line config
-    isam.isam.isam_ethernet_line:
+    nokia.isam.isam_ethernet_line:
       state: gathered
     timeout: 300
     register: isam_ethernet_line

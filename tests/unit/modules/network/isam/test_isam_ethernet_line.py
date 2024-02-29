@@ -1,14 +1,14 @@
 from textwrap import dedent
 from unittest import result
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.config.ethernet_line.ethernet_line import (
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.ethernet_line.ethernet_line import (
     Ethernet_line,
 )
-from ansible_collections.isam.isam.plugins.module_utils.network.isam.facts.ethernet_line.ethernet_line import (
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ethernet_line.ethernet_line import (
     Ethernet_lineFacts,
 )
-from ansible_collections.isam.isam.plugins.modules import isam_ethernet_line
-from ansible_collections.isam.isam.tests.unit.compat.mock import patch
-from ansible_collections.isam.isam.tests.unit.modules.utils import AnsibleFailJson
+from ansible_collections.nokia.isam.plugins.modules import isam_ethernet_line
+from ansible_collections.nokia.isam.tests.unit.compat.mock import patch
+from ansible_collections.nokia.isam.tests.unit.modules.utils import AnsibleFailJson
 
 from .isam_module import TestIsamModule, load_fixture, set_module_args
 import debugpy
@@ -28,7 +28,7 @@ class TestIsamEthernetLineModule(TestIsamModule):
         self.get_resource_connection = self.mock_get_resource_connection.start()
 
         self.mock_get_config = patch(
-            "ansible_collections.isam.isam.plugins.module_utils.network.isam.facts.ethernet_line.ethernet_line.Ethernet_lineFacts.get_config"
+            "ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ethernet_line.ethernet_line.Ethernet_lineFacts.get_config"
         )
         self.get_config = self.mock_get_config.start()
 
