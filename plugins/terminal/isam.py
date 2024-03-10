@@ -43,7 +43,7 @@ class TerminalModule(TerminalBase):
     terminal_stderr_re = [
         re.compile(rb"\s+\^"),
         re.compile(rb"invalid token.*"),
-        re.compile(rb"Error:.*"),
+        re.compile(rb"Error :.*"),
         re.compile(rb"command is not complete.*"),
     ]
 
