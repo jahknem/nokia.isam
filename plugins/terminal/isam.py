@@ -38,12 +38,12 @@ class TerminalModule(TerminalBase):
 
     # This list is the only way that network_cli has to know that something
     # has gone wrong. Without this list, it will assume that every command
-    # it issues is a success. In this instance, my prompt changes to a ! when
-    # the exit code is non-zero, so I can use that.
+    # it issues is a success.
     terminal_stderr_re = [
         re.compile(rb"\s+\^"),
         re.compile(rb"invalid token.*"),
         re.compile(rb"Error:.*"),
+        re.compile(rb"Error :.*"),
         re.compile(rb"command is not complete.*"),
     ]
 

@@ -33,7 +33,7 @@ git clone https://github.com/jahknem/nokia.isam.git
 cd nokia.isam
 pip3 install -r requirements.txt
 ansible-galaxy collection build
-ansible-galaxy collection install isam-isam-*.tar.gz
+ansible-galaxy collection install nokia-isam-*.tar.gz
 ```
 ### Usage
 
