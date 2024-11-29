@@ -1,0 +1,5 @@
+---
+collections:
+  - name: ansible.netcommon
+  - name: moreati.jq
+  - name: community.general
