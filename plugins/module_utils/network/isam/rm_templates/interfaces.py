@@ -65,11 +65,11 @@ class InterfacesTemplate(NetworkTemplate):
         },
         {
             'name': 'user',
-            'getval': re.compile(r'''\s+(?P<negate> no)?\s+(user\s(?P<user>[a-zA-Z0-9_]*))''', re.VERBOSE,),
+            'getval': re.compile(r'''\s+(?P<negate> no)?\s+user\s(?:"(?P<user_quoted>[^"]*)"|(?P<user>[^\s]+))''', re.VERBOSE,),
             'setval': 'configure interface port {{ id }} user {{ user }}',
             'result': {
                 '{{ id }}': {
-                    'user': '{{ "available" if negate is defined else user|string}}',
+                    'user': '{{ "available" if negate is defined else (user_quoted|default(user)|string) }}',
                 },
             },
         },

@@ -1,0 +1,4 @@
+help configure arp-relay
+                                                        ^
+command is not complete
+DS-LIN-TEST-01:automationuser>#

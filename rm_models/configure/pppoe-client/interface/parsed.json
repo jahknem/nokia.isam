@@ -1,0 +1,48 @@
+{
+  "title": "PPPOE CLIENT INTERFACE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure PPPoE client interface parameters.",
+  "user_level": "The command can be accessed by operators with pppoe privileges, and executed by \noperators with pppoe privileges.",
+  "syntax": "> configure pppoe-client ( no interface (ifindex) client-id <PPPoE::ClientId> ) | ( interface (ifindex) client-id <PPPoE::ClientId> profile-name <PPPoE::PppProfileName> username <PPPoE::UserName> password <PPPoE::Password> [ no mac | mac <PPPoE::MacAddress> ] [ no pbit | pbit <PPPoE::PbitValue> ] )",
+  "resource_parameters": [
+    {
+      "name": "(ifindex)",
+      "description": "interface index of the PPPoE client port"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "profile-name",
+      "description": "PPP profile name mandatory parameter",
+      "type": "<PPPoE::PppProfileName>",
+      "format": "name : <PPPoE::IgnoredPppProfileName>",
+      "values": [
+        "name                  : enter profile name to be associated Field type <PPPoE::IgnoredPppProfileName>",
+        "name of the PPP profile",
+        "length: 1<=x<=64"
+      ]
+    },
+    {
+      "name": "username",
+      "description": "user name for PPP authentication mandatory parameter - user name string - length: x<=25",
+      "type": "<PPPoE::UserName>"
+    },
+    {
+      "name": "password",
+      "description": "password for PPP authentication mandatory parameter - password string hidden from users - length: x<=25",
+      "type": "<PPPoE::Password>"
+    },
+    {
+      "name": "[no] mac",
+      "description": "specify the client MAC address for PPPoE frame optional parameter with default value: \"00 : 00 : 00 : 00 : 00 : 00\" - a unicast mac-address (example : 00:01:02:03:04:05) - length: 6",
+      "type": "<PPPoE::MacAddress>",
+      "default": "00 : 00 : 00"
+    },
+    {
+      "name": "[no] pbit",
+      "description": "the Pbit value for PPPoE frame optional parameter with default value: 0 - the Pbit value - range: [0...7]",
+      "type": "<PPPoE::PbitValue>",
+      "default": "0"
+    }
+  ],
+  "raw": "help configure pppoe-client interface\r\nPPPOE CLIENT INTERFACE CONFIGURATION COMMAND\r\n============================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure PPPoE client interface parameters.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with pppoe privileges, and executed by \r\noperators with pppoe privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure pppoe-client ( no interface (ifindex) client-id <PPPoE::ClientId> ) \r\n| ( interface (ifindex) client-id <PPPoE::ClientId> profile-name \r\n<PPPoE::PppProfileName> username <PPPoE::UserName> password <PPPoE::Password> [ \r\nno mac | mac <PPPoE::MacAddress> ] [ no pbit | pbit <PPPoE::PbitValue> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"PPPoE Client Interface Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(ifindex)                  interface index of the PPPoE client port\r\nclient-id                  the PPPoE client id\r\n\r\nTable \"PPPoE Client Interface Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nprofile-name               PPP profile name\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <PPPoE::PppProfileName>\r\n                           Format:\r\n                           name : <PPPoE::IgnoredPppProfileName>\r\n                           Possible values:\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Field type <PPPoE::IgnoredPppProfileName>\r\n                           - name of the PPP profile\r\n                           - length: 1<=x<=64 \r\n\r\nusername                   user name for PPP authentication\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <PPPoE::UserName>\r\n                           Format:\r\n                           - user name string\r\n                           - length: x<=25 \r\n\r\npassword                   password for PPP authentication\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <PPPoE::Password>\r\n                           Format:\r\n                           - password string hidden from users\r\n                           - length: x<=25 \r\n\r\n[no] mac                   specify the client MAC address for PPPoE frame\r\n                           optional parameter with default value: \"00 : 00 : 00 \r\n: 00 : 00 : 00\"\r\n\r\n                           Parameter type: <PPPoE::MacAddress>\r\n                           Format:\r\n                           - a unicast mac-address (example : 00:01:02:03:04:05)\r\n                           - length: 6 \r\n\r\n[no] pbit                  the Pbit value for PPPoE frame\r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <PPPoE::PbitValue>\r\n                           Format:\r\n                           - the Pbit value\r\n                           - range: [0...7]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

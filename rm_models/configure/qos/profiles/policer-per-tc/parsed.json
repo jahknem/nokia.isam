@@ -1,0 +1,9 @@
+{
+  "title": "",
+  "description": "",
+  "user_level": "",
+  "syntax": "",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure qos profiles policer-per-tc\r\nQOS POLICER PER TC PROFILE CONFIGURE\r\n====================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure policer per tc profile. .\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by \r\noperators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos profiles ( no policer-per-tc (name) ) | ( policer-per-tc (name) \r\n)\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS Policer Per Tc Profile Configure\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(name)                     A unique profile name\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 19:37:56 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,9 @@
+help configure service vpls egress bgp-ad spoke-
+sdp unrestrict-mac*
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 22:42:45 major alarm occurred for ip-addr 192.168.222.10  : Successful Management login, 8 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

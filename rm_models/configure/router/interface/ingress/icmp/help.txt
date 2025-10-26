@@ -1,0 +1,4 @@
+help configure router interface ingress icmp
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

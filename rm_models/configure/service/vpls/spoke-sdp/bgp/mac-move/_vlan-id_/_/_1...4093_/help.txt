@@ -1,0 +1,13 @@
+help configure service vpls spoke-sdp bgp mac-mo
+ve <vlan-id> : [1...4093]
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/26 12:08:53 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 26/10/25 12:08:51 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/26 12:08:53 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 26/10/25 12:08:39 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

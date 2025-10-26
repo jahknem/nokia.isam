@@ -1,0 +1,9 @@
+{
+  "title": "MLD VLAN SYSTEM CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the MLD parameters on a per Vlan \nbasis.",
+  "user_level": "The command can be accessed by operators with igmp privileges, and executed by \noperators with igmp privileges.",
+  "syntax": "> configure mcast-control ipv6",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure mcast-control ipv6\r\nMLD VLAN SYSTEM CONFIGURATION COMMAND\r\n=====================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the MLD parameters on a per Vlan \r\nbasis.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with igmp privileges, and executed by \r\noperators with igmp privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure mcast-control ipv6\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nnone\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,116 @@
+help configure qos profiles cos-threshold
+QOS COS THRESHOLD PROFILE CONFIGURATION COMMAND
+===============================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a QoS CoS threshold profile. A 
+QoS CoS threshold profile contains all settings related to a policer threshold.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles ( no cos-threshold (name) ) | ( cos-threshold (name) [ 
+no tc0-threshold | tc0-threshold <Qos::tcThreshold> ] [ no tc1-threshold | 
+tc1-threshold <Qos::tcThreshold> ] [ no tc2-threshold | tc2-threshold 
+<Qos::tcThreshold> ] [ no tc3-threshold | tc3-threshold <Qos::tcThreshold> ] [ 
+no tc4-threshold | tc4-threshold <Qos::tcThreshold> ] [ no tc5-threshold | 
+tc5-threshold <Qos::tcThreshold> ] [ no tc6-threshold | tc6-threshold 
+<Qos::tcThreshold> ] [ no tc7-threshold | tc7-threshold <Qos::tcThreshold> ] )
+
+Command Parameters
+------------------
+
+Table "QoS CoS Threshold Profile Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+Table "QoS CoS Threshold Profile Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] tc0-threshold         tc0 threshold, unit: percent 
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::tcThreshold>
+                           Format:
+                           - Percentage of the QoS Thresh
+                           - range: [0...100]
+
+[no] tc1-threshold         tc1 threshold, unit: percent 
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::tcThreshold>
+                           Format:
+                           - Percentage of the QoS Thresh
+                           - range: [0...100]
+
+[no] tc2-threshold         tc2 threshold, unit: percent 
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::tcThreshold>
+                           Format:
+                           - Percentage of the QoS Thresh
+                           - range: [0...100]
+
+[no] tc3-threshold         tc3 threshold, unit: percent 
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::tcThreshold>
+                           Format:
+                           - Percentage of the QoS Thresh
+                           - range: [0...100]
+
+[no] tc4-threshold         tc4 threshold, unit: percent 
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::tcThreshold>
+                           Format:
+                           - Percentage of the QoS Thresh
+                           - range: [0...100]
+
+[no] tc5-threshold         tc5 threshold, unit: percent 
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::tcThreshold>
+                           Format:
+                           - Percentage of the QoS Thresh
+                           - range: [0...100]
+
+[no] tc6-threshold         tc6 threshold, unit: percent 
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::tcThreshold>
+                           Format:
+                           - Percentage of the QoS Thresh
+                           - range: [0...100]
+
+[no] tc7-threshold         tc7 threshold, unit: percent 
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::tcThreshold>
+                           Format:
+                           - Percentage of the QoS Thresh
+                           - range: [0...100]
+
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:37:04 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:37:04 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

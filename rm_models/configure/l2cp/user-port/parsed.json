@@ -1,0 +1,14 @@
+{
+  "title": "L2CP USER PORT PARTITION CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the partition id for the given \nuser-port.",
+  "user_level": "The command can be accessed by operators with transport privileges, and \nexecuted by operators with transport privileges.",
+  "syntax": "> configure l2cp ( no user-port (user-port) partition-id <L2cp::PartitionId> ) | ( user-port (user-port) partition-id <L2cp::PartitionId> )",
+  "resource_parameters": [
+    {
+      "name": "(user-port)",
+      "description": "interface index of the DSL port"
+    }
+  ],
+  "command_parameters": [],
+  "raw": "help configure l2cp user-port\r\nL2CP USER PORT PARTITION CONFIGURATION COMMAND\r\n==============================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the partition id for the given \r\nuser-port.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with transport privileges, and \r\nexecuted by operators with transport privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure l2cp ( no user-port (user-port) partition-id <L2cp::PartitionId> ) \r\n| ( user-port (user-port) partition-id <L2cp::PartitionId> )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"L2CP User Port Partition Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(user-port)                interface index of the DSL port\r\npartition-id               partition id\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

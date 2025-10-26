@@ -1,0 +1,34 @@
+help configure dhcp-relay v6-port-stats
+DHCP V6 RELAY USER PORT CONFIGURATION COMMAND
+=============================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the DHCP v6 relay user port 
+statistics.
+
+
+User Level
+----------
+
+The command can be accessed by operators with dhcp privileges, and executed by 
+operators with dhcp privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure dhcp-relay ( no v6-port-stats (vlan-port) ) | ( v6-port-stats 
+(vlan-port) )
+
+Command Parameters
+------------------
+
+Table "DHCP v6 Relay User Port Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(vlan-port)                identification of vlan port
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,5 @@
+help configure alarm entry lsa-fo-trigger ! SIP 
+voice service degraded
+                                                                          ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

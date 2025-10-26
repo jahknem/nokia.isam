@@ -1,0 +1,5 @@
+help configure router interface icmp egress filt
+er
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

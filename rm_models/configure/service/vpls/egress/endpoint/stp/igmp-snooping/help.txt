@@ -1,0 +1,13 @@
+help configure service vpls egress endpoint stp 
+igmp-snooping
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/26 00:50:20 major alarm occurred for ip-addr 192.168.222.10  : Successful Management login, TimeStamp : 26/10/25 00:50:18 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/26 00:50:20 major alarm cleared for ip-addr 192.168.222.10  : Successful Management login, TimeStamp : 26/10/25 00:50:06 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

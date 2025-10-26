@@ -1,0 +1,5 @@
+help configure service vpls egress bgp-vpls sgt-
+qos
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

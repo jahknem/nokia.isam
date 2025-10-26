@@ -1,0 +1,192 @@
+dscp-map-dot1p 0
+  dot1p-value 0
+exit
+dscp-map-dot1p 1
+  dot1p-value 0
+exit
+dscp-map-dot1p 2
+  dot1p-value 0
+exit
+dscp-map-dot1p 3
+  dot1p-value 0
+exit
+dscp-map-dot1p 4
+  dot1p-value 0
+exit
+dscp-map-dot1p 5
+  dot1p-value 0
+exit
+dscp-map-dot1p 6
+  dot1p-value 0
+exit
+dscp-map-dot1p 7
+  dot1p-value 0
+exit
+dscp-map-dot1p 8
+  dot1p-value 1
+exit
+dscp-map-dot1p 9
+  dot1p-value 1
+exit
+dscp-map-dot1p 10
+  dot1p-value 1
+exit
+dscp-map-dot1p 11
+  dot1p-value 1
+exit
+dscp-map-dot1p 12
+  dot1p-value 1
+exit
+dscp-map-dot1p 13
+  dot1p-value 1
+exit
+dscp-map-dot1p 14
+  dot1p-value 1
+exit
+dscp-map-dot1p 15
+  dot1p-value 1
+exit
+dscp-map-dot1p 16
+  dot1p-value 2
+exit
+dscp-map-dot1p 17
+  dot1p-value 2
+exit
+dscp-map-dot1p 18
+  dot1p-value 2
+exit
+dscp-map-dot1p 19
+  dot1p-value 2
+exit
+dscp-map-dot1p 20
+  dot1p-value 2
+exit
+dscp-map-dot1p 21
+  dot1p-value 2
+exit
+dscp-map-dot1p 22
+  dot1p-value 2
+exit
+dscp-map-dot1p 23
+  dot1p-value 2
+exit
+dscp-map-dot1p 24
+  dot1p-value 3
+exit
+dscp-map-dot1p 25
+  dot1p-value 3
+exit
+dscp-map-dot1p 26
+  dot1p-value 3
+exit
+dscp-map-dot1p 27
+  dot1p-value 3
+exit
+dscp-map-dot1p 28
+  dot1p-value 3
+exit
+dscp-map-dot1p 29
+  dot1p-value 3
+exit
+dscp-map-dot1p 30
+  dot1p-value 3
+exit
+dscp-map-dot1p 31
+  dot1p-value 3
+exit
+dscp-map-dot1p 32
+  dot1p-value 4
+exit
+dscp-map-dot1p 33
+  dot1p-value 4
+exit
+dscp-map-dot1p 34
+  dot1p-value 4
+exit
+dscp-map-dot1p 35
+  dot1p-value 4
+exit
+dscp-map-dot1p 36
+  dot1p-value 4
+exit
+dscp-map-dot1p 37
+  dot1p-value 4
+exit
+dscp-map-dot1p 38
+  dot1p-value 4
+exit
+dscp-map-dot1p 39
+  dot1p-value 4
+exit
+dscp-map-dot1p 40
+  dot1p-value 5
+exit
+dscp-map-dot1p 41
+  dot1p-value 5
+exit
+dscp-map-dot1p 42
+  dot1p-value 5
+exit
+dscp-map-dot1p 43
+  dot1p-value 5
+exit
+dscp-map-dot1p 44
+  dot1p-value 5
+exit
+dscp-map-dot1p 45
+  dot1p-value 5
+exit
+dscp-map-dot1p 46
+  dot1p-value 5
+exit
+dscp-map-dot1p 47
+  dot1p-value 5
+exit
+dscp-map-dot1p 48
+  dot1p-value 6
+exit
+dscp-map-dot1p 49
+  dot1p-value 6
+exit
+dscp-map-dot1p 50
+  dot1p-value 6
+exit
+dscp-map-dot1p 51
+  dot1p-value 6
+exit
+dscp-map-dot1p 52
+  dot1p-value 6
+exit
+dscp-map-dot1p 53
+  dot1p-value 6
+exit
+dscp-map-dot1p 54
+  dot1p-value 6
+exit
+dscp-map-dot1p 55
+  dot1p-value 6
+exit
+dscp-map-dot1p 56
+  dot1p-value 7
+exit
+dscp-map-dot1p 57
+  dot1p-value 7
+exit
+dscp-map-dot1p 58
+  dot1p-value 7
+exit
+dscp-map-dot1p 59
+  dot1p-value 7
+exit
+dscp-map-dot1p 60
+  dot1p-value 7
+exit
+dscp-map-dot1p 61
+  dot1p-value 7
+exit
+dscp-map-dot1p 62
+  dot1p-value 7
+exit
+dscp-map-dot1p 63
+  dot1p-value 7
+exit

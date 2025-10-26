@@ -1,0 +1,9 @@
+{
+  "title": "PORT CONFIGURATION COMMAND",
+  "description": "See IHUB Interface Guide and IHUB QoS Guide for more information. The command \ncan be accessed and executed by operators with link privileges.",
+  "user_level": "The command can be executed by operators with link privileges.",
+  "syntax": "> configure port",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure port\r\nPORT CONFIGURATION COMMAND\r\n==========================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nSee IHUB Interface Guide and IHUB QoS Guide for more information. The command \r\ncan be accessed and executed by operators with link privileges.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be executed by operators with link privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure port\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nnone\r\nDS-LIN-TEST-01:automationuser>#"
+}

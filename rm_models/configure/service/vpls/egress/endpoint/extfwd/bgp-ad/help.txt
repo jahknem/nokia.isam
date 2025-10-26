@@ -1,0 +1,5 @@
+help configure service vpls egress endpoint extf
+wd bgp-ad
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

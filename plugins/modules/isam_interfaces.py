@@ -9,7 +9,6 @@ The module file for isam_interfaces
 """
 
 from __future__ import absolute_import, division, print_function
-import debugpy
 
 __metaclass__ = type
 

@@ -1,0 +1,5 @@
+help configure router interface egress delayed-e
+nable
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

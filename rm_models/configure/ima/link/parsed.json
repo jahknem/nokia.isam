@@ -1,0 +1,9 @@
+{
+  "title": "",
+  "description": "",
+  "user_level": "",
+  "syntax": "",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure ima link\r\nIMA LINK CONFIGURATION COMMANDS\r\n===============================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to manage the IMA link profile.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with xdsl privileges, and executed by \r\noperators with xdsl privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure ima ( no link (link-if-index) ) | ( link (link-if-index) grp-index \r\n<Itf::ImaLine> )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"IMA Link Configuration Commands\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(link-if-index)            interface index of the port\r\n\r\nTable \"IMA Link Configuration Commands\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\ngrp-index                  logical interface number assigned to this IMA grp \r\nLink\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Itf::ImaLine>\r\n                           Format:\r\n                           <Eqpt::RackId> / <Eqpt::ShelfId> / <Eqpt::SlotId> / \r\n<Eqpt::PortId>\r\n                           Field type <Eqpt::RackId>\r\n                           - the rack number\r\n                           Field type <Eqpt::ShelfId>\r\n                           - the shelf number\r\n                           Field type <Eqpt::SlotId>\r\n                           - the LT slot number\r\n                           Field type <Eqpt::PortId>\r\n                           - the port number\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

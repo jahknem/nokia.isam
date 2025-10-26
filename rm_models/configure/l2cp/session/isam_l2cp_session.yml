@@ -1,0 +1,189 @@
+module: isam_l2cp_session
+short_description: Resource module to configure l2cp session
+description:
+- 'Configures the L2CP session parameters for a given session id. In current version,
+  ISAM supports L2CP only on top of TCP/IP; as result of this command, ISAM shall
+  start a TCP connection to a BRAS identified by a configured IP address. Then depending
+  on the setting of the GSMP Retry Timer, the ISAM shall start the GSMP Adjacency
+  Protocol to setup a L2CP session with that BRAS. This means: - if TCP Retry Timer
+  is zero, ISAM shall not start the TCP connection. If TCP Retry Timer is not zero,
+  ISAM shall start the setup of a TCP connection to a BRAS whose IP address must be
+  configured too. In no way the ISAM accepts that a (unknown) BRAS tries to start
+  a TCP connection - if GSMP Retry Timer is zero, ISAM shall not start the GSMP Adjacency
+  Protocol but instead be prepared to handle GSMP Adjacency Protocol messages from
+  that BRAS. If GSMP Retry Timer is not zero, ISAM shall start the GSMP Adjacency
+  Protocol in addition to being prepared to handle GSMP Adjacency Protocol messages
+  from that BRAS'
+- Supports configuration of bras ip address, gsmp version, gsmp sub version and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure l2cp ()'
+options:
+  config:
+    description:
+    - A list of l2cp session configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (index) - index to the l2cp session table
+      bras_ip_address:
+        type: str
+        description:
+        - IPv4 address used for the L2cp session peer mandatory parameter - IPv4-address
+      gsmp_version:
+        type: str
+        description:
+        - 'version of gsmp protocol with default value: 3 - version of the GSMP protocol
+          - range: [3]'
+        default: '3'
+      gsmp_sub_version:
+        type: str
+        description:
+        - 'sub version of gsmp protocol with default value: 1 - sub version of the
+          GSMP protocol - range: [1...2]'
+        default: '1'
+      encap_type:
+        type: str
+        description:
+        - 'encapsulation type with default value: "tcp"'
+        - 'Possible values: C(tcp) - tcp encapsulation type'
+        default: tcp
+        choices:
+        - tcp
+      topo_discovery:
+        type: str
+        description:
+        - 'topology discovery capability with default value: "enabled"'
+        - 'Possible values: C(disabled) - no topology discovery; C(enabled) - topology
+          discovery'
+        default: enabled
+        choices:
+        - disabled
+        - enabled
+      layer2_oam:
+        type: str
+        description:
+        - 'layer2 OAM is supported with default value: "enabled"'
+        - 'Possible values: C(disabled) - no layer2 oam; C(enabled) - layer2 oam'
+        default: enabled
+        choices:
+        - disabled
+        - enabled
+      alive_timer:
+        type: str
+        description:
+        - 'adjacency protocol watchdog alive time. with default value: 250 - adjacency
+          protocol watchdog alive time - unit: 100 msec - range: [1...255]'
+        default: '250'
+      port_reprt_shaper:
+        type: str
+        description:
+        - 'time between 2 EventReport msgs on the same port, should be >= aggr-reprt-shaper
+          with default value: 10 - time between two EventReport msgs related to same
+          port, should be >= aggr-reprt-shaper - unit: 100 msec - range: [1...255]'
+        default: '10'
+      aggr_reprt_shaper:
+        type: str
+        description:
+        - 'time between 2 EventReport msgs on any port with default value: 10 - time
+          between two EventReport msgs related to any port - unit: 10 msec - range:
+          [1...2550]'
+        default: '10'
+      tcp_retry_time:
+        type: str
+        description:
+        - 'time between 2 TCP connection setup attempts with default value: 10 - time
+          between 2 TCP connection setup attempts. - unit: 100 msec - range: [0...255]'
+        default: '10'
+      gsmp_retry_time:
+        type: str
+        description:
+        - 'time between 2 GSMP/L2CP connection setup attempts with default value:
+          10 - time between 2 GSMP/L2CP connection setup attempts. - unit: 100 msec
+          - range: [0...255]'
+        default: '10'
+      dslam_name:
+        type: str
+        description:
+        - 'l2cp name of the DSLAM with default value: "00 : 00 : 00 : 00 : 00 : 00"
+          - a mac-address (example : 01:02:03:04:05:06) - length: 6'
+        default: '00 : 00 : 00'
+      partition_id:
+        type: str
+        description:
+        - 'identity for this session''s specific DSLAM partition with default value:
+          0 - partition id - range: [0...127]'
+        default: '0'
+      window_size:
+        type: str
+        description:
+        - 'max no.of unacknow req msgs to be transmitted in a window with default
+          value: 10 - max no.of unacknow req msgs to be transmtted in a window - range:
+          [10]'
+        default: '10'
+      tcp_port:
+        type: str
+        description:
+        - 'tcp port number of the session established to the peer. with default value:
+          6068 - tcp port number - range: [0...65535]'
+        default: '6068'
+      router_instance:
+        type: str
+        description:
+        - 'router-instance to be used to obtain connectivity to the peer. with default
+          value: "base"'
+        - 'Possible values: C(base) - base router; C(vpls-management) - vpls-management
+          router Field type <Ihub::L2cpRouter>; C(range) - [1...2147483646]'
+        default: base
+        choices:
+        - base
+        - vpls-management
+        - vprn service-id
+        - range
+      sig_partition_id:
+        type: bool
+        description:
+        - indicates if partition ID is signalled
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure l2cp session)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged
+EXAMPLES:
+  - gathered_example_01.txt

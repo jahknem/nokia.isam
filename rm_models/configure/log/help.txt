@@ -1,0 +1,27 @@
+help configure log
+LOG COMMAND
+===========
+
+Command Description
+-------------------
+
+See IHUB System Basics, Management and OAM Guide for more information. The 
+command can be accessed and executed by operators with log privileges.
+
+
+User Level
+----------
+
+The command can be executed by operators with log privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure log
+
+Command Parameters
+------------------
+
+none
+DS-LIN-TEST-01:automationuser>#

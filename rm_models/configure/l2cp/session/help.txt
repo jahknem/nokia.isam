@@ -1,0 +1,227 @@
+help configure l2cp session
+L2CP SESSION CONFIGURATION COMMAND
+==================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the L2CP session parameters for a 
+given session id.
+
+In current version, ISAM supports L2CP only on top of TCP/IP; as result of this 
+command, ISAM shall start a TCP connection to a BRAS identified by a configured 
+IP address. Then depending on the setting of the GSMP Retry Timer, the ISAM 
+shall start the GSMP Adjacency Protocol to setup a L2CP session with that BRAS.
+
+This means:
+  - if TCP Retry Timer is zero, ISAM shall not start the TCP connection. If TCP 
+Retry Timer is not zero, ISAM shall start the setup of a TCP connection to a 
+BRAS whose IP address must be configured too. In no way the ISAM accepts that a 
+(unknown) BRAS tries to start a TCP connection
+  - if GSMP Retry Timer is zero, ISAM shall not start the GSMP Adjacency 
+Protocol but instead be prepared to handle GSMP Adjacency Protocol messages 
+from that BRAS. If GSMP Retry Timer is not zero, ISAM shall start the GSMP 
+Adjacency Protocol in addition to being prepared to handle GSMP Adjacency 
+Protocol messages from that BRAS
+
+
+User Level
+----------
+
+The command can be accessed by operators with transport privileges, and 
+executed by operators with transport privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure l2cp ( no session (index) ) | ( session (index) bras-ip-address 
+<L2cp::InetAddress> [ no gsmp-version | gsmp-version <L2cp::Version> ] [ no 
+gsmp-sub-version | gsmp-sub-version <L2cp::SubVersion> ] [ no encap-type | 
+encap-type <L2cp::EncapType> ] [ no topo-discovery | topo-discovery 
+<L2cp::AccessTopologyDiscovery> ] [ no layer2-oam | layer2-oam 
+<L2cp::Layer2OAM> ] [ no alive-timer | alive-timer <L2cp::AliveTimer> ] [ no 
+port-reprt-shaper | port-reprt-shaper <L2cp::ReportShaper> ] [ no 
+aggr-reprt-shaper | aggr-reprt-shaper <L2cp::AggrReportShaper> ] [ no 
+tcp-retry-time | tcp-retry-time <L2cp::TcpRetryTimer> ] [ no gsmp-retry-time | 
+gsmp-retry-time <L2cp::GsmpRetryTimer> ] [ no dslam-name | dslam-name 
+<L2cp::DslamName> ] [ no partition-id | partition-id <L2cp::PartitionId2> ] [ 
+no window-size | window-size <L2cp::WindowSize> ] [ no tcp-port | tcp-port 
+<L2cp::InetPortNumber> ] [ no router-instance | router-instance 
+<Ihub::RouterVplsMgnt> ] [ [ no ] sig-partition-id ] )
+
+Command Parameters
+------------------
+
+Table "L2CP Session Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(index)                    index to the l2cp session table
+
+Table "L2CP Session Configuration Command" Command Parameters
+
+Parameter                  Description
+
+bras-ip-address            IPv4 address used for the L2cp session peer
+                           mandatory parameter
+
+                           Parameter type: <L2cp::InetAddress>
+                           Format:
+                           - IPv4-address
+
+[no] gsmp-version          version of gsmp protocol
+                           optional parameter with default value: 3
+
+                           Parameter type: <L2cp::Version>
+                           Format:
+                           - version of the GSMP protocol
+                           - range: [3]
+
+[no] gsmp-sub-version      sub version of gsmp protocol
+                           optional parameter with default value: 1
+
+                           Parameter type: <L2cp::SubVersion>
+                           Format:
+                           - sub version of the GSMP protocol
+                           - range: [1...2]
+
+[no] encap-type            encapsulation type
+                           optional parameter with default value: "tcp"
+
+                           Parameter type: <L2cp::EncapType>
+                           Format:
+                           tcp
+                           Possible values:
+                           - tcp                   : tcp encapsulation type
+
+[no] topo-discovery        topology discovery capability
+                           optional parameter with default value: "enabled"
+
+                           Parameter type: <L2cp::AccessTopologyDiscovery>
+                           Format:
+                           ( disabled
+                           | enabled )
+                           Possible values:
+                           - disabled              : no topology discovery
+                           - enabled               : topology discovery
+
+[no] layer2-oam            layer2 OAM is supported
+                           optional parameter with default value: "enabled"
+
+                           Parameter type: <L2cp::Layer2OAM>
+                           Format:
+                           ( disabled
+                           | enabled )
+                           Possible values:
+                           - disabled              : no layer2 oam
+                           - enabled               : layer2 oam
+
+[no] alive-timer           adjacency protocol watchdog alive time.
+                           optional parameter with default value: 250
+
+                           Parameter type: <L2cp::AliveTimer>
+                           Format:
+                           - adjacency protocol watchdog alive time
+                           - unit: 100 msec
+                           - range: [1...255]
+
+[no] port-reprt-shaper     time between 2 EventReport msgs on the same port, 
+should be >= aggr-reprt-shaper
+                           optional parameter with default value: 10
+
+                           Parameter type: <L2cp::ReportShaper>
+                           Format:
+                           - time between two EventReport msgs related to same 
+port, should be >= aggr-reprt-shaper
+                           - unit: 100 msec
+                           - range: [1...255]
+
+[no] aggr-reprt-shaper     time between 2 EventReport msgs on any port
+                           optional parameter with default value: 10
+
+                           Parameter type: <L2cp::AggrReportShaper>
+                           Format:
+                           - time between two EventReport msgs related to any 
+port
+                           - unit: 10 msec
+                           - range: [1...2550]
+
+[no] tcp-retry-time        time between 2 TCP connection setup attempts
+                           optional parameter with default value: 10
+
+                           Parameter type: <L2cp::TcpRetryTimer>
+                           Format:
+                           - time between 2 TCP connection setup attempts.
+                           - unit: 100 msec
+                           - range: [0...255]
+
+[no] gsmp-retry-time       time between 2 GSMP/L2CP connection setup attempts
+                           optional parameter with default value: 10
+
+                           Parameter type: <L2cp::GsmpRetryTimer>
+                           Format:
+                           - time between 2 GSMP/L2CP connection setup attempts.
+                           - unit: 100 msec
+                           - range: [0...255]
+
+[no] dslam-name            l2cp name of the DSLAM
+                           optional parameter with default value: "00 : 00 : 00 
+: 00 : 00 : 00"
+
+                           Parameter type: <L2cp::DslamName>
+                           Format:
+                           - a mac-address (example : 01:02:03:04:05:06)
+                           - length: 6 
+
+[no] partition-id          identity for this session's specific DSLAM partition
+                           optional parameter with default value: 0
+
+                           Parameter type: <L2cp::PartitionId2>
+                           Format:
+                           - partition id
+                           - range: [0...127]
+
+[no] window-size           max no.of unacknow req msgs to be transmitted in a 
+window
+                           optional parameter with default value: 10
+
+                           Parameter type: <L2cp::WindowSize>
+                           Format:
+                           - max no.of unacknow req msgs to be transmtted in a 
+window
+                           - range: [10]
+
+[no] tcp-port              tcp port number of the session established to the 
+peer.
+                           optional parameter with default value: 6068
+
+                           Parameter type: <L2cp::InetPortNumber>
+                           Format:
+                           - tcp port number
+                           - range: [0...65535]
+
+[no] router-instance       router-instance to be used to obtain connectivity to 
+the peer.
+                           optional parameter with default value: "base"
+
+                           Parameter type: <Ihub::RouterVplsMgnt>
+                           Format:
+                           ( base
+                           | vpls-management
+                           | <Ihub::L2cpRouter> )
+                           Possible values:
+                           - base                  : base router
+                           - vpls-management       : vpls-management router
+                           Field type <Ihub::L2cpRouter>
+                           - vprn service-id
+                           - range: [1...2147483646]
+
+[no] sig-partition-id      indicates if partition ID is signalled
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+
+DS-LIN-TEST-01:automationuser>#

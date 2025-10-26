@@ -1,0 +1,5 @@
+help configure service vpls sap stp mld-snooping
+ vlan-dot1q-ety*
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

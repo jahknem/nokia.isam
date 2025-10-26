@@ -1,0 +1,152 @@
+module: isam_equipment_slot
+short_description: Resource module to configure equipment slot
+description:
+- 'Configures a slot. The slot is identified by the physical slot number. The left-most
+  slot in the shelf is number 1. The following parameters can be configured for the
+  slot: - planned-type: the unit type that will be inserted into the slot. The not-planned
+  parameter indicates that a unit will not be inserted into that slot. - power-down:
+  the operator can power-up or power-down slots. This is only applicable to LSM. -
+  unlock: the operator can lock or unlock a unit. A unit in the locked state cannot
+  be used. This attribute is only supported for the NT (the system will refuse to
+  lock the NT of a simplex system), EXT, and a managed LSM. This attribute is not
+  applicable to sealed remote products (7367 SX). - alarm-profile: the operator can
+  assign a customizable alarm profile to a NT or LSM board. This is applicable for
+  all NTs and LSMs. - capab-profile:This parameter only applies to LSMs,NTIOs and
+  mini-NT NRNT-A.For BCM based LSM boards default capab-profile is "default" for Intel
+  based LSM boards it is "8vc_default". - disable-key: This Paramer should contain
+  string between 8 and 16 characters; must contain at least one lowercase letter,
+  one uppercase letter, one numeric digit, and one special character, but cannot contain
+  whitespace.'
+- Supports configuration of planned type, power down, unlock and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure equipment slot ()'
+options:
+  config:
+    description:
+    - A list of equipment slot configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (index) - the physical number of the slot
+      planned_type:
+        type: str
+        description:
+        - 'type of board intended to be in this position with default value: "not-planned"'
+        default: not-planned
+      power_down:
+        type: bool
+        description:
+        - power down the board
+      unlock:
+        type: bool
+        description:
+        - unlock the board
+      alarm_profile:
+        type: str
+        description:
+        - 'customized alarm profile assigned to this board with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - profile
+          name Field type <PrintableString-0-32>; C(length) - x<=32'
+        default: none
+        choices:
+        - none
+        - name
+        - a printable string
+        - length
+      capab_profile:
+        type: str
+        description:
+        - 'capability profile assigned to a line board with default value: "not_applicable"'
+      board_40gkr4:
+        type: str
+        description:
+        - 'inherited, disable or enable board 40GKR4 with default value: "inherited"'
+        - 'Possible values: C(inherited) - enable or disable 40G KR4 of the board
+          is controlled by system level parameter; C(disable) - the board should not
+          work in 40GKR4 no matter the value of system level; C(enable) - the board
+          should work in 40GKR4 no matter the value of system level'
+        default: inherited
+        choices:
+        - inherited
+        - disable
+        - enable
+      operational_mode:
+        type: str
+        description:
+        - 'operation mode of the cage with default value: "not-set"'
+        - 'Possible values: C(not-set) - cage mode not-set; C(gpon) - cage mode set
+          to gpon; C(xgs) - cage mode set to xgs; C(mpm-gpon-xgs) - cage mode set
+          to mpm-gpon-xgs; C(dual-gpon) - cage mode set to dual-gpon; C(u-ngpon) -
+          cage mode set to u-ngpon; C(twenty-five-g) - cage mode set to 25g; C(ng-pon2)
+          - cage mode set to ng-pon2; C(mpm-gpon-xgpon) - cage mode set to mpm-gpon-xgpon'
+        default: not-set
+        choices:
+        - not-set
+        - gpon
+        - xgs
+        - mpm-gpon-xgs
+        - dual-gpon
+        - u-ngpon
+        - twenty-five-g
+        - ng-pon2
+        - mpm-gpon-xgpon
+      dual_host_ip:
+        type: str
+        description:
+        - 'dual host ip with default value: "0.0.0.0" - IPv4-address'
+        default: 0.0.0.0
+      dual_host_loc:
+        type: str
+        description:
+        - 'dual host lsm location with default value: "none" DS-LIN-TEST-01:automationuser>#'
+        - 'Possible values: C(none) - no host lsm location Field type <Eqpt::MultiRackId>;
+          C(the rack number Field type <Eqpt) - :MultiShelfId>'
+        default: none
+        choices:
+        - none
+        - the rack number Field type <Eqpt
+        - the shelf number
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure equipment slot)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged
+EXAMPLES:
+  - gathered_example_01.txt

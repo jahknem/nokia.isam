@@ -1,0 +1,20 @@
+{
+  "title": "DUAL-PARENTING LOCAL-NODE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a local node . The system will \ndecide which port of the two becomes active. In case of failure of one port the \nother port will take over. A forced switchover can also be triggered manually \nby the operator.\n\nThe port protection group is identified by the first port in the group that is \nintended to be protected. The following parameters can be configured for the \nprotection group :\n  - local-node-id: the local-node-id that will ensure the protection of the \nfirst one.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure dual-parenting ( no local-node (node-id) ) | ( local-node (node-id) node-name <Equipm::DualParentProtGrpLocalNodeName> ip_subnet <Ip::V4Address> )",
+  "resource_parameters": [
+    {
+      "name": "(node-id)",
+      "description": "the config of dual-parenting local-node id"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "node-name",
+      "description": "the dual-parenting of local-node-name mandatory parameter - a printable string - length: 1<=x<=127 ip_subnet                  the ip_subnet of local-node.must config it like:x.x.0.0 mandatory parameter - IPv4-address",
+      "type": "<Ip::V4Address>"
+    }
+  ],
+  "raw": "help configure dual-parenting local-node\r\nDUAL-PARENTING LOCAL-NODE CONFIGURATION COMMAND\r\n===============================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a local node . The system will \r\ndecide which port of the two becomes active. In case of failure of one port the \r\nother port will take over. A forced switchover can also be triggered manually \r\nby the operator.\r\n\r\nThe port protection group is identified by the first port in the group that is \r\nintended to be protected. The following parameters can be configured for the \r\nprotection group :\r\n  - local-node-id: the local-node-id that will ensure the protection of the \r\nfirst one.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure dual-parenting ( no local-node (node-id) ) | ( local-node (node-id) \r\nnode-name <Equipm::DualParentProtGrpLocalNodeName> ip_subnet <Ip::V4Address> )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Dual-Parenting local-node Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(node-id)                  the config of dual-parenting local-node id\r\n\r\nTable \"Dual-Parenting local-node Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nnode-name                  the dual-parenting of local-node-name\r\n                           mandatory parameter\r\n\r\n                           Parameter type: \r\n<Equipm::DualParentProtGrpLocalNodeName>\r\n                           Format:\r\n                           - a printable string\r\n                           - length: 1<=x<=127 \r\n\r\nip_subnet                  the ip_subnet of local-node.must config it \r\nlike:x.x.0.0\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Ip::V4Address>\r\n                           Format:\r\n                           - IPv4-address\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

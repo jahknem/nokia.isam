@@ -1,0 +1,116 @@
+module: isam_qos_profiles_policy_action
+short_description: Resource module to configure qos profiles policy-action
+description:
+- 'Configures a QoS policy action profile. A QoS policy action contains: discard packet,
+  set a DSCP value, set a Dot1P value, policing with a policer, policer sharing,count
+  attribute. Dot1P and DSCP values are set to frames matched by the filter associated
+  with this policy action. The forwarding action for the frames matched by the filter
+  can be discard or pass. The default forwarding action is pass. When the forwarding
+  action is discard, the other policy actions in this entry will not be checked; the
+  frame will be discarded immediately. Policy sharing causes multiple QoS subflow
+  with the same policy action profile to share their policer instance, in case they
+  are set up within the same session profile in the same direction. Count configures
+  whether the traffic classified by filter needs to be counted. Count means enable
+  to count the traffic classified by filter, no count means disable to count the traffic
+  classified by the filter. Default value is no count.'
+- Supports configuration of dscp value, dot1p value, discard packet and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure qos profiles ()'
+options:
+  config:
+    description:
+    - A list of qos profiles policy-action configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (name) - A unique profile name
+      dscp_value:
+        type: str
+        description:
+        - 'dscp value set in a matched packet, -1 means no change with default value:
+          -1L - dscp value set in a matched packet, -1 means no change - range: [-1...63]'
+        default: -1L
+      dot1p_value:
+        type: str
+        description:
+        - 'dot1p value set in a matched packet, -1 means no change with default value:
+          -1L - dot1p value set in a matched packet, -1 means no change - range: [-1...7]'
+        default: -1L
+      discard_packet:
+        type: bool
+        description:
+        - discard the packet matching the policy
+      shared_policer:
+        type: bool
+        description:
+        - enable the sharing policer instances among subflows
+      policer_profile:
+        type: str
+        description:
+        - 'policer used to the packet matching the policy with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      count:
+        type: bool
+        description:
+        - enable to count traffic classified by filter
+      mirror_vlan:
+        type: str
+        description:
+        - 'vlan id for mirror, 0 means no mirror with default value: 0L - vlan id
+          for mirror, 0 means no mirror - range: [0...4093]'
+        default: 0L
+      tc_value:
+        type: str
+        description:
+        - 'tc value to map the queue for matched packet, -1 means no change with default
+          value: -1L - traffic class value range - range: [-1...7]'
+        default: -1L
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure qos profiles policy-action)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

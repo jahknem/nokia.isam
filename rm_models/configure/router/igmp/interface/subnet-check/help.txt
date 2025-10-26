@@ -1,0 +1,5 @@
+help configure router igmp interface subnet-chec
+k
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,5 @@
+help configure service vpls egress endpoint stp 
+def-mesh-vc-id
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

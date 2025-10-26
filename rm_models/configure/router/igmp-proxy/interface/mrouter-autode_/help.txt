@@ -1,0 +1,5 @@
+help configure router igmp-proxy interface mrout
+er-autode*
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

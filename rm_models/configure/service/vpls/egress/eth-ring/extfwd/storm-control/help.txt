@@ -1,0 +1,5 @@
+help configure service vpls egress eth-ring extf
+wd storm-control
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

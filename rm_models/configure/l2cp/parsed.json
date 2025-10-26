@@ -1,0 +1,21 @@
+{
+  "title": "L2CP CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the L2CP parameters.",
+  "user_level": "The command can be accessed by operators with transport privileges, and \nexecuted by operators with transport privileges.",
+  "syntax": "> configure l2cp [ no partition-type | partition-type <L2cp::PartitionType> ]",
+  "resource_parameters": [],
+  "command_parameters": [
+    {
+      "name": "[no] partition-type",
+      "description": "partition type optional parameter with default value: \"no-partition\"",
+      "type": "<L2cp::PartitionType>",
+      "format": "( no-partition                            | fixed-assigned )",
+      "values": [
+        "no-partition          : no partitioning is supported",
+        "fixed-assigned        : partitioning is supported"
+      ],
+      "default": "no-partition"
+    }
+  ],
+  "raw": "help configure l2cp\r\nL2CP CONFIGURATION COMMAND\r\n==========================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the L2CP parameters.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with transport privileges, and \r\nexecuted by operators with transport privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure l2cp [ no partition-type | partition-type <L2cp::PartitionType> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"L2CP Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] partition-type        partition type\r\n                           optional parameter with default value: \"no-partition\"\r\n\r\n                           Parameter type: <L2cp::PartitionType>\r\n                           Format:\r\n                           ( no-partition\r\n                           | fixed-assigned )\r\n                           Possible values:\r\n                           - no-partition          : no partitioning is \r\nsupported\r\n                           - fixed-assigned        : partitioning is supported\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

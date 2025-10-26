@@ -1,0 +1,40 @@
+help configure generic-pon
+GENERIC PON DATA PATH INTEGRITY THRESHOLD COMMAND
+=================================================
+
+Command Description
+-------------------
+
+This command configures the PON/Channel-pair Data Path Integrity Threshold
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure generic-pon dpinteg-threshold <Gpon::dpintegThreshold>
+
+Command Parameters
+------------------
+
+Table "Generic PON Data Path Integrity Threshold command" Command Parameters
+
+Parameter                  Description
+
+dpinteg-threshold          configure data-path integrity threshold value for 
+gpon/ngpon2
+                           optional parameter
+
+                           Parameter type: <Gpon::dpintegThreshold>
+                           Format:
+                           - Datapath Integrity Threshold
+                           - range: [0...100]
+
+
+DS-LIN-TEST-01:automationuser>#

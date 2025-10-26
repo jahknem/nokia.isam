@@ -1,0 +1,40 @@
+tc-map-dot1p 0
+  tc 0
+  dpcolor green
+  policer-color green
+exit
+tc-map-dot1p 1
+  tc 1
+  dpcolor green
+  policer-color green
+exit
+tc-map-dot1p 2
+  tc 2
+  dpcolor green
+  policer-color green
+exit
+tc-map-dot1p 3
+  tc 3
+  dpcolor green
+  policer-color green
+exit
+tc-map-dot1p 4
+  tc 4
+  dpcolor green
+  policer-color green
+exit
+tc-map-dot1p 5
+  tc 5
+  dpcolor green
+  policer-color green
+exit
+tc-map-dot1p 6
+  tc 6
+  dpcolor green
+  policer-color green
+exit
+tc-map-dot1p 7
+  tc 7
+  dpcolor green
+  policer-color green
+exit

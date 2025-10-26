@@ -1,0 +1,9 @@
+{
+  "title": "CFM PM-PROACTIVE TEST MANAGEMENT COMMAND",
+  "description": "This command is used to configure PM-Proactive tests.",
+  "user_level": "The command can be accessed by operators with alarm , oam , vlan privileges, \nand executed by operators with alarm , oam , vlan privileges.",
+  "syntax": "> configure cfm y1731pm",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure cfm y1731pm\r\nCFM PM-PROACTIVE TEST MANAGEMENT COMMAND\r\n========================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command is used to configure PM-Proactive tests.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with alarm , oam , vlan privileges, \r\nand executed by operators with alarm , oam , vlan privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure cfm y1731pm\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nnone\r\nDS-LIN-TEST-01:automationuser>#"
+}

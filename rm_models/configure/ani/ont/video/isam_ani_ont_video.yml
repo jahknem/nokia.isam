@@ -1,0 +1,88 @@
+module: isam_ani_ont_video
+short_description: Resource module to configure ani ont video
+description:
+- This command edits provisioning data associated with a ONTVIDANI.
+- Supports configuration of plnd agc mode, agc offset, lower optical th and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure ani ont ()'
+options:
+  config:
+    description:
+    - A list of ani ont video configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (ont-idx) - ont index
+      plnd_agc_mode:
+        type: str
+        description:
+        - 'allows provisioning of the ONT''s AGC capabilities with default value:
+          "broad-band-agc"'
+        - 'Possible values: C(no-agc) - No AGC is used; C(broad-band-agc) - Broadband
+          RF AGC is used'
+        choices:
+        - no-agc
+        - broad-band-agc
+      agc_offset:
+        type: str
+        description:
+        - 'indicates the offset value to be used for Broadband RF AGC or Optical with
+          default value: 2 - Offset value to be used for Broadband RF AGC or Optical
+          - unit: db - range: [-12...12]'
+        default: '2'
+      lower_optical_th:
+        type: str
+        description:
+        - 'indicates the optical level the ONT uses to declare the Video-OOR Low alarm
+          with default value: -9.5 - optical level the ONT uses to declare the Video-OOR
+          high/Low alarm - unit: dBm - range: [-12...6]'
+        default: '-9.5'
+      upper_optical_th:
+        type: str
+        description:
+        - 'indicates the optical level the ONT uses to declare the Video-OOR high
+          alarm with default value: 1.0 - optical level the ONT uses to declare the
+          Video-OOR high/Low alarm - unit: dBm - range: [-12...6]'
+        default: '1.0'
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure ani ont video)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

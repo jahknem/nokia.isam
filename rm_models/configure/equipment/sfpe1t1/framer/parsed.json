@@ -1,0 +1,136 @@
+{
+  "title": "2XE1/DS1 FRAMER CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure Framer parameters on the 2xE1/DS1 \nsfp:",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure equipment sfpe1t1 framer (position) [ no frame-mode | frame-mode <Eqpt::Framermode> ] [ no iwf-on-liu | iwf-on-liu <Eqpt::IwfOnLiu> ] [ no liu-on-liu | liu-on-liu <Eqpt::LiuOnliu> ] [ no pm-to-iwf | pm-to-iwf <Eqpt::PmToiwf> ] [ no ais-to-iwf | ais-to-iwf <Eqpt::AisToiwf> ] [ no rai-to-iwf | rai-to-iwf <Eqpt::RaiToiwf> ] [ no rei-to-iwf | rei-to-iwf <Eqpt::ReiToiwf> ] [ no pm-to-liu | pm-to-liu <Eqpt::PmToliu> ] [ no ais-to-liu | ais-to-liu <Eqpt::AisToliu> ] [ no rai-to-liu | rai-to-liu <Eqpt::RaiToliu> ] [ no rei-to-liu | rei-to-liu <Eqpt::ReiToliu> ]",
+  "resource_parameters": [
+    {
+      "name": "(position)",
+      "description": "the physical sfp cage position"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] frame-mode",
+      "description": "select line framing mode optional parameter with default value: \"unframed\"",
+      "type": "<Eqpt::Framermode>",
+      "format": "( framed                            | unframed )",
+      "values": [
+        "framed                : selects framed tdm packet",
+        "unframed              : selects unframed tdm packet"
+      ],
+      "default": "unframed"
+    },
+    {
+      "name": "[no] iwf-on-liu",
+      "description": "enable loop towards iwf on liu optional parameter with default value: \"disable\"",
+      "type": "<Eqpt::IwfOnLiu>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : enable loop towards iwf on liu",
+        "disable               : disable loop towards iwf on liu"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] liu-on-liu",
+      "description": "enable loop towards liu on liu optional parameter with default value: \"disable\"",
+      "type": "<Eqpt::LiuOnliu>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : enable loop towards liu on liu",
+        "disable               : disable loop towards liu on liu"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] pm-to-iwf",
+      "description": "enable performance monitoring towards iwf optional parameter with default value: \"disable\"",
+      "type": "<Eqpt::PmToiwf>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : enable performance monitoring towards iwf",
+        "disable               : disable performance monitoring towards iwf"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] ais-to-iwf",
+      "description": "enable ais alarm towards iwf optional parameter with default value: \"disable\"",
+      "type": "<Eqpt::AisToiwf>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : enable ais towards iwf",
+        "disable               : disable ais towards iwf"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] rai-to-iwf",
+      "description": "enable rai alarm towards iwf optional parameter with default value: \"disable\"",
+      "type": "<Eqpt::RaiToiwf>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : enable rai towards iwf",
+        "disable               : disable rai towards iwf"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] rei-to-iwf",
+      "description": "enable rei alarm towards iwf optional parameter with default value: \"disable\"",
+      "type": "<Eqpt::ReiToiwf>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : enable rei towards iwf",
+        "disable               : disable rei towards iwf"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] pm-to-liu",
+      "description": "enable performance monitoring towards liu optional parameter with default value: \"disable\"",
+      "type": "<Eqpt::PmToliu>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : enable performance monitoring towards liu",
+        "disable               : disable performance monitoring towards liu"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] ais-to-liu",
+      "description": "enable ais alarm towards liu optional parameter with default value: \"disable\"",
+      "type": "<Eqpt::AisToliu>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : enable ais towards liu",
+        "disable               : disable ais towards liu"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] rai-to-liu",
+      "description": "enable rai alarm towards liu optional parameter with default value: \"disable\"",
+      "type": "<Eqpt::RaiToliu>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : enable rai towards liu",
+        "disable               : disable rai towards liu"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] rei-to-liu",
+      "description": "enable rei alarm towards liu optional parameter with default value: \"disable\"",
+      "type": "<Eqpt::ReiToliu>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : enable rei towards liu",
+        "disable               : disable rei towards liu"
+      ],
+      "default": "disable"
+    }
+  ],
+  "raw": "help configure equipment sfpe1t1 framer\r\n2XE1/DS1 FRAMER CONFIGURATION COMMAND\r\n=====================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure Framer parameters on the 2xE1/DS1 \r\nsfp:\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure equipment sfpe1t1 framer (position) [ no frame-mode | frame-mode \r\n<Eqpt::Framermode> ] [ no iwf-on-liu | iwf-on-liu <Eqpt::IwfOnLiu> ] [ no \r\nliu-on-liu | liu-on-liu <Eqpt::LiuOnliu> ] [ no pm-to-iwf | pm-to-iwf \r\n<Eqpt::PmToiwf> ] [ no ais-to-iwf | ais-to-iwf <Eqpt::AisToiwf> ] [ no \r\nrai-to-iwf | rai-to-iwf <Eqpt::RaiToiwf> ] [ no rei-to-iwf | rei-to-iwf \r\n<Eqpt::ReiToiwf> ] [ no pm-to-liu | pm-to-liu <Eqpt::PmToliu> ] [ no ais-to-liu \r\n| ais-to-liu <Eqpt::AisToliu> ] [ no rai-to-liu | rai-to-liu <Eqpt::RaiToliu> ] \r\n[ no rei-to-liu | rei-to-liu <Eqpt::ReiToliu> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"2xE1/DS1 Framer configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(position)                 the physical sfp cage position\r\n\r\nTable \"2xE1/DS1 Framer configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] frame-mode            select line framing mode\r\n                           optional parameter with default value: \"unframed\"\r\n\r\n                           Parameter type: <Eqpt::Framermode>\r\n                           Format:\r\n                           ( framed\r\n                           | unframed )\r\n                           Possible values:\r\n                           - framed                : selects framed tdm packet\r\n                           - unframed              : selects unframed tdm packet\r\n\r\n[no] iwf-on-liu            enable loop towards iwf on liu\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Eqpt::IwfOnLiu>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : enable loop towards iwf on \r\nliu\r\n                           - disable               : disable loop towards iwf \r\non liu\r\n\r\n[no] liu-on-liu            enable loop towards liu on liu\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Eqpt::LiuOnliu>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : enable loop towards liu on \r\nliu\r\n                           - disable               : disable loop towards liu \r\non liu\r\n\r\n[no] pm-to-iwf             enable performance monitoring towards iwf\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Eqpt::PmToiwf>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : enable performance \r\nmonitoring towards iwf\r\n                           - disable               : disable performance \r\nmonitoring towards iwf\r\n\r\n[no] ais-to-iwf            enable ais alarm towards iwf\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Eqpt::AisToiwf>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : enable ais towards iwf\r\n                           - disable               : disable ais towards iwf\r\n\r\n[no] rai-to-iwf            enable rai alarm towards iwf\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Eqpt::RaiToiwf>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : enable rai towards iwf\r\n                           - disable               : disable rai towards iwf\r\n\r\n[no] rei-to-iwf            enable rei alarm towards iwf\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Eqpt::ReiToiwf>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : enable rei towards iwf\r\n                           - disable               : disable rei towards iwf\r\n\r\n[no] pm-to-liu             enable performance monitoring towards liu\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Eqpt::PmToliu>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : enable performance \r\nmonitoring towards liu\r\n                           - disable               : disable performance \r\nmonitoring towards liu\r\n\r\n[no] ais-to-liu            enable ais alarm towards liu\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Eqpt::AisToliu>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : enable ais towards liu\r\n                           - disable               : disable ais towards liu\r\n\r\n[no] rai-to-liu            enable rai alarm towards liu\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Eqpt::RaiToliu>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : enable rai towards liu\r\n                           - disable               : disable rai towards liu\r\n\r\n[no] rei-to-liu            enable rei alarm towards liu\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Eqpt::ReiToliu>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : enable rei towards liu\r\n                           - disable               : disable rei towards liu\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

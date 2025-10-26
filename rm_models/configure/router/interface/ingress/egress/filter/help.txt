@@ -1,0 +1,5 @@
+help configure router interface ingress egress f
+ilter
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

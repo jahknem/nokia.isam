@@ -1,0 +1,241 @@
+help configure qos profiles rate-limit
+QOS RATE LIMIT PROFILE CONFIGURATION COMMAND
+============================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a QoS rate limit profile. A QoS 
+rate limit profile contains all rate limit values related to different 
+protocols, or total protocol values
+
+Total protocol ratelimit value and supported protocol ratelimit value
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles ( no rate-limit (name) ) | ( rate-limit (name) [ no 
+total-rate | total-rate <Qos::RateLimitTotalRate> ] [ no total-burst | 
+total-burst <Qos::RateLimitTotalBurst> ] [ no arp-rate | arp-rate 
+<Qos::RateLimitProtocolRate> ] [ no arp-burst | arp-burst 
+<Qos::RateLimitProtocolBurst> ] [ no dhcp-rate | dhcp-rate 
+<Qos::RateLimitProtocolRate> ] [ no dhcp-burst | dhcp-burst 
+<Qos::RateLimitProtocolBurst> ] [ no igmp-rate | igmp-rate 
+<Qos::RateLimitProtocolRate> ] [ no igmp-burst | igmp-burst 
+<Qos::RateLimitProtocolBurst> ] [ no pppoe-rate | pppoe-rate 
+<Qos::RateLimitProtocolRate> ] [ no pppoe-burst | pppoe-burst 
+<Qos::RateLimitProtocolBurst> ] [ no nd-rate | nd-rate 
+<Qos::RateLimitProtocolRate> ] [ no nd-burst | nd-burst 
+<Qos::RateLimitProtocolBurst> ] [ no icmpv6-rate | icmpv6-rate 
+<Qos::RateLimitProtocolRate> ] [ no icmpv6-burst | icmpv6-burst 
+<Qos::RateLimitProtocolBurst> ] [ no mld-rate | mld-rate 
+<Qos::RateLimitProtocolRate> ] [ no mld-burst | mld-burst 
+<Qos::RateLimitProtocolBurst> ] [ no dhcpv6-rate | dhcpv6-rate 
+<Qos::RateLimitProtocolRate> ] [ no dhcpv6-burst | dhcpv6-burst 
+<Qos::RateLimitProtocolBurst> ] [ no cfm-rate | cfm-rate 
+<Qos::RateLimitProtocolRate> ] [ no cfm-burst | cfm-burst 
+<Qos::RateLimitProtocolBurst> ] )
+
+Command Parameters
+------------------
+
+Table "QoS Rate Limit Profile Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+Table "QoS Rate Limit Profile Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] total-rate            committed total rate limit value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitTotalRate>
+                           Format:
+                           - protocol rate limit total rate
+                           - unit: pps
+                           - range: [0...254]
+
+[no] total-burst           committed total rate limit burst value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitTotalBurst>
+                           Format:
+                           - protocol rate limit total burst
+                           - unit: pps
+                           - range: [0...254]
+
+[no] arp-rate              ARP rate limit value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitProtocolRate>
+                           Format:
+                           - protocol rate limit value
+                           - unit: pps
+                           - range: [0...254]
+
+[no] arp-burst             ARP burst value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitProtocolBurst>
+                           Format:
+                           - protocol rate limit burst
+                           - unit: pps
+                           - range: [0...254]
+
+[no] dhcp-rate             DHCP rate limit value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitProtocolRate>
+                           Format:
+                           - protocol rate limit value
+                           - unit: pps
+                           - range: [0...254]
+
+[no] dhcp-burst            DHCP burst value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitProtocolBurst>
+                           Format:
+                           - protocol rate limit burst
+                           - unit: pps
+                           - range: [0...254]
+
+[no] igmp-rate             IGMP rate limit value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitProtocolRate>
+                           Format:
+                           - protocol rate limit value
+                           - unit: pps
+                           - range: [0...254]
+
+[no] igmp-burst            IGMP burst value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitProtocolBurst>
+                           Format:
+                           - protocol rate limit burst
+                           - unit: pps
+                           - range: [0...254]
+
+[no] pppoe-rate            PPPoE rate limit value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitProtocolRate>
+                           Format:
+                           - protocol rate limit value
+                           - unit: pps
+                           - range: [0...254]
+
+[no] pppoe-burst           PPPoE burst value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitProtocolBurst>
+                           Format:
+                           - protocol rate limit burst
+                           - unit: pps
+                           - range: [0...254]
+
+[no] nd-rate               Nd rate limit value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitProtocolRate>
+                           Format:
+                           - protocol rate limit value
+                           - unit: pps
+                           - range: [0...254]
+
+[no] nd-burst              Nd burst value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitProtocolBurst>
+                           Format:
+                           - protocol rate limit burst
+                           - unit: pps
+                           - range: [0...254]
+
+[no] icmpv6-rate           ICMP V6 rate limit value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitProtocolRate>
+                           Format:
+                           - protocol rate limit value
+                           - unit: pps
+                           - range: [0...254]
+
+[no] icmpv6-burst          ICMP V6 burst value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitProtocolBurst>
+                           Format:
+                           - protocol rate limit burst
+                           - unit: pps
+                           - range: [0...254]
+
+[no] mld-rate              MLD rate limit value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitProtocolRate>
+                           Format:
+                           - protocol rate limit value
+                           - unit: pps
+                           - range: [0...254]
+
+[no] mld-burst             MLD burst value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitProtocolBurst>
+                           Format:
+                           - protocol rate limit burst
+                           - unit: pps
+                           - range: [0...254]
+
+[no] dhcpv6-rate           DHCP V6 rate limit value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitProtocolRate>
+                           Format:
+                           - protocol rate limit value
+                           - unit: pps
+                           - range: [0...254]
+
+[no] dhcpv6-burst          DHCP v6 burst value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitProtocolBurst>
+                           Format:
+                           - protocol rate limit burst
+                           - unit: pps
+                           - range: [0...254]
+
+[no] cfm-rate              CFM rate limit value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitProtocolRate>
+                           Format:
+                           - protocol rate limit value
+                           - unit: pps
+                           - range: [0...254]
+
+[no] cfm-burst             CFM burst value
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::RateLimitProtocolBurst>
+                           Format:
+                           - protocol rate limit burst
+                           - unit: pps
+                           - range: [0...254]
+
+
+DS-LIN-TEST-01:automationuser>#

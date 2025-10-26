@@ -1,0 +1,6 @@
+25/10/26 00:11:03 major alarm occurred for ip-addr 192.168.222.10  : Successful Management login, 7 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># help configure service vpls egress endpoint bgp
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

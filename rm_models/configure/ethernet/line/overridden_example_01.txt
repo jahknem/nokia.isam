@@ -1,0 +1,59 @@
+DS-LIN-TEST-01:automationuser># info configure ethernet line 1/1/8/6
+configure ethernet
+#-------------------------------------------------------------------------------
+echo "ethernet"
+#-------------------------------------------------------------------------------
+line 1/1/8/6
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+#-------------------------------------------------------------------------------
+
+-- attempted overridden change that failed (device reported it doesn't support the port-type):
+DS-LIN-TEST-01:automationuser># configure ethernet line 1/1/8/6 port-type uplink no admin-up
+DS-LIN-TEST-01:automationuser>configure>ethernet>line>1/1/8/6#
+
+Error : ETH MGT error 31 : This port doesn't support configured port type.
+
+-- successful overridden-style command (remove admin-up while keeping uni):
+DS-LIN-TEST-01:automationuser># configure ethernet line 1/1/8/6 port-type uni no admin-up
+DS-LIN-TEST-01:automationuser>configure>ethernet>line>1/1/8/6#
+
+-- verify after change:
+DS-LIN-TEST-01:automationuser># info configure ethernet line 1/1/8/6
+configure ethernet
+#-------------------------------------------------------------------------------
+echo "ethernet"
+#-------------------------------------------------------------------------------
+line 1/1/8/6
+  port-type uni
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+#-------------------------------------------------------------------------------
+
+-- revert to baseline:
+DS-LIN-TEST-01:automationuser># configure ethernet line 1/1/8/6 admin-up
+DS-LIN-TEST-01:automationuser>configure>ethernet>line>1/1/8/6#
+
+-- final verify restored:
+DS-LIN-TEST-01:automationuser># info configure ethernet line 1/1/8/6
+configure ethernet
+#-------------------------------------------------------------------------------
+echo "ethernet"
+#-------------------------------------------------------------------------------
+line 1/1/8/6
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+#-------------------------------------------------------------------------------

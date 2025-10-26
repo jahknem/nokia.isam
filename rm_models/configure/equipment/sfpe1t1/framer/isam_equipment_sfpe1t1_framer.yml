@@ -1,0 +1,169 @@
+module: isam_equipment_sfpe1t1_framer
+short_description: Resource module to configure equipment sfpe1t1 framer
+description:
+- 'Configures Framer parameters on the 2xE1/DS1 sfp:'
+- Supports configuration of frame mode, iwf on liu, liu on liu and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure equipment sfpe1t1 framer ()'
+options:
+  config:
+    description:
+    - A list of equipment sfpe1t1 framer configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (position) - the physical sfp cage position
+      frame_mode:
+        type: str
+        description:
+        - 'select line framing mode with default value: "unframed"'
+        - 'Possible values: C(framed) - selects framed tdm packet; C(unframed) - selects
+          unframed tdm packet'
+        default: unframed
+        choices:
+        - framed
+        - unframed
+      iwf_on_liu:
+        type: str
+        description:
+        - 'enable loop towards iwf on liu with default value: "disable"'
+        - 'Possible values: C(enable) - enable loop towards iwf on liu; C(disable)
+          - disable loop towards iwf on liu'
+        default: disable
+        choices:
+        - enable
+        - disable
+      liu_on_liu:
+        type: str
+        description:
+        - 'enable loop towards liu on liu with default value: "disable"'
+        - 'Possible values: C(enable) - enable loop towards liu on liu; C(disable)
+          - disable loop towards liu on liu'
+        default: disable
+        choices:
+        - enable
+        - disable
+      pm_to_iwf:
+        type: str
+        description:
+        - 'enable performance monitoring towards iwf with default value: "disable"'
+        - 'Possible values: C(enable) - enable performance monitoring towards iwf;
+          C(disable) - disable performance monitoring towards iwf'
+        default: disable
+        choices:
+        - enable
+        - disable
+      ais_to_iwf:
+        type: str
+        description:
+        - 'enable ais alarm towards iwf with default value: "disable"'
+        - 'Possible values: C(enable) - enable ais towards iwf; C(disable) - disable
+          ais towards iwf'
+        default: disable
+        choices:
+        - enable
+        - disable
+      rai_to_iwf:
+        type: str
+        description:
+        - 'enable rai alarm towards iwf with default value: "disable"'
+        - 'Possible values: C(enable) - enable rai towards iwf; C(disable) - disable
+          rai towards iwf'
+        default: disable
+        choices:
+        - enable
+        - disable
+      rei_to_iwf:
+        type: str
+        description:
+        - 'enable rei alarm towards iwf with default value: "disable"'
+        - 'Possible values: C(enable) - enable rei towards iwf; C(disable) - disable
+          rei towards iwf'
+        default: disable
+        choices:
+        - enable
+        - disable
+      pm_to_liu:
+        type: str
+        description:
+        - 'enable performance monitoring towards liu with default value: "disable"'
+        - 'Possible values: C(enable) - enable performance monitoring towards liu;
+          C(disable) - disable performance monitoring towards liu'
+        default: disable
+        choices:
+        - enable
+        - disable
+      ais_to_liu:
+        type: str
+        description:
+        - 'enable ais alarm towards liu with default value: "disable"'
+        - 'Possible values: C(enable) - enable ais towards liu; C(disable) - disable
+          ais towards liu'
+        default: disable
+        choices:
+        - enable
+        - disable
+      rai_to_liu:
+        type: str
+        description:
+        - 'enable rai alarm towards liu with default value: "disable"'
+        - 'Possible values: C(enable) - enable rai towards liu; C(disable) - disable
+          rai towards liu'
+        default: disable
+        choices:
+        - enable
+        - disable
+      rei_to_liu:
+        type: str
+        description:
+        - 'enable rei alarm towards liu with default value: "disable"'
+        - 'Possible values: C(enable) - enable rei towards liu; C(disable) - disable
+          rei towards liu'
+        default: disable
+        choices:
+        - enable
+        - disable
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure equipment sfpe1t1 framer)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged
+EXAMPLES:
+  - gathered_example_01.txt

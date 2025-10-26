@@ -1,0 +1,66 @@
+help configure pon uri-prof
+GPON URI PROFILE CONFIGURATION COMMAND
+======================================
+
+Command Description
+-------------------
+
+This command creates the URI profile for accessing the configuration server. 
+These profiles are normally associated with Voip Services.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure pon ( no uri-prof (index) ) | ( uri-prof (index) name 
+<AsamProfileName> [ no address | address <Gpon::UriProfileAddress> ] [ no 
+version | version <Gpon::UriProfileVersionNbr> ] )
+
+Command Parameters
+------------------
+
+Table "GPON URI Profile Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(index)                    profile index
+
+Table "GPON URI Profile Configuration Command" Command Parameters
+
+Parameter                  Description
+
+name                       profile name
+                           mandatory parameter
+
+                           Parameter type: <AsamProfileName>
+                           Format:
+                           - a profile name
+                           - range: [a-zA-Z0-9-_.]
+                           - length: 1<=x<=32 
+
+[no] address               uri profile address that contains a Fully Qualified 
+Domain Name (FQDN) or an IP Address (in dot notation)
+                           optional parameter with default value: ""
+
+                           Parameter type: <Gpon::UriProfileAddress>
+                           Format:
+                           - uri profile address
+                           - length: x<=100 
+
+[no] version               uri profile version number
+                           optional parameter with default value: 1L
+
+                           Parameter type: <Gpon::UriProfileVersionNbr>
+                           Format:
+                           - uri profile version number
+                           - range: [1...2147483647]
+
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,92 @@
+help configure qos profiles policy
+QOS POLICY PROFILE CONFIGURATION COMMAND
+========================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a QoS policy profile. A policy 
+rule groups together a policy condition (filter) with a set of associated 
+actions. A policy rule contains:
+  - Filter type (L2 filter or L3 filter)
+  - L2 or L3 filter
+  - Precedence of this policy rule
+  - Policy action
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles ( no policy (name) ) | ( policy (name) filter 
+<Qos::PolicyFilter> [ no precedence | precedence <Qos::PolicyPrecedence> ] [ no 
+policy-action | policy-action <Qos::QosPolicyActionProfileName> ] )
+
+Command Parameters
+------------------
+
+Table "QoS Policy Profile Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+Table "QoS Policy Profile Configuration Command" Command Parameters
+
+Parameter                  Description
+
+filter                     the filter for the policy rule
+                           mandatory parameter
+
+                           Parameter type: <Qos::PolicyFilter>
+                           Format:
+                           ( l2-name : <Qos::IgnoredQosProfileName>
+                           | l3-name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - l2-name               : refer to a l2 filter
+                           - l3-name               : refer to a l3 filter
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] precedence            precedence value of the policy rule
+                           optional parameter with default value: 10L
+
+                           Parameter type: <Qos::PolicyPrecedence>
+                           Format:
+                           - the precedence value of the policy rule
+                           - range: [0...255]
+
+[no] policy-action         policy action profile applicable for the policy
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosPolicyActionProfileName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associate
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+
+DS-LIN-TEST-01:automationuser>#

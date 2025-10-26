@@ -1,0 +1,23 @@
+DS-LIN-TEST-01:automationuser># info configure ethernet line
+configure ethernet
+#-------------------------------------------------------------------------------
+echo "ethernet"
+#-------------------------------------------------------------------------------
+line 1/1/8/1
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+line 1/1/8/2
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+... (truncated)
+#-------------------------------------------------------------------------------

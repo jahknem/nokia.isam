@@ -1,0 +1,245 @@
+module: isam_qos_profiles_session
+short_description: Resource module to configure qos profiles session
+description:
+- This commmand allows the operator to configure the QoS session profile. The QoS
+  session profile is the main building block for conveying user traffic contractual
+  rights and treatment. The QoS session profile is a "macro"-profile, which consists
+  of individual settings as well as references to smaller profiles. A QoS session
+  profile is composed of - a logical flow type, - a marker profile, - two policer
+  profiles for up and downstream policing, - two lists for upstream and downstream
+  policy conditions and actions. - tag selection for downstream scheduler. The logical
+  flow type is a legacy parameter which is ignored. Any value is interpreted as "Generic",
+  that is, the QoS session profile can be attached to any interface. If the QoS session
+  profile contains settings that are not supported on the interface, then these are
+  silently ignored by the system.
+- Supports configuration of logical flow type, up policer, down policer and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure qos profiles ()'
+options:
+  config:
+    description:
+    - A list of qos profiles session configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (name) - A unique profile name
+      logical_flow_type:
+        type: str
+        description:
+        - 'a traffic stream up on which policy to be made. Important note: this mandatory
+          parameter is depreciated. No distinction is made any more between the different
+          flow types : independent on what is configured, generic is used. mandatory
+          parameter'
+        - 'Possible values: C(generic) - any defined logical flow; C(pvc) - all frames
+          on a pvc; C(dot-1x-session) - frames on a pvc except ppp frames; C(pvc-vlan-combination)
+          - frames on dot-1D port with the same vlan-id; C(ppp-session) - all frames
+          on a ppp session; C(ip-session) - all frames in an IP session or interface;
+          C(ipoe-vlan-cc) - all ipoe frames in a vlan cc interface; C(pppoe-vlan-cc)
+          - all pppoe frames in a vlan cc interface; C(ipoa-cc) - all ipoa frames
+          in a ipoa cc interface(replaced by ipoa); C(pppoa-cc) - all pppoa frames
+          in a pppoa cc interface; C(ipoe-ibridge) - all ipoe frames in i-bridge interface;
+          C(pppoe-ibridge) - all pppoe frames in i-bridge interface; C(pppoa-relay)
+          - pppoa frames in pppoa relay interface; C(pppoe-relay) - all pppoe frames
+          in pppoe relay; C(ipoe-ip-aware-bridge) - ipoe frames in ip aware bridge
+          interface; C(ipoa-ip-aware-bridge) - all ipoa frames in ip aware bridge
+          interface(replaced by ipoa); C(ipoa) - all ipoa frames in a ipoa interface'
+        choices:
+        - generic
+        - pvc
+        - dot-1x-session
+        - pvc-vlan-combination
+        - ppp-session
+        - ip-session
+        - ipoe-vlan-cc
+        - pppoe-vlan-cc
+        - ipoa-cc
+        - pppoa-cc
+        - ipoe-ibridge
+        - pppoe-ibridge
+        - pppoa-relay
+        - pppoe-relay
+        - ipoe-ip-aware-bridge
+        - ipoa-ip-aware-bridge
+        - ipoa
+      up_policer:
+        type: str
+        description:
+        - 'policer profile name applicable on this session upstream with default value:
+          "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      down_policer:
+        type: str
+        description:
+        - 'policer profile applicable on this session downstream with default value:
+          "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      up_marker:
+        type: str
+        description:
+        - 'marker profile name applicable on this session upstream with default value:
+          "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      ing_outer_marker:
+        type: str
+        description:
+        - 'outer marker profile name applicable on this session ingress with default
+          value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      ds_schedule_tag:
+        type: str
+        description:
+        - 'specifies downstream scheduler tag with default value: "system-default"'
+        - 'Possible values: C(system-default) - system default behavior: always the
+          egress outer tag used.; C(cvlantag) - Select downstream scheduler based
+          on the c-vlan.; C(svlantag) - Select downstream scheduler based on the s-vlan.'
+        choices:
+        - system-default
+        - cvlantag
+        - svlantag
+      up_policer_per_tc:
+        type: str
+        description:
+        - 'policer-per-tc profile name applicable on this session upstream with default
+          value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      up_dscptotc_prof:
+        type: str
+        description:
+        - 'dscp to tc qos profile name applicable on this session in upstream with
+          default value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      dn_dscptotc_prof:
+        type: str
+        description:
+        - 'dscp to tc qos profile name applicable on this session in downstream with
+          default value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      up_pbittotc_prof:
+        type: str
+        description:
+        - 'pbit to tc qos profile name applicable on this session in upstream with
+          default value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      dn_pbittotc_prof:
+        type: str
+        description:
+        - 'pbit to tc qos profile name applicable on this session in downstream with
+          default value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      up_default_tc:
+        type: str
+        description:
+        - 'tc mapping for non ip packet applicable on this session in upstream with
+          default value: -1L - traffic class value range - range: [-1...7]'
+        default: -1L
+      dn_default_tc:
+        type: str
+        description:
+        - 'tc mapping for non ip packet applicable on this session in downstream with
+          default value: -1L - traffic class value range - range: [-1...7]'
+        default: -1L
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure qos profiles session)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

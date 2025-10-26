@@ -1,0 +1,15 @@
+{
+  "title": "NE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the NE. The operator can \nconfigure the following parameter:\n  - description: text that describes the location of the ISAM.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure equipment isam [ no description | description <Description-127> ]",
+  "resource_parameters": [],
+  "command_parameters": [
+    {
+      "name": "[no] description",
+      "description": "any description to be used by the operator optional parameter with default value: \"\" - description to help the operator to identify the object - length: x<=127",
+      "type": "<Description-127>"
+    }
+  ],
+  "raw": "help configure equipment isam\r\nNE CONFIGURATION COMMAND\r\n========================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the NE. The operator can \r\nconfigure the following parameter:\r\n  - description: text that describes the location of the ISAM.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure equipment isam [ no description | description <Description-127> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"NE Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] description           any description to be used by the operator\r\n                           optional parameter with default value: \"\"\r\n\r\n                           Parameter type: <Description-127>\r\n                           Format:\r\n                           - description to help the operator to identify the \r\nobject\r\n                           - length: x<=127 \r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,55 @@
+help configure linetest single ltline
+SINGLE LINETEST LINE CONFIGURATION COMMAND
+==========================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the single LineTest line 
+parameters.
+
+
+User Level
+----------
+
+The command can be accessed by operators with sip , xdsl privileges, and 
+executed by operators with sip , xdsl privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure linetest single ltline (sessionid) lineid <Itf::LineTestSingleLineId
+> [ line-status <LineTest::LineStatusForConfig> ]
+
+Command Parameters
+------------------
+
+Table "SINGLE LineTest Line Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(sessionid)                uniquely identify of session
+lineid                     Identify of line
+
+Table "SINGLE LineTest Line Configuration Command" Command Parameters
+
+Parameter                  Description
+
+line-status                status of line for test
+                           optional parameter
+
+                           Parameter type: <LineTest::LineStatusForConfig>
+                           Format:
+                           ( intest
+                           | testover
+                           | rstpartlyready )
+                           Possible values:
+                           - intest                : put the line in test
+                           - testover              : the line tested, and the 
+result is ready for polling, it is read-only
+
+                           - rstpartlyready        : defined for dp/dtmf test
+
+
+DS-LIN-TEST-01:automationuser>#

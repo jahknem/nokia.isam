@@ -1,0 +1,36 @@
+help configure qos profiles marker dot1p-remark
+QOS DOT1P REMARK TABLE MARKER CONFIGURATION COMMAND
+===================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a marker for a Dot1P Remark 
+table. To configure the Dot1P Remark value in remark table, the command 
+"configure qos profiles marker dot1p-remark (name) dot1p-value (val) 
+remark-value (val)" is to be used.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by op
+erators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles marker ( no dot1p-remark (name) ) | ( dot1p-remark 
+(name) )
+
+Command Parameters
+------------------
+
+Table "QoS Dot1P Remark Table Marker Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+DS-LIN-TEST-01:automationuser>#

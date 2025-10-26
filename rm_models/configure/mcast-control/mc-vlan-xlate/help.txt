@@ -1,0 +1,46 @@
+help configure mcast-control mc-vlan-xlate
+MCAST MULTICAST VLAN TRANSLATION COMMAND
+========================================
+
+Command Description
+-------------------
+
+This command allows the operator configure source-pon vlan translation.
+
+
+User Level
+----------
+
+The command can be accessed by operators with igmp privileges, and executed by 
+operators with igmp privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure mcast-control ( no mc-vlan-xlate (nwvlan) ) | ( mc-vlan-xlate 
+(nwvlan) ponvlan <Igmp::mcPonVlanId> )
+
+Command Parameters
+------------------
+
+Table "mcast Multicast Vlan Translation Command" Resource Parameters
+
+Resource Identifier        Description
+
+(nwvlan)                   identification of the network-side virtual lan
+
+Table "mcast Multicast Vlan Translation Command" Command Parameters
+
+Parameter                  Description
+
+ponvlan                    identification of the pon-side virtual lan
+                           mandatory parameter
+
+                           Parameter type: <Igmp::mcPonVlanId>
+                           Format:
+                           - vlan index
+                           - range: [1...4093]
+
+
+DS-LIN-TEST-01:automationuser>#

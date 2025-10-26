@@ -1,0 +1,4 @@
+help configure port local_nt_ports*
+                                                    ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

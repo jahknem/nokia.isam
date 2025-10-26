@@ -1,0 +1,86 @@
+help configure generic-pon ont
+SYSTEM ONT CONFIGURATION COMMAND
+================================
+
+Command Description
+-------------------
+
+This command is to configure the system wide ONT related parameters.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure generic-pon ont [ no slid-mode | slid-mode <Gpon::SlidMode> ] [ no 
+sn-bundle-timer | sn-bundle-timer <Gpon::SnBundleTimer> ] [ no sw-ver-mis-block 
+| sw-ver-mis-block <Gpon::SwVerMisBlock> ] [ no sn-autounlock | sn-autounlock 
+<Gpon::OntAuthMode> ]
+
+Command Parameters
+------------------
+
+Table "System ONT Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] slid-mode             display interpretation for gpon/ngpon2 subscriber 
+location id
+                           optional parameter with default value: "ascii"
+
+                           Parameter type: <Gpon::SlidMode>
+                           Format:
+                           ( ascii
+                           | hexa-dec )
+                           Possible values:
+                           - ascii                 : ascii interpretation for 
+subscriber location
+                           - hexa-dec              : hexadecimal mode 
+interpretation for subscriber location
+
+[no] sn-bundle-timer       the system timer for bundling sn with loid/slid when 
+gpon/ngpon2 ont is in auto-bundle mode
+
+                           optional parameter with default value: 24L
+
+                           Parameter type: <Gpon::SnBundleTimer>
+                           Format:
+                           - the system timer for auto bundling sn
+                           - unit: hour
+                           - range: [1...72]
+
+[no] sw-ver-mis-block      the control behavior of user traffic block when for 
+gpon/ngpon2 ont version mismatch
+                           optional parameter with default value: "enable"
+
+                           Parameter type: <Gpon::SwVerMisBlock>
+                           Format:
+                           ( enable
+                           | disable )
+                           Possible values:
+                           - enable                : block the user traffic 
+when ont version mismatch
+                           - disable               : do not block the user 
+traffic when ont version mismatch
+
+[no] sn-autounlock          unlock ONT automatically after ONT authenticated
+                           optional parameter with default value: "disable"
+
+                           Parameter type: <Gpon::OntAuthMode>
+                           Format:
+                           ( disable
+                           | enable )
+                           Possible values:
+                           - disable               : disable unlock ONT 
+automatically after ONT authenticated
+                           - enable                : enable unlock ONT 
+automatically after ONT authenticated
+
+
+DS-LIN-TEST-01:automationuser>#

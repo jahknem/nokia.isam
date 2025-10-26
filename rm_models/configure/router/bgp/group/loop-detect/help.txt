@@ -1,0 +1,4 @@
+help configure router bgp group loop-detect
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,5 @@
+help configure service vpls spoke-sdp bgp-ad igm
+p-snooping <v-vpls> : keyword
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

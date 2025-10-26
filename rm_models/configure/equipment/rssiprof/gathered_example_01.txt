@@ -1,0 +1,6 @@
+DS-LIN-TEST-01:automationuser># info configure equipment rssiprof
+configure equipment
+#-------------------------------------------------------------------------------
+echo "equipment"
+#-------------------------------------------------------------------------------
+DS-LIN-TEST-01:automationuser>#

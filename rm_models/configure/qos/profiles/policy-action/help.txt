@@ -1,0 +1,134 @@
+help configure qos profiles policy-action
+QOS POLICY ACTION PROFILE CONFIGURATION COMMAND
+===============================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a QoS policy action profile. A 
+QoS policy action contains: discard packet, set a DSCP value, set a Dot1P 
+value, policing with a policer, policer sharing,count attribute.
+
+Dot1P and DSCP values are set to frames matched by the filter associated with 
+this policy action.
+
+The forwarding action for the frames matched by the filter can be discard or 
+pass. The default forwarding action is pass. When the forwarding action is 
+discard, the other policy actions in this entry will not be checked; the frame 
+will be discarded immediately.
+
+Policy sharing causes multiple QoS subflow with the same policy action profile 
+to share their policer instance, in case they are set up within the same 
+session profile in the same direction.
+
+Count configures whether the traffic classified by filter needs to be counted. 
+Count means enable to count the traffic classified by filter, no count means 
+disable to count the traffic classified by the filter. Default value is no 
+count.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles ( no policy-action (name) ) | ( policy-action (name) [ 
+no dscp-value | dscp-value <Qos::SetDscpValue> ] [ no dot1p-value | dot1p-value 
+<Qos::SetDot1pValue> ] [ [ no ] discard-packet ] [ [ no ] shared-policer ] [ no 
+policer-profile | policer-profile <Qos::QosPolicerProfileName> ] [ [ no ] count 
+] [ no mirror-vlan | mirror-vlan <Qos::PolicyActionMirrorVlan> ] [ no tc-value 
+| tc-value <Qos::tcvalue> ] )
+
+Command Parameters
+------------------
+
+Table "QoS Policy Action Profile Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+Table "QoS Policy Action Profile Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] dscp-value            dscp value set in a matched packet, -1 means no 
+change
+                           optional parameter with default value: -1L
+
+                           Parameter type: <Qos::SetDscpValue>
+                           Format:
+                           - dscp value set in a matched packet, -1 means no 
+change
+                           - range: [-1...63]
+
+[no] dot1p-value           dot1p value set in a matched packet, -1 means no 
+change
+                           optional parameter with default value: -1L
+
+                           Parameter type: <Qos::SetDot1pValue>
+                           Format:
+                           - dot1p value set in a matched packet, -1 means no 
+change
+                           - range: [-1...7]
+
+[no] discard-packet        discard the packet matching the policy
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] shared-policer        enable the sharing policer instances among subflows
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] policer-profile       policer used to the packet matching the policy
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosPolicerProfileName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associate
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] count                 enable to count traffic classified by filter
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] mirror-vlan           vlan id for mirror, 0 means no mirror
+                           optional parameter with default value: 0L
+
+                           Parameter type: <Qos::PolicyActionMirrorVlan>
+                           Format:
+                           - vlan id for mirror, 0 means no mirror
+                           - range: [0...4093]
+
+[no] tc-value              tc value to map the queue for matched packet, -1 
+means no change
+                           optional parameter with default value: -1L
+
+                           Parameter type: <Qos::tcvalue>
+                           Format:
+                           - traffic class value range
+                           - range: [-1...7]
+
+
+DS-LIN-TEST-01:automationuser>#

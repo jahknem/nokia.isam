@@ -1,0 +1,5 @@
+help configure service vpls egress egress-networ
+k mesh-sdp mld-snooping
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

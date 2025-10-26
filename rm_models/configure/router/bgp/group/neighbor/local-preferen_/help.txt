@@ -1,0 +1,5 @@
+help configure router bgp group neighbor local-p
+referen*
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

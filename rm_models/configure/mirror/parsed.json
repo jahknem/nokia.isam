@@ -1,0 +1,9 @@
+{
+  "title": "MIRROR CONFIGURATION COMMAND",
+  "description": "See IHUB Services Guide for more information. The command can be accessed and \nexecuted by operators with debug-mirror privileges.",
+  "user_level": "The command can be executed by operators with debug_mirror privileges.",
+  "syntax": "> configure mirror",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure mirror\r\nMIRROR CONFIGURATION COMMAND\r\n============================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nSee IHUB Services Guide for more information. The command can be accessed and \r\nexecuted by operators with debug-mirror privileges.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be executed by operators with debug_mirror privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure mirror\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nnone\r\nDS-LIN-TEST-01:automationuser>#"
+}

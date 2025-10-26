@@ -1,0 +1,33 @@
+help configure pppoel2 statistics
+PPPOE-L2 STATISTICS CONFIGURATION COMMAND
+=========================================
+
+Command Description
+-------------------
+
+This command is used to enable or disable the PPPoE L2 statistics of extensive 
+counters (on demand) on vlan-port interface.
+
+
+User Level
+----------
+
+The command can be accessed by operators with pppoe privileges, and executed by 
+operators with pppoe privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure pppoel2 ( no statistics (vlan-port) ) | ( statistics (vlan-port) )
+
+Command Parameters
+------------------
+
+Table "Pppoe-L2 Statistics Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(vlan-port)                The VLAN port interface type
+
+DS-LIN-TEST-01:automationuser>#

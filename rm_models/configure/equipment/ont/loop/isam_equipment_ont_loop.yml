@@ -1,0 +1,83 @@
+module: isam_equipment_ont_loop
+short_description: Resource module to configure equipment ont loop
+description:
+- This command allows the operator to create and configure the ONT parameters. loop-detect
+  - when default value no-control is set, OLT won't care about ONT loop detect, when
+  disable is set, ONT won't detect loop, when enable is set , ONT will loop detect
+  loop-portautoshutoff - when default value enable is set, if ONT detect loop, it
+  will autoly shut down the port, when disable is set, ONT won't auto shutdown
+- Supports configuration of loop detect, loop portautoshut
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure equipment ont loop ()'
+options:
+  config:
+    description:
+    - A list of equipment ont loop configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (ont-idx) - ONT index
+      loop_detect:
+        type: str
+        description:
+        - 'loop detect admin state settings for this ONT with default value: "no-control"
+          | disable | enable )'
+        - 'Possible values: C(no-control) - loop detect no control; C(disable) - loop
+          detect disable; C(enable) - loop detect enable'
+        default: no-control
+        choices:
+        - no-control
+        - disable
+        - enable
+      loop_portautoshut:
+        type: str
+        description:
+        - 'loop detect auto shutoff settings for this ONT with default value: "enable"'
+        - 'Possible values: C(disable) - loop detect disable; C(enable) - loop detect
+          enable'
+        default: enable
+        choices:
+        - disable
+        - enable
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure equipment ont loop)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

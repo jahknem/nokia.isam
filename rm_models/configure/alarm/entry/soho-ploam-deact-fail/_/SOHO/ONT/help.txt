@@ -1,0 +1,5 @@
+help configure alarm entry soho-ploam-deact-fail
+ ! SOHO ONT
+                                                                                 ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

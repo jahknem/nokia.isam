@@ -1,0 +1,83 @@
+help configure alarm
+ALARM LOG CONFIGURATION COMMAND
+===============================
+
+Command Description
+-------------------
+
+This command allows the operator to maintain a log that contains all alarm 
+state changes by enabling the logging mode and setting the severity level equal 
+to or higher than the severity level that the operator is interested in.
+
+
+User Level
+----------
+
+The command can be accessed by operators with alarm privileges, and executed by 
+operators with alarm privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure alarm log-sev-level <Alarm::alarmSeverityReport> log-full-action 
+<Alarm::alarmLogFullAction> non-itf-rep-sev-level <Alarm::alarmSeverityReport>
+
+Command Parameters
+------------------
+
+Table "Alarm Log Configuration Command" Command Parameters
+
+Parameter                  Description
+
+log-sev-level              set the lowest severity level to log alarms
+                           optional parameter
+
+                           Parameter type: <Alarm::alarmSeverityReport>
+                           Format:
+                           ( indeterminate
+                           | warning
+                           | minor
+                           | major
+                           | critical )
+                           Possible values:
+                           - indeterminate         : not a definite known 
+severity level
+                           - warning               : just to inform as a warning
+                           - minor                 : not service affecting
+                           - major                 : service affecting
+                           - critical              : service breaking
+
+log-full-action            set the action if log buffer is full
+                           optional parameter
+
+                           Parameter type: <Alarm::alarmLogFullAction>
+                           Format:
+                           ( wrap
+                           | halt )
+                           Possible values:
+                           - wrap                  : older log records are 
+overwritten by recent ones
+                           - halt                  : logging is stopped until 
+the log buffer is reset
+
+non-itf-rep-sev-level      set minimum severity level to report non itf alarms
+                           optional parameter
+
+                           Parameter type: <Alarm::alarmSeverityReport>
+                           Format:
+                           ( indeterminate
+                           | warning
+                           | minor
+                           | major
+                           | critical )
+                           Possible values:
+                           - indeterminate         : not a definite known 
+severity level
+                           - warning               : just to inform as a warning
+                           - minor                 : not service affecting
+                           - major                 : service affecting
+                           - critical              : service breaking
+
+
+DS-LIN-TEST-01:automationuser>#

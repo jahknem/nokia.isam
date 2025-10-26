@@ -1,0 +1,4 @@
+help configure router bgp group disable-4byte-*
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

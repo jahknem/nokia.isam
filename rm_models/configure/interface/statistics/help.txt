@@ -1,0 +1,10 @@
+help configure interface statistics
+
+Error : index type could not be detected
+Error : no class defined for index type 196
+Error : index type could not be detected
+Error : no class defined for index type 196
+Error : index type could not be detected
+Error : no class defined for index type 196
+
+DS-LIN-TEST-01:automationuser>#

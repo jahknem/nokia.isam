@@ -1,0 +1,112 @@
+module: isam_equipment_sfpe1t1_pwtdm
+short_description: Resource module to configure equipment sfpe1t1 pwtdm
+description:
+- 'Configures pseudowire TDM parameters on the 2xE1/DS1 sfp:'
+- Supports configuration of channel, packet length, jitter buff size and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure equipment sfpe1t1 ()'
+options:
+  config:
+    description:
+    - A list of equipment sfpe1t1 pwtdm configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (position) - the physical sfp cage position
+      channel:
+        type: str
+        description:
+        - open or close the channel mandatory parameter
+        - 'Possible values: C(close) - close channel; C(open) - open channel'
+        choices:
+        - close
+        - open
+      packet_length:
+        type: str
+        description:
+        - 'packet length can be configured from 0 to 16382, packet length for MEF8
+          is 256 bytes mandatory parameter - packet length range - range: [0...16382]'
+      jitter_buff_size:
+        type: str
+        description:
+        - 'jitter buffer size can be configured from 0 to 1023,units in number of
+          MEF8 packets mandatory parameter - jitter buffer size - range: [0...1023]'
+      vlanid:
+        type: str
+        description:
+        - 'vlan id can be configured from 0 to 4095 mandatory parameter - vlan index
+          - range: [0...4095]'
+      priority:
+        type: str
+        description:
+        - '802.1p priority range 0 to 7 mandatory parameter - priority range 0 to
+          7 - range: [0...7]'
+      conseq_number:
+        type: str
+        description:
+        - 'consequence number range 0 to 7 mandatory parameter - consequence range
+          0 to 7,0: no control, 1-6:number of packets out of sequence - range: [0...7]'
+      ecid_rx:
+        type: str
+        description:
+        - 'receive emulated circuit identifier range 0 to 1048575 mandatory parameter
+          - Emulated circuit identifierrange 0 to 1048575 - range: [0...1048575]'
+      ecid_tx:
+        type: str
+        description:
+        - 'transmit emulated circuit identifier range 0 to 1048575 mandatory parameter
+          - Emulated circuit identifierrange 0 to 1048575 - range: [0...1048575]'
+      source_mac:
+        type: str
+        description:
+        - 'source mac address mandatory parameter - media dependent physical address
+          - length: 6'
+      dest_mac:
+        type: str
+        description:
+        - 'destination mac address mandatory parameter - media dependent physical
+          address - length: 6'
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure equipment sfpe1t1 pwtdm)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged
+EXAMPLES:
+  - gathered_example_01.txt

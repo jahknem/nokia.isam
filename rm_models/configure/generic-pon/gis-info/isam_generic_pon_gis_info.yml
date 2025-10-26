@@ -1,0 +1,108 @@
+module: isam_generic_pon_gis_info
+short_description: Resource module to configure generic-pon gis-info
+description:
+- This command configures the OLT GIS info.
+- Supports configuration of longitude, latitude, elevation and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+options:
+  config:
+    description:
+    - A list of generic-pon gis-info configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier
+      longitude:
+        type: str
+        description:
+        - 'longitude of GIS info with default value: "0.00000" - longitude of the
+          GIS info - unit: degree - range: [-180.00000...180.00000]'
+        default: '0.00000'
+      latitude:
+        type: str
+        description:
+        - 'latitude of GIS info with default value: "0.00000" - latitude of the GIS
+          info - unit: degree - range: [-90.00000...90.00000]'
+        default: '0.00000'
+      elevation:
+        type: str
+        description:
+        - 'elevation of GIS info with default value: "0" - latitude of the GIS info
+          - unit: meter - range: [-32768...32767]'
+        default: '0'
+      horizontal_error:
+        type: str
+        description:
+        - 'horizontal error of GIS info with default value: "0" - horizontal error
+          of the GIS info - unit: meter - range: [0...65535]'
+        default: '0'
+      altitude_error:
+        type: str
+        description:
+        - 'altitude error of GIS info with default value: "0" - altitude error of
+          the GIS info - unit: meter - range: [0...65535]'
+        default: '0'
+      area_code:
+        type: str
+        description:
+        - 'area code of GIS info with default value: "000000000000" - altitude error
+          of the GIS info - 12 Decimal charaters - length: 12'
+        default: '000000000000'
+      timestamp:
+        type: str
+        description:
+        - 'timestamp of GIS info with default value: "0" - the seconds eclapsed since
+          1970-01-01:00:00:00 - unit: Seconds - range: [0...4294967295]'
+        default: '0'
+      gis_digest:
+        type: str
+        description:
+        - 'GIS digest of GIS info with default value: "0000000000000000" - digest
+          of the GIS info - 16 hex characters - length: 16'
+      gis_check:
+        type: str
+        description:
+        - 'GIS digest of GIS info with default value: "0000" - check of the GIS info
+          - 4 hex characters - length: 4'
+        default: '0000'
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure generic-pon gis-info)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

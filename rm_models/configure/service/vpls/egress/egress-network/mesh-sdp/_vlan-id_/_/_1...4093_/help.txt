@@ -1,0 +1,5 @@
+help configure service vpls egress egress-networ
+k mesh-sdp <vlan-id> : [1...4093]
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

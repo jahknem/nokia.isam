@@ -1,0 +1,176 @@
+module: isam_iphost_ont
+short_description: Resource module to configure iphost ont
+description:
+- 'This command creates an IP host in the ONT.It must be created prior to creating
+  services on an ONT that will use this IP stack. Prior to entering this command the
+  following must have been already created: S-VLAN to associate for this stack The
+  ONT for this stack If DHCP is enabled, the addressed obtain will override manual
+  provisioning of ip-address, net-mask, default-router NOTE: Allowable range for IP
+  address is 0.0.0.0 to 255.255.255.255 OLT prohibits the entry of the following range
+  of well-known IP addresses: 224.0.0.0 to 239.255.255.255 (multicast) 127.0.0.0 to
+  127.255.255.255 (loopback) 256.256.256.256 (broadcast)'
+- Supports configuration of ip address, net mask, default router and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure iphost ()'
+options:
+  config:
+    description:
+    - A list of iphost ont configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (index) - a unique interface index
+      ip_address:
+        type: str
+        description:
+        - 'IP address of the IP Host at the ONT. Note: IP@ and net-mask are required
+          parameters and need to be entered at the same time. with default value:
+          "0.0.0.0" - IPv4-address'
+        default: 0.0.0.0
+      net_mask:
+        type: str
+        description:
+        - 'IP address network mask of the IP Host at the ONT. Note: IP@ and net-mask
+          are required parameters and need to be entered at the same time. with default
+          value: "0.0.0.0" - IPv4-address'
+        default: 0.0.0.0
+      default_router:
+        type: str
+        description:
+        - 'IP address of the default router with default value: "0.0.0.0" - IPv4-address'
+        default: 0.0.0.0
+      dns_addr:
+        type: str
+        description:
+        - 'address of the primary DNS server(when dhcp is disabled) with default value:
+          "0.0.0.0" - IPv4-address'
+        default: 0.0.0.0
+      sec_dns_addr:
+        type: str
+        description:
+        - 'address of the secondary DNS server(when dhcp is disabled) with default
+          value: "0.0.0.0" - IPv4-address'
+        default: 0.0.0.0
+      dhcp:
+        type: str
+        description:
+        - 'designate whether DHCP is enabled with default value: "disabled"'
+        - 'Possible values: C(enabled) - DHCP is enabled; C(disabled) - DHCP is disabled'
+        default: disabled
+        choices:
+        - enabled
+        - disabled
+      dhcp_dscp:
+        type: str
+        description:
+        - 'dscp value for use in outgoing dhcp packets with default value: 24 - dscp
+          value - range: [0...63]'
+        default: '24'
+      host_id:
+        type: str
+        description:
+        - 'dhcp option 61 clientid associated with the ip host with default value:
+          "" - to uniquely identify the VoIP Client. - length: x<=25'
+        - 'Maximum length: 25 characters'
+      ping:
+        type: str
+        description:
+        - 'determines whether host should respond to ping with default value: "disabled"'
+        - 'Possible values: C(enabled) - enable the ping facility; C(disabled) - disable
+          the ping facility'
+        default: disabled
+        choices:
+        - enabled
+        - disabled
+      traceroute:
+        type: str
+        description:
+        - 'determines whether host should respond to traceroute messages with default
+          value: "disabled"'
+        - 'Possible values: C(enabled) - enable the traceroute facility; C(disabled)
+          - disable the traceroute facility'
+        default: disabled
+        choices:
+        - enabled
+        - disabled
+      vlan:
+        type: str
+        description:
+        - vlan-id
+        - 'Possible values: C(stacked) - stacked vlan identity Field type <Vlan::UVlanIndex>;
+          C(range) - [0...4093]'
+        choices:
+        - stacked
+        - unstacked vlan identity
+        - range
+        - service vlan identity
+        - customer vlan identity
+      admin_state:
+        type: str
+        description:
+        - 'administrative state of the interface with default value: "up" Table "Voice
+          Ont IP-Host Configuration Command" Display Parameters Specific Information:'
+        - 'Possible values: C(up) - set the admin-state to up; C(down) - set the admin-state
+          to down'
+        default: up
+        choices:
+        - up
+        - down
+      oper_state:
+        type: str
+        description:
+        - operational state of the interface This element is always shown. ( up |
+          down | testing | unknown | dormant | no-value ) DS-LIN-TEST-01:automationuser>#
+        - 'Possible values: C(up) - up,traffic can pass; C(down) - down,no traffic
+          is passing; C(testing) - testing,no traffic is passing; C(unknown) - unknown;
+          C(dormant) - dormant,no traffic is passing; C(no-value) - no entry in the
+          table'
+        choices:
+        - up
+        - down
+        - testing
+        - unknown
+        - dormant
+        - no-value
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure iphost ont)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

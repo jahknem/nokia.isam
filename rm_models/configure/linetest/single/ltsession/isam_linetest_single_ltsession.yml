@@ -1,0 +1,319 @@
+module: isam_linetest_single_ltsession
+short_description: Resource module to configure linetest single ltsession
+description:
+- Configures the single LineTest session parameters.
+- Supports configuration of session cmd, ownerid, timeout period and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure linetest single ltsession ()'
+options:
+  config:
+    description:
+    - A list of linetest single ltsession configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (sessionid) - uniquely identify of session
+      session_cmd:
+        type: str
+        description:
+        - the linetest session command
+        - 'Possible values: C(create) - create a test session; C(starttest) - transfer
+          data done, start a test; C(sendinfo) - start to transfer info data for an
+          underway test; C(startinfo) - transfer info data done, start info operation;
+          C(destroy) - destroy a test session; C(recv-subtest) - start to transfer
+          the sub-test''s data; C(start-subtest) - transfer sub-test''s data done,
+          start the sub-test; C(repeat) - repeat the last test; C(endtest) - end current
+          test session'
+        choices:
+        - create
+        - starttest
+        - sendinfo
+        - startinfo
+        - destroy
+        - recv-subtest
+        - start-subtest
+        - repeat
+        - endtest
+      ownerid:
+        type: str
+        description:
+        - ownerid of the session - gauge
+      timeout_period:
+        type: str
+        description:
+        - 'timeout period - allows to set the whole test timer including all test
+          \r\nitems of all lines for the session. Should be larger \r\nthan or equal
+          to the sum of all lines'' limited time plus\r\nline test management time
+          <2s>. Each line''s limited time\r\nis the sum of all the test items'' limited
+          time in th is \r\nline. There are two exceptions: a) cable-pair-ident,\r\nwhich
+          uses a fixed limitation 60~5400s;\r\nb) diagnosis-call, which uses a fixed
+          limitation 42~120s.\r\nTest items'' limited time(second):\r\n| test type
+          | POTS | MELT |\r\n- type-high\r\n| group | 20 | 18 |\r\n|'
+      feeded_ac_vol:
+        type: str
+        description:
+        - '| 3 | N/A |\r\n| foreign-ac-vol | 10 | 5 |\r\n| feeded-dc-vol | 3 | N/A
+          |\r\n| foreign-dc-vol | 15 | 5 |\r\n| feeding-current | 3 | N/A |\r\n|'
+      resistance:
+        type: str
+        description:
+        - '| 6 | 18 |\r\n| capacitance | 15 | 18 |\r\n| impedance | 5 | N/A |\r\n|
+          low-capacit-phone | 20 | N/A |\r\n| force-ring-subscrib | 120 | N/A |\r\n|'
+      dialton_delay:
+        type: str
+        description:
+        - '| 8 | N/A |\r\n| msocket-detection | 6 | N/A |\r\n- type-low\r\n| ac-current
+          | 66 | N/A |\r\n|'
+      dc_current:
+        type: str
+        description:
+        - '| 66 | N/A |\r\n| noise-level | 66 | N/A |\r\n| howler | 120 | N/A |\r\n|
+          status-monitored | 3 | N/A |\r\n| talking-father | 3 | N/A |\r\n|'
+      line_reverse_sub:
+        type: str
+        description:
+        - '| 60 | N/A |\r\n| p-meter-pulse-sub | 6 | N/A |\r\n| ring-subscrib-sub
+          | 60 | N/A |\r\n| dpdtmf-signal-sub | 60 | N/A |\r\n| userloop-sub | 6 |
+          N/A |\r\n|'
+      etsi_signature:
+        type: str
+        description:
+        - '| N/A | 18 |\r\n| electronic-ringer | 10 | N/A |\r\n| longitudinal-current
+          | 3 | N/A |\r\n| conductance | 8 | 20 |\r\n| susceptance | 8 | 20 |\r\n|'
+      iltf_hazardous_voltage:
+        type: str
+        description:
+        - '| 30 | 20 |\r\n- type-extend\r\n|'
+      iltf_term_signature:
+        type: str
+        description:
+        - '| N/A | 20 |\r\n| iltf-term-capacitiv | 15 | 20 |\r\n| iltf-ppa-test |
+          15 | 20 |\r\n| roh-test | 8 | 20 |\r\n| gr909-ringer | 20 | N/A |\r\n|'
+      gr909_dialtone_d:
+        type: str
+        description:
+        - '| 8 | N/A |\r\n| gr909-roh | 20 | N/A |\r\n| gr909-hazardous-p | 20 | N/A
+          |\r\n| gr909-femf | 20 | N/A |\r\n| gr909-resistive-f | 20 | N/A |\r\n|'
+      iltf_term_ringer:
+        type: str
+        description:
+        - '| 10 | N/A |\r\n| zener-res-volt | 8 | 20 |\r\n| isdn-pra-remotelb | 2
+          | N/A |\r\n| isdn-pra-ploadlb | 2 | N/A |\r\n| isdn-pra-locallb | 4 | N/A
+          |\r\n|'
+      isdn_pra_cablelb:
+        type: str
+        description:
+        - '| 2 | N/A |\r\n| cas-r2-remotelb | 2 | N/A |\r\n| cas-r2-ploadlb | 2 |
+          N/A |\r\n| cas-r2-locallb | 4 | N/A |\r\n| cas-r2-cablelb | 2 | N/A | -
+          unit: second - range: [2...4294967295]'
+      line_num:
+        type: str
+        description:
+        - 'line number in the session of test (Max line number depends on the physical
+          line number of the device) - line number in the session of test - range:
+          [1...72]'
+      type_high:
+        type: str
+        description:
+        - indicate line test items
+        - 'Possible values: C(none) - null; C(group) - group test, see group-opt argument
+          for the content of the group test; C(feeded-ac-vol) - feeded ac rms voltage
+          test, HBit31/30/29; C(foreign-ac-vol) - foreign ac rms voltage test, HBit26/27/28;
+          C(feeded-dc-vol) - feeded dc voltage test, HBit18/23/24/25; C(foreign-dc-vol)
+          - foreign dc voltage test, HBit20/21/22; C(feeding-current) - feeding current
+          test, HBit19; C(resistance) - insulating resistance test, HBit12/13/14/15/16/17(ISDN
+          line test only support HBit14/15/16/17); C(capacitance) - capacitance test,
+          HBit8/9/10/11; C(impedance) - impedance test, HBit4/5/6/7; C(low-capacit-phone)
+          - low capacitance phone detect test, HBit3; C(force-ring-subscrib) - force
+          ring subscriber test, HBit2; C(dialton-delay) - dial tone delay test of
+          user circuit only in idle , HBit1; C(msocket-detection) - termination (m
+          socket detection) test, HBit0'
+        choices:
+        - none
+        - group
+        - feeded-ac-vol
+        - foreign-ac-vol
+        - feeded-dc-vol
+        - foreign-dc-vol
+        - feeding-current
+        - resistance
+        - capacitance
+        - impedance
+        - low-capacit-phone
+        - force-ring-subscrib
+        - dialton-delay
+        - msocket-detection
+      type_low:
+        type: str
+        description:
+        - indicate line test items
+        - 'Possible values: C(none) - null; C(ac-current) - ac current test normal
+          test, LBit29/30/31; C(dc-current) - dc current test normal test, LBit28/27/26;
+          C(noise-level) - noise level normal test, LBit24; C(howler) - howler test
+          under normal test, LBit22; C(status-monitored) - status monitored test,
+          LBit20; C(cable-pair-ident) - cable pair identification test, LBit19; C(talking-father)
+          - talking test (father test item), LBit18; C(line-reverse-sub) - line reverse
+          test, subtest of talking test, LBit17; C(p-meter-pulse-sub) - private meter
+          pulses test, subtest of talking test, LBit16; C(ring-subscrib-sub) - ring
+          subscriber with auto ring test, subtest of talking test, LBit15; C(dpdtmf-signal-sub)
+          - dp/dtmf signal test, subtest of talking test, LBit14; C(userloop-sub)
+          - resistance of user loop (tip-ring), subtest of talking test, LBit13; C(etsi-signature)
+          - etsi signature test, including capacitance and resistance, LBit12/11,
+          for MELT only; C(electronic-ringer) - electronic ringer detect test, including
+          capacitance and resistance, LBit12/11, for NPOT-B only; C(longitudinal-current)
+          - longitudinal current test, LBit9; C(conductance) - termination conductance
+          test, LBit4/5/6; C(susceptance) - termination susceptance test, LBit1/2/3;
+          C(iltf-hazardous-voltage) - hazardous voltage detection test, LBit0'
+        choices:
+        - none
+        - ac-current
+        - dc-current
+        - noise-level
+        - howler
+        - status-monitored
+        - cable-pair-ident
+        - talking-father
+        - line-reverse-sub
+        - p-meter-pulse-sub
+        - ring-subscrib-sub
+        - dpdtmf-signal-sub
+        - userloop-sub
+        - etsi-signature
+        - electronic-ringer
+        - longitudinal-current
+        - conductance
+        - susceptance
+        - iltf-hazardous-voltage
+      test_parm_num:
+        type: str
+        description:
+        - 'parameter lines number in the session for test - parameter lines number
+          in the session of test - range: [0...6]'
+      test_mode:
+        type: str
+        description:
+        - test mode
+        - 'Possible values: C(single) - the test will be end after one time; C(interactive)
+          - the interactive test; C(cablepair) - the cable pair test'
+        choices:
+        - single
+        - interactive
+        - cablepair
+      inactive_timer:
+        type: str
+        description:
+        - 'session inactive timer - session inactive timer, 0 means never destroy
+          the session automatically - unit: second - range: [0,120...65535]'
+      type_extend:
+        type: str
+        description:
+        - indicate line test items
+        - 'Possible values: C(none) - null; C(iltf-term-signature) - galvanic signature
+          detection, ExBit31, only applicable for MELT; C(iltf-term-capacitiv) - end
+          device capacitance >50nF detection, ExBit30; C(iltf-ppa-test) - ppa variant
+          test, ExBit29; C(roh-test) - termination roh test, ExBit28; C(gr909-ringers)
+          - ringers test, ExBit26; C(gr909-dialtone-d) - draw and break dial tone
+          delay test, ExBit25; C(gr909-roh) - receiver off hook test, ExBit24; C(gr909-hazardous-p)
+          - hazardous potential test, ExBit23,; C(gr909-femf) - foreign electromotive'
+        choices:
+        - none
+        - iltf-term-signature
+        - iltf-term-capacitiv
+        - iltf-ppa-test
+        - roh-test
+        - gr909-ringers
+        - gr909-dialtone-d
+        - gr909-roh
+        - gr909-hazardous-p
+        - gr909-femf
+      force:
+        type: str
+        description:
+        - 'test, ExBit22 - gr909-resistive-f : resistive faults test, ExBit21 - iltf-term-ringer
+          : Termination Ringer Testing, ExBit27,only applicable for NPOT-B/C - zener-res-volt
+          : Zener Resistance and Voltage test, ExBit20/19 - isdn-pra-remotelb : ISDN
+          PRA Remote loopback test, ExBit18 - isdn-pra-ploadlb : ISDN PRA Payload
+          loopback test, ExBit17 - isdn-pra-locallb : ISDN PRA Local loopback test,
+          ExBit16 - isdn-pra-cablelb : ISDN PRA Cable loopback test, ExBit15 - cas-r2-remotelb
+          : CAS R2 Remote loopback test, ExBit18 - cas-r2-ploadlb : CAS R2 Payload
+          loopback test, ExBit17 - cas-r2-locallb : CAS R2 Local loopback test, ExBit16
+          - cas-r2-cablelb : CAS R2 Cable loopback test, ExBit15 - diagnosis-call
+          : diagnosis call test, ExBit14'
+      group_opt:
+        type: str
+        description:
+        - 'indicate line test items with default value: "none"'
+        - 'Possible values: C(none) - identifier group test normal report value, HBit28/27/26/22/21/20/17/16/15/14/11/9/8;
+          C(extended) - identifier group test extended report value, HBit28/27/26/22/21/20/17/16/15/14/11/9/8;
+          C(pots-collective) - identifier pots collective tests,HBit28/27/26/22/21/20/17/16/15/14/11/9/8,
+          LBit12/11/6/5/4/3/2/1, ExBit30/29/28/27/20/19; C(melt-collective) - identifier
+          MELT collective tests,HBit28/27/26/22/21/20/17/16/15/14/11/9/8, LBit12/11/6/5/4/3/2/1,
+          ExBit31/30/29/28/20/19'
+        default: none
+        choices:
+        - none
+        - extended
+        - pots-collective
+        - melt-collective
+      busy_overwrite:
+        type: str
+        description:
+        - 'Session Busy Overwrite status with default value: "false"'
+        - 'Possible values: C(true) - busy overwrite enable; C(false) - busy overwrite
+          disable'
+        default: 'false'
+        choices:
+        - 'true'
+        - 'false'
+      force_measure:
+        type: str
+        description:
+        - 'status of line for test with default value: "false"'
+        - 'Possible values: C(true) - force the MELT measurement for requested line
+          tests; C(false) - force measurement is not required'
+        default: 'false'
+        choices:
+        - 'true'
+        - 'false'
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure linetest single ltsession)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

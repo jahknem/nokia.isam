@@ -1,0 +1,17 @@
+DS-LIN-TEST-01:automationuser># info configure ethernet ont
+configure ethernet
+#-------------------------------------------------------------------------------
+echo "ethernet"
+#-------------------------------------------------------------------------------
+ont 1/1/2/1/1/1/1
+  cust-info YTest-Proxy
+  auto-detect auto
+  admin-state up
+exit
+ont 1/1/5/1/1/1/1
+  cust-info Y654321
+  auto-detect auto
+  admin-state up
+exit
+... (truncated for brevity in this example file) ...
+#-------------------------------------------------------------------------------

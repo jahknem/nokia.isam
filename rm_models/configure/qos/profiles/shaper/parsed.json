@@ -1,0 +1,53 @@
+{
+  "title": "QOS SHAPER PROFILE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a QoS shaper profile. A QoS \nshaper profile contains all settings related to a shaper. The ISAM supports \nsingle token bucket shapers. EIR is only applicable if shaper type is \nsingleTokenBucketGpon. CBS is applicable only if the shaper type is \nsingleTokenBucket.\n\nThe L2+ line cards support shaping on queue.\n\n1. GPON supports EIR and CIR. If CBS is non-zero for GPON; CLI will return an \nerror.\n\n2. DSL doesn't support EIR. So if user enters non-zero for EIR for DSL; CLI \nwill return an error.",
+  "user_level": "The command can be accessed by operators with qos privileges, and executed by \noperators with qos privileges.",
+  "syntax": "> configure qos profiles ( no shaper (name) ) | ( shaper (name) committed-info-rate <Qos::ShaperCommittedInfoRate> committed-burst-size <Qos::ShaperCommittedBurstSizeNew> [ no excess-info-rate | excess-info-rate <Qos::ShaperExcessiveInfoRate> ] [ no type | type <Qos::ShaperType> ] [ no autoshape | autoshape <Qos::AutoShape> ] )",
+  "resource_parameters": [
+    {
+      "name": "(name)",
+      "description": "A unique profile name"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "committed-info-rate",
+      "description": "committed information rate of a shaper mandatory parameter - committed information rate of a shaper - unit: kbps - range: [0...2147483647]",
+      "type": "<Qos::ShaperCommittedInfoRate>"
+    },
+    {
+      "name": "committed-burst-size",
+      "description": "committed burst size of shaper mandatory parameter - committed burst size of shaper - unit: byte - range: [0,64...2147483647]",
+      "type": "<Qos::ShaperCommittedBurstSizeNew>"
+    },
+    {
+      "name": "[no] excess-info-rate",
+      "description": "excessive information rate  of shaper optional parameter with default value: 0 - excessive information rate of a shaper - unit: kbps - range: [0...2147483647]",
+      "type": "<Qos::ShaperExcessiveInfoRate>",
+      "default": "0"
+    },
+    {
+      "name": "[no] type",
+      "description": "the shaper profile type optional parameter with default value: \"singletokenbucket\"",
+      "type": "<Qos::ShaperType>",
+      "format": "( singletokenbucket                            | singletokenbucketgpon                            | onetokentworate                            | twotokenbuckettworate )",
+      "values": [
+        "singletokenbucket     : single Token Bucket",
+        "singletokenbucketgpon : single Token Bucket for GPON",
+        "onetokentworate       : single Token Two Rate Bucket",
+        "twotokenbuckettworate : two Token Two Rate Bucket"
+      ]
+    },
+    {
+      "name": "[no] autoshape",
+      "description": "enable or disable automatic shaping optional parameter with default value: \"no-autoshape-on\"",
+      "type": "<Qos::AutoShape>",
+      "format": "( autoshape-on                            | no-autoshape-on )",
+      "values": [
+        "autoshape-on          : enable shaping based on queue parameters",
+        "no-autoshape-on       : disable shaping based on queue parameters"
+      ]
+    }
+  ],
+  "raw": "help configure qos profiles shaper\r\nQOS SHAPER PROFILE CONFIGURATION COMMAND\r\n========================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a QoS shaper profile. A QoS \r\nshaper profile contains all settings related to a shaper. The ISAM supports \r\nsingle token bucket shapers. EIR is only applicable if shaper type is \r\nsingleTokenBucketGpon. CBS is applicable only if the shaper type is \r\nsingleTokenBucket.\r\n\r\nThe L2+ line cards support shaping on queue.\r\n\r\n1. GPON supports EIR and CIR. If CBS is non-zero for GPON; CLI will return an \r\nerror.\r\n\r\n2. DSL doesn't support EIR. So if user enters non-zero for EIR for DSL; CLI \r\nwill return an error.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by \r\noperators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos profiles ( no shaper (name) ) | ( shaper (name) \r\ncommitted-info-rate <Qos::ShaperCommittedInfoRate> committed-burst-size \r\n<Qos::ShaperCommittedBurstSizeNew> [ no excess-info-rate | excess-info-rate \r\n<Qos::ShaperExcessiveInfoRate> ] [ no type | type <Qos::ShaperType> ] [ no \r\nautoshape | autoshape <Qos::AutoShape> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS Shaper Profile Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(name)                     A unique profile name\r\n\r\nTable \"QoS Shaper Profile Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\ncommitted-info-rate        committed information rate of a shaper\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Qos::ShaperCommittedInfoRate>\r\n                           Format:\r\n                           - committed information rate of a shaper\r\n                           - unit: kbps\r\n                           - range: [0...2147483647]\r\n\r\ncommitted-burst-size       committed burst size of shaper\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Qos::ShaperCommittedBurstSizeNew>\r\n                           Format:\r\n                           - committed burst size of shaper\r\n                           - unit: byte\r\n                           - range: [0,64...2147483647]\r\n\r\n[no] excess-info-rate      excessive information rate  of shaper\r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Qos::ShaperExcessiveInfoRate>\r\n                           Format:\r\n                           - excessive information rate of a shaper\r\n                           - unit: kbps\r\n                           - range: [0...2147483647]\r\n\r\n[no] type                  the shaper profile type\r\n                           optional parameter with default value: \r\n\"singletokenbucket\"\r\n\r\n                           Parameter type: <Qos::ShaperType>\r\n                           Format:\r\n                           ( singletokenbucket\r\n                           | singletokenbucketgpon\r\n                           | onetokentworate\r\n                           | twotokenbuckettworate )\r\n                           Possible values:\r\n                           - singletokenbucket     : single Token Bucket\r\n                           - singletokenbucketgpon : single Token Bucket for \r\nGPON\r\n                           - onetokentworate       : single Token Two Rate \r\nBucket\r\n                           - twotokenbuckettworate : two Token Two Rate Bucket\r\n\r\n[no] autoshape             enable or disable automatic shaping\r\n                           optional parameter with default value: \r\n\"no-autoshape-on\"\r\n\r\n                           Parameter type: <Qos::AutoShape>\r\n                           Format:\r\n                           ( autoshape-on\r\n                           | no-autoshape-on )\r\n                           Possible values:\r\n                           - autoshape-on          : enable shaping based on \r\nqueue parameters\r\n                           - no-autoshape-on       : disable shaping based on \r\nqueue parameters\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

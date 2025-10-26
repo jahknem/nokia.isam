@@ -1,0 +1,86 @@
+help configure qos tca
+QOS QUEUE THRESHOLD CROSSING ALARM CONFIGURATION COMMAND
+========================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure various parameters related to 
+subscriber interface and queue level traffic load and packet loss.
+
+Load per physical line is calculated by matching the total number of bytes 
+transmitted versus the capacity of the interface in the relevant measurement 
+epoch. Load per queue is measured in terms of the contribution to the interface 
+level load of traffic passed in a certain queue.
+
+Threshold crossing alarms can be specified for the load and packet loss 
+parameters per line and per traffic class.
+
+This feature can be useful to detect network anomalies by watching over packet 
+discard or load level in high-priority traffic classes.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos tca (index) queue <Qos::TcaQueues> [ [ no ] tca-enable ] [ no 
+load-thresh | load-thresh <Qos::PercentThresh> ] [ no dis-frame-th | 
+dis-frame-th <Qos::QosQueueStatsDiscFramesTcaThreshold> ] [ no qpeak-usage-th | 
+qpeak-usage-th <Qos::PercentThresh> ]
+
+Command Parameters
+------------------
+
+Table "QoS Queue Threshold Crossing Alarm Configuration Command" Resource 
+Parameters
+
+Resource Identifier        Description
+
+(index)                    physical port or lag port of a dsl link
+queue                      the queue with in the scope of one dsl link of tca
+
+Table "QoS Queue Threshold Crossing Alarm Configuration Command" Command 
+Parameters
+
+Parameter                  Description
+
+[no] tca-enable            each queue statistic TCA of this queue
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] load-thresh           The threshold of queue traffic load.
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::PercentThresh>
+                           Format:
+                           - Percentage of the QoS Thresh
+                           - range: [0...100]
+
+[no] dis-frame-th          The threshold of discarded frames of this queue.
+                           optional parameter with default value: 0
+
+                           Parameter type: 
+<Qos::QosQueueStatsDiscFramesTcaThreshold>
+                           Format:
+                           - Qos thresh
+                           - range: [0...2147483647]
+
+[no] qpeak-usage-th        The threshold of the per queue traffic peak usage.
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::PercentThresh>
+                           Format:
+                           - Percentage of the QoS Thresh
+                           - range: [0...100]
+
+
+DS-LIN-TEST-01:automationuser>#

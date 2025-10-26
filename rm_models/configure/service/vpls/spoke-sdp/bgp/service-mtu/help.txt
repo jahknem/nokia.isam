@@ -1,0 +1,5 @@
+help configure service vpls spoke-sdp bgp servic
+e-mtu
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

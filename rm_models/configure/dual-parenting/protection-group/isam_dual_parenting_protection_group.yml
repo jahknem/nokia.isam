@@ -1,0 +1,83 @@
+module: isam_dual_parenting_protection_group
+short_description: Resource module to configure dual-parenting protection-group
+description:
+- 'Configures dual-parenting protection group. The system will decide which port of
+  the two becomes active. In case of failure of one port the other port will take
+  over. A forced switchover can also be triggered manually by the operator. The port
+  protection group is identified by the first port in the group that is intended to
+  be protected. The following parameters can be configured for the protection group
+  : - local-port-index: the local-port-index that will ensure the protection of the
+  first one.'
+- Supports configuration of prot type, peer node name, protection group id
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure dual-parenting ()'
+options:
+  config:
+    description:
+    - A list of dual-parenting protection-group configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (local-port) - the local port identifier of the dual-parenting in the protection
+          group
+      prot_type:
+        type: str
+        description:
+        - the dual-parenting protection group pro-type mandatory parameter
+        - 'Possible values: C(primary) - primary node; C(secondary) - secondary node'
+        choices:
+        - primary
+        - secondary
+      peer_node_name:
+        type: str
+        description:
+        - 'the dual-parenting peer-node-name mandatory parameter - a printable string
+          - length: 1<=x<=127'
+      protection_group_id:
+        type: bool
+        description:
+        - 'the protecion group id in the dual-parenting protection group mandatory
+          parameter - index of dual-parenting protection group - range: [1...127]
+          [no] prot-group-status'
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure dual-parenting protection-group)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

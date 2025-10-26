@@ -1,0 +1,5 @@
+help configure service vpls egress endpoint inte
+rface user-user-com
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,67 @@
+help configure mcast-control system cdr-type
+IGMP SYSTEM CDR TYPE CONFIGURATION COMMAND
+==========================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the IGMP system Call Detail Record
+
+
+User Level
+----------
+
+The command can be accessed by operators with igmp privileges, and executed by 
+operators with igmp privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure mcast-control system cdr-type [ [ no ] periodic ] [ no period | peri
+od <Igmp::IntermGenCDRPeriod> ] [ [ no ] attempt-max-pview ] [ [ no ] 
+attempt-blackout ] [ [ no ] attempt-no-perm ]
+
+Command Parameters
+------------------
+
+Table "IGMP System CDR Type Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] periodic              interim CDR records generated for fullview/preview
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] period                intermediate CDR generation period
+                           optional parameter with default value: 15
+
+                           Parameter type: <Igmp::IntermGenCDRPeriod>
+                           Format:
+                           - intermediate CDR generation period, in multiples 
+of 5
+                           - unit: min
+                           - range: [15...60]
+
+[no] attempt-max-pview     CDR generated when max nbr preview exceeded is true
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] attempt-blackout      CDR generated allowed when blackout period is active
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] attempt-no-perm       CDR generated to join a mcast with no access rights
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+
+DS-LIN-TEST-01:automationuser>#

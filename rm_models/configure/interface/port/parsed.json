@@ -1,0 +1,73 @@
+{
+  "title": "NETWORK INTERFACE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure interface management parameters.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure interface port (port) [ [ no ] admin-up ] [ no link-state-trap | link-state-trap <Itf::ifLinkUpDownTrap> ] [ [ no ] link-updown-trap ] [ no user | user <Itf::asamIfExtCustomerId> ] [ no severity | severity <Itf::asamIfExtAlmReportingSeverity> ] [ no port-type | port-type <Itf::asamIfPortType> ]",
+  "resource_parameters": [
+    {
+      "name": "(port)",
+      "description": "the interface index"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] admin-up",
+      "description": "admin status is up (read-only for voicefxs interface) optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] link-state-trap",
+      "description": "indicates if link-up/link-down traps should be generated obsolete parameter replaced by parameter \"link-updown-trap\"",
+      "type": "<Itf::ifLinkUpDownTrap>",
+      "format": "( enable                            | disable                            | no-value )",
+      "values": [
+        "enable                : enable link-up/link-down traps",
+        "disable               : disable link-up/link-down traps",
+        "no-value              : no valid value"
+      ],
+      "obsolete": true
+    },
+    {
+      "name": "[no] link-updown-trap",
+      "description": "enable link-up/link-down traps optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] user",
+      "description": "description of the user connected to this interface. optional parameter with default value: \"available\" - a string identifying the customer or user - length: x<=64",
+      "type": "<Itf::asamIfExtCustomerId>",
+      "default": "available"
+    },
+    {
+      "name": "[no] severity",
+      "description": "set minimum severity for alarm to be reported,If ima is the only interface for which this parameter is not supported optional parameter with default value: \"default\"",
+      "type": "<Itf::asamIfExtAlmReportingSeverity>",
+      "format": "( indeterminate                            | warning                            | minor                            | major                            | critical                            | no-alarms                            | default                            | no-value )",
+      "values": [
+        "indeterminate         : not a definite known severity",
+        "warning               : just to inform as a warning",
+        "minor                 : not service affecting",
+        "major                 : service affecting",
+        "critical              : service breaking",
+        "no-alarms             : do not report alarm",
+        "default               : take default as specified via Interface Alarm Configuration command",
+        "no-value              : no entry in the table"
+      ],
+      "default": "default"
+    },
+    {
+      "name": "[no] port-type",
+      "description": "the whole network service model based on this interface optional parameter with default value: \"uni\"",
+      "type": "<Itf::asamIfPortType>",
+      "format": "( uni                            | nni                            | hc-uni                            | uplink )",
+      "values": [
+        "uni                   : uni port type",
+        "nni                   : nni port type",
+        "hc-uni                : hicap uni port type",
+        "uplink                : uplink port type"
+      ],
+      "default": "uni"
+    }
+  ],
+  "raw": "help configure interface port\r\nNETWORK INTERFACE CONFIGURATION COMMAND\r\n=======================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure interface management parameters.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure interface port (port) [ [ no ] admin-up ] [ no link-state-trap | lin\r\nk-state-trap <Itf::ifLinkUpDownTrap> ] [ [ no ] link-updown-trap ] [ no user | \r\nuser <Itf::asamIfExtCustomerId> ] [ no severity | severity \r\n<Itf::asamIfExtAlmReportingSeverity> ] [ no port-type | port-type \r\n<Itf::asamIfPortType> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Network Interface Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(port)                     the interface index\r\n\r\nTable \"Network Interface Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] admin-up              admin status is up (read-only for voicefxs interface)\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] link-state-trap       indicates if link-up/link-down traps should be \r\ngenerated\r\n                           obsolete parameter replaced by parameter \r\n\"link-updown-trap\"\r\n\r\n                           Parameter type: <Itf::ifLinkUpDownTrap>\r\n                           Format:\r\n                           ( enable\r\n                           | disable\r\n                           | no-value )\r\n                           Possible values:\r\n                           - enable                : enable link-up/link-down \r\ntraps\r\n                           - disable               : disable link-up/link-down \r\ntraps\r\n                           - no-value              : no valid value\r\n\r\n[no] link-updown-trap      enable link-up/link-down traps\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] user                  description of the user connected to this interface.\r\n                           optional parameter with default value: \"available\"\r\n\r\n                           Parameter type: <Itf::asamIfExtCustomerId>\r\n                           Format:\r\n                           - a string identifying the customer or user\r\n                           - length: x<=64 \r\n\r\n[no] severity              set minimum severity for alarm to be reported,If ima \r\nis the only interface for which this parameter is not supported\r\n                           optional parameter with default value: \"default\"\r\n\r\n                           Parameter type: <Itf::asamIfExtAlmReportingSeverity>\r\n                           Format:\r\n                           ( indeterminate\r\n                           | warning\r\n                           | minor\r\n                           | major\r\n                           | critical\r\n                           | no-alarms\r\n                           | default\r\n                           | no-value )\r\n                           Possible values:\r\n                           - indeterminate         : not a definite known \r\nseverity\r\n                           - warning               : just to inform as a warning\r\n                           - minor                 : not service affecting\r\n                           - major                 : service affecting\r\n                           - critical              : service breaking\r\n                           - no-alarms             : do not report alarm\r\n                           - default               : take default as specified \r\nvia Interface Alarm Configuration command\r\n                           - no-value              : no entry in the table\r\n\r\n[no] port-type             the whole network service model based on this \r\ninterface\r\n                           optional parameter with default value: \"uni\"\r\n\r\n                           Parameter type: <Itf::asamIfPortType>\r\n                           Format:\r\n                           ( uni\r\n                           | nni\r\n                           | hc-uni\r\n                           | uplink )\r\n                           Possible values:\r\n                           - uni                   : uni port type\r\n                           - nni                   : nni port type\r\n                           - hc-uni                : hicap uni port type\r\n                           - uplink                : uplink port type\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

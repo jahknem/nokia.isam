@@ -1,0 +1,5 @@
+help configure router interface icmp ipv6 link-l
+ocal-add*
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

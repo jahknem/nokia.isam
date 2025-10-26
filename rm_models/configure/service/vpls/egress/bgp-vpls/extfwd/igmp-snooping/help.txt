@@ -1,0 +1,5 @@
+help configure service vpls egress bgp-vpls extf
+wd igmp-snooping
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

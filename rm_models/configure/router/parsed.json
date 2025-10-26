@@ -1,0 +1,9 @@
+{
+  "title": "ROUTER CONFIGURATION COMMAND",
+  "description": "See IHUB Router Configurations and Routing Protocols Guide for more \ninformation. See IHUB MPLS Guide for more information on mpls and ldp. The \ncommand can be accessed and executed by operators with service privileges.",
+  "user_level": "The command can be executed by operators with service privileges.",
+  "syntax": "> configure router",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure router\r\nROUTER CONFIGURATION COMMAND\r\n============================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nSee IHUB Router Configurations and Routing Protocols Guide for more \r\ninformation. See IHUB MPLS Guide for more information on mpls and ldp. The \r\ncommand can be accessed and executed by operators with service privileges.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be executed by operators with service privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure router\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nnone\r\nDS-LIN-TEST-01:automationuser>#"
+}

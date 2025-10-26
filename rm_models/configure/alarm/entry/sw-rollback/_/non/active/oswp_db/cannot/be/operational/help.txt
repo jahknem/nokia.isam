@@ -1,0 +1,5 @@
+help configure alarm entry sw-rollback ! non act
+ive oswp,db cannot be operational
+                                                                       ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -28,13 +28,27 @@ class VlansTemplate(NetworkTemplate):
         {
             'name': 'id',
             'getval': re.compile(
-                r'''
-                $''', re.VERBOSE,
+                r'''\bid\s+(?P<id>(?:\d+|stacked:\d+:\d+))''', re.VERBOSE,
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                },
+            },
+            'shared': True,
+        },
+        {
+            'name': 'id_with_mode',
+            'getval': re.compile(
+                r'''\bid\s+(?P<id>(?:\d+|stacked:\d+:\d+))\s+mode\s+(?P<mode>(cross-connect|residential-bridge|qos-aware|layer2-terminated|mirror))\s*$''',
+                re.VERBOSE,
+            ),
+            'setval': 'configure vlan id {{ id }} mode {{ mode }}',
+            'result': {
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'mode': '{{ mode }}',
                 },
             },
             'shared': True,
@@ -42,28 +56,28 @@ class VlansTemplate(NetworkTemplate):
         {
             'name': 'name',
             'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s+(name\s+(?P<name>[a-zA-Z0-9_]*))
-                $''', re.VERBOSE,
+                r'''^\s+(?P<negate>no\s+)?name\s+(?:"(?P<name_quoted>[^"]+)"|(?P<name>[A-Za-z0-9_\-]+))\s*$''',
+                re.VERBOSE,
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'name': '{{ name_quoted|default(name)|string }}',
                 },
             },
         },
         {
             'name': 'mode',
             'getval': re.compile(
-                r'''
-                (mode\s+(?P<user>(cross-connect|residential-bridge|qos-aware|layer2-terminated|mirror))
-                $''', re.VERBOSE,
+                r'''^\s+mode\s+(?P<mode>(cross-connect|residential-bridge|qos-aware|layer2-terminated|mirror))\s*$''',
+                re.VERBOSE,
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'mode': '{{ mode }}',
                 },
             },
         },
@@ -76,22 +90,22 @@ class VlansTemplate(NetworkTemplate):
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
                 },
             },
         },
         {
             'name': 'priority',
             'getval': re.compile(
-                r'''
-                (?P<negate> no)?\spriority\s(?P<priority>\d)
-                $''', re.VERBOSE,
+                r'''^\s+(?P<negate>no\s+)?priority\s+(?P<priority>\d+)\s*$''',
+                re.VERBOSE,
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'priority': '{{ priority|int }}',
                 },
             },
         },
@@ -104,49 +118,49 @@ class VlansTemplate(NetworkTemplate):
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
                 },
             },
         },
         {
             'name': 'new-broadcast',
             'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s+(new-broadcast\s+(?P<new_broadcast>(inherit|disable|enable)))
-                $''', re.VERBOSE,
+                r'''^\s+(?:(?P<negate>no)\s+new-broadcast|(new-broadcast\s+(?P<new_broadcast>(inherit|disable|enable)))\s*)$''',
+                re.VERBOSE,
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'new-broadcast': '{{ ("disable" if negate else new_broadcast)|default("inherit") }}',
                 },
             },
         },
         {
             'name': 'protocol-filter',
             'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s+(protocol-filter\s+(?P<new_broadcast>(pass-all|pass-pppoe|pass-ipoe|pass-pppoe-ipoe|pass-ipv6oe|pass-pppoe-ipv6oe|pass-ipoe-ipv6oe|pass-pppoe-ipoe-ipv6oe)))
-                $''', re.VERBOSE,
+                r'''^\s+(?:(?P<negate>no)\s+protocol-filter|(protocol-filter\s+(?P<protocol_filter>(pass-all|pass-pppoe|pass-ipoe|pass-pppoe-ipoe|pass-ipv6oe|pass-pppoe-ipv6oe|pass-ipoe-ipv6oe|pass-pppoe-ipoe-ipv6oe)))\s*)$''',
+                re.VERBOSE,
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'protocol-filter': '{{ ("pass-all" if negate else protocol_filter)|default("pass-all") }}',
                 },
             },
         },
         {
             'name': 'pppoe-relay-tag',
             'getval': re.compile(
-                r'''
-                $''', re.VERBOSE,
+                r'''^\s+pppoe-relay-tag\s+(?P<pppoe_relay_tag>true|false|configurable)\s*$''', re.VERBOSE,
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'pppoe-relay-tag': '{{ pppoe_relay_tag }}',
                 },
             },
         },
@@ -159,34 +173,36 @@ class VlansTemplate(NetworkTemplate):
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
                 },
             },
         },
         {
             'name': 'new-secure-fwd',
             'getval': re.compile(
-                r'''
-                $''', re.VERBOSE,
+                r'''^\s+new-secure-fwd\s+(?P<new_secure_fwd>(inherit|enable|disable))\s*$''',
+                re.VERBOSE,
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'new-secure-fwd': '{{ new_secure_fwd }}',
                 },
             },
         },
         {
             'name': 'aging-time',
             'getval': re.compile(
-                r'''
-                $''', re.VERBOSE,
+                r'''^\s+aging-time\s+(?P<aging_time>\d+)\s*$''',
+                re.VERBOSE,
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'aging-time': '{{ aging_time|int }}',
                 },
             },
         },
@@ -199,21 +215,22 @@ class VlansTemplate(NetworkTemplate):
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
                 },
             },
         },
         {
             'name': 'in-qos-prof-name',
             'getval': re.compile(
-                r'''
-                $''', re.VERBOSE,
+                r'''^\s+in-qos-prof-name\s+(?P<inqpn>\S+)\s*$''',
+                re.VERBOSE,
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'in-qos-prof-name': '{{ inqpn|string }}',
                 },
             },
         },
@@ -226,8 +243,8 @@ class VlansTemplate(NetworkTemplate):
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
                 },
             },
         },
@@ -240,8 +257,8 @@ class VlansTemplate(NetworkTemplate):
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
                 },
             },
         },
@@ -254,8 +271,8 @@ class VlansTemplate(NetworkTemplate):
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
                 },
             },
         },
@@ -268,8 +285,8 @@ class VlansTemplate(NetworkTemplate):
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
                 },
             },
         },
@@ -282,8 +299,8 @@ class VlansTemplate(NetworkTemplate):
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
                 },
             },
         },
@@ -296,8 +313,8 @@ class VlansTemplate(NetworkTemplate):
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
                 },
             },
         },
@@ -310,8 +327,8 @@ class VlansTemplate(NetworkTemplate):
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
                 },
             },
         },
@@ -324,8 +341,8 @@ class VlansTemplate(NetworkTemplate):
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
                 },
             },
         },
@@ -338,8 +355,8 @@ class VlansTemplate(NetworkTemplate):
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
                 },
             },
         },
@@ -351,8 +368,8 @@ class VlansTemplate(NetworkTemplate):
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
                 },
             },
         },
@@ -365,8 +382,8 @@ class VlansTemplate(NetworkTemplate):
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
                 },
             },
         },
@@ -379,8 +396,8 @@ class VlansTemplate(NetworkTemplate):
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
                 },
             },
         },
@@ -392,8 +409,8 @@ class VlansTemplate(NetworkTemplate):
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
                 },
             },
         },
@@ -406,8 +423,237 @@ class VlansTemplate(NetworkTemplate):
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
-                '{{ name }}': {
-                    'id': '{{ name }}',
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                },
+            },
+        },
+        # Additional DHCP/PPPoE and related options
+        {
+            'name': 'dhcp-opt82-ext',
+            'getval': re.compile(
+                r'''^\s+dhcp-opt82-ext\s+(?P<dhcp_opt82_ext>add-or-forward|enable)\s*$''',
+                re.VERBOSE,
+            ),
+            'setval': 'configure vlan id {{ id }}',
+            'result': {
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'dhcp-opt82-ext': '{{ dhcp_opt82_ext }}',
+                },
+            },
+        },
+        {
+            'name': 'dhcp-opt82-nni',
+            'getval': re.compile(
+                r'''^\s+dhcp-opt82-nni\s*$''', re.VERBOSE,
+            ),
+            'setval': 'configure vlan id {{ id }}',
+            'result': {
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'dhcp-opt82-nni': True,
+                },
+            },
+        },
+        {
+            'name': 'dhcp-opt82-uplink',
+            'getval': re.compile(
+                r'''^\s+dhcp-opt82-uplink\s*$''', re.VERBOSE,
+            ),
+            'setval': 'configure vlan id {{ id }}',
+            'result': {
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'dhcp-opt82-uplink': True,
+                },
+            },
+        },
+        {
+            'name': 'circuit-id-dhcp',
+            'getval': re.compile(
+                r'''^\s+circuit-id-dhcp\s+(?P<circuit_id_dhcp>physical-id)\s*$''',
+                re.VERBOSE,
+            ),
+            'setval': 'configure vlan id {{ id }}',
+            'result': {
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'circuit-id-dhcp': '{{ circuit_id_dhcp }}',
+                },
+            },
+        },
+        {
+            'name': 'remote-id-dhcp',
+            'getval': re.compile(
+                r'''^\s+remote-id-dhcp\s+(?P<remote_id_dhcp>customer-id)\s*$''',
+                re.VERBOSE,
+            ),
+            'setval': 'configure vlan id {{ id }}',
+            'result': {
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'remote-id-dhcp': '{{ remote_id_dhcp }}',
+                },
+            },
+        },
+        {
+            'name': 'relay-id-dhcp',
+            'getval': re.compile(
+                r'''^\s+relay-id-dhcp\s*$''', re.VERBOSE,
+            ),
+            'setval': 'configure vlan id {{ id }}',
+            'result': {
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'relay-id-dhcp': True,
+                },
+            },
+        },
+        {
+            'name': 'linerates',
+            'getval': re.compile(
+                r'''^\s+(?P<lr>(?:dhcp|pppoe|dhcpv6)-linerate)\s*$''', re.VERBOSE,
+            ),
+            'setval': 'configure vlan id {{ id }}',
+            'result': {
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    '{{ lr }}': True,
+                },
+            },
+        },
+        {
+            'name': 'l2-encaps',
+            'getval': re.compile(
+                r'''^\s+(?P<l2>(?:pppoe|dhcp|dhcpv6)-l2-encaps|l2-encaps1)\s*$''', re.VERBOSE,
+            ),
+            'setval': 'configure vlan id {{ id }}',
+            'result': {
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    '{{ l2 }}': True,
+                },
+            },
+        },
+        {
+            'name': 'vlanaware',
+            'getval': re.compile(
+                r'''^\s+(?P<aware>(?:pppoer|dhcpr|dhcpv6r)-vlanaware)\s*$''', re.VERBOSE,
+            ),
+            'setval': 'configure vlan id {{ id }}',
+            'result': {
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    '{{ aware }}': True,
+                },
+            },
+        },
+        {
+            'name': 'circuit-id-pppoe',
+            'getval': re.compile(
+                r'''^\s+circuit-id-pppoe\s+(?P<circuit_id_pppoe>physical-id)\s*$''',
+                re.VERBOSE,
+            ),
+            'setval': 'configure vlan id {{ id }}',
+            'result': {
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'circuit-id-pppoe': '{{ circuit_id_pppoe }}',
+                },
+            },
+        },
+        {
+            'name': 'remote-id-pppoe',
+            'getval': re.compile(
+                r'''^\s+remote-id-pppoe\s+(?P<remote_id_pppoe>customer-id)\s*$''',
+                re.VERBOSE,
+            ),
+            'setval': 'configure vlan id {{ id }}',
+            'result': {
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'remote-id-pppoe': '{{ remote_id_pppoe }}',
+                },
+            },
+        },
+        {
+            'name': 'dhcpv6-identifiers',
+            'getval': re.compile(
+                r'''^\s+(?P<key>dhcpv6-(?:itf-id|remote-id))\s+(?P<val>physical-id|customer-id)\s*$''',
+                re.VERBOSE,
+            ),
+            'setval': 'configure vlan id {{ id }}',
+            'result': {
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    '{{ key }}': '{{ val }}',
+                },
+            },
+        },
+        {
+            'name': 'dhcpv6-flags',
+            'getval': re.compile(
+                r'''^\s+(?P<key>dhcpv6-(?:relay-id|trst-port))\s*$''', re.VERBOSE,
+            ),
+            'setval': 'configure vlan id {{ id }}',
+            'result': {
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    '{{ key }}': True,
+                },
+            },
+        },
+        {
+            'name': 'enterprise-number',
+            'getval': re.compile(
+                r'''^\s+enterprise-number\s+(?P<enterprise_number>\d+)\s*$''',
+                re.VERBOSE,
+            ),
+            'setval': 'configure vlan id {{ id }}',
+            'result': {
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'enterprise-number': '{{ enterprise_number|int }}',
+                },
+            },
+        },
+        {
+            'name': 'icmpv6-sec-fltr',
+            'getval': re.compile(
+                r'''^\s+icmpv6-sec-fltr\s*$''', re.VERBOSE,
+            ),
+            'setval': 'configure vlan id {{ id }}',
+            'result': {
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'icmpv6-sec-fltr': True,
+                },
+            },
+        },
+        {
+            'name': 'vmac-translation',
+            'getval': re.compile(
+                r'''^\s+vmac-translation\s*$''', re.VERBOSE,
+            ),
+            'setval': 'configure vlan id {{ id }}',
+            'result': {
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'vmac-translation': True,
+                },
+            },
+        },
+        {
+            'name': 'vmac-dnstr-filter',
+            'getval': re.compile(
+                r'''^\s+vmac-dnstr-filter\s*$''', re.VERBOSE,
+            ),
+            'setval': 'configure vlan id {{ id }}',
+            'result': {
+                '{{ id }}': {
+                    'id': '{{ id }}',
+                    'vmac-dnstr-filter': True,
                 },
             },
         },

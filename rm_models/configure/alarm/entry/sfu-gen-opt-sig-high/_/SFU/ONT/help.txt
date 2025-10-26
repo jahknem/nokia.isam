@@ -1,0 +1,5 @@
+help configure alarm entry sfu-gen-opt-sig-high 
+! SFU ONT
+                                                                                ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,130 @@
+{
+  "title": "ONT ETHERNET PORT CONFIGURATION COMMAND",
+  "description": "This command allows the operator to modify ONT Ethernet port provisioning data.",
+  "user_level": "The command can be accessed by operators with transport privileges, and \nexecuted by operators with transport privileges.",
+  "syntax": "> configure ethernet ont (uni-idx) [ no cust-info | cust-info <Gpon::CustInfo> ] [ auto-detect <Gpon::AutoDetect> ] [ no power-control | power-control <Gpon::PowerControl> ] [ no pse-class | pse-class <Gpon::PSEClass> ] [ no pse-pw-priority | pse-pw-priority <Gpon::PSEPwrPri> ] [ no pwr-override | pwr-override <Gpon::PowerShedOverride> ] [ no lpt-mode | lpt-mode <Gpon::LPTMODE> ] [ no admin-state | admin-state <Gpon::ItfAdminStatus> ]",
+  "resource_parameters": [
+    {
+      "name": "(uni-idx)",
+      "description": "identification of the uni interface index"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] cust-info",
+      "description": "port information optional parameter with default value: \"none\" - a printable string - length: x<=80",
+      "type": "<Gpon::CustInfo>",
+      "default": "none"
+    },
+    {
+      "name": "auto-detect",
+      "description": "auto detection configuration optional parameter",
+      "type": "<Gpon::AutoDetect>",
+      "format": "( 10_100baset-auto                            | 10baset-fd                            | 100baset-fd                            | 1000baset-fd                            | auto-basetfd                            | 10gig-fd                            | 2.5gig-fd                            | 5gig-fd                            | 10baset-auto                            | 10baset-hd                            | 100baset-hd                            | 1000baset-hd                            | autobaset-hd                            | 10_100_1000baset-auto                            | 100baset-auto                            | auto                            | 1000baset-auto )",
+      "values": [
+        "10_100baset-auto      : 10/100/1000 Base T, auto sensing (note: this auto sensing behavior ensures backward compatibility with older software releases. It may result in the port negotiating to 1 Gbps)",
+        "10baset-fd            : 10 Base T, full duplex",
+        "100baset-fd           : 100 Base T, full duplex",
+        "1000baset-fd          : 1000 Base T, full duplex",
+        "auto-basetfd          : 10/100/1000 Base T, full duplex",
+        "10gig-fd              : 10 Gig, full duplex only",
+        "2.5gig-fd             : 2.5 Gig, full duplex only",
+        "5gig-fd               : 5 Gig, full duplex only",
+        "10baset-auto          : 10 Base T,automatic sensing",
+        "10baset-hd            : 10 Base T, half Duplex",
+        "100baset-hd           : 100 Base T, half duplex",
+        "1000baset-hd          : 1000 Base T, half duplex",
+        "autobaset-hd          : 10/100/1000 Base T, half duplex",
+        "10_100_1000baset-auto : 10/100/1000 Base T, auto sensing",
+        "100baset-auto         : 100 Base T, auto sensing",
+        "auto                  : 10/100/1000 Base T, auto sensing",
+        "1000baset-auto        : 1000 Base T auto sensing"
+      ]
+    },
+    {
+      "name": "[no] power-control",
+      "description": "power control configuration optional parameter with default value: \"disable\"",
+      "type": "<Gpon::PowerControl>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : provide power to external equipment",
+        "disable               : not provide power to external equipment"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] pse-class",
+      "description": "power class configuration optional parameter with default value: \"0\"",
+      "type": "<Gpon::PSEClass>",
+      "format": "( 0                            | 1                            | 2                            | 3                            | 4                            | 5 )",
+      "values": [
+        "0                     : Default output power",
+        "1                     : Class 0, the output power is 15.4w",
+        "2                     : Class 1, the output power is 4.0w",
+        "3                     : Class 2, the output power is 7.0w",
+        "4                     : Class 3, the output power is 15.4w",
+        "5                     : Class 4, the output power is 30.0w"
+      ],
+      "default": "0"
+    },
+    {
+      "name": "[no] pse-pw-priority",
+      "description": "power supply priority optional parameter with default value: \"low\"",
+      "type": "<Gpon::PSEPwrPri>",
+      "format": "( critical                            | high                            | low )",
+      "values": [
+        "critical              : Prevents overcurrent situations by last disconnecting the ports with critical priority",
+        "high                  : Prevents overcurrent situations by disconnecting the ports with high priority",
+        "low                   : Prevents overcurrent situations by first disconnecting the ports with lower priority(Default)"
+      ],
+      "default": "low"
+    },
+    {
+      "name": "[no] pwr-override",
+      "description": "configure power shedding optional parameter with default value: \"disable\"",
+      "type": "<Gpon::PowerShedOverride>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : port is excluded from data class power shedding",
+        "disable               : port is included in data class power shedding"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] lpt-mode",
+      "description": "LinkPassThrough(LPT) mode configuration optional parameter with default value: \"not-supported\"",
+      "type": "<Gpon::LPTMODE>",
+      "format": "( not-supported                            | enabled                            | disabled )",
+      "values": [
+        "not-supported         : ignore and don't send the configuration to ONT",
+        "enabled               : enable the LPT mode on this port",
+        "disabled              : disable the LPT mode on this port"
+      ]
+    },
+    {
+      "name": "[no] admin-state",
+      "description": "administrative status of the interface optional parameter with default value: \"down\" Table \"ONT Ethernet Port Configuration Command\" Display Parameters Specific Information:",
+      "type": "<Gpon::ItfAdminStatus>",
+      "format": "( up                            | down )",
+      "values": [
+        "up                    : set the admin-state to up",
+        "down                  : set the admin-state to down"
+      ],
+      "default": "down"
+    },
+    {
+      "name": "oper-state",
+      "description": "the operational state of the interface This element is always shown. ( up | down | testing | unknown | dormant | no-value )",
+      "type": "<Itf::ifOperStatus>",
+      "values": [
+        "up                    : up,traffic can pass",
+        "down                  : down,no traffic is passing",
+        "testing               : testing,no traffic is passing",
+        "unknown               : unknown",
+        "dormant               : dormant,no traffic is passing",
+        "no-value              : no entry in the table"
+      ]
+    }
+  ],
+  "raw": "help configure ethernet ont\r\nONT ETHERNET PORT CONFIGURATION COMMAND\r\n=======================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to modify ONT Ethernet port provisioning data.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with transport privileges, and \r\nexecuted by operators with transport privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure ethernet ont (uni-idx) [ no cust-info | cust-info <Gpon::CustInfo> \r\n] [ auto-detect <Gpon::AutoDetect> ] [ no power-control | power-control \r\n<Gpon::PowerControl> ] [ no pse-class | pse-class <Gpon::PSEClass> ] [ no \r\npse-pw-priority | pse-pw-priority <Gpon::PSEPwrPri> ] [ no pwr-override | \r\npwr-override <Gpon::PowerShedOverride> ] [ no lpt-mode | lpt-mode \r\n<Gpon::LPTMODE> ] [ no admin-state | admin-state <Gpon::ItfAdminStatus> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"ONT Ethernet Port Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(uni-idx)                  identification of the uni interface index\r\n\r\nTable \"ONT Ethernet Port Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] cust-info             port information\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Gpon::CustInfo>\r\n                           Format:\r\n                           - a printable string\r\n                           - length: x<=80 \r\n\r\nauto-detect                auto detection configuration\r\n                           optional parameter\r\n\r\n                           Parameter type: <Gpon::AutoDetect>\r\n                           Format:\r\n                           ( 10_100baset-auto\r\n                           | 10baset-fd\r\n                           | 100baset-fd\r\n                           | 1000baset-fd\r\n                           | auto-basetfd\r\n                           | 10gig-fd\r\n                           | 2.5gig-fd\r\n                           | 5gig-fd\r\n                           | 10baset-auto\r\n                           | 10baset-hd\r\n                           | 100baset-hd\r\n                           | 1000baset-hd\r\n                           | autobaset-hd\r\n                           | 10_100_1000baset-auto\r\n                           | 100baset-auto\r\n                           | auto\r\n                           | 1000baset-auto )\r\n                           Possible values:\r\n                           - 10_100baset-auto      : 10/100/1000 Base T, auto \r\nsensing (note: this auto sensing behavior ensures backward compatibility with \r\nolder software releases. It may result in the port negotiating to 1 Gbps)\r\n                           - 10baset-fd            : 10 Base T, full duplex\r\n                           - 100baset-fd           : 100 Base T, full duplex\r\n                           - 1000baset-fd          : 1000 Base T, full duplex\r\n                           - auto-basetfd          : 10/100/1000 Base T, full \r\nduplex\r\n                           - 10gig-fd              : 10 Gig, full duplex only\r\n                           - 2.5gig-fd             : 2.5 Gig, full duplex only\r\n                           - 5gig-fd               : 5 Gig, full duplex only\r\n                           - 10baset-auto          : 10 Base T,automatic sensing\r\n                           - 10baset-hd            : 10 Base T, half Duplex\r\n                           - 100baset-hd           : 100 Base T, half duplex\r\n                           - 1000baset-hd          : 1000 Base T, half duplex\r\n                           - autobaset-hd          : 10/100/1000 Base T, half \r\nduplex\r\n                           - 10_100_1000baset-auto : 10/100/1000 Base T, auto \r\nsensing\r\n                           - 100baset-auto         : 100 Base T, auto sensing\r\n                           - auto                  : 10/100/1000 Base T, auto \r\nsensing\r\n                           - 1000baset-auto        : 1000 Base T auto sensing\r\n\r\n[no] power-control         power control configuration\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Gpon::PowerControl>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : provide power to external \r\nequipment\r\n                           - disable               : not provide power to \r\nexternal equipment\r\n\r\n[no] pse-class             power class configuration\r\n                           optional parameter with default value: \"0\"\r\n\r\n                           Parameter type: <Gpon::PSEClass>\r\n                           Format:\r\n                           ( 0\r\n                           | 1\r\n                           | 2\r\n                           | 3\r\n                           | 4\r\n                           | 5 )\r\n                           Possible values:\r\n                           - 0                     : Default output power\r\n                           - 1                     : Class 0, the output power \r\nis 15.4w\r\n                           - 2                     : Class 1, the output power \r\nis 4.0w\r\n                           - 3                     : Class 2, the output power \r\nis 7.0w\r\n                           - 4                     : Class 3, the output power \r\nis 15.4w\r\n                           - 5                     : Class 4, the output power \r\nis 30.0w\r\n\r\n[no] pse-pw-priority       power supply priority\r\n                           optional parameter with default value: \"low\"\r\n\r\n                           Parameter type: <Gpon::PSEPwrPri>\r\n                           Format:\r\n                           ( critical\r\n                           | high\r\n                           | low )\r\n                           Possible values:\r\n                           - critical              : Prevents overcurrent \r\nsituations by last disconnecting the ports with critical priority\r\n                           - high                  : Prevents overcurrent \r\nsituations by disconnecting the ports with high priority\r\n                           - low                   : Prevents overcurrent \r\nsituations by first disconnecting the ports with lower priority(Default)\r\n\r\n[no] pwr-override          configure power shedding\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Gpon::PowerShedOverride>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : port is excluded from data \r\nclass power shedding\r\n                           - disable               : port is included in data \r\nclass power shedding\r\n\r\n[no] lpt-mode              LinkPassThrough(LPT) mode configuration\r\n                           optional parameter with default value: \r\n\"not-supported\"\r\n\r\n                           Parameter type: <Gpon::LPTMODE>\r\n                           Format:\r\n                           ( not-supported\r\n                           | enabled\r\n                           | disabled )\r\n                           Possible values:\r\n                           - not-supported         : ignore and don't send the \r\nconfiguration to ONT\r\n                           - enabled               : enable the LPT mode on \r\nthis port\r\n                           - disabled              : disable the LPT mode on \r\nthis port\r\n\r\n[no] admin-state           administrative status of the interface\r\n                           optional parameter with default value: \"down\"\r\n\r\n                           Parameter type: <Gpon::ItfAdminStatus>\r\n                           Format:\r\n                           ( up\r\n                           | down )\r\n                           Possible values:\r\n                           - up                    : set the admin-state to up\r\n                           - down                  : set the admin-state to down\r\n\r\n\r\nTable \"ONT Ethernet Port Configuration Command\" Display Parameters\r\n\r\nSpecific Information:\r\n\r\nParameter                  Description\r\n\r\n oper-state                the operational state of the interface\r\n                           This element is always shown.\r\n\r\n                           parameter type: <Itf::ifOperStatus>\r\n                           ( up\r\n                           | down\r\n                           | testing\r\n                           | unknown\r\n                           | dormant\r\n                           | no-value )\r\r\n\r\n                           Possible values:\r\n                           - up                    : up,traffic can pass\r\n                           - down                  : down,no traffic is passing\r\n                           - testing               : testing,no traffic is \r\npassing\r\n                           - unknown               : unknown\r\n                           - dormant               : dormant,no traffic is \r\npassing\r\n                           - no-value              : no entry in the table\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

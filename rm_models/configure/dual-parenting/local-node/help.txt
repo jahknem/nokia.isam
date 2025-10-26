@@ -1,0 +1,64 @@
+help configure dual-parenting local-node
+DUAL-PARENTING LOCAL-NODE CONFIGURATION COMMAND
+===============================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a local node . The system will 
+decide which port of the two becomes active. In case of failure of one port the 
+other port will take over. A forced switchover can also be triggered manually 
+by the operator.
+
+The port protection group is identified by the first port in the group that is 
+intended to be protected. The following parameters can be configured for the 
+protection group :
+  - local-node-id: the local-node-id that will ensure the protection of the 
+first one.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure dual-parenting ( no local-node (node-id) ) | ( local-node (node-id) 
+node-name <Equipm::DualParentProtGrpLocalNodeName> ip_subnet <Ip::V4Address> )
+
+Command Parameters
+------------------
+
+Table "Dual-Parenting local-node Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(node-id)                  the config of dual-parenting local-node id
+
+Table "Dual-Parenting local-node Configuration Command" Command Parameters
+
+Parameter                  Description
+
+node-name                  the dual-parenting of local-node-name
+                           mandatory parameter
+
+                           Parameter type: 
+<Equipm::DualParentProtGrpLocalNodeName>
+                           Format:
+                           - a printable string
+                           - length: 1<=x<=127 
+
+ip_subnet                  the ip_subnet of local-node.must config it 
+like:x.x.0.0
+                           mandatory parameter
+
+                           Parameter type: <Ip::V4Address>
+                           Format:
+                           - IPv4-address
+
+
+DS-LIN-TEST-01:automationuser>#

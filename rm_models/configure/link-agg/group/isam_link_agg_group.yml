@@ -1,0 +1,119 @@
+module: isam_link_agg_group
+short_description: Resource module to configure link-agg group
+description:
+- Configures the link aggregation group parameters.
+- Supports configuration of load sharing policy, max active port, swo threshold and
+  more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure link-agg group ()'
+options:
+  config:
+    description:
+    - A list of link-agg group configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (group) - interface index of the link aggregation group
+      load_sharing_policy:
+        type: str
+        description:
+        - link aggregation load sharing policy
+        - 'Possible values: C(mac-src) - source mac based; C(mac-dst) - destination
+          mac based; C(mac-src-dst) - source and destination mac based; C(ip-src)
+          - source ip based; C(ip-dst) - destination ip based; C(ip-src-dst) - source
+          and destination ip based; C(l2-l3-hybrid-model) - l2 and l3 hybrid model
+          based'
+        choices:
+        - mac-src
+        - mac-dst
+        - mac-src-dst
+        - ip-src
+        - ip-dst
+        - ip-src-dst
+        - l2-l3-hybrid-model
+      max_active_port:
+        type: str
+        description:
+        - 'the max active port number in a LAG with default value: 8 - max active
+          port - range: [1...8]'
+        default: '8'
+      swo_threshold:
+        type: str
+        description:
+        - 'the switchover threshold in a cross-lt LAG with default value: 0 - the
+          switchover threshold in a cross-lt LAG - range: [0...8]'
+        default: '0'
+      priority:
+        type: str
+        description:
+        - 'the system priority in a LAG with default value: "0" - the lacp agg actor
+          system priority - range: [0...65535]'
+        default: '0'
+      swo_revert:
+        type: str
+        description:
+        - the switchover revert flag in a cross-lt LAG
+        - 'Possible values: C(disable) - disable switchover revert; C(enable) - enable
+          switchover revert'
+        choices:
+        - disable
+        - enable
+      mode:
+        type: str
+        description:
+        - lacp mode
+        - 'Possible values: C(static) - static mode; C(dynamic) - dynamic mode'
+        choices:
+        - static
+        - dynamic
+      master_iwf:
+        type: str
+        description:
+        - master iwf value
+        - 'Possible values: C(auto) - app select the IWF connected to the primary
+          link of the lag; C(unset) - dummy lag'
+        choices:
+        - auto
+        - unset
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure link-agg group)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

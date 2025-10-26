@@ -1,0 +1,52 @@
+help configure cpe-management
+CPE REMOTE MANAGEMENT SYSTEM CONFIGURATION COMMANDS
+===================================================
+
+Command Description
+-------------------
+
+This command allows to configure CPE Remote Management System;
+
+
+User Level
+----------
+
+The command can be accessed by operators with security privileges, and executed 
+by operators with security privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure cpe-management [ no proxy-mode | proxy-mode <CpeProxy::SystemMode> 
+] [ vlan-id <CpeProxy::VlanIndex> ]
+
+Command Parameters
+------------------
+
+Table "CPE Remote Management System Configuration Commands" Command Parameters
+
+Parameter                  Description
+
+[no] proxy-mode            set the CPE Proxy mode
+                           optional parameter with default value: "none"
+
+                           Parameter type: <CpeProxy::SystemMode>
+                           Format:
+                           ( snmp
+                           | none )
+                           Possible values:
+                           - snmp                  : this mode is relaying SNMP 
+messages
+                           - none                  : disables the cpeproxy
+
+vlan-id                    configure the svlan number.
+                           obsolete parameter that will be ignored
+
+                           Parameter type: <CpeProxy::VlanIndex>
+                           Format:
+                           - cpe ipproxy vlan number
+                           - range: [0...4093]
+
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,4 @@
+help configure router igmp-proxy version
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

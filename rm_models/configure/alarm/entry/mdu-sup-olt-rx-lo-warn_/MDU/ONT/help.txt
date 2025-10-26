@@ -1,0 +1,13 @@
+help configure alarm entry mdu-sup-olt-rx-lo-war
+n! MDU ONT
+                                                                                 ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 18:56:12 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 18:56:10 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 18:56:12 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 18:55:58 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

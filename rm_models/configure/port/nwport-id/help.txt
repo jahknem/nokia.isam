@@ -1,0 +1,4 @@
+help configure port nwport-id
+                                                    ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

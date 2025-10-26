@@ -1,0 +1,63 @@
+module: isam_alias
+short_description: Resource module to configure alias
+description:
+- Configures CLI alias commands for the system. Alias names may not match any of the
+  reserved cli node keywords. Alias names may not contain whitespace or chars '?'
+  or '#'. Alias names may not match an existing alias value. Alias values may not
+  contain chars '?' or '#'. '\n' or '\r' are disallowed unless they are used within
+  literal string parameters. An alias value may not match an existing alias name.
+  Cli command parameters entered as part of the alias value will not be validated
+  until the alias is executed. The order of the displayed alias commands when executing
+  the 'info configure alias' command does not persist after an NT switchover or reset.
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure alias ()'
+options:
+  config:
+    description:
+    - A list of alias configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (name) - alias name
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure alias)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

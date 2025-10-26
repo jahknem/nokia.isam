@@ -1,0 +1,32 @@
+help configure cpe-management manager
+CPE MANAGER CONFIGURATION COMMAND
+==================================
+
+Command Description
+-------------------
+
+This command allows to configure a CPE manager.
+
+
+User Level
+----------
+
+The command can be accessed by operators with security privileges, and executed 
+by operators with security privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure cpe-management ( no manager (address) ) | ( manager (address) )
+
+Command Parameters
+------------------
+
+Table "CPE Manager Configuration Command " Resource Parameters
+
+Resource Identifier        Description
+
+(address)                  the address of a CPE manager
+
+DS-LIN-TEST-01:automationuser>#

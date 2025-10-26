@@ -1,0 +1,130 @@
+help configure equipment sfpe1t1 pwtdm
+2XE1/DS1 PSEUDO WIRE TDM SFP CONFIGURATION COMMAND
+==================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure pseudowire TDM parameters on the 
+2xE1/DS1 sfp:
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment sfpe1t1 ( no pwtdm (position) ) | ( pwtdm (position) 
+channel <Eqpt::Channel> packet-length <Eqpt::Packetlength> jitter-buff-size 
+<Eqpt::JitBufSize> vlanid <Eqpt::VlanId> priority <Eqpt::Priority> 
+conseq-number <Eqpt::ConseqNo> ecid-rx <Eqpt::ECID> ecid-tx <Eqpt::ECID> 
+source-mac <Eqpt::PhysicalAddress> dest-mac <Eqpt::PhysicalAddress> )
+
+Command Parameters
+------------------
+
+Table "2xE1/DS1 Pseudo Wire TDM SFP configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(position)                 the physical sfp cage position
+
+Table "2xE1/DS1 Pseudo Wire TDM SFP configuration Command" Command Parameters
+
+Parameter                  Description
+
+channel                    open or close the channel 
+                           mandatory parameter
+
+                           Parameter type: <Eqpt::Channel>
+                           Format:
+                           ( close
+                           | open )
+                           Possible values:
+                           - close                 : close channel
+                           - open                  : open channel
+
+packet-length              packet length can be configured from 0 to 16382, 
+packet length for MEF8 is 256 bytes  
+                           mandatory parameter
+
+                           Parameter type: <Eqpt::Packetlength>
+                           Format:
+                           - packet length range 
+                           - range: [0...16382]
+
+jitter-buff-size           jitter buffer size can be configured from 0 to 
+1023,units in number of MEF8 packets  
+                           mandatory parameter
+
+                           Parameter type: <Eqpt::JitBufSize>
+                           Format:
+                           - jitter buffer size 
+                           - range: [0...1023]
+
+vlanid                     vlan id can be configured from 0 to 4095
+                           mandatory parameter
+
+                           Parameter type: <Eqpt::VlanId>
+                           Format:
+                           - vlan index 
+                           - range: [0...4095]
+
+priority                   802.1p priority range 0 to 7
+                           mandatory parameter
+
+                           Parameter type: <Eqpt::Priority>
+                           Format:
+                           - priority range 0 to 7
+                           - range: [0...7]
+
+conseq-number              consequence number range 0 to 7
+                           mandatory parameter
+
+                           Parameter type: <Eqpt::ConseqNo>
+                           Format:
+                           - consequence range 0 to 7,0: no control, 1-6:number 
+of packets out of sequence
+                           - range: [0...7]
+
+ecid-rx                    receive emulated circuit identifier  range 0 to 
+1048575
+                           mandatory parameter
+
+                           Parameter type: <Eqpt::ECID>
+                           Format:
+                           - Emulated circuit identifierrange 0 to 1048575
+                           - range: [0...1048575]
+
+ecid-tx                    transmit emulated circuit identifier  range 0 to 
+1048575
+                           mandatory parameter
+
+                           Parameter type: <Eqpt::ECID>
+                           Format:
+                           - Emulated circuit identifierrange 0 to 1048575
+                           - range: [0...1048575]
+
+source-mac                 source mac address
+                           mandatory parameter
+
+                           Parameter type: <Eqpt::PhysicalAddress>
+                           Format:
+                           - media dependent physical address
+                           - length: 6 
+
+dest-mac                   destination mac address
+                           mandatory parameter
+
+                           Parameter type: <Eqpt::PhysicalAddress>
+                           Format:
+                           - media dependent physical address
+                           - length: 6 
+
+
+DS-LIN-TEST-01:automationuser>#

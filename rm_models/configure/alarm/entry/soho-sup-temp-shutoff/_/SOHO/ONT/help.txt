@@ -1,0 +1,5 @@
+help configure alarm entry soho-sup-temp-shutoff
+ ! SOHO ONT
+                                                                                 ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

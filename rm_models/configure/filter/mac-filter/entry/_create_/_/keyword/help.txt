@@ -1,0 +1,5 @@
+help configure filter mac-filter entry <create> 
+: keyword
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

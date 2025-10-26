@@ -1,0 +1,25 @@
+{
+  "title": "SINGLE LINETEST LINE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the single LineTest line \nparameters.",
+  "user_level": "The command can be accessed by operators with sip , xdsl privileges, and \nexecuted by operators with sip , xdsl privileges.",
+  "syntax": "> configure linetest single ltline (sessionid) lineid <Itf::LineTestSingleLineId > [ line-status <LineTest::LineStatusForConfig> ]",
+  "resource_parameters": [
+    {
+      "name": "(sessionid)",
+      "description": "uniquely identify of session"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "line-status",
+      "description": "status of line for test optional parameter - rstpartlyready        : defined for dp/dtmf test",
+      "type": "<LineTest::LineStatusForConfig>",
+      "format": "( intest                            | testover                            | rstpartlyready )",
+      "values": [
+        "intest                : put the line in test",
+        "testover              : the line tested, and the result is ready for polling, it is read-only"
+      ]
+    }
+  ],
+  "raw": "help configure linetest single ltline\r\nSINGLE LINETEST LINE CONFIGURATION COMMAND\r\n==========================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the single LineTest line \r\nparameters.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with sip , xdsl privileges, and \r\nexecuted by operators with sip , xdsl privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure linetest single ltline (sessionid) lineid <Itf::LineTestSingleLineId\r\n> [ line-status <LineTest::LineStatusForConfig> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"SINGLE LineTest Line Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(sessionid)                uniquely identify of session\r\nlineid                     Identify of line\r\n\r\nTable \"SINGLE LineTest Line Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nline-status                status of line for test\r\n                           optional parameter\r\n\r\n                           Parameter type: <LineTest::LineStatusForConfig>\r\n                           Format:\r\n                           ( intest\r\n                           | testover\r\n                           | rstpartlyready )\r\n                           Possible values:\r\n                           - intest                : put the line in test\r\n                           - testover              : the line tested, and the \r\nresult is ready for polling, it is read-only\r\r\n\r\n                           - rstpartlyready        : defined for dp/dtmf test\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

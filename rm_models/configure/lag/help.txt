@@ -1,0 +1,35 @@
+help configure lag
+LAG CONFIGURATION COMMAND
+=========================
+
+Command Description
+-------------------
+
+See IHUB Interface Guide for more information. The command can be accessed and 
+executed by operators with link privileges.
+
+
+User Level
+----------
+
+The command can be executed by operators with link privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure lag
+
+Command Parameters
+------------------
+
+none
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:17:45 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:17:45 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:17:32 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

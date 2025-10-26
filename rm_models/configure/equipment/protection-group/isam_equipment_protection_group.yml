@@ -1,0 +1,82 @@
+module: isam_equipment_protection_group
+short_description: Resource module to configure equipment protection-group
+description:
+- Configures a protection group. The protection group is identified by the eqptProtGroupId
+  attribute (index). The value 1 is reserved for extension chain protection group
+  which is always present and cannot be deleted. The protection group(s) are created
+  implicitly by the system as part of the default configuration. Use "show equipment
+  protection-group" to display the valid protection group identifier(s). Note that
+  the default admin-status for protection-group 1 at system level is locked where
+  it is always unlocked at cli level.
+- Supports configuration of admin status, eps quenchfactor
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure equipment protection-group ()'
+options:
+  config:
+    description:
+    - A list of equipment protection-group configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (prot-group-id) - Index in eqpt Prot Group Table
+      admin_status:
+        type: str
+        description:
+        - 'changes the administrative-status to lock or unlock with default value:
+          "unlock"'
+        - 'Possible values: C(unlock) - unlock; C(lock) - lock'
+        default: unlock
+        choices:
+        - unlock
+        - lock
+      eps_quenchfactor:
+        type: str
+        description:
+        - 'timervalue of quenching mechanism(unit: 1/100sec), 0 is valid value with
+          default value: "1440000" - timer value for quench mechanish - unit: 1/100
+          sec DS-LIN-TEST-01:automationuser>#'
+        default: '1440000'
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure equipment protection-group)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged
+EXAMPLES:
+  - gathered_example_01.txt

@@ -1,0 +1,5 @@
+help configure alarm entry sfu-gen-bat-missing !
+ SFU ONT
+                                                                               ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,28 @@
+{
+  "title": "PORT PROTECTION CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a protection group on two ports \nwhich will then operate in redundancy. The system will decide which port of the \ntwo becomes active. In case of failure of one port the other port will take \nover. A forced switchover can also be triggered manually by the operator.\n\nThe port protection group is identified by the first port in the group that is \nintended to be protected. The following parameters can be configured for the \nprotection group :\n  - paired-port: the paired port that will ensure the protection of the first \none.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure port-protection (port) paired-port <RedPort::PairedPortIndex>",
+  "resource_parameters": [
+    {
+      "name": "(port)",
+      "description": "the port identifier of the first port in the protection group"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "paired-port",
+      "description": "the port identifier of the paired port in the protection group mandatory parameter",
+      "type": "<RedPort::PairedPortIndex>",
+      "format": "pon : <Eqpt::RackId> / <Eqpt::ShelfId> / <Eqpt::SlotId> / <Eqpt::PonId>",
+      "values": [
+        "pon                   : pon-aid Field type <Eqpt::RackId>",
+        "the rack number Field type <Eqpt::ShelfId>",
+        "the shelf number Field type <Eqpt::SlotId>",
+        "the LT slot number Field type <Eqpt::PonId>",
+        "the PON identifier"
+      ]
+    }
+  ],
+  "raw": "help configure port-protection\r\nPORT PROTECTION CONFIGURATION COMMAND\r\n=====================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a protection group on two ports \r\nwhich will then operate in redundancy. The system will decide which port of the \r\ntwo becomes active. In case of failure of one port the other port will take \r\nover. A forced switchover can also be triggered manually by the operator.\r\n\r\nThe port protection group is identified by the first port in the group that is \r\nintended to be protected. The following parameters can be configured for the \r\nprotection group :\r\n  - paired-port: the paired port that will ensure the protection of the first \r\none.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure port-protection (port) paired-port <RedPort::PairedPortIndex>\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Port Protection Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(port)                     the port identifier of the first port in the \r\nprotection group\r\n\r\nTable \"Port Protection Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\npaired-port                the port identifier of the paired port in the \r\nprotection group\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <RedPort::PairedPortIndex>\r\n                           Format:\r\n                           pon : <Eqpt::RackId> / <Eqpt::ShelfId> / \r\n<Eqpt::SlotId> / <Eqpt::PonId>\r\n                           Possible values:\r\n                           - pon                   : pon-aid\r\n                           Field type <Eqpt::RackId>\r\n                           - the rack number\r\n                           Field type <Eqpt::ShelfId>\r\n                           - the shelf number\r\n                           Field type <Eqpt::SlotId>\r\n                           - the LT slot number\r\n                           Field type <Eqpt::PonId>\r\n                           - the PON identifier\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

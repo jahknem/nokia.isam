@@ -1,0 +1,20 @@
+{
+  "title": "MCAST MULTICAST VLAN TRANSLATION COMMAND",
+  "description": "This command allows the operator configure source-pon vlan translation.",
+  "user_level": "The command can be accessed by operators with igmp privileges, and executed by \noperators with igmp privileges.",
+  "syntax": "> configure mcast-control ( no mc-vlan-xlate (nwvlan) ) | ( mc-vlan-xlate (nwvlan) ponvlan <Igmp::mcPonVlanId> )",
+  "resource_parameters": [
+    {
+      "name": "(nwvlan)",
+      "description": "identification of the network-side virtual lan"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "ponvlan",
+      "description": "identification of the pon-side virtual lan mandatory parameter - vlan index - range: [1...4093]",
+      "type": "<Igmp::mcPonVlanId>"
+    }
+  ],
+  "raw": "help configure mcast-control mc-vlan-xlate\r\nMCAST MULTICAST VLAN TRANSLATION COMMAND\r\n========================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator configure source-pon vlan translation.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with igmp privileges, and executed by \r\noperators with igmp privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure mcast-control ( no mc-vlan-xlate (nwvlan) ) | ( mc-vlan-xlate \r\n(nwvlan) ponvlan <Igmp::mcPonVlanId> )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"mcast Multicast Vlan Translation Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(nwvlan)                   identification of the network-side virtual lan\r\n\r\nTable \"mcast Multicast Vlan Translation Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nponvlan                    identification of the pon-side virtual lan\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Igmp::mcPonVlanId>\r\n                           Format:\r\n                           - vlan index\r\n                           - range: [1...4093]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

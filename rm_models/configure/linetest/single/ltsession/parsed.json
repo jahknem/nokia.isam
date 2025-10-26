@@ -1,0 +1,218 @@
+{
+  "title": "SINGLE LINETEST SESSION CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the single LineTest session \nparameters.",
+  "user_level": "The command can be accessed by operators with sip , xdsl privileges, and \nexecuted by operators with sip , xdsl privileges.",
+  "syntax": "> configure linetest single ltsession (sessionid) [ session-cmd <LineTest::SessCmdForConfig> ] [ ownerid <Gauge> ] [ timeout-period <LineTest::TimeOutPerSip> ] [ line-num <LineTest::LineNum> ] [ type-high <LineTest::ltTypeHigh> ] [ type-low <LineTest::ltTypeLowSip> ] [ test-parm-num <LineTest::TestParmNum> ] [ test-mode <LineTest::TestModeForConfig> ] [ inactive-timer <LineTest::InactTimer> ] [ type-extend <LineTest::ltTypeExtendSip> ] [ no group-opt | group-opt <LineTest::ltGroupTestOpt> ] [ no busy-overwrite | busy-overwrite <LineTest::ltBusyOverwriteFlag> ] [ no force-measure | force-measure <LineTest::ForceMeasure> ]",
+  "resource_parameters": [
+    {
+      "name": "(sessionid)",
+      "description": "uniquely identify of session"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "session-cmd",
+      "description": "the linetest session command optional parameter",
+      "type": "<LineTest::SessCmdForConfig>",
+      "format": "( create                            | starttest                            | sendinfo                            | startinfo                            | destroy                            | recv-subtest                            | start-subtest                            | repeat                            | endtest )",
+      "values": [
+        "create                : create a test session",
+        "starttest             : transfer data done, start a test",
+        "sendinfo              : start to transfer info data for an underway test",
+        "startinfo             : transfer info data done, start info operation",
+        "destroy               : destroy a test session",
+        "recv-subtest          : start to transfer the sub-test's data",
+        "start-subtest         : transfer sub-test's data done, start the sub-test",
+        "repeat                : repeat the last test",
+        "endtest               : end current test session"
+      ]
+    },
+    {
+      "name": "ownerid",
+      "description": "ownerid of the session optional parameter - gauge",
+      "type": "<Gauge>"
+    },
+    {
+      "name": "timeout-period",
+      "description": "timeout period optional parameter - allows to set the whole test timer including all test \\r\\nitems of all lines for the session. Should be larger \\r\\nthan or equal to the sum of all lines' limited time plus\\r\\nline test management time <2s>. Each line's limited time\\r\\nis the sum of all the test items' limited time in th is \\r\\nline. There are two exceptions: a) cable-pair-ident,\\r\\nwhich uses a fixed limitation 60~5400s;\\r\\nb) diagnosis-call, which uses a fixed limitation 42~120s.\\r\\nTest items' limited time(second):\\r\\n| test type                | POTS | MELT |\\r\\n- type-high\\r\\n| group                    | 20   | 18   |\\r\\n|",
+      "type": "<LineTest::TimeOutPerSip>"
+    },
+    {
+      "name": "feeded-ac-vol",
+      "description": "| 3    | N/A  |\\r\\n| foreign-ac-vol           | 10   | 5    |\\r\\n| feeded-dc-vol            | 3    | N/A  |\\r\\n| foreign-dc-vol | 15   | 5    |\\r\\n| feeding-current          | 3    | N/A  |\\r\\n|"
+    },
+    {
+      "name": "resistance",
+      "description": "| 6    | 18   |\\r\\n| capacitance              | 15   | 18   |\\r\\n| impedance                | 5    | N/A  |\\r\\n| low-capacit-phone | 20   | N/A  |\\r\\n| force-ring-subscrib      | 120  | N/A  |\\r\\n|"
+    },
+    {
+      "name": "dialton-delay",
+      "description": "| 8    | N/A  |\\r\\n| msocket-detection        | 6    | N/A  |\\r\\n- type-low\\r\\n| ac-current               | 66   | N/A  |\\r\\n|"
+    },
+    {
+      "name": "dc-current",
+      "description": "| 66   | N/A  |\\r\\n| noise-level              | 66   | N/A  |\\r\\n| howler                   | 120  | N/A  |\\r\\n| status-monitored | 3    | N/A  |\\r\\n| talking-father           | 3    | N/A  |\\r\\n|"
+    },
+    {
+      "name": "line-reverse-sub",
+      "description": "| 60   | N/A  |\\r\\n| p-meter-pulse-sub        | 6    | N/A  |\\r\\n| ring-subscrib-sub        | 60   | N/A  |\\r\\n| dpdtmf-signal-sub | 60   | N/A  |\\r\\n| userloop-sub             | 6    | N/A  |\\r\\n|"
+    },
+    {
+      "name": "etsi-signature",
+      "description": "| N/A  | 18   |\\r\\n| electronic-ringer        | 10   | N/A  |\\r\\n| longitudinal-current     | 3    | N/A  |\\r\\n| conductance | 8    | 20   |\\r\\n| susceptance              | 8    | 20   |\\r\\n|"
+    },
+    {
+      "name": "iltf-hazardous-voltage",
+      "description": "| 30   | 20   |\\r\\n- type-extend\\r\\n|"
+    },
+    {
+      "name": "iltf-term-signature",
+      "description": "| N/A  | 20   |\\r\\n| iltf-term-capacitiv      | 15   | 20   |\\r\\n| iltf-ppa-test            | 15   | 20   |\\r\\n| roh-test | 8    | 20   |\\r\\n| gr909-ringer             | 20   | N/A  |\\r\\n|"
+    },
+    {
+      "name": "gr909-dialtone-d",
+      "description": "| 8    | N/A  |\\r\\n| gr909-roh                | 20   | N/A  |\\r\\n| gr909-hazardous-p        | 20   | N/A  |\\r\\n| gr909-femf | 20   | N/A  |\\r\\n| gr909-resistive-f        | 20   | N/A  |\\r\\n|"
+    },
+    {
+      "name": "iltf-term-ringer",
+      "description": "| 10   | N/A  |\\r\\n| zener-res-volt           | 8    | 20   |\\r\\n| isdn-pra-remotelb        | 2    | N/A  |\\r\\n| isdn-pra-ploadlb | 2    | N/A  |\\r\\n| isdn-pra-locallb         | 4    | N/A  |\\r\\n|"
+    },
+    {
+      "name": "isdn-pra-cablelb",
+      "description": "| 2    | N/A  |\\r\\n| cas-r2-remotelb          | 2    | N/A  |\\r\\n| cas-r2-ploadlb           | 2    | N/A  |\\r\\n| cas-r2-locallb | 4    | N/A  |\\r\\n| cas-r2-cablelb           | 2    | N/A  | - unit: second - range: [2...4294967295]"
+    },
+    {
+      "name": "line-num",
+      "description": "line number in the session of test (Max line number depends on the physical line number of the device) optional parameter - line number in the session of test - range: [1...72]",
+      "type": "<LineTest::LineNum>"
+    },
+    {
+      "name": "type-high",
+      "description": "indicate line test items optional parameter",
+      "type": "<LineTest::ltTypeHigh>",
+      "format": "( none                            | group                            | feeded-ac-vol                            | foreign-ac-vol                            | feeded-dc-vol                            | foreign-dc-vol                            | feeding-current                            | resistance                            | capacitance                            | impedance                            | low-capacit-phone                            | force-ring-subscrib                            | dialton-delay                            | msocket-detection )",
+      "values": [
+        "none                  : null",
+        "group                 : group test, see group-opt argument for the content of the group test",
+        "feeded-ac-vol         : feeded ac rms voltage test, HBit31/30/29",
+        "foreign-ac-vol        : foreign ac rms voltage test, HBit26/27/28",
+        "feeded-dc-vol         : feeded dc voltage test, HBit18/23/24/25",
+        "foreign-dc-vol        : foreign dc voltage test, HBit20/21/22",
+        "feeding-current       : feeding current test, HBit19",
+        "resistance            : insulating resistance test, HBit12/13/14/15/16/17(ISDN line test only support HBit14/15/16/17)",
+        "capacitance           : capacitance test, HBit8/9/10/11",
+        "impedance             : impedance test, HBit4/5/6/7",
+        "low-capacit-phone     : low capacitance phone detect test, HBit3",
+        "force-ring-subscrib   : force ring subscriber test, HBit2",
+        "dialton-delay         : dial tone delay test of user circuit only in idle , HBit1",
+        "msocket-detection     : termination (m socket detection) test, HBit0"
+      ]
+    },
+    {
+      "name": "type-low",
+      "description": "indicate line test items optional parameter",
+      "type": "<LineTest::ltTypeLowSip>",
+      "format": "( none                            | ac-current                            | dc-current                            | noise-level                            | howler                            | status-monitored                            | cable-pair-ident                            | talking-father                            | line-reverse-sub                            | p-meter-pulse-sub                            | ring-subscrib-sub                            | dpdtmf-signal-sub                            | userloop-sub                            | etsi-signature                            | electronic-ringer                            | longitudinal-current                            | conductance                            | susceptance                            | iltf-hazardous-voltage )",
+      "values": [
+        "none                  : null",
+        "ac-current            : ac current test normal test, LBit29/30/31",
+        "dc-current            : dc current test normal test, LBit28/27/26",
+        "noise-level           : noise level normal test, LBit24",
+        "howler                : howler test under normal test, LBit22",
+        "status-monitored      : status monitored test, LBit20",
+        "cable-pair-ident      : cable pair identification test, LBit19",
+        "talking-father        : talking test (father test item), LBit18",
+        "line-reverse-sub      : line reverse test, subtest of talking test, LBit17",
+        "p-meter-pulse-sub     : private meter pulses test, subtest of talking test, LBit16",
+        "ring-subscrib-sub     : ring subscriber with auto ring test, subtest of talking test, LBit15",
+        "dpdtmf-signal-sub     : dp/dtmf signal test, subtest of talking test, LBit14",
+        "userloop-sub          : resistance of user loop (tip-ring), subtest of talking test, LBit13",
+        "etsi-signature        : etsi signature test, including capacitance and resistance, LBit12/11, for MELT only",
+        "electronic-ringer     : electronic ringer detect test, including capacitance and resistance, LBit12/11, for NPOT-B only",
+        "longitudinal-current  : longitudinal current test, LBit9",
+        "conductance           : termination conductance test, LBit4/5/6",
+        "susceptance           : termination susceptance test, LBit1/2/3",
+        "iltf-hazardous-voltage: hazardous voltage detection test, LBit0"
+      ]
+    },
+    {
+      "name": "test-parm-num",
+      "description": "parameter lines number in the session for test optional parameter - parameter lines number in the session of test - range: [0...6]",
+      "type": "<LineTest::TestParmNum>"
+    },
+    {
+      "name": "test-mode",
+      "description": "test mode optional parameter",
+      "type": "<LineTest::TestModeForConfig>",
+      "format": "( single                            | interactive                            | cablepair )",
+      "values": [
+        "single                : the test will be end after one time",
+        "interactive           : the interactive test",
+        "cablepair             : the cable pair test"
+      ]
+    },
+    {
+      "name": "inactive-timer",
+      "description": "session inactive timer optional parameter - session inactive timer, 0 means never destroy the session automatically - unit: second - range: [0,120...65535]",
+      "type": "<LineTest::InactTimer>"
+    },
+    {
+      "name": "type-extend",
+      "description": "indicate line test items optional parameter",
+      "type": "<LineTest::ltTypeExtendSip>",
+      "format": "( none                            | iltf-term-signature                            | iltf-term-capacitiv                            | iltf-ppa-test                            | roh-test                            | gr909-ringers                            | gr909-dialtone-d                            | gr909-roh                            | gr909-hazardous-p                            | gr909-femf                            | gr909-resistive-f                            | iltf-term-ringer                            | zener-res-volt                            | isdn-pra-remotelb                            | isdn-pra-ploadlb                            | isdn-pra-locallb                            | isdn-pra-cablelb                            | cas-r2-remotelb                            | cas-r2-ploadlb                            | cas-r2-locallb                            | cas-r2-cablelb                            | diagnosis-call )",
+      "values": [
+        "none                  : null",
+        "iltf-term-signature   : galvanic signature detection, ExBit31, only applicable for MELT",
+        "iltf-term-capacitiv   : end device capacitance >50nF detection, ExBit30",
+        "iltf-ppa-test         : ppa variant test, ExBit29",
+        "roh-test              : termination roh test, ExBit28",
+        "gr909-ringers         : ringers test, ExBit26",
+        "gr909-dialtone-d      : draw and break dial tone delay test, ExBit25",
+        "gr909-roh             : receiver off hook test, ExBit24",
+        "gr909-hazardous-p     : hazardous potential test, ExBit23,",
+        "gr909-femf            : foreign electromotive"
+      ]
+    },
+    {
+      "name": "force",
+      "description": "test, ExBit22 - gr909-resistive-f     : resistive faults test, ExBit21 - iltf-term-ringer      : Termination Ringer Testing, ExBit27,only applicable for NPOT-B/C - zener-res-volt        : Zener Resistance and Voltage test, ExBit20/19 - isdn-pra-remotelb     : ISDN PRA Remote loopback test, ExBit18 - isdn-pra-ploadlb      : ISDN PRA Payload loopback test, ExBit17 - isdn-pra-locallb      : ISDN PRA Local loopback test, ExBit16 - isdn-pra-cablelb      : ISDN PRA Cable loopback test, ExBit15 - cas-r2-remotelb       : CAS R2 Remote loopback test, ExBit18 - cas-r2-ploadlb        : CAS R2 Payload loopback test, ExBit17 - cas-r2-locallb        : CAS R2 Local loopback test, ExBit16 - cas-r2-cablelb        : CAS R2 Cable loopback test, ExBit15 - diagnosis-call        : diagnosis call test, ExBit14"
+    },
+    {
+      "name": "[no] group-opt",
+      "description": "indicate line test items optional parameter with default value: \"none\"",
+      "type": "<LineTest::ltGroupTestOpt>",
+      "format": "( none                            | extended                            | pots-collective                            | melt-collective )",
+      "values": [
+        "none                  : identifier group test normal report value, HBit28/27/26/22/21/20/17/16/15/14/11/9/8",
+        "extended              : identifier group test extended report value, HBit28/27/26/22/21/20/17/16/15/14/11/9/8",
+        "pots-collective       : identifier pots collective tests,HBit28/27/26/22/21/20/17/16/15/14/11/9/8, LBit12/11/6/5/4/3/2/1, ExBit30/29/28/27/20/19",
+        "melt-collective       : identifier MELT collective tests,HBit28/27/26/22/21/20/17/16/15/14/11/9/8, LBit12/11/6/5/4/3/2/1, ExBit31/30/29/28/20/19"
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] busy-overwrite",
+      "description": "Session Busy Overwrite status optional parameter with default value: \"false\"",
+      "type": "<LineTest::ltBusyOverwriteFlag>",
+      "format": "( true                            | false )",
+      "values": [
+        "true                  : busy overwrite enable",
+        "false                 : busy overwrite disable"
+      ],
+      "default": "false"
+    },
+    {
+      "name": "[no] force-measure",
+      "description": "status of line for test optional parameter with default value: \"false\"",
+      "type": "<LineTest::ForceMeasure>",
+      "format": "( true                            | false )",
+      "values": [
+        "true                  : force the MELT measurement for requested line tests",
+        "false                 : force measurement is not required"
+      ],
+      "default": "false"
+    }
+  ],
+  "raw": "help configure linetest single ltsession\r\nSINGLE LINETEST SESSION CONFIGURATION COMMAND\r\n=============================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the single LineTest session \r\nparameters.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with sip , xdsl privileges, and \r\nexecuted by operators with sip , xdsl privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure linetest single ltsession (sessionid) [ session-cmd \r\n<LineTest::SessCmdForConfig> ] [ ownerid <Gauge> ] [ timeout-period \r\n<LineTest::TimeOutPerSip> ] [ line-num <LineTest::LineNum> ] [ type-high \r\n<LineTest::ltTypeHigh> ] [ type-low <LineTest::ltTypeLowSip> ] [ test-parm-num \r\n<LineTest::TestParmNum> ] [ test-mode <LineTest::TestModeForConfig> ] [ \r\ninactive-timer <LineTest::InactTimer> ] [ type-extend \r\n<LineTest::ltTypeExtendSip> ] [ no group-opt | group-opt \r\n<LineTest::ltGroupTestOpt> ] [ no busy-overwrite | busy-overwrite \r\n<LineTest::ltBusyOverwriteFlag> ] [ no force-measure | force-measure \r\n<LineTest::ForceMeasure> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"SINGLE LineTest Session Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(sessionid)                uniquely identify of session\r\n\r\nTable \"SINGLE LineTest Session Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nsession-cmd                the linetest session command\r\n                           optional parameter\r\n\r\n                           Parameter type: <LineTest::SessCmdForConfig>\r\n                           Format:\r\n                           ( create\r\n                           | starttest\r\n                           | sendinfo\r\n                           | startinfo\r\n                           | destroy\r\n                           | recv-subtest\r\n                           | start-subtest\r\n                           | repeat\r\n                           | endtest )\r\n                           Possible values:\r\n                           - create                : create a test session\r\n                           - starttest             : transfer data done, start \r\na test\r\n                           - sendinfo              : start to transfer info \r\ndata for an underway test\r\n                           - startinfo             : transfer info data done, \r\nstart info operation\r\n                           - destroy               : destroy a test session\r\n                           - recv-subtest          : start to transfer the \r\nsub-test's data\r\n                           - start-subtest         : transfer sub-test's data \r\ndone, start the sub-test\r\n                           - repeat                : repeat the last test\r\n                           - endtest               : end current test session\r\n\r\nownerid                    ownerid of the session\r\n                           optional parameter\r\n\r\n                           Parameter type: <Gauge>\r\n                           Format:\r\n                           - gauge\r\n\r\ntimeout-period             timeout period\r\n                           optional parameter\r\n\r\n                           Parameter type: <LineTest::TimeOutPerSip>\r\n                           Format:\r\n                           - allows to set the whole test timer including all \r\ntest \\r\\nitems of all lines for the session. Should be larger \\r\\nthan or equal \r\nto the sum of all lines' limited time plus\\r\\nline test management time <2s>. \r\nEach line's limited time\\r\\nis the sum of all the test items' limited time in th\r\nis \\r\\nline. There are two exceptions: a) cable-pair-ident,\\r\\nwhich uses a \r\nfixed limitation 60~5400s;\\r\\nb) diagnosis-call, which uses a fixed limitation \r\n42~120s.\\r\\nTest items' limited time(second):\\r\\n| test type                | \r\nPOTS | MELT |\\r\\n- type-high\\r\\n| group                    | 20   | 18   |\\r\\n| \r\nfeeded-ac-vol            | 3    | N/A  |\\r\\n| foreign-ac-vol           | 10   | \r\n5    |\\r\\n| feeded-dc-vol            | 3    | N/A  |\\r\\n| foreign-dc-vol        \r\n   | 15   | 5    |\\r\\n| feeding-current          | 3    | N/A  |\\r\\n| \r\nresistance               | 6    | 18   |\\r\\n| capacitance              | 15   | \r\n18   |\\r\\n| impedance                | 5    | N/A  |\\r\\n| low-capacit-phone     \r\n   | 20   | N/A  |\\r\\n| force-ring-subscrib      | 120  | N/A  |\\r\\n| \r\ndialton-delay            | 8    | N/A  |\\r\\n| msocket-detection        | 6    | \r\nN/A  |\\r\\n- type-low\\r\\n| ac-current               | 66   | N/A  |\\r\\n| \r\ndc-current               | 66   | N/A  |\\r\\n| noise-level              | 66   | \r\nN/A  |\\r\\n| howler                   | 120  | N/A  |\\r\\n| status-monitored      \r\n   | 3    | N/A  |\\r\\n| talking-father           | 3    | N/A  |\\r\\n| \r\nline-reverse-sub         | 60   | N/A  |\\r\\n| p-meter-pulse-sub        | 6    | \r\nN/A  |\\r\\n| ring-subscrib-sub        | 60   | N/A  |\\r\\n| dpdtmf-signal-sub     \r\n   | 60   | N/A  |\\r\\n| userloop-sub             | 6    | N/A  |\\r\\n| \r\netsi-signature           | N/A  | 18   |\\r\\n| electronic-ringer        | 10   | \r\nN/A  |\\r\\n| longitudinal-current     | 3    | N/A  |\\r\\n| conductance           \r\n   | 8    | 20   |\\r\\n| susceptance              | 8    | 20   |\\r\\n| \r\niltf-hazardous-voltage   | 30   | 20   |\\r\\n- type-extend\\r\\n| \r\niltf-term-signature      | N/A  | 20   |\\r\\n| iltf-term-capacitiv      | 15   | \r\n20   |\\r\\n| iltf-ppa-test            | 15   | 20   |\\r\\n| roh-test              \r\n   | 8    | 20   |\\r\\n| gr909-ringer             | 20   | N/A  |\\r\\n| \r\ngr909-dialtone-d         | 8    | N/A  |\\r\\n| gr909-roh                | 20   | \r\nN/A  |\\r\\n| gr909-hazardous-p        | 20   | N/A  |\\r\\n| gr909-femf            \r\n   | 20   | N/A  |\\r\\n| gr909-resistive-f        | 20   | N/A  |\\r\\n| \r\niltf-term-ringer         | 10   | N/A  |\\r\\n| zener-res-volt           | 8    | \r\n20   |\\r\\n| isdn-pra-remotelb        | 2    | N/A  |\\r\\n| isdn-pra-ploadlb      \r\n   | 2    | N/A  |\\r\\n| isdn-pra-locallb         | 4    | N/A  |\\r\\n| \r\nisdn-pra-cablelb         | 2    | N/A  |\\r\\n| cas-r2-remotelb          | 2    | \r\nN/A  |\\r\\n| cas-r2-ploadlb           | 2    | N/A  |\\r\\n| cas-r2-locallb        \r\n   | 4    | N/A  |\\r\\n| cas-r2-cablelb           | 2    | N/A  |\r\n                           - unit: second\r\n                           - range: [2...4294967295]\r\n\r\nline-num                   line number in the session of test (Max line number \r\ndepends on the physical line number of the device)\r\n                           optional parameter\r\n\r\n                           Parameter type: <LineTest::LineNum>\r\n                           Format:\r\n                           - line number in the session of test\r\n                           - range: [1...72]\r\n\r\ntype-high                  indicate line test items\r\n                           optional parameter\r\n\r\n                           Parameter type: <LineTest::ltTypeHigh>\r\n                           Format:\r\n                           ( none\r\n                           | group\r\n                           | feeded-ac-vol\r\n                           | foreign-ac-vol\r\n                           | feeded-dc-vol\r\n                           | foreign-dc-vol\r\n                           | feeding-current\r\n                           | resistance\r\n                           | capacitance\r\n                           | impedance\r\n                           | low-capacit-phone\r\n                           | force-ring-subscrib\r\n                           | dialton-delay\r\n                           | msocket-detection )\r\n                           Possible values:\r\n                           - none                  : null\r\n                           - group                 : group test, see group-opt \r\nargument for the content of the group test\r\n                           - feeded-ac-vol         : feeded ac rms voltage \r\ntest, HBit31/30/29\r\n                           - foreign-ac-vol        : foreign ac rms voltage \r\ntest, HBit26/27/28\r\n                           - feeded-dc-vol         : feeded dc voltage test, \r\nHBit18/23/24/25\r\n                           - foreign-dc-vol        : foreign dc voltage test, \r\nHBit20/21/22\r\n                           - feeding-current       : feeding current test, \r\nHBit19\r\n                           - resistance            : insulating resistance \r\ntest, HBit12/13/14/15/16/17(ISDN line test only support HBit14/15/16/17)\r\n                           - capacitance           : capacitance test, \r\nHBit8/9/10/11\r\n                           - impedance             : impedance test, HBit4/5/6/7\r\n                           - low-capacit-phone     : low capacitance phone \r\ndetect test, HBit3\r\n                           - force-ring-subscrib   : force ring subscriber \r\ntest, HBit2\r\n                           - dialton-delay         : dial tone delay test of \r\nuser circuit only in idle , HBit1\r\n                           - msocket-detection     : termination (m socket \r\ndetection) test, HBit0\r\n\r\ntype-low                   indicate line test items\r\n                           optional parameter\r\n\r\n                           Parameter type: <LineTest::ltTypeLowSip>\r\n                           Format:\r\n                           ( none\r\n                           | ac-current\r\n                           | dc-current\r\n                           | noise-level\r\n                           | howler\r\n                           | status-monitored\r\n                           | cable-pair-ident\r\n                           | talking-father\r\n                           | line-reverse-sub\r\n                           | p-meter-pulse-sub\r\n                           | ring-subscrib-sub\r\n                           | dpdtmf-signal-sub\r\n                           | userloop-sub\r\n                           | etsi-signature\r\n                           | electronic-ringer\r\n                           | longitudinal-current\r\n                           | conductance\r\n                           | susceptance\r\n                           | iltf-hazardous-voltage )\r\n                           Possible values:\r\n                           - none                  : null\r\n                           - ac-current            : ac current test normal \r\ntest, LBit29/30/31\r\n                           - dc-current            : dc current test normal \r\ntest, LBit28/27/26\r\n                           - noise-level           : noise level normal test, \r\nLBit24\r\n                           - howler                : howler test under normal \r\ntest, LBit22\r\n                           - status-monitored      : status monitored test, \r\nLBit20\r\n                           - cable-pair-ident      : cable pair identification \r\ntest, LBit19\r\n                           - talking-father        : talking test (father test \r\nitem), LBit18\r\n                           - line-reverse-sub      : line reverse test, subtest \r\nof talking test, LBit17\r\n                           - p-meter-pulse-sub     : private meter pulses test, \r\nsubtest of talking test, LBit16\r\n                           - ring-subscrib-sub     : ring subscriber with auto \r\nring test, subtest of talking test, LBit15\r\n                           - dpdtmf-signal-sub     : dp/dtmf signal test, \r\nsubtest of talking test, LBit14\r\n                           - userloop-sub          : resistance of user loop \r\n(tip-ring), subtest of talking test, LBit13\r\n                           - etsi-signature        : etsi signature test, \r\nincluding capacitance and resistance, LBit12/11, for MELT only\r\n                           - electronic-ringer     : electronic ringer detect \r\ntest, including capacitance and resistance, LBit12/11, for NPOT-B only\r\n                           - longitudinal-current  : longitudinal current test, \r\nLBit9\r\n                           - conductance           : termination conductance \r\ntest, LBit4/5/6\r\n                           - susceptance           : termination susceptance \r\ntest, LBit1/2/3\r\n                           - iltf-hazardous-voltage: hazardous voltage \r\ndetection test, LBit0\r\n\r\ntest-parm-num              parameter lines number in the session for test\r\n                           optional parameter\r\n\r\n                           Parameter type: <LineTest::TestParmNum>\r\n                           Format:\r\n                           - parameter lines number in the session of test\r\n                           - range: [0...6]\r\n\r\ntest-mode                  test mode\r\n                           optional parameter\r\n\r\n                           Parameter type: <LineTest::TestModeForConfig>\r\n                           Format:\r\n                           ( single\r\n                           | interactive\r\n                           | cablepair )\r\n                           Possible values:\r\n                           - single                : the test will be end after \r\none time\r\n                           - interactive           : the interactive test\r\n                           - cablepair             : the cable pair test\r\n\r\ninactive-timer             session inactive timer\r\n                           optional parameter\r\n\r\n                           Parameter type: <LineTest::InactTimer>\r\n                           Format:\r\n                           - session inactive timer, 0 means never destroy the \r\nsession automatically\r\n                           - unit: second\r\n                           - range: [0,120...65535]\r\n\r\ntype-extend                indicate line test items\r\n                           optional parameter\r\n\r\n                           Parameter type: <LineTest::ltTypeExtendSip>\r\n                           Format:\r\n                           ( none\r\n                           | iltf-term-signature\r\n                           | iltf-term-capacitiv\r\n                           | iltf-ppa-test\r\n                           | roh-test\r\n                           | gr909-ringers\r\n                           | gr909-dialtone-d\r\n                           | gr909-roh\r\n                           | gr909-hazardous-p\r\n                           | gr909-femf\r\n                           | gr909-resistive-f\r\n                           | iltf-term-ringer\r\n                           | zener-res-volt\r\n                           | isdn-pra-remotelb\r\n                           | isdn-pra-ploadlb\r\n                           | isdn-pra-locallb\r\n                           | isdn-pra-cablelb\r\n                           | cas-r2-remotelb\r\n                           | cas-r2-ploadlb\r\n                           | cas-r2-locallb\r\n                           | cas-r2-cablelb\r\n                           | diagnosis-call )\r\n                           Possible values:\r\n                           - none                  : null\r\n                           - iltf-term-signature   : galvanic signature \r\ndetection, ExBit31, only applicable for MELT\r\n                           - iltf-term-capacitiv   : end device capacitance \r\n>50nF detection, ExBit30\r\n                           - iltf-ppa-test         : ppa variant test, ExBit29\r\n                           - roh-test              : termination roh test, \r\nExBit28\r\n                           - gr909-ringers         : ringers test, ExBit26\r\n                           - gr909-dialtone-d      : draw and break dial tone \r\ndelay test, ExBit25\r\n                           - gr909-roh             : receiver off hook test, \r\nExBit24\r\n                           - gr909-hazardous-p     : hazardous potential test, \r\nExBit23,\r\n                           - gr909-femf            : foreign electromotive \r\nforce  test, ExBit22\r\n                           - gr909-resistive-f     : resistive faults test, \r\nExBit21\r\n                           - iltf-term-ringer      : Termination Ringer \r\nTesting, ExBit27,only applicable for NPOT-B/C\r\n                           - zener-res-volt        : Zener Resistance and \r\nVoltage test, ExBit20/19\r\n                           - isdn-pra-remotelb     : ISDN PRA Remote loopback \r\ntest, ExBit18\r\n                           - isdn-pra-ploadlb      : ISDN PRA Payload loopback \r\ntest, ExBit17\r\n                           - isdn-pra-locallb      : ISDN PRA Local loopback \r\ntest, ExBit16\r\n                           - isdn-pra-cablelb      : ISDN PRA Cable loopback \r\ntest, ExBit15\r\n                           - cas-r2-remotelb       : CAS R2 Remote loopback \r\ntest, ExBit18\r\n                           - cas-r2-ploadlb        : CAS R2 Payload loopback \r\ntest, ExBit17\r\n                           - cas-r2-locallb        : CAS R2 Local loopback \r\ntest, ExBit16\r\n                           - cas-r2-cablelb        : CAS R2 Cable loopback \r\ntest, ExBit15\r\n                           - diagnosis-call        : diagnosis call test, \r\nExBit14\r\n\r\n[no] group-opt             indicate line test items\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <LineTest::ltGroupTestOpt>\r\n                           Format:\r\n                           ( none\r\n                           | extended\r\n                           | pots-collective\r\n                           | melt-collective )\r\n                           Possible values:\r\n                           - none                  : identifier group test \r\nnormal report value, HBit28/27/26/22/21/20/17/16/15/14/11/9/8\r\n                           - extended              : identifier group test \r\nextended report value, HBit28/27/26/22/21/20/17/16/15/14/11/9/8\r\n                           - pots-collective       : identifier pots collective \r\ntests,HBit28/27/26/22/21/20/17/16/15/14/11/9/8, LBit12/11/6/5/4/3/2/1, \r\nExBit30/29/28/27/20/19\r\n                           - melt-collective       : identifier MELT collective \r\ntests,HBit28/27/26/22/21/20/17/16/15/14/11/9/8, LBit12/11/6/5/4/3/2/1, \r\nExBit31/30/29/28/20/19\r\n\r\n[no] busy-overwrite        Session Busy Overwrite status\r\n                           optional parameter with default value: \"false\"\r\n\r\n                           Parameter type: <LineTest::ltBusyOverwriteFlag>\r\n                           Format:\r\n                           ( true\r\n                           | false )\r\n                           Possible values:\r\n                           - true                  : busy overwrite enable\r\n                           - false                 : busy overwrite disable\r\n\r\n[no] force-measure         status of line for test\r\n                           optional parameter with default value: \"false\"\r\n\r\n                           Parameter type: <LineTest::ForceMeasure>\r\n                           Format:\r\n                           ( true\r\n                           | false )\r\n                           Possible values:\r\n                           - true                  : force the MELT measurement \r\nfor requested line tests\r\n                           - false                 : force measurement is not \r\nrequired\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,10 @@
+# Using replaced state
+# NOTE: This command returned errors on device; parameters are unknown
+
+- name: Replace interface statistics configuration
+  isam_interface_statistics:
+    state: replaced
+    config:
+      - name: "index_value"
+
+# Configuration applied but parameters unknown due to device error.

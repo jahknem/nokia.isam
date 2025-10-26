@@ -1,0 +1,98 @@
+module: isam_qos_profiles_cac
+short_description: Resource module to configure qos profiles cac
+description:
+- Configures a connection admission control (CAC) profile. CAC profiles are used primarily
+  for multicast video admission control. CAC profiles can be attached to subscriber
+  interfaces. The scope of a CAC profile is a DSL link (and not a PVC), regardless
+  of the number of PVCs on a DSL link. The system derives the line rate from the physical
+  interfaces and calculates an estimate of the available Ethernet bandwidth using
+  configurable overhead factors. The line rate taken into account may be the guaranteed
+  sync rate or the actual line rate in case of DSL, based on a global configuration
+  setting. From this bandwidth, a part can be reserved for voice and data applications
+  and the remaining part will be kept by the system as the available bandwidth for
+  multicast video. Only preconfigured multicast streams are considered for CAC. Note
+  that unicast video (regardless of whether it is premium content or generic Internet
+  streaming video) is ignored by the CAC function. The maximum bandwidth that video
+  will occupy can be further confined using the maximum multicast bandwidth 'max-mcast-bandwidth'
+  parameter. CAC profiles are applicable to line cards, but not to SHub/IHub interfaces.
+- Supports configuration of res voice bandwidth, max mcast bandwidth, res data bandwidth
+  and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure qos profiles ()'
+options:
+  config:
+    description:
+    - A list of qos profiles cac configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (name) - A unique profile name
+      res_voice_bandwidth:
+        type: str
+        description:
+        - 'reserved bandwidth for the voice services mandatory parameter - interface
+          bandwidth - unit: kbps - range: [0...2147483647]'
+      max_mcast_bandwidth:
+        type: str
+        description:
+        - 'maximum allowed bandwidth for multicast and unicast video service mandatory
+          parameter - interface bandwidth - unit: kbps - range: [0...2147483647]'
+      res_data_bandwidth:
+        type: str
+        description:
+        - 'reserved bandwidth for all data services mandatory parameter - interface
+          bandwidth - unit: kbps - range: [0...2147483647]'
+      cac_type:
+        type: str
+        description:
+        - 'cac-profile type with default value: "dsl-cac"'
+        - 'Possible values: C(dsl-cac) - cac profile for dsl links; C(pon-cac) - cac
+          profile for pon interfaces obsolete alternative replaced by generic-pon-cac;
+          C(generic-pon-cac) - cac profile for epon gpon and ngpon2 interfaces'
+        default: dsl-cac
+        choices:
+        - dsl-cac
+        - pon-cac
+        - generic-pon-cac
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure qos profiles cac)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

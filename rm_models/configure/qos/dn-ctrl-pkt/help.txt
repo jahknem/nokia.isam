@@ -1,0 +1,69 @@
+help configure qos dn-ctrl-pkt
+QOS SYSTEM LEVEL DN CONTROL PACKET DSCP/PBIT MARKING, TC MAPPING CONFIGURATION 
+COMMAND
+================================================================================
+======
+
+Command Description
+-------------------
+
+This command allows the operator to configure QoS DSCP, Pbit marking, TC 
+mapping for various protocols control packet in downstream direction.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos ( no dn-ctrl-pkt (protocol-id) ) | ( dn-ctrl-pkt (protocol-id) 
+[ no dscp | dscp <Qos::dscpvalue> ] [ no pbit | pbit <Qos::pbitvalue> ] [ no tc 
+| tc <Qos::tcvalue> ] )
+
+Command Parameters
+------------------
+
+Table "QoS system level Dn Control Packet DSCP/Pbit marking, TC mapping 
+Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(protocol-id)              protocol id for arp, igmp, dhcpv4, dhcpv6, icmpv6, 
+cfm, pppox, lacp, dot1x
+
+Table "QoS system level Dn Control Packet DSCP/Pbit marking, TC mapping 
+Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] dscp                  configure the dscp value
+                           optional parameter with default value: -1L
+
+                           Parameter type: <Qos::dscpvalue>
+                           Format:
+                           - dscp value range
+                           - range: [-1...63]
+
+[no] pbit                  configure the P-bit value
+                           optional parameter with default value: 7L
+
+                           Parameter type: <Qos::pbitvalue>
+                           Format:
+                           - pbit value range
+                           - range: [-1...7]
+
+[no] tc                    configure the traffic class value
+                           optional parameter with default value: -1L
+
+                           Parameter type: <Qos::tcvalue>
+                           Format:
+                           - traffic class value range
+                           - range: [-1...7]
+
+
+DS-LIN-TEST-01:automationuser>#

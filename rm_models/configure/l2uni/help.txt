@@ -1,0 +1,4 @@
+help configure l2uni
+                                                    ^
+command is not complete
+DS-LIN-TEST-01:automationuser>#

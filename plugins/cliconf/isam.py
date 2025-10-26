@@ -260,7 +260,7 @@ class Cliconf(CliconfBase):
             'network_os_image': <str>,
             'network_os_platform': <str>,
         },"""
-        raise Exception("This is an example exception.")
+        # raise Exception("This is an example exception.")
         if not self._device_info:
             device_info = dict()
             device_info['network_os'] = 'isam'

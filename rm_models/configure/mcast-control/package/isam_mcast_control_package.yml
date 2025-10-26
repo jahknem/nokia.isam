@@ -1,0 +1,76 @@
+module: isam_mcast_control_package
+short_description: Resource module to configure mcast-control package
+description:
+- Configures mcast package bitmaps. The package is intended primarily for use by a
+  network/element manager, such as an AMS, to support multiple sets of packages in
+  different regions. A package is a group of zero or more multicast sources that share
+  a common access permission. Grouping the source channels into one or more packages
+  provides flexibility for the service provider to deliver different levels of services
+  to the end users; for example, "Basic Package", "Middle-Tier Package", and "Premium
+  Package". NOTE:There is no requirement to configure the package. If the package
+  is modified, there is no effect on the multicast source.
+- Supports configuration of name, template name, template version
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure mcast-control package ()'
+options:
+  config:
+    description:
+    - A list of mcast-control package configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        description:
+        - 'name of the package with default value: "" - a printable string - length:
+          x<=32'
+        - 'Maximum length: 32 characters'
+      template_name:
+        type: str
+        description:
+        - 'name of the service template containing this pkg with default value: ""
+          - a printable string - length: x<=32'
+        - 'Maximum length: 32 characters'
+      template_version:
+        type: str
+        description:
+        - 'version of the service template containing this pkg with default value:
+          0 - version of the service template containing this package - range: [0...65535]'
+        default: '0'
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure mcast-control package)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

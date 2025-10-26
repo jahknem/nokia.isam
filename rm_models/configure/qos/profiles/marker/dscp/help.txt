@@ -1,0 +1,55 @@
+help configure qos profiles marker dscp
+QOS SINGLE DSCP MARKER CONFIGURATION COMMAND
+============================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a marker for a single DSCP.
+
+All IP packets will be marked with the specified DSCP value. This marker type 
+is incompatible with DSCP to P-bits alignment.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles marker ( no dscp (name) ) | ( dscp (name) default-dscp 
+<Qos::DscpToDot1PAlignmentDscpIndex> [ [ no ] alignment ] )
+
+Command Parameters
+------------------
+
+Table "QoS Single DSCP Marker Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+Table "QoS Single DSCP Marker Configuration Command" Command Parameters
+
+Parameter                  Description
+
+default-dscp               the default DSCP value to be applied on all frames
+                           mandatory parameter
+
+                           Parameter type: <Qos::DscpToDot1PAlignmentDscpIndex>
+                           Format:
+                           - the DSCP value
+                           - range: [0...63]
+
+[no] alignment             enable DSCP to P-bits alignment
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+
+DS-LIN-TEST-01:automationuser>#

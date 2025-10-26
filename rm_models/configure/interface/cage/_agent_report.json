@@ -1,0 +1,23 @@
+{
+  "command_path": "configure interface cage",
+  "module_file": "isam_interface_cage.yml",
+  "changes": [
+    {
+      "path": "notes",
+      "action": "corrected",
+      "reason": "Expanded incomplete CLI command syntax from 'configure interface cage ()' to full syntax with position and operational-mode parameters"
+    },
+    {
+      "path": "options.config.suboptions.operational_mode.description",
+      "action": "reformatted",
+      "reason": "Cleaned up line wrapping for improved readability; content remains faithful to help.txt"
+    }
+  ],
+  "example_files": [
+    "merged_example_01.txt",
+    "replaced_example_01.txt",
+    "overridden_example_01.txt",
+    "deleted_example_01.txt"
+  ],
+  "notes": "All corrections strictly derived from help.txt. All operational_mode choices are exact tokens from help.txt Possible values section."
+}

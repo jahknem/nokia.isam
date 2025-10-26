@@ -1,0 +1,20 @@
+{
+  "title": "HGU TR069 CUSTOMIZABLE ALARM CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the HGU TR069 customizable alarms.",
+  "user_level": "The command can be accessed by operators with alarm privileges, and executed by \noperators with alarm privileges.",
+  "syntax": "> configure alarm ( no hgutr069-cust (alarm-id) ) | ( hgutr069-cust (alarm-id) description <GPON::CustAlmDesc> )",
+  "resource_parameters": [
+    {
+      "name": "(alarm-id)",
+      "description": "HGU TR069 customizable alarm Id"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "description",
+      "description": "alarm description mandatory parameter - alarm description - length: 1<=x<=64",
+      "type": "<GPON::CustAlmDesc>"
+    }
+  ],
+  "raw": "help configure alarm hgutr069-cust\r\nHGU TR069 CUSTOMIZABLE ALARM CONFIGURATION COMMAND\r\n==================================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the HGU TR069 customizable alarms.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with alarm privileges, and executed by \r\noperators with alarm privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure alarm ( no hgutr069-cust (alarm-id) ) | ( hgutr069-cust (alarm-id) \r\ndescription <GPON::CustAlmDesc> )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"HGU TR069 Customizable Alarm Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(alarm-id)                 HGU TR069 customizable alarm Id\r\n\r\nTable \"HGU TR069 Customizable Alarm Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\ndescription                alarm description\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <GPON::CustAlmDesc>\r\n                           Format:\r\n                           - alarm description\r\n                           - length: 1<=x<=64 \r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

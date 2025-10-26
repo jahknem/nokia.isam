@@ -1,0 +1,236 @@
+{
+  "title": "QOS INTERFACE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure QoS settings on a user-port \nInterface. A user-port Interface can be a DSL-link, an Shdsl-link, an Ethernet \nLine, a Link Aggregation Group or a pon, ont or uni interface. For each \nInterface the operator can apply scheduling and CAC and shaper settings.\n\nA scheduler node profile is used to configure egress scheduler settings for \neach egress Interface. A CAC profile is used to configure CAC settings for each \nInterface. A shaper profile is used to configure downstream flooding shaper \nsettings for each Interface.",
+  "user_level": "The command can be accessed by operators with qos privileges, and executed by \noperators with qos privileges.",
+  "syntax": "> configure qos interface (index) [ no scheduler-node | scheduler-node <Qos::SchedulerNodeProfName> ] [ no ingress-profile | ingress-profile <Qos::QosIngressProfileNameEOnu> ] [ no cac-profile | cac-profile <Qos::QosCacProfileName> ] [ no ext-cac | ext-cac <Qos::QosCacProfileName> ] [ [ no ] ds-queue-sharing ] [ [ no ] us-queue-sharing ] [ no ds-num-queue | ds-num-queue <Qos::NumberofQueues> ] [ no ds-num-rem-queue | ds-num-rem-queue <Qos::NumberofQueues> ] [ no us-num-queue | us-num-queue <Qos::NumberofQueues> ] [ [ no ] queue-stats-on ] [ [ no ] autoschedule ] [ oper-weight <Qos::QosWeight> ] [ oper-rate <Qos::ShaperExcessiveInfoRate> ] [ [ no ] us-vlanport-queue ] [ no dsfld-shaper-prof | dsfld-shaper-prof <Qos::QosShaperProfileName> ] [ no bandwidth-profile | bandwidth-profile <Qos::QosBandwidthProfileName> ] [ no bandwidth-sharing | bandwidth-sharing <Qos::UniBandwidthSharing> ] [ no aggr-usq-profile | aggr-usq-profile <Qos::QosAggrQueuesConfigProfileName> ] [ no aggr-dsq-profile | aggr-dsq-profile <Qos::QosAggrQueuesConfigProfileName> ] [ no gem-sharing | gem-sharing <Qos::GemSharing> ] [ no scheduler-mode | scheduler-mode <Qos::SchedulerMode> ] [ no mc-scheduler-node | mc-scheduler-node <Qos::SchedulerNodeProfName> ] [ no bc-scheduler-node | bc-scheduler-node <Qos::SchedulerNodeProfName> ] [ no ds-schedule-tag | ds-schedule-tag <Qos::DsScheduleTag> ]",
+  "resource_parameters": [
+    {
+      "name": "(index)",
+      "description": "physical port  or la-group of a user-port Interface"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] scheduler-node",
+      "description": "the name of the scheduler-node profile to be mapped on this user-port Interface optional parameter with default value: \"none\"",
+      "type": "<Qos::SchedulerNodeProfName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associated",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] ingress-profile",
+      "description": "the name of the ingress profile to be mapped on this user-port Interface. It only used for EPON ONU interface current. optional parameter with default value: \"none\"",
+      "type": "<Qos::QosIngressProfileNameEOnu>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associated",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] cac-profile",
+      "description": "the name of the cac profile to be mapped on this user-port Interface. For EPON OLT in downstream, this profile used for CAC on 1G PON bandwidth. optional parameter with default value: \"none\"",
+      "type": "<Qos::QosCacProfileName>",
+      "format": "( name : <Qos::IgnoredQosProfileName>                            | none )",
+      "values": [
+        "none                  : no profile name to associated",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] ext-cac",
+      "description": "the name of the cac profile to be mapped on this user-port Interface. For EPON OLT in downstream, this profile used for CAC on 10G PON bandwidth. optional parameter with default value: \"none\"",
+      "type": "<Qos::QosCacProfileName>",
+      "format": "( name : <Qos::IgnoredQosProfileName>                            | none )",
+      "values": [
+        "none                  : no profile name to associated",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] ds-queue-sharing",
+      "description": "enable downstream queue sharing optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] us-queue-sharing",
+      "description": "enable upstream queue sharing optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] ds-num-queue",
+      "description": "number of downstream queues per uni optional parameter with default value: 4",
+      "type": "<Qos::NumberofQueues>",
+      "format": "( not-applicable                            | <Qos::NumberofQueues> )",
+      "values": [
+        "not-applicable        : not applicable Field type <Qos::NumberofQueues>",
+        "number of queues per uni",
+        "range: [4,8,1]"
+      ],
+      "default": "4"
+    },
+    {
+      "name": "[no] ds-num-rem-queue",
+      "description": "number of remote downstream queues per ont optional parameter with default value: 0",
+      "type": "<Qos::NumberofQueues>",
+      "format": "( not-applicable                            | <Qos::NumberofQueues> )",
+      "values": [
+        "not-applicable        : not applicable Field type <Qos::NumberofQueues>",
+        "number of queues per uni",
+        "range: [4,8,1]"
+      ],
+      "default": "0"
+    },
+    {
+      "name": "[no] us-num-queue",
+      "description": "number of upstream queues per uni optional parameter with default value: 8",
+      "type": "<Qos::NumberofQueues>",
+      "format": "( not-applicable                            | <Qos::NumberofQueues> )",
+      "values": [
+        "not-applicable        : not applicable Field type <Qos::NumberofQueues>",
+        "number of queues per uni",
+        "range: [4,8,1]"
+      ],
+      "default": "8"
+    },
+    {
+      "name": "[no] queue-stats-on",
+      "description": "enable queue stats collection for ont uni optional parameter [no] autoschedule optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "oper-weight",
+      "description": "operational weight of the ONT or UNI scheduler optional parameter - relative weight - range: [0...127]",
+      "type": "<Qos::QosWeight>"
+    },
+    {
+      "name": "oper-rate",
+      "description": "Operational rate limit when autoShape enabled for ONT or UNI optional parameter - excessive information rate of a shaper - unit: kbps - range: [0...2147483647]",
+      "type": "<Qos::ShaperExcessiveInfoRate>"
+    },
+    {
+      "name": "[no] us-vlanport-queue",
+      "description": "Enable Vlan Port Level Queue Configuration optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] dsfld-shaper-prof",
+      "description": "the name of the shaper profile attached to the pon optional parameter with default value: \"none\"",
+      "type": "<Qos::QosShaperProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associated",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] bandwidth-profile",
+      "description": "the name of the bandwidth profile. optional parameter with default value: \"none\"",
+      "type": "<Qos::QosBandwidthProfileName>",
+      "format": "( name : <Qos::IgnoredQosProfileName>                            | none )",
+      "values": [
+        "none                  : no profile name to associate",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] bandwidth-sharing",
+      "description": "enable or  disable bandwidth sharing optional parameter with default value: \"no-sharing\"",
+      "type": "<Qos::UniBandwidthSharing>",
+      "format": "( no-sharing                            | ont-sharing )",
+      "values": [
+        "no-sharing            : disable bandwidth sharing",
+        "ont-sharing           : enable UNI level BW  or TCONT sharing across UNIs of an ONT"
+      ],
+      "default": "no-sharing"
+    },
+    {
+      "name": "[no] aggr-usq-profile",
+      "description": "the name of the aggrQueuesConfig profile applied on upstream queues of an UNI. optional parameter with default value: \"none\"",
+      "type": "<Qos::QosAggrQueuesConfigProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associated",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] aggr-dsq-profile",
+      "description": "the name of the aggrQueuesConfig profile applied on downstream queues of an UNI. optional parameter with default value: \"none\"",
+      "type": "<Qos::QosAggrQueuesConfigProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associated",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] gem-sharing",
+      "description": "enable or disable gem sharing optional parameter with default value: \"disable\"",
+      "type": "<Qos::GemSharing>",
+      "format": "( enable                            | disable                            | not-applicable )",
+      "values": [
+        "enable                : enable GEM sharing",
+        "disable               : disable GEM sharing",
+        "not-applicable        : not applicable"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] scheduler-mode",
+      "description": "specifies which mode is selected for scheduler optional parameter with default value: \"subscriber-hierarchy\"",
+      "type": "<Qos::SchedulerMode>",
+      "format": "( subscriber-hierarchy                            | service-hierarchy                            | service-flat )",
+      "values": [
+        "subscriber-hierarchy  : Subscriber-based hierarchical scheduling. This mode achieves subscriber fairness using a Traffic Management hierarchy of subscriber levels.",
+        "service-hierarchy     : Service-based hierarchical scheduling. This mode achieves subscriber fairness using a Traffic Management hierarchy of subscriber levels, but also takes into account the service priority across all subscribers to achieve service fairness.",
+        "service-flat          : Service-based scheduling across all subscribers, using a flat class-based scheduler and aggregated queues associated with the physical port (e.g. PON port)."
+      ]
+    },
+    {
+      "name": "[no] mc-scheduler-node",
+      "description": "the name of the scheduler-node profile to be mapped on multicast port optional parameter with default value: \"name :",
+      "type": "<Qos::SchedulerNodeProfName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associated",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "name : Multicast_Default"
+    },
+    {
+      "name": "[no] bc-scheduler-node",
+      "description": "the name of the scheduler-node profile to be mapped on broadcast port optional parameter with default value: \"name :",
+      "type": "<Qos::SchedulerNodeProfName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associat ed",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "name : Broadcast_Default"
+    },
+    {
+      "name": "[no] ds-schedule-tag",
+      "description": "specifies downstream scheduler reference optional parameter with default value: \"egressoutertag\" DS-LIN-TEST-01:automationuser>#",
+      "type": "<Qos::DsScheduleTag>",
+      "format": "( egressoutertag                            | cvlantag                            | svlantag )",
+      "values": [
+        "egressoutertag        : system default behavior: always the egress outer tag used.",
+        "cvlantag              : Select downstream scheduler based on the c-vlan.",
+        "svlantag              : Select downstream scheduler based on the s-vlan."
+      ]
+    }
+  ],
+  "raw": "help configure qos interface\r\nQOS INTERFACE CONFIGURATION COMMAND\r\n===================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure QoS settings on a user-port \r\nInterface. A user-port Interface can be a DSL-link, an Shdsl-link, an Ethernet \r\nLine, a Link Aggregation Group or a pon, ont or uni interface. For each \r\nInterface the operator can apply scheduling and CAC and shaper settings.\r\n\r\nA scheduler node profile is used to configure egress scheduler settings for \r\neach egress Interface. A CAC profile is used to configure CAC settings for each \r\nInterface. A shaper profile is used to configure downstream flooding shaper \r\nsettings for each Interface.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by \r\noperators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos interface (index) [ no scheduler-node | scheduler-node \r\n<Qos::SchedulerNodeProfName> ] [ no ingress-profile | ingress-profile \r\n<Qos::QosIngressProfileNameEOnu> ] [ no cac-profile | cac-profile \r\n<Qos::QosCacProfileName> ] [ no ext-cac | ext-cac <Qos::QosCacProfileName> ] [ \r\n[ no ] ds-queue-sharing ] [ [ no ] us-queue-sharing ] [ no ds-num-queue | \r\nds-num-queue <Qos::NumberofQueues> ] [ no ds-num-rem-queue | ds-num-rem-queue \r\n<Qos::NumberofQueues> ] [ no us-num-queue | us-num-queue <Qos::NumberofQueues> \r\n] [ [ no ] queue-stats-on ] [ [ no ] autoschedule ] [ oper-weight \r\n<Qos::QosWeight> ] [ oper-rate <Qos::ShaperExcessiveInfoRate> ] [ [ no ] \r\nus-vlanport-queue ] [ no dsfld-shaper-prof | dsfld-shaper-prof \r\n<Qos::QosShaperProfileName> ] [ no bandwidth-profile | bandwidth-profile \r\n<Qos::QosBandwidthProfileName> ] [ no bandwidth-sharing | bandwidth-sharing \r\n<Qos::UniBandwidthSharing> ] [ no aggr-usq-profile | aggr-usq-profile \r\n<Qos::QosAggrQueuesConfigProfileName> ] [ no aggr-dsq-profile | \r\naggr-dsq-profile <Qos::QosAggrQueuesConfigProfileName> ] [ no gem-sharing | \r\ngem-sharing <Qos::GemSharing> ] [ no scheduler-mode | scheduler-mode <Qos::Sched\r\nulerMode> ] [ no mc-scheduler-node | mc-scheduler-node \r\n<Qos::SchedulerNodeProfName> ] [ no bc-scheduler-node | bc-scheduler-node \r\n<Qos::SchedulerNodeProfName> ] [ no ds-schedule-tag | ds-schedule-tag \r\n<Qos::DsScheduleTag> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS Interface Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(index)                    physical port  or la-group of a user-port Interface\r\n\r\nTable \"QoS Interface Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] scheduler-node        the name of the scheduler-node profile to be mapped \r\non this user-port Interface\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::SchedulerNodeProfName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociated\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] ingress-profile       the name of the ingress profile to be mapped on this \r\nuser-port Interface. It only used for EPON ONU interface current.\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosIngressProfileNameEOnu>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociated\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] cac-profile           the name of the cac profile to be mapped on this \r\nuser-port Interface. For EPON OLT in downstream, this profile used for CAC on \r\n1G PON bandwidth.\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosCacProfileName>\r\n                           Format:\r\n                           ( name : <Qos::IgnoredQosProfileName>\r\n                           | none )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociated\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] ext-cac               the name of the cac profile to be mapped on this \r\nuser-port Interface. For EPON OLT in downstream, this profile used for CAC on \r\n10G PON bandwidth.\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosCacProfileName>\r\n                           Format:\r\n                           ( name : <Qos::IgnoredQosProfileName>\r\n                           | none )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociated\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] ds-queue-sharing      enable downstream queue sharing\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] us-queue-sharing      enable upstream queue sharing\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] ds-num-queue          number of downstream queues per uni\r\n                           optional parameter with default value: 4\r\n\r\n                           Parameter type: <Qos::NumberofQueues>\r\n                           Format:\r\n                           ( not-applicable\r\n                           | <Qos::NumberofQueues> )\r\n                           Possible values:\r\n                           - not-applicable        : not applicable\r\n                           Field type <Qos::NumberofQueues>\r\n                           - number of queues per uni\r\n                           - range: [4,8,1]\r\n\r\n[no] ds-num-rem-queue      number of remote downstream queues per ont\r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Qos::NumberofQueues>\r\n                           Format:\r\n                           ( not-applicable\r\n                           | <Qos::NumberofQueues> )\r\n                           Possible values:\r\n                           - not-applicable        : not applicable\r\n                           Field type <Qos::NumberofQueues>\r\n                           - number of queues per uni\r\n                           - range: [4,8,1]\r\n\r\n[no] us-num-queue          number of upstream queues per uni\r\n                           optional parameter with default value: 8\r\n\r\n                           Parameter type: <Qos::NumberofQueues>\r\n                           Format:\r\n                           ( not-applicable\r\n                           | <Qos::NumberofQueues> )\r\n                           Possible values:\r\n                           - not-applicable        : not applicable\r\n                           Field type <Qos::NumberofQueues>\r\n                           - number of queues per uni\r\n                           - range: [4,8,1]\r\n\r\n[no] queue-stats-on        enable queue stats collection for ont uni\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] autoschedule          \r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\noper-weight                operational weight of the ONT or UNI scheduler\r\n                           optional parameter\r\n\r\n                           Parameter type: <Qos::QosWeight>\r\n                           Format:\r\n                           - relative weight\r\n                           - range: [0...127]\r\n\r\noper-rate                  Operational rate limit when autoShape enabled for \r\nONT or UNI\r\n                           optional parameter\r\n\r\n                           Parameter type: <Qos::ShaperExcessiveInfoRate>\r\n                           Format:\r\n                           - excessive information rate of a shaper\r\n                           - unit: kbps\r\n                           - range: [0...2147483647]\r\n\r\n[no] us-vlanport-queue     Enable Vlan Port Level Queue Configuration\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] dsfld-shaper-prof     the name of the shaper profile attached to the pon\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosShaperProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociated\r\n                           - name                  : enter profile name to be \r\nassociated\r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] bandwidth-profile     the name of the bandwidth profile.\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosBandwidthProfileName>\r\n                           Format:\r\n                           ( name : <Qos::IgnoredQosProfileName>\r\n                           | none )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociate\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] bandwidth-sharing     enable or  disable bandwidth sharing\r\n                           optional parameter with default value: \"no-sharing\"\r\n\r\n                           Parameter type: <Qos::UniBandwidthSharing>\r\n                           Format:\r\n                           ( no-sharing\r\n                           | ont-sharing )\r\n                           Possible values:\r\n                           - no-sharing            : disable bandwidth sharing\r\n                           - ont-sharing           : enable UNI level BW  or \r\nTCONT sharing across UNIs of an ONT\r\n\r\n[no] aggr-usq-profile      the name of the aggrQueuesConfig profile applied on \r\nupstream queues of an UNI.\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosAggrQueuesConfigProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociated\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] aggr-dsq-profile      the name of the aggrQueuesConfig profile applied on \r\ndownstream queues of an UNI.\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosAggrQueuesConfigProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociated\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] gem-sharing           enable or disable gem sharing\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Qos::GemSharing>\r\n                           Format:\r\n                           ( enable\r\n                           | disable\r\n                           | not-applicable )\r\n                           Possible values:\r\n                           - enable                : enable GEM sharing\r\n                           - disable               : disable GEM sharing\r\n                           - not-applicable        : not applicable\r\n\r\n[no] scheduler-mode        specifies which mode is selected for scheduler\r\n                           optional parameter with default value: \r\n\"subscriber-hierarchy\"\r\n\r\n                           Parameter type: <Qos::SchedulerMode>\r\n                           Format:\r\n                           ( subscriber-hierarchy\r\n                           | service-hierarchy\r\n                           | service-flat )\r\n                           Possible values:\r\n                           - subscriber-hierarchy  : Subscriber-based \r\nhierarchical scheduling. This mode achieves subscriber fairness using a Traffic \r\nManagement hierarchy of subscriber levels.\r\n                           - service-hierarchy     : Service-based hierarchical \r\nscheduling. This mode achieves subscriber fairness using a Traffic Management \r\nhierarchy of subscriber levels, but also takes into account the service \r\npriority across all subscribers to achieve service fairness.\r\n                           - service-flat          : Service-based scheduling \r\nacross all subscribers, using a flat class-based scheduler and aggregated \r\nqueues associated with the physical port (e.g. PON port).\r\n\r\n[no] mc-scheduler-node     the name of the scheduler-node profile to be mapped \r\non multicast port\r\n                           optional parameter with default value: \"name : \r\nMulticast_Default\"\r\n\r\n                           Parameter type: <Qos::SchedulerNodeProfName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociated\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] bc-scheduler-node     the name of the scheduler-node profile to be mapped \r\non broadcast port\r\n                           optional parameter with default value: \"name : \r\nBroadcast_Default\"\r\n\r\n                           Parameter type: <Qos::SchedulerNodeProfName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to associat\r\ned\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] ds-schedule-tag       specifies downstream scheduler reference\r\n                           optional parameter with default value: \r\n\"egressoutertag\"\r\n\r\n                           Parameter type: <Qos::DsScheduleTag>\r\n                           Format:\r\n                           ( egressoutertag\r\n                           | cvlantag\r\n                           | svlantag )\r\n                           Possible values:\r\n                           - egressoutertag        : system default behavior: \r\nalways the egress outer tag used.\r\n                           - cvlantag              : Select downstream \r\nscheduler based on the c-vlan.\r\n                           - svlantag              : Select downstream \r\nscheduler based on the s-vlan.\r\n\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 19:36:38 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 19:36:38 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

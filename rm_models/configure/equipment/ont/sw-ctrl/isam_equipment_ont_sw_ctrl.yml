@@ -1,0 +1,122 @@
+module: isam_equipment_ont_sw_ctrl
+short_description: Resource module to configure equipment ont sw-ctrl
+description:
+- 'This command creates an association between an ONT hardware version/variant and
+  an ONT software version (download and planned). hw-version - has the same meaning
+  as the eqpt-ver-num parameter supported by ''show equipment ont interface'' command.
+  Special character * (asterisk) may be provided in the string which means that the
+  * character (and all subsequent character positions) are considered to be automatic
+  ''matches'' for values in same character positions of eqpt-ver-num parameter. ont-variant
+  - has the same meaning as the plnd-var in ''configure equipment ont interface''
+  command Note: Combination of hw-version and ont-variant must be unique. plnd-sw-version
+  - has the same meaning as the ''auto-sw-plnd-ver parameter supported by ''show equipment
+  ont interface'' command. sw-dwload-ver - has the same meaning as the ''auto-sw-dld-ver
+  parameter supported by ''show equipment ont interface'' command.'
+- Supports configuration of hw version, ont variant, plnd sw version and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure equipment ont ()'
+options:
+  config:
+    description:
+    - A list of equipment ont sw-ctrl configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (sw-ctrl-id) - software control id
+      hw_version:
+        type: str
+        description:
+        - 'ONT hardware version mandatory parameter - ont sw version - length: 1<=x<=14'
+      ont_variant:
+        type: str
+        description:
+        - 'planned variant of the ONT hardware version.Use DO for Data-only ONTs,SIP
+          for SIP ONTs,H.248 for MEGACO ONTs with default value: "" - planned variant
+          of the ONT hardware version - length: x<=80'
+        - 'Maximum length: 80 characters'
+      plnd_sw_version:
+        type: str
+        description:
+        - 'planned ONT software version number. If sw-dwload-ver is set to disabled,
+          plnd-sw-version cannot be set to delayactivate. with default value: "UNPLANNED"
+          - ont sw version - length: 1<=x<=14'
+        default: UNPLANNED
+      plnd_sw_ver_conf:
+        type: str
+        description:
+        - 'software planned version confirmation with default value: "UNPLANNED" -
+          ont sw version - length: 1<=x<=14'
+        default: UNPLANNED
+      sw_dwload_ver:
+        type: str
+        description:
+        - 'software download version. If plnd-sw-version is set to delayactivate,
+          sw-dwload-ver cannot be set to disabled. with default value: "DISABLED"
+          - ont sw version - length: 1<=x<=14'
+        default: DISABLED
+      pland_cfgfile1:
+        type: str
+        description:
+        - 'indicate the cfgfile1 version to be planned with default value: "DISABLED"
+          - ont configure file version - length: 1<=x<=14'
+        default: DISABLED
+      pland_cfgfile2:
+        type: str
+        description:
+        - 'indicate the cfgfile2 version to be planned with default value: "DISABLED"
+          - ont configure file version - length: 1<=x<=14'
+        default: DISABLED
+      dnload_cfgfile1:
+        type: str
+        description:
+        - 'indicate the cfgfile1 version to be downloaded with default value: "DISABLED"
+          - ont configure file version - length: 1<=x<=14'
+        default: DISABLED
+      dnload_cfgfile2:
+        type: str
+        description:
+        - 'indicate the cfgfile2 version to be planned with default value: "DISABLED"
+          - ont configure file version - length: 1<=x<=14'
+        default: DISABLED
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure equipment ont sw-ctrl)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

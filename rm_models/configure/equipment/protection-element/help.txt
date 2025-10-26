@@ -1,0 +1,60 @@
+help configure equipment protection-element
+PROTECTION ELEMENT CONFIGURATION COMMAND
+========================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a protection element.
+
+The protection group is identified by the eqptProtGroupId attribute. The value 
+1 to 9 are reserved for the extension chain protection group which are always 
+present and cannot be deleted. Group 1 corresponding with NT 1+1 group, and 
+Group 2-9 corresponding with possible 8 LT 1+1 groups.
+
+The redcy-ctrl-status parameter is used to force a switchover between elements 
+of a protection group or to keep one of the elements active. The forced-active 
+parameter indicates that the NTA or NTB slot or LT slot is configured as active.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment protection-element (index) [ no redcy-ctrl-status | 
+redcy-ctrl-status <Equipm::ProtElementRedcyCtrlStatus> ]
+
+Command Parameters
+------------------
+
+Table "Protection Element Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(index)                    Index in eqpt Prot Element Table 
+
+Table "Protection Element Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] redcy-ctrl-status     changes the redundancy control status
+                           optional parameter with default value: "normal"
+
+                           Parameter type: <Equipm::ProtElementRedcyCtrlStatus>
+                           Format:
+                           ( normal
+                           | forced_active )
+                           Possible values:
+                           - normal                : enables redundancy (active 
+or standby)
+                           - forced_active         : forces the element to be 
+active
+
+
+DS-LIN-TEST-01:automationuser>#

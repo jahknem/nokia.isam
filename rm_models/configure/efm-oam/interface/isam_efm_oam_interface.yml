@@ -1,0 +1,116 @@
+module: isam_efm_oam_interface
+short_description: Resource module to configure efm-oam interface
+description:
+- This command will allow the operator to enable/disable EFM OAM on the specified
+  Ethernet-like interface and configure the mode, alive timer and response timer intervals.
+  In addition also the internal traffic generator data applicable to this interface
+  can be configured.
+- Supports configuration of admin up, passive mode, keep alive intvl and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure efm-oam interface ()'
+- Parameter C(bitrate) is marked as obsolete in device documentation
+- Parameter C(data_length) is marked as obsolete in device documentation
+- Parameter C(dmac) is marked as obsolete in device documentation
+- Parameter C(smac) is marked as obsolete in device documentation
+options:
+  config:
+    description:
+    - A list of efm-oam interface configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (interface) - identification of EFM port / Ethernet port
+      admin_up:
+        type: bool
+        description:
+        - enable efm oam
+        - When true, the interface/feature is enabled; when false, it is disabled
+      passive_mode:
+        type: bool
+        description:
+        - oam mode is passive
+      keep_alive_intvl:
+        type: str
+        description:
+        - 'keep alive time interval with default value: 300 - a timeout value expressed
+          in seconds - unit: seconds - range: [1...300]'
+        default: '300'
+      response_intvl:
+        type: str
+        description:
+        - 'variable response interval with default value: 5 - a timeout value expressed
+          in seconds - unit: seconds - range: [2...10]'
+        default: '5'
+      data_length:
+        type: str
+        description:
+        - 'Internal traffic generator data: Length of datafield, in bytes, of the
+          to be generated test traffic. Must be a value from 1 up to 1500. obsolete
+          parameter that will be ignored - A value of 1 up to 1500. Indicates length
+          in bytes. - unit: byte - range: [1...1500]'
+      bitrate:
+        type: str
+        description:
+        - 'Internal traffic generator data: Bitrate of the to b e generated test traffic.
+          obsolete parameter that will be ignored'
+        - 'Possible values: C(100k) - bitrate = 100K bit/sec; C(1m) - bitrate = 1M
+          bit/sec; C(10m) - bitrate = 10M bit/sec; C(100m) - bitrate = 100M bit/sec;
+          C(1g) - bitrate = 1G bit/sec'
+        choices:
+        - 100k
+        - 1m
+        - 10m
+        - 100m
+        - 1g
+      smac:
+        type: str
+        description:
+        - 'Internal traffic generator data: source MAC address. obsolete parameter
+          that will be ignored - mac address (aa:bb:cc:a1:02:03) - length: 6'
+      dmac:
+        type: str
+        description:
+        - 'Internal traffic generator data: destination MAC address. obsolete parameter
+          that will be ignored - mac address (aa:bb:cc:a1:02:03) - length: 6 DS-LIN-TEST-01:automationuser>#'
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure efm-oam interface)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

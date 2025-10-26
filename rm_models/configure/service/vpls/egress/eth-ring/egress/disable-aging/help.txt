@@ -1,0 +1,9 @@
+help configure service vpls egress eth-ring egre
+ss disable-aging
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/26 01:00:34 major alarm occurred for ip-addr 192.168.222.10  : Successful Management login, 9 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

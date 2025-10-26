@@ -1,0 +1,4 @@
+help configure pppoe-client cross-connect
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

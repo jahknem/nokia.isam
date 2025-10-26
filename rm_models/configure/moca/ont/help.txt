@@ -1,0 +1,181 @@
+help configure moca ont
+MOCA ONT UNI CONFIGURATION COMMAND
+==================================
+
+Command Description
+-------------------
+
+This command configures a MoCA ONT uni.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure moca ont (uni-idx) [ no cust-info | cust-info <Gpon::CustInfo> ] [ 
+no tx-pwr | tx-pwr <Moca::TxPwr> ] [ no net-coord | net-coord 
+<Moca::NetworkCoordinator> ] [ no snr-margin | snr-margin 
+<Moca::SignalToNoiseRatioMargin> ] [ no password | password <Moca::Password> ] 
+[ no privacy | privacy <Moca::Privacy> ] [ no bw-alarm-thresh | bw-alarm-thresh 
+<Moca::minBwAlarmThreshold> ] [ no auto-pwr-ctl | auto-pwr-ctl 
+<Moca::AutomaticPowerControl> ] [ no pwr-override | pwr-override 
+<Gpon::PowerShedOverride> ] [ no admin-state | admin-state 
+<Gpon::ItfAdminStatus> ]
+
+Command Parameters
+------------------
+
+Table "MoCA ONT Uni Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(uni-idx)                  identification of the uni interface index
+
+Table "MoCA ONT Uni Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] cust-info             port label
+                           optional parameter with default value: ""
+
+                           Parameter type: <Gpon::CustInfo>
+                           Format:
+                           - a printable string
+                           - length: x<=80 
+
+[no] tx-pwr                target transmitter power level (dBm)
+                           optional parameter with default value: -14L
+
+                           Parameter type: <Moca::TxPwr>
+                           Format:
+                           - transmitter power level in dBm
+                           - range: [-31...0]
+
+[no] net-coord             moca network coordinating role
+                           optional parameter with default value: "auto"
+
+                           Parameter type: <Moca::NetworkCoordinator>
+                           Format:
+                           ( auto
+                           | always
+                           | never )
+                           Possible values:
+                           - auto                  : negotiate for network 
+coordinator
+                           - always                : always be the network 
+coordinator
+                           - never                 : never be the network 
+coordinator
+
+[no] snr-margin            margin above Rx noise floor for variations in return 
+loss (dBm)
+                           optional parameter with default value: 2L
+
+                           Parameter type: <Moca::SignalToNoiseRatioMargin>
+                           Format:
+                           - threshold above measured rx noise floor in dDm
+                           - range: [-3...3]
+
+[no] password              hidden moca encryption key (0-17 numeric characters)
+                           optional parameter with default value: ""
+
+                           Parameter type: <Moca::Password>
+                           Format:
+                           - hidden moca encryption key
+                           - length: x<=17 
+
+[no] privacy               link layer security
+                           optional parameter with default value: "disable"
+
+                           Parameter type: <Moca::Privacy>
+                           Format:
+                           ( enable
+                           | disable )
+                           Possible values:
+                           - enable                : link-layer security 
+activated
+                           - disable               : link-layer security 
+deactivated
+
+[no] bw-alarm-thresh       minimum phy link bandwidth between two nodes (Mbps)
+                           optional parameter with default value: 180L
+
+                           Parameter type: <Moca::minBwAlarmThreshold>
+                           Format:
+                           ( disable
+                           | <Moca::minBwAlarmThreshold> )
+                           Possible values:
+                           - disable               : disable bw threshold alarm
+                           Field type <Moca::minBwAlarmThreshold>
+                           - minimum phy link bandwidth (Mbps) between two nodes
+                           - range: [0,57...3200]
+
+[no] auto-pwr-ctl          automatic power control
+                           optional parameter with default value: "enable"
+
+                           Parameter type: <Moca::AutomaticPowerControl>
+                           Format:
+                           ( enable
+                           | disable )
+                           Possible values:
+                           - enable                : apc enabled
+                           - disable               : apc disabled
+
+[no] pwr-override          power shed override
+                           optional parameter with default value: "disable"
+
+                           Parameter type: <Gpon::PowerShedOverride>
+                           Format:
+                           ( enable
+                           | disable )
+                           Possible values:
+                           - enable                : port is excluded from data 
+class power shedding
+                           - disable               : port is included in data 
+class power shedding
+
+[no] admin-state           administrative status of the interface
+                           optional parameter with default value: "down"
+
+                           Parameter type: <Gpon::ItfAdminStatus>
+                           Format:
+                           ( up
+                           | down )
+                           Possible values:
+                           - up                    : set the admin-state to up
+                           - down                  : set the admin-state to down
+
+
+Table "MoCA ONT Uni Configuration Command" Display Parameters
+
+Specific Information:
+
+Parameter                  Description
+
+ oper-state                operational state of the interface
+                           This element is always shown.
+
+                           parameter type: <Itf::ifOperStatus>
+                           ( up
+                           | down
+                           | testing
+                           | unknown
+                           | dormant
+                           | no-value )
+                           Possible values:
+                           - up                    : up,traffic can pass
+                           - down                  : down,no traffic is passing
+                           - testing               : testing,no traffic is 
+passing
+                           - unknown               : unknown
+                           - dormant               : dormant,no traffic is 
+passing
+                           - no-value              : no entry in the table
+
+DS-LIN-TEST-01:automationuser>#

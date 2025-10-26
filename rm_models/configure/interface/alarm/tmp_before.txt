@@ -1,0 +1,22 @@
+[SSH 16:09:34] one-shot connect to 10.190.1.40:22 user=automationuser
+[SSH 16:09:35] connected to 10.190.1.40:22
+[SSH 16:09:35] invoke interactive shell on 10.190.1.40
+[SSH 16:09:37] sending (one-shot) command: info configure interface alarm ethernetCsmacd
+[SSH 16:09:38] one-shot command completed: 10.190.1.40
+Slot	KVz	Line	dpbo-profile
+1/1/1			
+1/1/2	A1	1-48	test
+1/1/3	A1	49-96	1
+1/1/4	A1	97-144	1
+1/1/5	A2	1-48	2
+1/1/6	A2	49-96	2
+1/1/7	A2	97-144	2
+1/1/8			
+DS-LIN-TEST-01:automationuser># 
+
+25/10/24 15:09:36 major alarm occurred for ip-addr 192.168.222.19  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># info configure interface alarm ethernetCsmacd
+                                                                       ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

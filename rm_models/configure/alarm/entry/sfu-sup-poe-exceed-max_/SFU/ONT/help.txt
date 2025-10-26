@@ -1,0 +1,5 @@
+help configure alarm entry sfu-sup-poe-exceed-ma
+x! SFU ONT
+                                                                                 ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

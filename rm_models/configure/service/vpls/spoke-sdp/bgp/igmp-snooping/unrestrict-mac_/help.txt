@@ -1,0 +1,7 @@
+25/10/26 12:00:27 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 26/10/25 12:00:26 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># help configure service vpls spoke-sdp bgp igmp-s
+nooping unrestrict-mac*
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

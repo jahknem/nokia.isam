@@ -1,0 +1,5 @@
+help configure service vpls spoke-sdp bgp sap se
+rvice-mtu
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

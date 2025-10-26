@@ -1,0 +1,25 @@
+{
+  "title": "DUAL-PARENTING PEER-NODE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure peer node. The system will decide \nwhich port of the two becomes active. In case of failure of one port the other \nport will take over. A forced switchover can also be triggered manually by the \noperator.\n\nThe port protection group is identified by the first port in the group that is \nintended to be protected. The following parameters can be configured for the \nprotection group :\n  - peer-node-id: the peer-node-id that will ensure the protection of the first \none.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure dual-parenting ( no peer-node (node-id) ) | ( peer-node (node-id) node-name <Equipm::DualParentProtGrpPeerNodeName> sync-vlan <Eqpt::SyncVlanId> )",
+  "resource_parameters": [
+    {
+      "name": "(node-id)",
+      "description": "the config of dual-parenting peer-node id"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "node-name",
+      "description": "the dual-parenting of peer-node name mandatory parameter - a printable string - length: 1<=x<=127",
+      "type": "<Equipm::DualParentProtGrpPeerNodeName>"
+    },
+    {
+      "name": "sync-vlan",
+      "description": "the sync-vlan-id for dual-parenting typeb mandatory parameter - Sync vlan index - range: [2...4093]",
+      "type": "<Eqpt::SyncVlanId>"
+    }
+  ],
+  "raw": "help configure dual-parenting peer-node\r\nDUAL-PARENTING PEER-NODE CONFIGURATION COMMAND\r\n==============================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure peer node. The system will decide \r\nwhich port of the two becomes active. In case of failure of one port the other \r\nport will take over. A forced switchover can also be triggered manually by the \r\noperator.\r\n\r\nThe port protection group is identified by the first port in the group that is \r\nintended to be protected. The following parameters can be configured for the \r\nprotection group :\r\n  - peer-node-id: the peer-node-id that will ensure the protection of the first \r\none.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure dual-parenting ( no peer-node (node-id) ) | ( peer-node (node-id) \r\nnode-name <Equipm::DualParentProtGrpPeerNodeName> sync-vlan <Eqpt::SyncVlanId> )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Dual-Parenting peer-node Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(node-id)                  the config of dual-parenting peer-node id\r\n\r\nTable \"Dual-Parenting peer-node Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nnode-name                  the dual-parenting of peer-node name\r\n                           mandatory parameter\r\n\r\n                           Parameter type: \r\n<Equipm::DualParentProtGrpPeerNodeName>\r\n                           Format:\r\n                           - a printable string\r\n                           - length: 1<=x<=127 \r\n\r\nsync-vlan                  the sync-vlan-id for dual-parenting typeb\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Eqpt::SyncVlanId>\r\n                           Format:\r\n                           - Sync vlan index \r\n                           - range: [2...4093]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

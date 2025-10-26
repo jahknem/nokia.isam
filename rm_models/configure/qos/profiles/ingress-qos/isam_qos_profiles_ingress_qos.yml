@@ -1,0 +1,254 @@
+module: isam_qos_profiles_ingress_qos
+short_description: Resource module to configure qos profiles ingress-qos
+description:
+- Configures a QoS Ingress profile.The IngressQoS Profile table stores the pbit to
+  TC mappings that can be used by a L2 Forwarder in the upstream and dowstream directions.
+- Supports configuration of dot1 p0 tc, dot1 p1 tc, dot1 p2 tc and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure qos profiles ()'
+options:
+  config:
+    description:
+    - A list of qos profiles ingress-qos configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (name) - A unique profile name
+      dot1_p0_tc:
+        type: str
+        description:
+        - 'traffic class corresponding to pbit0 with default value: 15 - traffic class
+          corresponding to pbit0 - range: [0...7,15]'
+        default: '15'
+      dot1_p1_tc:
+        type: str
+        description:
+        - 'traffic class corresponding to pbit1 with default value: 15 - traffic class
+          corresponding to pbit1 - range: [0...7,15]'
+        default: '15'
+      dot1_p2_tc:
+        type: str
+        description:
+        - 'traffic class corresponding to pbit2 with default value: 15 - traffic class
+          corresponding to pbit2 - range: [0...7,15]'
+        default: '15'
+      dot1_p3_tc:
+        type: str
+        description:
+        - 'traffic class corresponding to pbit3 with default value: 15 - traffic class
+          corresponding to pbit3 - range: [0...7,15]'
+        default: '15'
+      dot1_p4_tc:
+        type: str
+        description:
+        - 'traffic class corresponding to pbit4 with default value: 15 - traffic class
+          corresponding to pbit4 - range: [0...7,15]'
+        default: '15'
+      dot1_p5_tc:
+        type: str
+        description:
+        - 'traffic class corresponding to pbit5 with default value: 15 - traffic class
+          corresponding to pbit5 - range: [0...7,15]'
+        default: '15'
+      dot1_p6_tc:
+        type: str
+        description:
+        - 'traffic class corresponding to pbit6 with default value: 15 - traffic class
+          corresponding to pbit6 - range: [0...7,15]'
+        default: '15'
+      dot1_p7_tc:
+        type: str
+        description:
+        - 'traffic class corresponding to pbit7 with default value: 15 - traffic class
+          corresponding to pbit7 - range: [0...7,15]'
+        default: '15'
+      use_dei:
+        type: bool
+        description:
+        - enable use of DEI bit
+      dot1_p0_color:
+        type: str
+        description:
+        - 'ingress color corresponding to pbit0 with default value: "green"'
+        - 'Possible values: C(green) - green color; C(yellow) - yellow color; C(red)
+          - red color; C(not-used) - pbit not in use'
+        default: green
+        choices:
+        - green
+        - yellow
+        - red
+        - not-used
+      dot1_p1_color:
+        type: str
+        description:
+        - 'ingress color corresponding to pbit1 with default value: "green"'
+        - 'Possible values: C(green) - green color; C(yellow) - yellow color; C(red)
+          - red color; C(not-used) - pbit not in use'
+        default: green
+        choices:
+        - green
+        - yellow
+        - red
+        - not-used
+      dot1_p2_color:
+        type: str
+        description:
+        - 'ingress color corresponding to pbit2 with default value: "green"'
+        - 'Possible values: C(green) - green color; C(yellow) - yellow color; C(red)
+          - red color; C(not-used) - pbit not in use'
+        default: green
+        choices:
+        - green
+        - yellow
+        - red
+        - not-used
+      dot1_p3_color:
+        type: str
+        description:
+        - 'ingress color corresponding to pbit3 with default value: "green"'
+        - 'Possible values: C(green) - green color; C(yellow) - yellow color; C(red)
+          - red color; C(not-used) - pbit not in use'
+        default: green
+        choices:
+        - green
+        - yellow
+        - red
+        - not-used
+      dot1_p4_color:
+        type: str
+        description:
+        - 'ingress color corresponding to pbit4 with default value: "green"'
+        - 'Possible values: C(green) - green color; C(yellow) - yellow color; C(red)
+          - red color; C(not-used) - pbit not in use'
+        default: green
+        choices:
+        - green
+        - yellow
+        - red
+        - not-used
+      dot1_p5_color:
+        type: str
+        description:
+        - 'ingress color corresponding to pbit5 with default value: "green"'
+        - 'Possible values: C(green) - green color; C(yellow) - yellow color; C(red)
+          - red color; C(not-used) - pbit not in use'
+        default: green
+        choices:
+        - green
+        - yellow
+        - red
+        - not-used
+      dot1_p6_color:
+        type: str
+        description:
+        - 'ingress color corresponding to pbit6 with default value: "green"'
+        - 'Possible values: C(green) - green color; C(yellow) - yellow color; C(red)
+          - red color; C(not-used) - pbit not in use'
+        default: green
+        choices:
+        - green
+        - yellow
+        - red
+        - not-used
+      dot1_p7_color:
+        type: str
+        description:
+        - 'ingress color corresponding to pbit7 with default value: "green"'
+        - 'Possible values: C(green) - green color; C(yellow) - yellow color; C(red)
+          - red color; C(not-used) - pbit not in use'
+        default: green
+        choices:
+        - green
+        - yellow
+        - red
+        - not-used
+      dot1_p0_pol_tc:
+        type: str
+        description:
+        - 'policing traffic class corresponding to pbit0 with default value: 15 -
+          policing traffic class corresponding to pbit0 - range: [0...7,15]'
+        default: '15'
+      dot1_p1_pol_tc:
+        type: str
+        description:
+        - 'policing traffic class corresponding to pbit1 with default value: 15 -
+          policing traffic class corresponding to pbit1 - range: [0...7,15]'
+        default: '15'
+      dot1_p2_pol_tc:
+        type: str
+        description:
+        - 'policing traffic class corresponding to pbit2 with default value: 15 -
+          policing traffic class corresponding to pbit2 - range: [0...7,15]'
+        default: '15'
+      dot1_p3_pol_tc:
+        type: str
+        description:
+        - 'policing traffic class corresponding to pbit3 with default value: 15 -
+          policing traffic class corresponding to pbit3 - range: [0...7,15]'
+        default: '15'
+      dot1_p4_pol_tc:
+        type: str
+        description:
+        - 'policing traffic class corresponding to pbit4 with default value: 15 -
+          policing traffic class corresponding to pbit4 - range: [0...7,15]'
+        default: '15'
+      dot1_p5_pol_tc:
+        type: str
+        description:
+        - 'policing traffic class corresponding to pbit5 with default value: 15 -
+          policing traffic class corresponding to pbit5 - range: [0...7,15]'
+        default: '15'
+      dot1_p6_pol_tc:
+        type: str
+        description:
+        - 'policing traffic class corresponding to pbit6 with default value: 15 -
+          policing traffic class corresponding to pbit6 - range: [0...7,15]'
+        default: '15'
+      dot1_p7_pol_tc:
+        type: str
+        description:
+        - 'policing traffic class corresponding to pbit7 with default value: 15 -
+          policing traffic class corresponding to pbit7 - range: [0...7,15]'
+        default: '15'
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure qos profiles ingress-qos)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

@@ -1,0 +1,9 @@
+{
+  "title": "",
+  "description": "",
+  "user_level": "",
+  "syntax": "",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure li_vlan\r\nLI_VLAN LI CONFIGURATION COMMAND\r\n================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure lawful interception parameters.\r\n\r\nNote: Many system management parameters are supported but are not included in \r\nthis guide as the NE uses default values.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with all,admin,li_user privileges, and \r\nexecuted by operators with all,admin,li_user privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure li_vlan vlan-id <Sec::LiVlanID>\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"li_vlan Li Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nvlan-id                    vlan id range [1...4093]\r\n                           optional parameter\r\n\r\n                           Parameter type: <Sec::LiVlanID>\r\n                           Format:\r\n                           - vlan-id, 0: default livlan\r\n                           - range: [0...4093]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

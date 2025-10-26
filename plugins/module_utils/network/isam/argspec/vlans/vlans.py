@@ -36,7 +36,7 @@ class VlansArgs(object):  # pylint: disable=R0903
             "type": "list",
             "elements": "dict",
             "options": {
-                "id": {"type": "int"},
+                "id": {"type": "str"},
                 "name": {"type": "str"},
                 "mode": {
                     "type": "str",
@@ -51,7 +51,7 @@ class VlansArgs(object):  # pylint: disable=R0903
                 "sntp-proxy": {"type": "bool"},
                 "priority": {"type": "int"},
                 "vmac-not-in-opt61": {"type": "bool"},
-                "new-broadcast:": {
+                "new-broadcast": {
                     "type": "str",
                     "choices": ["inherit", "enable", "disable"],
                     "default": "inherit",
@@ -72,9 +72,56 @@ class VlansArgs(object):  # pylint: disable=R0903
                 },
                 "pppoe-relay-tag": {
                     "type": "str",
-                    "choices": [True, False, "configurable"],
+                    "choices": ["true", "false", "configurable"],
                 },
-                "drly-srv-usr-side": {"type": "bool", "default": "disable"},
+                "drly-srv-usr-side": {"type": "bool", "default": False},
+                "dhcp-opt82-ext": {
+                    "type": "str",
+                    "choices": ["enable", "add-or-forward"],
+                },
+                "dhcp-opt82-nni": {"type": "bool"},
+                "dhcp-opt82-uplink": {"type": "bool"},
+                "circuit-id-dhcp": {
+                    "type": "str",
+                    "choices": ["physical-id"],
+                },
+                "remote-id-dhcp": {
+                    "type": "str",
+                    "choices": ["customer-id"],
+                },
+                "relay-id-dhcp": {"type": "bool"},
+                "dhcp-linerate": {"type": "bool"},
+                "pppoe-linerate": {"type": "bool"},
+                "dhcpv6-linerate": {"type": "bool"},
+                "pppoe-l2-encaps": {"type": "bool"},
+                "dhcp-l2-encaps": {"type": "bool"},
+                "dhcpv6-l2-encaps": {"type": "bool"},
+                "l2-encaps1": {"type": "bool"},
+                "pppoer-vlanaware": {"type": "bool"},
+                "dhcpr-vlanaware": {"type": "bool"},
+                "dhcpv6r-vlanaware": {"type": "bool"},
+                "circuit-id-pppoe": {
+                    "type": "str",
+                    "choices": ["physical-id"],
+                },
+                "remote-id-pppoe": {
+                    "type": "str",
+                    "choices": ["customer-id"],
+                },
+                "dhcpv6-itf-id": {
+                    "type": "str",
+                    "choices": ["physical-id"],
+                },
+                "dhcpv6-remote-id": {
+                    "type": "str",
+                    "choices": ["customer-id"],
+                },
+                "dhcpv6-relay-id": {"type": "bool"},
+                "dhcpv6-trst-port": {"type": "bool"},
+                "enterprise-number": {"type": "int"},
+                "vmac-translation": {"type": "bool"},
+                "vmac-dnstr-filter": {"type": "bool"},
+                "icmpv6-sec-fltr": {"type": "bool"},
                 "new-secure-fwd": {
                     "type": "str",
                     "choices": ["inherit", "enable", "disable"],

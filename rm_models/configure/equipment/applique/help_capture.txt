@@ -1,0 +1,48 @@
+Slot    KVz     Line    dpbo-profile
+1/1/1
+1/1/2   A1      1-48    test
+1/1/3   A1      49-96   1
+1/1/4   A1      97-144  1
+1/1/5   A2      1-48    2
+1/1/6   A2      49-96   2
+1/1/7   A2      97-144  2
+1/1/8
+DS-LIN-TEST-01:automationuser># help configure equipment applique           APPLIQUE CONFIGURATION COMMAND
+==============================
+
+Command Description
+-------------------
+
+This command allows the operator to configure an applique.
+The applique is identified by the physical slot number. The left-most slot in the shelf is number 1. The following parameter can be configured for the slot: - planned-type: the applique type to be inserted into the slot. The not-planned parameter indicates that an applique will not be inserted into that slot.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and executed by operators with equipment privileges.
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment applique (index) [ no planned-type | planned-type <Equipm::AppliqueType> ] [ no applique-profile | applique-profile <Equipm::CapabilityProfile> ]
+
+Command Parameters
+------------------
+
+Table "Applique Configuration Command" Resource Parameters
+ Resource Identifier        Description
+
+(index)                    the physical number of the applique
+Table "Applique Configuration Command" Command Parameters
+ Parameter                  Description
+
+[no] planned-type          type of applique intended to be in this position optional parameter with default value: "not-planned"
+                           Parameter type: <Equipm::AppliqueType> Format: Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help.
+
+[no] applique-profile      capability profile assigned to the applique board optional parameter with default value: "not_applicable"
+
+                           Parameter type: <Equipm::CapabilityProfile> Format: Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help.
+
+
+DS-LIN-TEST-01:automationuser>#

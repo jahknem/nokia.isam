@@ -1,0 +1,23 @@
+{
+  "command_path": "configure interface alarm",
+  "module_file": "isam_interface_alarm.yml",
+  "changes": [
+    {
+      "path": "notes",
+      "action": "corrected",
+      "reason": "Expanded incomplete CLI command syntax from 'configure interface alarm ()' to full syntax with parameter"
+    },
+    {
+      "path": "options.config.suboptions.default_severity.description",
+      "action": "removed",
+      "reason": "Removed added guidance 'Alarms below this threshold will not be reported' which was not in help.txt; removed redundant default value from description"
+    }
+  ],
+  "example_files": [
+    "merged_example_01.txt",
+    "replaced_example_01.txt",
+    "overridden_example_01.txt",
+    "deleted_example_01.txt"
+  ],
+  "notes": "All corrections strictly derived from help.txt. Removed vendor-added interpretations. Module file now accurately reflects the command structure."
+}

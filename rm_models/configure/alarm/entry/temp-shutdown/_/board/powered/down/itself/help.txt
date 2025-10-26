@@ -1,0 +1,5 @@
+help configure alarm entry temp-shutdown ! board
+ powered down itself
+                                                                         ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

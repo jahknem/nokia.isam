@@ -1,0 +1,64 @@
+help configure generic-pon utilization
+GENERIC PON UTILIZATION PM MODE CONFIGURATION COMMAND
+=====================================================
+
+Command Description
+-------------------
+
+This command configures the generic PON (system-wide) utilization performance 
+monitoring modes for PONs and channel-pairs.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure generic-pon utilization [ no pon-pmcollect | pon-pmcollect 
+<Gpon::OntPmTcaCollect> ] [ no ont-pmcollect | ont-pmcollect 
+<Gpon::OntPmCollect> ]
+
+Command Parameters
+------------------
+
+Table "Generic PON Utilization PM Mode Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] pon-pmcollect         system-wide PON / channel-pair utilization 
+performance monitoring
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Gpon::OntPmTcaCollect>
+                           Format:
+                           ( none
+                           | pm-enable
+                           | tca-enable )
+                           Possible values:
+                           - none                  : no pm
+                           - pm-enable             : enable pm
+                           - tca-enable            : enable tca
+
+[no] ont-pmcollect         system-wide utilization ONT detailed performance 
+monitoring
+                           optional parameter with default value: "disable"
+
+                           Parameter type: <Gpon::OntPmCollect>
+                           Format:
+                           ( enable
+                           | disable )
+                           Possible values:
+                           - enable                : enable PM
+                           - disable               : disable PM
+
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:15:58 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:15:56 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,46 @@
+help configure ipoa/e-iw gateway
+IPOA/E IW GATEWAY CONFIGURATION COMMAND
+=======================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure gateway address per L2 forwarder 
+vlan
+
+
+User Level
+----------
+
+The command can be accessed by operators with ip privileges, and executed by 
+operators with ip privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure ipoa/e-iw ( no gateway (vlanid) ) | ( gateway (vlanid) gw-ip-addr 
+<Ip::V4AddressHex> )
+
+Command Parameters
+------------------
+
+Table "IPoA/E IW Gateway Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(vlanid)                   vlan id
+
+Table "IPoA/E IW Gateway Configuration Command" Command Parameters
+
+Parameter                  Description
+
+gw-ip-addr                 the gateway ip address
+                           mandatory parameter
+
+                           Parameter type: <Ip::V4AddressHex>
+                           Format:
+                           - IPv4-address
+
+
+DS-LIN-TEST-01:automationuser>#

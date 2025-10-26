@@ -1,0 +1,40 @@
+help configure nat
+NAPT AGING-TIME CONFIGURATION COMMAND
+=====================================
+
+Command Description
+-------------------
+
+This command is used to provision the aging time for the nat table.
+
+
+User Level
+----------
+
+The command can be accessed by operators with xdsl privileges, and executed by 
+operators with xdsl privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure nat [ no aging-time | aging-time <CWMP::AgingTime> ]
+
+Command Parameters
+------------------
+
+Table "NAPT aging-time configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] aging-time            the aging time for the napt record.
+                           optional parameter with default value: 120
+
+                           Parameter type: <CWMP::AgingTime>
+                           Format:
+                           - The range of the value is [60s, 240s], the default 
+value is 120 seconds.
+                           - range: [60...240]
+
+
+DS-LIN-TEST-01:automationuser>#

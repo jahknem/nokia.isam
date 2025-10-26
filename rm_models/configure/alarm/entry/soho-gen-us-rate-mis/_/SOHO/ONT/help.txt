@@ -1,0 +1,5 @@
+help configure alarm entry soho-gen-us-rate-mis 
+! SOHO ONT
+                                                                                ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

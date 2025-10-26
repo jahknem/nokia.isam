@@ -1,0 +1,4 @@
+help configure port ethernet port-num
+                                                    ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

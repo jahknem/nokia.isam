@@ -1,0 +1,207 @@
+{
+  "title": "MCAST SYSTEM CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the mcast parameters that are \nglobally applicable to the Node.",
+  "user_level": "The command can be accessed by operators with igmp privileges, and executed by \noperators with igmp privileges.",
+  "syntax": "> configure mcast-control system [ no src-ip-address | src-ip-address <Ip::V4Address> ] [ no v6-src-ip-address | v6-src-ip-address <Igmp::Ipv6LinkLocalAddress> ] [ [ no ] verify-checksum ] [ no query-interval | query-interval <Igmp::SystemQueryInterval> ] [ no max-rsp-time | max-rsp-time <Igmp::SystemQueryMaxResponseTime> ] [ no robustness | robustness <Igmp::SystemRobustness> ] [ no mem-query-int | mem-query-int <Igmp::MembQueryIntvl> ] [ no last-memb-cnt | last-memb-cnt <Igmp::MembQueryCount> ] [ no last-max-resp-tim | last-max-resp-tim <Igmp::SystemLastMembMaxRespTime> ] [ no host-report-intv | host-report-intv <Igmp::SystemUnsolicitedReportIntvl> ] [ [ no ] start ] [ no preview-valid | preview-valid <Igmp::SystemPrevalidIntval> ] [ no cdr-validation | cdr-validation <Igmp::SystemPrecdrvalidIntval> ] [ [ no ] cdr-generation ] [ no except-cdr-rate | except-cdr-rate <Igmp::CDRGenerationForSingles> ] [ no cdr-export | cdr-export <Igmp::CDRGenerationMethod> ] [ no cdr-file-aging | cdr-file-aging <Igmp::CDRFileAgingTime> ] [ no cdr-polling | cdr-polling <Igmp::CDRSystemPollingCycle> ] [ no user-igmp-version | user-igmp-version <Igmp::igmpSystemGMQToUserSideVersion> ] [ no netw-igmp-version | netw-igmp-version <Igmp::V3ProcessingAdminStatus> ] [ no user-mld-version | user-mld-version <Igmp::igmpSystemMLDGMQToUserSideVersion> ] [ no netw-mld-version | netw-mld-version <Igmp::MldProcessingAdminStatus> ] [ no v3-max-num-rec | v3-max-num-rec <Igmp::V3MaxNumRecordsReport> ] [ [ no ] forking ] [ [ no ] lt-ont-signaling ] [ [ no ] vlan-selection ] [ [ no ] disc-lwr-version ] [ no uncfg-mcast-supp | uncfg-mcast-supp <Igmp::igmpSystemUncfgMcastSupport> ]",
+  "resource_parameters": [],
+  "command_parameters": [
+    {
+      "name": "[no] src-ip-address",
+      "description": "source ip addr which is tx in every mcast IP datagram optional parameter with default value: \"0.0.0.0\" - IPv4-address",
+      "type": "<Ip::V4Address>",
+      "default": "0.0.0.0"
+    },
+    {
+      "name": "[no] v6-src-ip-address",
+      "description": "source ipv6 address(link local address) which is tx in every mcast IP datagram optional parameter with default value: \" :  : \" - ipv6 link local address",
+      "type": "<Igmp::Ipv6LinkLocalAddress>",
+      "default": ":  :"
+    },
+    {
+      "name": "[no] verify-checksum",
+      "description": "verification performed on Rx mcast frame optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] query-interval",
+      "description": "interval at which general membership queries transmitted optional parameter with default value: 125 - interval at which general membership queries transmitted - unit: sec - range: [2...3175]",
+      "type": "<Igmp::SystemQueryInterval>",
+      "default": "125"
+    },
+    {
+      "name": "[no] max-rsp-time",
+      "description": "max query response time advertised in queries 1/10 sec optional parameter with default value: 100 - max query response time advertised in queries - unit: 1/10 sec - range: [1...31744]",
+      "type": "<Igmp::SystemQueryMaxResponseTime>",
+      "default": "100"
+    },
+    {
+      "name": "[no] robustness",
+      "description": "expected pkt loss on subnet optional parameter with default value: 2 - tuning for the expected packet loss on a subnet - range: [1...10]",
+      "type": "<Igmp::SystemRobustness>",
+      "default": "2"
+    },
+    {
+      "name": "[no] mem-query-int",
+      "description": "minimum interval between group-specific queries optional parameter with default value: 10 - spacing between GSQs (group-specific queries) - unit: 1/10 sec - range: [2...31744]",
+      "type": "<Igmp::MembQueryIntvl>",
+      "default": "10"
+    },
+    {
+      "name": "[no] last-memb-cnt",
+      "description": "number of GSQs ( group-specific queries) to be sent optional parameter with default value: 2 - number of GSQs ( group-specific queries) to be sent - range: [1...10]",
+      "type": "<Igmp::MembQueryCount>",
+      "default": "2"
+    },
+    {
+      "name": "[no] last-max-resp-tim",
+      "description": "allows shorter max response time optional parameter with default value: 2 - allows shorter max response time - unit: 1/10 sec - range: [1...31744]",
+      "type": "<Igmp::SystemLastMembMaxRespTime>",
+      "default": "2"
+    },
+    {
+      "name": "[no] host-report-intv",
+      "description": "interval of repetitions of host's report of grp membership optional parameter with default value: 10 - interval of repetitions of host's report of grp membership - unit: 1/10 sec - range: [1...255]",
+      "type": "<Igmp::SystemUnsolicitedReportIntvl>",
+      "default": "10"
+    },
+    {
+      "name": "[no] start",
+      "description": "start Mcast app module optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] preview-valid",
+      "description": "time interval that confirm the preview session is valid optional parameter with default value: 8 - time interval that confirm the preview session is valid - unit: sec - range: [1...120]",
+      "type": "<Igmp::SystemPrevalidIntval>",
+      "default": "8"
+    },
+    {
+      "name": "[no] cdr-validation",
+      "description": "minimum session time for generating a CDR optional parameter with default value: 2",
+      "type": "<Igmp::SystemPrecdrvalidIntval>",
+      "format": "( none                            | <Igmp::SystemPrecdrvalidIntval> )",
+      "values": [
+        "none                  : CDR generation valid immediately Field type <Igmp::SystemPrecdrvalidIntval>",
+        "minimum session time for generating a CDR",
+        "unit: sec",
+        "range: [0...120]"
+      ],
+      "default": "2"
+    },
+    {
+      "name": "[no] cdr-generation",
+      "description": "start CDR generation in the system optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] except-cdr-rate",
+      "description": "limit the generation of the CDR records optional parameter with default value: 3 - limit the generation of CDR records - unit: min - range: [1...30]",
+      "type": "<Igmp::CDRGenerationForSingles>",
+      "default": "3"
+    },
+    {
+      "name": "[no] cdr-export",
+      "description": "the method the cdr is to be generated and forwarded optional parameter with default value: \"local-file-storage\"",
+      "type": "<Igmp::CDRGenerationMethod>",
+      "format": "( local-file-storage                            | remote-logging )",
+      "values": [
+        "local-file-storage    : method the cdr generated and forwarded",
+        "remote-logging        : remote logging method"
+      ]
+    },
+    {
+      "name": "[no] cdr-file-aging",
+      "description": "configure the CDR file aging time optional parameter with default value: 8 - configure the CDR file aging time - unit: hour - range: [4...24]",
+      "type": "<Igmp::CDRFileAgingTime>",
+      "default": "8"
+    },
+    {
+      "name": "[no] cdr-polling",
+      "description": "configure the polling period for the CDR records optional parameter with default value: 180 - configure the polling period for the CDR records, in multiples of 60 - unit: sec - range: [60...900]",
+      "type": "<Igmp::CDRSystemPollingCycle>",
+      "default": "180"
+    },
+    {
+      "name": "[no] user-igmp-version",
+      "description": "version of the IGMP protocol optional parameter with default value: \"3\"",
+      "type": "<Igmp::igmpSystemGMQToUserSideVersion>",
+      "format": "( 2                            | 3 )",
+      "values": [
+        "2                     : IGMPv2 GMQs",
+        "3                     : IGMPv3 GMQs"
+      ],
+      "default": "3"
+    },
+    {
+      "name": "[no] netw-igmp-version",
+      "description": "version for IGMP packet to receive/forward to n/w side optional parameter with default value: \"3\"",
+      "type": "<Igmp::V3ProcessingAdminStatus>",
+      "format": "( 2                            | 3 )",
+      "values": [
+        "2                     : IGMP version2",
+        "3                     : IGMP version3"
+      ],
+      "default": "3"
+    },
+    {
+      "name": "[no] user-mld-version",
+      "description": "version of the MLD protocol optional parameter with default value: \"2\"",
+      "type": "<Igmp::igmpSystemMLDGMQToUserSideVersion>",
+      "format": "( 1                            | 2 )",
+      "values": [
+        "1                     : MLDv1 GMQs",
+        "2                     : MLDv2 GMQs"
+      ],
+      "default": "2"
+    },
+    {
+      "name": "[no] netw-mld-version",
+      "description": "version for MLD packet to receive/forward to n/w side optional parameter with default value: \"2\"",
+      "type": "<Igmp::MldProcessingAdminStatus>",
+      "format": "( 1                            | 2 )",
+      "values": [
+        "1                     : MLDV1 version1",
+        "2                     : MLDV2 version2"
+      ],
+      "default": "2"
+    },
+    {
+      "name": "[no] v3-max-num-rec",
+      "description": "max num of group records in one IGMPv3 or MLDv2 report (2 exp N) optional parameter with default value: 3 - max number of records in an IGMPv3 membership report - range: [0...10]",
+      "type": "<Igmp::V3MaxNumRecordsReport>",
+      "default": "3"
+    },
+    {
+      "name": "[no] forking",
+      "description": "enable IGMP forking in the system level optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] lt-ont-signaling",
+      "description": "enables lt to ont signaling at system level optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] vlan-selection",
+      "description": "enable vlan selection optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] disc-lwr-version",
+      "description": "discard lower version packets optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] uncfg-mcast-supp",
+      "description": "enable un-configured SSM/ASM support for  GPON/DSL LT cards optional parameter with default value: \"legacy\" DS-LIN-TEST-01:automationuser>#",
+      "type": "<Igmp::igmpSystemUncfgMcastSupport>",
+      "format": "( legacy                            | asmandssm )",
+      "values": [
+        "legacy                : enable un-configured SSM and ASM support for GPON LTs and un-configured ASM support alone for DSL LTs",
+        "asmandssm             : enable unconfigured SSM and ASM support for GPON and DSL LT cards"
+      ],
+      "default": "legacy"
+    }
+  ],
+  "raw": "help configure mcast-control system\r\nMCAST SYSTEM CONFIGURATION COMMAND\r\n==================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the mcast parameters that are \r\nglobally applicable to the Node.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with igmp privileges, and executed by \r\noperators with igmp privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure mcast-control system [ no src-ip-address | src-ip-address \r\n<Ip::V4Address> ] [ no v6-src-ip-address | v6-src-ip-address \r\n<Igmp::Ipv6LinkLocalAddress> ] [ [ no ] verify-checksum ] [ no query-interval | \r\nquery-interval <Igmp::SystemQueryInterval> ] [ no max-rsp-time | max-rsp-time \r\n<Igmp::SystemQueryMaxResponseTime> ] [ no robustness | robustness \r\n<Igmp::SystemRobustness> ] [ no mem-query-int | mem-query-int \r\n<Igmp::MembQueryIntvl> ] [ no last-memb-cnt | last-memb-cnt \r\n<Igmp::MembQueryCount> ] [ no last-max-resp-tim | last-max-resp-tim \r\n<Igmp::SystemLastMembMaxRespTime> ] [ no host-report-intv | host-report-intv \r\n<Igmp::SystemUnsolicitedReportIntvl> ] [ [ no ] start ] [ no preview-valid | \r\npreview-valid <Igmp::SystemPrevalidIntval> ] [ no cdr-validation | \r\ncdr-validation <Igmp::SystemPrecdrvalidIntval> ] [ [ no ] cdr-generation ] [ no \r\nexcept-cdr-rate | except-cdr-rate <Igmp::CDRGenerationForSingles> ] [ no \r\ncdr-export | cdr-export <Igmp::CDRGenerationMethod> ] [ no cdr-file-aging | \r\ncdr-file-aging <Igmp::CDRFileAgingTime> ] [ no cdr-polling | cdr-polling \r\n<Igmp::CDRSystemPollingCycle> ] [ no user-igmp-version | user-igmp-version \r\n<Igmp::igmpSystemGMQToUserSideVersion> ] [ no netw-igmp-version | \r\nnetw-igmp-version <Igmp::V3ProcessingAdminStatus> ] [ no user-mld-version | \r\nuser-mld-version <Igmp::igmpSystemMLDGMQToUserSideVersion> ] [ no \r\nnetw-mld-version | netw-mld-version <Igmp::MldProcessingAdminStatus> ] [ no \r\nv3-max-num-rec | v3-max-num-rec <Igmp::V3MaxNumRecordsReport> ] [ [ no ] \r\nforking ] [ [ no ] lt-ont-signaling ] [ [ no ] vlan-selection ] [ [ no ] \r\ndisc-lwr-version ] [ no uncfg-mcast-supp | uncfg-mcast-supp \r\n<Igmp::igmpSystemUncfgMcastSupport> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"mcast System Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] src-ip-address        source ip addr which is tx in every mcast IP datagram\r\n                           optional parameter with default value: \"0.0.0.0\"\r\n\r\n                           Parameter type: <Ip::V4Address>\r\n                           Format:\r\n                           - IPv4-address\r\n\r\n[no] v6-src-ip-address     source ipv6 address(link local address) which is tx \r\nin every mcast IP datagram\r\n                           optional parameter with default value: \" :  : \"\r\n\r\n                           Parameter type: <Igmp::Ipv6LinkLocalAddress>\r\n                           Format:\r\n                           - ipv6 link local address\r\n\r\n[no] verify-checksum       verification performed on Rx mcast frame\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] query-interval        interval at which general membership queries \r\ntransmitted\r\n                           optional parameter with default value: 125\r\n\r\n                           Parameter type: <Igmp::SystemQueryInterval>\r\n                           Format:\r\n                           - interval at which general membership queries \r\ntransmitted\r\n                           - unit: sec\r\n                           - range: [2...3175]\r\n\r\n[no] max-rsp-time          max query response time advertised in queries 1/10 \r\nsec\r\n                           optional parameter with default value: 100\r\n\r\n                           Parameter type: <Igmp::SystemQueryMaxResponseTime>\r\n                           Format:\r\n                           - max query response time advertised in queries\r\n                           - unit: 1/10 sec\r\n                           - range: [1...31744]\r\n\r\n[no] robustness            expected pkt loss on subnet\r\n                           optional parameter with default value: 2\r\n\r\n                           Parameter type: <Igmp::SystemRobustness>\r\n                           Format:\r\n                           - tuning for the expected packet loss on a subnet\r\n                           - range: [1...10]\r\n\r\n[no] mem-query-int         minimum interval between group-specific queries\r\n                           optional parameter with default value: 10\r\n\r\n                           Parameter type: <Igmp::MembQueryIntvl>\r\n                           Format:\r\n                           - spacing between GSQs (group-specific queries)\r\n                           - unit: 1/10 sec\r\n                           - range: [2...31744]\r\n\r\n[no] last-memb-cnt         number of GSQs ( group-specific queries) to be sent\r\n                           optional parameter with default value: 2\r\n\r\n                           Parameter type: <Igmp::MembQueryCount>\r\n                           Format:\r\n                           - number of GSQs ( group-specific queries) to be sent\r\n                           - range: [1...10]\r\n\r\n[no] last-max-resp-tim     allows shorter max response time\r\n                           optional parameter with default value: 2\r\n\r\n                           Parameter type: <Igmp::SystemLastMembMaxRespTime>\r\n                           Format:\r\n                           - allows shorter max response time\r\n                           - unit: 1/10 sec\r\n                           - range: [1...31744]\r\n\r\n[no] host-report-intv      interval of repetitions of host's report of grp \r\nmembership\r\n                           optional parameter with default value: 10\r\n\r\n                           Parameter type: <Igmp::SystemUnsolicitedReportIntvl>\r\n                           Format:\r\n                           - interval of repetitions of host's report of grp \r\nmembership\r\n                           - unit: 1/10 sec\r\n                           - range: [1...255]\r\n\r\n[no] start                 start Mcast app module\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] preview-valid         time interval that confirm the preview session is \r\nvalid\r\n                           optional parameter with default value: 8\r\n\r\n                           Parameter type: <Igmp::SystemPrevalidIntval>\r\n                           Format:\r\n                           - time interval that confirm the preview session is \r\nvalid\r\n                           - unit: sec\r\n                           - range: [1...120]\r\n\r\n[no] cdr-validation        minimum session time for generating a CDR\r\n                           optional parameter with default value: 2\r\n\r\n                           Parameter type: <Igmp::SystemPrecdrvalidIntval>\r\n                           Format:\r\n                           ( none\r\n                           | <Igmp::SystemPrecdrvalidIntval> )\r\n                           Possible values:\r\n                           - none                  : CDR generation valid \r\nimmediately\r\n                           Field type <Igmp::SystemPrecdrvalidIntval>\r\n                           - minimum session time for generating a CDR\r\n                           - unit: sec\r\n                           - range: [0...120]\r\n\r\n[no] cdr-generation        start CDR generation in the system\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] except-cdr-rate       limit the generation of the CDR records\r\n                           optional parameter with default value: 3\r\n\r\n                           Parameter type: <Igmp::CDRGenerationForSingles>\r\n                           Format:\r\n                           - limit the generation of CDR records\r\n                           - unit: min\r\n                           - range: [1...30]\r\n\r\n[no] cdr-export            the method the cdr is to be generated and forwarded\r\n                           optional parameter with default value: \r\n\"local-file-storage\"\r\n\r\n                           Parameter type: <Igmp::CDRGenerationMethod>\r\n                           Format:\r\n                           ( local-file-storage\r\n                           | remote-logging )\r\n                           Possible values:\r\n                           - local-file-storage    : method the cdr generated \r\nand forwarded\r\n                           - remote-logging        : remote logging method\r\n\r\n[no] cdr-file-aging        configure the CDR file aging time\r\n                           optional parameter with default value: 8\r\n\r\n                           Parameter type: <Igmp::CDRFileAgingTime>\r\n                           Format:\r\n                           - configure the CDR file aging time\r\n                           - unit: hour\r\n                           - range: [4...24]\r\n\r\n[no] cdr-polling           configure the polling period for the CDR records\r\n                           optional parameter with default value: 180\r\n\r\n                           Parameter type: <Igmp::CDRSystemPollingCycle>\r\n                           Format:\r\n                           - configure the polling period for the CDR records, \r\nin multiples of 60\r\n                           - unit: sec\r\n                           - range: [60...900]\r\n\r\n[no] user-igmp-version     version of the IGMP protocol\r\n                           optional parameter with default value: \"3\"\r\n\r\n                           Parameter type: \r\n<Igmp::igmpSystemGMQToUserSideVersion>\r\n                           Format:\r\n                           ( 2\r\n                           | 3 )\r\n                           Possible values:\r\n                           - 2                     : IGMPv2 GMQs\r\n                           - 3                     : IGMPv3 GMQs\r\n\r\n[no] netw-igmp-version     version for IGMP packet to receive/forward to n/w \r\nside\r\n                           optional parameter with default value: \"3\"\r\n\r\n                           Parameter type: <Igmp::V3ProcessingAdminStatus>\r\n                           Format:\r\n                           ( 2\r\n                           | 3 )\r\r\n\r\n                           Possible values:\r\n                           - 2                     : IGMP version2\r\n                           - 3                     : IGMP version3\r\n\r\n[no] user-mld-version      version of the MLD protocol\r\n                           optional parameter with default value: \"2\"\r\n\r\n                           Parameter type: \r\n<Igmp::igmpSystemMLDGMQToUserSideVersion>\r\n                           Format:\r\n                           ( 1\r\n                           | 2 )\r\n                           Possible values:\r\n                           - 1                     : MLDv1 GMQs\r\n                           - 2                     : MLDv2 GMQs\r\n\r\n[no] netw-mld-version      version for MLD packet to receive/forward to n/w side\r\n                           optional parameter with default value: \"2\"\r\n\r\n                           Parameter type: <Igmp::MldProcessingAdminStatus>\r\n                           Format:\r\n                           ( 1\r\n                           | 2 )\r\n                           Possible values:\r\n                           - 1                     : MLDV1 version1\r\n                           - 2                     : MLDV2 version2\r\n\r\n[no] v3-max-num-rec        max num of group records in one IGMPv3 or MLDv2 \r\nreport (2 exp N)\r\n                           optional parameter with default value: 3\r\n\r\n                           Parameter type: <Igmp::V3MaxNumRecordsReport>\r\n                           Format:\r\n                           - max number of records in an IGMPv3 membership \r\nreport\r\n                           - range: [0...10]\r\n\r\n[no] forking               enable IGMP forking in the system level\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] lt-ont-signaling      enables lt to ont signaling at system level\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] vlan-selection        enable vlan selection\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] disc-lwr-version      discard lower version packets\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] uncfg-mcast-supp      enable un-configured SSM/ASM support for  GPON/DSL \r\nLT cards\r\n                           optional parameter with default value: \"legacy\"\r\n\r\n                           Parameter type: <Igmp::igmpSystemUncfgMcastSupport>\r\n                           Format:\r\n                           ( legacy\r\n                           | asmandssm )\r\n                           Possible values:\r\n                           - legacy                : enable un-configured SSM \r\nand ASM support for GPON LTs and un-configured ASM support alone for DSL LTs\r\n                           - asmandssm             : enable unconfigured SSM \r\nand ASM support for GPON and DSL LT cards\r\n\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 19:29:51 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 19:29:51 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

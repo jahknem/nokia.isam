@@ -1,0 +1,10 @@
+DS-LIN-TEST-01:automationuser># info configure equipment applique
+configure equipment
+#-------------------------------------------------------------------------------
+echo "equipment"
+#-------------------------------------------------------------------------------
+applique ntio-1
+  planned-type ncnc-d
+exit
+#-------------------------------------------------------------------------------
+DS-LIN-TEST-01:automationuser>#

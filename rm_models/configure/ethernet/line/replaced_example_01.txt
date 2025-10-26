@@ -1,0 +1,52 @@
+DS-LIN-TEST-01:automationuser># info configure ethernet line 1/1/8/6
+configure ethernet
+#-------------------------------------------------------------------------------
+echo "ethernet"
+#-------------------------------------------------------------------------------
+line 1/1/8/6
+  port-type uni
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+#-------------------------------------------------------------------------------
+
+-- single-command to replace port-type (replaced example):
+DS-LIN-TEST-01:automationuser># configure ethernet line 1/1/8/6 port-type nni
+DS-LIN-TEST-01:automationuser>configure>ethernet>line>1/1/8/6#
+
+-- verify after change:
+DS-LIN-TEST-01:automationuser># info configure ethernet line 1/1/8/6
+configure ethernet
+#-------------------------------------------------------------------------------
+echo "ethernet"
+#-------------------------------------------------------------------------------
+line 1/1/8/6
+  port-type nni
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+#-------------------------------------------------------------------------------
+
+-- revert to baseline:
+DS-LIN-TEST-01:automationuser># configure ethernet line 1/1/8/6 port-type uni admin-up
+DS-LIN-TEST-01:automationuser>configure>ethernet>line>1/1/8/6#
+
+-- final verify restored:
+DS-LIN-TEST-01:automationuser># info configure ethernet line 1/1/8/6
+configure ethernet
+#-------------------------------------------------------------------------------
+echo "ethernet"
+#-------------------------------------------------------------------------------
+line 1/1/8/6
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+#-------------------------------------------------------------------------------

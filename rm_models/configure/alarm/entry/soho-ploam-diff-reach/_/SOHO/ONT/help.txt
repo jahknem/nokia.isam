@@ -1,0 +1,5 @@
+help configure alarm entry soho-ploam-diff-reach
+ ! SOHO ONT
+                                                                                 ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

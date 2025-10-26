@@ -1,0 +1,25 @@
+{
+  "title": "IPOA/E IW INTERWORKING PORT CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the parameter on the IPOA L2 \ninterworking port level",
+  "user_level": "The command can be accessed by operators with ip privileges, and executed by \noperators with ip privileges.",
+  "syntax": "> configure ipoa/e-iw ( no port (interworking-port) ) | ( port (interworking-port) [ user-ip <Ip::V4AddressHex> ] [ gw-ip <Ip::V4AddressHex> ] )",
+  "resource_parameters": [
+    {
+      "name": "(interworking-port)",
+      "description": "index of rack/shelf/slot/port user-bridgeport"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "user-ip",
+      "description": "ip address for user optional parameter - IPv4-address",
+      "type": "<Ip::V4AddressHex>"
+    },
+    {
+      "name": "gw-ip",
+      "description": "ip address for next-hop gateway optional parameter - IPv4-address",
+      "type": "<Ip::V4AddressHex>"
+    }
+  ],
+  "raw": "help configure ipoa/e-iw port\r\nIPOA/E IW INTERWORKING PORT CONFIGURATION COMMAND\r\n=================================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the parameter on the IPOA L2 \r\ninterworking port level\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with ip privileges, and executed by \r\noperators with ip privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure ipoa/e-iw ( no port (interworking-port) ) | ( port \r\n(interworking-port) [ user-ip <Ip::V4AddressHex> ] [ gw-ip <Ip::V4AddressHex> ] \r\n)\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"IPoA/E IW Interworking Port Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(interworking-port)        index of rack/shelf/slot/port user-bridgeport\r\n\r\nTable \"IPoA/E IW Interworking Port Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nuser-ip                    ip address for user\r\n                           optional parameter\r\n\r\n                           Parameter type: <Ip::V4AddressHex>\r\n                           Format:\r\n                           - IPv4-address\r\n\r\ngw-ip                      ip address for next-hop gateway\r\n                           optional parameter\r\n\r\n                           Parameter type: <Ip::V4AddressHex>\r\n                           Format:\r\n                           - IPv4-address\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

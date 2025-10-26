@@ -1,0 +1,5 @@
+help configure alarm entry sfu-ploam-startup-fai
+l! SFU ONT
+                                                                                 ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

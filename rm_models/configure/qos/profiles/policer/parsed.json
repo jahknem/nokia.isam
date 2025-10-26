@@ -1,0 +1,145 @@
+{
+  "title": "QOS POLICER PROFILE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a QoS policer profile. A QoS \npolicer profile contains all settings related to a policer. The ISAM supports \nsingle token bucket policers, where the action upon conformance is either pass \nor discard.\n\nThe L3 line cards units support both upstream and downstream policing. A \npolicer profile can be used within a QoS session profile for upstream and \ndownstream policing.\n\nThe L2 line cards units do not support policing.\n\nThe SHub/IHub supports ingress policing, but it does not use policer profiles. \nSee the section about the QoS Ingress Policing Configuration Command to set up \ningress policing on the SHub/IHub.",
+  "user_level": "The command can be accessed by operators with qos privileges, and executed by \noperators with qos privileges.",
+  "syntax": "> configure qos profiles ( no policer (name) ) | ( policer (name) committed-info-rate <Qos::CommittedInfoRate> committed-burst-size <Qos::CommittedBurstSize> [ no policer-type | policer-type <Qos::PolicerType> ] [ no excess-info-rate | excess-info-rate <Qos::ExcessInfoRate > ] [ no excess-burst-size | excess-burst-size <Qos::ExcessBurstSize> ] [ no coupling-flag | coupling-flag <Qos::CouplingFlag> ] [ no color-mode | color-mode <Qos::ColorMode> ] [ no green-action | green-action <Qos::GreenAction> ] [ no yellow-action | yellow-action <Qos::YellowAction> ] [ no red-action | red-action <Qos::RedAction> ] [ no policed-size-ctrl | policed-size-ctrl <Qos::PoliceFrameCtrl> ] [ no peak-info-rate | peak-info-rate <Qos::PeakInfoRate> ] [ no peak-burst-size | peak-burst-size <Qos::PeakBurstSize> ] [ no cos-threshold | cos-threshold <Qos::QosCoSThresholdProfileName> ] )",
+  "resource_parameters": [
+    {
+      "name": "(name)",
+      "description": "A unique profile name"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "committed-info-rate",
+      "description": "committed information rate of a policer mandatory parameter - information rate - unit: kbps - range: [0...2147483647]",
+      "type": "<Qos::CommittedInfoRate>"
+    },
+    {
+      "name": "committed-burst-size",
+      "description": "committed burst size of a policer mandatory parameter - committed burst size of a policer - unit: bytes - range: [0...134217728]",
+      "type": "<Qos::CommittedBurstSize>"
+    },
+    {
+      "name": "[no] policer-type",
+      "description": "the policer type optional parameter with default value: \"single-token- bucket\"",
+      "type": "<Qos::PolicerType>",
+      "format": "( single-token-bucket                            | trtcm                            | trtcmwithcosrfc2698                            | trtcmwithcosrfc4115 )",
+      "values": [
+        "single-token-bucket   : single token bucket",
+        "trtcm                 : trtcm Policer",
+        "trtcmwithcosrfc2698   : trTCMwithCoS RFC2698 policer",
+        "trtcmwithcosrfc4115   : trTCMwithCoS RFC4115 policer"
+      ],
+      "default": "single-token-"
+    },
+    {
+      "name": "[no] excess-info-rate",
+      "description": "excess information rate of a policer for trtcm optional parameter with default value: 0 - information rate - unit: kbps - range: [0...2147483647]",
+      "type": "<Qos::ExcessInfoRate >",
+      "default": "0"
+    },
+    {
+      "name": "[no] excess-burst-size",
+      "description": "excess burst size of a policer for trtcm optional parameter with default value: 64 - excess burst size of a policer - unit: bytes - range: [0...134217728]",
+      "type": "<Qos::ExcessBurstSize>",
+      "default": "64"
+    },
+    {
+      "name": "[no] coupling-flag",
+      "description": "the coupling flag of a policer for trtcm optional parameter with default value: \"disable\"",
+      "type": "<Qos::CouplingFlag>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : enable",
+        "disable               : disable"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] color-mode",
+      "description": "the color mode of a policer for trtcm optional parameter with default value: \"color-blind\"",
+      "type": "<Qos::ColorMode>",
+      "format": "( color-blind                            | color-aware )",
+      "values": [
+        "color-blind           : color blind mode",
+        "color-aware           : color aware mode"
+      ],
+      "default": "color-blind"
+    },
+    {
+      "name": "[no] green-action",
+      "description": "action for green  packet of a policer for trtcm,  mar ker profile for green packet optional parameter with default value: \"pass\"",
+      "type": "<Qos::GreenAction>",
+      "format": "( pass                            | remark : <Aaa::IgnoredQosProfileName>                            | setouterdei )",
+      "values": [
+        "pass                  : pass",
+        "remark                : remark",
+        "setouterdei           : setOuterDEI Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "pass"
+    },
+    {
+      "name": "[no] yellow-action",
+      "description": "action for yellow packet of a policer for trtcm, marker profile for yellow packet optional parameter with default value: \"pass\"",
+      "type": "<Qos::YellowAction>",
+      "format": "( pass                            | discard                            | remark : <Aaa::IgnoredQosProfileName>                            | setouterdei )",
+      "values": [
+        "pass                  : pass",
+        "discard               : discard",
+        "remark                : remark",
+        "setouterdei           : setOuterDEI Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "pass"
+    },
+    {
+      "name": "[no] red-action",
+      "description": "action for red packet of a policer for trtcm, marker profile for red packet optional parameter with default value: \"discard\"",
+      "type": "<Qos::RedAction>",
+      "format": "( pass                            | discard                            | remark : <Aaa::IgnoredQosProfileName>                            | setouterdei )",
+      "values": [
+        "pass                  : pass",
+        "discard               : discard",
+        "remark                : remark",
+        "setouterdei           : setOuterDEI Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "discard"
+    },
+    {
+      "name": "[no] policed-size-ctrl",
+      "description": "control for policed frame size optional parameter with default value: \"auto-controlled\"",
+      "type": "<Qos::PoliceFrameCtrl>",
+      "format": "( auto-controlled                            | ingress-mode                            | egress-mode                            | rmv4b-ingress )",
+      "values": [
+        "auto-controlled       : backward compatibility for all LTs",
+        "ingress-mode          : policer working with ingress packet size",
+        "egress-mode           : policer working with egress packet size",
+        "rmv4b-ingress         : policer working on packet size with 4 bytes removed from ingress"
+      ]
+    },
+    {
+      "name": "[no] peak-info-rate",
+      "description": "peak information rate of a policer for trtcm optional parameter with default value: 0 - peak information rate, for RFC2698 - unit: kbps - range: [0...2147483647]",
+      "type": "<Qos::PeakInfoRate>",
+      "default": "0"
+    },
+    {
+      "name": "[no] peak-burst-size",
+      "description": "peak burst size of a policer for trtcm optional parameter with default value: 0 - peak burst size of a policer, for RFC2698 - unit: bytes - range: [0...134217728]",
+      "type": "<Qos::PeakBurstSize>",
+      "default": "0"
+    },
+    {
+      "name": "[no] cos-threshold",
+      "description": "cos threshold profile name applicable on the profile optional parameter with default value: \"none\"",
+      "type": "<Qos::QosCoSThresholdProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associate",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    }
+  ],
+  "raw": "help configure qos profiles policer\r\nQOS POLICER PROFILE CONFIGURATION COMMAND\r\n=========================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a QoS policer profile. A QoS \r\npolicer profile contains all settings related to a policer. The ISAM supports \r\nsingle token bucket policers, where the action upon conformance is either pass \r\nor discard.\r\n\r\nThe L3 line cards units support both upstream and downstream policing. A \r\npolicer profile can be used within a QoS session profile for upstream and \r\ndownstream policing.\r\n\r\nThe L2 line cards units do not support policing.\r\n\r\nThe SHub/IHub supports ingress policing, but it does not use policer profiles. \r\nSee the section about the QoS Ingress Policing Configuration Command to set up \r\ningress policing on the SHub/IHub.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by \r\noperators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos profiles ( no policer (name) ) | ( policer (name) \r\ncommitted-info-rate <Qos::CommittedInfoRate> committed-burst-size \r\n<Qos::CommittedBurstSize> [ no policer-type | policer-type <Qos::PolicerType> ] \r\n[ no excess-info-rate | excess-info-rate <Qos::ExcessInfoRate > ] [ no \r\nexcess-burst-size | excess-burst-size <Qos::ExcessBurstSize> ] [ no \r\ncoupling-flag | coupling-flag <Qos::CouplingFlag> ] [ no color-mode | \r\ncolor-mode <Qos::ColorMode> ] [ no green-action | green-action \r\n<Qos::GreenAction> ] [ no yellow-action | yellow-action <Qos::YellowAction> ] [ \r\nno red-action | red-action <Qos::RedAction> ] [ no policed-size-ctrl | \r\npoliced-size-ctrl <Qos::PoliceFrameCtrl> ] [ no peak-info-rate | peak-info-rate \r\n<Qos::PeakInfoRate> ] [ no peak-burst-size | peak-burst-size \r\n<Qos::PeakBurstSize> ] [ no cos-threshold | cos-threshold \r\n<Qos::QosCoSThresholdProfileName> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS Policer Profile Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(name)                     A unique profile name\r\n\r\nTable \"QoS Policer Profile Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\ncommitted-info-rate        committed information rate of a policer\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Qos::CommittedInfoRate>\r\n                           Format:\r\n                           - information rate\r\n                           - unit: kbps\r\n                           - range: [0...2147483647]\r\n\r\ncommitted-burst-size       committed burst size of a policer\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Qos::CommittedBurstSize>\r\n                           Format:\r\n                           - committed burst size of a policer\r\n                           - unit: bytes\r\n                           - range: [0...134217728]\r\n\r\n[no] policer-type          the policer type\r\n                           optional parameter with default value: \"single-token-\r\nbucket\"\r\n\r\n                           Parameter type: <Qos::PolicerType>\r\n                           Format:\r\n                           ( single-token-bucket\r\n                           | trtcm\r\n                           | trtcmwithcosrfc2698\r\n                           | trtcmwithcosrfc4115 )\r\n                           Possible values:\r\n                           - single-token-bucket   : single token bucket\r\n                           - trtcm                 : trtcm Policer\r\n                           - trtcmwithcosrfc2698   : trTCMwithCoS RFC2698 \r\npolicer\r\n                           - trtcmwithcosrfc4115   : trTCMwithCoS RFC4115 \r\npolicer\r\n\r\n[no] excess-info-rate      excess information rate of a policer for trtcm\r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Qos::ExcessInfoRate >\r\n                           Format:\r\n                           - information rate\r\n                           - unit: kbps\r\n                           - range: [0...2147483647]\r\n\r\n[no] excess-burst-size     excess burst size of a policer for trtcm\r\n                           optional parameter with default value: 64\r\n\r\n                           Parameter type: <Qos::ExcessBurstSize>\r\n                           Format:\r\n                           - excess burst size of a policer\r\n                           - unit: bytes\r\n                           - range: [0...134217728]\r\n\r\n[no] coupling-flag         the coupling flag of a policer for trtcm\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Qos::CouplingFlag>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : enable\r\n                           - disable               : disable\r\n\r\n[no] color-mode            the color mode of a policer for trtcm\r\n                           optional parameter with default value: \"color-blind\"\r\n\r\n                           Parameter type: <Qos::ColorMode>\r\n                           Format:\r\n                           ( color-blind\r\n                           | color-aware )\r\n                           Possible values:\r\n                           - color-blind           : color blind mode\r\n                           - color-aware           : color aware mode\r\n\r\n[no] green-action          action for green  packet of a policer for trtcm,  mar\r\nker profile for green packet\r\n                           optional parameter with default value: \"pass\"\r\n\r\n                           Parameter type: <Qos::GreenAction>\r\n                           Format:\r\n                           ( pass\r\n                           | remark : <Aaa::IgnoredQosProfileName>\r\n                           | setouterdei )\r\n                           Possible values:\r\n                           - pass                  : pass\r\n                           - remark                : remark\r\n                           - setouterdei           : setOuterDEI\r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] yellow-action         action for yellow packet of a policer for trtcm, \r\nmarker profile for yellow packet\r\n                           optional parameter with default value: \"pass\"\r\n\r\n                           Parameter type: <Qos::YellowAction>\r\n                           Format:\r\n                           ( pass\r\n                           | discard\r\n                           | remark : <Aaa::IgnoredQosProfileName>\r\n                           | setouterdei )\r\n                           Possible values:\r\n                           - pass                  : pass\r\n                           - discard               : discard\r\n                           - remark                : remark\r\n                           - setouterdei           : setOuterDEI\r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] red-action            action for red packet of a policer for trtcm, marker \r\nprofile for red packet\r\n                           optional parameter with default value: \"discard\"\r\n\r\n                           Parameter type: <Qos::RedAction>\r\n                           Format:\r\n                           ( pass\r\n                           | discard\r\n                           | remark : <Aaa::IgnoredQosProfileName>\r\n                           | setouterdei )\r\n                           Possible values:\r\n                           - pass                  : pass\r\n                           - discard               : discard\r\n                           - remark                : remark\r\n                           - setouterdei           : setOuterDEI\r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] policed-size-ctrl     control for policed frame size\r\n                           optional parameter with default value: \r\n\"auto-controlled\"\r\n\r\n                           Parameter type: <Qos::PoliceFrameCtrl>\r\n                           Format:\r\n                           ( auto-controlled\r\n                           | ingress-mode\r\n                           | egress-mode\r\n                           | rmv4b-ingress )\r\n                           Possible values:\r\n                           - auto-controlled       : backward compatibility for \r\nall LTs\r\n                           - ingress-mode          : policer working with \r\ningress packet size\r\n                           - egress-mode           : policer working with \r\negress packet size\r\n                           - rmv4b-ingress         : policer working on packet \r\nsize with 4 bytes removed from ingress\r\n\r\n[no] peak-info-rate        peak information rate of a policer for trtcm\r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Qos::PeakInfoRate>\r\n                           Format:\r\n                           - peak information rate, for RFC2698\r\n                           - unit: kbps\r\n                           - range: [0...2147483647]\r\n\r\n[no] peak-burst-size       peak burst size of a policer for trtcm\r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Qos::PeakBurstSize>\r\n                           Format:\r\n                           - peak burst size of a policer, for RFC2698\r\n                           - unit: bytes\r\n                           - range: [0...134217728]\r\n\r\n[no] cos-threshold         cos threshold profile name applicable on the profile\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosCoSThresholdProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociate\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

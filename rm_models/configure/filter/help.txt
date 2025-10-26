@@ -1,0 +1,28 @@
+help configure filter
+FILTER CONFIGURATION COMMAND
+============================
+
+Command Description
+-------------------
+
+See IHUB Router Configurations and Routing Protocols Guide for more 
+information. The command can be accessed and executed by operators with filter 
+privileges.
+
+
+User Level
+----------
+
+The command can be executed by operators with filter privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure filter
+
+Command Parameters
+------------------
+
+none
+DS-LIN-TEST-01:automationuser>#

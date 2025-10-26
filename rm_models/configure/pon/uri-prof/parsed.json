@@ -1,0 +1,31 @@
+{
+  "title": "GPON URI PROFILE CONFIGURATION COMMAND",
+  "description": "This command creates the URI profile for accessing the configuration server. \nThese profiles are normally associated with Voip Services.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure pon ( no uri-prof (index) ) | ( uri-prof (index) name <AsamProfileName> [ no address | address <Gpon::UriProfileAddress> ] [ no version | version <Gpon::UriProfileVersionNbr> ] )",
+  "resource_parameters": [
+    {
+      "name": "(index)",
+      "description": "profile index"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "name",
+      "description": "profile name mandatory parameter - a profile name - range: [a-zA-Z0-9-_.] - length: 1<=x<=32",
+      "type": "<AsamProfileName>"
+    },
+    {
+      "name": "[no] address",
+      "description": "uri profile address that contains a Fully Qualified Domain Name (FQDN) or an IP Address (in dot notation) optional parameter with default value: \"\" - uri profile address - length: x<=100",
+      "type": "<Gpon::UriProfileAddress>"
+    },
+    {
+      "name": "[no] version",
+      "description": "uri profile version number optional parameter with default value: 1L - uri profile version number - range: [1...2147483647]",
+      "type": "<Gpon::UriProfileVersionNbr>",
+      "default": "1L"
+    }
+  ],
+  "raw": "help configure pon uri-prof\r\nGPON URI PROFILE CONFIGURATION COMMAND\r\n======================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command creates the URI profile for accessing the configuration server. \r\nThese profiles are normally associated with Voip Services.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure pon ( no uri-prof (index) ) | ( uri-prof (index) name \r\n<AsamProfileName> [ no address | address <Gpon::UriProfileAddress> ] [ no \r\nversion | version <Gpon::UriProfileVersionNbr> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"GPON URI Profile Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(index)                    profile index\r\n\r\nTable \"GPON URI Profile Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nname                       profile name\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <AsamProfileName>\r\n                           Format:\r\n                           - a profile name\r\n                           - range: [a-zA-Z0-9-_.]\r\n                           - length: 1<=x<=32 \r\n\r\n[no] address               uri profile address that contains a Fully Qualified \r\nDomain Name (FQDN) or an IP Address (in dot notation)\r\n                           optional parameter with default value: \"\"\r\n\r\n                           Parameter type: <Gpon::UriProfileAddress>\r\n                           Format:\r\n                           - uri profile address\r\n                           - length: x<=100 \r\n\r\n[no] version               uri profile version number\r\n                           optional parameter with default value: 1L\r\n\r\n                           Parameter type: <Gpon::UriProfileVersionNbr>\r\n                           Format:\r\n                           - uri profile version number\r\n                           - range: [1...2147483647]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

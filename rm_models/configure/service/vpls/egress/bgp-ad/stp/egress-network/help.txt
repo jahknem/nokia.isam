@@ -1,0 +1,5 @@
+help configure service vpls egress bgp-ad stp eg
+ress-network
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

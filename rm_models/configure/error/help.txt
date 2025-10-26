@@ -1,0 +1,46 @@
+help configure error
+ERROR LOG CONFIGURATION COMMAND
+===============================
+
+Command Description
+-------------------
+
+This command allows the operator to configure parameters related to the error 
+log.
+
+
+User Level
+----------
+
+The command can be accessed by operators with alarm privileges, and executed by 
+operators with alarm privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure error [ no log-full-action | log-full-action 
+<Error::errorLogFullAction> ]
+
+Command Parameters
+------------------
+
+Table "Error Log Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] log-full-action       set the action when error log buffer is full
+                           optional parameter with default value: "wrap"
+
+                           Parameter type: <Error::errorLogFullAction>
+                           Format:
+                           ( wrap
+                           | halt )
+                           Possible values:
+                           - wrap                  : older log records are 
+overwritten by recent ones
+                           - halt                  : logging is stopped until 
+the log buffer is reset
+
+
+DS-LIN-TEST-01:automationuser>#

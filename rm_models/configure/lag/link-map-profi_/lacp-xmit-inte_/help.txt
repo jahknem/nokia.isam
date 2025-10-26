@@ -1,0 +1,5 @@
+help configure lag link-map-profi* lacp-xmit-int
+e*
+                                                   ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

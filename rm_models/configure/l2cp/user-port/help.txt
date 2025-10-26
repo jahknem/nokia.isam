@@ -1,0 +1,35 @@
+help configure l2cp user-port
+L2CP USER PORT PARTITION CONFIGURATION COMMAND
+==============================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the partition id for the given 
+user-port.
+
+
+User Level
+----------
+
+The command can be accessed by operators with transport privileges, and 
+executed by operators with transport privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure l2cp ( no user-port (user-port) partition-id <L2cp::PartitionId> ) 
+| ( user-port (user-port) partition-id <L2cp::PartitionId> )
+
+Command Parameters
+------------------
+
+Table "L2CP User Port Partition Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(user-port)                interface index of the DSL port
+partition-id               partition id
+
+DS-LIN-TEST-01:automationuser>#

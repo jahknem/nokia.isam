@@ -1,0 +1,91 @@
+help configure qos tc-map-dot1p
+QOS 802.1P CLASS-TO-QUEUE MAPPING CONFIGURATION COMMAND
+=======================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the downstream traffic class 
+mapping table. This table defines which 802.1P codepoint is cast to which 
+egress buffer on the L3 units.
+
+There is a second class to the queue mapping table on the SHub/IHub, but this 
+class is independent from the configuration perspective of this table. (See the 
+traffic class configuration section for more information.) The second class is 
+used mainly for upstream traffic segregation into egress buffers on the 
+SHub/IHub.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos tc-map-dot1p (index) [ queue <Qos::Queues> ] [ tc 
+<Qos::QosTrafficClass> ] [ dpcolor <Qos::Color> ] [ policer-color <Qos::PolicerC
+olor> ]
+
+Command Parameters
+------------------
+
+Table "QoS 802.1P Class-to-Queue Mapping Configuration Command" Resource 
+Parameters
+
+Resource Identifier        Description
+
+(index)                    value of 802.1p field
+
+Table "QoS 802.1P Class-to-Queue Mapping Configuration Command" Command 
+Parameters
+
+Parameter                  Description
+
+queue                      output dsl port queue number
+                           obsolete parameter replaced by parameter "tc"
+
+                           Parameter type: <Qos::Queues>
+                           Format:
+                           - output dsl/gpon/epon port queue number
+                           - range: [0...7,255]
+
+tc                         the traffic class number
+                           optional parameter
+
+                           Parameter type: <Qos::QosTrafficClass>
+                           Format:
+                           - the traffic class number
+                           - range: [0...7]
+
+dpcolor                    output discard precedence on queue
+                           optional parameter
+
+                           Parameter type: <Qos::Color>
+                           Format:
+                           ( green
+                           | yellow )
+                           Possible values:
+                           - green                 : discard priority green in 
+queue
+                           - yellow                : discard priority yellow in 
+queue
+
+policer-color              the frame colour for trtcm
+                           optional parameter
+
+                           Parameter type: <Qos::PolicerColor>
+                           Format:
+                           ( green
+                           | yellow
+                           | red )
+                           Possible values:
+                           - green                 : green color
+                           - yellow                : yellow color
+                           - red                   : red color
+
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,75 @@
+module: isam_equipment_protection_element
+short_description: Resource module to configure equipment protection-element
+description:
+- Configures a protection element. The protection group is identified by the eqptProtGroupId
+  attribute. The value 1 to 9 are reserved for the extension chain protection group
+  which are always present and cannot be deleted. Group 1 corresponding with NT 1+1
+  group, and Group 2-9 corresponding with possible 8 LT 1+1 groups. The redcy-ctrl-status
+  parameter is used to force a switchover between elements of a protection group or
+  to keep one of the elements active. The forced-active parameter indicates that the
+  NTA or NTB slot or LT slot is configured as active.
+- Supports configuration of redcy ctrl status
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure equipment protection-element ()'
+options:
+  config:
+    description:
+    - A list of equipment protection-element configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (index) - Index in eqpt Prot Element Table
+      redcy_ctrl_status:
+        type: str
+        description:
+        - 'changes the redundancy control status with default value: "normal"'
+        - 'Possible values: C(normal) - enables redundancy (active or standby); C(forced_active)
+          - forces the element to be active'
+        default: normal
+        choices:
+        - normal
+        - forced_active
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure equipment protection-element)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged
+EXAMPLES:
+  - gathered_example_01.txt

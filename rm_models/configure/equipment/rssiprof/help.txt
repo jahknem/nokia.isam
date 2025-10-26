@@ -1,0 +1,444 @@
+help configure equipment rssiprof
+SFP RSSI CONFIGURATION COMMAND
+==============================
+
+Command Description
+-------------------
+
+This command allows the operator to create and configure the RSSI parameters on 
+SFPs.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment ( no rssiprof (index) ) | ( rssiprof (index) name 
+<Eqpt::DisplayString> [ no temp-alm-low | temp-alm-low <Eqpt::TcaTemp> ] [ no 
+temp-alm-high | temp-alm-high <Eqpt::TcaTemp> ] [ no temp-warn-low | 
+temp-warn-low <Eqpt::TcaTemp> ] [ no temp-warn-high | temp-warn-high 
+<Eqpt::TcaTemp> ] [ no voltage-alm-low | voltage-alm-low <Eqpt::TcaVoltage> ] [ 
+no voltage-alm-high | voltage-alm-high <Eqpt::TcaVoltage> ] [ no 
+voltage-warn-low | voltage-warn-low <Eqpt::TcaVoltage> ] [ no voltage-warn-high 
+| voltage-warn-high <Eqpt::TcaVoltage> ] [ no bias-alm-low | bias-alm-low 
+<Eqpt::TcaBias> ] [ no bias-alm-high | bias-alm-high <Eqpt::TcaBias> ] [ no 
+bias-warn-low | bias-warn-low <Eqpt::TcaBias> ] [ no bias-warn-high | 
+bias-warn-high <Eqpt::TcaBias> ] [ no tx-pwr-alm-low | tx-pwr-alm-low 
+<Eqpt::TcaTxPwr> ] [ no tx-pwr-alm-high | tx-pwr-alm-high <Eqpt::TcaTxPwr> ] [ 
+no tx-pwr-warn-low | tx-pwr-warn-low <Eqpt::TcaTxPwr> ] [ no tx-pwr-warn-high | 
+tx-pwr-warn-high <Eqpt::TcaTxPwr> ] [ no rx-pwr-alm-low | rx-pwr-alm-low 
+<Eqpt::TcaRxPwr> ] [ no rx-pwr-alm-high | rx-pwr-alm-high <Eqpt::TcaRxPwr> ] [ 
+no rx-pwr-warn-low | rx-pwr-warn-low <Eqpt::TcaRxPwr> ] [ no rx-pwr-warn-high | 
+rx-pwr-warn-high <Eqpt::TcaRxPwr> ] [ no ebias-alm-low | ebias-alm-low 
+<Eqpt::TcaBias> ] [ no ebias-alm-high | ebias-alm-high <Eqpt::TcaBias> ] [ no 
+ebias-warn-low | ebias-warn-low <Eqpt::TcaBias> ] [ no ebias-warn-high | 
+ebias-warn-high <Eqpt::TcaBias> ] [ no etx-alm-low | etx-alm-low 
+<Eqpt::TcaTxPwr> ] [ no etx-alm-high | etx-alm-high <Eqpt::TcaTxPwr> ] [ no 
+etx-warn-low | etx-warn-low <Eqpt::TcaTxPwr> ] [ no etx-warn-high | 
+etx-warn-high <Eqpt::TcaTxPwr> ] [ no erx-alm-low | erx-alm-low 
+<Eqpt::TcaRxPwr> ] [ no erx-alm-high | erx-alm-high <Eqpt::TcaRxPwr> ] [ no 
+erx-warn-low | erx-warn-low <Eqpt::TcaRxPwr> ] [ no erx-warn-high | 
+erx-warn-high <Eqpt::TcaRxPwr> ] [ no etemp-alm-low | etemp-alm-low 
+<Eqpt::TcaTemp> ] [ no etemp-alm-high | etemp-alm-high <Eqpt::TcaTemp> ] [ no 
+etemp-warn-low | etemp-warn-low <Eqpt::TcaTemp> ] [ no etemp-warn-high | 
+etemp-warn-high <Eqpt::TcaTemp> ] [ no profile-type | profile-type 
+<Eqpt::RssiProfileType> ] )
+
+Command Parameters
+------------------
+
+Table "Sfp RSSI Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(index)                    an unique index of the rssi profile(1-200)
+
+Table "Sfp RSSI Configuration Command" Command Parameters
+
+Parameter                  Description
+
+name                       A unique profile name
+                           mandatory parameter
+
+                           Parameter type: <Eqpt::DisplayString>
+                           Format:
+                           - string to identify the rssi profile
+                           - length: 1<=x<=16 
+
+[no] temp-alm-low          alarm low threshold for temperature
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaTemp>
+                           Format:
+                           - temperature of SFP
+                           - unit: degree C
+                           - range: [-128...128]
+
+[no] temp-alm-high         alarm high threshold for temperature
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaTemp>
+                           Format:
+                           - temperature of SFP
+                           - unit: degree C
+                           - range: [-128...128]
+
+[no] temp-warn-low         warn low threshold for temperature
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaTemp>
+                           Format:
+                           - temperature of SFP
+                           - unit: degree C
+                           - range: [-128...128]
+
+[no] temp-warn-high        warn high threshold for temperature
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaTemp>
+                           Format:
+                           - temperature of SFP
+                           - unit: degree C
+                           - range: [-128...128]
+
+[no] voltage-alm-low       alarm low threshold for Voltage
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaVoltage>
+                           Format:
+                           - voltage of SFP
+                           - unit: volts
+                           - range: [0...6.55]
+
+[no] voltage-alm-high      alarm high threshold for Voltage
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaVoltage>
+                           Format:
+                           - voltage of SFP
+                           - unit: volts
+                           - range: [0...6.55]
+
+[no] voltage-warn-low      warn low threshold for Voltage
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaVoltage>
+                           Format:
+                           - voltage of SFP
+                           - unit: volts
+                           - range: [0...6.55]
+
+[no] voltage-warn-high     warn high threshold for Voltage
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaVoltage>
+                           Format:
+                           - voltage of SFP
+                           - unit: volts
+                           - range: [0...6.55]
+
+[no] bias-alm-low          alarm low threshold for bias
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaBias>
+                           Format:
+                           - bias of SFP
+                           - unit: mA
+                           - range: [0...262]
+
+[no] bias-alm-high         alarm high threshold for bias
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaBias>
+                           Format:
+                           - bias of SFP
+                           - unit: mA
+                           - range: [0...262]
+
+[no] bias-warn-low         warn low threshold for bias
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaBias>
+                           Format:
+                           - bias of SFP
+                           - unit: mA
+                           - range: [0...262]
+
+[no] bias-warn-high        warn high threshold for bias
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaBias>
+                           Format:
+                           - bias of SFP
+                           - unit: mA
+                           - range: [0...262]
+
+[no] tx-pwr-alm-low        alarm low threshold for Tx power
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaTxPwr>
+                           Format:
+                           <Eqpt::TcaTxPwr>
+                           Field type <Eqpt::TcaTxPwr>
+                           - power of SFP
+                           - unit: dbm
+                           - range: [-63.5...63.5]
+
+[no] tx-pwr-alm-high       alarm high threshold for Tx power
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaTxPwr>
+                           Format:
+                           <Eqpt::TcaTxPwr>
+                           Field type <Eqpt::TcaTxPwr>
+                           - power of SFP
+                           - unit: dbm
+                           - range: [-63.5...63.5]
+
+[no] tx-pwr-warn-low       warn low threshold for Tx power
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaTxPwr>
+                           Format:
+                           <Eqpt::TcaTxPwr>
+                           Field type <Eqpt::TcaTxPwr>
+                           - power of SFP
+                           - unit: dbm
+                           - range: [-63.5...63.5]
+
+[no] tx-pwr-warn-high      warn high threshold for Tx power
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaTxPwr>
+                           Format:
+                           <Eqpt::TcaTxPwr>
+                           Field type <Eqpt::TcaTxPwr>
+                           - power of SFP
+                           - unit: dbm
+                           - range: [-63.5...63.5]
+
+[no] rx-pwr-alm-low        alarm low threshold for Rx power
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaRxPwr>
+                           Format:
+                           <Eqpt::TcaRxPwr>
+                           Field type <Eqpt::TcaRxPwr>
+                           - power of SFP
+                           - unit: dbm
+                           - range: [-127...8.2]
+
+[no] rx-pwr-alm-high       alarm high threshold for Rx power
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaRxPwr>
+                           Format:
+                           <Eqpt::TcaRxPwr>
+                           Field type <Eqpt::TcaRxPwr>
+                           - power of SFP
+                           - unit: dbm
+                           - range: [-127...8.2]
+
+[no] rx-pwr-warn-low       warn low threshold for Rx power
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaRxPwr>
+                           Format:
+                           <Eqpt::TcaRxPwr>
+                           Field type <Eqpt::TcaRxPwr>
+                           - power of SFP
+                           - unit: dbm
+                           - range: [-127...8.2]
+
+[no] rx-pwr-warn-high      warn high threshold for Rx power
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaRxPwr>
+                           Format:
+                           <Eqpt::TcaRxPwr>
+                           Field type <Eqpt::TcaRxPwr>
+                           - power of SFP
+                           - unit: dbm
+                           - range: [-127...8.2]
+
+[no] ebias-alm-low         alarm low threshold for ext bias
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaBias>
+                           Format:
+                           - bias of SFP
+                           - unit: mA
+                           - range: [0...262]
+
+[no] ebias-alm-high        alarm high threshold for ext bias
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaBias>
+                           Format:
+                           - bias of SFP
+                           - unit: mA
+                           - range: [0...262]
+
+[no] ebias-warn-low        warn low threshold for ext bias
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaBias>
+                           Format:
+                           - bias of SFP
+                           - unit: mA
+                           - range: [0...262]
+
+[no] ebias-warn-high       warn high threshold for ext bias
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaBias>
+                           Format:
+                           - bias of SFP
+                           - unit: mA
+                           - range: [0...262]
+
+[no] etx-alm-low           alarm low threshold for ext Tx power
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaTxPwr>
+                           Format:
+                           <Eqpt::TcaTxPwr>
+                           Field type <Eqpt::TcaTxPwr>
+                           - power of SFP
+                           - unit: dbm
+                           - range: [-63.5...63.5]
+
+[no] etx-alm-high          alarm high threshold for ext Tx power
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaTxPwr>
+                           Format:
+                           <Eqpt::TcaTxPwr>
+                           Field type <Eqpt::TcaTxPwr>
+                           - power of SFP
+                           - unit: dbm
+                           - range: [-63.5...63.5]
+
+[no] etx-warn-low          warn low threshold for ext Tx power
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaTxPwr>
+                           Format:
+                           <Eqpt::TcaTxPwr>
+                           Field type <Eqpt::TcaTxPwr>
+                           - power of SFP
+                           - unit: dbm
+                           - range: [-63.5...63.5]
+
+[no] etx-warn-high         warn high threshold for ext Tx power
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaTxPwr>
+                           Format:
+                           <Eqpt::TcaTxPwr>
+                           Field type <Eqpt::TcaTxPwr>
+                           - power of SFP
+                           - unit: dbm
+                           - range: [-63.5...63.5]
+
+[no] erx-alm-low           alarm low threshold for ext Rx power
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaRxPwr>
+                           Format:
+                           <Eqpt::TcaRxPwr>
+                           Field type <Eqpt::TcaRxPwr>
+                           - power of SFP
+                           - unit: dbm
+                           - range: [-127...8.2]
+
+[no] erx-alm-high          alarm high threshold for ext Rx power
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaRxPwr>
+                           Format:
+                           <Eqpt::TcaRxPwr>
+                           Field type <Eqpt::TcaRxPwr>
+                           - power of SFP
+                           - unit: dbm
+                           - range: [-127...8.2]
+
+[no] erx-warn-low          warn low threshold for ext Rx power
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaRxPwr>
+                           Format:
+                           <Eqpt::TcaRxPwr>
+                           Field type <Eqpt::TcaRxPwr>
+                           - power of SFP
+                           - unit: dbm
+                           - range: [-127...8.2]
+
+[no] erx-warn-high         warn high threshold for ext Rx power
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaRxPwr>
+                           Format:
+                           <Eqpt::TcaRxPwr>
+                           Field type <Eqpt::TcaRxPwr>
+                           - power of SFP
+                           - unit: dbm
+                           - range: [-127...8.2]
+
+[no] etemp-alm-low         alarm low threshold for temperature on network lane
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaTemp>
+                           Format:
+                           - temperature of SFP
+                           - unit: degree C
+                           - range: [-128...128]
+
+[no] etemp-alm-high        alarm high threshold for temperature on network lane
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaTemp>
+                           Format:
+                           - temperature of SFP
+                           - unit: degree C
+                           - range: [-128...128]
+
+[no] etemp-warn-low        warn low threshold for temperature on network lane
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaTemp>
+                           Format:
+                           - temperature of SFP
+                           - unit: degree C
+                           - range: [-128...128]
+
+[no] etemp-warn-high       warn high threshold for temperature on network lane
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Eqpt::TcaTemp>
+                           Format:
+                           - temperature of SFP
+                           - unit: degree C
+                           - range: [-128...128]
+
+[no] profile-type          determine if this RSSI Profile is for OLT or ONT
+                           optional parameter with default value: " olt"
+
+                           Parameter type: <Eqpt::RssiProfileType>
+                           Format:
+                           ( olt
+                           | ont )
+                           Possible values:
+                           - olt                   : This profile is for OLT 
+usage
+                           - ont                   : This profile is for ONT 
+usage
+
+
+DS-LIN-TEST-01:automationuser>#

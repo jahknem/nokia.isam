@@ -1,0 +1,49 @@
+help configure generic-pon alarmflag
+SYSTEM PONLOS ALARM RE-DEFINE SWITCH
+====================================
+
+Command Description
+-------------------
+
+This command configures PONLOS (system-wide) alarm redefine switch for PONs and 
+channel-pairs.
+
+if disable, "PONLOS" means original Loss of Signal; if disable, "PONLOS" will 
+be redefined for trunk fiber broken
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure generic-pon alarmflag [ no ponlos-alarm-ctrl | ponlos-alarm-ctrl 
+<Gpon::Alarmflag> ]
+
+Command Parameters
+------------------
+
+Table "System PONLOS Alarm Re-define Switch" Command Parameters
+
+Parameter                  Description
+
+[no] ponlos-alarm-ctrl     if disable, PONLOS means original Loss of Signal; if 
+enable, PONLOS will be redefined for trunk fiber broken
+                           optional parameter with default value: "disable"
+
+                           Parameter type: <Gpon::Alarmflag>
+                           Format:
+                           ( enable
+                           | disable )
+                           Possible values:
+                           - enable                : enable means trunk Fibler 
+cutfoff alarm
+                           - disable               : disable means PONLOS alarm
+
+
+DS-LIN-TEST-01:automationuser>#

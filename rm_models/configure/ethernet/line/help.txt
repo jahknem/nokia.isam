@@ -1,0 +1,61 @@
+help configure ethernet line
+ETHERNET LINE CONFIGURATION COMMAND
+===================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the ethernet line.
+
+
+User Level
+----------
+
+The command can be accessed by operators with transport privileges, and 
+executed by operators with transport privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure ethernet line (if-index) [ port-type <ETHITF::PortType> ] [ [ no ] 
+admin-up ]
+
+Command Parameters
+------------------
+
+Table "Ethernet Line Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(if-index)                 interface index of the port
+
+Table "Ethernet Line Configuration Command" Command Parameters
+
+Parameter                  Description
+
+port-type                  the whole network service model based on this 
+interface
+                           optional parameter
+
+                           Parameter type: <ETHITF::PortType>
+
+                           Format:
+                           ( uni
+                           | nni
+                           | hc-uni
+                           | uplink )
+                           Possible values:
+                           - uni                   : uni port type
+                           - nni                   : nni port type
+                           - hc-uni                : hicap uni port type
+                           - uplink                : uplink port type
+
+[no] admin-up              admin status is up (read-only for voicefxs interface)
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,182 @@
+help configure ces ont line
+CES SERVICE PORT PROVISIONING CONFIGURATION COMMAND
+===================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure ONT CESUNI port provisioning 
+data.All modifications are service affecting.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure ces ont line (uni-idx) [ mode <Ces::PortStructure> ] [ frame 
+<Ces::Frame> ] [ no encoding | encoding <Ces::Encoding> ] [ no line-length | 
+line-length <Ces::LineLength> ] [ [ no ] pwr-override ] [ no sst | sst 
+<Ces::BponLoopBack> ] [ no admin-state | admin-state <Gpon::ItfAdminStatus> ]
+
+Command Parameters
+------------------
+
+Table "CES Service Port Provisioning Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(uni-idx)                  interface index of the ces ont uni
+
+Table "CES Service Port Provisioning Configuration Command" Command Parameters
+
+Parameter                  Description
+
+mode                       DS1/E1 port structure
+                           optional parameter
+
+                           Parameter type: <Ces::PortStructure>
+                           Format:
+                           ( unstructured
+                           | structured )
+                           Possible values:
+                           - unstructured          : unstructured mode
+                           - structured            : structured mode
+
+frame                      port framing
+                           optional parameter
+
+                           Parameter type: <Ces::Frame>
+                           Format:
+                           ( esf
+                           | sf
+                           | unframed
+                           | pcm30
+                           | pcm31 )
+                           Possible values:
+                           - esf                   : extended superframe(only 
+for DS1 and mode=structured)
+                           - sf                    : superframe(only for DS1 
+and mode=structured)
+                           - unframed              : unframed(valid only and 
+mode=unstructured)
+                           - pcm30                 : pcm 30(only for E1 and 
+mode=structured)
+                           - pcm31                 : pcm 31(only for E1 and 
+mode=structured)
+
+[no] encoding              port encoding
+                           optional parameter with default value: "b8zs"
+
+                           Parameter type: <Ces::Encoding>
+                           Format:
+                           ( b8zs
+                           | ami
+                           | hdb3 )
+                           Possible values:
+                           - b8zs                  : b8zs encoding scheme(only 
+for DS1)
+                           - ami                   : ami encoding scheme
+                           - hdb3                  : hdb3 encoding scheme(only 
+for E1)
+
+[no] line-length           length of the twisted pair cable
+                           optional parameter with default value: ""
+
+                           Parameter type: <Ces::LineLength>
+                           Format:
+                           ( 0to133ft
+                           | 133to266ft
+                           | 266to399ft
+                           | 399to533ft
+                           | 533to655ft
+                           | 7andhalfdb
+                           | 15db
+                           | 22andhalfdb
+                           | 75ohms
+                           | 120ohms )
+                           Possible values:
+                           - 0to133ft              : 0 - 133 ft (only for DS1)
+                           - 133to266ft            : 133 - 266 ft (only for DS1)
+                           - 266to399ft            : 266 - 399 ft (only for DS1)
+                           - 399to533ft            : 399 - 533 ft (only for DS1)
+                           - 533to655ft            : 533 - 655 ft (only for DS1)
+                           - 7andhalfdb            : 7.5 db (only for DS1)
+                           - 15db                  : 15 db (only for DS1)
+                           - 22andhalfdb           : 22.5 db (only for DS1)
+                           - 75ohms                : 75 ohms (only for E1)
+                           - 120ohms               : 120 ohms (only for E1)
+
+[no] pwr-override          port excluded from CES class power shedding
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] sst                   loop back configuration
+                           optional parameter with default value: "no-loopback"
+
+                           Parameter type: <Ces::BponLoopBack>
+                           Format:
+                           ( no-loopback
+                           | line-loopback
+                           | inward-loopback )
+                           Possible values:
+                           - no-loopback           : no loopback
+                           - line-loopback         : line loopback
+                           - inward-loopback       : inward loopback
+
+[no] admin-state           administrative status of the interface
+                           optional parameter with default value: "down"
+
+                           Parameter type: <Gpon::ItfAdminStatus>
+                           Format:
+                           ( up
+                           | down )
+                           Possible values:
+                           - up                    : set the admin-state to up
+                           - down                  : set the admin-state to down
+
+
+Table "CES Service Port Provisioning Configuration Command" Display Parameters
+
+Specific Information:
+
+Parameter                  Description
+
+ oper-state                the operational state of the interface
+                           This element is always shown.
+
+                           parameter type: <Itf::ifOperStatus>
+                           ( up
+                           | down
+                           | testing
+                           | unknown
+                           | dormant
+                           | no-value )
+                           Possible values:
+                           - up                    : up,traffic can pass
+                           - down                  : down,no traffic is passing
+                           - testing               : testing,no traffic is 
+passing
+                           - unknown               : unknown
+                           - dormant               : dormant,no traffic is 
+passing
+                           - no-value              : no entry in the table
+
+ card-type                 card type
+                           This element is always shown.
+
+                           parameter type: <Ces::CardConfig>
+                           ( ds1
+                           | e1 )
+                           Possible values:
+                           - ds1                   : DS1 card
+                           - e1                    : E1 card
+
+DS-LIN-TEST-01:automationuser>#

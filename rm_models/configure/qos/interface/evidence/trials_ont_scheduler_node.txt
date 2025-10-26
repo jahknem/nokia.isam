@@ -1,0 +1,35 @@
+== After change: ONT scheduler-node GPONShaperDN600Mbps ==
+DS-LIN-TEST-01:automationuser># info configure qos interface ont:1/1/5/1/6
+configure qos
+#-------------------------------------------------------------------------------
+echo "qos"
+#-------------------------------------------------------------------------------
+interface ont:1/1/5/1/6
+  scheduler-node name:GPONShaperDN600Mbps
+  ds-num-queue not-applicable
+  ds-num-rem-queue not-applicable
+  oper-weight 50
+  oper-rate 614400
+  gem-sharing not-applicable
+  mc-scheduler-node none
+  bc-scheduler-node none
+exit
+#-------------------------------------------------------------------------------
+
+== After revert: ONT scheduler-node GPONShaperDN50Mbps ==
+DS-LIN-TEST-01:automationuser># info configure qos interface ont:1/1/5/1/6
+configure qos
+#-------------------------------------------------------------------------------
+echo "qos"
+#-------------------------------------------------------------------------------
+interface ont:1/1/5/1/6
+  scheduler-node name:GPONShaperDN50Mbps
+  ds-num-queue not-applicable
+  ds-num-rem-queue not-applicable
+  oper-weight 50
+  oper-rate 51200
+  gem-sharing not-applicable
+  mc-scheduler-node none
+  bc-scheduler-node none
+exit
+#-------------------------------------------------------------------------------

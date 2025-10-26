@@ -1,0 +1,247 @@
+module: isam_mcast_control_system
+short_description: Resource module to configure mcast-control system
+description:
+- Configures the mcast parameters that are globally applicable to the Node.
+- Supports configuration of src ip address, v6 src ip address, verify checksum and
+  more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+options:
+  config:
+    description:
+    - A list of mcast-control system configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier
+      src_ip_address:
+        type: str
+        description:
+        - 'source ip addr which is tx in every mcast IP datagram with default value:
+          "0.0.0.0" - IPv4-address'
+        default: 0.0.0.0
+      v6_src_ip_address:
+        type: str
+        description:
+        - 'source ipv6 address(link local address) which is tx in every mcast IP datagram
+          with default value: " : : " - ipv6 link local address'
+        default: ':  :'
+      verify_checksum:
+        type: bool
+        description:
+        - verification performed on Rx mcast frame
+      query_interval:
+        type: str
+        description:
+        - 'interval at which general membership queries transmitted with default value:
+          125 - interval at which general membership queries transmitted - unit: sec
+          - range: [2...3175]'
+        default: '125'
+      max_rsp_time:
+        type: str
+        description:
+        - 'max query response time advertised in queries 1/10 sec with default value:
+          100 - max query response time advertised in queries - unit: 1/10 sec - range:
+          [1...31744]'
+        default: '100'
+      robustness:
+        type: str
+        description:
+        - 'expected pkt loss on subnet with default value: 2 - tuning for the expected
+          packet loss on a subnet - range: [1...10]'
+        default: '2'
+      mem_query_int:
+        type: str
+        description:
+        - 'minimum interval between group-specific queries with default value: 10
+          - spacing between GSQs (group-specific queries) - unit: 1/10 sec - range:
+          [2...31744]'
+        default: '10'
+      last_memb_cnt:
+        type: str
+        description:
+        - 'number of GSQs ( group-specific queries) to be sent with default value:
+          2 - number of GSQs ( group-specific queries) to be sent - range: [1...10]'
+        default: '2'
+      last_max_resp_tim:
+        type: str
+        description:
+        - 'allows shorter max response time with default value: 2 - allows shorter
+          max response time - unit: 1/10 sec - range: [1...31744]'
+        default: '2'
+      host_report_intv:
+        type: str
+        description:
+        - 'interval of repetitions of host''s report of grp membership with default
+          value: 10 - interval of repetitions of host''s report of grp membership
+          - unit: 1/10 sec - range: [1...255]'
+        default: '10'
+      start:
+        type: bool
+        description:
+        - start Mcast app module
+      preview_valid:
+        type: str
+        description:
+        - 'time interval that confirm the preview session is valid with default value:
+          8 - time interval that confirm the preview session is valid - unit: sec
+          - range: [1...120]'
+        default: '8'
+      cdr_validation:
+        type: str
+        description:
+        - 'minimum session time for generating a CDR with default value: 2'
+        - 'Possible values: C(none) - CDR generation valid immediately Field type
+          <Igmp::SystemPrecdrvalidIntval>; C(unit) - sec; C(range) - [0...120]'
+        default: '2'
+        choices:
+        - none
+        - minimum session time for generating a CDR
+        - unit
+        - range
+      cdr_generation:
+        type: bool
+        description:
+        - start CDR generation in the system
+      except_cdr_rate:
+        type: str
+        description:
+        - 'limit the generation of the CDR records with default value: 3 - limit the
+          generation of CDR records - unit: min - range: [1...30]'
+        default: '3'
+      cdr_export:
+        type: str
+        description:
+        - 'the method the cdr is to be generated and forwarded with default value:
+          "local-file-storage"'
+        - 'Possible values: C(local-file-storage) - method the cdr generated and forwarded;
+          C(remote-logging) - remote logging method'
+        choices:
+        - local-file-storage
+        - remote-logging
+      cdr_file_aging:
+        type: str
+        description:
+        - 'configure the CDR file aging time with default value: 8 - configure the
+          CDR file aging time - unit: hour - range: [4...24]'
+        default: '8'
+      cdr_polling:
+        type: str
+        description:
+        - 'configure the polling period for the CDR records with default value: 180
+          - configure the polling period for the CDR records, in multiples of 60 -
+          unit: sec - range: [60...900]'
+        default: '180'
+      user_igmp_version:
+        type: str
+        description:
+        - 'version of the IGMP protocol with default value: "3"'
+        - 'Possible values: C(2) - IGMPv2 GMQs; C(3) - IGMPv3 GMQs'
+        default: '3'
+        choices:
+        - '2'
+        - '3'
+      netw_igmp_version:
+        type: str
+        description:
+        - 'version for IGMP packet to receive/forward to n/w side with default value:
+          "3"'
+        - 'Possible values: C(2) - IGMP version2; C(3) - IGMP version3'
+        default: '3'
+        choices:
+        - '2'
+        - '3'
+      user_mld_version:
+        type: str
+        description:
+        - 'version of the MLD protocol with default value: "2"'
+        - 'Possible values: C(1) - MLDv1 GMQs; C(2) - MLDv2 GMQs'
+        default: '2'
+        choices:
+        - '1'
+        - '2'
+      netw_mld_version:
+        type: str
+        description:
+        - 'version for MLD packet to receive/forward to n/w side with default value:
+          "2"'
+        - 'Possible values: C(1) - MLDV1 version1; C(2) - MLDV2 version2'
+        default: '2'
+        choices:
+        - '1'
+        - '2'
+      v3_max_num_rec:
+        type: str
+        description:
+        - 'max num of group records in one IGMPv3 or MLDv2 report (2 exp N) with default
+          value: 3 - max number of records in an IGMPv3 membership report - range:
+          [0...10]'
+        default: '3'
+      forking:
+        type: bool
+        description:
+        - enable IGMP forking in the system level
+      lt_ont_signaling:
+        type: bool
+        description:
+        - enables lt to ont signaling at system level
+      vlan_selection:
+        type: bool
+        description:
+        - enable vlan selection
+      disc_lwr_version:
+        type: bool
+        description:
+        - discard lower version packets
+      uncfg_mcast_supp:
+        type: str
+        description:
+        - 'enable un-configured SSM/ASM support for GPON/DSL LT cards with default
+          value: "legacy" DS-LIN-TEST-01:automationuser>#'
+        - 'Possible values: C(legacy) - enable un-configured SSM and ASM support for
+          GPON LTs and un-configured ASM support alone for DSL LTs; C(asmandssm) -
+          enable unconfigured SSM and ASM support for GPON and DSL LT cards'
+        default: legacy
+        choices:
+        - legacy
+        - asmandssm
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure mcast-control system)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

@@ -1,0 +1,79 @@
+module: isam_debug_trace_protocol_trace
+short_description: Resource module to configure debug-trace protocol-trace
+description:
+- This commands allows the operator to enable/disable protocol tracing. The operator
+  can enter the protocol, port and level of detail for which tracing can be enabled.
+  It is mandatory to enable/disable atleast one of the tracings, events or packet-summary.
+- Supports configuration of syslog, events, packet summary
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure debug-trace ()'
+options:
+  config:
+    description:
+    - A list of debug-trace protocol-trace configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (trace-subject) - subject for which tracing is enabled(e.g ADSL line,PVC)
+      syslog:
+        type: str
+        description:
+        - msg type used to log trace msgs to syslog mandatory parameter
+        - 'Possible values: C(tracing1) - msg type tracing1 used for syslog; C(tracing2)
+          - msg type tracing2 used for syslog; C(tracing3) - msg type tracing3 used
+          for syslog; C(tracing4) - msg type tracing4 used for syslog'
+        choices:
+        - tracing1
+        - tracing2
+        - tracing3
+        - tracing4
+      events:
+        type: bool
+        description:
+        - enable events tracing
+      packet_summary:
+        type: bool
+        description:
+        - enable pkt summary tracing
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure debug-trace protocol-trace)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

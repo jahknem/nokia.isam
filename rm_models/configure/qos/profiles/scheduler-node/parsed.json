@@ -1,0 +1,57 @@
+{
+  "title": "QOS SCHEDULER NODE PROFILE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a QoS scheduler node profile. The \nscheduler node profiles contain configuration settings for the data plane \nschedulers. These scheduler node profiles are applicable to downstream \nschedulers on the L3 line cards. The scheduler node settings on the service hub \ncan be modified separately.",
+  "user_level": "The command can be accessed by operators with qos privileges, and executed by \noperators with qos privileges.",
+  "syntax": "> configure qos profiles ( no scheduler-node (name) ) | ( scheduler-node (name) priority <Qos::QosPriority> weight <Qos::QosWeight> shaper-profile <Qos::QosShaperProfileName> [ no ext-shaper | ext-shaper <Qos::QosShaperProfileName> ] [ no mcast-inc-shape | mcast-inc-shape <Qos::QosMulticastInclShaping> ] )",
+  "resource_parameters": [
+    {
+      "name": "(name)",
+      "description": "A unique profile name"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "priority",
+      "description": "relative priority of the scheduler-node mandatory parameter - relative priority - range: [1...8]",
+      "type": "<Qos::QosPriority>"
+    },
+    {
+      "name": "weight",
+      "description": "relative weight of the scheduler-node mandatory parameter - relative weight - range: [0...127]",
+      "type": "<Qos::QosWeight>"
+    },
+    {
+      "name": "shaper-profile",
+      "description": "the associated shaper profile. For EPON OLT in downstream, this profile used for LLID shaper on 1G PON bandwidth. mandatory parameter",
+      "type": "<Qos::QosShaperProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associated",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ]
+    },
+    {
+      "name": "[no] ext-shaper",
+      "description": "the associated shaper profile. For EPON OLT in downstream, this profile used for LLID shaper on 10G PON bandwidth. optional parameter with default value: \"none\"",
+      "type": "<Qos::QosShaperProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associated",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] mcast-inc-shape",
+      "description": "indicates whether downstream shaping includes Mcast optional parameter with default value: \"false\"",
+      "type": "<Qos::QosMulticastInclShaping>",
+      "format": "( mcast-shap-on                            | no-mcast-shap )",
+      "values": [
+        "mcast-shap-on         : Downstream shaping includes Mcast",
+        "no-mcast-shap         : Downstream shaping doesnot include Mcast"
+      ],
+      "default": "false"
+    }
+  ],
+  "raw": "help configure qos profiles scheduler-node\r\nQOS SCHEDULER NODE PROFILE CONFIGURATION COMMAND\r\n================================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a QoS scheduler node profile. The \r\nscheduler node profiles contain configuration settings for the data plane \r\nschedulers. These scheduler node profiles are applicable to downstream \r\nschedulers on the L3 line cards. The scheduler node settings on the service hub \r\ncan be modified separately.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by \r\noperators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos profiles ( no scheduler-node (name) ) | ( scheduler-node (name) \r\npriority <Qos::QosPriority> weight <Qos::QosWeight> shaper-profile \r\n<Qos::QosShaperProfileName> [ no ext-shaper | ext-shaper \r\n<Qos::QosShaperProfileName> ] [ no mcast-inc-shape | mcast-inc-shape \r\n<Qos::QosMulticastInclShaping> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS Scheduler Node Profile Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(name)                     A unique profile name\r\n\r\nTable \"QoS Scheduler Node Profile Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\npriority                   relative priority of the scheduler-node\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Qos::QosPriority>\r\n                           Format:\r\n                           - relative priority\r\n                           - range: [1...8]\r\n\r\nweight                     relative weight of the scheduler-node\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Qos::QosWeight>\r\n                           Format:\r\n                           - relative weight\r\n                           - range: [0...127]\r\n\r\nshaper-profile             the associated shaper profile. For EPON OLT in \r\ndownstream, this profile used for LLID shaper on 1G PON bandwidth.\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Qos::QosShaperProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociated\r\n                           - name                  : enter profile name to be \r\nassociated\r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] ext-shaper            the associated shaper profile. For EPON OLT in \r\ndownstream, this profile used for LLID shaper on 10G PON bandwidth.\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosShaperProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociated\r\n                           - name                  : enter profile name to be \r\nassociated\r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] mcast-inc-shape       indicates whether downstream shaping includes Mcast\r\n                           optional parameter with default value: \"false\"\r\n\r\n                           Parameter type: <Qos::QosMulticastInclShaping>\r\n                           Format:\r\n                           ( mcast-shap-on\r\n                           | no-mcast-shap )\r\n                           Possible values:\r\n                           - mcast-shap-on         : Downstream shaping \r\nincludes Mcast\r\n                           - no-mcast-shap         : Downstream shaping doesnot \r\ninclude Mcast\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,12 @@
+help configure dual-parenting
+                                                             ^
+command is not complete
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:10:33 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:10:30 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:10:33 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:10:20 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

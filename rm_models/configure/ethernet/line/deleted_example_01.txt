@@ -1,0 +1,53 @@
+DS-LIN-TEST-01:automationuser># info configure ethernet line 1/1/8/7
+configure ethernet
+#-------------------------------------------------------------------------------
+echo "ethernet"
+#-------------------------------------------------------------------------------
+line 1/1/8/7
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+#-------------------------------------------------------------------------------
+
+-- single-command demonstrating deletion of admin-up:
+DS-LIN-TEST-01:automationuser># configure ethernet line 1/1/8/7 no admin-up
+DS-LIN-TEST-01:automationuser>configure>ethernet>line>1/1/8/7#
+
+-- verify after deletion:
+DS-LIN-TEST-01:automationuser># info configure ethernet line 1/1/8/7
+configure ethernet
+#-------------------------------------------------------------------------------
+echo "ethernet"
+#-------------------------------------------------------------------------------
+line 1/1/8/7
+  port-type uni
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+#-------------------------------------------------------------------------------
+
+-- revert to baseline:
+DS-LIN-TEST-01:automationuser># configure ethernet line 1/1/8/7 admin-up
+DS-LIN-TEST-01:automationuser>configure>ethernet>line>1/1/8/7#
+
+-- final verify restored:
+DS-LIN-TEST-01:automationuser># info configure ethernet line 1/1/8/7
+configure ethernet
+#-------------------------------------------------------------------------------
+echo "ethernet"
+#-------------------------------------------------------------------------------
+line 1/1/8/7
+  port-type uni
+  admin-up
+  mau 1
+    type 1000basebx10d
+    power up
+  exit
+exit
+#-------------------------------------------------------------------------------

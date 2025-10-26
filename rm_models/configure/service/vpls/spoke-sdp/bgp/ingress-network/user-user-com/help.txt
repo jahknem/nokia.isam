@@ -1,0 +1,5 @@
+help configure service vpls spoke-sdp bgp ingres
+s-network user-user-com
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

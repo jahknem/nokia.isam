@@ -1,0 +1,24 @@
+# Using overridden state
+
+# Before state:
+# =============
+#
+# Run on device to capture current settings for this resource:
+#    info configure interface cage
+# Example output:
+#    operational-mode xgs
+
+- name: Override interface cage configuration to dual-gpon mode
+  isam_interface_cage:
+    state: overridden
+    config:
+      - name: "1/1"
+        operational_mode: "dual-gpon"
+
+# After state:
+# ============
+#
+# Re-run the same info command to show the effect:
+#    info configure interface cage
+# Expected output:
+#    operational-mode dual-gpon

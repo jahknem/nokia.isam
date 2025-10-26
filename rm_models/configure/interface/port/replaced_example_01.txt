@@ -1,0 +1,43 @@
+# Using replaced state
+
+# Before state:
+# -------------
+# From real device (after merged):
+#   info configure interface port pon:1/1/2/1
+#
+DS-LIN-TEST-01:automationuser># info configure interface port pon:1/1/2/1
+configure interface
+#-------------------------------------------------------------------------------
+echo "interface"
+#-------------------------------------------------------------------------------
+port pon:1/1/2/1
+  admin-up
+  link-updown-trap
+  user ""
+exit
+#-------------------------------------------------------------------------------
+DS-LIN-TEST-01:automationuser>#
+
+- name: Apply replaced operation on Nokia ISAM
+  isam_interface_port:
+    state: replaced
+    config:
+      - name: "pon:1/1/2/1"
+        link_updown_trap: false
+
+# After state:
+# ------------
+# Run again on the device:
+#   info configure interface port pon:1/1/2/1
+#
+DS-LIN-TEST-01:automationuser># info configure interface port pon:1/1/2/1
+configure interface
+#-------------------------------------------------------------------------------
+echo "interface"
+#-------------------------------------------------------------------------------
+port pon:1/1/2/1
+  admin-up
+  user ""
+exit
+#-------------------------------------------------------------------------------
+DS-LIN-TEST-01:automationuser>#

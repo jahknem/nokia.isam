@@ -1,0 +1,49 @@
+{
+  "title": "QOS CONFIGURATION COMMAND",
+  "description": "This command allows the operator to specify global QoS parameters.\n\nThe ATM overhead factor is used to calculate ATM bandwidth required by streams \nfor which bandwidth parameters are specified as Ethernet bandwidth. The ATM \noverhead factor specifies in terms of percentage what part of a given raw ATM \nbit rate will be available for Ethernet frames. The default value is 85%, which \nmeans a typical overhead of 15% for ATM/AAL5. QoS management will use this \nvalue to deduct the available Ethernet rate on ATM-based DSL interfaces.\n\nThe Eth EFM overhead factor is used to calculate EFM bandwidth required by \nstreams for which bandwidth parameters are specified as Ethernet bandwidth. The \nEth EFM overhead factor specifies in terms of percentage what part of a given \nraw EFM bit rate will be available for Ethernet frames. The default value is \n97%, which means a typical overhead of 3% for EFM Encapsulation.\n\nThe enable alignment is used to enable or disable the DSCP to P-bits alignment \nfor all the L3 forwarded traffic.\n\nThe Global CAC-mode selection switch determines whether Connection Admission \nControl relies on the guaranteed sync rate or the actual line rate of the \nphysical interface.",
+  "user_level": "The command can be accessed by operators with qos privileges, and executed by \noperators with qos privileges.",
+  "syntax": "> configure qos [ no atm-overhead-fact | atm-overhead-fact <Qos::AtmFactor> ] [ no eth-efm-fact | eth-efm-fact <Qos::EthEfmFactor> ] [ [ no ] enable-alignment ] [ no cac-mode | cac-mode <Qos::CacMode> ] [ [ no ] use-dei ] [ [ no ] set-dei ]",
+  "resource_parameters": [],
+  "command_parameters": [
+    {
+      "name": "[no] atm-overhead-fact",
+      "description": "over head factor introduced by atm layer optional parameter with default value: 85 - over head factor introduced by atm layer - unit: % - range: [1...100]",
+      "type": "<Qos::AtmFactor>",
+      "default": "85"
+    },
+    {
+      "name": "[no] eth-efm-fact",
+      "description": "value to estimate bandwidth overhead inserted by efm layer optional parameter with default value: 97 - value to estimate bandwidth overhead inserted by efm layer - unit: % - range: [1...100]",
+      "type": "<Qos::EthEfmFactor>",
+      "default": "97"
+    },
+    {
+      "name": "[no] enable-alignment",
+      "description": "DSCP to P-bit alignment for all forwarded L3 traffic optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] cac-mode",
+      "description": "This object stores an global CAC mode selection switch optional parameter with default value: \"msr\"",
+      "type": "<Qos::CacMode>",
+      "format": "( nocac                            | msr                            | alr )",
+      "values": [
+        "nocac                 : no cac in system",
+        "msr                   : base on minimum synchronized rate",
+        "alr                   : base on actual line rate"
+      ],
+      "default": "msr"
+    },
+    {
+      "name": "[no] use-dei",
+      "description": "Enable global control of DEI aware optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] set-dei",
+      "description": "Enable global control of DEI remark optional parameter",
+      "type": "boolean"
+    }
+  ],
+  "raw": "help configure qos\r\nQOS CONFIGURATION COMMAND\r\n=========================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to specify global QoS parameters.\r\n\r\nThe ATM overhead factor is used to calculate ATM bandwidth required by streams \r\nfor which bandwidth parameters are specified as Ethernet bandwidth. The ATM \r\noverhead factor specifies in terms of percentage what part of a given raw ATM \r\nbit rate will be available for Ethernet frames. The default value is 85%, which \r\nmeans a typical overhead of 15% for ATM/AAL5. QoS management will use this \r\nvalue to deduct the available Ethernet rate on ATM-based DSL interfaces.\r\n\r\nThe Eth EFM overhead factor is used to calculate EFM bandwidth required by \r\nstreams for which bandwidth parameters are specified as Ethernet bandwidth. The \r\nEth EFM overhead factor specifies in terms of percentage what part of a given \r\nraw EFM bit rate will be available for Ethernet frames. The default value is \r\n97%, which means a typical overhead of 3% for EFM Encapsulation.\r\n\r\nThe enable alignment is used to enable or disable the DSCP to P-bits alignment \r\nfor all the L3 forwarded traffic.\r\n\r\nThe Global CAC-mode selection switch determines whether Connection Admission \r\nControl relies on the guaranteed sync rate or the actual line rate of the \r\nphysical interface.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by \r\noperators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos [ no atm-overhead-fact | atm-overhead-fact <Qos::AtmFactor> ] [ \r\nno eth-efm-fact | eth-efm-fact <Qos::EthEfmFactor> ] [ [ no ] enable-alignment \r\n] [ no cac-mode | cac-mode <Qos::CacMode> ] [ [ no ] use-dei ] [ [ no ] set-dei \r\n]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] atm-overhead-fact     over head factor introduced by atm layer\r\n                           optional parameter with default value: 85\r\n\r\n                           Parameter type: <Qos::AtmFactor>\r\n                           Format:\r\n                           - over head factor introduced by atm layer\r\n                           - unit: %\r\n                           - range: [1...100]\r\n\r\n[no] eth-efm-fact          value to estimate bandwidth overhead inserted by efm \r\nlayer\r\n                           optional parameter with default value: 97\r\n\r\n                           Parameter type: <Qos::EthEfmFactor>\r\n                           Format:\r\n                           - value to estimate bandwidth overhead inserted by \r\nefm layer\r\n                           - unit: %\r\n                           - range: [1...100]\r\n\r\n[no] enable-alignment      DSCP to P-bit alignment for all forwarded L3 traffic\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] cac-mode              This object stores an global CAC mode selection \r\nswitch\r\n                           optional parameter with default value: \"msr\"\r\n\r\n                           Parameter type: <Qos::CacMode>\r\n                           Format:\r\n                           ( nocac\r\n                           | msr\r\n                           | alr )\r\n                           Possible values:\r\n                           - nocac                 : no cac in system\r\n                           - msr                   : base on minimum \r\nsynchronized rate\r\n                           - alr                   : base on actual line rate\r\n\r\n[no] use-dei               Enable global control of DEI aware\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] set-dei               Enable global control of DEI remark\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,106 @@
+help configure alarm delta-log
+ALARM DELTA LOG CONFIGURATION COMMAND
+=====================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the action of the system when the 
+alarm log buffer is full.
+
+If the action is set to wrap, older log records are overwritten by recent 
+records. If the action is set to halt, logging is stopped until the log buffer 
+is reset.
+
+
+User Level
+----------
+
+The command can be accessed by operators with alarm privileges, and executed by 
+operators with alarm privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure alarm delta-log [ indet-log-full-action 
+<Alarm::alarmDeltaLogFullAction> ] [ warn-log-full-action 
+<Alarm::alarmDeltaLogFullAction> ] [ minor-log-full-action 
+<Alarm::alarmDeltaLogFullAction> ] [ major-log-full-action 
+<Alarm::alarmDeltaLogFullAction> ] [ crit-log-full-act 
+<Alarm::alarmDeltaLogFullAction> ]
+
+Command Parameters
+------------------
+
+Table "Alarm Delta Log Configuration Command" Command Parameters
+
+Parameter                  Description
+
+indet-log-full-action      set the action when indeterminate log buffer is full
+                           optional parameter
+
+                           Parameter type: <Alarm::alarmDeltaLogFullAction>
+                           Format:
+                           ( wrap
+                           | halt )
+                           Possible values:
+                           - wrap                  : wrap around when log is 
+full
+                           - halt                  : halt logging when log is 
+full
+
+warn-log-full-action       set the action when warn delta log buffer is full
+                           optional parameter
+
+                           Parameter type: <Alarm::alarmDeltaLogFullAction>
+                           Format:
+                           ( wrap
+                           | halt )
+                           Possible values:
+                           - wrap                  : wrap around when log is 
+full
+                           - halt                  : halt logging when log is 
+full
+
+minor-log-full-action      set the action when minor delta log buffer is full
+                           optional parameter
+
+                           Parameter type: <Alarm::alarmDeltaLogFullAction>
+                           Format:
+                           ( wrap
+                           | halt )
+                           Possible values:
+                           - wrap                  : wrap around when log is 
+full
+                           - halt                  : halt logging when log is 
+full
+
+major-log-full-action      set action when major delta log buffer is full
+                           optional parameter
+
+                           Parameter type: <Alarm::alarmDeltaLogFullAction>
+                           Format:
+                           ( wrap
+                           | halt )
+                           Possible values:
+                           - wrap                  : wrap around when log is 
+full
+                           - halt                  : halt logging when log is 
+full
+
+crit-log-full-act          set action when critical delta log buffer is full
+                           optional parameter
+
+                           Parameter type: <Alarm::alarmDeltaLogFullAction>
+                           Format:
+                           ( wrap
+                           | halt )
+                           Possible values:
+                           - wrap                  : wrap around when log is 
+full
+                           - halt                  : halt logging when log is 
+full
+
+
+DS-LIN-TEST-01:automationuser>#

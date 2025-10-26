@@ -1,0 +1,23 @@
+# Using deleted state
+
+# Before state:
+# =============
+#
+# Run on device to capture current settings for this resource:
+#    info configure interface cage
+# Example output:
+#    operational-mode dual-gpon
+
+- name: Delete interface cage configuration
+  isam_interface_cage:
+    state: deleted
+    config:
+      - name: "1/1"
+
+# After state:
+# ============
+#
+# Re-run the same info command to show the effect:
+#    info configure interface cage
+# Expected output:
+#    (configuration removed, interface returns to default state)

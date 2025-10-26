@@ -1,0 +1,5 @@
+help configure alarm entry sfu-sup-cfg-dnld-fail
+ ! SFU ONT
+                                                                                 ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

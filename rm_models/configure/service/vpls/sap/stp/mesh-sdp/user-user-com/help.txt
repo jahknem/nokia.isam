@@ -1,0 +1,5 @@
+help configure service vpls sap stp mesh-sdp use
+r-user-com
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

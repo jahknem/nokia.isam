@@ -1,0 +1,4 @@
+help configure pppoe-client default-dot1p
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

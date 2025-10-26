@@ -1,0 +1,27 @@
+-- Overridden example (single-command style): overwrite admin-state and cust-info then revert
+
+DS-LIN-TEST-01:automationuser># info configure ethernet ont 1/1/2/1/1/1/1
+... (before snapshot)
+
+-- single-command to override fields:
+DS-LIN-TEST-01:automationuser># configure ethernet ont 1/1/2/1/1/1/1 admin-state down cust-info OVRD-EX
+DS-LIN-TEST-01:automationuser>configure>ethernet>ont>1/1/2/1/1/1/1#
+
+-- verify after override:
+DS-LIN-TEST-01:automationuser># info configure ethernet ont 1/1/2/1/1/1/1
+ont 1/1/2/1/1/1/1
+  cust-info OVRD-EX
+  auto-detect auto
+exit
+
+-- revert to baseline:
+DS-LIN-TEST-01:automationuser># configure ethernet ont 1/1/2/1/1/1/1 admin-state up cust-info YTest-Proxy
+DS-LIN-TEST-01:automationuser>configure>ethernet>ont>1/1/2/1/1/1/1#
+
+-- final verify restored:
+DS-LIN-TEST-01:automationuser># info configure ethernet ont 1/1/2/1/1/1/1
+ont 1/1/2/1/1/1/1
+  cust-info YTest-Proxy
+  auto-detect auto
+  admin-state up
+exit

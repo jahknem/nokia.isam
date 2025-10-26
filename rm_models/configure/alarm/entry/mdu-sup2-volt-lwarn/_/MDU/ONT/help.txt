@@ -1,0 +1,5 @@
+help configure alarm entry mdu-sup2-volt-lwarn !
+ MDU ONT
+                                                                               ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

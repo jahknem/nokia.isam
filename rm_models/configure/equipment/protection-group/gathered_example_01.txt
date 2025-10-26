@@ -1,0 +1,14 @@
+DS-LIN-TEST-01:automationuser># info configure equipment protection-group
+configure equipment
+#-------------------------------------------------------------------------------
+echo "equipment"
+#-------------------------------------------------------------------------------
+protection-group 1
+  admin-status lock
+exit
+protection-group 33
+  admin-status lock
+  eps-quenchfactor 0
+exit
+#-------------------------------------------------------------------------------
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,5 @@
+help configure service vpls egress egress-networ
+k igmp-snooping ingress-network
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,199 @@
+module: isam_mcast_control_channel
+short_description: Resource module to configure mcast-control channel
+description:
+- This command allows the operator to create and configure the mcast channel parameters.
+- Supports configuration of perm pkg bitmap, max num group, mode and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure mcast-control ()'
+- Parameter C(mode) is marked as obsolete in device documentation
+options:
+  config:
+    description:
+    - A list of mcast-control channel configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (port) - identification of the port, vlanport or virtual channel
+      perm_pkg_bitmap:
+        type: str
+        description:
+        - 'packages, the user is allowed to join with default value: "01 : 00 : 00
+          : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 :
+          00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00
+          : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 :
+          00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00
+          : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 :
+          00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00
+          : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 :
+          00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00
+          : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00" - a binary string - length:
+          128'
+        default: '01 : 00 : 00'
+      max_num_group:
+        type: str
+        description:
+        - 'Max group number this port can support.The value depends on the board type
+          and port type,please refer to the product information document for detail.
+          with default value: 0 - Max group number this port can support.The value
+          depends on the board type and port type,please refer to the product information
+          document for detail. - range: [0...2048]'
+        default: '0'
+      mode:
+        type: str
+        description:
+        - 'protocol mode (ipoe or pppoe) with default value: "ipoe" (cac-disable)
+          bandwidth CAC for pre-configured multicast streams obsolete parameter that
+          will be ignored (ip-anti-spoof-dis) enables IP@ anti-spoofing on this user-interface
+          obsolete parameter that will be ignored'
+        - 'Possible values: C(ipoe) - IPoE mode; C(pppoe) - PPPoE mode; C(cac-disable)
+          - disables bandwidth CAC for conf. streams,default=enable; C(cac) - enables
+          bandwidth CAC for conf. streams,default=enable; C(ip-anti-spoof-dis) - disables
+          IP@ anti-spoofing,default=enable; C(ip-anti-spoof) - enables IP@ anti-spoofing,default=enable'
+        default: ipoe
+        choices:
+        - ipoe
+        - pppoe
+        - cac-disable
+        - cac
+        - ip-anti-spoof-dis
+        - ip-anti-spoof
+      igmp_version:
+        type: str
+        description:
+        - 'version of the IGMP protocol with default value: "system-inherited"'
+        - 'Possible values: C(system-inherited) - inherits GMQs to userversion from
+          the system level; C(2) - IGMPV2 GMQs; C(3) - IGMPV3 GMQs'
+        choices:
+        - system-inherited
+        - '2'
+        - '3'
+      mld_version:
+        type: str
+        description:
+        - 'version of the MLD protocol with default value: "system-inherited"'
+        - 'Possible values: C(system-inherited) - inherits GMQs to userversion from
+          the system level; C(1) - MLDV1 GMQs; C(2) - MLDV2 GMQs'
+        choices:
+        - system-inherited
+        - '1'
+        - '2'
+      forking:
+        type: str
+        description:
+        - 'forking status of the IGMP protocol with default value: "system-inherited"'
+        - 'Possible values: C(system-inherited) - inherits forking status from the
+          system level; C(enable) - enable IGMP forking; C(disable) - disable IGMP
+          forking'
+        choices:
+        - system-inherited
+        - enable
+        - disable
+      lt_ont_signaling:
+        type: str
+        description:
+        - 'lt to ont signaling parameter with default value: "inherited"'
+        - 'Possible values: C(enabled) - lt to ont signaling is enabled; C(disabled)
+          - lt to ont signaling is disabled; C(inherited) - inherits lt to ont signaling
+          from the system level'
+        default: inherited
+        choices:
+        - enabled
+        - disabled
+        - inherited
+      mc_pbit_value:
+        type: str
+        description:
+        - 'default P-bit value to be used by the ONT on the UNI-side for downstream
+          multicast traffic towards subscribers with default value: 8 - default P-bit
+          value to be used by the ONT on the UNI-side for downstream multicast traffic
+          towards subscribers - range: [0...8]'
+        default: '8'
+      mcast_vlan_id:
+        type: str
+        description:
+        - 'vlan selection for multicast channel with default value: 0 - vlan selection
+          value - range: [0...4093]'
+        default: '0'
+      mc_vlan_xlate:
+        type: str
+        description:
+        - 'to enable or disable mcast vlan translation with default value: "disabled"'
+        - 'Possible values: C(enabled) - allow mcast vlan translation; C(disabled)
+          - disallow mcast vlan translation'
+        default: disabled
+        choices:
+        - enabled
+        - disabled
+      mcast_svc_context:
+        type: str
+        description:
+        - 'Multicast Service Context Name with default value: "default"'
+        - 'Possible values: C(default) - Default profile is associated; C(name) -
+          Name of the multicast service context profile Data driven field type Possible
+          values are depending on the actual configuration and software. The currently
+          allowed values can be shown with online-help.'
+        default: default
+        choices:
+        - default
+        - name
+      max_msg_rate:
+        type: str
+        description:
+        - 'Default value 0 indicates that the value is inherited from what is set
+          in the system wide setting using command - configure qos dsl-ctrl-pkt-policer
+          sustained-rate [1...64] burst-size [1...128] with default value: 0 - Maximum
+          number of Upstream IGMP messages that can be received on this IGMP channel
+          - unit: messages/second - range: [0...256]'
+        default: '0'
+      ip_version:
+        type: str
+        description:
+        - 'the protocol the user want to use, IGMP(ipv4) or MLD(ipv6). with default
+          value: "ipv4"'
+        - 'Possible values: C(ipv4) - support IGMP; C(ipv6) - support MLD'
+        default: ipv4
+        choices:
+        - ipv4
+        - ipv6
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure mcast-control channel)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

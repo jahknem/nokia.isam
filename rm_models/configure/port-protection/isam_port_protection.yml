@@ -1,0 +1,77 @@
+module: isam_port_protection
+short_description: Resource module to configure port-protection
+description:
+- 'Configures a protection group on two ports which will then operate in redundancy.
+  The system will decide which port of the two becomes active. In case of failure
+  of one port the other port will take over. A forced switchover can also be triggered
+  manually by the operator. The port protection group is identified by the first port
+  in the group that is intended to be protected. The following parameters can be configured
+  for the protection group : - paired-port: the paired port that will ensure the protection
+  of the first one.'
+- Supports configuration of paired port
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure port-protection ()'
+options:
+  config:
+    description:
+    - A list of port-protection configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (port) - the port identifier of the first port in the protection group
+      paired_port:
+        type: str
+        description:
+        - the port identifier of the paired port in the protection group mandatory
+          parameter
+        - 'Possible values: C(pon) - pon-aid Field type <Eqpt::RackId>; C(the rack
+          number Field type <Eqpt) - :ShelfId>; C(the shelf number Field type <Eqpt)
+          - :SlotId>; C(the LT slot number Field type <Eqpt) - :PonId>'
+        choices:
+        - pon
+        - the rack number Field type <Eqpt
+        - the shelf number Field type <Eqpt
+        - the LT slot number Field type <Eqpt
+        - the PON identifier
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure port-protection)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

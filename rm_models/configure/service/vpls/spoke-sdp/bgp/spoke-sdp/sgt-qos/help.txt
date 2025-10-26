@@ -1,0 +1,5 @@
+help configure service vpls spoke-sdp bgp spoke-
+sdp sgt-qos
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

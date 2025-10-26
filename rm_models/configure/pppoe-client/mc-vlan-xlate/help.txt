@@ -1,0 +1,4 @@
+help configure pppoe-client mc-vlan-xlate
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

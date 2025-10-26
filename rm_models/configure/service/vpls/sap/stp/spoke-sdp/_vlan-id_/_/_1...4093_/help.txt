@@ -1,0 +1,5 @@
+help configure service vpls sap stp spoke-sdp <v
+lan-id> : [1...4093]
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

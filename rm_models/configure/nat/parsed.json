@@ -1,0 +1,16 @@
+{
+  "title": "NAPT AGING-TIME CONFIGURATION COMMAND",
+  "description": "This command is used to provision the aging time for the nat table.",
+  "user_level": "The command can be accessed by operators with xdsl privileges, and executed by \noperators with xdsl privileges.",
+  "syntax": "> configure nat [ no aging-time | aging-time <CWMP::AgingTime> ]",
+  "resource_parameters": [],
+  "command_parameters": [
+    {
+      "name": "[no] aging-time",
+      "description": "the aging time for the napt record. optional parameter with default value: 120 - The range of the value is [60s, 240s], the default value is 120 seconds. - range: [60...240]",
+      "type": "<CWMP::AgingTime>",
+      "default": "120"
+    }
+  ],
+  "raw": "help configure nat\r\nNAPT AGING-TIME CONFIGURATION COMMAND\r\n=====================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command is used to provision the aging time for the nat table.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with xdsl privileges, and executed by \r\noperators with xdsl privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure nat [ no aging-time | aging-time <CWMP::AgingTime> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"NAPT aging-time configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] aging-time            the aging time for the napt record.\r\n                           optional parameter with default value: 120\r\n\r\n                           Parameter type: <CWMP::AgingTime>\r\n                           Format:\r\n                           - The range of the value is [60s, 240s], the default \r\nvalue is 120 seconds.\r\n                           - range: [60...240]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

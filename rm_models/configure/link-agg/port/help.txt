@@ -1,0 +1,59 @@
+help configure link-agg port
+LACP PORT CONFIGURATION COMMAND
+===============================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the link aggregation port 
+parameters.
+
+
+User Level
+----------
+
+The command can be accessed by operators with lacp privileges, and executed by 
+operators with lacp privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure link-agg port (port) [ [ no ] passive-lacp ] [ [ no ] short-timeout 
+] [ no actor-port-prio | actor-port-prio <Lacp::ActorPortPriority> ]
+
+Command Parameters
+------------------
+
+Table "LACP port configuration command" Resource Parameters
+
+Resource Identifier        Description
+
+(port)                     interface index of the port
+
+Table "LACP port configuration command" Command Parameters
+
+Parameter                  Description
+
+[no] passive-lacp          set lacp inactive for the actor
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] short-timeout         short timeout for the lacp protocol
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] actor-port-prio       port priority for the actor
+                           optional parameter with default value: "1"
+
+                           Parameter type: <Lacp::ActorPortPriority>
+                           Format:
+                           - la aggregate port priority
+                           - range: [0...65535]
+
+
+DS-LIN-TEST-01:automationuser>#

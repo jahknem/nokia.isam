@@ -1,0 +1,5 @@
+help configure filter ip-filter <create> : keywo
+rd
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,28 @@
+help configure mcast-control ipv6
+MLD VLAN SYSTEM CONFIGURATION COMMAND
+=====================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the MLD parameters on a per Vlan 
+basis.
+
+
+User Level
+----------
+
+The command can be accessed by operators with igmp privileges, and executed by 
+operators with igmp privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure mcast-control ipv6
+
+Command Parameters
+------------------
+
+none
+DS-LIN-TEST-01:automationuser>#

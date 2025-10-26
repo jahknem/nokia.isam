@@ -1,0 +1,5 @@
+help configure router interface ingress arp-time
+out
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

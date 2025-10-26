@@ -1,0 +1,464 @@
+DS-LIN-TEST-01:automationuser># info configure bridge port
+configure bridge
+#-------------------------------------------------------------------------------
+echo "bridge"
+#-------------------------------------------------------------------------------
+port 1/1/2/1/1/1/1
+  max-unicast-mac 5
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 710
+    vlan-scope local
+  exit
+  vlan-id 20
+    tag single-tagged
+    l2fwder-vlan 720
+    vlan-scope local
+    qos priority:5
+  exit
+  vlan-id 30
+    tag single-tagged
+    l2fwder-vlan 730
+    vlan-scope local
+    qos priority:4
+  exit
+  vlan-id 99
+  exit
+  pvid 99
+exit
+port 1/1/5/1/1/1/1
+  max-unicast-mac 5
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 110
+    vlan-scope local
+  exit
+  vlan-id 20
+    tag single-tagged
+    l2fwder-vlan 120
+    vlan-scope local
+    qos priority:5
+  exit
+  vlan-id 30
+    tag single-tagged
+    l2fwder-vlan 731
+    vlan-scope local
+    qos priority:4
+  exit
+  vlan-id 99
+  exit
+  pvid 99
+exit
+port 1/1/5/1/3/1/1
+  max-unicast-mac 5
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 631
+    vlan-scope local
+  exit
+  vlan-id 20
+    tag single-tagged
+    l2fwder-vlan 699
+    vlan-scope local
+    qos priority:5
+  exit
+  vlan-id 30
+    tag single-tagged
+    l2fwder-vlan 730
+    vlan-scope local
+    qos priority:4
+  exit
+  vlan-id 99
+  exit
+  vlan-id 199
+    tag single-tagged
+    static-user
+      ip-address 10.9.40.7/32
+      exit
+      ip-address 10.9.40.8/32
+      exit
+      ip-address 10.9.40.9/32
+      exit
+      ip-address 10.9.40.10/32
+      exit
+      ip-address 10.9.40.11/32
+      exit
+      ip-address 10.9.40.12/32
+      exit
+      ip-address 10.9.40.13/32
+      exit
+      ip-address 10.9.40.14/32
+      exit
+      ip-address 10.9.40.15/32
+      exit
+      ip-address 10.9.40.18/32
+      exit
+      ip-address 10.9.40.20/32
+      exit
+      ip-address 10.9.40.35/32
+      exit
+      ip-address 10.9.40.36/32
+      exit
+      ip-address 10.9.40.37/32
+      exit
+      ip-address 10.9.40.38/32
+      exit
+      ip-address 10.9.40.39/32
+      exit
+      ip-address 10.9.40.43/32
+      exit
+      ip-address 10.9.40.44/32
+      exit
+      ip-address 10.9.40.47/32
+      exit
+      ip-address 10.9.40.48/32
+      exit
+      ip-address 10.9.40.49/32
+      exit
+      ip-address 10.9.40.50/32
+      exit
+      ip-address 10.9.40.53/32
+      exit
+      ip-address 10.9.40.57/32
+      exit
+      ip-address 10.9.40.58/32
+      exit
+      ip-address 10.9.40.59/32
+      exit
+      ip-address 10.9.40.60/32
+      exit
+    exit
+  exit
+  pvid 99
+exit
+port 1/1/5/1/4/1/1
+  max-unicast-mac 5
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 110
+    vlan-scope local
+  exit
+  vlan-id 20
+    tag single-tagged
+    l2fwder-vlan 120
+    vlan-scope local
+    qos priority:5
+  exit
+  vlan-id 30
+    tag single-tagged
+    l2fwder-vlan 731
+    vlan-scope local
+    qos priority:4
+  exit
+  vlan-id 99
+  exit
+  pvid 99
+exit
+port 1/1/5/1/5/1/1
+  max-unicast-mac 5
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 629
+    vlan-scope local
+  exit
+  vlan-id 20
+    tag single-tagged
+    l2fwder-vlan 699
+    vlan-scope local
+    qos priority:5
+  exit
+  vlan-id 30
+    tag single-tagged
+    l2fwder-vlan 731
+    vlan-scope local
+    qos priority:4
+  exit
+exit
+port 1/1/5/1/6/1/1
+  max-unicast-mac 5
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 410
+    vlan-scope local
+  exit
+  vlan-id 99
+  exit
+  pvid 99
+exit
+port 1/1/5/1/7/1/1
+  max-unicast-mac 5
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 110
+    vlan-scope local
+  exit
+  vlan-id 20
+    tag single-tagged
+    l2fwder-vlan 120
+    vlan-scope local
+    qos priority:5
+  exit
+  vlan-id 30
+    tag single-tagged
+    l2fwder-vlan 731
+    vlan-scope local
+    qos priority:4
+  exit
+  vlan-id 99
+  exit
+  pvid 99
+exit
+port 1/1/5/1/8/1/1
+  max-unicast-mac 5
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 110
+    vlan-scope local
+  exit
+  vlan-id 20
+    tag single-tagged
+    l2fwder-vlan 120
+    vlan-scope local
+    qos priority:5
+  exit
+  vlan-id 30
+    tag single-tagged
+    l2fwder-vlan 731
+    vlan-scope local
+    qos priority:4
+  exit
+  vlan-id 99
+  exit
+  pvid 99
+exit
+port 1/1/5/1/9/1/1
+  max-unicast-mac 5
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 710
+    vlan-scope local
+  exit
+  vlan-id 20
+    tag single-tagged
+    l2fwder-vlan 720
+    vlan-scope local
+    qos priority:5
+  exit
+  vlan-id 30
+    tag single-tagged
+    l2fwder-vlan 730
+    vlan-scope local
+    qos priority:4
+  exit
+  vlan-id 99
+  exit
+  pvid 99
+exit
+port 1/1/5/1/11/1/1
+  max-unicast-mac 5
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 711
+    vlan-scope local
+  exit
+  vlan-id 20
+    tag single-tagged
+    l2fwder-vlan 720
+    vlan-scope local
+    qos priority:5
+  exit
+  vlan-id 30
+    tag single-tagged
+    l2fwder-vlan 731
+    vlan-scope local
+    qos priority:4
+  exit
+  vlan-id 99
+  exit
+  pvid 99
+exit
+port 1/1/5/1/12/1/1
+  max-unicast-mac 5
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 710
+    vlan-scope local
+  exit
+  vlan-id 20
+    tag single-tagged
+    l2fwder-vlan 720
+    vlan-scope local
+    qos priority:5
+  exit
+  vlan-id 30
+    tag single-tagged
+    l2fwder-vlan 730
+    vlan-scope local
+    qos priority:4
+  exit
+  vlan-id 99
+  exit
+  pvid 99
+exit
+port 1/1/5/1/13/1/1
+  max-unicast-mac 5
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 710
+    vlan-scope local
+  exit
+  vlan-id 20
+    tag single-tagged
+    l2fwder-vlan 720
+    vlan-scope local
+    qos priority:5
+  exit
+  vlan-id 30
+    tag single-tagged
+    l2fwder-vlan 730
+    vlan-scope local
+    qos priority:4
+  exit
+  vlan-id 99
+  exit
+  pvid 99
+exit
+port 1/1/5/1/14/1/1
+  max-unicast-mac 5
+  vlan-id 20
+    tag single-tagged
+    l2fwder-vlan 720
+    vlan-scope local
+    qos priority:5
+  exit
+  vlan-id 30
+    tag single-tagged
+    l2fwder-vlan 730
+    vlan-scope local
+    qos priority:4
+  exit
+  vlan-id 99
+  exit
+  vlan-id 132
+    tag single-tagged
+    l2fwder-vlan stacked:552:3
+    vlan-scope local
+  exit
+  pvid 99
+exit
+port 1/1/5/1/15/1/1
+  max-unicast-mac 5
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 410
+    vlan-scope local
+  exit
+  vlan-id 20
+    tag single-tagged
+    l2fwder-vlan 720
+    vlan-scope local
+    qos priority:5
+  exit
+  vlan-id 30
+    tag single-tagged
+    l2fwder-vlan 730
+    vlan-scope local
+    qos priority:4
+  exit
+  vlan-id 99
+  exit
+  pvid 99
+exit
+port 1/1/5/1/16/1/1
+  max-unicast-mac 5
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 110
+    vlan-scope local
+  exit
+  vlan-id 20
+    tag single-tagged
+    l2fwder-vlan 120
+    vlan-scope local
+    qos priority:5
+  exit
+  vlan-id 30
+    tag single-tagged
+    l2fwder-vlan 731
+    vlan-scope local
+    qos priority:4
+  exit
+  vlan-id 99
+  exit
+  pvid 99
+exit
+port 1/1/5/1/17/1/1
+  max-unicast-mac 5
+  vlan-id 7
+    tag single-tagged
+    l2fwder-vlan 1700
+    vlan-scope local
+  exit
+  vlan-id 1000
+  exit
+  pvid 1000
+exit
+port 1/1/5/1/18/1/1
+  max-unicast-mac 5
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 710
+    vlan-scope local
+  exit
+  vlan-id 99
+  exit
+  pvid 99
+exit
+port 1/1/5/2/1/1/1
+  max-unicast-mac 5
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 110
+    vlan-scope local
+  exit
+  vlan-id 20
+    tag single-tagged
+    l2fwder-vlan 120
+    vlan-scope local
+    qos priority:5
+  exit
+  vlan-id 30
+    tag single-tagged
+    l2fwder-vlan 731
+    vlan-scope local
+    qos priority:4
+  exit
+  vlan-id 99
+  exit
+  pvid 99
+exit
+port 1/1/5/3/1/1/1
+  max-unicast-mac 5
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 710
+    vlan-scope local
+  exit
+  vlan-id 20
+    tag single-tagged
+    l2fwder-vlan 720
+    vlan-scope local
+    qos priority:5
+  exit
+  vlan-id 30
+    tag single-tagged
+    l2fwder-vlan 730
+    vlan-scope local
+    qos priority:4
+  exit
+  vlan-id 99
+  exit
+  pvid 99
+exit
+#-------------------------------------------------------------------------------
+DS-LIN-TEST-01:automationuser>#
