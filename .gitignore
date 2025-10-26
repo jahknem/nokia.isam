@@ -148,4 +148,4 @@ hosts.ini
 playbook.yml
 
 
-docs/documents
+docs/documentsrm_models/cli_tree.json
