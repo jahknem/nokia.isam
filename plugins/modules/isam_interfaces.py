@@ -1,4 +1,4 @@
-#!/usr/bin/python
+1#!/usr/bin/python
 # -*- coding: utf-8 -*-
 # Copyright 2022 Red Hat
 # GNU General Public License v3.0+
