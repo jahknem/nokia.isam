@@ -1,0 +1,4 @@
+-- Rendered CLI (single-command example, rendering what would be sent):
+configure ethernet ont 1/1/2/1/1/1/1 cust-info "TEMP-EXAMPLE"
+
+(This file shows the single rendered command that would be executed by the module in state=rendered.)

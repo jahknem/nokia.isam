@@ -1,0 +1,9 @@
+help configure alarm entry sfu-ploam-loss-sig ! 
+SFU ONT
+                                                                              ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:00:01 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 18:59:59 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

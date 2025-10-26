@@ -1,0 +1,14 @@
+{
+  "title": "QOS DOT1P REMARK TABLE MARKER CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a marker for a Dot1P Remark \ntable. To configure the Dot1P Remark value in remark table, the command \n\"configure qos profiles marker dot1p-remark (name) dot1p-value (val) \nremark-value (val)\" is to be used.",
+  "user_level": "The command can be accessed by operators with qos privileges, and executed by op\nerators with qos privileges.",
+  "syntax": "> configure qos profiles marker ( no dot1p-remark (name) ) | ( dot1p-remark (name) )",
+  "resource_parameters": [
+    {
+      "name": "(name)",
+      "description": "A unique profile name"
+    }
+  ],
+  "command_parameters": [],
+  "raw": "help configure qos profiles marker dot1p-remark\r\nQOS DOT1P REMARK TABLE MARKER CONFIGURATION COMMAND\r\n===================================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a marker for a Dot1P Remark \r\ntable. To configure the Dot1P Remark value in remark table, the command \r\n\"configure qos profiles marker dot1p-remark (name) dot1p-value (val) \r\nremark-value (val)\" is to be used.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by op\r\nerators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos profiles marker ( no dot1p-remark (name) ) | ( dot1p-remark \r\n(name) )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS Dot1P Remark Table Marker Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(name)                     A unique profile name\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

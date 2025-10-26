@@ -1,0 +1,69 @@
+{
+  "title": "EFM OAM INTERFACE CONFIGURATIONCOMMAND",
+  "description": "This command will allow the operator to enable/disable EFM OAM on the specified \nEthernet-like interface and configure the mode, alive timer and response timer \nintervals. In addition also the internal traffic generator data applicable to \nthis interface can be configured.",
+  "user_level": "The command can be accessed by operators with transport privileges, and \nexecuted by operators with transport privileges.",
+  "syntax": "> configure efm-oam interface (interface) [ [ no ] admin-up ] [ [ no ] passive-mode ] [ no keep-alive-intvl | keep-alive-intvl <Ether::KeepAliveTimeTicks> ] [ no response-intvl | response-intvl <Ether::ResponseTimeTicks> ] [ data-length <Ether::TraffGenDataLengthType> ] [ bitrate <Ether::TraffGenBitRateType> ] [ smac <Ether::MacAddr> ] [ dmac <Ether::MacAddr> ]",
+  "resource_parameters": [
+    {
+      "name": "(interface)",
+      "description": "identification of EFM port / Ethernet port"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] admin-up",
+      "description": "enable efm oam optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] passive-mode",
+      "description": "oam mode is passive optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] keep-alive-intvl",
+      "description": "keep alive time interval optional parameter with default value: 300 - a timeout value expressed in seconds - unit: seconds - range: [1...300]",
+      "type": "<Ether::KeepAliveTimeTicks>",
+      "default": "300"
+    },
+    {
+      "name": "[no] response-intvl",
+      "description": "variable response interval optional parameter with default value: 5 - a timeout value expressed in seconds - unit: seconds - range: [2...10]",
+      "type": "<Ether::ResponseTimeTicks>",
+      "default": "5"
+    },
+    {
+      "name": "data-length",
+      "description": "Internal traffic generator data: Length of datafield, in bytes, of the to be generated test traffic. Must be a value from 1 up to 1500. obsolete parameter that will be ignored -  A value of 1 up to 1500. Indicates length in bytes. - unit: byte - range: [1...1500]",
+      "type": "<Ether::TraffGenDataLengthType>",
+      "obsolete": true
+    },
+    {
+      "name": "bitrate",
+      "description": "Internal traffic generator data: Bitrate of the to b e generated test traffic. obsolete parameter that will be ignored",
+      "type": "<Ether::TraffGenBitRateType>",
+      "format": "( 100k                            | 1m                            | 10m                            | 100m                            | 1g )",
+      "values": [
+        "100k                  : bitrate = 100K bit/sec",
+        "1m                    : bitrate = 1M bit/sec",
+        "10m                   : bitrate = 10M bit/sec",
+        "100m                  : bitrate = 100M bit/sec",
+        "1g                    : bitrate = 1G bit/sec"
+      ],
+      "obsolete": true
+    },
+    {
+      "name": "smac",
+      "description": "Internal traffic generator data: source MAC address. obsolete parameter that will be ignored - mac address (aa:bb:cc:a1:02:03) - length: 6",
+      "type": "<Ether::MacAddr>",
+      "obsolete": true
+    },
+    {
+      "name": "dmac",
+      "description": "Internal traffic generator data: destination MAC address. obsolete parameter that will be ignored - mac address (aa:bb:cc:a1:02:03) - length: 6 DS-LIN-TEST-01:automationuser>#",
+      "type": "<Ether::MacAddr>",
+      "obsolete": true
+    }
+  ],
+  "raw": "help configure efm-oam interface\r\nEFM OAM INTERFACE CONFIGURATIONCOMMAND\r\n======================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command will allow the operator to enable/disable EFM OAM on the specified \r\nEthernet-like interface and configure the mode, alive timer and response timer \r\nintervals. In addition also the internal traffic generator data applicable to \r\nthis interface can be configured.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with transport privileges, and \r\nexecuted by operators with transport privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure efm-oam interface (interface) [ [ no ] admin-up ] [ [ no ] \r\npassive-mode ] [ no keep-alive-intvl | keep-alive-intvl \r\n<Ether::KeepAliveTimeTicks> ] [ no response-intvl | response-intvl \r\n<Ether::ResponseTimeTicks> ] [ data-length <Ether::TraffGenDataLengthType> ] [ \r\nbitrate <Ether::TraffGenBitRateType> ] [ smac <Ether::MacAddr> ] [ dmac \r\n<Ether::MacAddr> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Efm Oam Interface ConfigurationCommand\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(interface)                identification of EFM port / Ethernet port\r\n\r\nTable \"Efm Oam Interface ConfigurationCommand\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] admin-up              enable efm oam\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] passive-mode          oam mode is passive\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] keep-alive-intvl      keep alive time interval\r\n                           optional parameter with default value: 300\r\n\r\n                           Parameter type: <Ether::KeepAliveTimeTicks>\r\n                           Format:\r\n                           - a timeout value expressed in seconds\r\n                           - unit: seconds\r\n                           - range: [1...300]\r\n\r\n[no] response-intvl        variable response interval\r\n                           optional parameter with default value: 5\r\n\r\n                           Parameter type: <Ether::ResponseTimeTicks>\r\n                           Format:\r\n                           - a timeout value expressed in seconds\r\n                           - unit: seconds\r\n                           - range: [2...10]\r\n\r\ndata-length                 Internal traffic generator data: Length of \r\ndatafield, in bytes, of the to be generated test traffic. Must be a value from \r\n1 up to 1500.\r\n                           obsolete parameter that will be ignored\r\n\r\n                           Parameter type: <Ether::TraffGenDataLengthType>\r\n                           Format:\r\n                           -  A value of 1 up to 1500. Indicates length in \r\nbytes. \r\n                           - unit: byte\r\n                           - range: [1...1500]\r\n\r\nbitrate                     Internal traffic generator data: Bitrate of the to b\r\ne generated test traffic.\r\n                           obsolete parameter that will be ignored\r\n\r\n                           Parameter type: <Ether::TraffGenBitRateType>\r\n                           Format:\r\n                           ( 100k\r\n                           | 1m\r\n                           | 10m\r\n                           | 100m\r\n                           | 1g )\r\n                           Possible values:\r\n                           - 100k                  : bitrate = 100K bit/sec\r\n                           - 1m                    : bitrate = 1M bit/sec\r\n                           - 10m                   : bitrate = 10M bit/sec\r\n                           - 100m                  : bitrate = 100M bit/sec\r\n                           - 1g                    : bitrate = 1G bit/sec\r\n\r\nsmac                        Internal traffic generator data: source MAC address.\r\n                           obsolete parameter that will be ignored\r\n\r\n                           Parameter type: <Ether::MacAddr>\r\n                           Format:\r\n                           - mac address (aa:bb:cc:a1:02:03)\r\n                           - length: 6 \r\n\r\ndmac                        Internal traffic generator data: destination MAC \r\naddress.\r\n                           obsolete parameter that will be ignored\r\n\r\n                           Parameter type: <Ether::MacAddr>\r\n                           Format:\r\n                           - mac address (aa:bb:cc:a1:02:03)\r\n                           - length: 6 \r\n\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 19:10:59 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 19:10:59 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:10:46 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

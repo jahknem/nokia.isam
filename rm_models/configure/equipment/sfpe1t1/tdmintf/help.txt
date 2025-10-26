@@ -1,0 +1,60 @@
+help configure equipment sfpe1t1 tdmintf
+2XE1/DS1 PSEUDO WIRE TDM INTERFACE CONFIGURATION COMMAND
+========================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure PWTDM interface parameters on the 
+2xE1/DS1 sfp:
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment sfpe1t1 tdmintf (position) [ no window-number | 
+window-number <Eqpt::WindowNumber> ] [ no window-length | window-length 
+<Eqpt::Windowlength> ]
+
+Command Parameters
+------------------
+
+Table "2xE1/DS1 Pseudo Wire TDM Interface configuration Command" Resource 
+Parameters
+
+Resource Identifier        Description
+
+(position)                 the physical sfp cage position
+
+Table "2xE1/DS1 Pseudo Wire TDM Interface configuration Command" Command 
+Parameters
+
+Parameter                  Description
+
+[no] window-number         window number can be configured from 0 to 255, 
+selecting value 0 sets default value
+                           optional parameter with default value: "20"
+
+                           Parameter type: <Eqpt::WindowNumber>
+                           Format:
+                           - window-number range 
+                           - range: [0...255]
+
+[no] window-length         window number can be configured from 0 to 255, 
+selecting value 0 sets default value, units multiple of 10 milliseconds  
+                           optional parameter with default value: "10"
+
+                           Parameter type: <Eqpt::Windowlength>
+                           Format:
+                           - window-length  range 
+                           - range: [0...255]
+
+
+DS-LIN-TEST-01:automationuser>#

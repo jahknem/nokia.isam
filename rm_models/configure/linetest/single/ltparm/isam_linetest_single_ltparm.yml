@@ -1,0 +1,135 @@
+module: isam_linetest_single_ltparm
+short_description: Resource module to configure linetest single ltparm
+description:
+- This command allows the operator to manage single linetest parameters.
+- Supports configuration of value1, value2, value3 and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure linetest single ltparm ()'
+options:
+  config:
+    description:
+    - A list of linetest single ltparm configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (sessionid) - uniquely identify of session test-name(unit)            test
+          type
+      value1:
+        type: str
+        description:
+        - 'test parameter value1 - parameter value required for the execution of the
+          \r\nspecified test type.\r\n<resistance tr/rt(ohm)>:\r\n| Meaning: allows
+          to configure whether it is required \r\n| to test the ''signature'' or not.\r\n|
+          Applicability : MELT only.\r\n| Range: No(0) | Yes(1)\r\n| Default: No(0)\r\n<impedance
+          tr/tg/rg(ohm)>:\r\n| Meaning: allows to configure the frequency the test
+          \r\n| must run with.\r\n| Range: 5~3000\r\n| Default: 20 Unit: Hz\r\n<status-monitored>:\r\n|
+          Meaning: allows to configure whether to check real \r\n| parking or short
+          current state.\r\n| Range: No(1) | Yes(2)\r\n| No default value.\r\n<cable-pair-ident>:\r\n|
+          Meaning: allows to configure the frequency the test \r\n| must run with.\r\n|
+          Applicability : MELT only.\r\n| Range: 300~3400\r\n| Default: 800 Unit:
+          Hz\r\n| For SHDSL, only 800 Hz (default) and 1000 Hz are \r\n| supported.\r\n<p-meter-pulse-sub>:\r\n|
+          Meaning: allows to configure the metering mode.\r\n| Range: 1 TAPI_METER_MODE_TTX\r\n|
+          2 TAPI_METER_MODE_REVPOL\r\n| No default value.\ r\n<dpdtmf-signal-sub>:\r\n|
+          Meaning: allows to configure the number of signals\r\n| to be gathered.\r\n|
+          Range: 1~20\r\n| No default value.\r\n<isdn-pra-locallb / cablelb>:\r\n|
+          Meaning: allows to configure the test pattern to be \r\n| used for the loopback
+          test.\r\n| If no input is given, a ''Pseudo-random'' pattern is \r\n| defined
+          and applied by the system.\r\n| If an input is given (value in the range
+          0~254), the \r\n| value defines the pattern (range 0x00~0xFE) to be used
+          \r\n| for the loopback test.\r\n| Range: 0~254\r\n| Default: ''Pseudo-random''
+          pattern (no input given)\r\n<cas-r2-locallb / cablelb>:\r\n| Meaning: allows
+          to configure the test pattern to be \r\n| used for the loopback test.\r\n|
+          If no input is given, a ''Pseudo-random'' pattern is \r\n| defined and applied
+          by the system.\r\n| If an input is given (value in the range 0~254), the
+          \r\n| value defines the pattern (range 0x00~0xFE) to be used \r\n| for the
+          loopback test.\r\n| Range: 0~254\r\n| Default: ''Pseudo-random'' pattern
+          (no input given)'
+      value2:
+        type: str
+        description:
+        - 'test parameter value2 - parameter value required for the execution of the
+          \r\nspecified test type.\r\n<impedance tr/tg/rg(ohm)>:\r\n| Meaning: allows
+          to configure the RMS voltage level.\r\n| Range: -150~+150\r\n| Default:
+          15 Unit: V\r\n<cable-pair-ident>:\r\n| Meaning: allows to configure the
+          power level.\r\n| Applicability : MELT only.\r\n| Range: -600~0\r\n| For
+          XDSL, range is -600~-160\r\n| For SHDSL, range is -340~-40\r\n| Default:
+          -160 Unit: 0.1 dbm'
+      value3:
+        type: str
+        description:
+        - test parameter value3 - parameter value3 is actually not used
+      value4:
+        type: str
+        description:
+        - test parameter value4 - parameter value4 is actually not used
+      value5:
+        type: str
+        description:
+        - test parameter value5 - parameter value5 is actually not used
+      min_threshold:
+        type: str
+        description:
+        - 'threshold min of this test type - threshold of the test type - range: [-2147483647...2147483647]'
+      max_threshold:
+        type: str
+        description:
+        - 'threshold max of this test type - threshold of the test type - range: [-2147483647...2147483647]'
+      min_threshold2:
+        type: str
+        description:
+        - 'threshold2 min of this test type - threshold of the test type - range:
+          [-2147483647...2147483647]'
+      max_threshold2:
+        type: str
+        description:
+        - 'threshold2 max of this test type - threshold of the test type - range:
+          [-2147483647...2147483647]'
+      ltstrvalue1:
+        type: str
+        description:
+        - 'test parameter string value1 - string parameter value required for the
+          execution of the \r\nspecified test type.\r\n<diagnosis-call(1/10s)>:\r\n|
+          Meaning: allows to configure destination number.\r\n| Applicability: NBLT
+          only.\r\n| Range: 0~9, *, #.\r\n| No default value.\r\n| Length: 1~16.'
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure linetest single ltparm)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

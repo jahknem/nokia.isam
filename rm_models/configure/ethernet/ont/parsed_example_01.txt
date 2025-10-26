@@ -1,0 +1,18 @@
+-- Parsed example input (running_config) captured from device:
+DS-LIN-TEST-01:automationuser># info configure ethernet ont
+configure ethernet
+#-------------------------------------------------------------------------------
+echo "ethernet"
+#-------------------------------------------------------------------------------
+ont 1/1/2/1/1/1/1
+  cust-info YTest-Proxy
+  auto-detect auto
+  admin-state up
+exit
+ont 1/1/5/1/1/1/1
+  cust-info Y654321
+  auto-detect auto
+  admin-state up
+exit
+... (full running_config captured here can be used as state=parsed input)
+#-------------------------------------------------------------------------------

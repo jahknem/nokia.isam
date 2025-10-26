@@ -1,0 +1,5 @@
+help configure filter ipv6-filter <create> : key
+word
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

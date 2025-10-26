@@ -1,0 +1,5 @@
+help configure service vpls spoke-sdp bgp mac-mo
+ve disable-learni*
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

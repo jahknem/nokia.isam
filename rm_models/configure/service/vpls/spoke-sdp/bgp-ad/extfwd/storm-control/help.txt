@@ -1,0 +1,7 @@
+25/10/26 12:42:12 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># help configure service vpls spoke-sdp bgp-ad ext
+fwd storm-control
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,7 @@
+25/10/26 00:58:58 major alarm occurred for ip-addr 192.168.222.10  : Successful Management login, TimeStamp : 26/10/25 00:58:56 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># help configure service vpls egress eth-ring bgp-
+vpls remote-age
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

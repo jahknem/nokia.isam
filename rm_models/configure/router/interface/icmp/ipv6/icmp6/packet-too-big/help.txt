@@ -1,0 +1,5 @@
+help configure router interface icmp ipv6 icmp6 
+packet-too-big
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

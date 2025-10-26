@@ -1,0 +1,5 @@
+help configure service vpls spoke-sdp bgp sap di
+sable-aging
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

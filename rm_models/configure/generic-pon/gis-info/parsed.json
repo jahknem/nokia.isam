@@ -1,0 +1,63 @@
+{
+  "title": "OLT GIS INFO CONFIGURATION COMMAND",
+  "description": "This command configures the OLT GIS info.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure generic-pon gis-info [ no longitude | longitude <Gpon::OltLongitude> ] [ no latitude | latitude <Gpon::OltLatitude> ] [ no elevation | elevation <Gpon::OltElevation> ] [ no horizontal-error | horizontal-error <Gpon::OltHrzErr> ] [ no altitude-error | altitude-error <Gpon::OltAltErr> ] [ no area-code | area-code <Gpon::OltAreaCode> ] [ no timestamp | timestamp <Gpon::OltTimestamp> ] [ no gis-digest | gis-digest <Gpon::OltGisDigest> ] [ no gis-check | gis-check <Gpon::OltGisCheck> ]",
+  "resource_parameters": [],
+  "command_parameters": [
+    {
+      "name": "[no] longitude",
+      "description": "longitude of GIS info optional parameter with default value: \"0.00000\" - longitude of the GIS info - unit: degree - range: [-180.00000...180.00000]",
+      "type": "<Gpon::OltLongitude>",
+      "default": "0.00000"
+    },
+    {
+      "name": "[no] latitude",
+      "description": "latitude of GIS info optional parameter with default value: \"0.00000\" - latitude of the GIS info - unit: degree - range: [-90.00000...90.00000]",
+      "type": "<Gpon::OltLatitude>",
+      "default": "0.00000"
+    },
+    {
+      "name": "[no] elevation",
+      "description": "elevation of GIS info optional parameter with default value: \"0\" - latitude of the GIS info - unit: meter - range: [-32768...32767]",
+      "type": "<Gpon::OltElevation>",
+      "default": "0"
+    },
+    {
+      "name": "[no] horizontal-error",
+      "description": "horizontal error of GIS info optional parameter with default value: \"0\" - horizontal error of the GIS info - unit: meter - range: [0...65535]",
+      "type": "<Gpon::OltHrzErr>",
+      "default": "0"
+    },
+    {
+      "name": "[no] altitude-error",
+      "description": "altitude error of GIS info optional parameter with default value: \"0\" - altitude error of the GIS info - unit: meter - range: [0...65535]",
+      "type": "<Gpon::OltAltErr>",
+      "default": "0"
+    },
+    {
+      "name": "[no] area-code",
+      "description": "area code of GIS info optional parameter with default value: \"000000000000\" - altitude error of the GIS info - 12 Decimal charaters - length: 12",
+      "type": "<Gpon::OltAreaCode>",
+      "default": "000000000000"
+    },
+    {
+      "name": "[no] timestamp",
+      "description": "timestamp of GIS info optional parameter with default value: \"0\" - the seconds eclapsed since 1970-01-01:00:00:00 - unit: Seconds - range: [0...4294967295]",
+      "type": "<Gpon::OltTimestamp>",
+      "default": "0"
+    },
+    {
+      "name": "[no] gis-digest",
+      "description": "GIS digest of GIS info optional parameter with default value: \"0000000000000000\" - digest of the GIS info - 16 hex characters - length: 16",
+      "type": "<Gpon::OltGisDigest>"
+    },
+    {
+      "name": "[no] gis-check",
+      "description": "GIS digest of GIS info optional parameter with default value: \"0000\" - check of the GIS info - 4 hex characters - length: 4",
+      "type": "<Gpon::OltGisCheck>",
+      "default": "0000"
+    }
+  ],
+  "raw": "help configure generic-pon gis-info\r\nOLT GIS INFO CONFIGURATION COMMAND\r\n==================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command configures the OLT GIS info.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure generic-pon gis-info [ no longitude | longitude \r\n<Gpon::OltLongitude> ] [ no latitude | latitude <Gpon::OltLatitude> ] [ no \r\nelevation | elevation <Gpon::OltElevation> ] [ no horizontal-error | \r\nhorizontal-error <Gpon::OltHrzErr> ] [ no altitude-error | altitude-error \r\n<Gpon::OltAltErr> ] [ no area-code | area-code <Gpon::OltAreaCode> ] [ no \r\ntimestamp | timestamp <Gpon::OltTimestamp> ] [ no gis-digest | gis-digest \r\n<Gpon::OltGisDigest> ] [ no gis-check | gis-check <Gpon::OltGisCheck> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"OLT GIS info Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] longitude             longitude of GIS info\r\n                           optional parameter with default value: \"0.00000\"\r\n\r\n                           Parameter type: <Gpon::OltLongitude>\r\n                           Format:\r\n                           - longitude of the GIS info\r\n                           - unit: degree\r\n                           - range: [-180.00000...180.00000]\r\n\r\n[no] latitude              latitude of GIS info\r\n                           optional parameter with default value: \"0.00000\"\r\n\r\n                           Parameter type: <Gpon::OltLatitude>\r\n                           Format:\r\n                           - latitude of the GIS info\r\n                           - unit: degree\r\n                           - range: [-90.00000...90.00000]\r\n\r\n[no] elevation             elevation of GIS info\r\n                           optional parameter with default value: \"0\"\r\n\r\n                           Parameter type: <Gpon::OltElevation>\r\n                           Format:\r\n                           - latitude of the GIS info\r\n                           - unit: meter\r\n                           - range: [-32768...32767]\r\n\r\n[no] horizontal-error      horizontal error of GIS info\r\n                           optional parameter with default value: \"0\"\r\n\r\n                           Parameter type: <Gpon::OltHrzErr>\r\n                           Format:\r\n                           - horizontal error of the GIS info\r\n                           - unit: meter\r\n                           - range: [0...65535]\r\n\r\n[no] altitude-error        altitude error of GIS info\r\n                           optional parameter with default value: \"0\"\r\n\r\n                           Parameter type: <Gpon::OltAltErr>\r\n                           Format:\r\n                           - altitude error of the GIS info\r\n                           - unit: meter\r\n                           - range: [0...65535]\r\n\r\n[no] area-code             area code of GIS info\r\n                           optional parameter with default value: \"000000000000\"\r\n\r\n                           Parameter type: <Gpon::OltAreaCode>\r\n                           Format:\r\n                           - altitude error of the GIS info - 12 Decimal \r\ncharaters\r\n                           - length: 12 \r\n\r\n[no] timestamp             timestamp of GIS info\r\n                           optional parameter with default value: \"0\"\r\n\r\n                           Parameter type: <Gpon::OltTimestamp>\r\n                           Format:\r\n                           - the seconds eclapsed since 1970-01-01:00:00:00\r\n                           - unit: Seconds\r\n                           - range: [0...4294967295]\r\n\r\n[no] gis-digest            GIS digest of GIS info\r\n                           optional parameter with default value: \r\n\"0000000000000000\"\r\n\r\n                           Parameter type: <Gpon::OltGisDigest>\r\n                           Format:\r\n                           - digest of the GIS info - 16 hex characters\r\n                           - length: 16 \r\n\r\n[no] gis-check             GIS digest of GIS info\r\n                           optional parameter with default value: \"0000\"\r\n\r\n                           Parameter type: <Gpon::OltGisCheck>\r\n                           Format:\r\n                           - check of the GIS info - 4 hex characters\r\n                           - length: 4 \r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

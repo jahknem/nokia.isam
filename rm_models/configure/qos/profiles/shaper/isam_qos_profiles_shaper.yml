@@ -1,0 +1,100 @@
+module: isam_qos_profiles_shaper
+short_description: Resource module to configure qos profiles shaper
+description:
+- Configures a QoS shaper profile. A QoS shaper profile contains all settings related
+  to a shaper. The ISAM supports single token bucket shapers. EIR is only applicable
+  if shaper type is singleTokenBucketGpon. CBS is applicable only if the shaper type
+  is singleTokenBucket. The L2+ line cards support shaping on queue. 1. GPON supports
+  EIR and CIR. If CBS is non-zero for GPON; CLI will return an error. 2. DSL doesn't
+  support EIR. So if user enters non-zero for EIR for DSL; CLI will return an error.
+- Supports configuration of committed info rate, committed burst size, excess info
+  rate and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure qos profiles ()'
+options:
+  config:
+    description:
+    - A list of qos profiles shaper configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (name) - A unique profile name
+      committed_info_rate:
+        type: str
+        description:
+        - 'committed information rate of a shaper mandatory parameter - committed
+          information rate of a shaper - unit: kbps - range: [0...2147483647]'
+      committed_burst_size:
+        type: str
+        description:
+        - 'committed burst size of shaper mandatory parameter - committed burst size
+          of shaper - unit: byte - range: [0,64...2147483647]'
+      excess_info_rate:
+        type: str
+        description:
+        - 'excessive information rate of shaper with default value: 0 - excessive
+          information rate of a shaper - unit: kbps - range: [0...2147483647]'
+        default: '0'
+      type:
+        type: str
+        description:
+        - 'the shaper profile type with default value: "singletokenbucket"'
+        - 'Possible values: C(singletokenbucket) - single Token Bucket; C(singletokenbucketgpon)
+          - single Token Bucket for GPON; C(onetokentworate) - single Token Two Rate
+          Bucket; C(twotokenbuckettworate) - two Token Two Rate Bucket'
+        choices:
+        - singletokenbucket
+        - singletokenbucketgpon
+        - onetokentworate
+        - twotokenbuckettworate
+      autoshape:
+        type: str
+        description:
+        - 'enable or disable automatic shaping with default value: "no-autoshape-on"'
+        - 'Possible values: C(autoshape-on) - enable shaping based on queue parameters;
+          C(no-autoshape-on) - disable shaping based on queue parameters'
+        choices:
+        - autoshape-on
+        - no-autoshape-on
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure qos profiles shaper)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

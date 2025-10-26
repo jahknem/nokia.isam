@@ -1,0 +1,539 @@
+module: isam_qos_profiles_aggrqueuesconfig
+short_description: Resource module to configure qos profiles aggrqueuesconfig
+description:
+- Configures a QoS AggrQueuesConfig profile.The AggrQueuesConfig Profile table stores
+  the attributes of 8 queues of one UNI.These AggrQueuesConfig profiles are applicable
+  to qos interface for UNI Upstream and Downstream.
+- Supports configuration of q0 priority, q1 priority, q2 priority and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure qos profiles ()'
+options:
+  config:
+    description:
+    - A list of qos profiles aggrqueuesconfig configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (name) - A unique profile name
+      q0_priority:
+        type: str
+        description:
+        - 'priority corresponding to queue 0 with default value: 1 - priority corresponding
+          to queue 0 - range: [1...8]'
+        default: '1'
+      q1_priority:
+        type: str
+        description:
+        - 'priority corresponding to queue 1 with default value: 1 - priority corresponding
+          to queue 1 - range: [1...8]'
+        default: '1'
+      q2_priority:
+        type: str
+        description:
+        - 'priority corresponding to queue 2 with default value: 1 - priority corresponding
+          to queue 2 - range: [1...8]'
+        default: '1'
+      q3_priority:
+        type: str
+        description:
+        - 'priority corresponding to queue 3 with default value: 1 - priority corresponding
+          to queue 3 - range: [1...8]'
+        default: '1'
+      q4_priority:
+        type: str
+        description:
+        - 'priority corresponding to queue 4 with default value: 1 - priority corresponding
+          to queue 4 - range: [1...8]'
+        default: '1'
+      q5_priority:
+        type: str
+        description:
+        - 'priority corresponding to queue 5 with default value: 1 - priority corresponding
+          to queue 5 - range: [1...8]'
+        default: '1'
+      q6_priority:
+        type: str
+        description:
+        - 'priority corresponding to queue 6 with default value: 1 - priority corresponding
+          to queue 6 - range: [1...8]'
+        default: '1'
+      q7_priority:
+        type: str
+        description:
+        - 'priority corresponding to queue 7 with default value: 1 - priority corresponding
+          to queue 7 - range: [1...8]'
+        default: '1'
+      q0_weight:
+        type: str
+        description:
+        - 'relative weight of the queue 0 with default value: 1 - relative weight
+          - range: [0...127]'
+        default: '1'
+      q1_weight:
+        type: str
+        description:
+        - 'relative weight of the queue 1 with default value: 1 - relative weight
+          - range: [0...127]'
+        default: '1'
+      q2_weight:
+        type: str
+        description:
+        - 'relative weight of the queue 2 with default value: 1 - relative weight
+          - range: [0...127]'
+        default: '1'
+      q3_weight:
+        type: str
+        description:
+        - 'relative weight of the queue 3 with default value: 1 - relative weight
+          - range: [0...127]'
+        default: '1'
+      q4_weight:
+        type: str
+        description:
+        - 'relative weight of the queue 4 with default value: 1 - relative weight
+          - range: [0...127]'
+        default: '1'
+      q5_weight:
+        type: str
+        description:
+        - 'relative weight of the queue 5 with default value: 1 - relative weight
+          - range: [0...127]'
+        default: '1'
+      q6_weight:
+        type: str
+        description:
+        - 'relative weight of the queue 6 with default value: 1 - relative weight
+          - range: [0...127]'
+        default: '1'
+      q7_weight:
+        type: str
+        description:
+        - 'relative weight of the queue 7 with default value: 1 - relative weight
+          - range: [0...127]'
+        default: '1'
+      q0_shaper_prof:
+        type: str
+        description:
+        - 'the associated queue 0 shaper profile. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q1_shaper_prof:
+        type: str
+        description:
+        - 'the associated queue 1 shaper profile. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q2_shaper_prof:
+        type: str
+        description:
+        - 'the associated queue 2 shaper profile. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q3_shaper_prof:
+        type: str
+        description:
+        - 'the associated queue 3 shaper profile. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q4_shaper_prof:
+        type: str
+        description:
+        - 'the associated queue 4 shaper profile. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q5_shaper_prof:
+        type: str
+        description:
+        - 'the associated queue 5 shaper profile. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q6_shaper_prof:
+        type: str
+        description:
+        - 'the associated queue 6 shaper profile. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q7_shaper_prof:
+        type: str
+        description:
+        - 'the associated queue 7 shaper profile. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q0_queue_prof:
+        type: str
+        description:
+        - 'name of the queue 0 queue profile with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q1_queue_prof:
+        type: str
+        description:
+        - 'name of the queue 1 queue profile with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q2_queue_prof:
+        type: str
+        description:
+        - 'name of the queue 2 queue profile with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q3_queue_prof:
+        type: str
+        description:
+        - 'name of the queue 3 queue profile with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q4_queue_prof:
+        type: str
+        description:
+        - 'name of the queue 4 queue profile with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q5_queue_prof:
+        type: str
+        description:
+        - 'name of the queue 5 queue profile with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q6_queue_prof:
+        type: str
+        description:
+        - 'name of the queue 6 queue profile with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q7_queue_prof:
+        type: str
+        description:
+        - 'name of the queue 7 queue profile with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q0_bandwidth_prof:
+        type: str
+        description:
+        - 'the name of the queue 0 bandwidth profile. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q1_bandwidth_prof:
+        type: str
+        description:
+        - 'the name of the queue 1 bandwidth profile. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q2_bandwidth_prof:
+        type: str
+        description:
+        - 'the name of the queue 2 bandwidth profile. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q3_bandwidth_prof:
+        type: str
+        description:
+        - 'the name of the queue 3 bandwidth profile. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q4_bandwidth_prof:
+        type: str
+        description:
+        - 'the name of the queue 4 bandwidth profile. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q5_bandwidth_prof:
+        type: str
+        description:
+        - 'the name of the queue 5 bandwidth profile. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q6_bandwidth_prof:
+        type: str
+        description:
+        - 'the name of the queue 6 bandwidth profile. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q7_bandwidth_prof:
+        type: str
+        description:
+        - 'the name of the queue 7 bandwidth profile. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      q0_bw_sharing:
+        type: str
+        description:
+        - 'enable or disable queue 0 bandwidth sharing with default value: "no-sharing"'
+        - 'Possible values: C(no-sharing) - disable bandwith sharing; C(uni-sharing)
+          - enable BW or TCONT sharing on a single UNI; C(ont-sharing) - enable BW
+          or TCONT sharing on across UNIs of an ONT'
+        default: no-sharing
+        choices:
+        - no-sharing
+        - uni-sharing
+        - ont-sharing
+      q1_bw_sharing:
+        type: str
+        description:
+        - 'enable or disable queue 1 bandwidth sharing with default value: "no-sharing"'
+        - 'Possible values: C(no-sharing) - disable bandwidth sharing; C(uni-sharing)
+          - enable BW or TCONT sharing on a single UNI; C(ont-sharing) - enable BW
+          or TCONT sharing on across UNIs of an ONT'
+        default: no-sharing
+        choices:
+        - no-sharing
+        - uni-sharing
+        - ont-sharing
+      q2_bw_sharing:
+        type: str
+        description:
+        - 'enable or disable queue 2 bandwidth sharing with default value: "no-sharing"'
+        - 'Possible values: C(no-sharing) - disable bandwidth sharing; C(uni-sharing)
+          - enable BW or TCONT sharing on a single UNI; C(ont-sharing) - enable BW
+          or TCONT sharing on across UNIs of an ONT'
+        default: no-sharing
+        choices:
+        - no-sharing
+        - uni-sharing
+        - ont-sharing
+      q3_bw_sharing:
+        type: str
+        description:
+        - 'enable or disable queue 3 bandwidth sharing with default value: "no-sharing"'
+        - 'Possible values: C(no-sharing) - disable bandwidth sharing; C(uni-sharing)
+          - enable BW or TCONT sharing on a single UNI; C(ont-sharing) - enable BW
+          or TCONT sharing on across UNIs of an ONT'
+        default: no-sharing
+        choices:
+        - no-sharing
+        - uni-sharing
+        - ont-sharing
+      q4_bw_sharing:
+        type: str
+        description:
+        - 'enable or disable queue 4 bandwidth sharing with default value: "no-sharing"'
+        - 'Possible values: C(no-sharing) - disable bandwidth sharing; C(uni-sharing)
+          - enable BW or TCONT sharing on a single UNI; C(ont-sharing) - enable BW
+          or TCONT sharing on across UNIs of an ONT'
+        default: no-sharing
+        choices:
+        - no-sharing
+        - uni-sharing
+        - ont-sharing
+      q5_bw_sharing:
+        type: str
+        description:
+        - 'enable or disable queue 5 bandwidth sharing with default value: "no-sharing"'
+        - 'Possible values: C(no-sharing) - disable bandwidth sharing; C(uni-sharing)
+          - enable BW or TCONT sharing on a single UNI; C(ont-sharing) - enable BW
+          or TCONT sharing on across UNIs of an ONT'
+        default: no-sharing
+        choices:
+        - no-sharing
+        - uni-sharing
+        - ont-sharing
+      q6_bw_sharing:
+        type: str
+        description:
+        - 'enable or disable queue 6 bandwidth sharing with default value: "no-sharing"'
+        - 'Possible values: C(no-sharing) - disable bandwidth sharing; C(uni-sharing)
+          - enable BW or TCONT sharing on a single UNI; C(ont-sharing) - enable BW
+          or TCONT sharing on across UNIs of an ONT'
+        default: no-sharing
+        choices:
+        - no-sharing
+        - uni-sharing
+        - ont-sharing
+      q7_bw_sharing:
+        type: str
+        description:
+        - 'enable or disable queue 7 bandwidth sharing with default value: "no-sharing"'
+        - 'Possible values: C(no-sharing) - disable bandwidth sharing; C(uni-sharing)
+          - enable BW or TCONT sharing on a single UNI; C(ont-sharing) - enable BW
+          or TCONT sharing on across UNIs of an ONT'
+        default: no-sharing
+        choices:
+        - no-sharing
+        - uni-sharing
+        - ont-sharing
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure qos profiles aggrqueuesconfig)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

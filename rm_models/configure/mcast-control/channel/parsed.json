@@ -1,0 +1,139 @@
+{
+  "title": "MCAST CHANNEL CONFIGURATION COMMAND",
+  "description": "This command allows the operator to create and configure the mcast channel \nparameters.",
+  "user_level": "The command can be accessed by operators with igmp privileges, and executed by \noperators with igmp privileges.",
+  "syntax": "> configure mcast-control ( no channel (port) ) | ( channel (port) [ no perm-pkg-bitmap | perm-pkg-bitmap <Igmp::PermPkgBitMap> ] [ no max-num-group | max-num-group <Igmp::ChannelMaxNumGroup> ] [ no mode | mode <Igmp::ChannelProtocolMode> ] [ (cac-disable) ] [ (ip-anti-spoof-dis) ] [ no igmp-version | igmp-version <Igmp::UserItfVersion> ] [ no mld-version | mld-version <Igmp::MldUserItfVersion> ] [ no forking | forking <Igmp::ForkingStatus> ] [ no lt-ont-signaling | lt-ont-signaling <Igmp::ChannelLtOntSignaling> ] [ no mc-pbit-value | mc-pbit-value <Igmp::McPbitValue> ] [ no mcast-vlan-id | mcast-vlan-id <Igmp::ProtocolMcastVlan> ] [ no mc-vlan-xlate | mc-vlan-xlate <Igmp::mcVlanXlateAdmin> ] [ no mcast-svc-context | mcast-svc-context <Igmp::McastSvcCtxtName> ] [ no max-msg-rate | max-msg-rate <Igmp::ChannelMaxMsgRate> ] [ no ip-version | ip-version <Igmp::ip-version> ] )",
+  "resource_parameters": [
+    {
+      "name": "(port)",
+      "description": "identification of the port, vlanport or virtual channel"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] perm-pkg-bitmap",
+      "description": "packages, the user is allowed to join optional parameter with default value: \"01 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00\" - a binary string - length: 128",
+      "type": "<Igmp::PermPkgBitMap>",
+      "default": "01 : 00 : 00"
+    },
+    {
+      "name": "[no] max-num-group",
+      "description": "Max group number this port can support.The value depends on the board type and port type,please refer to the product information document for detail. optional parameter with default value: 0 - Max group number this port can support.The value depends on the board type and port type,please refer to the product information document for detail. - range: [0...2048]",
+      "type": "<Igmp::ChannelMaxNumGroup>",
+      "default": "0"
+    },
+    {
+      "name": "[no] mode",
+      "description": "protocol mode (ipoe or pppoe) optional parameter with default value: \"ipoe\" (cac-disable)               bandwidth CAC for pre-configured multicast streams obsolete parameter that will be ignored (ip-anti-spoof-dis)        enables IP@ anti-spoofing on this user-interface obsolete parameter that will be ignored",
+      "type": "<Igmp::IPAddrAntiSpoofingEnabled>",
+      "format": "( ipoe                            | pppoe )                            ( cac-disable                            | cac )                            ( ip-anti-spoof-dis                            | ip-anti-spoof )",
+      "values": [
+        "ipoe                  : IPoE mode",
+        "pppoe                 : PPPoE mode",
+        "cac-disable           : disables bandwidth CAC for conf. streams,default=enable",
+        "cac                   : enables bandwidth CAC for conf. streams,default=enable",
+        "ip-anti-spoof-dis     : disables IP@ anti-spoofing,default=enable",
+        "ip-anti-spoof         : enables IP@ anti-spoofing,default=enable"
+      ],
+      "default": "ipoe",
+      "obsolete": true
+    },
+    {
+      "name": "[no] igmp-version",
+      "description": "version of the IGMP protocol optional parameter with default value: \"system-inherited\"",
+      "type": "<Igmp::UserItfVersion>",
+      "format": "( system-inherited                            | 2                            | 3 )",
+      "values": [
+        "system-inherited      : inherits GMQs to userversion from the system level",
+        "2                     : IGMPV2 GMQs",
+        "3                     : IGMPV3 GMQs"
+      ]
+    },
+    {
+      "name": "[no] mld-version",
+      "description": "version of the MLD protocol optional parameter with default value: \"system-inherited\"",
+      "type": "<Igmp::MldUserItfVersion>",
+      "format": "( system-inherited                            | 1                            | 2 )",
+      "values": [
+        "system-inherited      : inherits GMQs to userversion from the system level",
+        "1                     : MLDV1 GMQs",
+        "2                     : MLDV2 GMQs"
+      ]
+    },
+    {
+      "name": "[no] forking",
+      "description": "forking status of the IGMP protocol optional parameter with default value: \"system-inherited\"",
+      "type": "<Igmp::ForkingStatus>",
+      "format": "( system-inherited                            | enable                            | disable )",
+      "values": [
+        "system-inherited      : inherits forking status from the system level",
+        "enable                : enable IGMP forking",
+        "disable               : disable IGMP forking"
+      ]
+    },
+    {
+      "name": "[no] lt-ont-signaling",
+      "description": "lt to ont signaling parameter optional parameter with default value: \"inherited\"",
+      "type": "<Igmp::ChannelLtOntSignaling>",
+      "format": "( enabled                            | disabled                            | inherited )",
+      "values": [
+        "enabled               : lt to ont signaling is enabled",
+        "disabled              : lt to ont signaling is disabled",
+        "inherited             : inherits lt to ont signaling from the system level"
+      ],
+      "default": "inherited"
+    },
+    {
+      "name": "[no] mc-pbit-value",
+      "description": "default P-bit value to be used by the ONT on the UNI-side for downstream multicast traffic towards subscribers optional parameter with default value: 8 - default P-bit value to be used by the ONT on the UNI-side for downstream multicast traffic towards subscribers - range: [0...8]",
+      "type": "<Igmp::McPbitValue>",
+      "default": "8"
+    },
+    {
+      "name": "[no] mcast-vlan-id",
+      "description": "vlan selection for multicast channel optional parameter with default value: 0 - vlan selection value - range: [0...4093]",
+      "type": "<Igmp::ProtocolMcastVlan>",
+      "default": "0"
+    },
+    {
+      "name": "[no] mc-vlan-xlate",
+      "description": "to enable or disable mcast vlan translation optional parameter with default value: \"disabled\"",
+      "type": "<Igmp::mcVlanXlateAdmin>",
+      "format": "( enabled                            | disabled )",
+      "values": [
+        "enabled               : allow mcast vlan translation",
+        "disabled              : disallow mcast vlan translation"
+      ],
+      "default": "disabled"
+    },
+    {
+      "name": "[no] mcast-svc-context",
+      "description": "Multicast Service Context Name optional parameter with default value: \"default\"",
+      "type": "<Igmp::McastSvcCtxtName>",
+      "format": "( name : <Qos::IgnoredQosProfileName>                            | default )",
+      "values": [
+        "default               : Default profile is associated",
+        "name                  : Name of the multicast service context profile Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "default"
+    },
+    {
+      "name": "[no] max-msg-rate",
+      "description": "Default value 0 indicates that the value is inherited from what is set in the system wide setting using command - configure qos dsl-ctrl-pkt-policer sustained-rate [1...64]  burst-size [1...128] optional parameter with default value: 0 - Maximum number of Upstream IGMP messages that can be received on this IGMP channel - unit: messages/second - range: [0...256]",
+      "type": "<Igmp::ChannelMaxMsgRate>",
+      "default": "0"
+    },
+    {
+      "name": "[no] ip-version",
+      "description": "the protocol the user want to use, IGMP(ipv4) or MLD(ipv6). optional parameter with default value: \"ipv4\"",
+      "type": "<Igmp::ip-version>",
+      "format": "( ipv4                            | ipv6 )",
+      "values": [
+        "ipv4                  : support IGMP",
+        "ipv6                  : support MLD"
+      ],
+      "default": "ipv4"
+    }
+  ],
+  "raw": "help configure mcast-control channel\r\nMCAST CHANNEL CONFIGURATION COMMAND\r\n===================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to create and configure the mcast channel \r\nparameters.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with igmp privileges, and executed by \r\noperators with igmp privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure mcast-control ( no channel (port) ) | ( channel (port) [ no \r\nperm-pkg-bitmap | perm-pkg-bitmap <Igmp::PermPkgBitMap> ] [ no max-num-group | \r\nmax-num-group <Igmp::ChannelMaxNumGroup> ] [ no mode | mode \r\n<Igmp::ChannelProtocolMode> ] [ (cac-disable) ] [ (ip-anti-spoof-dis) ] [ no \r\nigmp-version | igmp-version <Igmp::UserItfVersion> ] [ no mld-version | \r\nmld-version <Igmp::MldUserItfVersion> ] [ no forking | forking \r\n<Igmp::ForkingStatus> ] [ no lt-ont-signaling | lt-ont-signaling \r\n<Igmp::ChannelLtOntSignaling> ] [ no mc-pbit-value | mc-pbit-value \r\n<Igmp::McPbitValue> ] [ no mcast-vlan-id | mcast-vlan-id \r\n<Igmp::ProtocolMcastVlan> ] [ no mc-vlan-xlate | mc-vlan-xlate \r\n<Igmp::mcVlanXlateAdmin> ] [ no mcast-svc-context | mcast-svc-context \r\n<Igmp::McastSvcCtxtName> ] [ no max-msg-rate | max-msg-rate \r\n<Igmp::ChannelMaxMsgRate> ] [ no ip-version | ip-version <Igmp::ip-version> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"mcast Channel Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(port)                     identification of the port, vlanport or virtual \r\nchannel\r\n\r\nTable \"mcast Channel Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] perm-pkg-bitmap       packages, the user is allowed to join\r\n                           optional parameter with default value: \"01 : 00 : 00 \r\n: 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 \r\n: 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 \r\n: 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 \r\n: 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 \r\n: 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 \r\n: 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 \r\n: 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 \r\n: 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00 : 00\"\r\n\r\n                           Parameter type: <Igmp::PermPkgBitMap>\r\n                           Format:\r\n                           - a binary string\r\n                           - length: 128 \r\n\r\n[no] max-num-group         Max group number this port can support.The value \r\ndepends on the board type and port type,please refer to the product information \r\ndocument for detail.\r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Igmp::ChannelMaxNumGroup>\r\n                           Format:\r\n                           - Max group number this port can support.The value \r\ndepends on the board type and port type,please refer to the product information \r\ndocument for detail.\r\n                           - range: [0...2048]\r\n\r\n[no] mode                  protocol mode (ipoe or pppoe)\r\n                           optional parameter with default value: \"ipoe\"\r\n\r\n                           Parameter type: <Igmp::ChannelProtocolMode>\r\n                           Format:\r\n                           ( ipoe\r\n                           | pppoe )\r\n                           Possible values:\r\n                           - ipoe                  : IPoE mode\r\n                           - pppoe                 : PPPoE mode\r\n\r\n(cac-disable)               bandwidth CAC for pre-configured multicast streams\r\n                           obsolete parameter that will be ignored\r\n\r\n                           Parameter type: <Igmp::BwCacProcessing>\r\n                           Format:\r\n                           ( cac-disable\r\n                           | cac )\r\n                           Possible values:\r\n                           - cac-disable           : disables bandwidth CAC for \r\nconf. streams,default=enable\r\n                           - cac                   : enables bandwidth CAC for \r\nconf. streams,default=enable\r\n\r\n(ip-anti-spoof-dis)        enables IP@ anti-spoofing on this user-interface\r\n                           obsolete parameter that will be ignored\r\n\r\n                           Parameter type: <Igmp::IPAddrAntiSpoofingEnabled>\r\n                           Format:\r\n                           ( ip-anti-spoof-dis\r\n                           | ip-anti-spoof )\r\n                           Possible values:\r\n                           - ip-anti-spoof-dis     : disables IP@ \r\nanti-spoofing,default=enable\r\n                           - ip-anti-spoof         : enables IP@ \r\nanti-spoofing,default=enable\r\n\r\n[no] igmp-version          version of the IGMP protocol\r\n                           optional parameter with default value: \r\n\"system-inherited\"\r\n\r\n                           Parameter type: <Igmp::UserItfVersion>\r\n                           Format:\r\n                           ( system-inherited\r\n                           | 2\r\n                           | 3 )\r\n                           Possible values:\r\n                           - system-inherited      : inherits GMQs to \r\nuserversion from the system level\r\n                           - 2                     : IGMPV2 GMQs\r\n                           - 3                     : IGMPV3 GMQs\r\n\r\n[no] mld-version           version of the MLD protocol\r\n                           optional parameter with default value: \r\n\"system-inherited\"\r\n\r\n                           Parameter type: <Igmp::MldUserItfVersion>\r\n                           Format:\r\n                           ( system-inherited\r\n                           | 1\r\n                           | 2 )\r\n                           Possible values:\r\n                           - system-inherited      : inherits GMQs to \r\nuserversion from the system level\r\n                           - 1                     : MLDV1 GMQs\r\n                           - 2                     : MLDV2 GMQs\r\n\r\n[no] forking               forking status of the IGMP protocol\r\n                           optional parameter with default value: \r\n\"system-inherited\"\r\n\r\n                           Parameter type: <Igmp::ForkingStatus>\r\n                           Format:\r\n                           ( system-inherited\r\n                           | enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - system-inherited      : inherits forking status \r\nfrom the system level\r\n                           - enable                : enable IGMP forking\r\n                           - disable               : disable IGMP forking\r\n\r\n[no] lt-ont-signaling      lt to ont signaling parameter\r\n                           optional parameter with default value: \"inherited\"\r\n\r\n                           Parameter type: <Igmp::ChannelLtOntSignaling>\r\n                           Format:\r\n                           ( enabled\r\n                           | disabled\r\n                           | inherited )\r\n                           Possible values:\r\n                           - enabled               : lt to ont signaling is \r\nenabled\r\n                           - disabled              : lt to ont signaling is \r\ndisabled\r\n                           - inherited             : inherits lt to ont \r\nsignaling from the system level\r\n\r\n[no] mc-pbit-value         default P-bit value to be used by the ONT on the \r\nUNI-side for downstream multicast traffic towards subscribers\r\n                           optional parameter with default value: 8\r\n\r\n                           Parameter type: <Igmp::McPbitValue>\r\n                           Format:\r\n                           - default P-bit value to be used by the ONT on the \r\nUNI-side for downstream multicast traffic towards subscribers\r\n                           - range: [0...8]\r\n\r\n[no] mcast-vlan-id         vlan selection for multicast channel\r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Igmp::ProtocolMcastVlan>\r\n                           Format:\r\n                           - vlan selection value\r\n                           - range: [0...4093]\r\n\r\n[no] mc-vlan-xlate         to enable or disable mcast vlan translation\r\n                           optional parameter with default value: \"disabled\"\r\n\r\n                           Parameter type: <Igmp::mcVlanXlateAdmin>\r\n                           Format:\r\n                           ( enabled\r\n                           | disabled )\r\n                           Possible values:\r\n                           - enabled               : allow mcast vlan \r\ntranslation\r\n                           - disabled              : disallow mcast vlan \r\ntranslation\r\n\r\n[no] mcast-svc-context     Multicast Service Context Name\r\n                           optional parameter with default value: \"default\"\r\n\r\n                           Parameter type: <Igmp::McastSvcCtxtName>\r\n                           Format:\r\n                           ( name : <Qos::IgnoredQosProfileName>\r\n                           | default )\r\n                           Possible values:\r\n                           - default               : Default profile is \r\nassociated\r\n                           - name                  : Name of the multicast \r\nservice context profile\r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] max-msg-rate          Default value 0 indicates that the value is \r\ninherited from what is set in the system wide setting using command - configure \r\nqos dsl-ctrl-pkt-policer sustained-rate [1...64]  burst-size [1...128]\r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Igmp::ChannelMaxMsgRate>\r\n                           Format:\r\n                           - Maximum number of Upstream IGMP messages that can \r\nbe received on this IGMP channel\r\n                           - unit: messages/second\r\n                           - range: [0...256]\r\n\r\n[no] ip-version            the protocol the user want to use, IGMP(ipv4) or \r\nMLD(ipv6).\r\n                           optional parameter with default value: \"ipv4\"\r\n\r\n                           Parameter type: <Igmp::ip-version>\r\n                           Format:\r\n                           ( ipv4\r\n                           | ipv6 )\r\n                           Possible values:\r\n                           - ipv4                  : support IGMP\r\n                           - ipv6                  : support MLD\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

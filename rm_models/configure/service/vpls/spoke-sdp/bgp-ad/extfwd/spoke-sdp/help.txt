@@ -1,0 +1,5 @@
+help configure service vpls spoke-sdp bgp-ad ext
+fwd spoke-sdp
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

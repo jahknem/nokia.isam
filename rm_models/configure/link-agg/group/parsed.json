@@ -1,0 +1,78 @@
+{
+  "title": "LACP GROUP CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the link aggregation group \nparameters.",
+  "user_level": "The command can be accessed by operators with lacp privileges, and executed by \noperators with lacp privileges.",
+  "syntax": "> configure link-agg group (group) [ load-sharing-policy <Lacp::LoadSharingPolicy> ] [ no max-active-port | max-active-port <Lacp::MaxActivePort> ] [ no swo-threshold | swo-threshold <Lacp::SwThreshold> ] [ no priority | priority <Lacp::AggSysPri> ] [ swo-revert <Lacp::SwRevert> ] [ mode <Lacp::Mode> ] [ master-iwf <Lacp::MasterIwf> ]",
+  "resource_parameters": [
+    {
+      "name": "(group)",
+      "description": "interface index of the link aggregation group"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "load-sharing-policy",
+      "description": "link aggregation load sharing policy optional parameter",
+      "type": "<Lacp::LoadSharingPolicy>",
+      "format": "( mac-src                            | mac-dst                            | mac-src-dst                            | ip-src                            | ip-dst                            | ip-src-dst                            | l2-l3-hybrid-model )",
+      "values": [
+        "mac-src               : source mac based",
+        "mac-dst               : destination mac based",
+        "mac-src-dst           : source and destination mac based",
+        "ip-src                : source ip based",
+        "ip-dst                : destination ip based",
+        "ip-src-dst            : source and destination ip based",
+        "l2-l3-hybrid-model    : l2 and l3 hybrid model based"
+      ]
+    },
+    {
+      "name": "[no] max-active-port",
+      "description": "the max active port number in a LAG optional parameter with default value: 8 - max active port - range: [1...8]",
+      "type": "<Lacp::MaxActivePort>",
+      "default": "8"
+    },
+    {
+      "name": "[no] swo-threshold",
+      "description": "the switchover threshold in a cross-lt LAG optional parameter with default value: 0 - the switchover threshold in a cross-lt LAG - range: [0...8]",
+      "type": "<Lacp::SwThreshold>",
+      "default": "0"
+    },
+    {
+      "name": "[no] priority",
+      "description": "the system priority in a LAG optional parameter with default value: \"0\" - the lacp agg actor system priority - range: [0...65535]",
+      "type": "<Lacp::AggSysPri>",
+      "default": "0"
+    },
+    {
+      "name": "swo-revert",
+      "description": "the switchover revert flag in a cross-lt LAG optional parameter",
+      "type": "<Lacp::SwRevert>",
+      "format": "( disable                            | enable )",
+      "values": [
+        "disable               : disable switchover revert",
+        "enable                : enable switchover revert"
+      ]
+    },
+    {
+      "name": "mode",
+      "description": "lacp mode optional parameter",
+      "type": "<Lacp::Mode>",
+      "format": "( static                            | dynamic )",
+      "values": [
+        "static                : static mode",
+        "dynamic               : dynamic mode"
+      ]
+    },
+    {
+      "name": "master-iwf",
+      "description": "master iwf value optional parameter",
+      "type": "<Lacp::MasterIwf>",
+      "format": "( auto                            | unset )",
+      "values": [
+        "auto                  : app select the IWF connected to the primary link of the lag",
+        "unset                 : dummy lag"
+      ]
+    }
+  ],
+  "raw": "help configure link-agg group\r\nLACP GROUP CONFIGURATION COMMAND\r\n================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the link aggregation group \r\nparameters.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with lacp privileges, and executed by \r\noperators with lacp privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure link-agg group (group) [ load-sharing-policy \r\n<Lacp::LoadSharingPolicy> ] [ no max-active-port | max-active-port \r\n<Lacp::MaxActivePort> ] [ no swo-threshold | swo-threshold <Lacp::SwThreshold> \r\n] [ no priority | priority <Lacp::AggSysPri> ] [ swo-revert <Lacp::SwRevert> ] \r\n[ mode <Lacp::Mode> ] [ master-iwf <Lacp::MasterIwf> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"LACP group configuration command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(group)                    interface index of the link aggregation group\r\n\r\nTable \"LACP group configuration command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nload-sharing-policy        link aggregation load sharing policy\r\n                           optional parameter\r\n\r\n                           Parameter type: <Lacp::LoadSharingPolicy>\r\n                           Format:\r\n                           ( mac-src\r\n                           | mac-dst\r\n                           | mac-src-dst\r\n                           | ip-src\r\n                           | ip-dst\r\n                           | ip-src-dst\r\n                           | l2-l3-hybrid-model )\r\n                           Possible values:\r\n                           - mac-src               : source mac based\r\n                           - mac-dst               : destination mac based\r\n                           - mac-src-dst           : source and destination mac \r\nbased\r\n                           - ip-src                : source ip based\r\n                           - ip-dst                : destination ip based\r\n                           - ip-src-dst            : source and destination ip \r\nbased\r\n                           - l2-l3-hybrid-model    : l2 and l3 hybrid model \r\nbased\r\n\r\n[no] max-active-port       the max active port number in a LAG\r\n                           optional parameter with default value: 8\r\n\r\n                           Parameter type: <Lacp::MaxActivePort>\r\n                           Format:\r\n                           - max active port\r\n                           - range: [1...8]\r\n\r\n[no] swo-threshold         the switchover threshold in a cross-lt LAG\r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Lacp::SwThreshold>\r\n                           Format:\r\n                           - the switchover threshold in a cross-lt LAG \r\n                           - range: [0...8]\r\n\r\n[no] priority              the system priority in a LAG \r\n                           optional parameter with default value: \"0\"\r\n\r\n                           Parameter type: <Lacp::AggSysPri>\r\n                           Format:\r\n                           - the lacp agg actor system priority\r\n                           - range: [0...65535]\r\n\r\nswo-revert                 the switchover revert flag in a cross-lt LAG\r\n                           optional parameter\r\n\r\n                           Parameter type: <Lacp::SwRevert>\r\n                           Format:\r\n                           ( disable\r\n                           | enable )\r\n                           Possible values:\r\n                           - disable               : disable switchover revert\r\n                           - enable                : enable switchover revert\r\n\r\nmode                       lacp mode\r\n                           optional parameter\r\n\r\n                           Parameter type: <Lacp::Mode>\r\n                           Format:\r\n                           ( static\r\n                           | dynamic )\r\n                           Possible values:\r\n                           - static                : static mode\r\n                           - dynamic               : dynamic mode\r\n\r\nmaster-iwf                 master iwf value\r\n                           optional parameter\r\n\r\n                           Parameter type: <Lacp::MasterIwf>\r\n                           Format:\r\n                           ( auto\r\n                           | unset )\r\n                           Possible values:\r\n                           - auto                  : app select the IWF \r\nconnected to the primary link of the lag\r\n                           - unset                 : dummy lag\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,49 @@
+{
+  "title": "SYSTEM ONT CONFIGURATION COMMAND",
+  "description": "This command is to configure the system wide ONT related parameters.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure generic-pon ont [ no slid-mode | slid-mode <Gpon::SlidMode> ] [ no sn-bundle-timer | sn-bundle-timer <Gpon::SnBundleTimer> ] [ no sw-ver-mis-block | sw-ver-mis-block <Gpon::SwVerMisBlock> ] [ no sn-autounlock | sn-autounlock <Gpon::OntAuthMode> ]",
+  "resource_parameters": [],
+  "command_parameters": [
+    {
+      "name": "[no] slid-mode",
+      "description": "display interpretation for gpon/ngpon2 subscriber location id optional parameter with default value: \"ascii\"",
+      "type": "<Gpon::SlidMode>",
+      "format": "( ascii                            | hexa-dec )",
+      "values": [
+        "ascii                 : ascii interpretation for subscriber location",
+        "hexa-dec              : hexadecimal mode interpretation for subscriber location"
+      ],
+      "default": "ascii"
+    },
+    {
+      "name": "[no] sn-bundle-timer",
+      "description": "the system timer for bundling sn with loid/slid when gpon/ngpon2 ont is in auto-bundle mode optional parameter with default value: 24L - the system timer for auto bundling sn - unit: hour - range: [1...72]",
+      "type": "<Gpon::SnBundleTimer>",
+      "default": "24L"
+    },
+    {
+      "name": "[no] sw-ver-mis-block",
+      "description": "the control behavior of user traffic block when for gpon/ngpon2 ont version mismatch optional parameter with default value: \"enable\"",
+      "type": "<Gpon::SwVerMisBlock>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : block the user traffic when ont version mismatch",
+        "disable               : do not block the user traffic when ont version mismatch"
+      ],
+      "default": "enable"
+    },
+    {
+      "name": "[no] sn-autounlock",
+      "description": "unlock ONT automatically after ONT authenticated optional parameter with default value: \"disable\"",
+      "type": "<Gpon::OntAuthMode>",
+      "format": "( disable                            | enable )",
+      "values": [
+        "disable               : disable unlock ONT automatically after ONT authenticated",
+        "enable                : enable unlock ONT automatically after ONT authenticated"
+      ],
+      "default": "disable"
+    }
+  ],
+  "raw": "help configure generic-pon ont\r\nSYSTEM ONT CONFIGURATION COMMAND\r\n================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command is to configure the system wide ONT related parameters.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure generic-pon ont [ no slid-mode | slid-mode <Gpon::SlidMode> ] [ no \r\nsn-bundle-timer | sn-bundle-timer <Gpon::SnBundleTimer> ] [ no sw-ver-mis-block \r\n| sw-ver-mis-block <Gpon::SwVerMisBlock> ] [ no sn-autounlock | sn-autounlock \r\n<Gpon::OntAuthMode> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"System ONT Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] slid-mode             display interpretation for gpon/ngpon2 subscriber \r\nlocation id\r\n                           optional parameter with default value: \"ascii\"\r\n\r\n                           Parameter type: <Gpon::SlidMode>\r\n                           Format:\r\n                           ( ascii\r\n                           | hexa-dec )\r\n                           Possible values:\r\n                           - ascii                 : ascii interpretation for \r\nsubscriber location\r\n                           - hexa-dec              : hexadecimal mode \r\ninterpretation for subscriber location\r\n\r\n[no] sn-bundle-timer       the system timer for bundling sn with loid/slid when \r\ngpon/ngpon2 ont is in auto-bundle mode\r\r\n\r\n                           optional parameter with default value: 24L\r\n\r\n                           Parameter type: <Gpon::SnBundleTimer>\r\n                           Format:\r\n                           - the system timer for auto bundling sn\r\n                           - unit: hour\r\n                           - range: [1...72]\r\n\r\n[no] sw-ver-mis-block      the control behavior of user traffic block when for \r\ngpon/ngpon2 ont version mismatch\r\n                           optional parameter with default value: \"enable\"\r\n\r\n                           Parameter type: <Gpon::SwVerMisBlock>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : block the user traffic \r\nwhen ont version mismatch\r\n                           - disable               : do not block the user \r\ntraffic when ont version mismatch\r\n\r\n[no] sn-autounlock          unlock ONT automatically after ONT authenticated\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Gpon::OntAuthMode>\r\n                           Format:\r\n                           ( disable\r\n                           | enable )\r\n                           Possible values:\r\n                           - disable               : disable unlock ONT \r\nautomatically after ONT authenticated\r\n                           - enable                : enable unlock ONT \r\nautomatically after ONT authenticated\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

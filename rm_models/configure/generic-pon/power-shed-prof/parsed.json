@@ -1,0 +1,65 @@
+{
+  "title": "POWER SHEDDING PROFILE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the Power Shedding Profiles for \ngpon and ngpon2",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure generic-pon ( no power-shed-prof (profile-idx) ) | ( power-shed-prof (profile-idx) profile-name <AsamProfileName> [ no restore-time | restore-time <Gpon::RestoreTime> ] [ no data-class-time | data-class-time <Gpon::DataClassTime> ] [ no voice-class-time | voice-class-time <Gpon::VoiceClassTime> ] [ no video-class-time | video-class-time <Gpon::VideoClassTime> ] [ no dsl-class-time | dsl-class-time <Gpon::DslClassTime> ] [ no ces-class-time | ces-class-time <Gpon::CesClassTime> ] )",
+  "resource_parameters": [
+    {
+      "name": "(profile-idx)",
+      "description": "profile index"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "profile-name",
+      "description": "name of the profile mandatory parameter - a profile name - range: [a-zA-Z0-9-_.] - length: 1<=x<=32",
+      "type": "<AsamProfileName>"
+    },
+    {
+      "name": "[no] restore-time",
+      "description": "time delay required before resetting timers to zero after a full power restore optional parameter with default value: 0L - zero means no-shed, and one means immediate-shed - unit: secs - range: [0...28800]",
+      "type": "<Gpon::RestoreTime>",
+      "default": "0L"
+    },
+    {
+      "name": "[no] data-class-time",
+      "description": "time delay required before shedding power for data uni classes. optional parameter with default value: 0L - zero means no-shed, and one means immediate-shed - unit: secs - range: [0...28800]",
+      "type": "<Gpon::DataClassTime>",
+      "default": "0L"
+    },
+    {
+      "name": "[no] voice-class-time",
+      "description": "the time delay required before shedding power for voice uni classes. optional parameter with default value: 0L - zero means no-shed, and one means immediate-shed - unit: secs - range: [0...28800]",
+      "type": "<Gpon::VoiceClassTime>",
+      "default": "0L"
+    },
+    {
+      "name": "[no] video-class-time",
+      "description": "the time delay required before shedding power for the video ani class. optional parameter with default value: 0L - zero means no-shed, and one means immediate-shed - unit: secs - range: [0...28800]",
+      "type": "<Gpon::VideoClassTime>",
+      "default": "0L"
+    },
+    {
+      "name": "[no] dsl-class-time",
+      "description": "the time delay required before shedding power for dsl uni classes. optional parameter with default value: 0L - zero means no-shed, and one means immediate-shed - unit: secs - range: [0...28800]",
+      "type": "<Gpon::DslClassTime>",
+      "default": "0L"
+    },
+    {
+      "name": "[no] ces-class-time",
+      "description": "the time delay required before shedding power for ces uni classes. optional parameter with default value: 0L - zero means no-shed, and one means immediate-shed - unit: secs - range: [0...28800] Table \"Power Shedding Profile Configuration Command\" Display Parameters Specific Information:",
+      "type": "<Gpon::CesClassTime>",
+      "default": "0L"
+    },
+    {
+      "name": "scope",
+      "description": "scope of the profile This element is always shown. ( local | network )",
+      "type": "<Gpon::Scope>",
+      "values": [
+        "local                 : local scope",
+        "network               : network wide scope"
+      ]
+    }
+  ],
+  "raw": "help configure generic-pon power-shed-prof\r\nPOWER SHEDDING PROFILE CONFIGURATION COMMAND\r\n============================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the Power Shedding Profiles for \r\ngpon and ngpon2\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure generic-pon ( no power-shed-prof (profile-idx) ) | ( \r\npower-shed-prof (profile-idx) profile-name <AsamProfileName> [ no restore-time \r\n| restore-time <Gpon::RestoreTime> ] [ no data-class-time | data-class-time \r\n<Gpon::DataClassTime> ] [ no voice-class-time | voice-class-time \r\n<Gpon::VoiceClassTime> ] [ no video-class-time | video-class-time \r\n<Gpon::VideoClassTime> ] [ no dsl-class-time | dsl-class-time \r\n<Gpon::DslClassTime> ] [ no ces-class-time | ces-class-time \r\n<Gpon::CesClassTime> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Power Shedding Profile Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(profile-idx)              profile index\r\n\r\nTable \"Power Shedding Profile Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nprofile-name               name of the profile\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <AsamProfileName>\r\n                           Format:\r\n                           - a profile name\r\n                           - range: [a-zA-Z0-9-_.]\r\n                           - length: 1<=x<=32 \r\n\r\n[no] restore-time          time delay required before resetting timers to zero \r\nafter a full power restore\r\n                           optional parameter with default value: 0L\r\n\r\n                           Parameter type: <Gpon::RestoreTime>\r\n                           Format:\r\n                           - zero means no-shed, and one means immediate-shed\r\n                           - unit: secs\r\n                           - range: [0...28800]\r\n\r\n[no] data-class-time       time delay required before shedding power for data \r\nuni classes.\r\n                           optional parameter with default value: 0L\r\n\r\n                           Parameter type: <Gpon::DataClassTime>\r\n                           Format:\r\n                           - zero means no-shed, and one means immediate-shed\r\n                           - unit: secs\r\n                           - range: [0...28800]\r\n\r\n[no] voice-class-time      the time delay required before shedding power for \r\nvoice uni classes.\r\n                           optional parameter with default value: 0L\r\n\r\n                           Parameter type: <Gpon::VoiceClassTime>\r\n                           Format:\r\n                           - zero means no-shed, and one means immediate-shed\r\n                           - unit: secs\r\n                           - range: [0...28800]\r\n\r\n[no] video-class-time      the time delay required before shedding power for \r\nthe video ani class.\r\n                           optional parameter with default value: 0L\r\n\r\n                           Parameter type: <Gpon::VideoClassTime>\r\n                           Format:\r\n                           - zero means no-shed, and one means immediate-shed\r\n                           - unit: secs\r\n                           - range: [0...28800]\r\n\r\n[no] dsl-class-time        the time delay required before shedding power for \r\ndsl uni classes.\r\n                           optional parameter with default value: 0L\r\n\r\n                           Parameter type: <Gpon::DslClassTime>\r\n                           Format:\r\n                           - zero means no-shed, and one means immediate-shed\r\n                           - unit: secs\r\n                           - range: [0...28800]\r\n\r\n[no] ces-class-time        the time delay required before shedding power for \r\nces uni classes.\r\n                           optional parameter with default value: 0L\r\n\r\n                           Parameter type: <Gpon::CesClassTime>\r\n                           Format:\r\n                           - zero means no-shed, and one means immediate-shed\r\n                           - unit: secs\r\n                           - range: [0...28800]\r\n\r\n\r\nTable \"Power Shedding Profile Configuration Command\" Display Parameters\r\n\r\nSpecific Information:\r\n\r\nParameter                  Description\r\n\r\n scope                     scope of the profile\r\n                           This element is always shown.\r\n\r\n                           parameter type: <Gpon::Scope>\r\n                           ( local\r\n                           | network )\r\n                           Possible values:\r\n                           - local                 : local scope\r\n                           - network               : network wide scope\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

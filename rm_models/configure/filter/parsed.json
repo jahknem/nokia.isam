@@ -1,0 +1,9 @@
+{
+  "title": "FILTER CONFIGURATION COMMAND",
+  "description": "See IHUB Router Configurations and Routing Protocols Guide for more \ninformation. The command can be accessed and executed by operators with filter \nprivileges.",
+  "user_level": "The command can be executed by operators with filter privileges.",
+  "syntax": "> configure filter",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure filter\r\nFILTER CONFIGURATION COMMAND\r\n============================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nSee IHUB Router Configurations and Routing Protocols Guide for more \r\ninformation. The command can be accessed and executed by operators with filter \r\nprivileges.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be executed by operators with filter privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure filter\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nnone\r\nDS-LIN-TEST-01:automationuser>#"
+}

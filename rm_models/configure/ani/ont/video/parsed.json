@@ -1,0 +1,43 @@
+{
+  "title": "ANI ONT VIDEO CONFIGURATION COMMAND",
+  "description": "This command edits provisioning data associated with a ONTVIDANI.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure ani ont ( no video (ont-idx) ) | ( video (ont-idx) [ no plnd-agc-mode | plnd-agc-mode <Gpon::AgcMode> ] [ no agc-offset | agc-offset <Gpon::Agcoffset> ] [ no lower-optical-th | lower-optical-th <Gpon::Vidopticalthresh> ] [ no upper-optical-th | upper-optical-th <Gpon::Vidopticalthresh> ] )",
+  "resource_parameters": [
+    {
+      "name": "(ont-idx)",
+      "description": "ont index"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] plnd-agc-mode",
+      "description": "allows provisioning of the ONT's AGC capabilities optional parameter with default value: \"broad-band-agc\"",
+      "type": "<Gpon::AgcMode>",
+      "format": "( no-agc                            | broad-band-agc )",
+      "values": [
+        "no-agc                : No AGC is used",
+        "broad-band-agc        : Broadband RF AGC is used"
+      ]
+    },
+    {
+      "name": "[no] agc-offset",
+      "description": "indicates the offset value to be used for Broadband RF AGC or Optical optional parameter with default value: 2 - Offset value to be used for Broadband RF AGC or Optical - unit: db - range: [-12...12]",
+      "type": "<Gpon::Agcoffset>",
+      "default": "2"
+    },
+    {
+      "name": "[no] lower-optical-th",
+      "description": "indicates the optical level the ONT uses to declare the Video-OOR Low alarm optional parameter with default value: -9.5 - optical level the ONT uses to declare the Video-OOR high/Low alarm - unit: dBm - range: [-12...6]",
+      "type": "<Gpon::Vidopticalthresh>",
+      "default": "-9.5"
+    },
+    {
+      "name": "[no] upper-optical-th",
+      "description": "indicates the optical level the ONT uses to declare the Video-OOR high alarm optional parameter with default value: 1.0 - optical level the ONT uses to declare the Video-OOR high/Low alarm - unit: dBm - range: [-12...6]",
+      "type": "<Gpon::Vidopticalthresh>",
+      "default": "1.0"
+    }
+  ],
+  "raw": "help configure ani ont video\r\nANI ONT VIDEO CONFIGURATION COMMAND\r\n===================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command edits provisioning data associated with a ONTVIDANI.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure ani ont ( no video (ont-idx) ) | ( video (ont-idx) [ no \r\nplnd-agc-mode | plnd-agc-mode <Gpon::AgcMode> ] [ no agc-offset | agc-offset \r\n<Gpon::Agcoffset> ] [ no lower-optical-th | lower-optical-th \r\n<Gpon::Vidopticalthresh> ] [ no upper-optical-th | upper-optical-th \r\n<Gpon::Vidopticalthresh> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"ANI ONT Video Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(ont-idx)                  ont index\r\n\r\nTable \"ANI ONT Video Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] plnd-agc-mode         allows provisioning of the ONT's AGC capabilities\r\n                           optional parameter with default value: \r\n\"broad-band-agc\"\r\n\r\n                           Parameter type: <Gpon::AgcMode>\r\n                           Format:\r\n                           ( no-agc\r\n                           | broad-band-agc )\r\n                           Possible values:\r\n                           - no-agc                : No AGC is used\r\n                           - broad-band-agc        : Broadband RF AGC is used\r\n\r\n[no] agc-offset            indicates the offset value to be used for Broadband \r\nRF AGC or Optical \r\n                           optional parameter with default value: 2\r\n\r\n                           Parameter type: <Gpon::Agcoffset>\r\n                           Format:\r\n                           - Offset value to be used for Broadband RF AGC or \r\nOptical\r\n                           - unit: db\r\n                           - range: [-12...12]\r\n\r\n[no] lower-optical-th      indicates the optical level the ONT uses to declare \r\nthe Video-OOR Low alarm\r\n                           optional parameter with default value: -9.5\r\n\r\n                           Parameter type: <Gpon::Vidopticalthresh>\r\n                           Format:\r\n                           - optical level the ONT uses to declare the \r\nVideo-OOR high/Low alarm \r\n                           - unit: dBm\r\n                           - range: [-12...6]\r\n\r\n[no] upper-optical-th      indicates the optical level the ONT uses to declare \r\nthe Video-OOR high alarm\r\n                           optional parameter with default value: 1.0\r\n\r\n                           Parameter type: <Gpon::Vidopticalthresh>\r\n                           Format:\r\n                           - optical level the ONT uses to declare the \r\nVideo-OOR high/Low alarm \r\n                           - unit: dBm\r\n                           - range: [-12...6]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

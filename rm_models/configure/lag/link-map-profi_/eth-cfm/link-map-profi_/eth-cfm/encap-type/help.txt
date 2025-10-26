@@ -1,0 +1,5 @@
+help configure lag link-map-profi* eth-cfm link-
+map-profi* eth-cfm encap-type
+                                                   ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

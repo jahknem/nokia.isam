@@ -1,0 +1,4 @@
+help configure port rack
+                                                    ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

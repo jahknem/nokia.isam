@@ -1,0 +1,93 @@
+module: isam_dist_router_mpls_static_lsp
+short_description: Resource module to configure dist-router mpls static-lsp
+description:
+- Configures a static outbound MPLS LSP, include the MPLS label and nexthop of an
+  outgoing MPLS tunnel.
+- Supports configuration of interface, push, nexthopaddrtype and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure dist-router mpls ()'
+options:
+  config:
+    description:
+    - A list of dist-router mpls static-lsp configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (lsp-name) - Administrative name for the LSP
+      interface:
+        type: str
+        description:
+        - specify the outgoing interface mandatory parameter
+        - 'Possible values: C(slot-vlan) - slot unstacked; C(slot-stacked) - slot
+          stacked Field type <Eqpt::RackId>; C(the rack number Field type <Eqpt) -
+          :ShelfId>; C(the shelf number Field type <Eqpt) - :SlotId>; C(the LT slot
+          number Field type <Eqpt) - :UnstackedVlan>; C(unstacked vlan id Field type
+          <Eqpt) - :SVlan>; C(service vlan id Field type <Eqpt) - :CVlan>'
+        choices:
+        - slot-vlan
+        - slot-stacked
+        - the rack number Field type <Eqpt
+        - the shelf number Field type <Eqpt
+        - the LT slot number Field type <Eqpt
+        - unstacked vlan id Field type <Eqpt
+        - service vlan id Field type <Eqpt
+        - customer vlan id
+      push:
+        type: str
+        description:
+        - 'specify the outgoing label mandatory parameter - Out Label - range: [1...1048575]'
+      nexthopaddrtype:
+        type: str
+        description:
+        - 'specify the type of next hop IP address with default value: "ipv4"'
+        - 'Possible values: C(ipv4) - ipv4; C(ipv6) - ipv6'
+        default: ipv4
+        choices:
+        - ipv4
+        - ipv6
+      nexthop:
+        type: str
+        description:
+        - Next hop IP address mandatory parameter - IPv4-address
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure dist-router mpls static-lsp)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

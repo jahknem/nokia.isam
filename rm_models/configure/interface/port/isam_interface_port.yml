@@ -1,0 +1,120 @@
+module: isam_interface_port
+short_description: Resource module to configure interface port
+description:
+- Configures interface management parameters.
+- Supports configuration of admin up, link state trap, link updown trap and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure interface port ()'
+- Parameter C(link_state_trap) is marked as obsolete in device documentation
+options:
+  config:
+    description:
+    - A list of interface port configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (port) - the interface index
+      admin_up:
+        type: bool
+        description:
+        - admin status is up (read-only for voicefxs interface)
+        - When true, the interface/feature is enabled; when false, it is disabled
+      link_state_trap:
+        type: str
+        description:
+        - indicates if link-up/link-down traps should be generated obsolete parameter
+          replaced by parameter "link-updown-trap"
+        - 'Possible values: C(enable) - enable link-up/link-down traps; C(disable)
+          - disable link-up/link-down traps; C(no-value) - no valid value'
+        choices:
+        - enable
+        - disable
+        - no-value
+      link_updown_trap:
+        type: bool
+        description:
+        - enable link-up/link-down traps
+        - When enabled, SNMP traps will be generated for state changes
+      user:
+        type: str
+        description:
+        - 'description of the user connected to this interface. with default value:
+          "available" - a string identifying the customer or user - length: x<=64'
+        - 'Maximum length: 64 characters'
+        default: available
+      severity:
+        type: str
+        description:
+        - 'set minimum severity for alarm to be reported,If ima is the only interface
+          for which this parameter is not supported with default value: "default"'
+        - Alarms below this threshold will not be reported
+        - 'Possible values: C(indeterminate) - not a definite known severity; C(warning)
+          - just to inform as a warning; C(minor) - not service affecting; C(major)
+          - service affecting; C(critical) - service breaking; C(no-alarms) - do not
+          report alarm; C(default) - take default as specified via Interface Alarm
+          Configuration command; C(no-value) - no entry in the table'
+        default: default
+        choices:
+        - indeterminate
+        - warning
+        - minor
+        - major
+        - critical
+        - no-alarms
+        - default
+        - no-value
+      port_type:
+        type: str
+        description:
+        - 'the whole network service model based on this interface with default value:
+          "uni"'
+        - 'Possible values: C(uni) - uni port type; C(nni) - nni port type; C(hc-uni)
+          - hicap uni port type; C(uplink) - uplink port type'
+        default: uni
+        choices:
+        - uni
+        - nni
+        - hc-uni
+        - uplink
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure interface port)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

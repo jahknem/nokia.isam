@@ -1,0 +1,62 @@
+module: isam_qos_tca
+short_description: Resource module to configure qos tca
+description:
+- Configures various parameters related to subscriber interface and queue level traffic
+  load and packet loss. Load per physical line is calculated by matching the total
+  number of bytes transmitted versus the capacity of the interface in the relevant
+  measurement epoch. Load per queue is measured in terms of the contribution to the
+  interface level load of traffic passed in a certain queue. Threshold crossing alarms
+  can be specified for the load and packet loss parameters per line and per traffic
+  class. This feature can be useful to detect network anomalies by watching over packet
+  discard or load level in high-priority traffic classes.
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure qos tca ()'
+options:
+  config:
+    description:
+    - A list of qos tca configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure qos tca)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

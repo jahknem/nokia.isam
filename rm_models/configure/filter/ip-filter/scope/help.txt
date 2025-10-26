@@ -1,0 +1,4 @@
+help configure filter ip-filter scope
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

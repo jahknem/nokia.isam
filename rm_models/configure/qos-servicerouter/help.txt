@@ -1,0 +1,32 @@
+25/10/25 19:38:40 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># help configure qos-servicerouter
+
+25/10/25 19:38:40 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI
+
+QOS SERVICE ROUTER CONFIGURATION COMMAND
+========================================
+
+Command Description
+-------------------
+
+See IHUB QoS Guide for more information. The command can be accessed and 
+executed by operators with qos privileges.
+
+
+User Level
+----------
+
+The command can be executed by operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos-servicerouter
+
+Command Parameters
+------------------
+
+none
+DS-LIN-TEST-01:automationuser>#

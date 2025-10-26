@@ -1,0 +1,42 @@
+help configure li_vlan
+LI_VLAN LI CONFIGURATION COMMAND
+================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure lawful interception parameters.
+
+Note: Many system management parameters are supported but are not included in 
+this guide as the NE uses default values.
+
+
+User Level
+----------
+
+The command can be accessed by operators with all,admin,li_user privileges, and 
+executed by operators with all,admin,li_user privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure li_vlan vlan-id <Sec::LiVlanID>
+
+Command Parameters
+------------------
+
+Table "li_vlan Li Configuration Command" Command Parameters
+
+Parameter                  Description
+
+vlan-id                    vlan id range [1...4093]
+                           optional parameter
+
+                           Parameter type: <Sec::LiVlanID>
+                           Format:
+                           - vlan-id, 0: default livlan
+                           - range: [0...4093]
+
+
+DS-LIN-TEST-01:automationuser>#

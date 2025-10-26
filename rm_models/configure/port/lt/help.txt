@@ -1,0 +1,4 @@
+help configure port lt
+                                                    ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

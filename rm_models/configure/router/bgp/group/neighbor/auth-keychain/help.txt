@@ -1,0 +1,5 @@
+help configure router bgp group neighbor auth-ke
+ychain
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

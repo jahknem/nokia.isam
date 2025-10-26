@@ -1,0 +1,65 @@
+help configure equipment replan
+CONFIGURE BOARD AUTO REPLAN FEATURE
+===================================
+
+Command Description
+-------------------
+
+Parameter indicates whether the system is configured to allow an LT slot to be 
+automatically re-planned
+
+into a new slot value upon LT hardware migration. Enabling this feature makes 
+sure that a new
+
+compatible LT inserted into an already configured slot becomes operational 
+automatically, without loss
+
+of the original configuration database and without requiring any 
+(re-)configuration action. This only
+
+applies to certain board replacement scenarios and for a subset of (from/to) LT 
+types.
+
+
+
+By default, the field is set to false (value 2) i.e. the slot will not be 
+automatically re-planned
+
+when the new LT is inserted. When the feature is enabled by the operator, the 
+value is set to True (value 1).
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment replan [ boardautoreplan <Eqpt::BoardAutoReplan> ]
+
+Command Parameters
+------------------
+
+Table "Configure Board Auto Replan feature" Command Parameters
+
+Parameter                  Description
+
+boardautoreplan            Set the Board Auto Replan feature
+                           optional parameter
+
+                           Parameter type: <Eqpt::BoardAutoReplan>
+                           Format:
+                           ( enable
+                           | disable )
+                           Possible values:
+                           - enable                : enable board auto replan 
+functionality
+                           - disable               : disable board auto replan 
+functionality
+
+
+DS-LIN-TEST-01:automationuser>#

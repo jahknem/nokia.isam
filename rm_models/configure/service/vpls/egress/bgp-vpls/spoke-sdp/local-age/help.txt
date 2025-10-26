@@ -1,0 +1,5 @@
+help configure service vpls egress bgp-vpls spok
+e-sdp local-age
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

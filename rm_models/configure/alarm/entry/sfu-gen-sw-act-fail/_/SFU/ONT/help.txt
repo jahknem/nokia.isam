@@ -1,0 +1,5 @@
+help configure alarm entry sfu-gen-sw-act-fail !
+ SFU ONT
+                                                                               ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,4 @@
+DS-LIN-TEST-01:automationuser># info configure equipment fan-tray
+Error : instance does not exist
+
+DS-LIN-TEST-01:automationuser>#

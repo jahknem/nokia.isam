@@ -1,0 +1,5 @@
+help configure router bgp group neighbor prefere
+nce
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

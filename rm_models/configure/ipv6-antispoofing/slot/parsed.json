@@ -1,0 +1,21 @@
+{
+  "title": "IPV6 ANTI-SPOOFING CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the bit length of the IPv6 \naddress on which IPv6 anti-spoofing based.",
+  "user_level": "The command can be accessed by operators with ip privileges, and executed by \noperators with ip privileges.",
+  "syntax": "> configure ipv6-antispoofing slot (slot) [ no bit-len | bit-len <ipv6::bitLength> ]",
+  "resource_parameters": [
+    {
+      "name": "(slot)",
+      "description": "the physical number of the slot"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] bit-len",
+      "description": "bit length of the IPv6 address on which IPv6 anti-spoofing based optional parameter with default value: \"64\" - number of bits that is checked during IPv6 address anti-spoofing. - range: [64,128]",
+      "type": "<ipv6::bitLength>",
+      "default": "64"
+    }
+  ],
+  "raw": "help configure ipv6-antispoofing slot\r\nIPV6 ANTI-SPOOFING CONFIGURATION COMMAND\r\n========================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the bit length of the IPv6 \r\naddress on which IPv6 anti-spoofing based.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with ip privileges, and executed by \r\noperators with ip privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure ipv6-antispoofing slot (slot) [ no bit-len | bit-len \r\n<ipv6::bitLength> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"ipv6 anti-spoofing Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(slot)                     the physical number of the slot\r\n\r\nTable \"ipv6 anti-spoofing Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] bit-len               bit length of the IPv6 address on which IPv6 \r\nanti-spoofing based\r\n                           optional parameter with default value: \"64\"\r\n\r\n                           Parameter type: <ipv6::bitLength>\r\n                           Format:\r\n                           - number of bits that is checked during IPv6 address \r\nanti-spoofing.\r\n                           - range: [64,128]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

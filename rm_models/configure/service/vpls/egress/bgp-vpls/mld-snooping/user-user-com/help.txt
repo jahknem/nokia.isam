@@ -1,0 +1,5 @@
+DS-LIN-TEST-01:automationuser># help configure service vpls egress bgp-vpls mld-
+snooping user-user-com
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,16 @@
+{
+  "title": "BRIDGE GENERAL CONFIGURATION COMMAND",
+  "description": "This command allows the operator to specify the aging time for dynamically \nlearned MAC addresses in the filtering database. The setting is applicable to \nthe entire bridge.",
+  "user_level": "The command can be accessed by operators with vlan privileges, and executed by \noperators with vlan privileges.",
+  "syntax": "> configure bridge [ no ageing-time | ageing-time <Vlan::AgingTime> ]",
+  "resource_parameters": [],
+  "command_parameters": [
+    {
+      "name": "[no] ageing-time",
+      "description": "ageing timeout for dynamic mac entries optional parameter with default value: 300 - ageing time - unit: sec - range: [10...1000000]",
+      "type": "<Vlan::AgingTime>",
+      "default": "300"
+    }
+  ],
+  "raw": "help configure bridge\r\nBRIDGE GENERAL CONFIGURATION COMMAND\r\n====================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to specify the aging time for dynamically \r\nlearned MAC addresses in the filtering database. The setting is applicable to \r\nthe entire bridge.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with vlan privileges, and executed by \r\noperators with vlan privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure bridge [ no ageing-time | ageing-time <Vlan::AgingTime> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Bridge General Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] ageing-time           ageing timeout for dynamic mac entries\r\n                           optional parameter with default value: 300\r\n\r\n                           Parameter type: <Vlan::AgingTime>\r\n                           Format:\r\n                           - ageing time\r\n                           - unit: sec\r\n                           - range: [10...1000000]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

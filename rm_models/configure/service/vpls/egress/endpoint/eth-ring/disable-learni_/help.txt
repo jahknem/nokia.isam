@@ -1,0 +1,5 @@
+help configure service vpls egress endpoint eth-
+ring disable-learni*
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

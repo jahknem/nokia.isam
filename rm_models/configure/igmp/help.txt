@@ -1,0 +1,4 @@
+help configure igmp
+                                                   ^
+command is not complete
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,5 @@
+help configure service vpls egress eth-ring igmp
+-snooping mfib-table-size
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,15 @@
+{
+  "title": "GENERIC PON DATA PATH INTEGRITY THRESHOLD COMMAND",
+  "description": "This command configures the PON/Channel-pair Data Path Integrity Threshold",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure generic-pon dpinteg-threshold <Gpon::dpintegThreshold>",
+  "resource_parameters": [],
+  "command_parameters": [
+    {
+      "name": "dpinteg-threshold",
+      "description": "configure data-path integrity threshold value for gpon/ngpon2 optional parameter - Datapath Integrity Threshold - range: [0...100]",
+      "type": "<Gpon::dpintegThreshold>"
+    }
+  ],
+  "raw": "help configure generic-pon\r\nGENERIC PON DATA PATH INTEGRITY THRESHOLD COMMAND\r\n=================================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command configures the PON/Channel-pair Data Path Integrity Threshold\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure generic-pon dpinteg-threshold <Gpon::dpintegThreshold>\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Generic PON Data Path Integrity Threshold command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\ndpinteg-threshold          configure data-path integrity threshold value for \r\ngpon/ngpon2\r\n                           optional parameter\r\n\r\n                           Parameter type: <Gpon::dpintegThreshold>\r\n                           Format:\r\n                           - Datapath Integrity Threshold\r\n                           - range: [0...100]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

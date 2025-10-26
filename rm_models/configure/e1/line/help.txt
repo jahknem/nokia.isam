@@ -1,0 +1,126 @@
+help configure e1 line
+E1 CONFIGURATION COMMAND
+========================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the E1 line.
+
+
+User Level
+----------
+
+The command can be accessed by operators with xdsl privileges, and executed by 
+operators with xdsl privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure e1 line (if-index) [ [ no ] active ] [ no line-coding | line-coding 
+<E1::LineCoding> ] [ no framing-mode | framing-mode <E1::FramingMode> ] [ no 
+crc | crc <E1::Crc> ] [ no multi-framing | multi-framing <E1::MultiFraming> ] [ 
+no transmit-clk-src | transmit-clk-src <E1::TransmitClkSrc> ] [ no 
+line-impedance | line-impedance <E1::LineImpedance> ] [ [ no ] admin-up ]
+
+Command Parameters
+------------------
+
+Table "E1 Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(if-index)                 interface index of the port
+
+Table "E1 Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] active                set the span-profile active
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] line-coding           encoding type of the E1 interface
+                           optional parameter with default value: "hdb3"
+
+                           Parameter type: <E1::LineCoding>
+                           Format:
+                           ( ami
+                           | hdb3 )
+                           Possible values:
+                           - ami                   : Specifies Alternate Mark 
+Inversion (AMI) as the linecode type
+                           - hdb3                  : Specifies High-Density 
+Bipolar 3 (HDB3) as the linecode type
+
+[no] framing-mode          specifies framing of E1 interface
+                           optional parameter with default value: "unframed"
+
+                           Parameter type: <E1::FramingMode>
+                           Format:
+                           ( unframed
+                           | framed )
+                           Possible values:
+                           - unframed              : Unframed E1 type
+                           - framed                : Framed E1 type
+
+[no] crc                   enable or disable CRC4 for this e1 interface
+                           optional parameter with default value: "disable"
+
+                           Parameter type: <E1::Crc>
+                           Format:
+                           ( disable
+                           | enable )
+                           Possible values:
+                           - disable               : no CRC4
+                           - enable                : Enable CRC4
+
+[no] multi-framing         Specifies if multi framing to be used
+                           optional parameter with default value: "disable"
+
+                           Parameter type: <E1::MultiFraming>
+                           Format:
+                           ( disable
+                           | enable )
+                           Possible values:
+                           - disable               : No multi framing
+                           - enable                : Enable multi framing
+
+[no] transmit-clk-src      Specifies clock source to be used for the e1 
+interface
+                           optional parameter with default value: "external"
+
+                           Parameter type: <E1::TransmitClkSrc>
+                           Format:
+                           ( external
+                           | internal )
+                           Possible values:
+                           - external              : Specifies that the network 
+clock source is used
+                           - internal              : Specifies that the 
+internal clock source is used
+
+[no] line-impedance        Nominal line impedance
+                           optional parameter with default value: "120ohms"
+
+                           Parameter type: <E1::LineImpedance>
+                           Format:
+                           ( 75ohms
+                           | 120ohms )
+                           Possible values:
+                           - 75ohms                : indicates the line 
+impedance value unbalanced 75ohms
+                           - 120ohms               : indicates the line 
+impedance value balanced 120 ohms
+
+[no] admin-up              admin status is up
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+
+DS-LIN-TEST-01:automationuser>#

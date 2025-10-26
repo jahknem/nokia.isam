@@ -1,0 +1,5 @@
+help configure alarm entry soho-sup-sw-file-erro
+r! SOHO ONT
+                                                                                 ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

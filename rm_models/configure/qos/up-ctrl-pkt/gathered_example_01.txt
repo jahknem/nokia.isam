@@ -1,0 +1,18 @@
+up-ctrl-pkt arp
+exit
+up-ctrl-pkt igmp
+exit
+up-ctrl-pkt dhcpv4
+exit
+up-ctrl-pkt dhcpv6
+exit
+up-ctrl-pkt icmpv6
+exit
+up-ctrl-pkt cfm
+exit
+up-ctrl-pkt pppox
+exit
+up-ctrl-pkt lacp
+exit
+up-ctrl-pkt dot1x
+exit

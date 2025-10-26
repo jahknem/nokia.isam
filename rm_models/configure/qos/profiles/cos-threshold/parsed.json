@@ -1,0 +1,63 @@
+{
+  "title": "QOS COS THRESHOLD PROFILE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a QoS CoS threshold profile. A \nQoS CoS threshold profile contains all settings related to a policer threshold.",
+  "user_level": "The command can be accessed by operators with qos privileges, and executed by \noperators with qos privileges.",
+  "syntax": "> configure qos profiles ( no cos-threshold (name) ) | ( cos-threshold (name) [ no tc0-threshold | tc0-threshold <Qos::tcThreshold> ] [ no tc1-threshold | tc1-threshold <Qos::tcThreshold> ] [ no tc2-threshold | tc2-threshold <Qos::tcThreshold> ] [ no tc3-threshold | tc3-threshold <Qos::tcThreshold> ] [ no tc4-threshold | tc4-threshold <Qos::tcThreshold> ] [ no tc5-threshold | tc5-threshold <Qos::tcThreshold> ] [ no tc6-threshold | tc6-threshold <Qos::tcThreshold> ] [ no tc7-threshold | tc7-threshold <Qos::tcThreshold> ] )",
+  "resource_parameters": [
+    {
+      "name": "(name)",
+      "description": "A unique profile name"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] tc0-threshold",
+      "description": "tc0 threshold, unit: percent optional parameter with default value: 0 - Percentage of the QoS Thresh - range: [0...100]",
+      "type": "<Qos::tcThreshold>",
+      "default": "0"
+    },
+    {
+      "name": "[no] tc1-threshold",
+      "description": "tc1 threshold, unit: percent optional parameter with default value: 0 - Percentage of the QoS Thresh - range: [0...100]",
+      "type": "<Qos::tcThreshold>",
+      "default": "0"
+    },
+    {
+      "name": "[no] tc2-threshold",
+      "description": "tc2 threshold, unit: percent optional parameter with default value: 0 - Percentage of the QoS Thresh - range: [0...100]",
+      "type": "<Qos::tcThreshold>",
+      "default": "0"
+    },
+    {
+      "name": "[no] tc3-threshold",
+      "description": "tc3 threshold, unit: percent optional parameter with default value: 0 - Percentage of the QoS Thresh - range: [0...100]",
+      "type": "<Qos::tcThreshold>",
+      "default": "0"
+    },
+    {
+      "name": "[no] tc4-threshold",
+      "description": "tc4 threshold, unit: percent optional parameter with default value: 0 - Percentage of the QoS Thresh - range: [0...100]",
+      "type": "<Qos::tcThreshold>",
+      "default": "0"
+    },
+    {
+      "name": "[no] tc5-threshold",
+      "description": "tc5 threshold, unit: percent optional parameter with default value: 0 - Percentage of the QoS Thresh - range: [0...100]",
+      "type": "<Qos::tcThreshold>",
+      "default": "0"
+    },
+    {
+      "name": "[no] tc6-threshold",
+      "description": "tc6 threshold, unit: percent optional parameter with default value: 0 - Percentage of the QoS Thresh - range: [0...100]",
+      "type": "<Qos::tcThreshold>",
+      "default": "0"
+    },
+    {
+      "name": "[no] tc7-threshold",
+      "description": "tc7 threshold, unit: percent optional parameter with default value: 0 - Percentage of the QoS Thresh - range: [0...100] DS-LIN-TEST-01:automationuser>#",
+      "type": "<Qos::tcThreshold>",
+      "default": "0"
+    }
+  ],
+  "raw": "help configure qos profiles cos-threshold\r\nQOS COS THRESHOLD PROFILE CONFIGURATION COMMAND\r\n===============================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a QoS CoS threshold profile. A \r\nQoS CoS threshold profile contains all settings related to a policer threshold.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by \r\noperators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos profiles ( no cos-threshold (name) ) | ( cos-threshold (name) [ \r\nno tc0-threshold | tc0-threshold <Qos::tcThreshold> ] [ no tc1-threshold | \r\ntc1-threshold <Qos::tcThreshold> ] [ no tc2-threshold | tc2-threshold \r\n<Qos::tcThreshold> ] [ no tc3-threshold | tc3-threshold <Qos::tcThreshold> ] [ \r\nno tc4-threshold | tc4-threshold <Qos::tcThreshold> ] [ no tc5-threshold | \r\ntc5-threshold <Qos::tcThreshold> ] [ no tc6-threshold | tc6-threshold \r\n<Qos::tcThreshold> ] [ no tc7-threshold | tc7-threshold <Qos::tcThreshold> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS CoS Threshold Profile Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(name)                     A unique profile name\r\n\r\nTable \"QoS CoS Threshold Profile Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] tc0-threshold         tc0 threshold, unit: percent \r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Qos::tcThreshold>\r\n                           Format:\r\n                           - Percentage of the QoS Thresh\r\n                           - range: [0...100]\r\n\r\n[no] tc1-threshold         tc1 threshold, unit: percent \r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Qos::tcThreshold>\r\n                           Format:\r\n                           - Percentage of the QoS Thresh\r\n                           - range: [0...100]\r\n\r\n[no] tc2-threshold         tc2 threshold, unit: percent \r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Qos::tcThreshold>\r\n                           Format:\r\n                           - Percentage of the QoS Thresh\r\n                           - range: [0...100]\r\n\r\n[no] tc3-threshold         tc3 threshold, unit: percent \r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Qos::tcThreshold>\r\n                           Format:\r\n                           - Percentage of the QoS Thresh\r\n                           - range: [0...100]\r\n\r\n[no] tc4-threshold         tc4 threshold, unit: percent \r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Qos::tcThreshold>\r\n                           Format:\r\n                           - Percentage of the QoS Thresh\r\n                           - range: [0...100]\r\n\r\n[no] tc5-threshold         tc5 threshold, unit: percent \r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Qos::tcThreshold>\r\n                           Format:\r\n                           - Percentage of the QoS Thresh\r\n                           - range: [0...100]\r\n\r\n[no] tc6-threshold         tc6 threshold, unit: percent \r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Qos::tcThreshold>\r\n                           Format:\r\n                           - Percentage of the QoS Thresh\r\n                           - range: [0...100]\r\n\r\n[no] tc7-threshold         tc7 threshold, unit: percent \r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Qos::tcThreshold>\r\n                           Format:\r\n                           - Percentage of the QoS Thresh\r\n                           - range: [0...100]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 19:37:04 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 19:37:04 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

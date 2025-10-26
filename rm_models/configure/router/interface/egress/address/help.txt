@@ -1,0 +1,12 @@
+help configure router interface egress address
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:53:28 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:53:26 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:53:28 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:53:12 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

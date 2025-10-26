@@ -1,0 +1,5 @@
+help configure router igmp ssm-translate grp-ran
+ge <end> : a.b.c.d
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

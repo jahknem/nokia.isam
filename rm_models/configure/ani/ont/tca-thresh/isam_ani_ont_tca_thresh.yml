@@ -1,0 +1,80 @@
+module: isam_ani_ont_tca_thresh
+short_description: Resource module to configure ani ont tca-thresh
+description:
+- This command edits provisioning data associated with an ONT ANI.
+- Supports configuration of lower optical th, upper optical th, rssi profile
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure ani ont ()'
+options:
+  config:
+    description:
+    - A list of ani ont tca-thresh configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (ont-idx) - ont index
+      lower_optical_th:
+        type: str
+        description:
+        - 'indicates the optical level the ONT uses to declare the Low received.Value
+          0.5 dBm means ONT internal choice which would be MIB default 1 with default
+          value: 0.5 - optical level ONT uses to declare the low recieved - unit:
+          dBm - range: [-127...0.5]'
+        default: '0.5'
+      upper_optical_th:
+        type: str
+        description:
+        - 'indicates the optical level the ONT uses to declare the High received.Value
+          0.5 dBm means ONT internal choice which would be MIB default 1 with default
+          value: 0.5 - optical level ONT uses to declare the high recieved - unit:
+          dBm - range: [-127...0.5]'
+        default: '0.5'
+      rssi_profile:
+        type: str
+        description:
+        - 'an unique index of the rssi profile(0-200) with default value: "0" - an
+          unique index value for the rssi profile(0-200 configurable) - range: [0...200]
+          DS-LIN-TEST-01:automationuser>#'
+        default: '0'
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure ani ont tca-thresh)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

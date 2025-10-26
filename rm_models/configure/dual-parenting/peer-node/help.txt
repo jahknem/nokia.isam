@@ -1,0 +1,64 @@
+help configure dual-parenting peer-node
+DUAL-PARENTING PEER-NODE CONFIGURATION COMMAND
+==============================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure peer node. The system will decide 
+which port of the two becomes active. In case of failure of one port the other 
+port will take over. A forced switchover can also be triggered manually by the 
+operator.
+
+The port protection group is identified by the first port in the group that is 
+intended to be protected. The following parameters can be configured for the 
+protection group :
+  - peer-node-id: the peer-node-id that will ensure the protection of the first 
+one.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure dual-parenting ( no peer-node (node-id) ) | ( peer-node (node-id) 
+node-name <Equipm::DualParentProtGrpPeerNodeName> sync-vlan <Eqpt::SyncVlanId> )
+
+Command Parameters
+------------------
+
+Table "Dual-Parenting peer-node Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(node-id)                  the config of dual-parenting peer-node id
+
+Table "Dual-Parenting peer-node Configuration Command" Command Parameters
+
+Parameter                  Description
+
+node-name                  the dual-parenting of peer-node name
+                           mandatory parameter
+
+                           Parameter type: 
+<Equipm::DualParentProtGrpPeerNodeName>
+                           Format:
+                           - a printable string
+                           - length: 1<=x<=127 
+
+sync-vlan                  the sync-vlan-id for dual-parenting typeb
+                           mandatory parameter
+
+                           Parameter type: <Eqpt::SyncVlanId>
+                           Format:
+                           - Sync vlan index 
+                           - range: [2...4093]
+
+
+DS-LIN-TEST-01:automationuser>#

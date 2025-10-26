@@ -1,0 +1,56 @@
+help configure equipment external-link-assign
+HOST SHELF SFP CONFIGURATION COMMANDS
+=====================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the association between a host 
+shelf SFP/XFP and a remote LT.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment external-link-assign (index) [ no remote | remote 
+<Equipm::ExpansionSlotIndex> ]
+
+Command Parameters
+------------------
+
+Table "Host Shelf SFP Configuration Commands" Resource Parameters
+
+Resource Identifier        Description
+
+(index)                    the physical sfp or xfp cage position
+
+Table "Host Shelf SFP Configuration Commands" Command Parameters
+
+Parameter                  Description
+
+[no] remote                the expansion shelf LSM 
+                           optional parameter with default value: "0/0/0"
+
+
+                           Parameter type: <Equipm::ExpansionSlotIndex>
+                           Format:
+                           <Eqpt::ExpRack> / <Eqpt::ExpShelf> / <Eqpt::ExpSlot>
+                           Field type <Eqpt::ExpRack>
+                           - the physical number of the expansion rack, 0 
+stands for no remote
+                           Field type <Eqpt::ExpShelf>
+                           - physical nbr of expansion shelf within expansion 
+rack, 0 stands for no remote
+                           Field type <Eqpt::ExpSlot>
+                           - the physical number of the slot within expansion 
+shelf, 0 stands for no remote
+
+
+DS-LIN-TEST-01:automationuser>#

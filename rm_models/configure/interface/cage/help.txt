@@ -1,0 +1,68 @@
+help configure interface cage
+CAGE MODE CONFIGURATION COMMAND
+===============================
+
+Command Description
+-------------------
+
+This command allows the operator to configure SLOT cage mode:
+  - The slot index of the cage
+  - The number of the sfp cage
+  - The index of rssi profile which would be configured on cage.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure interface cage (position) [ operational-mode <Eqpt::AsamCageMode> ]
+
+Command Parameters
+------------------
+
+Table "Cage mode configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(position)                 the physical cage position
+
+Table "Cage mode configuration Command" Command Parameters
+
+Parameter                  Description
+
+operational-mode           oper-mode of the cage
+                           optional parameter
+
+                           Parameter type: <Eqpt::AsamCageMode>
+                           Format:
+                           ( not-set
+                           | gpon
+                           | xgs
+                           | mpm-gpon-xgs
+                           | dual-gpon
+                           | u-ngpon
+                           | twenty-five-g
+                           | ng-pon2
+                           | mpm-gpon-xgpon )
+                           Possible values:
+                           - not-set               : cage mode set to not set
+                           - gpon                  : cage mode set to gpon
+                           - xgs                   : cage mode set to xgs
+                           - mpm-gpon-xgs          : cage mode set to 
+mpm-gpon-xgs
+                           - dual-gpon             : cage mode set to dual-gpon
+                           - u-ngpon               : cage mode set to u-ngpon
+                           - twenty-five-g         : cage mode set to 
+twentyfiveg
+                           - ng-pon2               : cage mode set to ng-pon2
+                           - mpm-gpon-xgpon        : cage mode set to 
+mpm-gpon-xgpon
+
+
+DS-LIN-TEST-01:automationuser>#

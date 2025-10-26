@@ -1,0 +1,5 @@
+help configure router interface egress icmp unre
+achables
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

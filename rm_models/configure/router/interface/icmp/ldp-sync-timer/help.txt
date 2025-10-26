@@ -1,0 +1,5 @@
+help configure router interface icmp ldp-sync-ti
+mer
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

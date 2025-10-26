@@ -1,0 +1,35 @@
+{
+  "title": "DUAL-PARENTING PROTGRP CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure dual-parenting protection group. \nThe system will decide which port of the two becomes active. In case of failure \nof one port the other port will take over. A forced switchover can also be \ntriggered manually by the operator.\n\nThe port protection group is identified by the first port in the group that is \nintended to be protected. The following parameters can be configured for the \nprotection group :\n  - local-port-index: the local-port-index that will ensure the protection of \nthe first one.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure dual-parenting ( no protection-group (local-port) ) | ( protection-group (local-port) prot-type <Equipm::DualParentProtGrpType> peer-node-name <Equipm::DualParentProtGrpPeerNodeName> protection-group-id <Equipm::DualParentProtGrpId> [ [ no ] prot-group-status ] )",
+  "resource_parameters": [
+    {
+      "name": "(local-port)",
+      "description": "the local port identifier of the dual-parenting in the protection group"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "prot-type",
+      "description": "the dual-parenting protection group pro-type mandatory parameter",
+      "type": "<Equipm::DualParentProtGrpType>",
+      "format": "( primary                            | secondary )",
+      "values": [
+        "primary               : primary node",
+        "secondary             : secondary node"
+      ]
+    },
+    {
+      "name": "peer-node-name",
+      "description": "the dual-parenting peer-node-name mandatory parameter - a printable string - length: 1<=x<=127",
+      "type": "<Equipm::DualParentProtGrpPeerNodeName>"
+    },
+    {
+      "name": "protection-group-id",
+      "description": "the protecion group id in the dual-parenting protection group mandatory parameter - index of dual-parenting protection group - range: [1...127] [no] prot-group-status optional parameter",
+      "type": "boolean"
+    }
+  ],
+  "raw": "help configure dual-parenting protection-group\r\nDUAL-PARENTING PROTGRP CONFIGURATION COMMAND\r\n============================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure dual-parenting protection group. \r\nThe system will decide which port of the two becomes active. In case of failure \r\nof one port the other port will take over. A forced switchover can also be \r\ntriggered manually by the operator.\r\n\r\nThe port protection group is identified by the first port in the group that is \r\nintended to be protected. The following parameters can be configured for the \r\nprotection group :\r\n  - local-port-index: the local-port-index that will ensure the protection of \r\nthe first one.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure dual-parenting ( no protection-group (local-port) ) | ( \r\nprotection-group (local-port) prot-type <Equipm::DualParentProtGrpType> \r\npeer-node-name <Equipm::DualParentProtGrpPeerNodeName> protection-group-id \r\n<Equipm::DualParentProtGrpId> [ [ no ] prot-group-status ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Dual-Parenting ProtGrp Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(local-port)               the local port identifier of the dual-parenting in \r\nthe protection group\r\n\r\nTable \"Dual-Parenting ProtGrp Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nprot-type                  the dual-parenting protection group pro-type\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Equipm::DualParentProtGrpType>\r\n                           Format:\r\n                           ( primary\r\n                           | secondary )\r\n                           Possible values:\r\n                           - primary               : primary node\r\n                           - secondary             : secondary node\r\n\r\npeer-node-name             the dual-parenting peer-node-name\r\n                           mandatory parameter\r\n\r\n                           Parameter type: \r\n<Equipm::DualParentProtGrpPeerNodeName>\r\n                           Format:\r\n                           - a printable string\r\n                           - length: 1<=x<=127 \r\n\r\nprotection-group-id        the protecion group id in the dual-parenting \r\nprotection group\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Equipm::DualParentProtGrpId>\r\n                           Format:\r\n                           - index of dual-parenting protection group\r\n                           - range: [1...127]\r\n\r\n[no] prot-group-status     \r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

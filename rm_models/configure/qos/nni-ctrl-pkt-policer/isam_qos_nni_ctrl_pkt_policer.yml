@@ -1,0 +1,78 @@
+module: isam_qos_nni_ctrl_pkt_policer
+short_description: Resource module to configure qos nni-ctrl-pkt-policer
+description:
+- Configures a upstream QoS Nni Control Packet Policer.This control packet policer
+  serves to prevent DoS attacks from subscriber premises against the control plane
+  of the ISAM. The policing parameters that can be configured are the sustainable
+  rate in packets/sec and the maximum burst size in packets. Control packets arriving
+  at a higher rate then the sustainable rate are dropped by the policer. Control packets
+  arriving in a longer burst then the maximum burst size are dropped by the policer.
+  Control packets are packets directed to the LSM itself or inserted by the LSM. The
+  control packet protocol type depends on the applied forwarding model, and can be
+  802.1x, ARP, RIP, DHCP, IGMP, PPPoEDiscovery , PPP LCP, PPP control, PPP LCP termination
+  acknowledgement. Policing is not applied on control packets inserted by the LSM.
+- Supports configuration of sustained rate, burst size
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+options:
+  config:
+    description:
+    - A list of qos nni-ctrl-pkt-policer configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier
+      sustained_rate:
+        type: str
+        description:
+        - 'max sustainable rate in packets/sec with default value: 64 - the police
+          rate of inc user pkts in pps - range: [1...256]'
+        default: '64'
+      burst_size:
+        type: str
+        description:
+        - 'max burst size, in packets with default value: 128 - the burst size - range:
+          [1...256]'
+        default: '128'
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure qos nni-ctrl-pkt-policer)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged
+EXAMPLES:
+  - gathered_example_01.txt

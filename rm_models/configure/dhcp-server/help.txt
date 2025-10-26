@@ -1,0 +1,67 @@
+help configure dhcp-server
+DHCP-SERVER CONFIGURATION DATA
+==============================
+
+Command Description
+-------------------
+
+This command allows the opterator to manage the dhcp server information
+
+
+User Level
+----------
+
+The command can be accessed by operators with xdsl privileges, and executed by 
+operators with xdsl privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure dhcp-server [ start-addr <Ip::V4Address> ] [ stop-addr 
+<Ip::V4Address> ] [ no lease-time | lease-time <CWMP::LeaseTime> ] [ (restart) ]
+
+Command Parameters
+------------------
+
+Table "Dhcp-Server Configuration Data" Command Parameters
+
+Parameter                  Description
+
+start-addr                 the start address of dynamic IP pool
+                           optional parameter
+
+                           Parameter type: <Ip::V4Address>
+                           Format:
+                           - IPv4-address
+
+stop-addr                  the stop address of dynamic IP pool
+                           optional parameter
+
+                           Parameter type: <Ip::V4Address>
+                           Format:
+                           - IPv4-address
+
+[no] lease-time            the lease time for the client.The range of the value 
+is [300s, 259200s]
+                           optional parameter with default value: 43200L
+
+                           Parameter type: <CWMP::LeaseTime>
+                           Format:
+                           - the lease time for the client
+                           - unit: sec
+                           - range: [300...259200]
+                           - length: 300<=x<=259200 
+
+(restart)                  to restart the dhcp server, the dhcp-server 
+configuration will be effective after restarting dhcp server
+                           optional parameter
+
+                           Parameter type: <CWMP::DhcpSRestart>
+                           Format:
+                           restart
+                           Possible values:
+                           - restart               : restart the dhcp server
+
+
+DS-LIN-TEST-01:automationuser>#

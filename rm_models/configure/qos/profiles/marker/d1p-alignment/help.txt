@@ -1,0 +1,89 @@
+help configure qos profiles marker d1p-alignment
+QOS DOT1P ALIGNMENT MARKER CONFIGURATION COMMAND
+================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a marker for Dot1P alignment.
+
+Default value for the global DSCP To Dot1P Alignment Table
+
+
+DSCP Value                              P-bit Value 
+
+0-7                                   0 
+
+8-15                                   1 
+
+16-23                                   2 
+
+24-31                                   3 
+
+32-39                                   4 
+
+40-47                                   5 
+
+48-55                                   6 
+
+56-63                                   7 
+
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles marker ( no d1p-alignment (name) ) | ( d1p-alignment 
+(name) (alignment) [ no dscp-pbit-prof | dscp-pbit-prof 
+<Qos::QosDscpToPbitProfileName> ] )
+
+Command Parameters
+------------------
+
+Table "QoS Dot1P Alignment Marker Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+Table "QoS Dot1P Alignment Marker Configuration Command" Command Parameters
+
+Parameter                  Description
+
+(alignment)                enable dot1p alignment
+                           mandatory parameter
+
+                           Parameter type: <Qos::Dot1PAlignment>
+                           Format:
+                           enable
+                           Possible values:
+                           - enable                : enable dot1p alignment
+
+[no] dscp-pbit-prof        Dscp to Pbit mapping profile name applicable on this 
+marker
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosDscpToPbitProfileName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associate
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+
+DS-LIN-TEST-01:automationuser>#

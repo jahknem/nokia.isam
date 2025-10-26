@@ -1,0 +1,11 @@
+25/10/26 12:07:14 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 26/10/25 12:07:12 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/26 12:07:14 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 26/10/25 12:07:00 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># help configure service vpls spoke-sdp bgp interf
+ace ingress-network
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

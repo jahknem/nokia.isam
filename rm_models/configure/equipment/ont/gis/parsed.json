@@ -1,0 +1,26 @@
+{
+  "title": "ONT GIS CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the ONT GIS parameters.\n\nolt-location - when default value disable is set, OLT won't care about ONT GIS \ninfo, when enable is set, OLT would provison OLT's location to ONT",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure equipment ont gis (ont-idx) [ no olt-location | olt-location <Gpon::OltLocation> ]",
+  "resource_parameters": [
+    {
+      "name": "(ont-idx)",
+      "description": "ONT index"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] olt-location",
+      "description": "GIS settings for this ONT optional parameter with default value: \"disable\"",
+      "type": "<Gpon::OltLocation>",
+      "format": "( disable                            | enable )",
+      "values": [
+        "disable               : the OLT GIS info will not be used",
+        "enable                : the OLT GIS info will be used"
+      ],
+      "default": "disable"
+    }
+  ],
+  "raw": "help configure equipment ont gis\r\nONT GIS CONFIGURATION COMMAND\r\n=============================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the ONT GIS parameters.\r\n\r\nolt-location - when default value disable is set, OLT won't care about ONT GIS \r\ninfo, when enable is set, OLT would provison OLT's location to ONT\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure equipment ont gis (ont-idx) [ no olt-location | olt-location \r\n<Gpon::OltLocation> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"ONT GIS Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(ont-idx)                  ONT index\r\n\r\nTable \"ONT GIS Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] olt-location          GIS settings for this ONT\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Gpon::OltLocation>\r\n                           Format:\r\n                           ( disable\r\n                           | enable )\r\n                           Possible values:\r\n                           - disable               : the OLT GIS info will not \r\nbe used\r\n                           - enable                : the OLT GIS info will be \r\nused\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

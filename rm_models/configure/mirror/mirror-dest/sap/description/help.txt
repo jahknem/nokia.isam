@@ -1,0 +1,5 @@
+help configure mirror mirror-dest sap descriptio
+n
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

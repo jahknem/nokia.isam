@@ -1,0 +1,44 @@
+DS-LIN-TEST-01:automationuser># info configure ethernet ont 1/1/5/1/1/1/1
+configure ethernet
+#-------------------------------------------------------------------------------
+echo "ethernet"
+#-------------------------------------------------------------------------------
+ont 1/1/5/1/1/1/1
+  cust-info Y654321
+  auto-detect auto
+  admin-state up
+exit
+#-------------------------------------------------------------------------------
+
+-- single-command demonstrating deletion of cust-info:
+DS-LIN-TEST-01:automationuser># configure ethernet ont 1/1/5/1/1/1/1 no cust-info
+DS-LIN-TEST-01:automationuser>configure>ethernet>ont>1/1/5/1/1/1/1#
+
+-- verify after deletion:
+DS-LIN-TEST-01:automationuser># info configure ethernet ont 1/1/5/1/1/1/1
+configure ethernet
+#-------------------------------------------------------------------------------
+echo "ethernet"
+#-------------------------------------------------------------------------------
+ont 1/1/5/1/1/1/1
+  auto-detect auto
+  admin-state up
+exit
+#-------------------------------------------------------------------------------
+
+-- revert to baseline:
+DS-LIN-TEST-01:automationuser># configure ethernet ont 1/1/5/1/1/1/1 cust-info Y654321
+DS-LIN-TEST-01:automationuser>configure>ethernet>ont>1/1/5/1/1/1/1#
+
+-- final verify restored:
+DS-LIN-TEST-01:automationuser># info configure ethernet ont 1/1/5/1/1/1/1
+configure ethernet
+#-------------------------------------------------------------------------------
+echo "ethernet"
+#-------------------------------------------------------------------------------
+ont 1/1/5/1/1/1/1
+  cust-info Y654321
+  auto-detect auto
+  admin-state up
+exit
+#-------------------------------------------------------------------------------

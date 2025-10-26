@@ -1,0 +1,102 @@
+module: isam_alarm_entry
+short_description: Resource module to configure alarm entry
+description:
+- This command allows the operator to manage local alarm entries.
+- Supports configuration of severity, service affecting, reporting and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure alarm entry ()'
+options:
+  config:
+    description:
+    - A list of alarm entry configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (index) - alarm type
+      severity:
+        type: str
+        description:
+        - 'assign a severity level to this alarm with default value: "minor"'
+        - Alarms below this threshold will not be reported
+        - 'Possible values: C(indeterminate) - not a definite known severity level;
+          C(warning) - just to inform as a warning; C(minor) - not service affecting;
+          C(major) - service affecting; C(critical) - service breaking; C(ignore)
+          - alarm is not processed by the system'
+        default: minor
+        choices:
+        - indeterminate
+        - warning
+        - minor
+        - major
+        - critical
+        - ignore
+      service_affecting:
+        type: bool
+        description:
+        - make this alarm service affecting
+      reporting:
+        type: bool
+        description:
+        - enable reporting of this alarm
+      logging:
+        type: bool
+        description:
+        - 'enable logging of this alarm Table "Alarm Entry Configuration Command"
+          Display Parameters Specific Information:'
+      category:
+        type: str
+        description:
+        - category of an alarm This element is always shown. ( communications | qos
+          | processing-error | equipment | environmental )
+        - 'Possible values: C(communications) - communications related alar ms; C(qos)
+          - QoS related alarms; C(processing-error) - processing failure related alarms;
+          C(equipment) - equipment related alarms; C(environmental) - environmental
+          related alarms'
+        choices:
+        - communications
+        - qos
+        - processing-error
+        - equipment
+        - environmental
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure alarm entry)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

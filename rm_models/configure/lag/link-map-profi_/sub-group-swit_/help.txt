@@ -1,0 +1,5 @@
+help configure lag link-map-profi* sub-group-swi
+t*
+                                                   ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

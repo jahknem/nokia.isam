@@ -1,0 +1,9 @@
+{
+  "title": "",
+  "description": "",
+  "user_level": "",
+  "syntax": "",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure cfm slm\r\nSYNTHETIC LOSS MEASUREMENT CONFIGURATION COMMANDS\r\n=================================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command can be used to configure the parameters for synthetic loss \r\nmeasurement\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with alarm , oam , vlan privileges, \r\nand executed by operators with alarm , oam , vlan privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure cfm slm [ no inactivity-time | inactivity-time \r\n<Cfm::slmInactivityTime> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Synthetic Loss Measurement configuration Commands\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] inactivity-time       value of slm inactivity timer\r\n                           optional parameter with default value: 100L\r\n\r\n                           Parameter type: <Cfm::slmInactivityTime>\r\n                           Format:\r\n                           - inactivity time\r\n                           - unit: seconds\r\n                           - range: [10...100]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

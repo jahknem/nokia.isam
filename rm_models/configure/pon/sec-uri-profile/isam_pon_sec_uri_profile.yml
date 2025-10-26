@@ -1,0 +1,99 @@
+module: isam_pon_sec_uri_profile
+short_description: Resource module to configure pon sec-uri-profile
+description:
+- This command creates a Secure URI Profile. It provides (via pointers to other profiles)
+  both the URI for accessing information plus the security information necessary to
+  access the information
+- Supports configuration of name, auth securi prof, uri prof and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure pon ()'
+options:
+  config:
+    description:
+    - A list of pon sec-uri-profile configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        description:
+        - 'A string 1..32 characters long which uniquely identifies this Secure URI
+          Profile mandatory parameter - a profile name - range: [a-zA-Z0-9-_.] - length:
+          1<=x<=32'
+      auth_securi_prof:
+        type: str
+        description:
+        - 'Authentication security profile that contains network address of the security
+          server with default value: "none"'
+        - 'Possible values: C(none) - no profile to associate; C(name) - profile name
+          Field type <Gpon:AuthProfPtr>; C(range) - [0...20] Data driven field type
+          Possible values are depending on the actual configuration and software.
+          The currently allowed values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+        - Index of the Authentication security profile
+        - range
+      uri_prof:
+        type: str
+        description:
+        - 'uri profile that contains network address of the configuration server mandatory
+          parameter Table "Voice ONT Secure URI profile Configuration command" Display
+          Parameters Specific Information:'
+        - 'Possible values: C(none) - no profile to associate; C(name) - profile name
+          Field type <Gpon:UriProfilePtr>; C(range) - [0...100] Data driven field
+          type Possible values are depending on the actual configuration and software.
+          The currently allowed values can be shown with online -help.'
+        choices:
+        - none
+        - name
+        - Index of the URI profile that contains the IP address of the server
+        - range
+      auth_securi_prof_name:
+        type: str
+        description:
+        - name of the authentication security uri profile This element is only shown
+          in detail mode. - ignored printable string
+      uri_prof_name:
+        type: str
+        description:
+        - name of the uri profile This element is only shown in detail mode. - ignored
+          printable string
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure pon sec-uri-profile)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

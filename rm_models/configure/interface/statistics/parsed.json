@@ -1,0 +1,9 @@
+{
+  "title": "",
+  "description": "",
+  "user_level": "",
+  "syntax": "",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure interface statistics\r\n\r\nError : index type could not be detected\r\nError : no class defined for index type 196\r\nError : index type could not be detected\r\nError : no class defined for index type 196\r\nError : index type could not be detected\r\nError : no class defined for index type 196\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

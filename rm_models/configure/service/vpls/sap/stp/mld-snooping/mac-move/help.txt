@@ -1,0 +1,5 @@
+help configure service vpls sap stp mld-snooping
+ mac-move
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

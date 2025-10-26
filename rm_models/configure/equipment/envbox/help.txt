@@ -1,0 +1,42 @@
+help configure equipment envbox
+ENVIRONMENT MONITORING CONFIGURATION COMMAND
+============================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure environment monitoring status to 
+enable/disable the data relay from an external monitor box connected on the 
+NTIO board of ISAM to the monitor server. The operator can configure the 
+following parameters:
+  - enable-supervise: enable relay of environment monitoring from an external 
+monitor box.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment envbox [ [ no ] enable-supervise ]
+
+Command Parameters
+------------------
+
+Table "Environment Monitoring Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] enable-supervise      enable environment monitoring relay
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+
+DS-LIN-TEST-01:automationuser>#

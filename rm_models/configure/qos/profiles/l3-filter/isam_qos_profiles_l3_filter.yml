@@ -1,0 +1,173 @@
+module: isam_qos_profiles_l3_filter
+short_description: Resource module to configure qos profiles l3-filter
+description:
+- Configures an L3 filter. The created L3 filter can be reused to build policy actions
+  based on L3 filtering criteria, inside QoS session profiles. DSCP mask is supported
+  with defined L3-filter name with a prefix "DSCPMASKx_", 'x' must be 1~6, which means
+  treat dscp-value as a last 'x' bits masking -The first 8 characters are UPPER CASE
+  ALPHABETIC = DSCPMASK; and -The 9 character is NUMERICAL = {1, 2, 3, 4, 5, 6}; and
+  -The 10 character is UNDERSCORE; -the remaining is configurable.
+- Supports configuration of filter type, dst ip addr, src ip addr and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure qos profiles ()'
+options:
+  config:
+    description:
+    - A list of qos profiles l3-filter configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (name) - A unique profile name
+      filter_type:
+        type: str
+        description:
+        - 'L3 Filter type. Indicates to what kind of ip frames (ipv4 or ipv6) the
+          L3 filter is applicable. with default value: "ipv4"'
+        - 'Possible values: C(ipv4) - ipv4; C(ipv6) - ipv6'
+        default: ipv4
+        choices:
+        - ipv4
+        - ipv6
+      dst_ip_addr:
+        type: str
+        description:
+        - 'destination ipv4 address to be matched with the packet. Only applicable
+          in case filterType is equal to ipv4. with default value: "0.0.0.0/0" - IPv4-address
+          Field type <Ip::PrefixLengthFull> - IP address prefix length - range: [0...32]'
+        default: 0.0.0.0/0
+      src_ip_addr:
+        type: str
+        description:
+        - 'source ipv4 address to be matched with the packet. Only applicable in case
+          filterType is equal to ipv4. with default value: "0.0.0.0/0" - IPv4-address
+          Field type <Ip::PrefixLengthFull> - IP address prefix length - range: [0...32]'
+        default: 0.0.0.0/0
+      dst_ipv6_addr:
+        type: str
+        description:
+        - 'destination ipv6 address to be matched with the packet. Only applicable
+          in case filterType is equal to ipv6. with default value: " : : /0" - IPv6-address
+          Field type <ipv6::PrefixLength> - length of IPv6 address or prefix - range:
+          [0...128]'
+        default: ':  : /0'
+      src_ipv6_addr:
+        type: str
+        description:
+        - 'source ipv6 address to be matched with the packet. Only applicable in case
+          filterType is equal to ipv6. with default value: " : : /0" - IPv6-address
+          Field type <ipv6::PrefixLength> - length of IPv6 address or prefix - range:
+          [0...128]'
+        default: ':  : /0'
+      min_dst_port:
+        type: str
+        description:
+        - 'minimum value of the layer-4 destination port number with default value:
+          0L - the layer-4 port number - range: [0...65535]'
+        default: 0L
+      max_dst_port:
+        type: str
+        description:
+        - 'maximum value of the layer-4 destination port number with default value:
+          65535L - the layer-4 port number - range: [0...65535]'
+        default: 65535L
+      min_src_port:
+        type: str
+        description:
+        - 'minimum value of the layer-4 source port number with default value: 0L
+          - the layer-4 port number - range: [0...65535]'
+        default: 0L
+      max_src_port:
+        type: str
+        description:
+        - 'maximum value of the layer-4 source port number with default value: 65535L
+          - the layer-4 port number - range: [0...65535]'
+        default: 65535L
+      dscp_value:
+        type: str
+        description:
+        - 'dscp value to be matched, -1 means match all with default value: -1L -
+          dscp value to be matched, -1 means match all - range: [-1...63]'
+        default: -1L
+      protocol:
+        type: str
+        description:
+        - 'protocol to be matched with the packet with default value: "all"'
+        - 'Possible values: C(egp) - egp (IANA protocol number 8); C(eigrp) - eigrp
+          (IANA protocol number 88); C(gre) - gre (IANA protocol number 47); C(icmp)
+          - icmp (IANA protocol number 1); C(icmpv6) - icmpv6 (IANA protocol number
+          58); C(igmp) - igmp (IANA protocol number 2); C(igrp) - igrp (IANA protocol
+          number 9); C(ip) - ip (IANA protocol number 4); C(ipinip) - ipinip(protocol
+          id should be 94); C(ipv6) - ipv6 (IANA protocol number 41); C(ipv6-frag)
+          - ipv6-frag (IANA protocol number 44); C(ipv6-hopopt) - ipv6-HOPOPT (IANA
+          protocol number 0); C(ipv6-nonxt) - ipv6-NoNxt (IANA protocol number 59);
+          C(ipv6-opts) - ipv6-opts (IANA protocol number 60); C(ipv6-route) - ipv6-route
+          (IANA protocol number 43); C(ospf-igp) - ospf-igp (IANA protocol number
+          89); C(tcp) - tcp (IANA protocol number 6); C(udp) - udp (IANA protocol
+          number 17); C(rsvp) - rsvp (IANA protocol number 46); C(all) - all are considered
+          as match Field type <Qos::ProtocolType>; C(range) - [0...255]'
+        default: all
+        choices:
+        - egp
+        - eigrp
+        - gre
+        - icmp
+        - icmpv6
+        - igmp
+        - igrp
+        - ip
+        - ipinip
+        - ipv6
+        - ipv6-frag
+        - ipv6-hopopt
+        - ipv6-nonxt
+        - ipv6-opts
+        - ipv6-route
+        - ospf-igp
+        - tcp
+        - udp
+        - rsvp
+        - all
+        - ip protocol value
+        - range
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure qos profiles l3-filter)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

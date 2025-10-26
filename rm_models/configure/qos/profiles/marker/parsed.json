@@ -1,0 +1,9 @@
+{
+  "title": "",
+  "description": "",
+  "user_level": "",
+  "syntax": "",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure qos profiles marker\r\n                                                                  ^\r\ncommand is not complete\r\nDS-LIN-TEST-01:automationuser>#"
+}

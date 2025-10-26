@@ -1,0 +1,5 @@
+help configure service vpls egress bgp-ad spoke-
+sdp bgp-vpls
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

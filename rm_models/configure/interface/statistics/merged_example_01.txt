@@ -1,0 +1,20 @@
+# Using merged state
+# NOTE: This command returned errors on device; parameters are unknown
+
+# Before state:
+# =============
+#
+# Device help returned errors:
+#    Error: index type could not be detected
+#    Error: no class defined for index type 196
+
+- name: Merge interface statistics configuration
+  isam_interface_statistics:
+    state: merged
+    config:
+      - name: "index_value"
+
+# After state:
+# ============
+#
+# Configuration applied but parameters unknown due to device error.

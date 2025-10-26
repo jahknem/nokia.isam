@@ -1,0 +1,111 @@
+help configure qos profiles bandwidth
+QOS BANDWIDTH PROFILE CONFIGURATION COMMAND
+===========================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a QoS Bandwidth profile. A QoS 
+Bandwidth profile contains upstream rate enforcement information for frames to 
+which this profile is applied.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles ( no bandwidth (name) ) | ( bandwidth (name) 
+committed-info-rate <Qos::BwCommittedInfoRate> assured-info-rate 
+<Qos::BwAssuredInfoRate> excessive-info-rate <Qos::BwExcessiveInfoRate> [ no 
+delay-tolerance | delay-tolerance <Qos::DelayTolerance> ] [ no assu-burst-size 
+| assu-burst-size <Qos::BwAssuredBurstSize> ] [ no exce-burst-size | 
+exce-burst-size <Qos::BwExcessiveBurstSize> ] [ no dbru | dbru <Qos::BwDBRu> ] )
+
+Command Parameters
+------------------
+
+Table "QoS Bandwidth Profile Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+Table "QoS Bandwidth Profile Configuration Command" Command Parameters
+
+Parameter                  Description
+
+committed-info-rate        committed information rate 
+                           mandatory parameter
+
+                           Parameter type: <Qos::BwCommittedInfoRate>
+                           Format:
+                           - committed information rate 
+                           - unit: kbps
+                           - range: [0...25000000]
+
+assured-info-rate          assured information rate
+                           mandatory parameter
+
+                           Parameter type: <Qos::BwAssuredInfoRate>
+                           Format:
+                           - assured information rate 
+                           - unit: kbps
+                           - range: [0...25000000]
+
+excessive-info-rate        excessive information rate  
+                           mandatory parameter
+
+                           Parameter type: <Qos::BwExcessiveInfoRate>
+                           Format:
+                           - excessive information rate 
+                           - unit: kbps
+                           - range: [0...25000000]
+
+[no] delay-tolerance       delay tolerance
+                           optional parameter with default value: "1"
+
+                           Parameter type: <Qos::DelayTolerance>
+                           Format:
+                           - delay tolerance
+                           - range: [1...240]
+
+[no] assu-burst-size       assured burst size only for EPON
+                           optional parameter with default value: 256L
+
+                           Parameter type: <Qos::BwAssuredBurstSize>
+                           Format:
+                           - assured burst size only for EPON 
+                           - unit: kB
+                           - range: [1...256]
+
+[no] exce-burst-size       excessive burst size only for EPON  
+                           optional parameter with default value: 256L
+
+                           Parameter type: <Qos::BwExcessiveBurstSize>
+                           Format:
+                           - excessive burst size only for EPON 
+                           - unit: kB
+                           - range: [1...256]
+
+[no] dbru                  DBRu enable 
+                           optional parameter with default value: 
+"enable-if-supported"
+
+                           Parameter type: <Qos::BwDBRu>
+                           Format:
+                           ( enable
+                           | disable
+                           | enable-if-supported )
+                           Possible values:
+                           - enable                : enable use of DBRu
+                           - disable               : disable use of DBRu
+                           - enable-if-supported   : enable DBRu if supported
+
+
+DS-LIN-TEST-01:automationuser>#

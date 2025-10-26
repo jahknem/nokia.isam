@@ -1,0 +1,4 @@
+help configure router igmp-proxy mc-ecmp-balance
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

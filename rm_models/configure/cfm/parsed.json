@@ -1,0 +1,9 @@
+{
+  "title": "",
+  "description": "",
+  "user_level": "",
+  "syntax": "",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure cfm\r\n                                                  ^\r\ncommand is not complete\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 19:09:12 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:09:10 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 19:09:12 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:08:58 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

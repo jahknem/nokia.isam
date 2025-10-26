@@ -1,0 +1,5 @@
+help configure router interface ingress icmp ttl
+-expired
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

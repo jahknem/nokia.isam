@@ -1,0 +1,287 @@
+module: isam_ces_ont_service
+short_description: Resource module to configure ces ont service
+description:
+- Configures CES service.
+- Supports configuration of service type, label, signaling and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure ces ont ()'
+options:
+  config:
+    description:
+    - A list of ces ont service configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (uni-idx) - interface index of the ces ont uni
+      service_type:
+        type: str
+        description:
+        - 'underlying transport type - ethernet (l2) vs. udp/ip (l3) with default
+          value: "l2"'
+        - 'Possible values: C(l2) - Layer2 (ethernet); C(l3) - layer3 (IP/UDP)'
+        default: l2
+        choices:
+        - l2
+        - l3
+      label:
+        type: str
+        description:
+        - 'label of the service with default value: "" - label of the service - length:
+          x<=20'
+        - 'Maximum length: 20 characters'
+      signaling:
+        type: str
+        description:
+        - 'signaling with default value: "no-sig"'
+        - 'Possible values: C(no-sig) - no signalling; C(cas) - carried in a separate
+          signalling channel'
+        default: no-sig
+        choices:
+        - no-sig
+        - cas
+      timeslot_map:
+        type: str
+        description:
+        - 'time slot map with default value: "ff : ff : ff : 00" - time slot map -
+          length: 4'
+        default: 'ff : ff : ff'
+      payload_size:
+        type: str
+        description:
+        - 'payload size with default value: 0L - payload size, applicable only if
+          service type is unstructured;value 192 for DS1 and 256 for E1. - range:
+          [192,256]'
+        default: 0L
+      pl_encap_delay:
+        type: str
+        description:
+        - 'payload encapsulation delay with default value: 0L - payload encapsulation
+          delay, number of 125 microsecond frames to be encapsulated in each PW packet;only
+          significant and required in structured mode. - range: [8,16,24,32,64]'
+        default: 0L
+      timing_mode:
+        type: str
+        description:
+        - 'timing mode of the TDM service with default value: "adaptive" - loop :
+          loop timing'
+        - 'Possible values: C(net) - network timing; C(diff) - differential timing;
+          C(adaptive) - adaptive timing'
+        default: adaptive
+        choices:
+        - net
+        - diff
+        - adaptive
+      transmit_ckt_id:
+        type: str
+        description:
+        - 'transmit circuit id (L2 only) with default value: "00 : 00 : 00 : 00 :
+          00 : 00 : 00 : 00" - transmit circuit id (L2 only) - length: 8'
+        default: '00 : 00 : 00'
+      expected_ckt_id:
+        type: str
+        description:
+        - 'expected circuit id (L2 only) with default value: "00 : 00 : 00 : 00 :
+          00 : 00 : 00 : 00" - expected circuit id (L2 only) - length: 8'
+        default: '00 : 00 : 00'
+      maintenance_prof:
+        type: str
+        description:
+        - 'maintenance profile with default value: "none"'
+        - 'Possible values: C(none) - no profile to associate Field type <Ces::MaintProfIndex>;
+          C(range) - [0...20]'
+        default: none
+        choices:
+        - none
+        - a ces maintenance profile index value
+        - range
+      dest_mac_address:
+        type: str
+        description:
+        - 'destination mac address (L2 only) with default value: "00 : 00 : 00 : 00
+          : 00 : 00" - a mac-address (example : 01:02:03:04:05:06) (L2 only) - length:
+          6'
+        default: '00 : 00 : 00'
+      rtp_enable:
+        type: str
+        description:
+        - 'rtp enable with default value: "disabled"'
+        - 'Possible values: C(enabled) - enable rtp; C(disabled) - disable rtp'
+        default: disabled
+        choices:
+        - enabled
+        - disabled
+      vlan:
+        type: str
+        description:
+        - vlan id mandatory parameter
+        - 'Possible values: C(stacked) - stacked vlan identity Field type <Vlan::UVlanIndex>;
+          C(range) - [0...4093]'
+        choices:
+        - stacked
+        - unstacked vlan identity
+        - range
+        - service vlan identity
+        - customer vlan identity
+      admin_up:
+        type: bool
+        description:
+        - 'administrative state of the service with default value: "unlocked"'
+        - When true, the interface/feature is enabled; when false, it is disabled
+        - 'Possible values: C(unlocked) - start sending upstream allocation grants;
+          C(locked) - stop sending upstream allocation grants'
+        default: unlocked
+        choices:
+        - unlocked
+        - locked
+      udp_port:
+        type: str
+        description:
+        - 'unique udp port number for l3 service (L3 only) with default value: 2142L
+          - udp port (L3 only) - range: [2142,49152...65535]'
+        default: 2142L
+      dscp:
+        type: str
+        description:
+        - 'DSCP Value (L3 only) with default value: 46L - to set the DSCP value that
+          the Voip Client will use - range: [0...63]'
+        default: 46L
+      farend_ipinfo:
+        type: str
+        description:
+        - 'URI of the far-end termination point (L3 only) with default value: "" -
+          far end URI. Example = udp://<ip-addr>:<udp-port> (L3 only) - length: x<=50'
+        - 'Maximum length: 50 characters'
+      rtp_clock_ref:
+        type: str
+        description:
+        - 'frequency of the common timing reference (in multiples of 8 kHz) (L3 only)
+          with default value: 0L - frequency of the common timing reference (L3 only)
+          - range: [0...1000]'
+        default: 0L
+      rtp_ts_mode:
+        type: str
+        description:
+        - 'Mode in which RTP timestamps are generated in the TDM to PSN direction
+          (L3 only) with default value: "unknown"'
+        - 'Possible values: C(unknown) - not applicable (L3 only); C(absolute) - absolute
+          mode (L3 only); C(differential) - differential mode (L3 only)'
+        default: unknown
+        choices:
+        - unknown
+        - absolute
+        - differential
+      rtp_ptyp_pay:
+        type: str
+        description:
+        - 'RTP payload type for the payload channel in the TDM to PSN direction (L3
+          only) with default value: 96L - RTP payload type for the payload channel
+          in the TDM to PSN direction (L3 only) - range: [96...127]'
+        default: 96L
+      rtp_ptyp_sig:
+        type: str
+        description:
+        - 'RTP payload type for the signalling channel in the TDM to PSN direction
+          (L3 only) with default value: 0L - RTP payload type for the signalling channel
+          (L3 only) - range: [0]'
+        default: 0L
+      rtp_sync_pay:
+        type: str
+        description:
+        - 'RTP synchronization source for the payload channel in the TDM to PSN direction
+          (L3 only) with default value: 0L - RTP synchronization source for the payload
+          channel (L3 only) - range: [0...65535]'
+        default: 0L
+      rtp_sync_sig:
+        type: str
+        description:
+        - 'RTP synchronization source for the signalling channel in the TDM to PSN
+          direction (L3 only) with default value: 0L - RTP synchronization source
+          for the signalling channel (L3 only) - range: [0]'
+        default: 0L
+      rtp_exp_ptyp_pay:
+        type: str
+        description:
+        - 'RTP expected payload type for the payload channelin the PSN to TDM direction
+          (L3 only) with default value: 0L - RTP payload type for the payload channel
+          (L3 only) - range: [0...127]'
+        default: 0L
+      rtp_exp_ptyp_sig:
+        type: str
+        description:
+        - 'RTP expected payload type for the signalling channelin the PSN to TDM direction
+          (L3 only) with default value: 0L - RTP payload type for the signalling channel
+          (L3 only) - range: [0]'
+        default: 0L
+      rtp_exp_sync_pay:
+        type: str
+        description:
+        - 'RTP expected synchronization source for the payload channel in the TDM
+          to PSN direction (L3 only) with default value: 0L - RTP synchronization
+          source for the payload channel (L3 only) - range: [0...65535]'
+        default: 0L
+      rtp_exp_sync_sig:
+        type: str
+        description:
+        - 'RTP expected synchronization source for the signalling channel in the TDM
+          to PSN direction (L3 only) with default value: 0L - RTP synchronization
+          source for the signalling channel (L3 only) - range: [0] Table "CES Service
+          Configuration Command" Display Parameters Specific Information:'
+        default: 0L
+      oper_state:
+        type: str
+        description:
+        - operational state of the service This element is always shown. ( enabled
+          | disabled | unknown )
+        - 'Possible values: C(enabled) - enable the service; C(disabled) - disable
+          the service; C(unknown) - unknown state'
+        choices:
+        - enabled
+        - disabled
+        - unknown
+      maint_prof_name:
+        type: str
+        description:
+        - ces maintenance profile This element is always shown. - ignored printable
+          string
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure ces ont service)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

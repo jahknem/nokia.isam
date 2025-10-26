@@ -14,26 +14,26 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 ---
-module: isam_interfaces
+module: isam_vlans
 version_added: 2.9
-short_description: 'Manages interface attributes of Nokia ISAM MSAN devices.'
-description: 'This module manages interface attributes of Nokia ISAM MSAN devices'
+short_description: 'Manage VLAN attributes on Nokia ISAM MSAN devices.'
+description: 'This module manages VLAN configuration and facts on Nokia ISAM MSAN devices.'
 author: Jan Kuehnemund
 notes:
 - 'Tested against Nokia ISAM with OS Version R6.2.04m'
 options:
   config:
-    description: A dictionary of options for vlans
+    description: A dictionary of options for VLANs
     type: list
     elements: dict
     suboptions:
       id:
-        type: int
-        description: 
-        - configure a specific VLAN
+        type: str
+        description:
+        - Configure a specific VLAN ID (numeric or stacked like 'stacked:<svid>:<cvid>')
       name:
-        description: 
-        - The name of the VLAN
+        description:
+        - The VLAN name
         type: str
       mode:
         type: str
@@ -50,14 +50,14 @@ options:
         description: If the VLAN should be configured as a SNTP proxy
       priority:
         type: int
-        description: 
+        description:
         - 'The priority of the VLAN. Range: [0...7]'
       vmac-not-in-opt61:
         type: bool
-        description: skip vmac translation in dhcp option 61 even when vmac is enabled
-      new-broadcast::
+        description: Skip vmac translation in dhcp option 61 even when vmac is enabled
+      new-broadcast:
         type: str
-        description: switch downstream broadcast frames (On GPON and L2+ LT boards, broadcast control for S+C L2 Forwarders can only be controlled at S-VLAN level, not individually at S+C-VLAN-port level)
+        description: Control downstream broadcast frames.
         choices:
         - inherit
         - enable
@@ -65,8 +65,8 @@ options:
         default: inherit
       protocol-filter:
         type: str
-        description: control protocol group filters
-        choices: 
+        description: Control protocol group filters
+        choices:
         - pass-all
         - pass-pppoe
         - pass-ipoe
@@ -78,107 +78,94 @@ options:
         default: pass-all
       pppoe-relay-tag:
         type: str
-        description: 
-        - configure the format of the PPPoE relay tag
-        - true                  ! pppoe tag with the current fixed format
-        - false                 ! no pppoe tag
-        - configurable          ! circuit-id-pppoe and remote-id-pppoe controlling format
+        description:
+        - Configure the format of the PPPoE relay tag
         choices:
         - true
         - false
         - configurable
       drly-srv-usr-side:
         description:
-        - enable DHCP(v4/v6) server transparency at the user side when DHCP(v4/v6) relay is enabled.Only applicable for CC forwarder
-        - default = disable
-        - enable                ! enable DHCP(v4/v6) server transparency at the user side when DHCP(v4/v6) relay is enabled.
-        - disable               ! disable DHCP(v4/v6) server transparency at the user side when DHCP(v4/v6) relay is enabled.
+        - Enable DHCP(v4/v6) server transparency at the user side when DHCP(v4/v6) relay is enabled. Only applicable for CC forwarder
         type: bool
-        default: disable
+        default: false
       new-secure-fwd:
-        description: 
-        - enable secure forwarding for the VLAN (On GPON and L2+ LT boards, secure forwarding can only be controlled at S-VLAN level, not individually at S+C-VLAN-port level)
-        - default = inherit
-        - inherit               ! inherit new-secure-forwarding
-        - disable               ! disable new-secure-forwarding
-        - enable                ! enable new-secure-forwarding
+        description:
+        - Enable secure forwarding for the VLAN. On GPON and L2+ LT boards, this can only be controlled at S-VLAN level
         type: str
         choices:
         - inherit
         - enable
         - disable
       aging-time:
-        description: 
-        - configure MAC aging time in seconds; in case of default,the system-level value is applicable.
-        - default = -1
+        description:
+        - Configure MAC aging time in seconds; if default, the system-level value is applicable.
         type: int
       l2cp-transparent:
-        description: enable l2cp-transparent
+        description: Enable l2cp-transparent
         type: bool
       in-qos-prof-name:
         description:
         - QoS ingress profile name
-        - default = default
         type: str
       ipv4-mcast-ctrl:
         description:
-        - 'enable ipv4 multicast control: forward ipv4 multicast frames in this VLAN'
+        - 'Enable ipv4 multicast control: forward ipv4 multicast frames in this VLAN'
         type: bool
       ipv6-mcast-ctrl:
         description:
-        - 'enable ipv6 multicast control: forward ipv6 multicast frames in this VLAN'
+        - 'Enable ipv6 multicast control: forward ipv6 multicast frames in this VLAN'
         type: bool
       mac-mcast-ctrl:
         description:
-        - 'enable mac multicast control: forward mac multicast frames in this VLAN'
+        - 'Enable mac multicast control: forward mac multicast frames in this VLAN'
         type: bool
       dis-proto-rip:
         description:
-        - disable rip-ipv4 protocol
+        - Disable rip-ipv4 protocol
         type: bool
       proto-ntp:
         description:
-        - enable ntp protocol
+        - Enable ntp protocol
         type: bool
       dis-ip-antispoof:
         description:
-        - disable IP anti-spoofing
+        - Disable IP anti-spoofing
         type: bool
       unknown-unicast:
         description:
-        - enable unknown unicast flooding
+        - Enable unknown unicast flooding
         type: bool
       pt2ptgem-flooding:
         description:
-        - enable flooding on unicast GEM port
+        - Enable flooding on unicast GEM port
         type: bool
       mac-movement-ctrl:
         description:
-        - enable mac movement in this vlan
+        - Enable MAC movement in this VLAN
         type: bool
       cvlan4095passthru:
         description:
-        - enable C-VLAN 4095 tunneling behavior. Only applicable for S-VLAN CC forwarder
+        - Enable C-VLAN 4095 tunneling behavior. Only applicable for S-VLAN CC forwarder
         type: str
         choices:
         - passthru
         - not-applicable
       arp-snooping:
         description:
-        - enable arp snooping
+        - Enable ARP snooping
         type: bool
       arp-polling:
         description:
-        - enable arp polling
+        - Enable ARP polling
         type: bool
       arp-polling-ip:
         description:
-        - configure ARP polling IP address in form of 
-        - default = 0.0.0.0
+        - Configure ARP polling IP address in form of
         type: str
       mac-unauth:
         description:
-        - 'enable mac unauthorized default : forward the frame to this vlan if authorization failed'
+        - 'Enable mac unauthorized default: forward the frame to this vlan if authorization failed'
         type: bool
   state:
     description:

@@ -1,0 +1,4 @@
+help configure service vpls egress endpoint sap
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

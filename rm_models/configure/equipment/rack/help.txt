@@ -1,0 +1,49 @@
+help configure equipment rack
+RACK CONFIGURATION COMMAND
+==========================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the rack. The operator can 
+configure the following parameter:
+  - description: text that describes the location of the rack.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment rack (index) [ no description | description 
+<Description-127> ]
+
+Command Parameters
+------------------
+
+Table "Rack Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(index)                    the physcial position of the rack
+
+Table "Rack Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] description           any description to be used by the operator
+                           optional parameter with default value: ""
+
+                           Parameter type: <Description-127>
+                           Format:
+                           - description to help the operator to identify the 
+object
+                           - length: x<=127 
+
+
+DS-LIN-TEST-01:automationuser>#

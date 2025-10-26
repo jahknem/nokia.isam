@@ -1,0 +1,24 @@
+CONFIGURE FAN TRAY PARAMETERS
+
+Command Description
+-------------------
+
+This command allows the operator to configure the fan tray parameter fanmode. The fanmode determines the applied speed of the fan trays. Possible values: auto, eco, protect, classic.
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment fan-tray [ fanmode <Eqpt::FanMode> ]
+
+Command Parameters
+------------------
+
+fanmode                    Fan Tray mode (auto|eco|protect|classic)
+
+DS-LIN-TEST-01:automationuser>#

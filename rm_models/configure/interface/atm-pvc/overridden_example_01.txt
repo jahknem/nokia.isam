@@ -1,0 +1,24 @@
+# Using overridden state
+
+# Before state:
+# =============
+#
+# Run on device to capture current settings for this resource:
+#    info configure interface atm-pvc
+# Example output:
+#    customer-id "vip_customer_2"
+
+- name: Override interface atm-pvc configuration back to default
+  isam_interface_atm_pvc:
+    state: overridden
+    config:
+      - name: "1/1/atm:0/0"
+        customer_id: "available"
+
+# After state:
+# ============
+#
+# Re-run the same info command to show the effect:
+#    info configure interface atm-pvc
+# Expected output:
+#    customer-id "available"

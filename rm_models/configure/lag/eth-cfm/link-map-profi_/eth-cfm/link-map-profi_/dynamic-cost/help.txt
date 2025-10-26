@@ -1,0 +1,7 @@
+25/10/25 19:19:35 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># help configure lag eth-cfm link-map-profi* eth-c
+fm link-map-profi* dynamic-cost
+                                                   ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,69 @@
+help configure dist-router interface
+DROUTER IP CONFIGURATION COMMAND
+================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a distributed router IP interface 
+on a linecard and assign an IP address.
+
+
+User Level
+----------
+
+The command can be accessed by operators with drouter privileges, and executed 
+by operators with drouter privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure dist-router ( no interface (lt-vlan) ) | ( interface (lt-vlan) [ no 
+addrtype | addrtype <Drouter::IpAddressType> ] ip-address 
+<Drouter::IntfAddAndMask> [ [ no ] mpls ] )
+
+Command Parameters
+------------------
+
+Table "Drouter IP Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(lt-vlan)                  lt-vlan index
+
+Table "Drouter IP Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] addrtype              specify the type of IP address
+                           optional parameter with default value: "ipv4"
+
+                           Parameter type: <Drouter::IpAddressType>
+                           Format:
+                           ( ipv4
+                           | ipv6 )
+                           Possible values:
+                           - ipv4                  : ipv4
+                           - ipv6                  : ipv6
+
+ip-address                 specify IP Address
+                           mandatory parameter
+
+                           Parameter type: <Drouter::IntfAddAndMask>
+                           Format:
+                           <Drouter::V4AddressHex> / <Drouter::PrefixLength>
+                           Field type <Drouter::V4AddressHex>
+                           - IP Address
+                           Field type <Drouter::PrefixLength>
+                           - prefix length of the subnet
+                           - range: [1...31]
+
+[no] mpls                  enable MPLS on the IP interface
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,127 @@
+# Using overridden state
+
+# Before state:
+# -------------
+# From real device (after deleted):
+#   info configure qos interface
+DS-LIN-TEST-01:automationuser># info configure qos interface
+interface 1/1/5/2/1/1/1
+  scheduler-node name:NGLT_Default
+  cac-profile name:FD_ONTUniVideo
+  ds-num-rem-queue not-applicable
+  us-num-queue not-applicable
+  oper-weight 50
+  oper-rate 0
+  mc-scheduler-node none
+  bc-scheduler-node none
+  queue 0
+    priority 6
+    weight 34
+    oper-weight 34
+    queue-profile name:NGLT_Default
+    shaper-profile none
+  exit
+  queue 1
+    priority 6
+    weight 66
+    oper-weight 66
+    queue-profile name:NGLT_Default
+    shaper-profile none
+  exit
+  queue 2
+    priority 7
+    weight 0
+    oper-weight 0
+    queue-profile name:NGLT_Default
+    shaper-profile none
+  exit
+  queue 3
+    priority 8
+    weight 0
+    oper-weight 0
+    queue-profile name:NGLT_Default
+    shaper-profile none
+  exit
+  upstream-queue 0
+    bandwidth-profile name:GPONqpp100Mbps
+    bandwidth-sharing uni-sharing
+  exit
+  upstream-queue 4
+    weight 5
+    bandwidth-profile name:GPONqpp100Mbps
+    bandwidth-sharing uni-sharing
+  exit
+  upstream-queue 5
+    weight 6
+    bandwidth-profile name:GPONqpp100Mbps
+    bandwidth-sharing uni-sharing
+  exit
+exit
+DS-LIN-TEST-01:automationuser>#
+
+- name: Apply overridden operation on Nokia ISAM (qos interface)
+  isam_qos_interface:
+    state: overridden
+    config:
+      - name: "1/1/5/2/1/1/1"
+        queue_stats_on: true
+
+# After state:
+# ------------
+# Run again on the device:
+#   info configure qos interface
+DS-LIN-TEST-01:automationuser># info configure qos interface
+interface 1/1/5/2/1/1/1
+  scheduler-node name:NGLT_Default
+  cac-profile name:FD_ONTUniVideo
+  ds-num-rem-queue not-applicable
+  us-num-queue not-applicable
+  queue-stats-on
+  oper-weight 50
+  oper-rate 0
+  mc-scheduler-node none
+  bc-scheduler-node none
+  queue 0
+    priority 6
+    weight 34
+    oper-weight 34
+    queue-profile name:NGLT_Default
+    shaper-profile none
+  exit
+  queue 1
+    priority 6
+    weight 66
+    oper-weight 66
+    queue-profile name:NGLT_Default
+    shaper-profile none
+  exit
+  queue 2
+    priority 7
+    weight 0
+    oper-weight 0
+    queue-profile name:NGLT_Default
+    shaper-profile none
+  exit
+  queue 3
+    priority 8
+    weight 0
+    oper-weight 0
+    queue-profile name:NGLT_Default
+    shaper-profile none
+  exit
+  upstream-queue 0
+    bandwidth-profile name:GPONqpp100Mbps
+    bandwidth-sharing uni-sharing
+  exit
+  upstream-queue 4
+    weight 5
+    bandwidth-profile name:GPONqpp100Mbps
+    bandwidth-sharing uni-sharing
+  exit
+  upstream-queue 5
+    weight 6
+    bandwidth-profile name:GPONqpp100Mbps
+    bandwidth-sharing uni-sharing
+  exit
+exit
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,105 @@
+help configure qos pbit-scheduling
+P-BIT BASED SCHEDULING FOR SC FORWARDER CROSS CONNECT/RESIDENTIAL BRIDGE 
+CONFIGURATION COMMAND
+================================================================================
+==============
+
+Command Description
+-------------------
+
+This command allows the operator to configure the P-bit based scheduling for 
+the S+C VLAN forwarder model for Cross Connect / Residential Bridge.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos pbit-scheduling [ no sc-xcon-us | sc-xcon-us <Qos::PbitSched> ] 
+[ no sc-xcon-dn | sc-xcon-dn <Qos::PbitSched> ] [ no sc-rb-us | sc-rb-us 
+<Qos::PbitSched> ] [ no sc-rb-dn | sc-rb-dn <Qos::PbitSched> ]
+
+Command Parameters
+------------------
+
+Table "P-bit Based Scheduling For SC Forwarder Cross Connect/Residential Bridge 
+Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] sc-xcon-us            This objects configure the behavior of pbit 
+scheduling in S+C Vlan Cross Connect in upstream direction
+                           optional parameter with default value: 
+"svlanpbitbased"
+
+                           Parameter type: <Qos::PbitSched>
+                           Format:
+                           ( svlanpbitbased
+                           | cvlanpbitbased )
+                           Possible values:
+                           - svlanpbitbased        : Upstream p-bits affecting 
+QoS action applies to S-VLAN p-bits and C-VLAN p-bits. Downstream S-VLAN p-bits 
+are copied to User-VLAN p-bits
+                           - cvlanpbitbased        : Upstream p-bits affecting 
+QoS action applies to S-VLAN p-bits. Downstream C-VLAN p-bits are copied to 
+User-VLAN p-bits
+
+[no] sc-xcon-dn            This objects configure the behavior of pbit 
+scheduling in S+C Vlan Cross Connect in downstream direction
+                           optional parameter with default value: "svlanpbitbase
+d"
+
+                           Parameter type: <Qos::PbitSched>
+                           Format:
+                           ( svlanpbitbased
+                           | cvlanpbitbased )
+                           Possible values:
+                           - svlanpbitbased        : Upstream p-bits affecting 
+QoS action applies to S-VLAN p-bits and C-VLAN p-bits. Downstream S-VLAN p-bits 
+are copied to User-VLAN p-bits
+                           - cvlanpbitbased        : Upstream p-bits affecting 
+QoS action applies to S-VLAN p-bits. Downstream C-VLAN p-bits are copied to 
+User-VLAN p-bits
+
+[no] sc-rb-us              This objects configure the behavior of pbit 
+scheduling in S+C Vlan iBridge in upstream direction
+                           optional parameter with default value: 
+"svlanpbitbased"
+
+                           Parameter type: <Qos::PbitSched>
+                           Format:
+                           ( svlanpbitbased
+                           | cvlanpbitbased )
+                           Possible values:
+                           - svlanpbitbased        : Upstream p-bits affecting 
+QoS action applies to S-VLAN p-bits and C-VLAN p-bits. Downstream S-VLAN p-bits 
+are copied to User-VLAN p-bits
+                           - cvlanpbitbased        : Upstream p-bits affecting 
+QoS action applies to S-VLAN p-bits. Downstream C-VLAN p-bits are copied to 
+User-VLAN p-bits
+
+[no] sc-rb-dn              This objects configure the behavior of pbit 
+scheduling in S+C Vlan iBridge in downstream direction
+                           optional parameter with default value: 
+"cvlanpbitbased"
+
+                           Parameter type: <Qos::PbitSched>
+                           Format:
+                           ( svlanpbitbased
+                           | cvlanpbitbased )
+                           Possible values:
+                           - svlanpbitbased        : Upstream p-bits affecting 
+QoS action applies to S-VLAN p-bits and C-VLAN p-bits. Downstream S-VLAN p-bits 
+are copied to User-VLAN p-bits
+                           - cvlanpbitbased        : Upstream p-bits affecting 
+QoS action applies to S-VLAN p-bits. Downstream C-VLAN p-bits are copied to 
+User-VLAN p-bits
+
+
+DS-LIN-TEST-01:automationuser>#

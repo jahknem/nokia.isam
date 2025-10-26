@@ -1,0 +1,132 @@
+help configure equipment shelf
+SHELF CONFIGURATION COMMAND
+===========================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the shelf. The operator can 
+configure the following parameters:
+  - class: the classification of the shelf. The following shelf classes are 
+supported:
+    -- main-ethernet: supports Ethernet-based traffic. Shelves in this class 
+can contain NT and LT units. There must be at least one shelf of this class in 
+the system.
+    -- ext-ethernet: supports Ethernet-based traffic. Shelves in this class can 
+only contain LT units.
+  - planned-type: the type planned for this shelf. The not-planned parameter 
+indicates that a shelf will not be inserted at this position.
+  - lock: locks or unlocks the shelf.
+  - shelf-mode: the shelf mode. When the shelf mode was changed successfully, 
+the NE will reboot automatically.
+  - description: text that describes the location of the shelf.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment shelf (index) [ no class | class <Equipm::ShelfClass> ] [ 
+no planned-type | planned-type <Equipm::ShelfType> ] [ [ no ] lock ] [ [ no ] 
+extended-lt-slots ] [ no mode | mode <Equipm::HolderMode> ] [ no description | 
+description <Description-127> ]
+
+Command Parameters
+------------------
+
+Table "Shelf Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(index)                    the physical identification of the shelf
+
+Table "Shelf Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] class                 the class to which the shelf belongs
+                           optional parameter with default value: 
+"main-ethernet"
+
+                           Parameter type: <Equipm::ShelfClass>
+                           Format:
+                           ( main-ethernet
+                           | ext-ethernet )
+                           Possible values:
+                           - main-ethernet         : main shelf - supports 
+ethernet-based traffic
+                           - ext-ethernet          : extension shelf - supports 
+ethernet-based traffic
+
+[no] planned-type          the planned type of the shelf
+                           optional parameter with default value: "not-planned"
+
+                           Parameter type: <Equipm::ShelfType>
+                           Format:
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] lock                  the holder is locked
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] extended-lt-slots     change to extended lt slots
+                           obsolete parameter replaced by parameter "mode"
+
+                           Parameter type: boolean
+                           
+
+[no] mode                  the shelf mode, applicable to NEP and ARAM-E only
+                           optional parameter with default value: 
+"no-extended-lt-slots"
+
+                           Parameter type: <Equipm::HolderMode>
+                           Format:
+                           ( no-extended-lt-slots
+                           | extended-lt-slots
+                           | no-ntb-slot
+                           | no-extended-slots
+                           | no-ntio-slots
+                           | ngpon
+                           | gpon
+                           | ngpon-port-reduced
+                           | gpon-mng-ngpon
+                           | gpon-mng-reduced )
+                           Possible values:
+                           - no-extended-lt-slots  : no extended lt slots
+                           - extended-lt-slots     : change to extended lt slots
+                           - no-ntb-slot           : use ntb slot as lt slot
+                           - no-extended-slots     : no extended slots
+                           - no-ntio-slots         : not changeable
+                           - ngpon                 : use universal ngpon lt 
+(supports NG-PON2, XGS-PON and XG-PON1 currently)
+                           - gpon                  : use gpon lt
+                           - ngpon-port-reduced    : use ngpon port reduced 
+mode lt (supports ERPS)
+                           - gpon-mng-ngpon        : use gpon managed ngpon 
+management model
+                           - gpon-mng-reduced      : use gpon managed ngpon 
+port reduced mode lt(supports ERPS)
+
+[no] description           any description to be used by the operator
+                           optional parameter with default value: ""
+
+                           Parameter type: <Description-127>
+                           Format:
+                           - description to help the operator to identify the 
+object
+                           - length: x<=127 
+
+
+DS-LIN-TEST-01:automationuser>#

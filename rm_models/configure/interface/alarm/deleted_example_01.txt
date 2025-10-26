@@ -1,0 +1,52 @@
+# Using deleted state
+
+# Before state (live):
+# --------------------
+# Command:
+#   info configure interface alarm
+DS-LIN-TEST-01:automationuser># info configure interface alarm 
+configure interface
+#-------------------------------------------------------------------------------
+echo "interface"
+#-------------------------------------------------------------------------------
+alarm pon
+  default-severity minor
+exit
+alarm epon
+  default-severity indeterminate
+exit
+alarm eont
+  default-severity indeterminate
+exit
+alarm ont
+  default-severity indeterminate
+exit
+#-------------------------------------------------------------------------------
+DS-LIN-TEST-01:automationuser>#
+
+- name: Delete explicit alarm severity for PON (revert to implicit default)
+  isam_interface_alarm:
+    state: deleted
+    config:
+      - name: "pon"
+
+# After state (live):
+# -------------------
+# Command:
+#   info configure interface alarm
+DS-LIN-TEST-01:automationuser># info configure interface alarm 
+configure interface
+#-------------------------------------------------------------------------------
+echo "interface"
+#-------------------------------------------------------------------------------
+alarm epon
+  default-severity indeterminate
+exit
+alarm eont
+  default-severity indeterminate
+exit
+alarm ont
+  default-severity indeterminate
+exit
+#-------------------------------------------------------------------------------
+DS-LIN-TEST-01:automationuser>#

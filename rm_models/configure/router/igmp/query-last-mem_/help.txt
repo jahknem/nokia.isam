@@ -1,0 +1,4 @@
+help configure router igmp query-last-mem*
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

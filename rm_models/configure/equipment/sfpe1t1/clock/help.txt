@@ -1,0 +1,54 @@
+help configure equipment sfpe1t1 clock
+2XE1/DS1 CLOCK CONFIGURATION COMMAND
+====================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure clock source on the 2xE1/DS1 sfp:
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment sfpe1t1 ( no clock (position) ) | ( clock (position) [ no 
+clocksource | clocksource <Eqpt::ClockSource> ] )
+
+Command Parameters
+------------------
+
+Table "2xE1/DS1 CLOCK configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(position)                 the physical sfp cage position
+
+Table "2xE1/DS1 CLOCK configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] clocksource           Clock source can be tributary1 or tributary2  or 
+serdes 
+                           optional parameter with default value: "serdes"
+
+                           Parameter type: <Eqpt::ClockSource>
+                           Format:
+                           ( tributary1
+                           | tributary2
+                           | serdes )
+                           Possible values:
+                           - tributary1            : clock source is from 
+tributary 1
+                           - tributary2            : clock source is from 
+tributary 2
+                           - serdes                : clock source is from serdes
+
+
+DS-LIN-TEST-01:automationuser>#

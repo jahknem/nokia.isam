@@ -1,0 +1,9 @@
+{
+  "title": "",
+  "description": "",
+  "user_level": "",
+  "syntax": "",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure service vpls egress egress-networ\r\nk egress shutdown\u0007\r\n                                                            ^\r\ninvalid token\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 23:39:55 major alarm occurred for ip-addr 192.168.222.10  : Successful Management login, TimeStamp : 25/10/25 23:39:53 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 23:39:55 major alarm cleared for ip-addr 192.168.222.10  : Successful Management login, 8 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

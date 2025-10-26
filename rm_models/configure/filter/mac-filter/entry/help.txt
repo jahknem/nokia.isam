@@ -1,0 +1,8 @@
+help configure filter mac-filter entry
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:15:03 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:15:01 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

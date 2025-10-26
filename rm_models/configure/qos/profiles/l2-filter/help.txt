@@ -1,0 +1,138 @@
+help configure qos profiles l2-filter
+QOS L2 FILTER PROFILE CONFIGURATION COMMAND
+===========================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure an L2 filter. The created L2 
+filter can be reused to build policy actions based on L2 filtering criteria, 
+inside QoS session profiles.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles ( no l2-filter (name) ) | ( l2-filter (name) [ no 
+dst-mac-addr | dst-mac-addr <Qos::MacAddrAndMask> ] [ no src-mac-addr | 
+src-mac-addr <Qos::MacAddrAndMask> ] [ no ethertype | ethertype 
+<Qos::FilterEthernetType> ] [ no dot1p-priority | dot1p-priority 
+<Qos::MatchDot1pValue> ] [ no canonical-format | canonical-format 
+<Qos::FilterCfi> ] [ no vlan-id | vlan-id <Qos::FilterVlanId> ] )
+
+Command Parameters
+------------------
+
+Table "QoS L2 Filter Profile Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+Table "QoS L2 Filter Profile Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] dst-mac-addr          destination mac address to be matched with the packet
+                           optional parameter with default value: "00 : 00 : 00 
+: 00 : 00 : 00/0"
+
+                           Parameter type: <Qos::MacAddrAndMask>
+                           Format:
+                           <Qos::MacAddress> / <Qos::MacPrefixLength>
+                           Field type <Qos::MacAddress>
+                           - a mac-address (example : 01:02:03:04:05:06)
+                           - length: 6 
+                           Field type <Qos::MacPrefixLength>
+                           - the mac address prefix length
+                           - range: [0...48]
+
+[no] src-mac-addr          source mac address to be matched with the packet
+                           optional parameter with default value: "00 : 00 : 00 
+: 00 : 00 : 00/0"
+
+                           Parameter type: <Qos::MacAddrAndMask>
+                           Format:
+                           <Qos::MacAddress> / <Qos::MacPrefixLength>
+                           Field type <Qos::MacAddress>
+                           - a mac-address (example : 01:02:03:04:05:06)
+                           - length: 6 
+                           Field type <Qos::MacPrefixLength>
+                           - the mac address prefix length
+                           - range: [0...48]
+
+[no] ethertype             ethernet type to be matched with the packet
+                           optional parameter with default value: "all"
+
+                           Parameter type: <Qos::FilterEthernetType>
+                           Format:
+                           ( ip
+                           | x75
+                           | nbs
+                           | ecma
+                           | chaos
+                           | x25
+                           | arp
+                           | rarp
+                           | appletalk
+                           | snmp
+                           | loopback
+                           | pppoe-discovery
+                           | pppoe
+                           | ipv6
+                           | all
+                           | <Qos::EtherType> )
+                           Possible values:
+                           - ip                    : ip
+                           - x75                   : x75
+                           - nbs                   : nbs
+                           - ecma                  : ecma
+                           - chaos                 : chaos
+                           - x25                   : x25
+                           - arp                   : arp
+                           - rarp                  : rarp
+                           - appletalk             : appletalk
+                           - snmp                  : snmp
+                           - loopback              : loopback
+                           - pppoe-discovery       : pppoe-discovery
+                           - pppoe                 : pppoe
+                           - ipv6                  : ipv6
+                           - all                   : all ethtype values are 
+considered a match
+                           Field type <Qos::EtherType>
+                           - ethertype value
+                           - range: [-1...65535]
+
+[no] dot1p-priority        dot1p value to be matched, -1 means match all
+                           optional parameter with default value: -1L
+
+                           Parameter type: <Qos::MatchDot1pValue>
+                           Format:
+                           - dot1p value to be matched, -1 means match all
+                           - range: [-1...7]
+
+[no] canonical-format      canonical format indicator, -1 means match all
+                           optional parameter with default value: -1L
+
+                           Parameter type: <Qos::FilterCfi>
+                           Format:
+                           - canonical format indicator, -1 means match all
+                           - range: [-1...1]
+
+[no] vlan-id               vlan id to be matched, -1 means match all
+                           optional parameter with default value: -1L
+
+                           Parameter type: <Qos::FilterVlanId>
+                           Format:
+                           - vlan id to be matched, -1 means match all
+                           - range: [-1...4095]
+
+
+DS-LIN-TEST-01:automationuser>#

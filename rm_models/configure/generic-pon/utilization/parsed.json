@@ -1,0 +1,33 @@
+{
+  "title": "GENERIC PON UTILIZATION PM MODE CONFIGURATION COMMAND",
+  "description": "This command configures the generic PON (system-wide) utilization performance \nmonitoring modes for PONs and channel-pairs.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure generic-pon utilization [ no pon-pmcollect | pon-pmcollect <Gpon::OntPmTcaCollect> ] [ no ont-pmcollect | ont-pmcollect <Gpon::OntPmCollect> ]",
+  "resource_parameters": [],
+  "command_parameters": [
+    {
+      "name": "[no] pon-pmcollect",
+      "description": "system-wide PON / channel-pair utilization performance monitoring optional parameter with default value: \"none\"",
+      "type": "<Gpon::OntPmTcaCollect>",
+      "format": "( none                            | pm-enable                            | tca-enable )",
+      "values": [
+        "none                  : no pm",
+        "pm-enable             : enable pm",
+        "tca-enable            : enable tca"
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] ont-pmcollect",
+      "description": "system-wide utilization ONT detailed performance monitoring optional parameter with default value: \"disable\" DS-LIN-TEST-01:automationuser>#",
+      "type": "<Gpon::OntPmCollect>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : enable PM",
+        "disable               : disable PM"
+      ],
+      "default": "disable"
+    }
+  ],
+  "raw": "help configure generic-pon utilization\r\nGENERIC PON UTILIZATION PM MODE CONFIGURATION COMMAND\r\n=====================================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command configures the generic PON (system-wide) utilization performance \r\nmonitoring modes for PONs and channel-pairs.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure generic-pon utilization [ no pon-pmcollect | pon-pmcollect \r\n<Gpon::OntPmTcaCollect> ] [ no ont-pmcollect | ont-pmcollect \r\n<Gpon::OntPmCollect> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Generic PON Utilization PM Mode Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] pon-pmcollect         system-wide PON / channel-pair utilization \r\nperformance monitoring\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Gpon::OntPmTcaCollect>\r\n                           Format:\r\n                           ( none\r\n                           | pm-enable\r\n                           | tca-enable )\r\n                           Possible values:\r\n                           - none                  : no pm\r\n                           - pm-enable             : enable pm\r\n                           - tca-enable            : enable tca\r\n\r\n[no] ont-pmcollect         system-wide utilization ONT detailed performance \r\nmonitoring\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Gpon::OntPmCollect>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : enable PM\r\n                           - disable               : disable PM\r\n\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 19:15:58 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:15:56 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

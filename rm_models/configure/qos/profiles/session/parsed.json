@@ -1,0 +1,162 @@
+{
+  "title": "QOS SESSION PROFILE CONFIGURATION COMMAND",
+  "description": "This commmand allows the operator to configure the QoS session profile. The QoS \nsession profile is the main building block for conveying user traffic \ncontractual rights and treatment. The QoS session profile is a \"macro\"-profile, \nwhich consists of individual settings as well as references to smaller profiles.\n\nA QoS session profile is composed of\n  - a logical flow type,\n  - a marker profile,\n  - two policer profiles for up and downstream policing,\n  - two lists for upstream and downstream policy conditions and actions.\n  - tag selection for downstream scheduler.\n\nThe logical flow type is a legacy parameter which is ignored. Any value is \ninterpreted as \"Generic\", that is, the QoS session profile can be attached to \nany interface. If the QoS session profile contains settings that are not \nsupported on the interface, then these are silently ignored by the system.",
+  "user_level": "The command can be accessed by operators with qos privileges, and executed by \noperators with qos privileges.",
+  "syntax": "> configure qos profiles ( no session (name) ) | ( session (name) logical-flow-type <Qos::LogicalFlowType> [ no up-policer | up-policer <Qos::QosPolicerProfileName> ] [ no down-policer | down-policer <Qos::QosPolicerProfileName> ] [ no up-marker | up-marker <Qos::QosMarkerProfileName> ] [ no ing-outer-marker | ing-outer-marker <Qos::QosMarkerProfileName> ] [ no ds-schedule-tag | ds-schedule-tag <Qos::DsSchedulerProfileTag> ] [ no up-policer-per-tc | up-policer-per-tc <Qos::QosPolicerPerTCProfileName> ] [ no up-dscptotc-prof | up-dscptotc-prof <Qos::QosDscpToTcProfileName> ] [ no dn-dscptotc-prof | dn-dscptotc-prof <Qos::QosDscpToTcProfileName> ] [ no up-pbittotc-prof | up-pbittotc-prof <Qos::QosPbitToTcProfileName> ] [ no dn-pbittotc-prof | dn-pbittotc-prof <Qos::QosPbitToTcProfileName> ] [ no up-default-tc | up-default-tc <Qos::tcvalue> ] [ no dn-default-tc | dn-default-tc <Qos::tcvalue> ] )",
+  "resource_parameters": [
+    {
+      "name": "(name)",
+      "description": "A unique profile name"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "logical-flow-type",
+      "description": "a traffic stream up on which policy to be made. Important note: this mandatory parameter is depreciated. No distinction is made any more between the different flow types : independent on what is configured, generic is used. mandatory parameter",
+      "type": "<Qos::LogicalFlowType>",
+      "format": "( generic                            | pvc                            | dot-1x-session                            | pvc-vlan-combination                            | ppp-session                            | ip-session                            | ipoe-vlan-cc                            | pppoe-vlan-cc                            | ipoa-cc                            | pppoa-cc                            | ipoe-ibridge                            | pppoe-ibridge                            | pppoa-relay                            | pppoe-relay                            | ipoe-ip-aware-bridge                            | ipoa-ip-aware-bridge                            | ipoa )",
+      "values": [
+        "generic               : any defined logical flow",
+        "pvc                   : all frames on a pvc",
+        "dot-1x-session        : frames on a pvc except ppp frames",
+        "pvc-vlan-combination  : frames on dot-1D port with the same vlan-id",
+        "ppp-session           : all frames on a ppp session",
+        "ip-session            : all frames in an IP session or interface",
+        "ipoe-vlan-cc          : all ipoe frames in a vlan cc interface",
+        "pppoe-vlan-cc         : all pppoe frames in a vlan cc interface",
+        "ipoa-cc               : all ipoa frames in a ipoa cc interface(replaced by ipoa)",
+        "pppoa-cc              : all pppoa frames in a pppoa cc interface",
+        "ipoe-ibridge          : all ipoe frames in i-bridge interface",
+        "pppoe-ibridge         : all pppoe frames in i-bridge interface",
+        "pppoa-relay           : pppoa frames in pppoa relay interface",
+        "pppoe-relay           : all pppoe frames in pppoe relay",
+        "ipoe-ip-aware-bridge  : ipoe frames in ip aware bridge interface",
+        "ipoa-ip-aware-bridge  : all ipoa frames in ip aware bridge interface(replaced by ipoa)",
+        "ipoa                  : all ipoa frames in a ipoa interface"
+      ]
+    },
+    {
+      "name": "[no] up-policer",
+      "description": "policer profile name applicable on this session upstream optional parameter with default value: \"none\"",
+      "type": "<Qos::QosPolicerProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associate",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] down-policer",
+      "description": "policer profile applicable on this session downstream optional parameter with default value: \"none\"",
+      "type": "<Qos::QosPolicerProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associate",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] up-marker",
+      "description": "marker profile name applicable on this session upstream optional parameter with default value: \"none\"",
+      "type": "<Qos::QosMarkerProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associate",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] ing-outer-marker",
+      "description": "outer marker profile name applicable on this session ingress optional parameter with default value: \"none\"",
+      "type": "<Qos::QosMarkerProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associate",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] ds-schedule-tag",
+      "description": "specifies downstream scheduler tag optional parameter with default value: \"system-default\"",
+      "type": "<Qos::DsSchedulerProfileTag>",
+      "format": "( system-default                            | cvlantag                            | svlantag )",
+      "values": [
+        "system-default        : system default behavior: always the egress outer tag used.",
+        "cvlantag              : Select downstream scheduler based on the c-vlan.",
+        "svlantag              : Select downstream scheduler based on the s-vlan."
+      ]
+    },
+    {
+      "name": "[no] up-policer-per-tc",
+      "description": "policer-per-tc profile name applicable on this session upstream optional parameter with default value: \"none\"",
+      "type": "<Qos::QosPolicerPerTCProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associate",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] up-dscptotc-prof",
+      "description": "dscp to tc qos profile name applicable on this session in upstream optional parameter with default value: \"none\"",
+      "type": "<Qos::QosDscpToTcProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associate",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] dn-dscptotc-prof",
+      "description": "dscp to tc qos profile name applicable on this session in downstream optional parameter with default value: \"none\"",
+      "type": "<Qos::QosDscpToTcProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associate",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] up-pbittotc-prof",
+      "description": "pbit to tc qos profile name applicable on this session in upstream optional parameter with default value: \"none\"",
+      "type": "<Qos::QosPbitToTcProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associate",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] dn-pbittotc-prof",
+      "description": "pbit to tc qos profile name applicable on this session in downstream optional parameter with default value: \"none\"",
+      "type": "<Qos::QosPbitToTcProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associate",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] up-default-tc",
+      "description": "tc mapping for non ip packet applicable on this session in upstream optional parameter with default value: -1L - traffic class value range - range: [-1...7]",
+      "type": "<Qos::tcvalue>",
+      "default": "-1L"
+    },
+    {
+      "name": "[no] dn-default-tc",
+      "description": "tc mapping for non ip packet applicable on this session in downstream optional parameter with default value: -1L - traffic class value range - range: [-1...7]",
+      "type": "<Qos::tcvalue>",
+      "default": "-1L"
+    }
+  ],
+  "raw": "help configure qos profiles session\r\nQOS SESSION PROFILE CONFIGURATION COMMAND\r\n=========================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis commmand allows the operator to configure the QoS session profile. The QoS \r\nsession profile is the main building block for conveying user traffic \r\ncontractual rights and treatment. The QoS session profile is a \"macro\"-profile, \r\nwhich consists of individual settings as well as references to smaller profiles.\r\n\r\nA QoS session profile is composed of\r\n  - a logical flow type,\r\n  - a marker profile,\r\n  - two policer profiles for up and downstream policing,\r\n  - two lists for upstream and downstream policy conditions and actions.\r\n  - tag selection for downstream scheduler.\r\n\r\nThe logical flow type is a legacy parameter which is ignored. Any value is \r\ninterpreted as \"Generic\", that is, the QoS session profile can be attached to \r\nany interface. If the QoS session profile contains settings that are not \r\nsupported on the interface, then these are silently ignored by the system.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by \r\noperators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos profiles ( no session (name) ) | ( session (name) \r\nlogical-flow-type <Qos::LogicalFlowType> [ no up-policer | up-policer \r\n<Qos::QosPolicerProfileName> ] [ no down-policer | down-policer \r\n<Qos::QosPolicerProfileName> ] [ no up-marker | up-marker \r\n<Qos::QosMarkerProfileName> ] [ no ing-outer-marker | ing-outer-marker \r\n<Qos::QosMarkerProfileName> ] [ no ds-schedule-tag | ds-schedule-tag \r\n<Qos::DsSchedulerProfileTag> ] [ no up-policer-per-tc | up-policer-per-tc \r\n<Qos::QosPolicerPerTCProfileName> ] [ no up-dscptotc-prof | up-dscptotc-prof \r\n<Qos::QosDscpToTcProfileName> ] [ no dn-dscptotc-prof | dn-dscptotc-prof \r\n<Qos::QosDscpToTcProfileName> ] [ no up-pbittotc-prof | up-pbittotc-prof \r\n<Qos::QosPbitToTcProfileName> ] [ no dn-pbittotc-prof | dn-pbittotc-prof \r\n<Qos::QosPbitToTcProfileName> ] [ no up-default-tc | up-default-tc \r\n<Qos::tcvalue> ] [ no dn-default-tc | dn-default-tc <Qos::tcvalue> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS Session Profile Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(name)                     A unique profile name\r\n\r\nTable \"QoS Session Profile Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nlogical-flow-type          a traffic stream up on which policy to be made. \r\nImportant note: this mandatory parameter is depreciated. No distinction is made \r\nany more between the different flow types : independent on what is configured, \r\ngeneric is used.\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Qos::LogicalFlowType>\r\n                           Format:\r\n                           ( generic\r\n                           | pvc\r\n                           | dot-1x-session\r\n                           | pvc-vlan-combination\r\n                           | ppp-session\r\n                           | ip-session\r\n                           | ipoe-vlan-cc\r\n                           | pppoe-vlan-cc\r\n                           | ipoa-cc\r\n                           | pppoa-cc\r\n                           | ipoe-ibridge\r\n                           | pppoe-ibridge\r\n                           | pppoa-relay\r\n                           | pppoe-relay\r\n                           | ipoe-ip-aware-bridge\r\n                           | ipoa-ip-aware-bridge\r\n                           | ipoa )\r\n                           Possible values:\r\n                           - generic               : any defined logical flow\r\n                           - pvc                   : all frames on a pvc\r\n                           - dot-1x-session        : frames on a pvc except ppp \r\nframes\r\n                           - pvc-vlan-combination  : frames on dot-1D port with \r\nthe same vlan-id\r\n                           - ppp-session           : all frames on a ppp session\r\n                           - ip-session            : all frames in an IP \r\nsession or interface\r\n                           - ipoe-vlan-cc          : all ipoe frames in a vlan \r\ncc interface\r\n                           - pppoe-vlan-cc         : all pppoe frames in a vlan \r\ncc interface\r\n                           - ipoa-cc               : all ipoa frames in a ipoa \r\ncc interface(replaced by ipoa)\r\n                           - pppoa-cc              : all pppoa frames in a \r\npppoa cc interface\r\n                           - ipoe-ibridge          : all ipoe frames in \r\ni-bridge interface\r\n                           - pppoe-ibridge         : all pppoe frames in \r\ni-bridge interface\r\n                           - pppoa-relay           : pppoa frames in pppoa \r\nrelay interface\r\n                           - pppoe-relay           : all pppoe frames in pppoe \r\nrelay\r\n                           - ipoe-ip-aware-bridge  : ipoe frames in ip aware \r\nbridge interface\r\n                           - ipoa-ip-aware-bridge  : all ipoa frames in ip \r\naware bridge interface(replaced by ipoa)\r\n                           - ipoa                  : all ipoa frames in a ipoa \r\ninterface\r\n\r\n[no] up-policer            policer profile name applicable on this session \r\nupstream\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosPolicerProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociate\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] down-policer          policer profile applicable on this session downstream\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosPolicerProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociate\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] up-marker             marker profile name applicable on this session \r\nupstream\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosMarkerProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociate\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] ing-outer-marker      outer marker profile name applicable on this session \r\ningress\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosMarkerProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociate\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] ds-schedule-tag       specifies downstream scheduler tag\r\n                           optional parameter with default value: \r\n\"system-default\"\r\n\r\n                           Parameter type: <Qos::DsSchedulerProfileTag>\r\n                           Format:\r\n                           ( system-default\r\n                           | cvlantag\r\n                           | svlantag )\r\n                           Possible values:\r\n                           - system-default        : system default behavior: \r\nalways the egress outer tag used.\r\n                           - cvlantag              : Select downstream \r\nscheduler based on the c-vlan.\r\n                           - svlantag              : Select downstream \r\nscheduler based on the s-vlan.\r\n\r\n[no] up-policer-per-tc     policer-per-tc profile name applicable on this \r\nsession upstream\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosPolicerPerTCProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociate\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] up-dscptotc-prof      dscp to tc qos profile name applicable on this \r\nsession in upstream\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosDscpToTcProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociate\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] dn-dscptotc-prof      dscp to tc qos profile name applicable on this \r\nsession in downstream\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosDscpToTcProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociate\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] up-pbittotc-prof      pbit to tc qos profile name applicable on this \r\nsession in upstream\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosPbitToTcProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociate\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] dn-pbittotc-prof      pbit to tc qos profile name applicable on this \r\nsession in downstream\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosPbitToTcProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociate\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] up-default-tc         tc mapping for non ip packet applicable on this \r\nsession in upstream\r\n                           optional parameter with default value: -1L\r\n\r\n                           Parameter type: <Qos::tcvalue>\r\n                           Format:\r\n                           - traffic class value range\r\n                           - range: [-1...7]\r\n\r\n[no] dn-default-tc         tc mapping for non ip packet applicable on this \r\nsession in downstream\r\n                           optional parameter with default value: -1L\r\n\r\n                           Parameter type: <Qos::tcvalue>\r\n                           Format:\r\n                           - traffic class value range\r\n                           - range: [-1...7]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

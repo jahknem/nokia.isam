@@ -1,0 +1,66 @@
+help configure port-protection
+PORT PROTECTION CONFIGURATION COMMAND
+=====================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a protection group on two ports 
+which will then operate in redundancy. The system will decide which port of the 
+two becomes active. In case of failure of one port the other port will take 
+over. A forced switchover can also be triggered manually by the operator.
+
+The port protection group is identified by the first port in the group that is 
+intended to be protected. The following parameters can be configured for the 
+protection group :
+  - paired-port: the paired port that will ensure the protection of the first 
+one.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure port-protection (port) paired-port <RedPort::PairedPortIndex>
+
+Command Parameters
+------------------
+
+Table "Port Protection Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(port)                     the port identifier of the first port in the 
+protection group
+
+Table "Port Protection Configuration Command" Command Parameters
+
+Parameter                  Description
+
+paired-port                the port identifier of the paired port in the 
+protection group
+                           mandatory parameter
+
+                           Parameter type: <RedPort::PairedPortIndex>
+                           Format:
+                           pon : <Eqpt::RackId> / <Eqpt::ShelfId> / 
+<Eqpt::SlotId> / <Eqpt::PonId>
+                           Possible values:
+                           - pon                   : pon-aid
+                           Field type <Eqpt::RackId>
+                           - the rack number
+                           Field type <Eqpt::ShelfId>
+                           - the shelf number
+                           Field type <Eqpt::SlotId>
+                           - the LT slot number
+                           Field type <Eqpt::PonId>
+                           - the PON identifier
+
+
+DS-LIN-TEST-01:automationuser>#

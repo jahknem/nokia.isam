@@ -1,0 +1,186 @@
+module: isam_ethernet_ont
+short_description: Resource module to configure ethernet ont
+description:
+- This command allows the operator to modify ONT Ethernet port provisioning data.
+- Supports configuration of cust info, auto detect, power control and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure ethernet ont ()'
+options:
+  config:
+    description:
+    - A list of ethernet ont configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (uni-idx) - identification of the uni interface index
+      cust_info:
+        type: str
+        description:
+        - 'port information with default value: "none" - a printable string - length:
+          x<=80'
+        - 'Maximum length: 80 characters'
+        default: none
+      auto_detect:
+        type: str
+        description:
+        - auto detection configuration
+        - 'Possible values: C(10_100baset-auto) - 10/100/1000 Base T, auto sensing
+          (note: this auto sensing behavior ensures backward compatibility with older
+          software releases. It may result in the port negotiating to 1 Gbps); C(10baset-fd)
+          - 10 Base T, full duplex; C(100baset-fd) - 100 Base T, full duplex; C(1000baset-fd)
+          - 1000 Base T, full duplex; C(auto-basetfd) - 10/100/1000 Base T, full duplex;
+          C(10gig-fd) - 10 Gig, full duplex only; C(2.5gig-fd) - 2.5 Gig, full duplex
+          only; C(5gig-fd) - 5 Gig, full duplex only; C(10baset-auto) - 10 Base T,automatic
+          sensing; C(10baset-hd) - 10 Base T, half Duplex; C(100baset-hd) - 100 Base
+          T, half duplex; C(1000baset-hd) - 1000 Base T, half duplex; C(autobaset-hd)
+          - 10/100/1000 Base T, half duplex; C(10_100_1000baset-auto) - 10/100/1000
+          Base T, auto sensing; C(100baset-auto) - 100 Base T, auto sensing; C(auto)
+          - 10/100/1000 Base T, auto sensing; C(1000baset-auto) - 1000 Base T auto
+          sensing'
+        choices:
+        - 10_100baset-auto
+        - 10baset-fd
+        - 100baset-fd
+        - 1000baset-fd
+        - auto-basetfd
+        - 10gig-fd
+        - 2.5gig-fd
+        - 5gig-fd
+        - 10baset-auto
+        - 10baset-hd
+        - 100baset-hd
+        - 1000baset-hd
+        - autobaset-hd
+        - 10_100_1000baset-auto
+        - 100baset-auto
+        - auto
+        - 1000baset-auto
+      power_control:
+        type: str
+        description:
+        - 'power control configuration with default value: "disable"'
+        - 'Possible values: C(enable) - provide power to external equipment; C(disable)
+          - not provide power to external equipment'
+        default: disable
+        choices:
+        - enable
+        - disable
+      pse_class:
+        type: str
+        description:
+        - 'power class configuration with default value: "0"'
+        - 'Possible values: C(0) - Default output power; C(1) - Class 0, the output
+          power is 15.4w; C(2) - Class 1, the output power is 4.0w; C(3) - Class 2,
+          the output power is 7.0w; C(4) - Class 3, the output power is 15.4w; C(5)
+          - Class 4, the output power is 30.0w'
+        default: '0'
+        choices:
+        - '0'
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+      pse_pw_priority:
+        type: str
+        description:
+        - 'power supply priority with default value: "low"'
+        - 'Possible values: C(critical) - Prevents overcurrent situations by last
+          disconnecting the ports with critical priority; C(high) - Prevents overcurrent
+          situations by disconnecting the ports with high priority; C(low) - Prevents
+          overcurrent situations by first disconnecting the ports with lower priority(Default)'
+        default: low
+        choices:
+        - critical
+        - high
+        - low
+      pwr_override:
+        type: str
+        description:
+        - 'configure power shedding with default value: "disable"'
+        - 'Possible values: C(enable) - port is excluded from data class power shedding;
+          C(disable) - port is included in data class power shedding'
+        default: disable
+        choices:
+        - enable
+        - disable
+      lpt_mode:
+        type: str
+        description:
+        - 'LinkPassThrough(LPT) mode configuration with default value: "not-supported"'
+        - 'Possible values: C(not-supported) - ignore and don''t send the configuration
+          to ONT; C(enabled) - enable the LPT mode on this port; C(disabled) - disable
+          the LPT mode on this port'
+        choices:
+        - not-supported
+        - enabled
+        - disabled
+      admin_state:
+        type: str
+        description:
+        - 'administrative status of the interface with default value: "down" Table
+          "ONT Ethernet Port Configuration Command" Display Parameters Specific Information:'
+        - 'Possible values: C(up) - set the admin-state to up; C(down) - set the admin-state
+          to down'
+        default: down
+        choices:
+        - up
+        - down
+      oper_state:
+        type: str
+        description:
+        - the operational state of the interface This element is always shown. ( up
+          | down | testing | unknown | dormant | no-value )
+        - 'Possible values: C(up) - up,traffic can pass; C(down) - down,no traffic
+          is passing; C(testing) - testing,no traffic is passing; C(unknown) - unknown;
+          C(dormant) - dormant,no traffic is passing; C(no-value) - no entry in the
+          table'
+        choices:
+        - up
+        - down
+        - testing
+        - unknown
+        - dormant
+        - no-value
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure ethernet ont)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

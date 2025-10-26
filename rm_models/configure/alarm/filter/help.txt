@@ -1,0 +1,3467 @@
+help configure alarm filter
+ALARM FILTER CONFIGURATION COMMAND
+==================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure Alarm filter parameters.
+
+
+User Level
+----------
+
+The command can be accessed by operators with alarm privileges, and executed by 
+operators with alarm privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure alarm filter (fltr-type) filterid <Alarm::fltrId> [ alarmid 
+<Alarm::alarmIndexExt> ] [ no status | status <Alarm::fltrStatus> ] [ no 
+threshold | threshold <Alarm::fltrThreshold> ] [ no window | window 
+<Alarm::fltrWindow> ]
+
+Command Parameters
+------------------
+
+Table "Alarm Filter Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(fltr-type)                the type of the considered alarm filter
+filterid                   unique filter number
+
+Table "Alarm Filter Configuration Command" Command Parameters
+
+Parameter                  Description
+
+alarmid                    alarmType
+                           optional parameter
+
+                           Parameter type: <Alarm::alarmIndexExt>
+                           Format:
+                           ( all
+                           | xtca-ne-es
+                           | xtca-ne-ses
+                           | xtca-ne-uas
+                           | xtca-ne-day-es
+                           | xtca-ne-day-ses
+                           | xtca-ne-day-uas
+                           | xtca-fe-es
+                           | xtca-fe-ses
+                           | xtca-fe-uas
+                           | xtca-fe-day-es
+                           | xtca-fe-day-ses
+                           | xtca-fe-day-uas
+                           | xtca-leftrs
+                           | xtca-day-leftrs
+                           | xtca-fe-leftrs
+                           | xtca-fe-day-leftrs
+                           | xtca-auto-port-reset
+                           | xtca-reinit
+                           | xtca-day-reinit
+                           | xdsl-ne-los
+                           | xdsl-ne-lof
+                           | xdsl-ne-lom
+                           | xdsl-ne-ese
+                           | xdsl-act-cfg-error
+                           | xdsl-act-not-feas
+                           | xdsl-up-br-reach
+                           | xdsl-ne-ncd
+                           | xdsl-ne-lcd
+                           | xdsl-fe-los
+                           | xdsl-fe-lof
+                           | xdsl-fe-lpr
+                           | xdsl-fe-lol
+                           | xdsl-fe-lom
+                           | xdsl-fe-ese
+                           | xdsl-fe-upbo-vio
+                           | xdsl-fe-cpe-pol
+                           | xdsl-tpstc-mis
+                           | xdsl-act-comm
+                           | xdsl-act-modem
+                           | xdsl-do-br-reach
+                           | xdsl-fe-ncd
+                           | xdsl-fe-lcd
+                           | xdsl-frtx-init-fail
+                           | xdsl-vect-dle
+                           | xdsl-fe-mis-peer-35b
+                           | vectline-xtc-var-vict
+                           | vectline-xtc-var-dist
+                           | vectline-corp-errf
+                           | vect-cpe-cap-mismatch
+                           | vectline-conf_notfeas
+                           | vect-vp-lt-mismatch
+                           | vect-inv-qsfp
+                           | vect-vp-lt-fail
+                           | vect-no-gain-at-init
+                           | sw-rollback
+                           | db-rollback
+                           | xvps-inv-dbase
+                           | inv-cde-file
+                           | miss-cde-file
+                           | cde-hash-error
+                           | low-disk-space
+                           | cell-discard-up
+                           | cell-discard-down
+                           | persist-data-loss
+                           | mac-conflict
+                           | vmac-full
+                           | sntp-comm-lost
+                           | preferred-mode
+                           | timing-reference
+                           | nt-disk-95%full
+                           | shub-loc
+                           | cf-error
+                           | back-pnl-inv
+                           | ihub-conf-loss
+                           | rack-power
+                           | rack-fan-unit1
+                           | rack-fan-unit2
+                           | shelf-mismatch
+                           | shelf-missing
+                           | shelf-install-missing
+                           | door
+                           | ac-power-fail
+                           | board-mismatch
+                           | waiting-for-sw
+                           | temp-exceeded
+                           | backplane-data-failure
+                           | temp-shutdown
+                           | board-missing
+                           | board-instl-missing
+                           | board-init
+                           | board-reset-prot
+                           | sem-power-fail
+                           | sem-ups-fail
+                           | board-reset-cf
+                           | vlan-assign-fail
+                           | vsa-info-invalid
+                           | auth-mac-conflict
+                           | user-pwd-fault
+                           | up-plan-bitrate
+                           | up-min-bitrate
+                           | up-config-not-feas
+                           | down-plan-bitrate
+                           | down-min-bitrate
+                           | down-config-not-feas
+                           | non-bonding-cpe
+                           | multiple-cpes
+                           | register
+                           | group-incomplete
+                           | host-sfp-los
+                           | host-sfp-tx-fail
+                           | host-sfp-not-prst
+                           | host-sfp-inv-id
+                           | host-sfp-ctrl-fail
+                           | host-sfp-rmtlt
+                           | host-sfp-mismatch
+                           | host-sfp-incompt
+                           | exp-sfp-los
+                           | exp-sfp-tx-fail
+                           | exp-sfp-not-prst
+                           | exp-sfp-inv-id
+                           | exp-sfp-ctrl-fail
+                           | exp-sfp-1-los
+                           | exp-sfp-2-los
+                           | ext-qsfp-invld
+                           | tx-power-high-alarm
+                           | tx-power-low-alarm
+                           | rx-power-high-alarm
+                           | rx-power-low-alarm
+                           | tx-biascur-high-alarm
+                           | tx-biascur-low-alarm
+                           | volt-high-alarm
+                           | volt-low-alarm
+                           | temp-high-alarm
+                           | temp-low-alarm
+                           | tx-power-high-warn
+                           | tx-power-low-warn
+                           | rx-power-high-warn
+                           | rx-power-low-warn
+                           | tx-biascur-high-warn
+                           | tx-biascur-low-warn
+                           | volt-high-warn
+                           | volt-low-warn
+                           | temp-high-warn
+                           | temp-low-warn
+                           | onu-unprovisioned
+                           | signal-loss
+                           | bitrate-high
+                           | opmodule-mismatch
+                           | key-fail-one-churn
+                           | key-fail-three-churn
+                           | oam-discov-fail
+                           | report-timeout
+                           | total-packets-exceed
+                           | arp-packets-exceed
+                           | dhcp-packets-exceed
+                           | igmp-packets-exceed
+                           | pppoe-packets-exceed
+                           | nd-packets-exceed
+                           | icmpv6-packets-exceed
+                           | mld-packets-exceed
+                           | dhcpv6-packets-exceed
+                           | cfm-packets-exceed
+                           | dsx1-serdes-fail
+                           | dsx1-tributary1-fail
+                           | dsx1-tributary2-fail
+                           | dsx1-los-fail
+                           | dsx1-ais-sync
+                           | dsx1-lof-sync
+                           | dsx1-los-sync
+                           | dsx1-deg-fail
+                           | dsx1-rei-from-liu
+                           | dsx1-rdi-from-liu
+                           | dsx1-crc6-from-liu
+                           | dsx1-crc4-from-liu
+                           | dsx1-crc4-th-from-liu
+                           | dsx1-ais-from-liu
+                           | dsx1-los-from-liu
+                           | dsx1-lof-from-liu
+                           | dsx1-lomf-from-liu
+                           | dsx1-rei-from-iwf
+                           | dsx1-rdi-from-iwf
+                           | dsx1-crc6-from-iwf
+                           | dsx1-crc4-from-iwf
+                           | dsx1-crc4-th-from-iwf
+                           | dsx1-ais-from-iwf
+                           | dsx1-los-from-iwf
+                           | dsx1-lof-from-iwf
+                           | dsx1-lomf-from-iwf
+                           | pppce-trans-15min-tca
+                           | pppce-sess-15min-tca
+                           | pppce-trans-1day-tca
+                           | pppce-sess-1day-tca
+                           | custom1
+                           | custom2
+                           | custom3
+                           | custom4
+                           | custom5
+                           | he-custom1
+                           | he-custom2
+                           | he-custom3
+                           | he-custom4
+                           | he-custom5
+                           | he-custom6
+                           | custom6
+                           | custom7
+                           | custom8
+                           | custom9
+                           | custom10
+                           | custom11
+                           | custom12
+                           | custom13
+                           | custom14
+                           | custom15
+                           | custom16
+                           | custom17
+                           | loss-swo-cap
+                           | ping-check-fail
+                           | der-temp1
+                           | der-temp2
+                           | der-temp3
+                           | der-temp4
+                           | der-temp5
+                           | der-temp6
+                           | der-temp7
+                           | der-temp8
+                           | der-temp9
+                           | der-temp10
+                           | der-temp11
+                           | der-temp12
+                           | der-temp13
+                           | der-temp14
+                           | der-temp15
+                           | der-temp16
+                           | der-temp17
+                           | der-temp18
+                           | der-temp19
+                           | der-temp20
+                           | der-temp21
+                           | der-temp22
+                           | der-temp23
+                           | der-temp24
+                           | der-temp25
+                           | der-temp26
+                           | der-temp27
+                           | der-temp28
+                           | der-temp29
+                           | der-temp30
+                           | der-temp31
+                           | der-spa1
+                           | der-spa2
+                           | der-spa3
+                           | der-spa4
+                           | der-spa5
+                           | der-spa6
+                           | der-spa7
+                           | der-spa8
+                           | der-spa9
+                           | der-spa10
+                           | der-spa11
+                           | der-spa12
+                           | der-spa13
+                           | der-spa14
+                           | der-spa15
+                           | der-spa16
+                           | der-spa17
+                           | der-spa18
+                           | der-spa19
+                           | der-spa20
+                           | der-spa21
+                           | der-spa22
+                           | der-spa23
+                           | der-spa24
+                           | der-spa25
+                           | der-spa26
+                           | der-spa27
+                           | der-spa28
+                           | der-spa29
+                           | der-spa30
+                           | der-spa31
+                           | apsf-alarm
+                           | custextalarm1
+                           | custextalarm2
+                           | custextalarm3
+                           | custextalarm4
+                           | custextalarm5
+                           | pluginfan
+                           | plugin-dc-a
+                           | plugin-dc-b
+                           | plugin-dg
+                           | ntr-a-loss
+                           | ntr-b-loss
+                           | xvps-conf-loss
+                           | mac-entry-nofree
+                           | fibre-conn-mismatch
+                           | link-cap-mismatch
+                           | eqpt-cap-mismatch
+                           | ctrl-dnld-failure
+                           | melt-hw-issue
+                           | melt-board-reset
+                           | board-shelf-mismatch
+                           | single-fan-fail
+                           | multi-fan-fail
+                           | fan-tray-missing
+                           | mgnt-type-mismatch
+                           | fileserv-unavail
+                           | shdsl-n-loopback
+                           | shdsl-c-loopback
+                           | shdsl-conferr
+                           | shdsl-atm-lcd
+                           | shdsl-lpr
+                           | shdsl-secu-err
+                           | shdsl-dev-fault
+                           | shdsl-atm-ncd
+                           | shdsl-n-losw
+                           | shdsl-c-losw
+                           | shdsl-n-aten
+                           | shdsl-c-aten
+                           | shdsl-n-snr
+                           | shdsl-c-snr
+                           | shdsl-n-dccont
+                           | shdsl-c-dccont
+                           | shdsl-c-actfail
+                           | e1-fe-rai
+                           | e1-ne-rai
+                           | e1-fe-ais
+                           | e1-ne-ais
+                           | e1-lof
+                           | e1-los
+                           | e1-loopback
+                           | ima-grp-fe-su
+                           | ima-grp-fe-cfg
+                           | ima-grp-ne-cfg
+                           | ima-grp-fe-nl
+                           | ima-grp-ne-nl
+                           | ima-grp-fe-blk
+                           | ima-lnk-lif
+                           | ima-lnk-lods
+                           | ima-lnk-misc
+                           | ima-lnk-rfi
+                           | ima-lnk-fault
+                           | ima-lnk-txblk
+                           | ima-lnk-rxblk
+                           | bad-digitmap
+                           | dhcp-unreach
+                           | dhcp-no-srv
+                           | dhcp-inv-srv
+                           | norpniewithsoftdsp
+                           | unknown-sub
+                           | ground-key
+                           | port-hightemp
+                           | port-jbfltca
+                           | reg-domainname
+                           | reg-auth
+                           | reg-timeout
+                           | reg-srvfailresp
+                           | inv-domainname
+                           | inv-auth
+                           | inv-timeout
+                           | inv-srvfailresp
+                           | subs-srvfailresp
+                           | subs-domainname
+                           | subs-auth
+                           | subs-refreshfail
+                           | subs-inittimeout
+                           | emergency-call
+                           | e1sip-reg-domainname
+                           | e1sip-reg-auth
+                           | e1sip-reg-timeout
+                           | e1sip-reg-srvfailresp
+                           | e1sip-inv-domainname
+                           | e1sip-inv-auth
+                           | e1sip-inv-timeout
+                           | e1sip-inv-srvfailresp
+                           | e1sip-emergency-call
+                           | e1itf-ais-signal
+                           | e1itf-los-signal
+                           | e1itf-rai-signal
+                           | e1sip-misconfig-mgc10
+                           | e1sip-nsmprf-missed
+                           | e1t1itf-recv-ais
+                           | e1t1itf-recv-los
+                           | e1t1itf-recv-rai
+                           | transport-mismatch
+                           | dns-lookup-failure
+                           | none-dns-srv
+                           | no-dns-srv
+                           | none-srv
+                           | no-srv
+                           | reg-srv-unreach
+                           | proxy-srv-unreach
+                           | dhcp-srv-unreach
+                           | fo-trigger
+                           | fb-trigger
+                           | du-trigger
+                           | ssp-missing
+                           | dns-pool-exceed
+                           | lsa-fo-trigger
+                           | reg-domainname-sec
+                           | reg-auth-sec
+                           | reg-timeout-sec
+                           | reg-srvfailresp-sec
+                           | inv-domainname-sec
+                           | inv-auth-sec
+                           | inv-timeout-sec
+                           | inv-srvfailresp-sec
+                           | subs-srvfailresp-sec
+                           | subs-domainname-sec
+                           | subs-auth-sec
+                           | subs-refreshfail-sec
+                           | subs-inittimeout-sec
+                           | emergency-call-sec
+                           | fanout
+                           | up-overflow
+                           | upobc-overflow
+                           | dwobc-overflow
+                           | dw-overflow
+                           | lwpri-overflow
+                           | queue-drop
+                           | queue-load
+                           | queue-peak-usage
+
+                           | mgc-unreachable
+                           | failover-to-esamgc
+                           | sgc-unreachable
+                           | lcard-unreach-srvcard
+                           | lcard-type-mismatch
+                           | meg-unknown-sub
+                           | meg-ground-key
+                           | meg-high-temp
+                           | meg-act-fail
+                           | meg-over-current
+                           | line-showering
+                           | low-qos-packetloss
+                           | low-qos-jitter
+                           | low-qos-delay
+                           | sig-brd-persist-loss
+                           | sig-brd-disk-full
+                           | sig-brd-db-rollback
+                           | mg-overload
+                           | meg-unknown-sub-sec
+                           | line-showering-sec
+                           | loss-env-mon
+                           | etca-los
+                           | etca-fcs
+                           | etca-day-los
+                           | etca-day-fcs
+                           | etca-rx-octets
+                           | etca-tx-octets
+                           | etca-day-rx-octets
+                           | etca-day-tx-octets
+                           | user-sfp-los
+                           | user-sfp-tx-fail
+                           | user-sfp-not-prst
+                           | user-sfp-inv-id
+                           | user-sfp-t-exceed
+                           | user-sfp-mismatch
+                           | uplink-sfp-los
+                           | uplink-sfp-tx-fail
+                           | uplink-sfp-not-prst
+                           | uplink-sfp-inv-id
+                           | uplink-sfp-t-exceed
+                           | uplink-sfp-mismatch
+                           | loss-lsmswp-cap
+                           | inv-xvps-pair-data
+                           | network-power-loss
+                           | hw-fault
+                           | bat-miss
+                           | bat-fail
+                           | bat-low
+                           | bat-a-fail
+                           | bat-b-fail
+                           | ac-vol-out-range
+                           | network-power-loss-b
+                           | sem-ac-power-fail
+                           | sem-ups-low-volt
+                           | dc-a-fail
+                           | dc-b-fail
+                           | plan-power-mismatch
+                           | water-seepage-in-box
+                           | sealed-box-open
+                           | dc-a-vol-out-range
+                           | dc-b-vol-out-range
+                           | inlet-temp-major
+                           | inlet-temp-critical
+                           | psu-fail-crit
+                           | psu-a-fail-presence
+                           | psu-a-fail-vin-ac-nok
+                           | psu-a-fail-vin-uv
+                           | psu-a-fail-vin-ov
+                           | psu-a-fail-vout-uv
+                           | psu-a-fail-vout-ov
+                           | psu-a-fail-iout-oc
+                           | psu-a-fail-overtemp
+                           | psu-b-fail-presence
+                           | psu-b-fail-vin-ac-nok
+                           | psu-b-fail-vin-uv
+                           | psu-b-fail-vin-ov
+                           | psu-b-fail-vout-uv
+                           | psu-b-fail-vout-ov
+                           | psu-b-fail-iout-oc
+                           | psu-b-fail-overtemp
+                           | synce-fail
+                           | bits-fail
+                           | bits-output-shutoff
+                           | ieee1588-fail
+                           | gnss-fail
+                           | ieee1588-hybrid-fail
+                           | signal-loss
+                           | signal-efd
+                           | esmc-loss
+                           | bits-output-exceed
+                           | ql-input-exceed
+                           | holdover
+                           | lti
+                           | tod-reference-fail
+                           | internal-clk-fail
+                           | bgp-peer-down
+                           | bgp-routes-mid-limit
+                           | isis-adjacency-down
+                           | isis-adjacency-reject
+                           | isis-instance-down
+                           | ospf-lsa-limit
+                           | ospf-lsa-mid-limit
+                           | ospf-neighbor-down
+                           | ospf-instance-down
+                           | ospf3-lsa-limit
+                           | ospf3-lsa-mid-limit
+                           | ospf3-neighbor-down
+                           | ospf3-instance-down
+                           | rip-instance-down
+                           | lag-down
+                           | lagsubgrp-thresh-reach
+                           | lagsubgrp-switch-fail
+                           | no-unpinned-free-ports
+                           | general-arp-limit
+                           | gen-switch-out-of-res
+                           | ipv6-nc-limit
+                           | dhcp-session-oor
+                           | ihub-fdb-limit
+                           | ihub-mac-limit
+                           | l2fw-stp-exception
+                           | l2fw-stp-root-guard
+                           | vprn-routes-limit
+                           | vprn-ipv6-routes-limit
+                           | dhcpv6-lease-limit
+                           | dhcpv4-lease-limit
+                           | vpls-mfib-limit
+                           | ihub-ipv6-dad-own
+                           | ihub-ipv6-dad
+                           | ihub-ipv6-dup-pd-route
+                           | vpls-duplicate-mac
+                           | vpls-fdb-limit
+                           | vpls-self-duplic-mac
+                           | vpls-sdp-self-dup-mac
+                           | link-down
+                           | link-lagport-add-fail
+                           | link-conf-mismatch
+                           | ihub-peer-comm
+                           | ihub-sw-fail
+                           | ihub-hw-fail
+                           | ihub-link-fail
+                           | ihub-proc-overload
+                           | ihub-out-of-mem
+                           | ntp-comm-lost
+                           | ldp-instance-down
+                           | ldp-session-down
+                           | mpls-instance-down
+                           | mpls-lsp-down
+                           | mpls-lsp-path-down
+                           | sdp-instance-down
+                           | sdp-binding-down
+                           | epipe-instance-down
+                           | lldpmed-portcfg-mis
+                           | lldpmed-mediapl-mis
+                           | vlanport-svc-mismatch
+                           | mcsrc-stream-lost
+                           | eqptsupl-syslog-upload
+                           | eqptsupl-ontsw-dnload
+                           | cf-75%used
+                           | cf-90%used
+                           | olt-gen-pon-com-fail
+                           | olt-gen-tx-fail
+                           | olt-gen-unprov-ont
+                           | olt-gen-pon-eqpt-prov
+                           | olt-gen-pon-loss-sig
+                           | olt-gen-pon-diagnostic
+                           | olt-gen-loid-conflict
+                           | olt-gen-loid-pwderr
+                           | olt-gen-pon-alien-test
+                           | olt-gen-alien-detect
+                           | olt-gen-rng-mism
+                           | olt-gen-sfp-mism
+                           | olt-gen-deact-hightca
+                           | olt-gen-deact-lowtca
+                           | olt-gen-dp-integ
+                           | olt-gen-ddr-fault
+                           | olt-pon-tc-err-frag-tc
+                           | olt-ont-tc-err-frag-tc
+                           | ont-ploam-loss-sig
+                           | ont-ploam-loss-ack
+                           | ont-ploam-loss-cd
+                           | ont-ploam-phy-eqpt-err
+                           | ont-ploam-startup-fail
+                           | ont-ploam-sig-degrade
+                           | ont-ploam-disabled
+                           | ont-ploam-err-msg
+                           | ont-ploam-inactive
+                           | ont-ploam-sig-fail
+                           | ont-ploam-dying-gasp
+                           | ont-ploam-deact-fail
+                           | ont-ploam-oam
+                           | ont-ploam-win-drift
+                           | ont-ploam-rdi
+                           | ont-ploam-loss-ks
+                           | ont-ploam-pwr-burst
+                           | ont-ploam-rog-disa
+                           | ont-ploam-diff-reach
+                           | ont-ploam-looc
+                           | sfu-ploam-loss-sig
+                           | sfu-ploam-loss-ack
+                           | sfu-ploam-loss-cd
+                           | sfu-ploam-phy-eqpt-err
+                           | sfu-ploam-startup-fail
+                           | sfu-ploam-sig-degrade
+                           | sfu-ploam-disabled
+                           | sfu-ploam-err-msg
+                           | sfu-ploam-inactive
+                           | sfu-ploam-sig-fail
+                           | sfu-ploam-dying-gasp
+                           | sfu-ploam-deact-fail
+                           | sfu-ploam-oam
+                           | sfu-ploam-win-drift
+                           | sfu-ploam-rdi
+                           | sfu-ploam-loss-ks
+                           | sfu-ploam-pwr-burst
+                           | sfu-ploam-rog-disa
+                           | sfu-ploam-diff-reach
+                           | sfu-ploam-looc
+                           | soho-ploam-loss-sig
+                           | soho-ploam-loss-ack
+                           | soho-ploam-loss-cd
+                           | soho-ploam-phy-eqpt-er
+                           | soho-ploam-startup-fai
+                           | soho-ploam-sig-degrade
+                           | soho-ploam-disabled
+                           | soho-ploam-err-msg
+                           | soho-ploam-inactive
+                           | soho-ploam-sig-fail
+                           | soho-ploam-dying-gasp
+                           | soho-ploam-deact-fail
+                           | soho-ploam-oam
+                           | soho-ploam-win-drift
+                           | soho-ploam-rdi
+                           | soho-ploam-loss-ks
+                           | soho-ploam-pwr-burst
+                           | soho-ploam-rog-disa
+                           | soho-ploam-diff-reach
+                           | soho-ploam-looc
+                           | mdu-ploam-loss-sig
+                           | mdu-ploam-loss-ack
+                           | mdu-ploam-loss-cd
+                           | mdu-ploam-phy-eqpt-err
+                           | mdu-ploam-startup-fail
+                           | mdu-ploam-sig-degrade
+                           | mdu-ploam-disabled
+                           | mdu-ploam-err-msg
+                           | mdu-ploam-inactive
+                           | mdu-ploam-sig-fail
+                           | mdu-ploam-dying-gasp
+                           | mdu-ploam-deact-fail
+                           | mdu-ploam-oam
+                           | mdu-ploam-win-drift
+                           | mdu-ploam-rdi
+                           | mdu-ploam-loss-ks
+                           | mdu-ploam-pwr-burst
+                           | mdu-ploam-rog-disa
+                           | mdu-ploam-diff-reach
+                           | mdu-ploam-looc
+                           | ont-hpna-ser-mis
+                           | ont-hpna-los-sig
+                           | ont-moca-svc-mis
+                           | ont-moca-link-los
+                           | ont-moca-min-bw
+                           | ont-moca-tca-rx-err-fr
+                           | ont-sipa-reg-nm-fail
+                           | ont-sipa-reg-rec-fail
+                           | ont-sipa-reg-con-fail
+                           | ont-sipa-reg-val-fail
+                           | ont-sipa-reg-mis
+                           | ont-vcd-cfg-nm-fail
+                           | ont-vcd-cfg-rech-fail
+                           | ont-vcd-cfg-conn-fail
+                           | ont-vcd-cfg-vali-fail
+                           | ont-vcd-cfg-auth-fail
+                           | ont-vcd-cfg-resp-tmout
+                           | ont-vcd-cfg-resp-err
+                           | ont-vcd-cfg-file-err
+                           | ont-vcd-sub-nm-fail
+                           | ont-vcd-sub-rech-fail
+                           | ont-vcd-sub-conn-fail
+                           | ont-vcd-sub-vali-fail
+                           | ont-vcd-sub-auth-fail
+                           | ont-vcd-sub-resp-tmout
+                           | ont-vcd-sub-resp-err
+                           | ont-vcd-reb-requ
+                           | ont-vcd-mis
+                           | ont-mgc-mis
+                           | ont-mgc-timeout
+                           | ont-sip-reg-dns
+                           | ont-sip-reg-fail
+                           | ont-sip-reg-timeout
+                           | ont-sip-reg-err-resps
+                           | ont-sip-inv-dns
+                           | ont-sip-inv-auth
+                           | ont-sip-inv-timeout
+                           | ont-sip-inv-err
+                           | ont-svc-pots-subs-refr
+                           | ont-svc-pots-not-refr
+                           | ont-svc-pots-icfg-err
+                           | ont-veip-mismatch
+                           | ont-ip-host-mismatch
+                           | ont-ip-host-file
+                           | ont-ip-host-ip-alloc
+                           | olt-pon-up-bw-tca
+                           | olt-pon-down-bw-tca
+                           | ont-gen-omci-fail
+                           | ont-gen-eqpt-selftest
+                           | ont-gen-ac-pwr-fail
+                           | ont-gen-bat-missing
+                           | ont-gen-bat-low
+                           | ont-gen-bat-fail
+                           | ont-gen-phys-intrusion
+                           | ont-gen-sw-dnload-f
+                           | ont-gen-sw-dnload-p
+                           | ont-gen-sw-act-fail
+                           | ont-gen-eqpt-vers-mis
+                           | ont-gen-sw-vers-mis
+                           | ont-gen-us-rate-mis
+                           | ont-gen-mdu-env1
+                           | ont-gen-mdu-env2
+                           | ont-gen-mdu-env3
+                           | ont-gen-nw-time-err
+                           | ont-gen-opt-sig-high
+                           | ont-gen-opt-sig-low
+                           | ont-gen-eqpt-prov-sa
+                           | ont-gen-eqpt-prov-nsa
+                           | pon-t-txmcutilhi
+                           | pon-t-txmcutilmd
+                           | pon-t-txmcutillo
+                           | pon-t-txtotutilhi
+                           | pon-t-txtotutilmd
+                           | pon-t-txtotutillo
+                           | pon-t-rxtotutilhi
+                           | pon-t-rxtotutilmd
+                           | pon-t-rxtotutillo
+                           | pon-t-dbacongperiodhi
+                           | pon-t-dbacongperiodmd
+                           | pon-t-dbacongperiodlo
+                           | pon-t-txucdropfrmhi
+                           | pon-t-txucdropfrmmd
+                           | pon-t-txucdropfrmlo
+                           | pon-t-txmcdropfrmhi
+                           | pon-t-txmcdropfrmmd
+                           | pon-t-txmcdropfrmlo
+                           | pon-t-txbcdropfrmhi
+                           | pon-t-txbcdropfrmmd
+                           | pon-t-txbcdropfrmlo
+                           | pon-t-rxtotdropfrmhi
+                           | pon-t-rxtotdropfrmmd
+                           | pon-t-rxtotdropfrmlo
+                           | chpr-t-txmcutilhi
+                           | chpr-t-txmcutilmd
+                           | chpr-t-txmcutillo
+                           | chpr-t-txtotutilhi
+                           | chpr-t-txtotutilmd
+                           | chpr-t-txtotutillo
+                           | chpr-t-rxtotutilhi
+                           | chpr-t-rxtotutilmd
+                           | chpr-t-rxtotutillo
+                           | chpr-t-dbacongperiodhi
+                           | chpr-t-dbacongperiodmd
+                           | chpr-t-dbacongperiodlo
+                           | chpr-t-txucdropfrmhi
+                           | chpr-t-txucdropfrmmd
+                           | chpr-t-txucdropfrmlo
+                           | chpr-t-txmcdropfrmhi
+                           | chpr-t-txmcdropfrmmd
+                           | chpr-t-txmcdropfrmlo
+                           | chpr-t-txbcdropfrmhi
+                           | chpr-t-txbcdropfrmmd
+                           | chpr-t-txbcdropfrmlo
+                           | chpr-t-rxtotdropfrmhi
+                           | chpr-t-rxtotdropfrmmd
+                           | chpr-t-rxtotdropfrmlo
+                           | sfu-gen-omci-fail
+                           | sfu-gen-eqpt-selftest
+                           | sfu-gen-ac-pwr-fail
+                           | sfu-gen-bat-missing
+                           | sfu-gen-bat-low
+                           | sfu-gen-bat-fail
+                           | sfu-gen-sw-dnload-f
+                           | sfu-gen-sw-dnload-p
+                           | sfu-gen-sw-act-fail
+                           | sfu-gen-eqpt-vers-mis
+                           | sfu-gen-sw-vers-mis
+                           | sfu-gen-us-rate-mis
+                           | sfu-gen-tune-fail
+                           | sfu-gen-nw-time-err
+                           | sfu-gen-opt-sig-high
+                           | sfu-gen-opt-sig-low
+                           | sfu-gen-eqpt-prov-sa
+                           | sfu-gen-eqpt-prov-nsa
+                           | soho-gen-omci-fail
+                           | soho-gen-eqpt-selftest
+                           | soho-gen-ac-pwr-fail
+                           | soho-gen-bat-missing
+                           | soho-gen-bat-low
+                           | soho-gen-bat-fail
+                           | soho-gen-sw-dnload-f
+                           | soho-gen-sw-dnload-p
+                           | soho-gen-sw-act-fail
+
+                           | soho-gen-eqpt-vers-mis
+                           | soho-gen-sw-vers-mis
+                           | soho-gen-us-rate-mis
+                           | soho-gen-tune-fail
+                           | soho-gen-nw-time-err
+                           | soho-gen-opt-sig-high
+                           | soho-gen-opt-sig-low
+                           | soho-gen-eqpt-prov-sa
+                           | soho-gen-eqpt-prov-nsa
+                           | mdu-gen-omci-fail
+                           | mdu-gen-eqpt-selftest
+                           | mdu-gen-ac-pwr-fail
+                           | mdu-gen-bat-missing
+                           | mdu-gen-bat-low
+                           | mdu-gen-bat-fail
+                           | mdu-gen-phys-intrusion
+                           | mdu-gen-sw-dnload-f
+                           | mdu-gen-sw-dnload-p
+                           | mdu-gen-sw-act-fail
+                           | mdu-gen-eqpt-vers-mis
+                           | mdu-gen-sw-vers-mis
+                           | mdu-gen-us-rate-mis
+                           | mdu-gen-tune-fail
+                           | mdu-gen-mdu-env1
+                           | mdu-gen-mdu-env2
+                           | mdu-gen-mdu-env3
+                           | mdu-gen-nw-time-err
+                           | mdu-gen-opt-sig-high
+                           | mdu-gen-opt-sig-low
+                           | mdu-gen-eqpt-prov-sa
+                           | mdu-gen-eqpt-prov-nsa
+                           | ont-gen-sw-dnload-file
+                           | ont-gen-fan-fail
+                           | ont-gen-high-temp
+                           | ont-gen-high-temp-ex
+                           | ont-gen-emergency-call
+                           | ont-gen-sw-version
+                           | ont-poe-exceed-max
+                           | ont-poe-overload-yell
+                           | ont-opti-malfunc
+                           | ont-gen-cfgdld-fail
+                           | ont-gen-rssi-mis
+                           | ont-gen-tx-pwr-low
+                           | ont-gen-temp-high
+                           | ont-gen-volt-high
+                           | ont-gen-bias-high
+                           | ont-loopdetect-mis
+                           | ont-olt-rx-pw-lo
+                           | ont-olt-rx-pw-hig
+                           | ont-olt-rx-pw-warnlo
+                           | ont-olt-rx-pw-warnhig
+                           | ont-gen-tod-out-sync
+                           | ont-gen-tune-fail
+                           | hgu-tr069-parm-fail
+                           | ont-gen-tod-mismatch
+                           | sfu-sup-sw-file-error
+                           | sfu-sup-fan-failure
+                           | sfu-sup-temp-high-warn
+                           | sfu-sup-temp-shutoff
+                           | sfu-sup-emergency-call
+                           | sfu-sup-swverctrl-err
+                           | sfu-sup-poe-exceed-max
+                           | sfu-sup-poe-over-yell
+                           | sfu-opti-malfunc
+                           | sfu-sup-cfg-dnld-fail
+                           | sfu-sup-rssi-cfg-mism
+                           | sfu-sup-sfp-tx-low
+                           | sfu-sup-sfp-temp-high
+                           | sfu-sup-sfp-volt-high
+                           | sfu-sup-sfp-bias-high
+                           | sfu-sup-ld-cfg-mism
+                           | sfu-sup-olt-rx-low
+                           | sfu-sup-olt-rx-high
+                           | sfu-sup-olt-rx-lo-warn
+                           | sfu-sup-olt-rx-hi-warn
+                           | sfu-sup-tod-out-sync
+                           | sfu-sup-ont-tune-fail
+                           | sfu-tr069-parm-fail
+                           | sfu-sup-tod-mismatch
+                           | soho-sup-sw-file-error
+                           | soho-sup-fan-failure
+                           | soho-sup-temp-high-war
+                           | soho-sup-temp-shutoff
+                           | soho-sup-emergency-cal
+                           | soho-sup-swverctrl-err
+                           | soho-sup-poe-exceed-ma
+                           | soho-sup-poe-over-yell
+                           | soho-opti-malfunc
+                           | soho-sup-cfg-dnld-fail
+                           | soho-sup-rssi-cfg-mism
+                           | soho-sup-sfp-tx-low
+                           | soho-sup-sfp-temp-high
+                           | soho-sup-sfp-volt-high
+                           | soho-sup-sfp-bias-high
+                           | soho-sup-ld-cfg-mism
+                           | soho-sup-olt-rx-low
+                           | soho-sup-olt-rx-high
+                           | soho-sup-olt-rx-lo-war
+                           | soho-sup-olt-rx-hi-war
+                           | soho-sup-tod-out-sync
+                           | soho-sup-ont-tune-fail
+                           | soho-tr069-parm-fail
+                           | soho-sup-tod-mismatch
+                           | mdu-sup-sw-file-error
+                           | mdu-sup-fan-failure
+                           | mdu-sup-temp-high-warn
+                           | mdu-sup-temp-shutoff
+                           | mdu-sup-emergency-call
+                           | mdu-sup-swverctrl-err
+                           | mdu-sup-poe-exceed-max
+                           | mdu-sup-poe-over-yell
+                           | mdu-opti-malfunc
+                           | mdu-sup-cfg-dnld-fail
+                           | mdu-sup-rssi-cfg-mism
+                           | mdu-sup-sfp-tx-low
+                           | mdu-sup-sfp-temp-high
+                           | mdu-sup-sfp-volt-high
+                           | mdu-sup-sfp-bias-high
+                           | mdu-sup-ld-cfg-mism
+                           | mdu-sup-olt-rx-low
+                           | mdu-sup-olt-rx-high
+                           | mdu-sup-olt-rx-lo-warn
+                           | mdu-sup-olt-rx-hi-warn
+                           | mdu-sup-tod-out-sync
+                           | mdu-sup-ont-tune-fail
+                           | mdu-tr069-parm-fail
+                           | mdu-sup-tod-mismatch
+                           | ont-sbscr-lim-missing
+                           | ont-sbscr-lim-type-mis
+                           | ont-sbscr-lim-removal
+                           | ont-sbscr-lim-fail
+                           | ont-sbscr-lim-svc-mis
+                           | ont-sbscr-lim-port-mis
+                           | ont-svc-video-conf-mis
+                           | ont-svc-video-pw-high
+                           | ont-svc-video-pw-low
+                           | ont-svc-pots-svc-mis
+                           | ont-svc-pots-rtcp-lost
+                           | ont-svc-pots-icnf-subs
+                           | ont-svc-pots-icnf-ntfy
+                           | ont-svc-pots-icnf-http
+                           | ont-svc-pots-sip-reg
+                           | ont-svc-pots-sip-inv
+                           | ont-svc-pots-sip-subsc
+                           | ont-svc-pots-sip-mt-tc
+                           | ont-svc-pots-pk-los-tc
+                           | ont-svc-pots-jitter-tc
+                           | ont-svc-pots-subs-dns
+                           | ont-svc-pots-subs-tcp
+                           | ont-svc-pots-subs-tls
+                           | ont-svc-pots-subs-auth
+                           | ont-svc-pots-subs-to
+                           | ont-svc-pots-subs-err
+                           | ont-svc-pots-not-to
+                           | ont-svc-pots-notref-to
+                           | ont-svc-pots-not-mal
+                           | ont-svc-pots-not-rej
+                           | ont-svc-pots-http-dns
+                           | ont-svc-pots-http-tcp
+                           | ont-svc-pots-http-tls
+                           | ont-svc-pots-http-auth
+                           | ont-svc-pots-http-to
+                           | ont-svc-pots-http-err
+                           | ont-svc-pots-http-mal
+                           | ont-svc-pots-insuff
+                           | ont-svc-pots-poos
+                           | ont-svc-lan-mismatch
+                           | ont-svc-lan-loss-sig
+                           | ont-svc-enet-poos
+                           | ont-svc-ces-ds1-mis
+                           | ont-svc-ces-ds1-los
+                           | ont-svc-ces-ds1-lof
+                           | ont-svc-ces-ds1-rair
+                           | ont-svc-ces-ds1-ais
+                           | ont-svc-ces-ds1-lnlpbk
+                           | ont-svc-ces-ds1-tmlpbk
+                           | ont-svc-ces-e1-mis
+                           | ont-svc-ces-e1-los
+                           | ont-svc-ces-e1-lof
+                           | ont-svc-ces-e1-rair
+                           | ont-svc-ces-e1-ais
+                           | ont-svc-voip-cnf-file
+                           | ont-svc-voip-svc-mis
+                           | ont-svc-voip-gw-comm
+                           | ont-svc-voip-dhcp-fail
+                           | ont-svc-voip-icnf-subs
+                           | ont-svc-voip-icnf-ntfy
+                           | ont-svc-voip-icnf-http
+                           | ont-svc-voip-dhcp-to
+                           | ont-svc-voip-dhcp-mal
+                           | ont-svc-voip-dhcp-noad
+                           | ont-svc-voip-dhcp-leas
+                           | ont-svc-voip-subs-dns
+                           | ont-svc-voip-subs-tcp
+                           | ont-svc-voip-subs-tls
+                           | ont-svc-voip-subs-auth
+                           | ont-svc-voip-subs-to
+                           | ont-svc-voip-subs-err
+                           | ont-svc-voip-not-to
+                           | ont-svc-voip-notref-to
+                           | ont-svc-voip-not-mal
+                           | ont-svc-voip-not-rej
+                           | ont-svc-voip-http-dns
+                           | ont-svc-voip-http-tcp
+                           | ont-svc-voip-http-tls
+                           | ont-svc-voip-http-auth
+                           | ont-svc-voip-http-to
+                           | ont-svc-voip-http-err
+                           | ont-svc-voip-http-mal
+                           | ont-svc-voip-subs-refr
+                           | ont-svc-voip-not-refr
+                           | ont-svc-voip-icfg-err
+                           | ont-svc-v-ani-conf-mis
+                           | ont-svc-v-ani-loss-sig
+                           | ont-svc-v-ani-lv-high
+                           | ont-svc-v-ani-lv-low
+                           | ont-svc-pwe-mismatch
+                           | ont-svc-pwe-reordr-lof
+                           | ont-svc-pwe-jitt-buf-o
+                           | ont-svc-pwe-jitt-buf-u
+                           | ont-svc-pwe-malf-frms
+                           | ont-svc-pwe-late-frms
+                           | ont-svc-pwe-link-loss
+                           | ont-svc-pwe-arp-fail
+                           | ont-svc-xdsl-mismatch
+                           | ont-svc-xdsl-ne-lof
+                           | ont-svc-xdsl-ne-los
+                           | ont-svc-xdsl-ne-line
+                           | ont-svc-xdsl-ne-lol
+                           | ont-svc-xdsl-fe-lof
+                           | ont-svc-xdsl-fe-los
+                           | ont-svc-xdsl-fe-lop
+                           | ont-svc-xdsl-cnf-err
+                           | ont-svc-xdsl-ne-es-tc
+                           | ont-svc-xdsl-ne-ses-tc
+                           | ont-svc-xdsl-ne-uas-tc
+                           | ont-svc-xdsl-fe-es-tc
+                           | ont-svc-xdsl-fe-ses-tc
+                           | ont-svc-xdsl-fe-uas-tc
+                           | ont-tc-rx-los-frag-tc
+                           | ont-tc-tx-los-frag-tc
+                           | ont-tc-bad-gem-hd-tc
+                           | ont-uni-ds-drpd-fr-tc
+                           | ont-uni-up-drpd-fr-tc
+                           | ont-uni-ds-crc-fr-tc
+                           | ont-uni-up-crc-fr-tc
+                           | ont-cpu-util-tca
+                           | ont-mem-util-tca
+                           | pim-neighbor-down
+                           | pim-max-mcroutes
+                           | li-traffic-disabled
+                           | li-bandwidth-limit
+                           | li-out-of-res
+                           | otdr-cap-mismatch
+                           | login-successful
+                           | login-failure
+                           | cfm-defrdiccm
+                           | cfm-defmacstatus
+                           | cfm-defremoteccm
+                           | cfm-deferrorccm
+                           | cfm-defxconccm
+                           | cfm-defais
+                           | bfd-session-down
+                           | bfd-max-resource
+                           | bfd-stale-entry
+                           | tca-outputbw
+                           | tca-inputbw
+                           | tca-rxcrcalign
+                           | tca-txcrcalign
+                           | tca-txcollisions
+                           | tca-outputhighbw
+                           | tca-outputmedbw
+                           | tca-outputlowbw
+                           | tca-inputhighbw
+                           | tca-inputmediumbw
+                           | tca-inputlowbw
+                           | eth-cfm-defrdiccm
+                           | eth-cfm-defmacstatus
+                           | eth-cfm-defremoteccm
+                           | eth-cfm-deferrorccm
+                           | eth-cfm-defxconccm
+                           | rsvp-neighbor-down
+                           | rsvp-instance-down
+                           | eth-ring-path-block
+                           | ai-platform-down
+                           | ai-appl-install-fail
+                           | ip-assign-fail
+                           | ont-tr069-serv-mis
+                           | ont-snmp-mis
+                           | bsf-dhcpv4
+                           | bsf-dhcpv6
+                           | bsf-pon
+                           | bsf-vbridge
+                           | bsf-qos
+                           | bsf-igmp
+                           | bsf-lxfwd
+                           | prot-not-available
+                           | prot-switchover-fail
+                           | efm-oam-cpelinkfault
+                           | efm-oam-cpedyinggasp
+                           | efm-oam-cpecrevt
+                           | ont-loopdetect
+                           | alrm-tbl-overflow
+                           | auto-switch-status
+                           | auswqueuefullatm
+                           | auswbkpfailatm
+                           | auswrecfgfailatm
+                           | auswdataunatm
+                           | auswqueuefulptm
+                           | auswbkpfailptm
+                           | auswrecfgfailptm
+                           | auswdataunptm
+                           | auswbakpfailatm
+                           | cfg-dld-fail
+                           | cfg-act-fail
+                           | cfg-dld-ip
+                           | cfg-ver-mismatch
+                           | cfg-file-missing
+                           | cfg-verctrl-err
+                           | cfg-not-supported
+                           | ont-prot-not-available
+                           | ont-gen-temp-low
+                           | ont-gen-volt-low
+                           | ont-gen-tx-pwr-high
+                           | ont-gen-bias-low
+                           | ont-gen-rx-hwarn
+                           | ont-gen-rx-lwarn
+                           | ont-gen-tx-hwarn
+                           | ont-gen-tx-lwarn
+                           | ont-gen-temp-hwarn
+                           | ont-gen-temp-lwarn
+                           | ont-gen-volt-hwarn
+                           | ont-gen-volt-lwarn
+                           | ont-gen-bias-hwarn
+                           | ont-gen-bias-lwarn
+                           | sfu-sup2-temp-low
+                           | sfu-sup2-volt-low
+                           | sfu-sup2-tx-high
+                           | sfu-sup2-bias-low
+                           | sfu-sup2-rx-hwarn
+                           | sfu-sup2-rx-lwarn
+                           | sfu-sup2-tx-hwarn
+                           | sfu-sup2-tx-lwarn
+                           | sfu-sup2-temp-hwarn
+                           | sfu-sup2-temp-lwarn
+                           | sfu-sup2-volt-hwarn
+                           | sfu-sup2-volt-lwarn
+                           | sfu-sup2-bias-hwarn
+                           | sfu-sup2-bias-lwarn
+                           | soho-sup2-temp-low
+                           | soho-sup2-volt-low
+                           | soho-sup2-tx-high
+                           | soho-sup2-bias-low
+                           | soho-sup2-rx-hwarn
+                           | soho-sup2-rx-lwarn
+                           | soho-sup2-tx-hwarn
+                           | soho-sup2-tx-lwarn
+                           | soho-sup2-temp-hwarn
+                           | soho-sup2-temp-lwarn
+                           | soho-sup2-volt-hwarn
+                           | soho-sup2-volt-lwarn
+                           | soho-sup2-bias-hwarn
+                           | soho-sup2-bias-lwarn
+                           | mdu-sup2-temp-low
+                           | mdu-sup2-volt-low
+                           | mdu-sup2-tx-high
+                           | mdu-sup2-bias-low
+                           | mdu-sup2-rx-hwarn
+                           | mdu-sup2-rx-lwarn
+                           | mdu-sup2-tx-hwarn
+                           | mdu-sup2-tx-lwarn
+                           | mdu-sup2-temp-hwarn
+                           | mdu-sup2-temp-lwarn
+                           | mdu-sup2-volt-hwarn
+                           | mdu-sup2-volt-lwarn
+                           | mdu-sup2-bias-hwarn
+                           | mdu-sup2-bias-lwarn
+                           | cust-alm1
+                           | cust-alm2
+                           | cust-alm3
+                           | cust-alm4
+                           | cust-alm5
+                           | cust-alm6
+                           | cust-alm7
+                           | cust-alm8
+                           | cust-alm9
+                           | cust-alm10
+                           | cust-alm11
+                           | cust-alm12
+                           | cust-alm13
+                           | cust-alm14
+                           | cust-alm15
+                           | cust-alm16
+                           | cust-alm17
+                           | cust-alm18
+                           | cust-alm19
+                           | cust-alm20
+                           | cust-alm21
+                           | cust-alm22
+                           | cust-alm23
+                           | cust-alm24
+                           | cust-alm25
+                           | cust-alm26
+                           | cust-alm27
+                           | cust-alm28
+                           | cust-alm29
+                           | cust-alm30
+                           | cust-alm31
+                           | ethernet-ring-pthfwst
+                           | ethernet-ring-fop-to
+                           | ethernet-ring-fop-pm
+                           | fpm-depletion
+                           | exp-seizureack
+                           | exp-disconack
+                           | exp-forcerelack
+                           | packet-loss
+                           | remote-packet-loss
+                           | no-dsp-resource
+                           | la-down
+                           | la-standby-na
+                           | la-switch-fail
+                           | la-degrade
+                           | melt-board-reset
+                           | board-shelf-mismatch
+                           | fcs-thresh-exceed )
+                           Possible values:
+                           - all                   : all alarms for query
+                           - xtca-ne-es            : errored seconds in 15 min
+                           - xtca-ne-ses           : severely errored seconds 
+in 15 min
+                           - xtca-ne-uas           : unavailable seconds in 15 
+min
+                           - xtca-ne-day-es        : errored seconds in 1 day
+                           - xtca-ne-day-ses       : severely errored seconds 
+in 1 day
+                           - xtca-ne-day-uas       : unavailable seconds in 1 
+day
+                           - xtca-fe-es            : errored seconds in 15 min
+                           - xtca-fe-ses           : severely errored secs in 
+15 min
+                           - xtca-fe-uas           : unavailable seconds in 15 
+min
+                           - xtca-fe-day-es        : errored seconds in 1 day
+                           - xtca-fe-day-ses       : severely errored secs in 1 
+day
+                           - xtca-fe-day-uas       : unavailable seconds in 1 
+day
+                           - xtca-leftrs           : low error free throughput 
+seconds in 15 min
+                           - xtca-day-leftrs       : low error free throughput 
+seconds in 1 day
+                           - xtca-fe-leftrs        : far end low error free 
+throughput seconds in 15 min
+                           - xtca-fe-day-leftrs    : far end low error free 
+throughput seconds in 1 day
+                           - xtca-auto-port-reset  : auto-port-resets in 1 week
+                           - xtca-reinit           : Reinitialization seconds 
+in 15 min
+                           - xtca-day-reinit       : Reinitialization seconds 
+in 1 day
+                           - xdsl-ne-los           : loss of signal
+                           - xdsl-ne-lof           : loss of frame
+                           - xdsl-ne-lom           : loss of margin
+                           - xdsl-ne-ese           : excessive severe errors
+                           - xdsl-act-cfg-error    : line configuration data 
+cannot be used
+                           - xdsl-act-not-feas     : line capacity not enough 
+to setup requested profile
+                           - xdsl-up-br-reach      : planned bitrate not 
+reached after initialization
+                           - xdsl-ne-ncd           : no cell delineation
+                           - xdsl-ne-lcd           : loss of cell delineation
+                           - xdsl-fe-los           : loss of signal
+                           - xdsl-fe-lof           : loss of frame
+                           - xdsl-fe-lpr           : loss of power
+                           - xdsl-fe-lol           : loss of link
+                           - xdsl-fe-lom           : loss of margin
+                           - xdsl-fe-ese           : excessive severe errors
+                           - xdsl-fe-upbo-vio      : upbo violation
+                           - xdsl-fe-cpe-pol       : activation failure cpe 
+policing
+                           - xdsl-tpstc-mis        : mismatch between the 
+configured tps-tc mode and the mode supported by the connected cpe
+                           - xdsl-act-comm         : init not successful due to 
+communications problem
+                           - xdsl-act-modem        : no peer modem detected
+                           - xdsl-do-br-reach      : planned bitrate not 
+reached after init
+                           - xdsl-fe-ncd           : no cell delineation
+                           - xdsl-fe-lcd           : loss of cell delineation
+                           - xdsl-frtx-init-fail   : init not successful due to 
+forced rtx
+                           - xdsl-vect-dle         : vectoring disorderly 
+leaving event
+                           - xdsl-fe-mis-peer-35b  : VDSL2 35b opmode mismatch 
+between XTU-C and XTU-R
+                           - vectline-xtc-var-vict : excessive victim crosstalk 
+coefficients variation
+                           - vectline-xtc-var-dist : excessive disturber 
+crosstalk coefficients variation
+                           - vectline-corp-errf    : corrupted or missing 
+errorf-samples
+                           - vect-cpe-cap-mismatch : not allowed Vectoring CPE 
+connected
+                           - vectline-conf_notfeas : vect line configuration 
+not feasible
+                           - vect-vp-lt-mismatch   : actual vp-lt connection(s) 
+do not match expected vp-lt connection(s) or vp-lt connection lost
+                           - vect-inv-qsfp         : qsfp has no valid Nokia ID
+                           - vect-vp-lt-fail       : vp-lt connection not 
+operational
+                           - vect-no-gain-at-init  : Lines cannot train in 
+gain-at-init mode
+                           - sw-rollback           : non active oswp,db cannot 
+be operational - will rollback
+                           - db-rollback           : selected oswp,db cannot be 
+operational - will rollback
+                           - xvps-inv-dbase        :  invalid xvps dbase
+                           - inv-cde-file          : invalid xvps cde file
+                           - miss-cde-file         : missing cde profile
+                           - cde-hash-error        : cde profile hash error
+                           - low-disk-space        : insufficient space for Sw 
+storage
+                           - cell-discard-up       : cell discarded in the 
+upstream direction
+                           - cell-discard-down     : cell discarded in the 
+downstream direction
+                           - persist-data-loss     : all data lost after 
+restart - system not configured
+                           - mac-conflict          : duplicate mac address on 
+the bridge port
+                           - vmac-full             : virtual mac address is 
+full on the bridge port 
+                           - sntp-comm-lost        : sntp server not responding
+                           - preferred-mode        : preferred mode not 
+available
+                           - timing-reference      : timing reference failure
+                           - nt-disk-95%full       : nt disk 95% full
+                           - shub-loc              : communication lost with 
+shub
+                           - cf-error              : compact flash access error
+                           - back-pnl-inv          : BackPanel-type Invalid
+                           - ihub-conf-loss        : iHub configuration loss - 
+recent changes lost
+                           - rack-power            : power fuse broken
+                           - rack-fan-unit1        : fan unit rack 1 failing
+                           - rack-fan-unit2        : fan unit rack 2 failing
+                           - shelf-mismatch        : shelf type different from 
+planned type
+                           - shelf-missing         : detected shelf no longer 
+detected
+                           - shelf-install-missing : shelf planned but not 
+installed
+                           - door                  : open cabinet door
+                           - ac-power-fail         : external power failure - 
+shelf shutdown in 15 minutes
+                           - board-mismatch        : board inserted different 
+from planned
+                           - waiting-for-sw        : not able to download all 
+the applicable sw files
+                           - temp-exceeded         : temperature threshold 
+exceeded on the board
+                           - backplane-data-failure: lt port on backplane data 
+failure
+                           - temp-shutdown         : board powered down itself 
+- too high temperature
+                           - board-missing         : board detected after 
+planning - now missing
+                           - board-instl-missing   : board never detected after 
+planning
+                           - board-init            : board initialisation 
+failure
+                           - board-reset-prot      : number of resets exceeded
+                           - sem-power-fail        : SEM external power failure
+                           - sem-ups-fail          : SEM external power supply 
+failure
+                           - board-reset-cf        : board reset and/or 
+communication failure
+                           - vlan-assign-fail      : failure to assign VLAN for 
+a user session
+                           - vsa-info-invalid      : radius fail to assign a 
+valid vsa to a user session
+                           - auth-mac-conflict     : failure to check mac 
+conflict for a user session
+                           - user-pwd-fault        : failure to check user or 
+password of a user session
+                           - up-plan-bitrate       : upstream bitrate is above 
+min and below planned
+                           - up-min-bitrate        : upstream bitrate is below 
+min bitrate
+                           - up-config-not-feas    : upstream bitrate is not 
+enough to set up config group
+                           - down-plan-bitrate     : downstream bitrate is 
+above min and below planned
+                           - down-min-bitrate      : downstream bitrate is 
+below min bitrate
+                           - down-config-not-feas  : downstream bitrate is not 
+enough to set up config group
+                           - non-bonding-cpe       : no bonding cpe modem is 
+connected
+                           - multiple-cpes         : bonding group has multiple 
+cpe modems connected
+                           - register              : bonding group discovery or 
+aggregation register failure
+                           - group-incomplete      : bonding group is incomplete
+                           - host-sfp-los          : loss of signal
+                           - host-sfp-tx-fail      : Tx failure
+                           - host-sfp-not-prst     : not present
+                           - host-sfp-inv-id       : no valid Nokia ID
+                           - host-sfp-ctrl-fail    : control failure
+                           - host-sfp-rmtlt        : unexpected remote plug-in
+                           - host-sfp-mismatch     : assignment does not match 
+reported rack/shelf/slot
+                           - host-sfp-incompt      : incompatible shelf type 
+detected
+                           - exp-sfp-los           : expansion side loss of 
+signal
+                           - exp-sfp-tx-fail       : Tx failure
+                           - exp-sfp-not-prst      : not present
+                           - exp-sfp-inv-id        : no valid Nokia ID
+                           - exp-sfp-ctrl-fail     : control failure
+                           - exp-sfp-1-los         : expansion side sfp1 loss 
+of signal
+                           - exp-sfp-2-los         : expansion side sfp2 loss 
+of signal
+                           - ext-qsfp-invld        : Invalid Nokia ID
+                           - tx-power-high-alarm   : tx power more than alarm 
+range
+                           - tx-power-low-alarm    : tx power less than alarm 
+range
+                           - rx-power-high-alarm   : rx power more than alarm 
+range
+                           - rx-power-low-alarm    : rx power less than alarm 
+range
+                           - tx-biascur-high-alarm : tx bias current high alarm
+                           - tx-biascur-low-alarm  : tx bias current low alarm
+                           - volt-high-alarm       : voltage high alarm
+                           - volt-low-alarm        : voltage low alarm
+                           - temp-high-alarm       : temperature high alarm
+                           - temp-low-alarm        : temperature low alarm
+                           - tx-power-high-warn    : tx power more than warn 
+range
+                           - tx-power-low-warn     : tx power less than warn 
+range
+                           - rx-power-high-warn    : rx power more than warn 
+range
+                           - rx-power-low-warn     : rx power less than warn 
+range
+                           - tx-biascur-high-warn  : tx bias current high warn
+                           - tx-biascur-low-warn   : tx bias current low warn
+                           - volt-high-warn        : voltage high warn
+                           - volt-low-warn         : voltage low warn
+                           - temp-high-warn        : temperature high warn
+                           - temp-low-warn         : temperature low warn
+                           - onu-unprovisioned     : unprovisioned ont
+                           - signal-loss           : pon loss of signal
+                           - bitrate-high          : the error bit rate high at 
+pon interface
+                           - opmodule-mismatch     : the optical module mismatch
+ed at pon interface
+                           - key-fail-one-churn    : key exchange failure 
+during one churning time
+                           - key-fail-three-churn  : key exchange failure 
+during three churning time
+                           - oam-discov-fail       : extend oam discovery 
+failure
+                           - report-timeout        : report timeout detecting
+                           - total-packets-exceed  : total amount of protocol 
+packets exceed threshold
+                           - arp-packets-exceed    : protocol arp packets 
+exceed threshold
+                           - dhcp-packets-exceed   : protocol dhcp packets 
+exceed threshold
+                           - igmp-packets-exceed   : protocol igmp packets 
+exceed threshold
+                           - pppoe-packets-exceed  : protocol pppoe packets 
+exceed threshold
+                           - nd-packets-exceed     : protocol nd packets exceed 
+threshold
+                           - icmpv6-packets-exceed : protocol icmpv6 packets 
+exceed threshold
+                           - mld-packets-exceed    : protocol mld packets 
+exceed threshold
+                           - dhcpv6-packets-exceed : protocol dhcpv6 packets 
+exceed threshold
+                           - cfm-packets-exceed    : protocol cfm packets 
+exceed threshold
+                           - dsx1-serdes-fail      : SERDES clock alarm failure
+                           - dsx1-tributary1-fail  : The tributary 1 clock is 
+not present
+                           - dsx1-tributary2-fail  : The tributary 2 clock is 
+not present
+                           - dsx1-los-fail         : All the selected tribs in 
+Loss of Signal
+                           - dsx1-ais-sync         : Alarm Indication signal on 
+the tributary selected as sync source
+                           - dsx1-lof-sync         : Loss of Framing on the 
+tributary selected as sync source
+                           - dsx1-los-sync         : Loss of signal on the 
+tributary selected as sync source
+                           - dsx1-deg-fail         : Signal degrade Alarm
+                           - dsx1-rei-from-liu     : Remote Error Indication 
+alarm from LIU
+                           - dsx1-rdi-from-liu     : Remote Defect Alarm from 
+LIU
+                           - dsx1-crc6-from-liu    : Cyclic Redundancy check-6 
+alarm from LIU
+                           - dsx1-crc4-from-liu    : Cyclic Redundancy check-4 
+alarm from LIU
+                           - dsx1-crc4-th-from-liu : Cyclic Redundancy check-4 
+threshold alarm from LIU
+                           - dsx1-ais-from-liu     : Alarm Indication Signal 
+alarm from LIU
+                           - dsx1-los-from-liu     : Loss of signal alarm from 
+LIU
+                           - dsx1-lof-from-liu     : Loss of framing alarm from 
+LIU
+                           - dsx1-lomf-from-liu    : Loss of Multi-frame alarm 
+from LIU
+                           - dsx1-rei-from-iwf     : Remote Error Indication 
+alarm from IWF
+                           - dsx1-rdi-from-iwf     : Remote Defect Alarm from 
+IWF
+                           - dsx1-crc6-from-iwf    : Cyclic Redundancy check-6 
+alarm from IWF
+                           - dsx1-crc4-from-iwf    : Cyclic Redundancy check-4 
+alarm from IWF
+                           - dsx1-crc4-th-from-iwf : Cyclic Redundancy check-4 
+threshold alarm from IWF
+                           - dsx1-ais-from-iwf     : Alarm Indication Signal 
+alarm from IWF
+                           - dsx1-los-from-iwf     : Loss of signal alarm from 
+IWF
+                           - dsx1-lof-from-iwf     : Loss of framing alarm from 
+IWF
+                           - dsx1-lomf-from-iwf    : Loss of Multi-frame alarm 
+from IWF
+                           - pppce-trans-15min-tca : 15 minutes transaction 
+timeout count exceeds configured TCA
+                           - pppce-sess-15min-tca  : 15 minutes session timeout 
+count exceeds configured TCA
+                           - pppce-trans-1day-tca  : 1day transaction timeout 
+count exceeds configured TCA
+                           - pppce-sess-1day-tca   : 1day session timeout count 
+exceeds configured TCA
+                           - custom1               : customizable alarm 1
+                           - custom2               : customizable alarm 2
+                           - custom3               : customizable alarm 3
+                           - custom4               : customizable alarm 4
+                           - custom5               : customizable alarm 5
+                           - he-custom1            : host expansion 
+customizable alarm 1
+                           - he-custom2            : host expansion 
+customizable alarm 2
+                           - he-custom3            : host expansion 
+customizable alarm 3
+                           - he-custom4            : host expansion 
+customizable alarm 4
+                           - he-custom5            : host expansion 
+customizable alarm 5
+                           - he-custom6            : host expansion 
+customizable alarm 6
+                           - custom6               : customizable alarm 6
+                           - custom7               : customizable alarm 7
+                           - custom8               : customizable alarm 8
+                           - custom9               : customizable alarm 9
+                           - custom10              : customizable alarm 10
+                           - custom11              : customizable alarm 11
+                           - custom12              : customizable alarm 12
+                           - custom13              : customizable alarm 13
+                           - custom14              : customizable alarm 14
+                           - custom15              : customizable alarm 15
+                           - custom16              : customizable alarm 16
+                           - custom17              : customizable alarm 17
+                           - loss-swo-cap          : switch over capability in 
+a redundant system
+                           - ping-check-fail       : ping check in a redundant 
+system
+                           - der-temp1             : Derived Alarm for Temporal 
+Filter 1
+                           - der-temp2             : Derived Alarm for Temporal 
+Filter 2
+                           - der-temp3             : Derived Alarm for Temporal 
+Filter 3
+                           - der-temp4             : Derived Alarm for Temporal 
+Filter 4
+                           - der-temp5             : Derived Alarm for Temporal 
+Filter 5
+                           - der-temp6             : Derived Alarm for Temporal 
+Filter 6
+                           - der-temp7             : Derived Alarm for Temporal 
+Filter 7
+                           - der-temp8             : Derived Alarm for Temporal 
+Filter 8
+                           - der-temp9             : Derived Alarm for Temporal 
+Filter 9
+                           - der-temp10            : Derived Alarm for Temporal 
+Filter 10
+                           - der-temp11            : Derived Alarm for Temporal 
+Filter 11
+                           - der-temp12            : Derived Alarm for Temporal 
+Filter 12
+                           - der-temp13            : Derived Alarm for Temporal 
+Filter 13
+                           - der-temp14            : Derived Alarm for Temporal 
+Filter 14
+                           - der-temp15            : Derived Alarm for Temporal 
+Filter 15
+                           - der-temp16            : Derived Alarm for Temporal 
+Filter 16
+                           - der-temp17            : Derived Alarm for Temporal 
+Filter 17
+                           - der-temp18            : Derived Alarm for Temporal 
+Filter 18
+                           - der-temp19            : Derived Alarm for Temporal 
+Filter 19
+                           - der-temp20            : Derived Alarm for Temporal 
+Filter 20
+                           - der-temp21            : Derived Alarm for Temporal 
+Filter 21
+                           - der-temp22            : Derived Alarm for Temporal 
+Filter 22
+                           - der-temp23            : Derived Alarm for Temporal 
+Filter 23
+                           - der-temp24            : Derived Alarm for Temporal 
+Filter 24
+                           - der-temp25            : Derived Alarm for Temporal 
+Filter 25
+                           - der-temp26            : Derived Alarm for Temporal 
+Filter 26
+                           - der-temp27            : Derived Alarm for Temporal 
+Filter 27
+                           - der-temp28            : Derived Alarm for Temporal 
+Filter 28
+                           - der-temp29            : Derived Alarm for Temporal 
+Filter 29
+                           - der-temp30            : Derived Alarm for Temporal 
+Filter 30
+                           - der-temp31            : Derived Alarm for Temporal 
+Filter 31
+                           - der-spa1              : Derived Alarm for Spatial 
+Filter 1
+                           - der-spa2              : Derived Alarm for Spatial 
+Filter 2
+                           - der-spa3              : Derived Alarm for Spatial 
+Filter 3
+                           - der-spa4              : Derived Alarm for Spatial 
+Filter 4
+                           - der-spa5              : Derived Alarm for Spatial 
+Filter 5
+                           - der-spa6              : Derived Alarm for Spatial 
+Filter 6
+                           - der-spa7              : Derived Alarm for Spatial 
+Filter 7
+                           - der-spa8              : Derived Alarm for Spatial 
+Filter 8
+                           - der-spa9              : Derived Alarm for Spatial 
+Filter 9
+                           - der-spa10             : Derived Alarm for Spatial 
+Filter 10
+                           - der-spa11             : Derived Alarm for Spatial 
+Filter 11
+                           - der-spa12             : Derived Alarm for Spatial 
+Filter 12
+                           - der-spa13             : Derived Alarm for Spatial 
+Filter 13
+                           - der-spa14             : Derived Alarm for Spatial 
+Filter 14
+                           - der-spa15             : Derived Alarm for Spatial 
+Filter 15
+                           - der-spa16             : Derived Alarm for Spatial 
+Filter 16
+                           - der-spa17             : Derived Alarm for Spatial 
+Filter 17
+                           - der-spa18             : Derived Alarm for Spatial 
+Filter 18
+                           - der-spa19             : Derived Alarm for Spatial 
+Filter 19
+                           - der-spa20             : Derived Alarm for Spatial 
+Filter 20
+                           - der-spa21             : Derived Alarm for Spatial 
+Filter 21
+                           - der-spa22             : Derived Alarm for Spatial 
+Filter 22
+                           - der-spa23             : Derived Alarm for Spatial 
+Filter 23
+                           - der-spa24             : Derived Alarm for Spatial 
+Filter 24
+                           - der-spa25             : Derived Alarm for Spatial 
+Filter 25
+                           - der-spa26             : Derived Alarm for Spatial 
+Filter 26
+                           - der-spa27             : Derived Alarm for Spatial 
+Filter 27
+                           - der-spa28             : Derived Alarm for Spatial 
+Filter 28
+                           - der-spa29             : Derived Alarm for Spatial 
+Filter 29
+                           - der-spa30             : Derived Alarm for Spatial 
+Filter 30
+                           - der-spa31             : Derived Alarm for Spatial 
+Filter 31
+                           - apsf-alarm            : Applique Power Supply 
+Failure
+                           - custextalarm1         : Customizable External 
+Alarm Number 1
+                           - custextalarm2         : Customizable External 
+Alarm Number 2
+                           - custextalarm3         : Customizable External 
+Alarm Number 3
+                           - custextalarm4         : Customizable External 
+Alarm Number 4
+                           - custextalarm5         : Customizable External 
+Alarm Number 5
+                           - pluginfan             : REM Fan Alarm
+                           - plugin-dc-a           : REM DC A Alarm
+                           - plugin-dc-b           : REM DC B Alarm
+                           - plugin-dg             : Dying Gasp Alarm
+                           - ntr-a-loss            : NTR-A signal is not 
+available
+                           - ntr-b-loss            : NTR-B signal is not 
+available
+                           - xvps-conf-loss        : xvps configuration loss
+                           - mac-entry-nofree      : no free mac entry in the 
+mac table on lt board
+                           - fibre-conn-mismatch   : REM Fibre Connection 
+Mismatch Alarm
+                           - link-cap-mismatch     : Link speed capability 
+mismatch
+                           - eqpt-cap-mismatch     : Link equipment capability 
+mismatch
+                           - ctrl-dnld-failure     : Controller card download 
+failure
+                           - melt-hw-issue         : MELT hardware issue
+                           - melt-board-reset      : MELT board reset
+                           - board-shelf-mismatch  : board type and shelf type 
+mismatch
+                           - single-fan-fail       : single fan fail
+                           - multi-fan-fail        :  multiple fan failed
+                           - fan-tray-missing      : fan tray missing
+                           - mgnt-type-mismatch    : Board management type 
+mismatch
+                           - fileserv-unavail      : file transfer Server 
+unavailable or file transfer failed
+                           - shdsl-n-loopback      : loopback active at the 
+network side
+                           - shdsl-c-loopback      : loopback active at the 
+customer side
+                           - shdsl-conferr         : configuration error
+                           - shdsl-atm-lcd         : loss of atm cell 
+delineation
+                           - shdsl-lpr             : loss of power at stu-r
+                           - shdsl-secu-err        : unable to disable stu-r 
+access
+                           - shdsl-dev-fault       : device fault
+                           - shdsl-atm-ncd         : no atm cell delineation
+                           - shdsl-n-losw          : loss of sync word at the 
+network side on each pair
+                           - shdsl-c-losw          : loss of sync word at the 
+customer side on each pair
+                           - shdsl-n-aten          : loop attenuation alarm at 
+the network side on each pair
+                           - shdsl-c-aten          : loop attenuation alarm at 
+the customer side on each pair
+                           - shdsl-n-snr           : snr margin alarm at the 
+network side each pair
+                           - shdsl-c-snr           : snr margin alarm at the 
+customer side on each pair
+                           - shdsl-n-dccont        : dc continuity fault at the 
+network side on each pair
+                           - shdsl-c-dccont        : dc continuity fault at the 
+customer side on each pair
+                           - shdsl-c-actfail       : activation failure at the 
+customer side on each pair
+                           - e1-fe-rai             : Receiving Remote Alarm 
+Indication
+                           - e1-ne-rai             : Transmitting Remote Alarm 
+Indication
+                           - e1-fe-ais             : Receiving Alarm Indication 
+Signal
+                           - e1-ne-ais             : Transmitting Alarm 
+Indication Signal
+                           - e1-lof                : E1 Loss of frame
+                           - e1-los                : E1 Loss of Signal
+                           - e1-loopback           : E1 facility in loopback
+                           - ima-grp-fe-su         : far-end starting up
+                           - ima-grp-fe-cfg        : far-end failed 
+configuration
+                           - ima-grp-ne-cfg        : near-end failed configurati
+on
+                           - ima-grp-fe-nl         : insufficient number of 
+links at far-end
+                           - ima-grp-ne-nl         : insufficient number of 
+links at near-end
+                           - ima-grp-fe-blk        : far-end is blocked
+                           - ima-lnk-lif           : loss of ima frame
+                           - ima-lnk-lods          : link out of delay 
+synchronization
+                           - ima-lnk-misc          : link misconnect
+                           - ima-lnk-rfi           : link remote failure 
+indication
+                           - ima-lnk-fault         : fault in link facility
+                           - ima-lnk-txblk         : transmit blocked due to 
+far-end
+                           - ima-lnk-rxblk         : receive blocked due to 
+far-end
+                           - bad-digitmap          : Configured digitmap is 
+unusable
+                           - dhcp-unreach          : The DHCP server is 
+unreachable
+                           - dhcp-no-srv           : The address in DHCP reply 
+is NULL
+                           - dhcp-inv-srv          : The address in DHCP reply 
+is invalid
+                           - norpniewithsoftdsp    : do not plan / plug-in 
+RPNI-E board with SoftDsp SW image
+                           - unknown-sub           : subscriber exist in the 
+POLT, but not in the appl server
+                           - ground-key            : Return current to the 
+ground
+                           - port-hightemp         : Temperature threshold on 
+user port exceeded.
+                           - port-jbfltca          : JB fill level threshold on 
+user port exceeded.
+                           - reg-domainname        : Registration failure 
+(resolving domain name).
+                           - reg-auth              : Registration failure 
+(authentication).
+                           - reg-timeout           : Registration failure 
+(message timeout).
+                           - reg-srvfailresp       : Registration failure 
+(failure response from server).
+                           - inv-domainname        : Invitation failure 
+(resolving domain name).
+                           - inv-auth              : Invitation failure 
+(authentication).
+                           - inv-timeout           : Invitation failure 
+(message timeout).
+                           - inv-srvfailresp       : Invitation failure 
+(failure response from server).
+                           - subs-srvfailresp      : Subscribe failure (failure 
+response from server).
+                           - subs-domainname       : Subscribe failure 
+(resolving domain name).
+                           - subs-auth             : Subscribe failure 
+(authentication).
+                           - subs-refreshfail      : Subscribe failure (refresh 
+failure).
+                           - subs-inittimeout      : Subscribe failure (initial 
+REQ timeout).
+                           - emergency-call        : Emergency call for SIP 
+POTS is ongoing.
+                           - e1sip-reg-domainname  : E1 sip termination 
+registration failure (resolving domain name).
+                           - e1sip-reg-auth        : E1 sip termination 
+registration failure (authentication).
+                           - e1sip-reg-timeout     : E1 sip termination 
+registration failure (message timeout).
+                           - e1sip-reg-srvfailresp : E1 sip termination 
+registration failure (failure response from server).
+                           - e1sip-inv-domainname  : E1 sip termination 
+invitation failure (resolving domain name).
+                           - e1sip-inv-auth        : E1 sip termination 
+invitation failure (authentication).
+                           - e1sip-inv-timeout     : E1 sip termination 
+invitation failure (message timeout).
+                           - e1sip-inv-srvfailresp : E1 sip invitation failure 
+(failure response from server).
+                           - e1sip-emergency-call  : Emergency call for ISDN 
+PRA/CAS R2 is ongoing.
+                           - e1itf-ais-signal      : Alarm Indication Signal 
+detected at E1 interface.
+                           - e1itf-los-signal      : Loss Of Signal detected at 
+E1 interface.
+                           - e1itf-rai-signal      : Remote Alarm Indication 
+detected at E1 interface.
+                           - e1sip-misconfig-mgc10 : Configuration not conform 
+with the core network entity.
+                           - e1sip-nsmprf-missed   : The SIP termination 
+requires a NSM profile.
+                           - e1t1itf-recv-ais      : Alarm Indication Signal 
+received at interface.
+                           - e1t1itf-recv-los      : Loss Of Signal received at 
+interface.
+                           - e1t1itf-recv-rai      : Remote Alarm Indication 
+received at interface.
+                           - transport-mismatch    : Transport protocol mismatch
+                           - dns-lookup-failure    : Dns look up failure
+                           - none-dns-srv          : No reply for all DNS server
+d
+                           - no-dns-srv            : No DNS servers configured
+                           - none-srv              : No reply for all SIP First 
+Hops
+                           - no-srv                : No SIP First Hop configured
+                           - reg-srv-unreach       : All SIP register servers 
+are unreachable
+                           - proxy-srv-unreach     : All SIP proxy servers are 
+unreachable
+                           - dhcp-srv-unreach      : The DHCP server is unreacha
+ble on this board
+                           - fo-trigger            : Fail Over Triggered
+                           - fb-trigger            : Fail Back Triggered
+                           - du-trigger            : Deliberate Update Triggered
+                           - ssp-missing           : SSP Missing in CDE
+                           - dns-pool-exceed       : Number of different SG 
+associated DNS pools exceed
+                           - lsa-fo-trigger        : SIP voice service degraded 
+- fail-over to LSA server
+                           - reg-domainname-sec    : Registration failure 
+(resolving domain name).
+                           - reg-auth-sec          : Registration failure 
+(authentication).
+                           - reg-timeout-sec       : Registration failure 
+(message timeout).
+                           - reg-srvfailresp-sec   : Registration failure 
+(failure response from server).
+                           - inv-domainname-sec    : Invitation failure 
+(resolving domain name).
+                           - inv-auth-sec          : Invitation failure 
+(authentication).
+                           - inv-timeout-sec       : Invitation failure 
+(message timeout).
+                           - inv-srvfailresp-sec   : Invitation failure 
+(failure response from server).
+                           - subs-srvfailresp-sec  : Subscribe failure (failure 
+response from server).
+                           - subs-domainname-sec   : Subscribe failure 
+(resolving domain name).
+                           - subs-auth-sec         : Subscribe failure 
+(authentication).
+                           - subs-refreshfail-sec  : Subscribe failure (refresh 
+failure).
+                           - subs-inittimeout-sec  : Subscribe failure (initial 
+REQ timeout).
+                           - emergency-call-sec    : Emergency call for 
+Secondary Termination is ongoing.
+                           - fanout                : Lt load overflow
+                           - up-overflow           : Upstream load overflow
+                           - upobc-overflow        :  Upstream load to OBC 
+overflow
+                           - dwobc-overflow        : Downstream load to OBC 
+overflow
+                           - dw-overflow           : Downstream load overflow
+                           - lwpri-overflow        : The number of  BE and CL 
+pkts dropped exceed threshold
+                           - queue-drop            : The number of pkts dropped 
+by queue exceeds threshold
+                           - queue-load            : The queue load exceeds 
+threshold
+                           - queue-peak-usage      : The queue peak usage 
+exceeds threshold
+                           - mgc-unreachable       : loss of contact with the 
+media gateway controller
+                           - failover-to-esamgc    : failover to esa mgc
+                           - sgc-unreachable       : loss of contac with 
+signaling gateway controller
+                           - lcard-unreach-srvcard : line card unreachable with 
+server card
+                           - lcard-type-mismatch   : associate board of wrong 
+type
+                           - meg-unknown-sub       : the megaco subscriber is 
+unknown
+                           - meg-ground-key        : voice port ground key
+                           - meg-high-temp         : voice port high temperature
+                           - meg-act-fail          : the first link layer for 
+isdn subscriber activation failure
+                           - meg-over-current      : voice port over current
+                           - line-showering        : line showering
+                           - low-qos-packetloss    : the total packet loss has 
+exceeded the configured threshold
+                           - low-qos-jitter        : the rtp jitter has 
+exceeded the configured threshold
+                           - low-qos-delay         : the rtp delay has exceeded 
+the configured threshold
+                           - sig-brd-persist-loss  : voice signaling board 
+persistent data loss
+                           - sig-brd-disk-full     : voice signaling board disk 
+90% full
+                           - sig-brd-db-rollback   : voice signaling board db 
+rollback
+                           - mg-overload           : mg overload
+                           - meg-unknown-sub-sec   : The Megaco subscriber 
+exists in voice signaling board but not in media gateway controller.
+                           - line-showering-sec    : A subscriber line exceeds 
+20 off-hook / on-hook events / minute.
+                           - loss-env-mon          : env-monitor box lost or 
+not alive
+                           - etca-los              : loss of signal errors in 
+15 min
+                           - etca-fcs              : frame check sequence 
+errors in 15 min
+                           - etca-day-los          : loss of signal errors in 1 
+day
+                           - etca-day-fcs          : frame check sequence 
+errors in 1 day
+                           - etca-rx-octets        : received octets in 15 min
+                           - etca-tx-octets        : transmitted octets in 15 
+min
+                           - etca-day-rx-octets    : received octets in 1 day
+                           - etca-day-tx-octets    : transmitted octets in 1 day
+                           - user-sfp-los          : user sfp loss of signal
+                           - user-sfp-tx-fail      : user sfp tx failure
+                           - user-sfp-not-prst     : user sfp not detected
+                           - user-sfp-inv-id       : user sfp invalid id
+                           - user-sfp-t-exceed     : user sfp temperature exceed
+                           - user-sfp-mismatch     : user sfp mismatch the 
+configured type
+                           - uplink-sfp-los        : uplink sfp loss of signal
+                           - uplink-sfp-tx-fail    : uplink sfp tx failure
+                           - uplink-sfp-not-prst   : uplink sfp not detected
+                           - uplink-sfp-inv-id     : uplink sfp invalid id
+                           - uplink-sfp-t-exceed   : uplink sfp temperature 
+exceed
+                           - uplink-sfp-mismatch   : uplink sfp mismatch the 
+configured type
+                           - loss-lsmswp-cap       : lsm redundancy
+                           - inv-xvps-pair-data    : invalid xvps pair 
+redundancy data
+                           - network-power-loss    : Loss of Network Power
+                           - hw-fault              : Hardware Failure
+                           - bat-miss              : Power Source Battery 
+Missing
+                           - bat-fail              : Power Source Battery 
+Failure
+                           - bat-low               : Power Source Battery 
+Charge LOW
+                           - bat-a-fail            : Power Source BAT-A Fail
+                           - bat-b-fail            : Power Source BAT-B Fail
+                           - ac-vol-out-range      : AC Input Voltage Value Out 
+of Range 
+                           - network-power-loss-b  : Loss of Network Power B
+                           - sem-ac-power-fail     : External AC power supply 
+failure
+                           - sem-ups-low-volt      : External power supply low 
+voltage
+                           - dc-a-fail             : Local DC A power failure
+                           - dc-b-fail             : Local DC B power failure
+                           - plan-power-mismatch   : Planned and detected power 
+mode mismatch
+                           - water-seepage-in-box  : Detected water seepage in 
+enclosure
+                           - sealed-box-open       : Sealed box open detected
+                           - dc-a-vol-out-range    : DC A Input Voltage Value 
+Out of Range 
+                           - dc-b-vol-out-range    : DC B Input Voltage Value 
+Out of Range 
+                           - inlet-temp-major      : The inlet temperature has 
+exceeded a major level
+                           - inlet-temp-critical   : The inlet temperature has 
+exceeded a critical level
+                           - psu-fail-crit         : Power Supply failure
+                           - psu-a-fail-presence   : Power Supply A is not 
+present
+                           - psu-a-fail-vin-ac-nok : Power Supply A has Vin AC 
+fault
+                           - psu-a-fail-vin-uv     : Power Supply A has Vin 
+undervoltage
+                           - psu-a-fail-vin-ov     : Power Supply A has Vin 
+overvoltage
+                           - psu-a-fail-vout-uv    : Power Supply A has Vout 
+undervoltage
+                           - psu-a-fail-vout-ov    : Power Supply A has Vout 
+overvoltage
+                           - psu-a-fail-iout-oc    : Power Supply A has Iout 
+overcurrent
+                           - psu-a-fail-overtemp   : Power Supply A has over 
+temperature
+                           - psu-b-fail-presence   : Power Supply B is not 
+present
+                           - psu-b-fail-vin-ac-nok : Power Supply B has Vin AC 
+fault
+                           - psu-b-fail-vin-uv     : Power Supply B has Vin 
+undervoltage
+                           - psu-b-fail-vin-ov     : Power Supply B has Vin 
+overvoltage
+                           - psu-b-fail-vout-uv    : Power Supply B has Vout 
+undervoltage
+                           - psu-b-fail-vout-ov    : Power Supply B has Vout 
+overvoltage
+                           - psu-b-fail-iout-oc    : Power Supply B has Iout 
+overcurrent
+                           - psu-b-fail-overtemp   : Power Supply B has over 
+temperature
+                           - synce-fail            : synce clock source failure
+                           - bits-fail             : bits clock source failure
+                           - bits-output-shutoff   : bits output failure
+                           - ieee1588-fail         : ieee1588 clock source 
+failure
+                           - gnss-fail             : gnss clock source failure
+                           - ieee1588-hybrid-fail  : ieee1588 hybrid tod source 
+failure
+                           - signal-loss           : synce or bits clock signal 
+loss
+                           - signal-efd            : synce or bits clock signal 
+exceed frequency deviation
+                           - esmc-loss             : clock source loss SSM 
+infomation
+                           - bits-output-exceed    : exceed bits output 
+threshold
+                           - ql-input-exceed       : exceed input clock source 
+threshold
+                           - holdover              : clock system is in the 
+holdover
+                           - lti                   : all clock source failed
+                           - tod-reference-fail    : Timing ToD Reference failed
+                           - internal-clk-fail     : Internal CLK failed
+                           - bgp-peer-down         : peer operational state is 
+down
+                           - bgp-routes-mid-limit  : 90% of max nbr of routes 
+BGP can learn from a peer is reached
+                           - isis-adjacency-down   : isis adjacency is down
+                           - isis-adjacency-reject : isis adjacency is rejected
+                           - isis-instance-down    : isis instance is down or 
+not
+                           - ospf-lsa-limit        : limit of received LSA's is 
+reached
+                           - ospf-lsa-mid-limit    : 90% of  limit of received 
+LSA's is reached
+                           - ospf-neighbor-down    : OSPF neighbour is down
+                           - ospf-instance-down    : OSPF instance is down or 
+not
+                           - ospf3-lsa-limit       : limit of received OSPFv3 
+LSAs is reached
+                           - ospf3-lsa-mid-limit   : 90% of  limit of received 
+OSPFv3 LSAs is reached
+                           - ospf3-neighbor-down   : OSPFv3 neighbour is down
+                           - ospf3-instance-down   : OSPFv3 instance is down or 
+not
+                           - rip-instance-down     : rip instance down
+                           - lag-down              : lag down
+                           - lagsubgrp-thresh-reach: lag subgroup threshold 
+reached
+                           - lagsubgrp-switch-fail : lag subgroup switchover 
+failed
+                           - no-unpinned-free-ports: No free ports available 
+for un pinned traffic
+                           - general-arp-limit     : arp limit exceeded
+                           - gen-switch-out-of-res : failure due to lack of 
+resources on switch
+                           - ipv6-nc-limit         : ipv6 neighbor cache limit 
+exceeded
+                           - dhcp-session-oor      : dhcp session out of 
+resources
+                           - ihub-fdb-limit        : layer 2 fdb limit reached
+                           - ihub-mac-limit        : layer 2 mac limit reached
+                           - l2fw-stp-exception    : STP exception condition is 
+present in the SAP
+                           - l2fw-stp-root-guard   : STP root guard violation 
+is present
+                           - vprn-routes-limit     : limit of ip is reached
+                           - vprn-ipv6-routes-limit: limit of ipv6 is reached
+                           - dhcpv6-lease-limit    : limit of dhcpv6 leases is 
+reached
+                           - dhcpv4-lease-limit    : limit of dhcpv4 leases is 
+reached
+                           - vpls-mfib-limit       : limit of fib table is 
+reached
+                           - ihub-ipv6-dad-own     : duplicate IPV6 address is 
+detected for IP address allotted to system
+                           - ihub-ipv6-dad         : duplicate IPV6 address is 
+detected for a user's IP address
+                           - ihub-ipv6-dup-pd-route: ipv6 duplicate pd detected
+                           - vpls-duplicate-mac    : duplicate mac address is 
+detected
+                           - vpls-fdb-limit        : limit of fdb table is 
+reached
+                           - vpls-self-duplic-mac  : duplicate of a system 
+owned mac address detected on a sap
+                           - vpls-sdp-self-dup-mac : duplicate of a system 
+owned mac address detected on a sdp binding
+                           - link-down             : link is down
+                           - link-lagport-add-fail : failure to add port to LAG
+                           - link-conf-mismatch    : SFP+plugin-types does not 
+match the planned speed and/or auto-negotiation for the port
+                           - ihub-peer-comm        : ihub peer to peer 
+communication failure
+                           - ihub-sw-fail          : IHUB s/w error
+                           - ihub-hw-fail          : IHUB h/w error
+                           - ihub-link-fail        : IHUB link failure
+                           - ihub-proc-overload    : IHUB processor exceeded
+                           - ihub-out-of-mem       : IHUB processor out of 
+memory
+                           - ntp-comm-lost         : No response is received 
+from the NTP servers
+                           - ldp-instance-down     : ldp instance down
+                           - ldp-session-down      : ldp session down
+                           - mpls-instance-down    : mpls instance down
+                           - mpls-lsp-down         : lsp down
+                           - mpls-lsp-path-down    : lsp path down
+                           - sdp-instance-down     : sdp instance down
+                           - sdp-binding-down      : sdp binding down
+                           - epipe-instance-down   : epipe instance down
+                           - lldpmed-portcfg-mis   : config request failure for 
+lldpmed portconfig
+                           - lldpmed-mediapl-mis   : config request failure for 
+lldpmed mediapolicy
+                           - vlanport-svc-mismatch : config request failure for 
+the provisioned vlanport
+                           - mcsrc-stream-lost     : multicast video stream lost
+                           - eqptsupl-syslog-upload: upload of log file to 
+remote server failure
+                           - eqptsupl-ontsw-dnload : ont sw download in progress
+                           - cf-75%used            : Compact flash exceeds 75% 
+of life expectancy
+                           - cf-90%used            : Compact flash exceeds 90% 
+of life expectancy
+                           - olt-gen-pon-com-fail  : pon communication failure 
+on olt
+                           - olt-gen-tx-fail       : transmitter failure on olt
+                           - olt-gen-unprov-ont    : unprovisioned ont on pon
+                           - olt-gen-pon-eqpt-prov : mismatch btw equipment and 
+provisioning pon attributes
+                           - olt-gen-pon-loss-sig  : pon loss of signal
+                           - olt-gen-pon-diagnostic: pon diagnostic test active
+                           - olt-gen-loid-conflict : loid conflict ont on pon
+                           - olt-gen-loid-pwderr   : loid password error ont on 
+pon
+                           - olt-gen-pon-alien-test: pon alien diagnostic test 
+active
+                           - olt-gen-alien-detect  : pon alien detect active
+                           - olt-gen-rng-mism      : pon ranging mismatch active
+                           - olt-gen-sfp-mism      : pon sfp mismatch active
+                           - olt-gen-deact-hightca : deactivated ont hightca 
+threshold crossed
+                           - olt-gen-deact-lowtca  : deactivated ont lowtca 
+threshold crossed
+                           - olt-gen-dp-integ      : pon data path integriy 
+failure
+                           - olt-gen-ddr-fault     : pon failure due to ddr 
+fault
+                           - olt-pon-tc-err-frag-tc: pon errored fragments 
+threshold crossed
+                           - olt-ont-tc-err-frag-tc: ont errored fragments 
+threshold crossed
+                           - ont-ploam-loss-sig    : loss of signal at ont
+                           - ont-ploam-loss-ack    : loss of acknowledge from 
+ont
+                           - ont-ploam-loss-cd     : loss of  channel 
+delineation of ont
+                           - ont-ploam-phy-eqpt-err: physical equipment error 
+of ont
+                           - ont-ploam-startup-fail: startup failure in ranging 
+of ont
+                           - ont-ploam-sig-degrade : signal degrade from ont
+                           - ont-ploam-disabled    : ont disabled alarm
+                           - ont-ploam-err-msg     : error message from ont
+                           - ont-ploam-inactive    : inactive ont
+                           - ont-ploam-sig-fail    : signal fail alarm from ont
+                           - ont-ploam-dying-gasp  : dying gasp alarm from ont
+                           - ont-ploam-deact-fail  : deactive failure of ont
+                           - ont-ploam-oam         : loss of ploam for ont
+                           - ont-ploam-win-drift   : drift of window alarm
+                           - ont-ploam-rdi         : remote defect indication 
+alarm
+                           - ont-ploam-loss-ks     : loss of key 
+synchronization alarm
+                           - ont-ploam-pwr-burst   : power bursts on ont
+                           - ont-ploam-rog-disa    : ont rogue disabled
+                           - ont-ploam-diff-reach  : ont differential reach 
+exceeded
+                           - ont-ploam-looc        : Loss of OMCI channel due 
+to persistent MIC failure
+                           - sfu-ploam-loss-sig    : SFU ONT - loss of signal 
+at ont
+                           - sfu-ploam-loss-ack    : SFU ONT - loss of 
+acknowledge from ont
+                           - sfu-ploam-loss-cd     : SFU ONT - loss of  channel 
+delineation of ont
+                           - sfu-ploam-phy-eqpt-err: SFU ONT - physical 
+equipment error of ont
+                           - sfu-ploam-startup-fail: SFU ONT - startup failure 
+in ranging of ont
+                           - sfu-ploam-sig-degrade : SFU ONT - signal degrade 
+from ont
+                           - sfu-ploam-disabled    : SFU ONT - ont disabled 
+alarm
+                           - sfu-ploam-err-msg     : SFU ONT - error message 
+from ont
+                           - sfu-ploam-inactive    : SFU ONT - inactive ont
+                           - sfu-ploam-sig-fail    : SFU ONT - signal fail 
+alarm from ont
+                           - sfu-ploam-dying-gasp  : SFU ONT - dying gasp alarm 
+from ont
+                           - sfu-ploam-deact-fail  : SFU ONT - deactive failure 
+of ont
+                           - sfu-ploam-oam         : SFU ONT - loss of ploam 
+for ont
+                           - sfu-ploam-win-drift   : SFU ONT - drift of window 
+alarm
+                           - sfu-ploam-rdi         : SFU ONT - remote defect 
+indication alarm
+                           - sfu-ploam-loss-ks     : SFU ONT - loss of key 
+synchronization alarm
+                           - sfu-ploam-pwr-burst   : SFU ONT - power bursts on 
+ont
+                           - sfu-ploam-rog-disa    : SFU ONT - ont rogue 
+disabled
+                           - sfu-ploam-diff-reach  : SFU ONT - ont differential 
+reach exceeded
+                           - sfu-ploam-looc        : SFU ONT - Loss of OMCI 
+channel due to persistent MIC failure
+                           - soho-ploam-loss-sig   : SOHO ONT - loss of signal 
+at ont
+                           - soho-ploam-loss-ack   : SOHO ONT - loss of 
+acknowledge from ont
+                           - soho-ploam-loss-cd    : SOHO ONT - loss of  
+channel delineation of ont
+                           - soho-ploam-phy-eqpt-er: SOHO ONT - physical 
+equipment error of ont
+                           - soho-ploam-startup-fai: SOHO ONT - startup failure 
+in ranging of ont
+                           - soho-ploam-sig-degrade: SOHO ONT - signal degrade 
+from ont
+                           - soho-ploam-disabled   : SOHO ONT - ont disabled 
+alarm
+                           - soho-ploam-err-msg    : SOHO ONT - error message 
+from ont
+                           - soho-ploam-inactive   : SOHO ONT - inactive ont
+                           - soho-ploam-sig-fail   : SOHO ONT - signal fail 
+alarm from ont
+                           - soho-ploam-dying-gasp : SOHO ONT - dying gasp 
+alarm from ont
+                           - soho-ploam-deact-fail : SOHO ONT - deactive 
+failure of ont
+                           - soho-ploam-oam        : SOHO ONT - loss of ploam 
+for ont
+                           - soho-ploam-win-drift  : SOHO ONT - drift of window 
+alarm
+                           - soho-ploam-rdi        : SOHO ONT - remote defect 
+indication alarm
+                           - soho-ploam-loss-ks    : SOHO ONT - loss of key 
+synchronization alarm
+                           - soho-ploam-pwr-burst  : SOHO ONT - power bursts on 
+ont
+                           - soho-ploam-rog-disa   : SOHO ONT - ont rogue 
+disabled
+                           - soho-ploam-diff-reach : SOHO ONT - ont 
+differential reach exceeded
+                           - soho-ploam-looc       : SOHO ONT - Loss of OMCI 
+channel due to persistent MIC failure
+                           - mdu-ploam-loss-sig    : MDU ONT - loss of signal 
+at ont
+                           - mdu-ploam-loss-ack    : MDU ONT - loss of 
+acknowledge from ont
+                           - mdu-ploam-loss-cd     : MDU ONT - loss of  channel 
+delineation of ont
+                           - mdu-ploam-phy-eqpt-err: MDU ONT - physical 
+equipment error of ont
+                           - mdu-ploam-startup-fail: MDU ONT - startup failure 
+in ranging of ont
+                           - mdu-ploam-sig-degrade : MDU ONT - signal degrade 
+from ont
+                           - mdu-ploam-disabled    : MDU ONT - ont disabled 
+alarm
+                           - mdu-ploam-err-msg     : MDU ONT - error message 
+from ont
+                           - mdu-ploam-inactive    : MDU ONT - inactive ont
+                           - mdu-ploam-sig-fail    : MDU ONT - signal fail 
+alarm from ont
+                           - mdu-ploam-dying-gasp  : MDU ONT - dying gasp alarm 
+from ont
+                           - mdu-ploam-deact-fail  : MDU ONT - deactive failure 
+of ont
+                           - mdu-ploam-oam         : MDU ONT - loss of ploam 
+for ont
+                           - mdu-ploam-win-drift   : MDU ONT - drift of window 
+alarm
+                           - mdu-ploam-rdi         : MDU ONT - remote defect 
+indication alarm
+                           - mdu-ploam-loss-ks     : MDU ONT - loss of key 
+synchronization alarm
+                           - mdu-ploam-pwr-burst   : MDU ONT - power bursts on 
+ont
+                           - mdu-ploam-rog-disa    : MDU ONT - ont rogue 
+disabled
+                           - mdu-ploam-diff-reach  : MDU ONT - ont differential 
+reach exceeded
+                           - mdu-ploam-looc        : MDU ONT - Loss of OMCI 
+channel due to persistent MIC failure
+                           - ont-hpna-ser-mis      : hpna ont service mismatch
+                           - ont-hpna-los-sig      : hpna loss of link
+                           - ont-moca-svc-mis      : moca ont service mismatch
+                           - ont-moca-link-los     : moca loss of link
+                           - ont-moca-min-bw       : moca bw between nodes less 
+than minimum bw
+                           - ont-moca-tca-rx-err-fr: moca rx errored frames 
+threshold crossed
+                           - ont-sipa-reg-nm-fail  : sipua registration name 
+failed
+                           - ont-sipa-reg-rec-fail : sipua register reach failed
+                           - ont-sipa-reg-con-fail : sipua register connect 
+failed
+                           - ont-sipa-reg-val-fail : sipua register validation  
+failed
+                           - ont-sipa-reg-mis      : sipua register mismatch
+                           - ont-vcd-cfg-nm-fail   : vcd config name failed 
+                           - ont-vcd-cfg-rech-fail : vcd config reach failed 
+                           - ont-vcd-cfg-conn-fail : vcd config connect failed 
+                           - ont-vcd-cfg-vali-fail : vcd config validation 
+failed 
+                           - ont-vcd-cfg-auth-fail : vcd config authentication 
+failed 
+                           - ont-vcd-cfg-resp-tmout: vcd config response 
+timeout  
+                           - ont-vcd-cfg-resp-err  : vcd config response error  
+                           - ont-vcd-cfg-file-err  : vcd config file error  
+                           - ont-vcd-sub-nm-fail   : vcd subscription name 
+failed 
+                           - ont-vcd-sub-rech-fail : vcd subscription reach 
+failed 
+                           - ont-vcd-sub-conn-fail : vcd subscription connect 
+failed 
+                           - ont-vcd-sub-vali-fail : vcd subscription 
+validation failed 
+                           - ont-vcd-sub-auth-fail : vcd subscription 
+authentication  failed 
+                           - ont-vcd-sub-resp-tmout: vcd subscription response 
+timeout 
+                           - ont-vcd-sub-resp-err  : vcd subscription response 
+error 
+                           - ont-vcd-reb-requ      : vcd reboot request 
+                           - ont-vcd-mis           : vcd mismatch 
+                           - ont-mgc-mis           : ont mgc mismatch 
+                           - ont-mgc-timeout       : ont mgc timeout 
+                           - ont-sip-reg-dns       : ont services pots sip 
+registration failed (resolving domain name)
+                           - ont-sip-reg-fail      : ont services pots sip 
+registration authentication failed
+                           - ont-sip-reg-timeout   : ont services pots sip 
+registration timeout
+                           - ont-sip-reg-err-resps : ont services pots sip 
+registration response error
+                           - ont-sip-inv-dns       : ont services pots sip 
+invitation failed (resolving domain name)
+                           - ont-sip-inv-auth      : ont services pots sip 
+invitation authentication failed
+                           - ont-sip-inv-timeout   : ont services pots sip 
+invitation timeout
+                           - ont-sip-inv-err       : ont services pots sip 
+invitation response error
+                           - ont-svc-pots-subs-refr: ont services pots iconfig 
+subscription could not be refreshed
+                           - ont-svc-pots-not-refr : ont services pots iconfig 
+notification could not be refreshed
+                           - ont-svc-pots-icfg-err : ont services pots service 
+failed due to an unmapped iconfig error
+                           - ont-veip-mismatch     : ont veip mismatch
+                           - ont-ip-host-mismatch  : ont ip host mismatch
+                           - ont-ip-host-file      : ont ip host file 
+unavailable
+                           - ont-ip-host-ip-alloc  : ont ip host IP allocation 
+failure
+                           - olt-pon-up-bw-tca     : OLT PON upstream bandwidth 
+TCA
+                           - olt-pon-down-bw-tca   : OLT PON downstream 
+bandwidth TCA
+                           - ont-gen-omci-fail     : loss of communication
+                           - ont-gen-eqpt-selftest : ont self-test failure
+                           - ont-gen-ac-pwr-fail   : ac power failure on ont
+                           - ont-gen-bat-missing   : battery missing
+                           - ont-gen-bat-low       : battery low
+                           - ont-gen-bat-fail      : battery failure
+                           - ont-gen-phys-intrusion: physical intrusion
+                           - ont-gen-sw-dnload-f   : ont sw download failure
+                           - ont-gen-sw-dnload-p   : ont sw download in progress
+                           - ont-gen-sw-act-fail   : ont sw activation failure
+                           - ont-gen-eqpt-vers-mis : ont equipment version 
+mismatch
+                           - ont-gen-sw-vers-mis   : ont sw version mismatch
+                           - ont-gen-us-rate-mis   : ont upstream rate mismatch
+                           - ont-gen-mdu-env1      : mdu environmental alarm#1
+                           - ont-gen-mdu-env2      : mdu environmental alarm#2
+                           - ont-gen-mdu-env3      : mdu environmental alarm#3
+                           - ont-gen-nw-time-err   : network timing protocol 
+error
+                           - ont-gen-opt-sig-high  : optical signal level too 
+high
+                           - ont-gen-opt-sig-low   : optical signal level too 
+low
+                           - ont-gen-eqpt-prov-sa  : service affecting mismatch 
+btw equipment and provisioning attributes
+                           - ont-gen-eqpt-prov-nsa : non service affecting 
+mismatch btw equipment and provisioning attributes
+                           - pon-t-txmcutilhi      : pon utilization tx 
+(downstream) multicast high threshold crossed
+                           - pon-t-txmcutilmd      : pon utilization tx 
+(downstream) multicast medium threshold crossed
+                           - pon-t-txmcutillo      : pon utilization tx 
+(downstream) multicast low threshold crossed
+                           - pon-t-txtotutilhi     : pon utilization tx 
+(downstream) total high threshold crossed
+                           - pon-t-txtotutilmd     : pon utilization tx 
+(downstream) total medium threshold crossed
+                           - pon-t-txtotutillo     : pon utilization tx 
+(downstream) total low threshold crossed
+                           - pon-t-rxtotutilhi     : pon utilization rx 
+(upstream) total high threshold crossed
+                           - pon-t-rxtotutilmd     : pon utilization rx 
+(upstream) total medium threshold crossed
+                           - pon-t-rxtotutillo     : pon utilization rx 
+(upstream) total low threshold crossed
+                           - pon-t-dbacongperiodhi : pon utilization rx 
+(upstream) dbacongperiod high threshold crossed
+                           - pon-t-dbacongperiodmd : pon utilization rx 
+(upstream) dbacongperiod medium threshold crossed
+                           - pon-t-dbacongperiodlo : pon utilization rx 
+(upstream) dbacongperiod low threshold crossed
+                           - pon-t-txucdropfrmhi   : pon utilization tx 
+(downstream) unicast drop frame high threshold crossed
+                           - pon-t-txucdropfrmmd   : pon utilization tx 
+(downstream) unicast drop frame medium threshold crossed
+                           - pon-t-txucdropfrmlo   : pon utilization tx 
+(downstream) unicast drop frame low threshold crossed
+                           - pon-t-txmcdropfrmhi   : pon utilization tx 
+(downstream) multicast drop frame high threshold crossed
+                           - pon-t-txmcdropfrmmd   : pon utilization tx 
+(downstream) multicast drop frame medium threshold crossed
+                           - pon-t-txmcdropfrmlo   : pon utilization tx 
+(downstream) multicast drop frame low threshold crossed
+                           - pon-t-txbcdropfrmhi   : pon utilization tx 
+(downstream) broadcast drop frame high threshold crossed
+                           - pon-t-txbcdropfrmmd   : pon utilization tx 
+(downstream) broadcast drop frame medium threshold crossed
+                           - pon-t-txbcdropfrmlo   : pon utilization tx 
+(downstream) broadcast drop frame low threshold crossed
+                           - pon-t-rxtotdropfrmhi  : pon utilization rx 
+(upstream) total drop frame high threshold crossed
+                           - pon-t-rxtotdropfrmmd  : pon utilization rx 
+(upstream) total drop frame medium threshold crossed
+                           - pon-t-rxtotdropfrmlo  : pon utilization rx 
+(upstream) total drop frame low threshold crossed
+                           - chpr-t-txmcutilhi     : channel-pair utilization 
+tx (downstream) multicast high threshold crossed
+                           - chpr-t-txmcutilmd     : channel-pair utilization 
+tx (downstream) multicast medium threshold crossed
+                           - chpr-t-txmcutillo     : channel-pair utilization 
+tx (downstream) multicast low threshold crossed
+                           - chpr-t-txtotutilhi    : channel-pair utilization 
+tx (downstream) total high threshold crossed
+                           - chpr-t-txtotutilmd    : channel-pair utilization 
+tx (downstream) total medium threshold crossed
+                           - chpr-t-txtotutillo    : channel-pair utilization 
+tx (downstream) total low threshold crossed
+                           - chpr-t-rxtotutilhi    : channel-pair utilization 
+rx (upstream) total high threshold crossed
+                           - chpr-t-rxtotutilmd    : channel-pair utilization 
+rx (upstream) total medium threshold crossed
+                           - chpr-t-rxtotutillo    : channel-pair utilization 
+rx (upstream) total low threshold crossed
+                           - chpr-t-dbacongperiodhi: channel-pair utilization 
+rx (upstream) dbacongperiod high threshold crossed
+                           - chpr-t-dbacongperiodmd: channel-pair utilization 
+rx (upstream) dbacongperiod medium threshold crossed
+                           - chpr-t-dbacongperiodlo: channel-pair utilization 
+rx (upstream) dbacongperiod low threshold crossed
+                           - chpr-t-txucdropfrmhi  : channel-pair utilization 
+tx (downstream) unicast drop frame high threshold crossed
+                           - chpr-t-txucdropfrmmd  : channel-pair utilization 
+tx (downstream) unicast drop frame medium threshold crossed
+                           - chpr-t-txucdropfrmlo  : channel-pair utilization 
+tx (downstream) unicast drop frame low threshold crossed
+                           - chpr-t-txmcdropfrmhi  : channel-pair utilization 
+tx (downstream) multicast drop frame high threshold crossed
+                           - chpr-t-txmcdropfrmmd  : channel-pair utilization 
+tx (downstream) multicast drop frame medium threshold crossed
+                           - chpr-t-txmcdropfrmlo  : channel-pair utilization 
+tx (downstream) multicast drop frame low threshold crossed
+                           - chpr-t-txbcdropfrmhi  : channel-pair utilization 
+tx (downstream) broadcast drop frame high threshold crossed
+                           - chpr-t-txbcdropfrmmd  : channel-pair utilization 
+tx (downstream) broadcast drop frame medium threshold crossed
+                           - chpr-t-txbcdropfrmlo  : channel-pair utilization 
+tx (downstream) broadcast drop frame low threshold crossed
+                           - chpr-t-rxtotdropfrmhi : channel-pair utilization 
+rx (upstream) total drop frame high threshold crossed
+                           - chpr-t-rxtotdropfrmmd : channel-pair utilization 
+rx (upstream) total drop frame medium threshold crossed
+                           - chpr-t-rxtotdropfrmlo : channel-pair utilization 
+rx (upstream) total drop frame low threshold crossed
+                           - sfu-gen-omci-fail     : SFU ONT - loss of 
+communication
+                           - sfu-gen-eqpt-selftest : SFU ONT - ont self-test 
+failure
+                           - sfu-gen-ac-pwr-fail   : SFU ONT - ac power failure 
+on ont
+                           - sfu-gen-bat-missing   : SFU ONT - battery missing
+                           - sfu-gen-bat-low       : SFU ONT - battery low
+                           - sfu-gen-bat-fail      : SFU ONT - battery failure
+                           - sfu-gen-sw-dnload-f   : SFU ONT - ont sw download 
+failure
+                           - sfu-gen-sw-dnload-p   : SFU ONT - ont sw download i
+n progress
+                           - sfu-gen-sw-act-fail   : SFU ONT - ont sw 
+activation failure
+                           - sfu-gen-eqpt-vers-mis : SFU ONT - ont equipment 
+version mismatch
+                           - sfu-gen-sw-vers-mis   : SFU ONT - ont sw version 
+mismatch
+                           - sfu-gen-us-rate-mis   : SFU ONT - ont upstream 
+rate mismatch
+                           - sfu-gen-tune-fail     : SFU ONT - ont has failed 
+to tune to Target-ChnlPair
+                           - sfu-gen-nw-time-err   : SFU ONT - network timing 
+protocol error
+                           - sfu-gen-opt-sig-high  : SFU ONT - optical signal 
+level too high
+                           - sfu-gen-opt-sig-low   : SFU ONT - optical signal 
+level too low
+                           - sfu-gen-eqpt-prov-sa  : SFU ONT - service 
+affecting mismatch btw equipment and provisioning attributes
+                           - sfu-gen-eqpt-prov-nsa : SFU ONT - non service 
+affecting mismatch btw equipment and provisioning attributes
+                           - soho-gen-omci-fail    : SOHO ONT - loss of 
+communication
+                           - soho-gen-eqpt-selftest: SOHO ONT - ont self-test 
+failure
+                           - soho-gen-ac-pwr-fail  : SOHO ONT - ac power 
+failure on ont
+                           - soho-gen-bat-missing  : SOHO ONT - battery missing
+                           - soho-gen-bat-low      : SOHO ONT - battery low
+                           - soho-gen-bat-fail     : SOHO ONT - battery failure
+                           - soho-gen-sw-dnload-f  : SOHO ONT - ont sw download 
+failure
+                           - soho-gen-sw-dnload-p  : SOHO ONT - ont sw download 
+in progress
+                           - soho-gen-sw-act-fail  : SOHO ONT - ont sw 
+activation failure
+                           - soho-gen-eqpt-vers-mis: SOHO ONT - ont equipment 
+version mismatch
+                           - soho-gen-sw-vers-mis  : SOHO ONT - ont sw version 
+mismatch
+                           - soho-gen-us-rate-mis  : SOHO ONT - ont upstream 
+rate mismatch
+                           - soho-gen-tune-fail    : SOHO ONT - ont has failed 
+to tune to Target-ChnlPair
+                           - soho-gen-nw-time-err  : SOHO ONT - network timing 
+protocol error
+                           - soho-gen-opt-sig-high : SOHO ONT - optical signal 
+level too high
+                           - soho-gen-opt-sig-low  : SOHO ONT - optical signal 
+level too low
+                           - soho-gen-eqpt-prov-sa : SOHO ONT - service 
+affecting mismatch btw equipment and provisioning attributes
+                           - soho-gen-eqpt-prov-nsa: SOHO ONT - non service 
+affecting mismatch btw equipment and provisioning attributes
+                           - mdu-gen-omci-fail     : MDU ONT - loss of 
+communication
+                           - mdu-gen-eqpt-selftest : MDU ONT - ont self-test 
+failure
+                           - mdu-gen-ac-pwr-fail   : MDU ONT - ac power failure 
+on ont
+                           - mdu-gen-bat-missing   : MDU ONT - battery missing
+                           - mdu-gen-bat-low       : MDU ONT - battery low
+                           - mdu-gen-bat-fail      : MDU ONT - battery failure
+                           - mdu-gen-phys-intrusion: MDU ONT - physical 
+intrusion
+                           - mdu-gen-sw-dnload-f   : MDU ONT - ont sw download 
+failure
+                           - mdu-gen-sw-dnload-p   : MDU ONT - ont sw download 
+in progress
+                           - mdu-gen-sw-act-fail   : MDU ONT - ont sw activation
+ failure
+                           - mdu-gen-eqpt-vers-mis : MDU ONT - ont equipment 
+version mismatch
+                           - mdu-gen-sw-vers-mis   : MDU ONT - ont sw version 
+mismatch
+                           - mdu-gen-us-rate-mis   : MDU ONT - ont upstream 
+rate mismatch
+                           - mdu-gen-tune-fail     : MDU ONT - ont has failed 
+to tune to Target-ChnlPair
+                           - mdu-gen-mdu-env1      : MDU ONT - mdu 
+environmental alarm#1
+                           - mdu-gen-mdu-env2      : MDU ONT - mdu 
+environmental alarm#2
+                           - mdu-gen-mdu-env3      : MDU ONT - mdu 
+environmental alarm#3
+                           - mdu-gen-nw-time-err   : MDU ONT - network timing 
+protocol error
+                           - mdu-gen-opt-sig-high  : MDU ONT - optical signal 
+level too high
+                           - mdu-gen-opt-sig-low   : MDU ONT - optical signal 
+level too low
+                           - mdu-gen-eqpt-prov-sa  : MDU ONT - service affecting
+ mismatch btw equipment and provisioning attributes
+                           - mdu-gen-eqpt-prov-nsa : MDU ONT - non service 
+affecting mismatch btw equipment and provisioning attributes
+                           - ont-gen-sw-dnload-file: ont sw download file 
+missing
+                           - ont-gen-fan-fail      : ont fan failure
+                           - ont-gen-high-temp     : ont high temperature
+                           - ont-gen-high-temp-ex  : ont excessive high 
+temperature
+                           - ont-gen-emergency-call: ont emergency call
+                           - ont-gen-sw-version    : ont sw version control 
+error
+                           - ont-poe-exceed-max    : ont poe exceed max
+                           - ont-poe-overload-yell : ONU is nearing its maximum 
+ability to supply the power
+                           - ont-opti-malfunc      : malfunction of ONT's 
+optical transceiver
+                           - ont-gen-cfgdld-fail   : download of voice xml file 
+to ont failed
+                           - ont-gen-rssi-mis      : ONU RSSI configuration 
+mismatch
+                           - ont-gen-tx-pwr-low    : ONU SFP Tx Power is lower 
+than configured Alarm low threshold
+                           - ont-gen-temp-high     : ONU SFP Temperature is 
+higher than configured Alarm high threshold
+                           - ont-gen-volt-high     : ONU SFP Voltage is higher 
+than configured Alarm high threshold
+                           - ont-gen-bias-high     : ONU SFP Bias is higher 
+than configured Alarm high threshold
+                           - ont-loopdetect-mis    : ont loop detect mismatch
+                           - ont-olt-rx-pw-lo      : olt side receive power 
+from ont low
+                           - ont-olt-rx-pw-hig     : olt side receive power 
+from ont high
+                           - ont-olt-rx-pw-warnlo  : olt side receive power 
+from ont low warning
+                           - ont-olt-rx-pw-warnhig : olt side receive power 
+from ont high warning
+                           - ont-gen-tod-out-sync  : ONU TOD is out-sync with 
+OLT
+                           - ont-gen-tune-fail     : ONU has failed to tune to 
+Target-ChnlPair
+                           - hgu-tr069-parm-fail   : hgu tr069 parameters 
+mismatch
+                           - ont-gen-tod-mismatch  : ONU TOD MISMATCH
+                           - sfu-sup-sw-file-error : SFU ONT - Software file 
+has error or is missing
+                           - sfu-sup-fan-failure   : SFU ONT - Fan failure
+                           - sfu-sup-temp-high-warn: SFU ONT - High temperature 
+warning
+                           - sfu-sup-temp-shutoff  : SFU ONT - Service disabled 
+due to excessive temperature
+                           - sfu-sup-emergency-call: SFU ONT - Emergency call 
+active
+                           - sfu-sup-swverctrl-err : SFU ONT - Software version 
+control error
+                           - sfu-sup-poe-exceed-max: SFU ONT - Configured PoE 
+feeding exceeds ONT maximum
+                           - sfu-sup-poe-over-yell : SFU ONT - ONU is nearing 
+its maximum ability to supply the power
+                           - sfu-opti-malfunc      : SFU ONT - Malfunction of 
+ONT's optical transceiver
+                           - sfu-sup-cfg-dnld-fail : SFU ONT - Download of 
+voice xml file to ONT failed
+                           - sfu-sup-rssi-cfg-mism : SFU ONT - RSSI 
+configuration mismatch
+                           - sfu-sup-sfp-tx-low    : SFU ONT - SFP Tx Power 
+below configured low-level alarm threshold
+                           - sfu-sup-sfp-temp-high : SFU ONT - SFP Temperature 
+above configured high-level alarm threshold
+                           - sfu-sup-sfp-volt-high : SFU ONT - SFP Voltage 
+above configured high-level alarm threshold
+                           - sfu-sup-sfp-bias-high : SFU ONT - SFP Bias above 
+configured high-level alarm threshold
+                           - sfu-sup-ld-cfg-mism   : SFU ONT - Loop detection 
+configuration mismatch
+                           - sfu-sup-olt-rx-low    : SFU ONT - OLT Rx power 
+below receiver operating range
+                           - sfu-sup-olt-rx-high   : SFU ONT - OLT Rx power 
+above receiver operating range
+                           - sfu-sup-olt-rx-lo-warn: SFU ONT - OLT Rx power 
+below low-level warning threshold
+                           - sfu-sup-olt-rx-hi-warn: SFU ONT - OLT Rx power 
+above high-level warning threshold
+                           - sfu-sup-tod-out-sync  : SFU ONT - ONU TOD is 
+out-sync with OLT
+                           - sfu-sup-ont-tune-fail : SFU ONT - ONU has failed 
+to tune to Target-ChnlPair
+                           - sfu-tr069-parm-fail   : SFU ONT - hgu tr069 
+parameters mismatch
+                           - sfu-sup-tod-mismatch  : SFU ONT - ONU TOD MISMATCH
+                           - soho-sup-sw-file-error: SOHO ONT - Software file 
+has error or is missing
+                           - soho-sup-fan-failure  : SOHO ONT - Fan failure
+                           - soho-sup-temp-high-war: SOHO ONT - High temperature
+ warning
+                           - soho-sup-temp-shutoff : SOHO ONT - Service 
+disabled due to excessive temperature
+                           - soho-sup-emergency-cal: SOHO ONT - Emergency call 
+active
+                           - soho-sup-swverctrl-err: SOHO ONT - Software 
+version control error
+                           - soho-sup-poe-exceed-ma: SOHO ONT - Configured PoE 
+feeding exceeds ONT maximum
+                           - soho-sup-poe-over-yell: SOHO ONT - ONU is nearing 
+its maximum ability to supply the power
+                           - soho-opti-malfunc     : SOHO ONT - Malfunction of 
+ONT's optical transceiver
+                           - soho-sup-cfg-dnld-fail: SOHO ONT - Download of 
+voice xml file to ONT failed
+                           - soho-sup-rssi-cfg-mism: SOHO ONT - RSSI 
+configuration mismatch
+                           - soho-sup-sfp-tx-low   : SOHO ONT - SFP Tx Power 
+below configured low-level alarm threshold
+                           - soho-sup-sfp-temp-high: SOHO ONT - SFP Temperature 
+above configured high-level alarm threshold
+                           - soho-sup-sfp-volt-high: SOHO ONT - SFP Voltage 
+above configured high-level alarm threshold
+                           - soho-sup-sfp-bias-high: SOHO ONT - SFP Bias above 
+configured high-level alarm threshold
+                           - soho-sup-ld-cfg-mism  : SOHO ONT - Loop detection 
+configuration mismatch
+                           - soho-sup-olt-rx-low   : SOHO ONT - OLT Rx power 
+below receiver operating range
+                           - soho-sup-olt-rx-high  : SOHO ONT - OLT Rx power 
+above receiver operating range
+                           - soho-sup-olt-rx-lo-war: SOHO ONT - OLT Rx power 
+below low-level warning threshold
+                           - soho-sup-olt-rx-hi-war: SOHO ONT - OLT Rx power 
+above high-level warning threshold
+                           - soho-sup-tod-out-sync : SOHO ONT - ONU TOD is 
+out-sync with OLT
+                           - soho-sup-ont-tune-fail: SOHO ONT - ONU has failed t
+o tune to Target-ChnlPair
+                           - soho-tr069-parm-fail  : SOHO ONT - hgu tr069 
+parameters mismatch
+                           - soho-sup-tod-mismatch : SOHO ONT - ONU TOD MISMATCH
+                           - mdu-sup-sw-file-error : MDU ONT - Software file 
+has error or is missing
+                           - mdu-sup-fan-failure   : MDU ONT - Fan failure
+                           - mdu-sup-temp-high-warn: MDU ONT - High temperature 
+warning
+                           - mdu-sup-temp-shutoff  : MDU ONT - Service disabled 
+due to excessive temperature
+                           - mdu-sup-emergency-call: MDU ONT - Emergency call 
+active
+                           - mdu-sup-swverctrl-err : MDU ONT - Software version 
+control error
+                           - mdu-sup-poe-exceed-max: MDU ONT - Configured PoE 
+feeding exceeds ONT maximum
+                           - mdu-sup-poe-over-yell : MDU ONT - ONU is nearing 
+its maximum ability to supply the power
+                           - mdu-opti-malfunc      : MDU ONT - Malfunction of 
+ONT's optical transceiver
+                           - mdu-sup-cfg-dnld-fail : MDU ONT - Download of 
+voice xml file to ONT failed
+                           - mdu-sup-rssi-cfg-mism : MDU ONT - RSSI 
+configuration mismatch
+                           - mdu-sup-sfp-tx-low    : MDU ONT - SFP Tx Power 
+below configured low-level alarm threshold
+                           - mdu-sup-sfp-temp-high : MDU ONT - SFP Temperature 
+above configured high-level alarm threshold
+                           - mdu-sup-sfp-volt-high : MDU ONT - SFP Voltage 
+above configured high-level alarm threshold
+                           - mdu-sup-sfp-bias-high : MDU ONT - SFP Bias above 
+configured high-level alarm threshold
+                           - mdu-sup-ld-cfg-mism   : MDU ONT - Loop detection 
+configuration mismatch
+                           - mdu-sup-olt-rx-low    : MDU ONT - OLT Rx power 
+below receiver operating range
+                           - mdu-sup-olt-rx-high   : MDU ONT - OLT Rx power 
+above receiver operating range
+                           - mdu-sup-olt-rx-lo-warn: MDU ONT - OLT Rx power 
+below low-level warning threshold
+                           - mdu-sup-olt-rx-hi-warn: MDU ONT - OLT Rx power 
+above high-level warning threshold
+                           - mdu-sup-tod-out-sync  : MDU ONT - ONU TOD is 
+out-sync with OLT
+                           - mdu-sup-ont-tune-fail : MDU ONT - ONU has failed 
+to tune to Target-ChnlPair
+                           - mdu-tr069-parm-fail   : MDU ONT - hgu tr069 
+parameters mismatch
+                           - mdu-sup-tod-mismatch  : MDU ONT - ONU TOD MISMATCH
+                           - ont-sbscr-lim-missing : provisioned ont card 
+missing
+                           - ont-sbscr-lim-type-mis: wrong type plug-in ont card
+                           - ont-sbscr-lim-removal : improper removal ont card
+                           - ont-sbscr-lim-fail    : ont card failure
+                           - ont-sbscr-lim-svc-mis : ont service mismatch for 
+provisioned onu card
+                           - ont-sbscr-lim-port-mis: port mismatch btw actual 
+and planned ont card
+                           - ont-svc-video-conf-mis: config request failure for 
+video service
+                           - ont-svc-video-pw-high : high power level for rf 
+video signal
+                           - ont-svc-video-pw-low  : low power level for rf 
+video signal
+                           - ont-svc-pots-svc-mis  : ont service mismatch for 
+provisioned pots
+                           - ont-svc-pots-rtcp-lost: pots realtime transport 
+control protocol stream lost
+                           - ont-svc-pots-icnf-subs: pots line iconfig 
+subscription failure
+                           - ont-svc-pots-icnf-ntfy: pots line iconfig notify 
+failure
+                           - ont-svc-pots-icnf-http: pots line iconfig http 
+failure
+                           - ont-svc-pots-sip-reg  : pots line sip registration 
+failure
+                           - ont-svc-pots-sip-inv  : pots line sip invite 
+request failure
+                           - ont-svc-pots-sip-subsc: pots line sip subscribe 
+failure
+                           - ont-svc-pots-sip-mt-tc: pots line sip message 
+timeout threshold crossed
+                           - ont-svc-pots-pk-los-tc: pots line rtp bearer 
+packets loss threshold crossed
+                           - ont-svc-pots-jitter-tc: pots line rtp jitter 
+threshold crossed
+                           - ont-svc-pots-subs-dns : pots line iconfig 
+subscription failed (DNS)
+                           - ont-svc-pots-subs-tcp : pots line iconfig 
+subscription failed (TCP)
+                           - ont-svc-pots-subs-tls : pots line iconfig 
+subscription failed (TLS)
+                           - ont-svc-pots-subs-auth: pots line iconfig 
+subscription failed authentication
+                           - ont-svc-pots-subs-to  : pots line iconfig 
+subscription failed (timeout)
+                           - ont-svc-pots-subs-err : pots line iconfig 
+subscription response error
+                           - ont-svc-pots-not-to   : pots line iconfig 
+notification failed (timeout)
+                           - ont-svc-pots-notref-to: pots line iconfig 
+notification refresh failed
+                           - ont-svc-pots-not-mal  : pots line iconfig 
+notification failed (malformed)
+                           - ont-svc-pots-not-rej  : pots line iconfig 
+notification rejected
+                           - ont-svc-pots-http-dns : pots line iconfig doc 
+retrieval failed (DNS)
+                           - ont-svc-pots-http-tcp : pots line iconfig doc 
+retrieval failed (TCP)
+                           - ont-svc-pots-http-tls : pots line iconfig doc 
+retrieval failed (TLS)
+                           - ont-svc-pots-http-auth: pots line iconfig doc 
+retrieval failed (authentication)
+                           - ont-svc-pots-http-to  : pots line iconfig doc 
+retrieval failed (timeout)
+                           - ont-svc-pots-http-err : pots line iconfig doc 
+retrieval response error
+                           - ont-svc-pots-http-mal : pots line iconfig doc 
+retrieval failed (malformed)
+                           - ont-svc-pots-insuff   : pots line iconfig service 
+failed (insufficient data)
+                           - ont-svc-pots-poos     : pots ports out of service
+                           - ont-svc-lan-mismatch  : ont service mismatch for 
+lan
+                           - ont-svc-lan-loss-sig  : loss of signal on an 
+ethernet port interface
+                           - ont-svc-enet-poos     : Ethernet Ports out of 
+Service
+                           - ont-svc-ces-ds1-mis   : ont service mismatch for 
+provisioned ces ds1
+                           - ont-svc-ces-ds1-los   : loss of signal at ds1 
+interface
+                           - ont-svc-ces-ds1-lof   : loss of frame at ds1 
+interface
+                           - ont-svc-ces-ds1-rair  : receiving rai at ds1 
+interface
+                           - ont-svc-ces-ds1-ais   : receiving ais at ds1 
+interface
+                           - ont-svc-ces-ds1-lnlpbk: receiving line loopback at 
+ds1 interface
+                           - ont-svc-ces-ds1-tmlpbk: receiving terminal 
+loopback at ds1 interface
+                           - ont-svc-ces-e1-mis    : ont service mismatch for 
+provisioned ces e1
+                           - ont-svc-ces-e1-los    : loss of signal at e1 
+interface
+                           - ont-svc-ces-e1-lof    : loss of frame at e1 
+interface
+                           - ont-svc-ces-e1-rair   : receiving rai at e1 interfa
+ce
+                           - ont-svc-ces-e1-ais    : receiving ais at e1 
+interface
+                           - ont-svc-voip-cnf-file : voice configuration file 
+error
+                           - ont-svc-voip-svc-mis  : service mismatch for 
+provisioned client service
+                           - ont-svc-voip-gw-comm  : voice gateway 
+communication failure
+                           - ont-svc-voip-dhcp-fail: voice dhcp server failure
+                           - ont-svc-voip-icnf-subs: voice iconfig subscription 
+failure
+                           - ont-svc-voip-icnf-ntfy: voice iconfig notify 
+failure
+                           - ont-svc-voip-icnf-http: voice iconfig http failure
+                           - ont-svc-voip-dhcp-to  : DHCP server 
+retransmissions timed out
+                           - ont-svc-voip-dhcp-mal : DHCP response was malformed
+                           - ont-svc-voip-dhcp-noad: DHCP server failed to 
+issue the required parameters
+                           - ont-svc-voip-dhcp-leas: DHCP Server failure due to 
+problem in lease renewal
+                           - ont-svc-voip-subs-dns : iConfig Subscription 
+failure due to DNS problem
+                           - ont-svc-voip-subs-tcp : iConfig Subscription 
+failure due to TCP socket problem
+                           - ont-svc-voip-subs-tls : iConfig Subscription 
+failure due to TLS session problem
+                           - ont-svc-voip-subs-auth: iConfig Subscription 
+failure due to authentication error
+                           - ont-svc-voip-subs-to  : iConfig Subscription 
+failure due to retransmission timeout
+                           - ont-svc-voip-subs-err : iConfig Subscription 
+failure due to response error
+                           - ont-svc-voip-not-to   : iConfig Notify response 
+timeout for new subscription
+                           - ont-svc-voip-notref-to: iConfig Notify response 
+timeout for subscription refresh
+                           - ont-svc-voip-not-mal  : iConfig Notify response is 
+malformed
+                           - ont-svc-voip-not-rej  : iConfig subscription 
+request rejected by configuration server
+                           - ont-svc-voip-http-dns : VOIP client can't retrieve 
+config doc due to DNS problem
+                           - ont-svc-voip-http-tcp : VOIP client can't retrieve 
+config doc due to TCP socket problem
+                           - ont-svc-voip-http-tls : VOIP client can't retrieve 
+config doc due to TLS session problem
+                           - ont-svc-voip-http-auth: VOIP client can't retrieve 
+config doc due to auth error
+                           - ont-svc-voip-http-to  : VOIP client can't retrieve 
+config doc due to re-tx timeout
+                           - ont-svc-voip-http-err : VOIP client can't retrieve 
+config doc due to response error
+                           - ont-svc-voip-http-mal : iConfig configuration 
+document is malformed
+                           - ont-svc-voip-subs-refr: iConfig Subscription 
+refresh error
+                           - ont-svc-voip-not-refr : iConfig Notify response 
+for refresh subscribe failed
+                           - ont-svc-voip-icfg-err : iConfig Configuration Error
+                           - ont-svc-v-ani-conf-mis: config request failure for 
+video ani service
+                           - ont-svc-v-ani-loss-sig: video loss of signal on ani
+                           - ont-svc-v-ani-lv-high : high video optical signal 
+level
+                           - ont-svc-v-ani-lv-low  : low video optical signal 
+level
+                           - ont-svc-pwe-mismatch  : service mismatch for 
+provisioned pseudowire
+                           - ont-svc-pwe-reordr-lof: pseudowire reordering and 
+loss of frame
+                           - ont-svc-pwe-jitt-buf-o: pseudowire jitter buffer 
+overrun
+                           - ont-svc-pwe-jitt-buf-u: pseudowire jitter buffer 
+underrun
+                           - ont-svc-pwe-malf-frms : pseudowire malformed frames
+                           - ont-svc-pwe-late-frms : pseudowire late frames
+                           - ont-svc-pwe-link-loss : pseudowire link loss
+                           - ont-svc-pwe-arp-fail  : pseudowire arp failure
+                           - ont-svc-xdsl-mismatch : service mismatch for 
+provisioned xdsl
+                           - ont-svc-xdsl-ne-lof   : near end loss of frame
+                           - ont-svc-xdsl-ne-los   : near end loss of signal
+                           - ont-svc-xdsl-ne-line  : near end line init
+                           - ont-svc-xdsl-ne-lol   : near end loss of link
+                           - ont-svc-xdsl-fe-lof   : far end loss of frame
+                           - ont-svc-xdsl-fe-los   : far end loss of signal
+                           - ont-svc-xdsl-fe-lop   : far end loss of power
+                           - ont-svc-xdsl-cnf-err  : xdsl provisioning error
+                           - ont-svc-xdsl-ne-es-tc : near end errored seconds 
+threshold crossed
+                           - ont-svc-xdsl-ne-ses-tc: near end severe errored 
+seconds threshold crossed
+                           - ont-svc-xdsl-ne-uas-tc: ear end unavailable 
+seconds threshold crossed
+                           - ont-svc-xdsl-fe-es-tc : far end errored seconds 
+threshold crossed
+                           - ont-svc-xdsl-fe-ses-tc: far end severe errored 
+seconds threshold crossed
+                           - ont-svc-xdsl-fe-uas-tc: far end unavailable 
+seconds threshold crossed
+                           - ont-tc-rx-los-frag-tc : rx loss of gem fragments 
+threshold crossed
+                           - ont-tc-tx-los-frag-tc : tx loss of gem fragments 
+threshold crossed
+                           - ont-tc-bad-gem-hd-tc  : bad gem header threshold 
+crossed
+                           - ont-uni-ds-drpd-fr-tc : downstream l2 dropped 
+frames threshold crossed
+                           - ont-uni-up-drpd-fr-tc : upstream l2 dropped frames 
+threshold crossed
+                           - ont-uni-ds-crc-fr-tc  : downstream l2 rx crc error 
+frames threshold crossed
+                           - ont-uni-up-crc-fr-tc  : upstream l2 rx crc error 
+frames threshold crossed
+                           - ont-cpu-util-tca      : ONT CPU utilization 
+threshold crossed
+                           - ont-mem-util-tca      : ONT memory utilization 
+threshold crossed
+                           - pim-neighbor-down     : pim neighbor down
+                           - pim-max-mcroutes      : maximum routes reached
+                           - li-traffic-disabled   : lawful interception of 
+traffic disabled
+                           - li-bandwidth-limit    : lawful intercept reached 
+bandwidth limit
+                           - li-out-of-res         : lawful intercept out of 
+resources
+                           - otdr-cap-mismatch     : otdr capability mismatch
+                           - login-successful      : successful login via 
+management access
+                           - login-failure         : invalid login via 
+management access has crossed the threshold limit
+                           - cfm-defrdiccm         : rdi bit in ccm received
+                           - cfm-defmacstatus      : ccm mac error status
+                           - cfm-defremoteccm      : missing ccm from mep
+                           - cfm-deferrorccm       : invalid ccm received
+                           - cfm-defxconccm        : unexpected ccm received
+                           - cfm-defais            : ethernet ais received
+                           - bfd-session-down      : bfd session down
+                           - bfd-max-resource      : bfd maximum resources 
+reached
+                           - bfd-stale-entry       : bfd stale entry present
+                           - tca-outputbw          : tca output bandwidth
+                           - tca-inputbw           : tca input bandwidth
+                           - tca-rxcrcalign        : tca rxcrc align errors
+                           - tca-txcrcalign        : tca txcrc align errors
+                           - tca-txcollisions      : tca tx collision errors
+                           - tca-outputhighbw      : tca output high bandwidth
+                           - tca-outputmedbw       : tca output medium bandwidth
+                           - tca-outputlowbw       : tca output low bandwidth
+                           - tca-inputhighbw       : tca input high bandwidth
+                           - tca-inputmediumbw     : tca input medium bandwidth
+                           - tca-inputlowbw        : tca input low bandwidth
+                           - eth-cfm-defrdiccm     : rdi bit in ccm received
+                           - eth-cfm-defmacstatus  : ccm mac error status
+                           - eth-cfm-defremoteccm  : missing ccm from mep
+                           - eth-cfm-deferrorccm   : invalid ccm received
+                           - eth-cfm-defxconccm    : unexpected ccm received
+                           - rsvp-neighbor-down    : rsvp neighbor down
+                           - rsvp-instance-down    : rsvp instance down
+                           - eth-ring-path-block   : eth ring path block
+                           - ai-platform-down      : Application Intelligence 
+Platform down
+                           - ai-appl-install-fail  : Application installation 
+failure
+                           - ip-assign-fail        : Dhcp assigned address 
+failure
+                           - ont-tr069-serv-mis    : ont tr069 server config 
+mismatch
+                           - ont-snmp-mis          : ont snmp agent config 
+mismatch
+                           - bsf-dhcpv4            : bulksync failed for dhcpv4
+                           - bsf-dhcpv6            : bulksync failed for dhcpv6
+                           - bsf-pon               : bulksync failed for pon
+                           - bsf-vbridge           : bulksync failed for 
+vlan-bridge
+                           - bsf-qos               : bulksync failed for qos
+                           - bsf-igmp              : bulksync failed for igmp
+                           - bsf-lxfwd             : bulksync failed for lxfwd
+                           - prot-not-available    : no protection not available
+                           - prot-switchover-fail  : port switch over failed
+                           - efm-oam-cpelinkfault  : EFM-OAM CPE link fault
+                           - efm-oam-cpedyinggasp  : EFM-OAM CPE dying gasp
+                           - efm-oam-cpecrevt      : EFM-OAM CPE critical event
+                           - ont-loopdetect        : ont loop detect
+                           - alrm-tbl-overflow     : alarm table has overflowed
+                           - auto-switch-status    : auto-switch status
+                           - auswqueuefullatm      : auto-switch queue Full for 
+ATM
+                           - auswbkpfailatm        : auto-switch config data 
+backup failed for ATM
+                           - auswrecfgfailatm      : auto-switch fallback 
+reconfiguration failed for ATM
+                           - auswdataunatm         : auto-switch backup config 
+data unavailable for ATM
+                           - auswqueuefulptm       : auto-switch queue Full for 
+PTM
+                           - auswbkpfailptm        : auto-switch config data 
+backup failed for PTM
+                           - auswrecfgfailptm      : auto-switch fallback 
+reconfiguration failed for PTM
+                           - auswdataunptm         : auto-switch backup config 
+data unavailable for PTM
+                           - auswbakpfailatm       : auto-switch backup fail 
+for ATM
+                           - cfg-dld-fail          : download of configure file 
+to ont failed
+                           - cfg-act-fail          : activate the passive 
+config file failed
+                           - cfg-dld-ip            : ont configure file 
+download in progress
+                           - cfg-ver-mismatch      : the planned configure file 
+does not match the active configure file
+                           - cfg-file-missing      : ont configure file missing 
+or has an error
+                           - cfg-verctrl-err       : ont configure file version 
+control error
+                           - cfg-not-supported     : ont not support the 
+configure file download function
+                           - ont-prot-not-available: ONT/ONU protection not 
+available
+                           - ont-gen-temp-low      : ONU SFP temperature is 
+lower than configured Alarm low threshold
+                           - ont-gen-volt-low      : ONU SFP Voltage is lower 
+than configured Alarm low threshold
+                           - ont-gen-tx-pwr-high   : ONU SFP Tx power is higher 
+than configured Alarm high threshold
+                           - ont-gen-bias-low      : ONU SFP bias is lower than 
+configured Alarm low threshold
+                           - ont-gen-rx-hwarn      : ONU SFP Rx power is higher 
+than warn threshold 
+                           - ont-gen-rx-lwarn      : ONU SFP Rx power is lower 
+than warn threshold
+                           - ont-gen-tx-hwarn      : ONU SFP Tx power is higher 
+than warn threshold
+                           - ont-gen-tx-lwarn      : ONU SFP Tx power is lower 
+than warn threshold
+                           - ont-gen-temp-hwarn    : ONU SFP temperature is 
+higher than warn threshold
+                           - ont-gen-temp-lwarn    : ONU SFP temperature is 
+lower than warn threshold
+                           - ont-gen-volt-hwarn    : ONU SFP Voltage is higher 
+than warn threshold
+                           - ont-gen-volt-lwarn    : ONU SFP Voltage is lower 
+than warn threshold
+                           - ont-gen-bias-hwarn    : ONU SFP bias is higher 
+than warn threshold
+                           - ont-gen-bias-lwarn    : ONU SFP bias is lower than 
+warn threshold
+                           - sfu-sup2-temp-low     : SFU ONT - SFP temperature 
+is lower than configured Alarm low threshold
+                           - sfu-sup2-volt-low     : SFU ONT - SFP Voltage is 
+lower than configured Alarm low threshold
+                           - sfu-sup2-tx-high      : SFU ONT - SFP tx power is 
+higher than configured Alarm high threshold
+                           - sfu-sup2-bias-low     : SFU ONT - SFP bias is 
+lower than configured Alarm low threshold
+                           - sfu-sup2-rx-hwarn     : SFU ONT - SFP rx power is 
+higher than configured warn threshold
+                           - sfu-sup2-rx-lwarn     : SFU ONT - SFP rx power is 
+lower than configured warn threshold
+                           - sfu-sup2-tx-hwarn     : SFU ONT - SFP tx power is 
+higher than configured warn threshold
+                           - sfu-sup2-tx-lwarn     : SFU ONT - SFP tx power is 
+lower than configured warn threshold
+                           - sfu-sup2-temp-hwarn   : SFU ONT - SFP temperature 
+is higher than configured warn threshold
+                           - sfu-sup2-temp-lwarn   : SFU ONT - SFP temperature 
+is lower than configured warn threshold
+                           - sfu-sup2-volt-hwarn   : SFU ONT - SFP Voltage is 
+higher than configured warn threshold
+                           - sfu-sup2-volt-lwarn   : SFU ONT - SFP Voltage is 
+lower than configured warn threshold
+                           - sfu-sup2-bias-hwarn   : SFU ONT - SFP bias is 
+higher than configured warn threshold
+                           - sfu-sup2-bias-lwarn   : SFU ONT - SFP bias is 
+lower than configured warn threshold
+                           - soho-sup2-temp-low    : SOHO ONT - SFP temperature 
+is lower than configured Alarm low threshold
+                           - soho-sup2-volt-low    : SOHO ONT - SFP Voltage is 
+lower than configured Alarm low threshold
+                           - soho-sup2-tx-high     : SOHO ONT - SFP tx power is 
+higher than configured Alarm low threshold
+                           - soho-sup2-bias-low    : SOHO ONT - SFP bias is 
+lower than configured Alarm low threshold
+                           - soho-sup2-rx-hwarn    : SOHO ONT - SFP rx power is 
+higher than warn threshold
+                           - soho-sup2-rx-lwarn    : SOHO ONT - SFP rx poweris 
+lower than warn threshold
+                           - soho-sup2-tx-hwarn    : SOHO ONT - SFP tx power is 
+higher than warn threshold
+                           - soho-sup2-tx-lwarn    : SOHO ONT - SFP tx power is 
+lower than warn threshold
+                           - soho-sup2-temp-hwarn  : SOHO ONT - SFP temperature 
+is higher than warn threshold
+                           - soho-sup2-temp-lwarn  : SOHO ONT - SFP 
+temperatureis lower than warn threshold
+                           - soho-sup2-volt-hwarn  : SOHO ONT - SFP Voltage is 
+higher than warn threshold
+                           - soho-sup2-volt-lwarn  : SOHO ONT - SFP Voltage is 
+lower than warn threshold
+                           - soho-sup2-bias-hwarn  : SOHO ONT - SFP bias is 
+higher than warn threshold
+                           - soho-sup2-bias-lwarn  : SOHO ONT - SFP bias is 
+lower than warn threshold
+                           - mdu-sup2-temp-low     : MDU ONT - SFP temperature 
+is lower than configured alarm low threshold
+                           - mdu-sup2-volt-low     : MDU ONT - SFP Voltage is 
+lower than configured alarm low threshold
+                           - mdu-sup2-tx-high      : MDU ONT - SFP tx power is 
+higher than configured alarm low threshold
+                           - mdu-sup2-bias-low     : MDU ONT - SFP bias is 
+lower than configured alarm low threshold
+                           - mdu-sup2-rx-hwarn     : MDU ONT - SFP rx power is 
+higher than warn threshold
+                           - mdu-sup2-rx-lwarn     : MDU ONT - SFP rx power is 
+lower than warn threshold
+                           - mdu-sup2-tx-hwarn     : MDU ONT - SFP tx power is 
+higher than warn threshold
+                           - mdu-sup2-tx-lwarn     : MDU ONT - SFP tx power is 
+lower than warn threshold
+                           - mdu-sup2-temp-hwarn   : MDU ONT - SFP temperature 
+is higher than warn threshold
+                           - mdu-sup2-temp-lwarn   : MDU ONT - SFP temperature 
+is lower than warn threshold
+                           - mdu-sup2-volt-hwarn   : MDU ONT - SFP voltage is 
+higher than warn threshold
+                           - mdu-sup2-volt-lwarn   : MDU ONT - SFP voltage is 
+lower than warn threshold
+                           - mdu-sup2-bias-hwarn   : MDU ONT - SFP bias is 
+higher than warn threshold
+                           - mdu-sup2-bias-lwarn   : MDU ONT - SFP bias is 
+lower than warn threshold
+                           - cust-alm1             : customizable alarm 1
+                           - cust-alm2             : customizable alarm 2
+                           - cust-alm3             : customizable alarm 3
+                           - cust-alm4             : customizable alarm 4
+                           - cust-alm5             : customizable alarm 5
+                           - cust-alm6             : customizable alarm 6
+                           - cust-alm7             : customizable alarm 7
+                           - cust-alm8             : customizable alarm 8
+                           - cust-alm9             : customizable alarm 9
+                           - cust-alm10            : customizable alarm 10
+                           - cust-alm11            : customizable alarm 11
+                           - cust-alm12            : customizable alarm 12
+                           - cust-alm13            : customizable alarm 13
+                           - cust-alm14            : customizable alarm 14
+                           - cust-alm15            : customizable alarm 15
+                           - cust-alm16            : customizable alarm 16
+                           - cust-alm17            : customizable alarm 17
+                           - cust-alm18            : customizable alarm 18
+                           - cust-alm19            : customizable alarm 19
+                           - cust-alm20            : customizable alarm 20
+                           - cust-alm21            : customizable alarm 21
+                           - cust-alm22            : customizable alarm 22
+                           - cust-alm23            : customizable alarm 23
+                           - cust-alm24            : customizable alarm 24
+                           - cust-alm25            : customizable alarm 25
+                           - cust-alm26            : customizable alarm 26
+                           - cust-alm27            : customizable alarm 27
+                           - cust-alm28            : customizable alarm 28
+                           - cust-alm29            : customizable alarm 29
+                           - cust-alm30            : customizable alarm 30
+                           - cust-alm31            : customizable alarm 31
+                           - ethernet-ring-pthfwst : ethernet ring path forward 
+state
+                           - ethernet-ring-fop-to  : ethernet ring fop-to 
+failure of protocol timeout
+                           - ethernet-ring-fop-pm  : ethernet ring fop-pm 
+failure of protocol provision mismatch
+                           - fpm-depletion         : failsafe fpm depletion
+                           - exp-seizureack        : Channel was blocked due to 
+failure in the reception of the SEIZURE ACK signal
+                           - exp-disconack         : Channel was blocked due to 
+failure in the reception of the DISCONNECTION ACK signal
+                           - exp-forcerelack       : Channel was blocked due to 
+failure in the reception of the BACKWARD DISCONNECTION ACK signal
+                           - packet-loss           : Pseudo Wire entered the 
+Packet loss state
+                           - remote-packet-loss    : Remote Packet loss detected
+                           - no-dsp-resource       : DSP resource allocation 
+failed
+                           - la-down               : Link aggregation group 
+link-status is down
+                           - la-standby-na         : Cross-lt lag on standby 
+slot part is not available
+                           - la-switch-fail        : Cross-lt lag fail to do 
+switchover
+                           - la-degrade            : Link aggregation group 
+degrade
+                           - melt-board-reset      : MELT board reset
+                           - board-shelf-mismatch  : board type and shelf type 
+mismatch
+                           - fcs-thresh-exceed     : FCS counter threshold 
+exceeded
+
+[no] status                filter status
+                           optional parameter with default value: "not-used"
+
+                           Parameter type: <Alarm::fltrStatus>
+                           Format:
+                           ( not-used
+                           | used )
+                           Possible values:
+                           - not-used              : deactivate the configured 
+alarm filter
+                           - used                  : activate the configured 
+alarm filter
+
+[no] threshold             the threshold value of the considered alarm filter
+                           optional parameter with default value: "2"
+
+                           Parameter type: <Alarm::fltrThreshold>
+                           Format:
+                           - the threshold value of the considered alarm filter
+                           - range: [2...65535]
+
+[no] window                the duration of the filter window, only applicable 
+for temporal type
+                           optional parameter with default value: "60"
+
+                           Parameter type: <Alarm::fltrWindow>
+                           Format:
+                           - the duration of the filter window in seconds
+                           - range: [1...65535]
+
+
+
+25/10/25 19:07:52 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI
+25/10/25 19:07:52 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:07:37 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

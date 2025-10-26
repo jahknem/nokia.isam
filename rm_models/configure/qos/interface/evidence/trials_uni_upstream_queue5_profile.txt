@@ -1,0 +1,17 @@
+== After change: upstream-queue 5 bandwidth-profile GPONqpp200Mbps ==
+... excerpt ...
+  upstream-queue 5
+    weight 6
+    bandwidth-profile name:GPONqpp200Mbps
+    bandwidth-sharing uni-sharing
+  exit
+... excerpt ...
+
+== After revert: upstream-queue 5 bandwidth-profile GPONqpp100Mbps ==
+... excerpt ...
+  upstream-queue 5
+    weight 6
+    bandwidth-profile name:GPONqpp100Mbps
+    bandwidth-sharing uni-sharing
+  exit
+... excerpt ...

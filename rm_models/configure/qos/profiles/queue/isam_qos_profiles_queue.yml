@@ -1,0 +1,70 @@
+module: isam_qos_profiles_queue
+short_description: Resource module to configure qos profiles queue
+description:
+- Configures a QoS queue profile. A queue profile or buffer acceptance control (BAC)
+  profile contains configuration information on data plane queues. BAC profiles can
+  be used on the L3 line cards. Minimum and Maximum Threshold value for queues are
+  given in packets.
+- Supports configuration of unit
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure qos profiles ()'
+options:
+  config:
+    description:
+    - A list of qos profiles queue configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (name) - A unique profile name
+      unit:
+        type: str
+        description:
+        - 'identify the threshold unit type with default value: "packet"'
+        - 'Possible values: C(packet) - the unit of discard threshold is packet; C(byte)
+          - the unit of discard threshold is byte'
+        default: packet
+        choices:
+        - packet
+        - byte
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure qos profiles queue)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

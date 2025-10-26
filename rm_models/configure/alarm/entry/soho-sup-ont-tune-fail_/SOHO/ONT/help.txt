@@ -1,0 +1,5 @@
+help configure alarm entry soho-sup-ont-tune-fai
+l! SOHO ONT
+                                                                                 ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

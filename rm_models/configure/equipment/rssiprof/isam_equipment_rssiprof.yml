@@ -1,0 +1,286 @@
+module: isam_equipment_rssiprof
+short_description: Resource module to configure equipment rssiprof
+description:
+- This command allows the operator to create and configure the RSSI parameters on
+  SFPs.
+- Supports configuration of name, temp alm low, temp alm high and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure equipment ()'
+options:
+  config:
+    description:
+    - A list of equipment rssiprof configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        description:
+        - 'A unique profile name mandatory parameter - string to identify the rssi
+          profile - length: 1<=x<=16'
+      temp_alm_low:
+        type: str
+        description:
+        - 'alarm low threshold for temperature with default value: "0" - temperature
+          of SFP - unit: degree C - range: [-128...128]'
+        default: '0'
+      temp_alm_high:
+        type: str
+        description:
+        - 'alarm high threshold for temperature with default value: "0" - temperature
+          of SFP - unit: degree C - range: [-128...128]'
+        default: '0'
+      temp_warn_low:
+        type: str
+        description:
+        - 'warn low threshold for temperature with default value: "0" - temperature
+          of SFP - unit: degree C - range: [-128...128]'
+        default: '0'
+      temp_warn_high:
+        type: str
+        description:
+        - 'warn high threshold for temperature with default value: "0" - temperature
+          of SFP - unit: degree C - range: [-128...128]'
+        default: '0'
+      voltage_alm_low:
+        type: str
+        description:
+        - 'alarm low threshold for Voltage with default value: "0" - voltage of SFP
+          - unit: volts - range: [0...6.55]'
+        default: '0'
+      voltage_alm_high:
+        type: str
+        description:
+        - 'alarm high threshold for Voltage with default value: "0" - voltage of SFP
+          - unit: volts - range: [0...6.55]'
+        default: '0'
+      voltage_warn_low:
+        type: str
+        description:
+        - 'warn low threshold for Voltage with default value: "0" - voltage of SFP
+          - unit: volts - range: [0...6.55]'
+        default: '0'
+      voltage_warn_high:
+        type: str
+        description:
+        - 'warn high threshold for Voltage with default value: "0" - voltage of SFP
+          - unit: volts - range: [0...6.55]'
+        default: '0'
+      bias_alm_low:
+        type: str
+        description:
+        - 'alarm low threshold for bias with default value: "0" - bias of SFP - unit:
+          mA - range: [0...262]'
+        default: '0'
+      bias_alm_high:
+        type: str
+        description:
+        - 'alarm high threshold for bias with default value: "0" - bias of SFP - unit:
+          mA - range: [0...262]'
+        default: '0'
+      bias_warn_low:
+        type: str
+        description:
+        - 'warn low threshold for bias with default value: "0" - bias of SFP - unit:
+          mA - range: [0...262]'
+        default: '0'
+      bias_warn_high:
+        type: str
+        description:
+        - 'warn high threshold for bias with default value: "0" - bias of SFP - unit:
+          mA - range: [0...262]'
+        default: '0'
+      tx_pwr_alm_low:
+        type: str
+        description:
+        - 'alarm low threshold for Tx power with default value: "0" - power of SFP
+          - unit: dbm - range: [-63.5...63.5]'
+        default: '0'
+      tx_pwr_alm_high:
+        type: str
+        description:
+        - 'alarm high threshold for Tx power with default value: "0" - power of SFP
+          - unit: dbm - range: [-63.5...63.5]'
+        default: '0'
+      tx_pwr_warn_low:
+        type: str
+        description:
+        - 'warn low threshold for Tx power with default value: "0" - power of SFP
+          - unit: dbm - range: [-63.5...63.5]'
+        default: '0'
+      tx_pwr_warn_high:
+        type: str
+        description:
+        - 'warn high threshold for Tx power with default value: "0" - power of SFP
+          - unit: dbm - range: [-63.5...63.5]'
+        default: '0'
+      rx_pwr_alm_low:
+        type: str
+        description:
+        - 'alarm low threshold for Rx power with default value: "0" - power of SFP
+          - unit: dbm - range: [-127...8.2]'
+        default: '0'
+      rx_pwr_alm_high:
+        type: str
+        description:
+        - 'alarm high threshold for Rx power with default value: "0" - power of SFP
+          - unit: dbm - range: [-127...8.2]'
+        default: '0'
+      rx_pwr_warn_low:
+        type: str
+        description:
+        - 'warn low threshold for Rx power with default value: "0" - power of SFP
+          - unit: dbm - range: [-127...8.2]'
+        default: '0'
+      rx_pwr_warn_high:
+        type: str
+        description:
+        - 'warn high threshold for Rx power with default value: "0" - power of SFP
+          - unit: dbm - range: [-127...8.2]'
+        default: '0'
+      ebias_alm_low:
+        type: str
+        description:
+        - 'alarm low threshold for ext bias with default value: "0" - bias of SFP
+          - unit: mA - range: [0...262]'
+        default: '0'
+      ebias_alm_high:
+        type: str
+        description:
+        - 'alarm high threshold for ext bias with default value: "0" - bias of SFP
+          - unit: mA - range: [0...262]'
+        default: '0'
+      ebias_warn_low:
+        type: str
+        description:
+        - 'warn low threshold for ext bias with default value: "0" - bias of SFP -
+          unit: mA - range: [0...262]'
+        default: '0'
+      ebias_warn_high:
+        type: str
+        description:
+        - 'warn high threshold for ext bias with default value: "0" - bias of SFP
+          - unit: mA - range: [0...262]'
+        default: '0'
+      etx_alm_low:
+        type: str
+        description:
+        - 'alarm low threshold for ext Tx power with default value: "0" - power of
+          SFP - unit: dbm - range: [-63.5...63.5]'
+        default: '0'
+      etx_alm_high:
+        type: str
+        description:
+        - 'alarm high threshold for ext Tx power with default value: "0" - power of
+          SFP - unit: dbm - range: [-63.5...63.5]'
+        default: '0'
+      etx_warn_low:
+        type: str
+        description:
+        - 'warn low threshold for ext Tx power with default value: "0" - power of
+          SFP - unit: dbm - range: [-63.5...63.5]'
+        default: '0'
+      etx_warn_high:
+        type: str
+        description:
+        - 'warn high threshold for ext Tx power with default value: "0" - power of
+          SFP - unit: dbm - range: [-63.5...63.5]'
+        default: '0'
+      erx_alm_low:
+        type: str
+        description:
+        - 'alarm low threshold for ext Rx power with default value: "0" - power of
+          SFP - unit: dbm - range: [-127...8.2]'
+        default: '0'
+      erx_alm_high:
+        type: str
+        description:
+        - 'alarm high threshold for ext Rx power with default value: "0" - power of
+          SFP - unit: dbm - range: [-127...8.2]'
+        default: '0'
+      erx_warn_low:
+        type: str
+        description:
+        - 'warn low threshold for ext Rx power with default value: "0" - power of
+          SFP - unit: dbm - range: [-127...8.2]'
+        default: '0'
+      erx_warn_high:
+        type: str
+        description:
+        - 'warn high threshold for ext Rx power with default value: "0" - power of
+          SFP - unit: dbm - range: [-127...8.2]'
+        default: '0'
+      etemp_alm_low:
+        type: str
+        description:
+        - 'alarm low threshold for temperature on network lane with default value:
+          "0" - temperature of SFP - unit: degree C - range: [-128...128]'
+        default: '0'
+      etemp_alm_high:
+        type: str
+        description:
+        - 'alarm high threshold for temperature on network lane with default value:
+          "0" - temperature of SFP - unit: degree C - range: [-128...128]'
+        default: '0'
+      etemp_warn_low:
+        type: str
+        description:
+        - 'warn low threshold for temperature on network lane with default value:
+          "0" - temperature of SFP - unit: degree C - range: [-128...128]'
+        default: '0'
+      etemp_warn_high:
+        type: str
+        description:
+        - 'warn high threshold for temperature on network lane with default value:
+          "0" - temperature of SFP - unit: degree C - range: [-128...128]'
+        default: '0'
+      profile_type:
+        type: str
+        description:
+        - 'determine if this RSSI Profile is for OLT or ONT with default value: "
+          olt"'
+        - 'Possible values: C(olt) - This profile is for OLT usage; C(ont) - This
+          profile is for ONT usage'
+        default: olt
+        choices:
+        - olt
+        - ont
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure equipment rssiprof)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged
+EXAMPLES:
+  - gathered_example_01.txt

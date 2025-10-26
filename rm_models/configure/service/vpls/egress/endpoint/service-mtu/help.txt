@@ -1,0 +1,5 @@
+help configure service vpls egress endpoint serv
+ice-mtu
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

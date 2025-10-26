@@ -1,0 +1,59 @@
+help configure equipment fan-tray
+CONFIGURE FAN TRAY PARAMETERS
+=============================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the fan tray parameter fanmode.
+
+The fanmode determines the applied speed of the fan trays.
+
+On 7302 ISAM, 7330 ISAM FTTN and 7360 ISAM the fanmode is effective only if 
+intelligent fan packs are installed. Traditional fan packs (A-fans) do not 
+support speed change, the 'classic' mode applies.
+
+On 7363 MX intelligent fan packs are by default present. The "classic mode" 
+will change the fan speed, but based on ambient temperature only.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment fan-tray [ fanmode <Eqpt::FanMode> ]
+
+Command Parameters
+------------------
+
+Table "Configure Fan Tray parameters" Command Parameters
+
+Parameter                  Description
+
+fanmode                    Fan Tray mode
+                           optional parameter
+
+                           Parameter type: <Eqpt::FanMode>
+                           Format:
+                           ( auto
+                           | eco
+                           | protect
+                           | classic )
+                           Possible values:
+                           - auto                  : runs in average mode; fan 
+speeds determined by predefined thermal margins
+                           - eco                   : runs in 'green' mode; 
+minimal thermal margins
+                           - protect               : runs in protected mode; 
+wider thermal settings wrt auto
+                           - classic               : fixed fan speed; no SW 
+control
+
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,5 @@
+help configure service vpls sap stp sap igmp-sno
+oping
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

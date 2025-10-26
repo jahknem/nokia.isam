@@ -1,0 +1,21 @@
+{
+  "title": "EXTEND INTERFACE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure extended interface management \nparameters.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure interface atm-pvc (pvc-index) [ no customer-id | customer-id <Itf::asamIfExtCustomerId> ]",
+  "resource_parameters": [
+    {
+      "name": "(pvc-index)",
+      "description": "the ATM PVC interface index"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] customer-id",
+      "description": "Config the customerId per PVC optional parameter with default value: \"available\" - a string identifying the customer or user - length: x<=64",
+      "type": "<Itf::asamIfExtCustomerId>",
+      "default": "available"
+    }
+  ],
+  "raw": "help configure interface atm-pvc\r\nEXTEND INTERFACE CONFIGURATION COMMAND\r\n======================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure extended interface management \r\nparameters.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure interface atm-pvc (pvc-index) [ no customer-id | customer-id \r\n<Itf::asamIfExtCustomerId> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Extend Interface Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(pvc-index)                the ATM PVC interface index\r\n\r\nTable \"Extend Interface Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] customer-id           Config the customerId per PVC \r\n                           optional parameter with default value: \"available\"\r\n\r\n                           Parameter type: <Itf::asamIfExtCustomerId>\r\n                           Format:\r\n                           - a string identifying the customer or user\r\n                           - length: x<=64 \r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

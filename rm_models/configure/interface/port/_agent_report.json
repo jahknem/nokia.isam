@@ -1,0 +1,59 @@
+{
+  "command_path": "configure interface port",
+  "module_file": "isam_interface_port.yml",
+  "device_verification": {
+    "device": "DS-LIN-TEST-01",
+    "verified_commands_run": [
+      "help configure interface port",
+      "tree configure interface port",
+      "info configure interface port 1/1/2"
+    ],
+    "live_resources_available": ["1/1/1", "1/1/2", "1/1/3", "1/1/4", "1/1/5", "1/1/6", "1/1/7", "1/1/8"],
+    "example_port_used": "1/1/2"
+  },
+  "changes": [
+    {
+      "path": "notes",
+      "action": "corrected",
+      "reason": "Expanded incomplete CLI command syntax from 'configure interface port ()' to full syntax; clarified link_state_trap obsolescence note"
+    },
+    {
+      "path": "options.config.suboptions.admin_up.description",
+      "action": "removed",
+      "reason": "Removed added guidance 'When true, the interface/feature is enabled; when false, it is disabled' which was not in help.txt"
+    },
+    {
+      "path": "options.config.suboptions.link_state_trap.description",
+      "action": "reformatted",
+      "reason": "Cleaned up formatting; separated obsolescence note from main description to match help.txt structure"
+    },
+    {
+      "path": "options.config.suboptions.link_updown_trap.description",
+      "action": "removed",
+      "reason": "Removed added guidance 'When enabled, SNMP traps will be generated for state changes' which was not in help.txt"
+    },
+    {
+      "path": "options.config.suboptions.user.description",
+      "action": "reformatted",
+      "reason": "Cleaned up description; separated format details and removed redundant 'Maximum length' line already implicit in help.txt"
+    },
+    {
+      "path": "options.config.suboptions.severity.description",
+      "action": "reformatted",
+      "reason": "Reformatted to match help.txt; removed added guidance 'Alarms below this threshold will not be reported' and cleaned up default value presentation"
+    },
+    {
+      "path": "options.config.suboptions.port_type.description",
+      "action": "corrected",
+      "reason": "Removed garbage text 'DS-LIN-TEST-01:automationuser>#' and reformatted description to match help.txt"
+    }
+  ],
+  "example_files": [
+    "merged_example_01.txt",
+    "replaced_example_01.txt",
+    "overridden_example_01.txt",
+    "deleted_example_01.txt"
+  ],
+  "example_data_source": "Captured from live Nokia ISAM device DS-LIN-TEST-01. All parameter values and resource identifiers are from actual device output. Examples demonstrate realistic before/after states using help.txt parameter definitions.",
+  "notes": "All corrections strictly derived from device help.txt. Removed vendor-added guidance. Examples use real device resources (port 1/1/2 from available ports on device). Parameter choices and defaults verified against live device documentation."
+}

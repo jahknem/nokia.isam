@@ -1,0 +1,158 @@
+help configure qos profiles queue
+QOS QUEUE PROFILE CONFIGURATION COMMAND
+=======================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a QoS queue profile. A queue 
+profile or buffer acceptance control (BAC) profile contains configuration 
+information on data plane queues. BAC profiles can be used on the L3 line cards.
+
+Minimum and Maximum Threshold value for queues are given in packets.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles ( no queue (name) ) | ( queue (name) 
+(bac-complex-type) [ no unit | unit <Qos::Units> ] )
+
+Command Parameters
+------------------
+
+Table "QoS Queue Profile Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+Table "QoS Queue Profile Configuration Command" Command Parameters
+
+Parameter                  Description
+
+(bac-complex-type)         buffer acceptance control algorithm
+                           mandatory parameter
+
+                           Parameter type: <Qos::BACComplexType>
+                           Format:
+                           ( tail-drop : <Qos::MaxThreshold>
+                           | red : <Qos::MinThreshold> : <Qos::MaxThreshold> : 
+<Qos::DiscardProbability>
+                           | twocolour-taildrop : <Qos::MaxThreshold> : 
+<Qos::MaxThresholdYellow>
+                           | twocolourred : <Qos::MinThreshold> : 
+<Qos::MaxThreshold> : <Qos::DiscardProbability> : <Qos::MinThresholdYellow> : 
+<Qos::MaxThresholdYellow> : <Qos::DiscardProbYellow>
+                           | gpon-tail-drop : <Qos::MinThreshold> : 
+<Qos::MaxThreshold>
+                           | threecolour-taildrop : <Qos::MaxThreshold> : 
+<Qos::MaxThresholdYellow> : <Qos::MaxThresholdRed>
+                           | threecolour-red : <Qos::MinThreshold> : <Qos::MaxTh
+reshold> : <Qos::DiscardProbability> : <Qos::MinThresholdYellow> : 
+<Qos::MaxThresholdYellow> : <Qos::DiscardProbYellow> : <Qos::MinThresholdRed> : 
+<Qos::MaxThresholdRed> : <Qos::DiscardProbRed>
+                           | gpon-threecolour-red : <Qos::MinThreshold> : 
+<Qos::MaxThreshold> : <Qos::DiscardProbability> : <Qos::MinThresholdYellow> : 
+<Qos::MaxThresholdYellow> : <Qos::DiscardProbYellow> : <Qos::MinThresholdRed> : 
+<Qos::MaxThresholdRed> : <Qos::DiscardProbRed> : <Qos::MinQueueSize> : <Qos::Max
+QueueSize> )
+                           Possible values:
+                           - tail-drop             : tail drop algorithm
+                           - red                   : random early detection 
+algorithm
+                           - twocolour-taildrop    : colour-aware tail drop 
+algorithm
+                           - twocolourred          : colour-aware random early 
+detection algorithm
+                           - gpon-tail-drop        : gpon tail drop algorithm
+                           - threecolour-taildrop  : three colour aware tail 
+drop algorithm
+                           - threecolour-red       : three colour aware random 
+early detection algorithm
+                           - gpon-threecolour-red  : three colour aware random 
+early detection algorithm with min and max queue sizes
+                           Field type <Qos::MinThreshold>
+                           - min threshold of green frames or min threshold of 
+frames for RED type or min queue size for gpon-tail-drop: if unit is 
+packet,range:[1..1048574] for gpon, [1..1398100] for non gpon,[1..681] for 
+DSL,[1..1999] for ngvr; if unit is byte,range is  [1..2147483646] for fibre 
+bactypes,[1..1048575] for DSL bactypes,[1..3000319] for ngvr bactypes
+                           - range: [1...2147483646]
+                           Field type <Qos::MaxThreshold>
+                           - max threshold of green frames or max threshold of 
+frames for RED type or max queue size for tail-drop/gpon-tail-drop: if unit is 
+packet,range:[2..1048575] for gpon, [2..1398101] for non gpon,[2..682] for DSL, 
+[2..2000] for ngvr;if unit is byte,range is [2..2147483647] for fibre bactypes, 
+ [2..1048576] for DSL bactypes; [2..3000320] for ngvr bactypes
+                           - range: [2...2147483647]
+                           Field type <Qos::DiscardProbability>
+                           - maximum discard probability of green frames
+                           - unit: %
+                           - range: [0...100]
+                           Field type <Qos::MinThresholdYellow>
+                           - min threshold for yellow frames: if unit is 
+packet,range:[1..1048574] for gpon, [1..1398100] for non gpon,[1..681] for 
+DSL,[1..1999] for ngvr; if unit is byte,range is  [1..2147483646] for fibre 
+bactypes,[1..1048575] for DSL bactypes,[1..3000319] for ngvr bactypes 
+                           - range: [1...2147483646]
+                           Field type <Qos::MaxThresholdYellow>
+                           - max threshold for yellow frames: if unit is 
+packet,range:[2..1048575] for gpon, [2..1398101] for non gpon,[2..682] for DSL, 
+[2..2000] for ngvr;if unit is byte,range is [2..2147483647] for fibre bactypes, 
+ [2..1048576] for DSL bactypes; [2..3000320] for ngvr bactypes 
+                           - range: [2...2147483647]
+                           Field type <Qos::DiscardProbYellow>
+                           - maximum discard probability of yellow frames
+                           - unit: %
+                           - range: [0...100]
+                           Field type <Qos::MinThresholdRed>
+                           - min threshold for red frames: if unit is 
+packet,range:[1..1048574] for gpon, [1..1398100] for non gpon,[1..681] for 
+DSL,[1..1999] for ngvr; if unit is byte,range is  [1..2147483646] for fibre 
+bactypes,[1..1048575] for DSL bactypes,[1..3000319] for ngvr bactypes 
+                           - range: [1...2147483646]
+                           Field type <Qos::MaxThresholdRed>
+                           - max threshold for red frames: if unit is 
+packet,range:[2..1048575] for gpon, [2..1398101] for non gpon,[2..682] for DSL, 
+[2..2000] for ngvr;if unit is byte,range is [2..2147483647] for fibre bactypes, 
+ [2..1048576] for DSL bactypes; [2..3000320] for ngvr bactypes 
+                           - range: [2...2147483647]
+                           Field type <Qos::DiscardProbRed>
+                           - maximum discard probability of red frames
+                           - unit: %
+                           - range: [0...100]
+                           Field type <Qos::MinQueueSize>
+                           - minimum guaranteed queue size : if unit is 
+packet,range:[1..1048574] for gpon, [1..1398100] for non gpon,[1..1999] for 
+ngvr; if unit is byte,range is  [1..2147483646] for fibre bactypes,[1..3000319] 
+for ngvr bactypes 
+                           - range: [1...2147483646]
+                           Field type <Qos::MaxQueueSize>
+                           - maximum queue size: if unit is packet,range:[2..104
+8575] for gpon, [2..1398101] for non gpon,[2..2000] for ngvr;if unit is 
+byte,range is [2..2147483647] for fibre bactypes,[2..3000320] for ngvr bactypes 
+                           - range: [2...2147483647]
+
+[no] unit                  identify the threshold unit type
+                           optional parameter with default value: "packet"
+
+                           Parameter type: <Qos::Units>
+                           Format:
+                           ( packet
+                           | byte )
+                           Possible values:
+                           - packet                : the unit of discard 
+threshold is packet
+                           - byte                  : the unit of discard 
+threshold is byte
+
+
+DS-LIN-TEST-01:automationuser>#

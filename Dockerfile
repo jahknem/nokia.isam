@@ -1,17 +1,31 @@
-FROM python:3.12-buster
+FROM python:3.12-bookworm
 
-RUN python3 -m pip install --upgrade pip  
-RUN python3 -m pip install ansible  
-# If you want to install ansible-core, just run the same command but with "ansible-core" instead of "ansible"
+# System deps (pylibssh build + QoL)
+RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y --no-install-recommends \
+      sshpass openssh-client tree \
+      pkg-config build-essential libssh-dev && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    sshpass
-# Pip install requirements.txt
-RUN python3 -m pip install -f requirements.txt
-RUN python3 -m pip install -f requirementsdev.txt
+# Python tooling
+RUN python -m pip install --upgrade pip
 
-# Install ansible galaxy requirements
-RUN ansible-galaxy collection install -r requirements.yml
+# Install Ansible + debug tools
+RUN python -m pip install \
+      ansible \
+      ansible-pylibssh \
+      debugpy
 
-WORKDIR /ansible
+# Install python requirements
+COPY requirements.txt /tmp/requirements.txt
+RUN python -m pip install -r /tmp/requirements.txt
+
+# install python dev requirements
+COPY requirements-dev.txt /tmp/requirements-dev.txt
+RUN python -m pip install -r /tmp/requirements-dev.txt
+
+# (Optional) preinstall collection deps referenced in requirements.yml at image build time
+# COPY requirements.yml /tmp/requirements.yml
+# RUN ansible-galaxy collection install -r /tmp/requirements.yml || true
+
+WORKDIR /workspaces/ansible_collections/nokia/isam

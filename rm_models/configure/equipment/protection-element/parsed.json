@@ -1,0 +1,26 @@
+{
+  "title": "PROTECTION ELEMENT CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a protection element.\n\nThe protection group is identified by the eqptProtGroupId attribute. The value \n1 to 9 are reserved for the extension chain protection group which are always \npresent and cannot be deleted. Group 1 corresponding with NT 1+1 group, and \nGroup 2-9 corresponding with possible 8 LT 1+1 groups.\n\nThe redcy-ctrl-status parameter is used to force a switchover between elements \nof a protection group or to keep one of the elements active. The forced-active \nparameter indicates that the NTA or NTB slot or LT slot is configured as active.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure equipment protection-element (index) [ no redcy-ctrl-status | redcy-ctrl-status <Equipm::ProtElementRedcyCtrlStatus> ]",
+  "resource_parameters": [
+    {
+      "name": "(index)",
+      "description": "Index in eqpt Prot Element Table"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] redcy-ctrl-status",
+      "description": "changes the redundancy control status optional parameter with default value: \"normal\"",
+      "type": "<Equipm::ProtElementRedcyCtrlStatus>",
+      "format": "( normal                            | forced_active )",
+      "values": [
+        "normal                : enables redundancy (active or standby)",
+        "forced_active         : forces the element to be active"
+      ],
+      "default": "normal"
+    }
+  ],
+  "raw": "help configure equipment protection-element\r\nPROTECTION ELEMENT CONFIGURATION COMMAND\r\n========================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a protection element.\r\n\r\nThe protection group is identified by the eqptProtGroupId attribute. The value \r\n1 to 9 are reserved for the extension chain protection group which are always \r\npresent and cannot be deleted. Group 1 corresponding with NT 1+1 group, and \r\nGroup 2-9 corresponding with possible 8 LT 1+1 groups.\r\n\r\nThe redcy-ctrl-status parameter is used to force a switchover between elements \r\nof a protection group or to keep one of the elements active. The forced-active \r\nparameter indicates that the NTA or NTB slot or LT slot is configured as active.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure equipment protection-element (index) [ no redcy-ctrl-status | \r\nredcy-ctrl-status <Equipm::ProtElementRedcyCtrlStatus> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Protection Element Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(index)                    Index in eqpt Prot Element Table \r\n\r\nTable \"Protection Element Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] redcy-ctrl-status     changes the redundancy control status\r\n                           optional parameter with default value: \"normal\"\r\n\r\n                           Parameter type: <Equipm::ProtElementRedcyCtrlStatus>\r\n                           Format:\r\n                           ( normal\r\n                           | forced_active )\r\n                           Possible values:\r\n                           - normal                : enables redundancy (active \r\nor standby)\r\n                           - forced_active         : forces the element to be \r\nactive\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

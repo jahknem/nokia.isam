@@ -1,0 +1,113 @@
+module: isam_generic_pon_power_shed_prof
+short_description: Resource module to configure generic-pon power-shed-prof
+description:
+- Configures the Power Shedding Profiles for gpon and ngpon2
+- Supports configuration of profile name, restore time, data class time and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure generic-pon ()'
+options:
+  config:
+    description:
+    - A list of generic-pon power-shed-prof configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (profile-idx) - profile index
+      profile_name:
+        type: str
+        description:
+        - 'name of the profile mandatory parameter - a profile name - range: [a-zA-Z0-9-_.]
+          - length: 1<=x<=32'
+      restore_time:
+        type: str
+        description:
+        - 'time delay required before resetting timers to zero after a full power
+          restore with default value: 0L - zero means no-shed, and one means immediate-shed
+          - unit: secs - range: [0...28800]'
+        default: 0L
+      data_class_time:
+        type: str
+        description:
+        - 'time delay required before shedding power for data uni classes. with default
+          value: 0L - zero means no-shed, and one means immediate-shed - unit: secs
+          - range: [0...28800]'
+        default: 0L
+      voice_class_time:
+        type: str
+        description:
+        - 'the time delay required before shedding power for voice uni classes. with
+          default value: 0L - zero means no-shed, and one means immediate-shed - unit:
+          secs - range: [0...28800]'
+        default: 0L
+      video_class_time:
+        type: str
+        description:
+        - 'the time delay required before shedding power for the video ani class.
+          with default value: 0L - zero means no-shed, and one means immediate-shed
+          - unit: secs - range: [0...28800]'
+        default: 0L
+      dsl_class_time:
+        type: str
+        description:
+        - 'the time delay required before shedding power for dsl uni classes. with
+          default value: 0L - zero means no-shed, and one means immediate-shed - unit:
+          secs - range: [0...28800]'
+        default: 0L
+      ces_class_time:
+        type: str
+        description:
+        - 'the time delay required before shedding power for ces uni classes. with
+          default value: 0L - zero means no-shed, and one means immediate-shed - unit:
+          secs - range: [0...28800] Table "Power Shedding Profile Configuration Command"
+          Display Parameters Specific Information:'
+        default: 0L
+      scope:
+        type: str
+        description:
+        - scope of the profile This element is always shown. ( local | network )
+        - 'Possible values: C(local) - local scope; C(network) - network wide scope'
+        choices:
+        - local
+        - network
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure generic-pon power-shed-prof)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

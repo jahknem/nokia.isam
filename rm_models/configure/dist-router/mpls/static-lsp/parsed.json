@@ -1,0 +1,52 @@
+{
+  "title": "STATIC OUTBOUND MPLS LSP CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a static outbound MPLS LSP, \ninclude the MPLS label and nexthop of an outgoing MPLS tunnel.",
+  "user_level": "The command can be accessed by operators with drouter privileges, and executed \nby operators with drouter privileges.",
+  "syntax": "> configure dist-router mpls ( no static-lsp (lsp-name) ) | ( static-lsp (lsp-name) interface <Drouter::IfIndex> push <Drouter::OutLabel> [ no nexthopaddrtype | nexthopaddrtype <Drouter::IpAddressType> ] nexthop <Ip::V4AddressHex> )",
+  "resource_parameters": [
+    {
+      "name": "(lsp-name)",
+      "description": "Administrative name for the LSP"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "interface",
+      "description": "specify the outgoing interface mandatory parameter",
+      "type": "<Drouter::IfIndex>",
+      "format": "( slot-vlan : <Eqpt::RackId> / <Eqpt::ShelfId> / <Eqpt::SlotId> : <Eqpt::UnstackedVlan>                            | slot-stacked : <Eqpt::RackId> / <Eqpt::ShelfId> / <Eqpt::SlotId> : <Eqpt::SVlan> : <Eqpt::CVlan> )",
+      "values": [
+        "slot-vlan             : slot unstacked",
+        "slot-stacked          : slot stacked Field type <Eqpt::RackId>",
+        "the rack number Field type <Eqpt::ShelfId>",
+        "the shelf number Field type <Eqpt::SlotId>",
+        "the LT slot number Field type <Eqpt::UnstackedVlan>",
+        "unstacked vlan id Field type <Eqpt::SVlan>",
+        "service vlan id Field type <Eqpt::CVlan>",
+        "customer vlan id"
+      ]
+    },
+    {
+      "name": "push",
+      "description": "specify the outgoing label mandatory parameter - Out Label - range: [1...1048575]",
+      "type": "<Drouter::OutLabel>"
+    },
+    {
+      "name": "[no] nexthopaddrtype",
+      "description": "specify the type of next hop IP address optional parameter with default value: \"ipv4\"",
+      "type": "<Drouter::IpAddressType>",
+      "format": "( ipv4                            | ipv6 )",
+      "values": [
+        "ipv4                  : ipv4",
+        "ipv6                  : ipv6"
+      ],
+      "default": "ipv4"
+    },
+    {
+      "name": "nexthop",
+      "description": "Next hop IP address mandatory parameter - IPv4-address",
+      "type": "<Ip::V4AddressHex>"
+    }
+  ],
+  "raw": "help configure dist-router mpls static-lsp\r\nSTATIC OUTBOUND MPLS LSP CONFIGURATION COMMAND\r\n==============================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a static outbound MPLS LSP, \r\ninclude the MPLS label and nexthop of an outgoing MPLS tunnel.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with drouter privileges, and executed \r\nby operators with drouter privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure dist-router mpls ( no static-lsp (lsp-name) ) | ( static-lsp \r\n(lsp-name) interface <Drouter::IfIndex> push <Drouter::OutLabel> [ no \r\nnexthopaddrtype | nexthopaddrtype <Drouter::IpAddressType> ] nexthop \r\n<Ip::V4AddressHex> )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Static Outbound MPLS LSP Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(lsp-name)                 Administrative name for the LSP\r\n\r\nTable \"Static Outbound MPLS LSP Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\ninterface                  specify the outgoing interface\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Drouter::IfIndex>\r\n                           Format:\r\n                           ( slot-vlan : <Eqpt::RackId> / <Eqpt::ShelfId> / \r\n<Eqpt::SlotId> : <Eqpt::UnstackedVlan>\r\n                           | slot-stacked : <Eqpt::RackId> / <Eqpt::ShelfId> / \r\n<Eqpt::SlotId> : <Eqpt::SVlan> : <Eqpt::CVlan> )\r\n                           Possible values:\r\n                           - slot-vlan             : slot unstacked\r\n                           - slot-stacked          : slot stacked\r\n                           Field type <Eqpt::RackId>\r\n                           - the rack number\r\n                           Field type <Eqpt::ShelfId>\r\n                           - the shelf number\r\n                           Field type <Eqpt::SlotId>\r\n                           - the LT slot number\r\n                           Field type <Eqpt::UnstackedVlan>\r\n                           - unstacked vlan id\r\n                           Field type <Eqpt::SVlan>\r\n                           - service vlan id\r\n                           Field type <Eqpt::CVlan>\r\n                           - customer vlan id\r\n\r\npush                       specify the outgoing label\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Drouter::OutLabel>\r\n                           Format:\r\n                           - Out Label\r\n                           - range: [1...1048575]\r\n\r\n[no] nexthopaddrtype       specify the type of next hop IP address\r\n                           optional parameter with default value: \"ipv4\"\r\n\r\n                           Parameter type: <Drouter::IpAddressType>\r\n                           Format:\r\n                           ( ipv4\r\n                           | ipv6 )\r\n                           Possible values:\r\n                           - ipv4                  : ipv4\r\n                           - ipv6                  : ipv6\r\n\r\nnexthop                    Next hop IP address\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Ip::V4AddressHex>\r\n                           Format:\r\n                           - IPv4-address\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,48 @@
+help configure dist-router sdp
+SDP CONFIGURATION COMMAND
+=========================
+
+Command Description
+-------------------
+
+This command allows the operator to configure an SDP(typically corresponding to 
+an MPLS tunnel).
+
+
+User Level
+----------
+
+The command can be accessed by operators with drouter privileges, and executed 
+by operators with drouter privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure dist-router ( no sdp (sdp-id) ) | ( sdp (sdp-id) lsp-name 
+<Drouter::MplsLspName> )
+
+Command Parameters
+------------------
+
+Table "SDP Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(sdp-id)                   SDP Identifier
+
+Table "SDP Configuration Command" Command Parameters
+
+Parameter                  Description
+
+lsp-name                   LSP name to set the LSP list
+                           mandatory parameter
+
+                           Parameter type: <Drouter::MplsLspName>
+                           Format:
+                           - LSP name
+                           - range: [a-zA-Z0-9-_.]
+                           - length: 1<=x<=32 
+
+
+DS-LIN-TEST-01:automationuser>#

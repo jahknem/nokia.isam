@@ -1,0 +1,5 @@
+help configure service vpls spoke-sdp bgp igmp-s
+nooping vlan-dot1q-ety
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,31 @@
+{
+  "title": "IGMP VLAN SYSTEM CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the IGMP parameters on a per Vlan \nbasis.",
+  "user_level": "The command can be accessed by operators with igmp privileges, and executed by \noperators with igmp privileges.",
+  "syntax": "> configure mcast-control ipv4 ( no vlan (vlan-id) ) | ( vlan (vlan-id) netw-igmp-version <Igmp::VlanV3ProcessStatus> [ no v3-max-num-rec | v3-max-num-rec <Igmp::V3MaxNumRecordReport> ] )",
+  "resource_parameters": [
+    {
+      "name": "(vlan-id)",
+      "description": "index of the system vlan"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "netw-igmp-version",
+      "description": "IGMP version of the protocol mandatory parameter",
+      "type": "<Igmp::VlanV3ProcessStatus>",
+      "format": "( 2                            | 3 )",
+      "values": [
+        "2                     : IGMP version2",
+        "3                     : IGMP version3"
+      ]
+    },
+    {
+      "name": "[no] v3-max-num-rec",
+      "description": "max num of group records in one IGMPv3 report (2 exp N) optional parameter with default value: 3 - max num of group records in one IGMPv3 or MLDv2 report (2 exp N) - range: [0...10]",
+      "type": "<Igmp::V3MaxNumRecordReport>",
+      "default": "3"
+    }
+  ],
+  "raw": "help configure mcast-control ipv4 vlan\r\nIGMP VLAN SYSTEM CONFIGURATION COMMAND\r\n======================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the IGMP parameters on a per Vlan \r\nbasis.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with igmp privileges, and executed by \r\noperators with igmp privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure mcast-control ipv4 ( no vlan (vlan-id) ) | ( vlan (vlan-id) \r\nnetw-igmp-version <Igmp::VlanV3ProcessStatus> [ no v3-max-num-rec | \r\nv3-max-num-rec <Igmp::V3MaxNumRecordReport> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"IGMP Vlan System Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(vlan-id)                  index of the system vlan\r\n\r\nTable \"IGMP Vlan System Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nnetw-igmp-version          IGMP version of the protocol\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Igmp::VlanV3ProcessStatus>\r\n                           Format:\r\n                           ( 2\r\n                           | 3 )\r\n                           Possible values:\r\n                           - 2                     : IGMP version2\r\n                           - 3                     : IGMP version3\r\n\r\n[no] v3-max-num-rec        max num of group records in one IGMPv3 report (2 exp \r\nN)\r\n                           optional parameter with default value: 3\r\n\r\n                           Parameter type: <Igmp::V3MaxNumRecordReport>\r\n                           Format:\r\n                           - max num of group records in one IGMPv3 or MLDv2 \r\nreport (2 exp N)\r\n                           - range: [0...10]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,9 @@
+{
+  "title": "",
+  "description": "",
+  "user_level": "",
+  "syntax": "",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure qos upstr-prot-dsl\r\nQOS HANDLING OF UPSTREAM PROTOCOLS(ARP, PPPOE, DHCPV4/V6,ND AND MLD) FOR DSL \r\nLT'S CONFIGURATION COMMAND\r\n================================================================================\r\n=======================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the QoS handling of upstream \r\nprotocols(ARP, PPPoE, DHCPv4/v6,ND and MLD) for DSL LT's.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by \r\noperators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos upstr-prot-dsl [ [ no ] enable ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS handling of upstream protocols(ARP, PPPoE, DHCPv4/v6,ND and MLD) for \r\nDSL LT's Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] enable                Enable QoS handling of upstream protocols\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

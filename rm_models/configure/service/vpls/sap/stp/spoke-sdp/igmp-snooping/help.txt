@@ -1,0 +1,5 @@
+help configure service vpls sap stp spoke-sdp ig
+mp-snooping
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

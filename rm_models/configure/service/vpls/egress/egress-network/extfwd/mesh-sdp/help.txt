@@ -1,0 +1,13 @@
+help configure service vpls egress egress-networ
+k extfwd mesh-sdp
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 23:46:13 major alarm occurred for ip-addr 192.168.222.10  : Successful Management login, TimeStamp : 25/10/25 23:46:12 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 23:46:13 major alarm cleared for ip-addr 192.168.222.10  : Successful Management login, TimeStamp : 25/10/25 23:45:58 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

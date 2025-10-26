@@ -1,0 +1,32 @@
+{
+  "title": "CAGE MODE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure SLOT cage mode:\n  - The slot index of the cage\n  - The number of the sfp cage\n  - The index of rssi profile which would be configured on cage.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure interface cage (position) [ operational-mode <Eqpt::AsamCageMode> ]",
+  "resource_parameters": [
+    {
+      "name": "(position)",
+      "description": "the physical cage position"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "operational-mode",
+      "description": "oper-mode of the cage optional parameter",
+      "type": "<Eqpt::AsamCageMode>",
+      "format": "( not-set                            | gpon                            | xgs                            | mpm-gpon-xgs                            | dual-gpon                            | u-ngpon                            | twenty-five-g                            | ng-pon2                            | mpm-gpon-xgpon )",
+      "values": [
+        "not-set               : cage mode set to not set",
+        "gpon                  : cage mode set to gpon",
+        "xgs                   : cage mode set to xgs",
+        "mpm-gpon-xgs          : cage mode set to mpm-gpon-xgs",
+        "dual-gpon             : cage mode set to dual-gpon",
+        "u-ngpon               : cage mode set to u-ngpon",
+        "twenty-five-g         : cage mode set to twentyfiveg",
+        "ng-pon2               : cage mode set to ng-pon2",
+        "mpm-gpon-xgpon        : cage mode set to mpm-gpon-xgpon"
+      ]
+    }
+  ],
+  "raw": "help configure interface cage\r\nCAGE MODE CONFIGURATION COMMAND\r\n===============================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure SLOT cage mode:\r\n  - The slot index of the cage\r\n  - The number of the sfp cage\r\n  - The index of rssi profile which would be configured on cage.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure interface cage (position) [ operational-mode <Eqpt::AsamCageMode> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Cage mode configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(position)                 the physical cage position\r\n\r\nTable \"Cage mode configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\noperational-mode           oper-mode of the cage\r\n                           optional parameter\r\n\r\n                           Parameter type: <Eqpt::AsamCageMode>\r\n                           Format:\r\n                           ( not-set\r\n                           | gpon\r\n                           | xgs\r\n                           | mpm-gpon-xgs\r\n                           | dual-gpon\r\n                           | u-ngpon\r\n                           | twenty-five-g\r\n                           | ng-pon2\r\n                           | mpm-gpon-xgpon )\r\n                           Possible values:\r\n                           - not-set               : cage mode set to not set\r\n                           - gpon                  : cage mode set to gpon\r\n                           - xgs                   : cage mode set to xgs\r\n                           - mpm-gpon-xgs          : cage mode set to \r\nmpm-gpon-xgs\r\n                           - dual-gpon             : cage mode set to dual-gpon\r\n                           - u-ngpon               : cage mode set to u-ngpon\r\n                           - twenty-five-g         : cage mode set to \r\ntwentyfiveg\r\n                           - ng-pon2               : cage mode set to ng-pon2\r\n                           - mpm-gpon-xgpon        : cage mode set to \r\nmpm-gpon-xgpon\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

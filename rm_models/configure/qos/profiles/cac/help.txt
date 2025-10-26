@@ -1,0 +1,105 @@
+help configure qos profiles cac
+QOS CAC PROFILE CONFIGURATION COMMAND
+=====================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a connection admission control 
+(CAC) profile. CAC profiles are used primarily for multicast video admission 
+control. CAC profiles can be attached to subscriber interfaces. The scope of a 
+CAC profile is a DSL link (and not a PVC), regardless of the number of PVCs on 
+a DSL link.
+
+The system derives the line rate from the physical interfaces and calculates an 
+estimate of the available Ethernet bandwidth using configurable overhead 
+factors. The line rate taken into account may be the guaranteed sync rate or 
+the actual line rate in case of DSL, based on a global configuration setting.
+
+From this bandwidth, a part can be reserved for voice and data applications and 
+the remaining part will be kept by the system as the available bandwidth for 
+multicast video. Only preconfigured multicast streams are considered for CAC. 
+Note that unicast video (regardless of whether it is premium content or generic 
+Internet streaming video) is ignored by the CAC function.
+
+The maximum bandwidth that video will occupy can be further confined using the 
+maximum multicast bandwidth 'max-mcast-bandwidth' parameter.
+
+CAC profiles are applicable to line cards, but not to SHub/IHub interfaces.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles ( no cac (name) ) | ( cac (name) res-voice-bandwidth 
+<Qos::BandWidthKBPS> max-mcast-bandwidth <Qos::BandWidthKBPS> 
+res-data-bandwidth <Qos::BandWidthKBPS> [ no cac-type | cac-type 
+<Qos::QosCacType> ] )
+
+Command Parameters
+------------------
+
+Table "QoS CAC Profile Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+Table "QoS CAC Profile Configuration Command" Command Parameters
+
+Parameter                  Description
+
+res-voice-bandwidth        reserved bandwidth for the voice services
+                           mandatory parameter
+
+                           Parameter type: <Qos::BandWidthKBPS>
+                           Format:
+                           - interface bandwidth
+                           - unit: kbps
+                           - range: [0...2147483647]
+
+max-mcast-bandwidth        maximum allowed bandwidth for multicast and unicast 
+video service
+                           mandatory parameter
+
+                           Parameter type: <Qos::BandWidthKBPS>
+                           Format:
+                           - interface bandwidth
+                           - unit: kbps
+                           - range: [0...2147483647]
+
+res-data-bandwidth         reserved bandwidth for all data services
+                           mandatory parameter
+
+                           Parameter type: <Qos::BandWidthKBPS>
+                           Format:
+                           - interface bandwidth
+                           - unit: kbps
+                           - range: [0...2147483647]
+
+[no] cac-type              cac-profile type
+                           optional parameter with default value: "dsl-cac"
+
+                           Parameter type: <Qos::QosCacType>
+                           Format:
+                           ( dsl-cac
+                           | pon-cac
+                           | generic-pon-cac )
+                           Possible values:
+                           - dsl-cac               : cac profile for dsl links
+                           - pon-cac               : cac profile for pon 
+interfaces
+                                                     obsolete alternative 
+replaced by generic-pon-cac
+                           - generic-pon-cac       : cac profile for epon gpon 
+and ngpon2 interfaces
+
+
+DS-LIN-TEST-01:automationuser>#

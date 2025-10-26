@@ -1,0 +1,27 @@
+== After change: upstream-queue 0 bandwidth-profile GPONqpp200Mbps ==
+DS-LIN-TEST-01:automationuser># info configure qos interface 1/1/5/1/6/1/1
+configure qos
+#-------------------------------------------------------------------------------
+echo "qos"
+#-------------------------------------------------------------------------------
+interface 1/1/5/1/6/1/1
+  ...
+  upstream-queue 0
+    bandwidth-profile name:GPONqpp200Mbps
+    bandwidth-sharing uni-sharing
+  exit
+  ...
+
+== After revert: upstream-queue 0 bandwidth-profile GPONqpp100Mbps ==
+DS-LIN-TEST-01:automationuser># info configure qos interface 1/1/5/1/6/1/1
+configure qos
+#-------------------------------------------------------------------------------
+echo "qos"
+#-------------------------------------------------------------------------------
+interface 1/1/5/1/6/1/1
+  ...
+  upstream-queue 0
+    bandwidth-profile name:GPONqpp100Mbps
+    bandwidth-sharing uni-sharing
+  exit
+  ...

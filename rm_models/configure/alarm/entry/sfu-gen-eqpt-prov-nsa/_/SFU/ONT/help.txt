@@ -1,0 +1,13 @@
+help configure alarm entry sfu-gen-eqpt-prov-nsa
+ ! SFU ONT
+                                                                                 ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 18:58:30 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 18:58:27 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 18:58:30 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 18:58:15 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

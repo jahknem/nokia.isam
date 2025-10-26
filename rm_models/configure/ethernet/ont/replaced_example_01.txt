@@ -1,0 +1,28 @@
+-- Replaced example (single-command style): change two fields then revert
+
+DS-LIN-TEST-01:automationuser># info configure ethernet ont 1/1/5/1/1/1/1
+... (before snapshot)
+
+-- single-command to set both fields (replaced example):
+DS-LIN-TEST-01:automationuser># configure ethernet ont 1/1/5/1/1/1/1 cust-info REPL-EX auto-detect 10baset-fd
+DS-LIN-TEST-01:automationuser>configure>ethernet>ont>1/1/5/1/1/1/1#
+
+-- verify after change:
+DS-LIN-TEST-01:automationuser># info configure ethernet ont 1/1/5/1/1/1/1
+ont 1/1/5/1/1/1/1
+  cust-info REPL-EX
+  auto-detect 10baset-fd
+  admin-state up
+exit
+
+-- revert to baseline:
+DS-LIN-TEST-01:automationuser># configure ethernet ont 1/1/5/1/1/1/1 cust-info Y654321 auto-detect auto
+DS-LIN-TEST-01:automationuser>configure>ethernet>ont>1/1/5/1/1/1/1#
+
+-- final verify restored:
+DS-LIN-TEST-01:automationuser># info configure ethernet ont 1/1/5/1/1/1/1
+ont 1/1/5/1/1/1/1
+  cust-info Y654321
+  auto-detect auto
+  admin-state up
+exit

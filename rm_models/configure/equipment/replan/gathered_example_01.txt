@@ -1,0 +1,1 @@
+DS-LIN-TEST-01:automationuser># info configure equipment replan

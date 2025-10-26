@@ -1,0 +1,59 @@
+help configure qos profiles marker d1p-dscp
+QOS DOT1P AND SINGLE DSCP MARKER CONFIGURATION COMMAND
+======================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a marker for Dot1P and single 
+DSCP.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles marker ( no d1p-dscp (name) ) | ( d1p-dscp (name) 
+default-dscp <Qos::DscpToDot1PAlignmentDscpIndex> default-dot1p 
+<Qos::ExtVlanSysPrio> )
+
+Command Parameters
+------------------
+
+Table "QoS Dot1P and Single DSCP Marker Configuration Command" Resource 
+Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+Table "QoS Dot1P and Single DSCP Marker Configuration Command" Command 
+Parameters
+
+Parameter                  Description
+
+default-dscp               the default DSCP value to be applied on all frames
+                           mandatory parameter
+
+                           Parameter type: <Qos::DscpToDot1PAlignmentDscpIndex>
+                           Format:
+                           - the DSCP value
+                           - range: [0...63]
+
+default-dot1p              the default dot-1p bit value to be applied on all 
+frames
+                           mandatory parameter
+
+                           Parameter type: <Qos::ExtVlanSysPrio>
+                           Format:
+                           - the dot-1p bit value
+                           - range: [0...7]
+
+
+DS-LIN-TEST-01:automationuser>#

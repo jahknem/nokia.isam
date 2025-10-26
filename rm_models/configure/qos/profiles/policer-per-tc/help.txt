@@ -1,0 +1,37 @@
+help configure qos profiles policer-per-tc
+QOS POLICER PER TC PROFILE CONFIGURE
+====================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure policer per tc profile. .
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles ( no policer-per-tc (name) ) | ( policer-per-tc (name) 
+)
+
+Command Parameters
+------------------
+
+Table "QoS Policer Per Tc Profile Configure" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:37:56 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

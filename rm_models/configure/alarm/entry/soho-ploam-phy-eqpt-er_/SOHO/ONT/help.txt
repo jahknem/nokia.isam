@@ -1,0 +1,5 @@
+help configure alarm entry soho-ploam-phy-eqpt-e
+r! SOHO ONT
+                                                                                 ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

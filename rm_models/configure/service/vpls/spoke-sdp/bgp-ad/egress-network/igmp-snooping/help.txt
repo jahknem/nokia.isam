@@ -1,0 +1,9 @@
+help configure service vpls spoke-sdp bgp-ad egr
+ess-network igmp-snooping
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/26 12:33:39 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

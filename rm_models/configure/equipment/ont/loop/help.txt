@@ -1,0 +1,71 @@
+help configure equipment ont loop
+ONT INTERFACE CONFIGURATION COMMAND
+===================================
+
+Command Description
+-------------------
+
+This command allows the operator to create and configure the ONT parameters.
+
+loop-detect - when default value no-control is set, OLT won't care about ONT 
+loop detect, when disable is set, ONT won't detect loop, when enable is set , 
+ONT will loop detect
+
+loop-portautoshutoff - when default value enable is set, if ONT detect loop, it 
+will autoly shut down the port, when disable is set, ONT won't auto shutdown
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment ont loop (ont-idx) [ no loop-detect | loop-detect 
+<Gpon::LoopDetectAdmin> ] [ no loop-portautoshut | loop-portautoshut 
+<Gpon::LoopDetectAutoShut> ]
+
+Command Parameters
+------------------
+
+Table "ONT Interface Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(ont-idx)                  ONT index
+
+Table "ONT Interface Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] loop-detect           loop detect admin state settings for this ONT
+                           optional parameter with default value: "no-control"
+
+                           Parameter type: <Gpon::LoopDetectAdmin>
+                           Format:
+                           ( no-control
+
+                           | disable
+                           | enable )
+                           Possible values:
+                           - no-control            : loop detect no control
+                           - disable               : loop detect disable
+                           - enable                : loop detect enable
+
+[no] loop-portautoshut     loop detect auto shutoff settings for this ONT
+                           optional parameter with default value: "enable"
+
+                           Parameter type: <Gpon::LoopDetectAutoShut>
+                           Format:
+                           ( disable
+                           | enable )
+                           Possible values:
+                           - disable               : loop detect disable
+                           - enable                : loop detect enable
+
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,120 @@
+help configure ntp ont
+CONFIGURE NTP PARAMETERS ON A SPECIFIC ONT
+==========================================
+
+Command Description
+-------------------
+
+This command sets the NTP parameters on a specific ONT,in case of 
+server1-ip-addr, server2-ip-addr and server3-ip-addr, following range of 
+ip-addresses are not allowed:127.0.0.0 to 127.255.255.255 (loopback)
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+
+--------------
+
+The command has the following syntax:
+> configure ntp ( no ont (ont-idx) ) | ( ont (ont-idx) [ no client-state | 
+client-state <Gpon::ClientState> ] [ no config-mode | config-mode 
+<Gpon::ConfigMode> ] [ no server1-ip-addr | server1-ip-addr <Gpon::Ipaddr> ] [ 
+no server2-ip-addr | server2-ip-addr <Gpon::Ipaddr> ] [ no server3-ip-addr | 
+server3-ip-addr <Gpon::Ipaddr> ] [ no oper-mode | oper-mode <Gpon::OperMode> ] 
+[ no key-identifier | key-identifier <Gpon::KeyIdentifier> ] [ no key | key <Gpo
+n::OntNtpKey> ] )
+
+Command Parameters
+------------------
+
+Table "Configure NTP parameters on a specific ONT" Resource Parameters
+
+Resource Identifier        Description
+
+(ont-idx)                  identification of the ont
+
+Table "Configure NTP parameters on a specific ONT" Command Parameters
+
+Parameter                  Description
+
+[no] client-state          indicates whether ntp client should be on or off
+                           optional parameter with default value: "off"
+
+                           Parameter type: <Gpon::ClientState>
+                           Format:
+                           ( on
+                           | off )
+                           Possible values:
+                           - on                    : indicates ntp Client On
+                           - off                   : indicates ntp Client Off
+
+[no] config-mode           used to designate whether dhcp is designated as the 
+method by which the ont obtains ntp server addresses
+                           optional parameter with default value: "dhcp"
+
+                           Parameter type: <Gpon::ConfigMode>
+                           Format:
+                           ( dhcp
+                           | manual )
+                           Possible values:
+                           - dhcp                  : dhcp mode
+                           - manual                : manual
+
+[no] server1-ip-addr       ip address of the 1st ntp server.
+                           optional parameter with default value: "0.0.0.0"
+
+                           Parameter type: <Gpon::Ipaddr>
+                           Format:
+                           - IPv4-address
+
+[no] server2-ip-addr       ip address of the second ntp server.
+                           optional parameter with default value: "0.0.0.0"
+
+                           Parameter type: <Gpon::Ipaddr>
+                           Format:
+                           - IPv4-address
+
+[no] server3-ip-addr       ip Address of the third ntp server
+                           optional parameter with default value: "0.0.0.0"
+
+                           Parameter type: <Gpon::Ipaddr>
+                           Format:
+                           - IPv4-address
+
+[no] oper-mode             ntp mode of operation
+                           optional parameter with default value: "unicast"
+
+                           Parameter type: <Gpon::OperMode>
+                           Format:
+                           ( unicast
+                           | multicast
+                           | broadcast )
+                           Possible values:
+                           - unicast               : unicast mode of operation
+                           - multicast             : multicast mode of operation
+                           - broadcast             : broadcast mode of operation
+
+[no] key-identifier        specifies the key that should be used by the ntp 
+server 
+                           optional parameter with default value:  0
+
+                           Parameter type: <Gpon::KeyIdentifier>
+                           Format:
+                           - key that should be used by the ntp server
+                           - range: [0...65535]
+
+[no] key                   specifies the actual key used by the ont
+                           optional parameter with default value: ""
+
+                           Parameter type: <Gpon::OntNtpKey>
+                           Format:
+                           - actual key used by the ont
+                           - length: x<=16 
+
+
+DS-LIN-TEST-01:automationuser>#

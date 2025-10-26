@@ -1,0 +1,94 @@
+module: isam_alarm_suppression
+short_description: Resource module to configure alarm suppression
+description:
+- Configures Suppression Alarm filter parameters. Without valid interface and alarmid,
+  suppression filter cannot be activated.
+- Supports configuration of interface, alarmid, status and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+options:
+  config:
+    description:
+    - A list of alarm suppression configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier
+      interface:
+        type: str
+        description:
+        - suppression filter interface
+        - 'Possible values: C(lt) - lt-slot Field type <Eqpt::RackId>; C(the rack
+          number Field type <Eqpt) - :ShelfId>; C(the shelf number Field type <Eqpt)
+          - :SlotId>'
+        choices:
+        - lt
+        - the rack number Field type <Eqpt
+        - the shelf number Field type <Eqpt
+        - the LT slot number
+      alarmid:
+        type: str
+        description:
+        - alarmType
+        - 'Possible values: C(board-missing) - board detected after planning - now
+          missing; C(board-init) - board initialisation failure'
+        choices:
+        - board-missing
+        - board-init
+      status:
+        type: str
+        description:
+        - 'filter status with default value: "not-used"'
+        - 'Possible values: C(not-used) - deactivate the configured alarm filter;
+          C(used) - activate the configured alarm filter'
+        default: not-used
+        choices:
+        - not-used
+        - used
+      threshold:
+        type: str
+        description:
+        - 'the threshold value of the considered alarm filter with default value:
+          "1" - the threshold value of the considered alarm filter - range: [1...100]
+          DS-LIN-TEST-01:automationuser>#'
+        default: '1'
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure alarm suppression)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

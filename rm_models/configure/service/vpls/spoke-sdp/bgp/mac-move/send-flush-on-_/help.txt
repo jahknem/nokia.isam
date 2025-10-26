@@ -1,0 +1,5 @@
+help configure service vpls spoke-sdp bgp mac-mo
+ve send-flush-on-*
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

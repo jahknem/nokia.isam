@@ -1,0 +1,103 @@
+help configure alarm entry
+ALARM ENTRY CONFIGURATION COMMAND
+=================================
+
+Command Description
+-------------------
+
+This command allows the operator to manage local alarm entries.
+
+
+User Level
+----------
+
+The command can be accessed by operators with alarm privileges, and executed by 
+operators with alarm privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure alarm entry (index) [ no severity | severity <Alarm::alarmSeverity> 
+] [ [ no ] service-affecting ] [ [ no ] reporting ] [ [ no ] logging ]
+
+Command Parameters
+------------------
+
+Table "Alarm Entry Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(index)                    alarm type
+
+Table "Alarm Entry Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] severity              assign a severity level to this alarm
+                           optional parameter with default value: "minor"
+
+                           Parameter type: <Alarm::alarmSeverity>
+                           Format:
+                           ( indeterminate
+                           | warning
+                           | minor
+                           | major
+                           | critical
+                           | ignore )
+                           Possible values:
+                           - indeterminate         : not a definite known 
+severity level
+                           - warning               : just to inform as a warning
+                           - minor                 : not service affecting
+                           - major                 : service affecting
+                           - critical              : service breaking
+                           - ignore                : alarm is not processed by 
+the system
+
+[no] service-affecting     make this alarm service affecting
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+
+[no] reporting             enable reporting of this alarm
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] logging               enable logging of this alarm
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+
+Table "Alarm Entry Configuration Command" Display Parameters
+
+Specific Information:
+
+Parameter                  Description
+
+ category                  category of an alarm
+                           This element is always shown.
+
+                           parameter type: <Alarm::category>
+                           ( communications
+                           | qos
+                           | processing-error
+                           | equipment
+                           | environmental )
+                           Possible values:
+                           - communications        : communications related alar
+ms
+                           - qos                   : QoS related alarms
+                           - processing-error      : processing failure related 
+alarms
+                           - equipment             : equipment related alarms
+                           - environmental         : environmental related 
+alarms
+
+DS-LIN-TEST-01:automationuser>#

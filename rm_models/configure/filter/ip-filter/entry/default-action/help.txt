@@ -1,0 +1,5 @@
+help configure filter ip-filter entry default-ac
+tion
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

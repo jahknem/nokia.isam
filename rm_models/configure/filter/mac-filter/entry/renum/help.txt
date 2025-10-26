@@ -1,0 +1,4 @@
+help configure filter mac-filter entry renum
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

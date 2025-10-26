@@ -1,0 +1,141 @@
+help configure equipment ont slot
+ONT CARD CONFIGURATION COMMAND
+==============================
+
+Command Description
+-------------------
+
+This command allows the operator to create and configure the ONT Card 
+parameters.
+
+Prior to entering this command the ONT must have been already created.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment ont ( no slot (ont-slot-idx) ) | ( slot (ont-slot-idx) 
+planned-card-type <Gpon::PlndCardType> plndnumdataports 
+<Gpon::PlndNumDataPorts> plndnumvoiceports <Gpon::PlndNumVoicePorts> [ no 
+port-type | port-type <Gpon::PortType> ] [ no transp-mode-rem | transp-mode-rem 
+<Gpon::TranspMode> ] [ no no-mcast-control | no-mcast-control 
+<Gpon::NoMcastCtrl> ] [ no admin-state | admin-state <Gpon::AdminStatus> ] )
+
+Command Parameters
+------------------
+
+Table "ONT Card Configuration Command" Resource Parameters
+
+
+Resource Identifier        Description
+
+(ont-slot-idx)             identification of the ont-slot
+
+Table "ONT Card Configuration Command" Command Parameters
+
+Parameter                  Description
+
+planned-card-type          planned card type
+                           mandatory parameter
+
+                           Parameter type: <Gpon::PlndCardType>
+                           Format:
+                           ( ethernet
+                           | 10_100base
+                           | pots
+                           | vdsl2pots
+                           | vdsl2
+                           | ethpots
+                           | video
+                           | veip
+                           | ds1
+                           | e1
+                           | hpna
+                           | moca
+                           | eth_adaptive )
+                           Possible values:
+                           - ethernet              : 10/100/1000/10000 base-t
+                           - 10_100base            : 10/100 base-t
+                           - pots                  : pots
+                           - vdsl2pots             : vdsl2/pots combo
+                           - vdsl2                 : vdsl2
+                           - ethpots               : ethernet/pots combo
+                           - video                 : video
+                           - veip                  : VEIP card
+                           - ds1                   : ds1
+                           - e1                    : e1
+                           - hpna                  : hpna
+                           - moca                  : moca
+                           - eth_adaptive          : Self-adaptive between PPTP 
+Ethernet and VEIP
+
+plndnumdataports           planned number of data ports
+                           mandatory parameter
+
+                           Parameter type: <Gpon::PlndNumDataPorts>
+                           Format:
+                           - planned number of data ports
+                           - range: [0...16]
+
+plndnumvoiceports          planned number of voice ports
+                           mandatory parameter
+
+                           Parameter type: <Gpon::PlndNumVoicePorts>
+                           Format:
+                           - planned number of voice ports
+                           - range: [0...24]
+
+[no] port-type             port type of the line card
+                           optional parameter with default value: "uni"
+
+                           Parameter type: <Gpon::PortType>
+                           Format:
+                           ( uni
+                           | nni )
+                           Possible values:
+                           - uni                   : uni interface
+                           - nni                   : nni interface
+
+[no] transp-mode-rem       transparent mode of the line card
+                           optional parameter with default value: "disable"
+
+                           Parameter type: <Gpon::TranspMode>
+                           Format:
+                           ( disable
+                           | enable )
+                           Possible values:
+                           - disable               : disable transparent
+                           - enable                : enable  transparent
+
+[no] no-mcast-control      used to control whether the mcast related OMCI 
+message should be sent to ONT 
+                           optional parameter with default value: "disable"
+
+                           Parameter type: <Gpon::NoMcastCtrl>
+                           Format:
+                           ( disable
+                           | enable )
+                           Possible values:
+                           - disable               : disable igmp NoMcastCtrl
+                           - enable                : enable igmp NoMcastCtrl
+
+[no] admin-state           administrative status of the interface
+                           optional parameter with default value: "up"
+
+                           Parameter type: <Gpon::AdminStatus>
+                           Format:
+                           ( down
+                           | up )
+                           Possible values:
+                           - down                  : set the admin-state to down
+                           - up                    : set the admin-state to up
+
+
+DS-LIN-TEST-01:automationuser>#

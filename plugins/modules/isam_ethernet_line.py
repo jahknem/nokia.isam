@@ -13,8 +13,8 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 DOCUMENTATION = """
-module: isam_equipment
-short_description: 'Manages equipment attributes of nokia isam.'
+module: isam_ethernet_line
+short_description: 'Manages ethernet line attributes of Nokia ISAM.'
 description: |
   configure
     ethernet
@@ -334,7 +334,6 @@ parsed:
     This output will always be in the same format as the
     module argspec.
 """
-import debugpy
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.ethernet_line.ethernet_line import (
@@ -351,9 +350,6 @@ def main():
 
     :returns: the result form module invocation
     """
-    debugpy.listen(("localhost",3000))
-    debugpy.wait_for_client()
-    debugpy.breakpoint()
     module = AnsibleModule(
         argument_spec=Ethernet_lineArgs.argument_spec,
         mutually_exclusive=[["config", "running_config"]],

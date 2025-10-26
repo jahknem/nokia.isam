@@ -1,0 +1,131 @@
+module: isam_equipment_ont_slot
+short_description: Resource module to configure equipment ont slot
+description:
+- This command allows the operator to create and configure the ONT Card parameters.
+  Prior to entering this command the ONT must have been already created.
+- Supports configuration of planned card type, plndnumdataports, plndnumvoiceports
+  and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure equipment ont ()'
+options:
+  config:
+    description:
+    - A list of equipment ont slot configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (ont-slot-idx) - identification of the ont-slot
+      planned_card_type:
+        type: str
+        description:
+        - planned card type mandatory parameter
+        - 'Possible values: C(ethernet) - 10/100/1000/10000 base-t; C(10_100base)
+          - 10/100 base-t; C(pots) - pots; C(vdsl2pots) - vdsl2/pots combo; C(vdsl2)
+          - vdsl2; C(ethpots) - ethernet/pots combo; C(video) - video; C(veip) - VEIP
+          card; C(ds1) - ds1; C(e1) - e1; C(hpna) - hpna; C(moca) - moca; C(eth_adaptive)
+          - Self-adaptive between PPTP Ethernet and VEIP'
+        choices:
+        - ethernet
+        - 10_100base
+        - pots
+        - vdsl2pots
+        - vdsl2
+        - ethpots
+        - video
+        - veip
+        - ds1
+        - e1
+        - hpna
+        - moca
+        - eth_adaptive
+      plndnumdataports:
+        type: str
+        description:
+        - 'planned number of data ports mandatory parameter - planned number of data
+          ports - range: [0...16]'
+      plndnumvoiceports:
+        type: str
+        description:
+        - 'planned number of voice ports mandatory parameter - planned number of voice
+          ports - range: [0...24]'
+      port_type:
+        type: str
+        description:
+        - 'port type of the line card with default value: "uni"'
+        - 'Possible values: C(uni) - uni interface; C(nni) - nni interface'
+        default: uni
+        choices:
+        - uni
+        - nni
+      transp_mode_rem:
+        type: str
+        description:
+        - 'transparent mode of the line card with default value: "disable"'
+        - 'Possible values: C(disable) - disable transparent; C(enable) - enable  transparent'
+        default: disable
+        choices:
+        - disable
+        - enable
+      no_mcast_control:
+        type: str
+        description:
+        - 'used to control whether the mcast related OMCI message should be sent to
+          ONT with default value: "disable"'
+        - 'Possible values: C(disable) - disable igmp NoMcastCtrl; C(enable) - enable
+          igmp NoMcastCtrl'
+        default: disable
+        choices:
+        - disable
+        - enable
+      admin_state:
+        type: str
+        description:
+        - 'administrative status of the interface with default value: "up"'
+        - 'Possible values: C(down) - set the admin-state to down; C(up) - set the
+          admin-state to up'
+        default: up
+        choices:
+        - down
+        - up
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure equipment ont slot)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

@@ -1,0 +1,50 @@
+tree configure qos profiles marker
+marker 
+|  
++--d1p 
+|  |  
+|  +--default-dot1p 
+|     
++--dscp 
+|  |  
+|  +--default-dscp 
+|  |  
+|  *--(alignment) 
+|     
++--dscp-contract 
+|  |  
+|  *--(alignment) 
+|  |  
+|  +--codepoint 
+|     |  
+|     *--dscp-value 
+|        
++--d1p-dscp-contract 
+|  |  
+|  +--dot1p-value 
+|  |  
+|  *--(alignment) 
+|  |  
+|  +--codepoint 
+|     |  
+|     *--dscp-value 
+|        
++--d1p-dscp 
+|  |  
+|  +--default-dscp 
+|  |  
+|  +--default-dot1p 
+|     
++--d1p-alignment 
+|  |  
+|  +--(alignment) 
+|  |  
+|  *--dscp-pbit-prof 
+|     
++--dot1p-remark 
+   |  
+   +--dot1p-value 
+      |  
+      *--remark-value 
+         
+DS-LIN-TEST-01:automationuser>#

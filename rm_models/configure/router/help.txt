@@ -1,0 +1,28 @@
+help configure router
+ROUTER CONFIGURATION COMMAND
+============================
+
+Command Description
+-------------------
+
+See IHUB Router Configurations and Routing Protocols Guide for more 
+information. See IHUB MPLS Guide for more information on mpls and ldp. The 
+command can be accessed and executed by operators with service privileges.
+
+
+User Level
+----------
+
+The command can be executed by operators with service privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure router
+
+Command Parameters
+------------------
+
+none
+DS-LIN-TEST-01:automationuser>#

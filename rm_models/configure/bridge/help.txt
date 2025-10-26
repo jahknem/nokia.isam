@@ -1,0 +1,42 @@
+help configure bridge
+BRIDGE GENERAL CONFIGURATION COMMAND
+====================================
+
+Command Description
+-------------------
+
+This command allows the operator to specify the aging time for dynamically 
+learned MAC addresses in the filtering database. The setting is applicable to 
+the entire bridge.
+
+
+User Level
+----------
+
+The command can be accessed by operators with vlan privileges, and executed by 
+operators with vlan privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure bridge [ no ageing-time | ageing-time <Vlan::AgingTime> ]
+
+Command Parameters
+------------------
+
+Table "Bridge General Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] ageing-time           ageing timeout for dynamic mac entries
+                           optional parameter with default value: 300
+
+                           Parameter type: <Vlan::AgingTime>
+                           Format:
+                           - ageing time
+                           - unit: sec
+                           - range: [10...1000000]
+
+
+DS-LIN-TEST-01:automationuser>#

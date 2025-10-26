@@ -1,0 +1,70 @@
+help configure l2uni ont tc-layer-threshold
+TC-LAYER PERFORMANCE MONITORING COUNTER THRESHOLDS CONFIGURATION COMMAND FOR 
+ONTL2UNI
+================================================================================
+=====
+
+Command Description
+-------------------
+
+This command allows the operator to enable configuration of performance 
+Monitoring counter thresholds for ONTL2UNI.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure l2uni ont tc-layer-threshold (if-index) [ no dropped-frames-up | 
+dropped-frames-up <Gpon::TcaThresholdValue> ] [ no dropped-frames-dn | 
+dropped-frames-dn <Gpon::TcaThresholdValue> ]
+
+Command Parameters
+------------------
+
+Table "TC-layer Performance Monitoring Counter Thresholds Configuration Command 
+for ONTL2UNI" Resource Parameters
+
+Resource Identifier        Description
+
+(if-index)                 interface index of the port
+
+Table "TC-layer Performance Monitoring Counter Thresholds Configuration Command 
+for ONTL2UNI" Command Parameters
+
+Parameter                  Description
+
+[no] dropped-frames-up     tca setting for dropped frames in upstream
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: <Gpon::TcaThresholdValue>
+                           Format:
+                           ( disabled
+                           | <Gpon::TcaThresholdValue> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::TcaThresholdValue>
+                           - tc-layer tca threshold value (4294967295=disabled)
+                           - range: [0...4294967294,4294967295]
+
+[no] dropped-frames-dn     tca setting for dropped frames in downstream
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: <Gpon::TcaThresholdValue>
+                           Format:
+                           ( disabled
+                           | <Gpon::TcaThresholdValue> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::TcaThresholdValue>
+                           - tc-layer tca threshold value (4294967295=disabled)
+                           - range: [0...4294967294,4294967295]
+
+
+DS-LIN-TEST-01:automationuser>#

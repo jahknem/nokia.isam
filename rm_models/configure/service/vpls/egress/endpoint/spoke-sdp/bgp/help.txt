@@ -1,0 +1,9 @@
+help configure service vpls egress endpoint spok
+e-sdp bgp
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/26 00:46:56 major alarm occurred for ip-addr 192.168.222.10  : Successful Management login, 9 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

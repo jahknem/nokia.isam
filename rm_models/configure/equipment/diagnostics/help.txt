@@ -1,0 +1,4 @@
+help configure equipment diagnostics
+                                                                    ^
+command is not complete
+DS-LIN-TEST-01:automationuser>#

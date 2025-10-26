@@ -51,11 +51,22 @@ class InterfacesFacts(object):
            
         if not data:
             data = connection.get("info configure interface port flat")
+            self._module.warn(f"LINES={len(data.splitlines())}")
+            self._module.warn(data[:1000])
 
-        
         # parse native config using the Interfaces template
-        lines = data.splitlines()
-        interfaces_parser = InterfacesTemplate(lines=lines, module=self._module)
+        # the template 'getval' regexes expect lines starting with 'port ...'
+        # but the device output contains 'configure interface port ...'
+        # so strip the leading prefix and ignore non-config lines
+        raw_lines = []
+        for line in data.splitlines():
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue
+            if line.startswith('configure interface '):
+                raw_lines.append(line.replace('configure interface ', '', 1))
+
+        interfaces_parser = InterfacesTemplate(lines=raw_lines, module=self._module)
         parsed = interfaces_parser.parse()
         valued = parsed.values()
         objs = list(valued)
@@ -65,9 +76,8 @@ class InterfacesFacts(object):
 
         params = utils.remove_empties(
             interfaces_parser.validate_config(self.argument_spec, {"config": objs}, redact=True)
-        )
-
-        facts['interfaces'] = params['config']
+        ) or {}
+        facts['interfaces'] = params.get('config') or []
         ansible_facts['ansible_network_resources'].update(facts)
 
         return ansible_facts

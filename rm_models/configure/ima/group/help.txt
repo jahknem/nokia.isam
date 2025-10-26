@@ -1,0 +1,77 @@
+help configure ima group
+IMA GROUP CONFIGURATION COMMANDS
+================================
+
+Command Description
+-------------------
+
+This command allows the operator to manage the IMA group profile.
+
+
+User Level
+----------
+
+The command can be accessed by operators with xdsl privileges, and executed by 
+operators with xdsl privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure ima group (if-index) [ [ no ] activate ] [ [ no ] admin-up ] [ no 
+min-tx-links | min-tx-links <Ima::GroupMinNumTxLinks> ] [ no min-rx-links | 
+min-rx-links <Ima::GroupMinNumRxLinks> ] [ near-end-ima-id <Ima::GroupTxImaId> ]
+
+Command Parameters
+------------------
+
+Table "IMA Group Configuration Commands" Resource Parameters
+
+Resource Identifier        Description
+
+(if-index)                 interface index of the port
+
+Table "IMA Group Configuration Commands" Command Parameters
+
+Parameter                  Description
+
+[no] activate              
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] admin-up              admin status is up
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] min-tx-links          the mininum number of transmit links
+                           optional parameter with default value: 1
+
+                           Parameter type: <Ima::GroupMinNumTxLinks>
+                           Format:
+                           - a mininum number of transmit links required to be 
+active
+                           - range: [1...8]
+
+[no] min-rx-links          the mininum number of receive links
+                           optional parameter with default value: 1
+
+                           Parameter type: <Ima::GroupMinNumRxLinks>
+                           Format:
+                           - a mininum number of receive links required to be 
+active
+                           - range: [1...8]
+
+near-end-ima-id            the imd id used by the near-end ima function
+                           optional parameter
+
+                           Parameter type: <Ima::GroupTxImaId>
+                           Format:
+                           - an imd id used by the near-end ima function
+                           - range: [0...255]
+
+
+DS-LIN-TEST-01:automationuser>#

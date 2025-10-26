@@ -1,0 +1,5 @@
+help configure alarm entry soho-sup-ld-cfg-mism 
+! SOHO ONT
+                                                                                ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

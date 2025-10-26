@@ -1,0 +1,119 @@
+module: isam_equipment_shelf
+short_description: Resource module to configure equipment shelf
+description:
+- 'Configures the shelf. The operator can configure the following parameters: - class:
+  the classification of the shelf. The following shelf classes are supported: -- main-ethernet:
+  supports Ethernet-based traffic. Shelves in this class can contain NT and LT units.
+  There must be at least one shelf of this class in the system. -- ext-ethernet: supports
+  Ethernet-based traffic. Shelves in this class can only contain LT units. - planned-type:
+  the type planned for this shelf. The not-planned parameter indicates that a shelf
+  will not be inserted at this position. - lock: locks or unlocks the shelf. - shelf-mode:
+  the shelf mode. When the shelf mode was changed successfully, the NE will reboot
+  automatically. - description: text that describes the location of the shelf.'
+- Supports configuration of class, planned type, lock and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure equipment shelf ()'
+- Parameter C(extended_lt_slots) is marked as obsolete in device documentation
+options:
+  config:
+    description:
+    - A list of equipment shelf configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (index) - the physical identification of the shelf
+      class:
+        type: str
+        description:
+        - 'the class to which the shelf belongs with default value: "main-ethernet"'
+        - 'Possible values: C(main-ethernet) - main shelf - supports ethernet-based
+          traffic; C(ext-ethernet) - extension shelf - supports ethernet-based traffic'
+        choices:
+        - main-ethernet
+        - ext-ethernet
+      planned_type:
+        type: str
+        description:
+        - 'the planned type of the shelf with default value: "not-planned"'
+        default: not-planned
+      lock:
+        type: bool
+        description:
+        - the holder is locked
+      extended_lt_slots:
+        type: bool
+        description:
+        - change to extended lt slots obsolete parameter replaced by parameter "mode"
+      mode:
+        type: str
+        description:
+        - 'the shelf mode, applicable to NEP and ARAM-E only with default value: "no-extended-lt-slots"'
+        - 'Possible values: C(no-extended-lt-slots) - no extended lt slots; C(extended-lt-slots)
+          - change to extended lt slots; C(no-ntb-slot) - use ntb slot as lt slot;
+          C(no-extended-slots) - no extended slots; C(no-ntio-slots) - not changeable;
+          C(ngpon) - use universal ngpon lt (supports NG-PON2, XGS-PON and XG-PON1
+          currently); C(gpon) - use gpon lt; C(ngpon-port-reduced) - use ngpon port
+          reduced mode lt (supports ERPS); C(gpon-mng-ngpon) - use gpon managed ngpon
+          management model; C(gpon-mng-reduced) - use gpon managed ngpon port reduced
+          mode lt(supports ERPS)'
+        choices:
+        - no-extended-lt-slots
+        - extended-lt-slots
+        - no-ntb-slot
+        - no-extended-slots
+        - no-ntio-slots
+        - ngpon
+        - gpon
+        - ngpon-port-reduced
+        - gpon-mng-ngpon
+        - gpon-mng-reduced
+      description:
+        type: str
+        description:
+        - 'any description to be used by the operator with default value: "" - description
+          to help the operator to identify the object - length: x<=127'
+        - 'Maximum length: 127 characters'
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure equipment shelf)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged
+EXAMPLES:
+  - gathered_example_01.txt

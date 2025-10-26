@@ -1,0 +1,5 @@
+help configure router bgp group neighbor min-rou
+te-adve*
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,163 @@
+module: isam_ces_ont_line
+short_description: Resource module to configure ces ont line
+description:
+- Configures ONT CESUNI port provisioning data.All modifications are service affecting.
+- Supports configuration of mode, frame, encoding and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure ces ont line ()'
+options:
+  config:
+    description:
+    - A list of ces ont line configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (uni-idx) - interface index of the ces ont uni
+      mode:
+        type: str
+        description:
+        - DS1/E1 port structure
+        - 'Possible values: C(unstructured) - unstructured mode; C(structured) - structured
+          mode'
+        choices:
+        - unstructured
+        - structured
+      frame:
+        type: str
+        description:
+        - port framing
+        - 'Possible values: C(esf) - extended superframe(only for DS1 and mode=structured);
+          C(sf) - superframe(only for DS1 and mode=structured); C(unframed) - unframed(valid
+          only and mode=unstructured); C(pcm30) - pcm 30(only for E1 and mode=structured);
+          C(pcm31) - pcm 31(only for E1 and mode=structured)'
+        choices:
+        - esf
+        - sf
+        - unframed
+        - pcm30
+        - pcm31
+      encoding:
+        type: str
+        description:
+        - 'port encoding with default value: "b8zs"'
+        - 'Possible values: C(b8zs) - b8zs encoding scheme(only for DS1); C(ami) -
+          ami encoding scheme; C(hdb3) - hdb3 encoding scheme(only for E1)'
+        default: b8zs
+        choices:
+        - b8zs
+        - ami
+        - hdb3
+      line_length:
+        type: str
+        description:
+        - 'length of the twisted pair cable with default value: ""'
+        - 'Possible values: C(0to133ft) - 0 - 133 ft (only for DS1); C(133to266ft)
+          - 133 - 266 ft (only for DS1); C(266to399ft) - 266 - 399 ft (only for DS1);
+          C(399to533ft) - 399 - 533 ft (only for DS1); C(533to655ft) - 533 - 655 ft
+          (only for DS1); C(7andhalfdb) - 7.5 db (only for DS1); C(15db) - 15 db (only
+          for DS1); C(22andhalfdb) - 22.5 db (only for DS1); C(75ohms) - 75 ohms (only
+          for E1); C(120ohms) - 120 ohms (only for E1)'
+        choices:
+        - 0to133ft
+        - 133to266ft
+        - 266to399ft
+        - 399to533ft
+        - 533to655ft
+        - 7andhalfdb
+        - 15db
+        - 22andhalfdb
+        - 75ohms
+        - 120ohms
+      pwr_override:
+        type: bool
+        description:
+        - port excluded from CES class power shedding
+      sst:
+        type: str
+        description:
+        - 'loop back configuration with default value: "no-loopback"'
+        - 'Possible values: C(no-loopback) - no loopback; C(line-loopback) - line
+          loopback; C(inward-loopback) - inward loopback'
+        default: no-loopback
+        choices:
+        - no-loopback
+        - line-loopback
+        - inward-loopback
+      admin_state:
+        type: str
+        description:
+        - 'administrative status of the interface with default value: "down" Table
+          "CES Service Port Provisioning Configuration Command" Display Parameters
+          Specific Information:'
+        - 'Possible values: C(up) - set the admin-state to up; C(down) - set the admin-state
+          to down'
+        default: down
+        choices:
+        - up
+        - down
+      oper_state:
+        type: str
+        description:
+        - the operational state of the interface This element is always shown. ( up
+          | down | testing | unknown | dormant | no-value )
+        - 'Possible values: C(up) - up,traffic can pass; C(down) - down,no traffic
+          is passing; C(testing) - testing,no traffic is passing; C(unknown) - unknown;
+          C(dormant) - dormant,no traffic is passing; C(no-value) - no entry in the
+          table'
+        choices:
+        - up
+        - down
+        - testing
+        - unknown
+        - dormant
+        - no-value
+      card_type:
+        type: str
+        description:
+        - card type This element is always shown. ( ds1 | e1 )
+        - 'Possible values: C(ds1) - DS1 card; C(e1) - E1 card'
+        choices:
+        - ds1
+        - e1
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure ces ont line)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

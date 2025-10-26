@@ -1,0 +1,9 @@
+help configure service vpls egress eth-ring bgp 
+mld-snooping
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/26 00:53:56 major alarm occurred for ip-addr 192.168.222.10  : Successful Management login, TimeStamp : 26/10/25 00:53:54 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

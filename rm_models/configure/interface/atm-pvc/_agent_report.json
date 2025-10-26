@@ -1,0 +1,23 @@
+{
+  "command_path": "configure interface atm-pvc",
+  "module_file": "isam_interface_atm_pvc.yml",
+  "changes": [
+    {
+      "path": "notes",
+      "action": "corrected",
+      "reason": "Expanded incomplete CLI command syntax from 'configure interface atm-pvc ()' to full syntax with pvc-index and customer-id parameters"
+    },
+    {
+      "path": "options.config.suboptions.customer_id.description",
+      "action": "reformatted",
+      "reason": "Removed default value from description; removed redundant 'Maximum length' line. Default is now shown only in the 'default:' field"
+    }
+  ],
+  "example_files": [
+    "merged_example_01.txt",
+    "replaced_example_01.txt",
+    "overridden_example_01.txt",
+    "deleted_example_01.txt"
+  ],
+  "notes": "All corrections strictly derived from help.txt. Default value 'available' taken directly from help.txt parameter description."
+}

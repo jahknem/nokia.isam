@@ -1,0 +1,59 @@
+{
+  "title": "QOS BANDWIDTH PROFILE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a QoS Bandwidth profile. A QoS \nBandwidth profile contains upstream rate enforcement information for frames to \nwhich this profile is applied.",
+  "user_level": "The command can be accessed by operators with qos privileges, and executed by \noperators with qos privileges.",
+  "syntax": "> configure qos profiles ( no bandwidth (name) ) | ( bandwidth (name) committed-info-rate <Qos::BwCommittedInfoRate> assured-info-rate <Qos::BwAssuredInfoRate> excessive-info-rate <Qos::BwExcessiveInfoRate> [ no delay-tolerance | delay-tolerance <Qos::DelayTolerance> ] [ no assu-burst-size | assu-burst-size <Qos::BwAssuredBurstSize> ] [ no exce-burst-size | exce-burst-size <Qos::BwExcessiveBurstSize> ] [ no dbru | dbru <Qos::BwDBRu> ] )",
+  "resource_parameters": [
+    {
+      "name": "(name)",
+      "description": "A unique profile name"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "committed-info-rate",
+      "description": "committed information rate mandatory parameter - committed information rate - unit: kbps - range: [0...25000000]",
+      "type": "<Qos::BwCommittedInfoRate>"
+    },
+    {
+      "name": "assured-info-rate",
+      "description": "assured information rate mandatory parameter - assured information rate - unit: kbps - range: [0...25000000]",
+      "type": "<Qos::BwAssuredInfoRate>"
+    },
+    {
+      "name": "excessive-info-rate",
+      "description": "excessive information rate mandatory parameter - excessive information rate - unit: kbps - range: [0...25000000]",
+      "type": "<Qos::BwExcessiveInfoRate>"
+    },
+    {
+      "name": "[no] delay-tolerance",
+      "description": "delay tolerance optional parameter with default value: \"1\" - delay tolerance - range: [1...240]",
+      "type": "<Qos::DelayTolerance>",
+      "default": "1"
+    },
+    {
+      "name": "[no] assu-burst-size",
+      "description": "assured burst size only for EPON optional parameter with default value: 256L - assured burst size only for EPON - unit: kB - range: [1...256]",
+      "type": "<Qos::BwAssuredBurstSize>",
+      "default": "256L"
+    },
+    {
+      "name": "[no] exce-burst-size",
+      "description": "excessive burst size only for EPON optional parameter with default value: 256L - excessive burst size only for EPON - unit: kB - range: [1...256]",
+      "type": "<Qos::BwExcessiveBurstSize>",
+      "default": "256L"
+    },
+    {
+      "name": "[no] dbru",
+      "description": "DBRu enable optional parameter with default value: \"enable-if-supported\"",
+      "type": "<Qos::BwDBRu>",
+      "format": "( enable                            | disable                            | enable-if-supported )",
+      "values": [
+        "enable                : enable use of DBRu",
+        "disable               : disable use of DBRu",
+        "enable-if-supported   : enable DBRu if supported"
+      ]
+    }
+  ],
+  "raw": "help configure qos profiles bandwidth\r\nQOS BANDWIDTH PROFILE CONFIGURATION COMMAND\r\n===========================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a QoS Bandwidth profile. A QoS \r\nBandwidth profile contains upstream rate enforcement information for frames to \r\nwhich this profile is applied.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by \r\noperators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos profiles ( no bandwidth (name) ) | ( bandwidth (name) \r\ncommitted-info-rate <Qos::BwCommittedInfoRate> assured-info-rate \r\n<Qos::BwAssuredInfoRate> excessive-info-rate <Qos::BwExcessiveInfoRate> [ no \r\ndelay-tolerance | delay-tolerance <Qos::DelayTolerance> ] [ no assu-burst-size \r\n| assu-burst-size <Qos::BwAssuredBurstSize> ] [ no exce-burst-size | \r\nexce-burst-size <Qos::BwExcessiveBurstSize> ] [ no dbru | dbru <Qos::BwDBRu> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS Bandwidth Profile Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(name)                     A unique profile name\r\n\r\nTable \"QoS Bandwidth Profile Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\ncommitted-info-rate        committed information rate \r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Qos::BwCommittedInfoRate>\r\n                           Format:\r\n                           - committed information rate \r\n                           - unit: kbps\r\n                           - range: [0...25000000]\r\n\r\nassured-info-rate          assured information rate\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Qos::BwAssuredInfoRate>\r\n                           Format:\r\n                           - assured information rate \r\n                           - unit: kbps\r\n                           - range: [0...25000000]\r\n\r\nexcessive-info-rate        excessive information rate  \r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Qos::BwExcessiveInfoRate>\r\n                           Format:\r\n                           - excessive information rate \r\n                           - unit: kbps\r\n                           - range: [0...25000000]\r\n\r\n[no] delay-tolerance       delay tolerance\r\n                           optional parameter with default value: \"1\"\r\n\r\n                           Parameter type: <Qos::DelayTolerance>\r\n                           Format:\r\n                           - delay tolerance\r\n                           - range: [1...240]\r\n\r\n[no] assu-burst-size       assured burst size only for EPON\r\n                           optional parameter with default value: 256L\r\n\r\n                           Parameter type: <Qos::BwAssuredBurstSize>\r\n                           Format:\r\n                           - assured burst size only for EPON \r\n                           - unit: kB\r\n                           - range: [1...256]\r\n\r\n[no] exce-burst-size       excessive burst size only for EPON  \r\n                           optional parameter with default value: 256L\r\n\r\n                           Parameter type: <Qos::BwExcessiveBurstSize>\r\n                           Format:\r\n                           - excessive burst size only for EPON \r\n                           - unit: kB\r\n                           - range: [1...256]\r\n\r\n[no] dbru                  DBRu enable \r\n                           optional parameter with default value: \r\n\"enable-if-supported\"\r\n\r\n                           Parameter type: <Qos::BwDBRu>\r\n                           Format:\r\n                           ( enable\r\n                           | disable\r\n                           | enable-if-supported )\r\n                           Possible values:\r\n                           - enable                : enable use of DBRu\r\n                           - disable               : disable use of DBRu\r\n                           - enable-if-supported   : enable DBRu if supported\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

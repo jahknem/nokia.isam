@@ -1,0 +1,10 @@
+DS-LIN-TEST-01:automationuser># info configure equipment shelf
+configure equipment
+#-------------------------------------------------------------------------------
+echo "equipment"
+#-------------------------------------------------------------------------------
+shelf 1/1
+  planned-type nfxs-b
+exit
+#-------------------------------------------------------------------------------
+DS-LIN-TEST-01:automationuser>#

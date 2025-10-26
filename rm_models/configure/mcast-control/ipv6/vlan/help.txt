@@ -1,0 +1,61 @@
+help configure mcast-control ipv6 vlan
+MLD VLAN SYSTEM CONFIGURATION COMMAND
+=====================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the MLD parameters on a per Vlan 
+basis.
+
+
+User Level
+----------
+
+The command can be accessed by operators with igmp privileges, and executed by 
+operators with igmp privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure mcast-control ipv6 ( no vlan (vlan-id) ) | ( vlan (vlan-id) 
+netw-mld-version <Igmp::VlanMldV2ProcessStatus> [ no mldv2-max-num-rec | 
+mldv2-max-num-rec <Igmp::MldV2MaxNumRecordReport> ] )
+
+Command Parameters
+------------------
+
+Table "MLD Vlan System Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(vlan-id)                  index of the system vlan
+
+Table "MLD Vlan System Configuration Command" Command Parameters
+
+Parameter                  Description
+
+netw-mld-version           MLD version of the protocol
+                           mandatory parameter
+
+                           Parameter type: <Igmp::VlanMldV2ProcessStatus>
+                           Format:
+                           ( 1
+                           | 2 )
+                           Possible values:
+                           - 1                     : MLD version1
+                           - 2                     : MLD version2
+
+[no] mldv2-max-num-rec     max num of group records in one MLDv2 report (2 exp 
+N)
+                           optional parameter with default value: 3
+
+                           Parameter type: <Igmp::MldV2MaxNumRecordReport>
+                           Format:
+                           - max num of group records in one MLDv2 report (2 
+exp N)
+                           - range: [0...10]
+
+
+DS-LIN-TEST-01:automationuser>#

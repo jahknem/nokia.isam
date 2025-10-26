@@ -1,0 +1,4 @@
+help configure filter ipv6-filter renum
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,5 @@
+help configure service vpls egress bgp-ad sap sh
+utdown
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

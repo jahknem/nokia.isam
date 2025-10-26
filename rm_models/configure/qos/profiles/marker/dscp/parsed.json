@@ -1,0 +1,25 @@
+{
+  "title": "QOS SINGLE DSCP MARKER CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a marker for a single DSCP.\n\nAll IP packets will be marked with the specified DSCP value. This marker type \nis incompatible with DSCP to P-bits alignment.",
+  "user_level": "The command can be accessed by operators with qos privileges, and executed by \noperators with qos privileges.",
+  "syntax": "> configure qos profiles marker ( no dscp (name) ) | ( dscp (name) default-dscp <Qos::DscpToDot1PAlignmentDscpIndex> [ [ no ] alignment ] )",
+  "resource_parameters": [
+    {
+      "name": "(name)",
+      "description": "A unique profile name"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "default-dscp",
+      "description": "the default DSCP value to be applied on all frames mandatory parameter - the DSCP value - range: [0...63]",
+      "type": "<Qos::DscpToDot1PAlignmentDscpIndex>"
+    },
+    {
+      "name": "[no] alignment",
+      "description": "enable DSCP to P-bits alignment optional parameter",
+      "type": "boolean"
+    }
+  ],
+  "raw": "help configure qos profiles marker dscp\r\nQOS SINGLE DSCP MARKER CONFIGURATION COMMAND\r\n============================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a marker for a single DSCP.\r\n\r\nAll IP packets will be marked with the specified DSCP value. This marker type \r\nis incompatible with DSCP to P-bits alignment.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by \r\noperators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos profiles marker ( no dscp (name) ) | ( dscp (name) default-dscp \r\n<Qos::DscpToDot1PAlignmentDscpIndex> [ [ no ] alignment ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS Single DSCP Marker Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(name)                     A unique profile name\r\n\r\nTable \"QoS Single DSCP Marker Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\ndefault-dscp               the default DSCP value to be applied on all frames\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Qos::DscpToDot1PAlignmentDscpIndex>\r\n                           Format:\r\n                           - the DSCP value\r\n                           - range: [0...63]\r\n\r\n[no] alignment             enable DSCP to P-bits alignment\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

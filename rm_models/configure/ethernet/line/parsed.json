@@ -1,0 +1,32 @@
+{
+  "title": "ETHERNET LINE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the ethernet line.",
+  "user_level": "The command can be accessed by operators with transport privileges, and \nexecuted by operators with transport privileges.",
+  "syntax": "> configure ethernet line (if-index) [ port-type <ETHITF::PortType> ] [ [ no ] admin-up ]",
+  "resource_parameters": [
+    {
+      "name": "(if-index)",
+      "description": "interface index of the port"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "port-type",
+      "description": "the whole network service model based on this interface optional parameter",
+      "type": "<ETHITF::PortType>",
+      "format": "( uni                            | nni                            | hc-uni                            | uplink )",
+      "values": [
+        "uni                   : uni port type",
+        "nni                   : nni port type",
+        "hc-uni                : hicap uni port type",
+        "uplink                : uplink port type"
+      ]
+    },
+    {
+      "name": "[no] admin-up",
+      "description": "admin status is up (read-only for voicefxs interface) optional parameter",
+      "type": "boolean"
+    }
+  ],
+  "raw": "help configure ethernet line\r\nETHERNET LINE CONFIGURATION COMMAND\r\n===================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the ethernet line.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with transport privileges, and \r\nexecuted by operators with transport privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure ethernet line (if-index) [ port-type <ETHITF::PortType> ] [ [ no ] \r\nadmin-up ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Ethernet Line Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(if-index)                 interface index of the port\r\n\r\nTable \"Ethernet Line Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nport-type                  the whole network service model based on this \r\ninterface\r\n                           optional parameter\r\n\r\n                           Parameter type: <ETHITF::PortType>\r\r\n\r\n                           Format:\r\n                           ( uni\r\n                           | nni\r\n                           | hc-uni\r\n                           | uplink )\r\n                           Possible values:\r\n                           - uni                   : uni port type\r\n                           - nni                   : nni port type\r\n                           - hc-uni                : hicap uni port type\r\n                           - uplink                : uplink port type\r\n\r\n[no] admin-up              admin status is up (read-only for voicefxs interface)\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

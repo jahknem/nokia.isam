@@ -1,0 +1,5 @@
+help configure service vpls sap stp send-flush-o
+n-*
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

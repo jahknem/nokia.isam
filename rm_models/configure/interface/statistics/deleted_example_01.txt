@@ -1,0 +1,10 @@
+# Using deleted state
+# NOTE: This command returned errors on device; parameters are unknown
+
+- name: Delete interface statistics configuration
+  isam_interface_statistics:
+    state: deleted
+    config:
+      - name: "index_value"
+
+# Configuration deleted but parameters unknown due to device error.

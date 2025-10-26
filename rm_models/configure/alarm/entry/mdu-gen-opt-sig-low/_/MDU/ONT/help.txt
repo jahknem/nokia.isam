@@ -1,0 +1,5 @@
+help configure alarm entry mdu-gen-opt-sig-low !
+ MDU ONT
+                                                                               ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

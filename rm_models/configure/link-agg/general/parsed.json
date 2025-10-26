@@ -1,0 +1,16 @@
+{
+  "title": "LACP GENERAL CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the general LACP parameters.",
+  "user_level": "The command can be accessed by operators with lacp privileges, and executed by \noperators with lacp privileges.",
+  "syntax": "> configure link-agg general [ no priority | priority <Lacp::SysPriority> ]",
+  "resource_parameters": [],
+  "command_parameters": [
+    {
+      "name": "[no] priority",
+      "description": "the lacp system priority optional parameter with default value: 1 - the lacp system priority - range: [1...65535]",
+      "type": "<Lacp::SysPriority>",
+      "default": "1"
+    }
+  ],
+  "raw": "help configure link-agg general\r\nLACP GENERAL CONFIGURATION COMMAND\r\n==================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the general LACP parameters.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with lacp privileges, and executed by \r\noperators with lacp privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure link-agg general [ no priority | priority <Lacp::SysPriority> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"LACP general configuration command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] priority              the lacp system priority\r\n                           optional parameter with default value: 1\r\n\r\n                           Parameter type: <Lacp::SysPriority>\r\n                           Format:\r\n                           - the lacp system priority\r\n                           - range: [1...65535]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,4 @@
+help configure equipment sfpe1t1
+                                                                ^
+command is not complete
+DS-LIN-TEST-01:automationuser>#

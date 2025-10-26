@@ -1,0 +1,50 @@
+help configure equipment ont pm-collect
+ONT XGPON CONFIGURATION COMMAND
+===============================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the ONT,parameters,enable/disable 
+Performance monitors.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment ont pm-collect (ont-idx) [ no xg-pm-collect | xg-pm-collec
+t <Gpon::OntPmCollect> ]
+
+Command Parameters
+------------------
+
+Table "ONT xgpon Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(ont-idx)                  ONT index
+
+Table "ONT xgpon Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] xg-pm-collect         enable/disable Performance monitors
+                           optional parameter with default value: "disable"
+
+                           Parameter type: <Gpon::OntPmCollect>
+                           Format:
+                           ( enable
+                           | disable )
+                           Possible values:
+                           - enable                : enable PM
+                           - disable               : disable PM
+
+
+DS-LIN-TEST-01:automationuser>#

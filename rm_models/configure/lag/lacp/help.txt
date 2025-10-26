@@ -1,0 +1,4 @@
+help configure lag lacp
+                                                   ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

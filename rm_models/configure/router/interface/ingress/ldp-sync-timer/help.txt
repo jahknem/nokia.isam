@@ -1,0 +1,5 @@
+help configure router interface ingress ldp-sync
+-timer
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

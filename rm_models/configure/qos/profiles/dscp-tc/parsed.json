@@ -1,0 +1,14 @@
+{
+  "title": "QOS DSCP TO TC MAPPING PROFILE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a QoS DSCP to Tc mapping profile. \nTo configure the DSCP codepoints in the DSCP to tc mapping, the command \n\"configure qos profiles dscp-tc (name) codepoint (codepoint) (value)\" is to be \nused.",
+  "user_level": "The command can be accessed by operators with qos privileges, and executed by \noperators with qos privileges.",
+  "syntax": "> configure qos profiles ( no dscp-tc (name) ) | ( dscp-tc (name) )",
+  "resource_parameters": [
+    {
+      "name": "(name)",
+      "description": "A unique profile name"
+    }
+  ],
+  "command_parameters": [],
+  "raw": "help configure qos profiles dscp-tc\r\nQOS DSCP TO TC MAPPING PROFILE CONFIGURATION COMMAND\r\n====================================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a QoS DSCP to Tc mapping profile. \r\nTo configure the DSCP codepoints in the DSCP to tc mapping, the command \r\n\"configure qos profiles dscp-tc (name) codepoint (codepoint) (value)\" is to be \r\nused.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by \r\noperators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos profiles ( no dscp-tc (name) ) | ( dscp-tc (name) )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS DSCP to Tc Mapping Profile Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(name)                     A unique profile name\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

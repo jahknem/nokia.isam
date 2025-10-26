@@ -1,0 +1,310 @@
+{
+  "title": "CUSTOMIZABLE ALARM PROFILE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the external alarm profile. The \nprofile is made to be assigned to a remote LT board. The profile reflects a \nconfiguration of external alarms parameters that corresponds to a certain \nenvironment where the remote board is located (in an outdoor cabinet, basement \ncabinet, ...). The use of a profile avoids the need to specify the parameters \nfor each remote board separately. The alarm profile groups all five external \nalarms parameters. The profile contains a description/meaning of each alarm, as \nwell as an indication that tells us whether or not any alarm outputs are to be \ntriggered if the corresponding external input alarm is raised. On top of these \nparameters, a mnemonic (short for the description), the polarity and the \nseverity are configurable. Note: The Severity parameters of custom alarm \nprofile i.e (severity1,severity2,severity3,severity4,severity5) are supported \nfor only FD-REM not other shelfs.",
+  "user_level": "The command can be accessed by operators with alarm privileges, and executed by \noperators with alarm privileges.",
+  "syntax": "> configure alarm ( no custom-profile (name) ) | ( custom-profile (name) [ no mnemonic1 | mnemonic1 <Alarm::AlarmMnemonic> ] [ no description1 | description1 <Alarm::AlarmDescription> ] [ no visible1 | visible1 <Alarm::VisibleOutput> ] [ no audible1 | audible1 <Alarm::AudibleOutput> ] [ no polarity1 | polarity1 <Alarm::InversePolarity> ] [ no severity1 | severity1 <Alarm::AlarmSeverity> ] [ no mnemonic2 | mnemonic2 <Alarm::AlarmMnemonic> ] [ no description2 | description2 <Alarm::AlarmDescription> ] [ no visible2 | visible2 <Alarm::VisibleOutput> ] [ no audible2 | audible2 <Alarm::AudibleOutput> ] [ no polarity2 | polarity2 <Alarm::InversePolarity> ] [ no severity2 | severity2 <Alarm::AlarmSeverity> ] [ no mnemonic3 | mnemonic3 <Alarm::AlarmMnemonic> ] [ no description3 | description3 <Alarm::AlarmDescription> ] [ no visible3 | visible3 <Alarm::VisibleOutput> ] [ no audible3 | audible3 <Alarm::AudibleOutput> ] [ no polarity3 | polarity3 <Alarm::InversePolarity> ] [ no severity3 | severity3 <Alarm::AlarmSeverity> ] [ no mnemonic4 | mnemonic4 <Alarm::AlarmMnemonic> ] [ no description4 | description4 <Alarm::AlarmDescription> ] [ no visible4 | visible4 <Alarm::VisibleOutput> ] [ no audible4 | audible4 <Alarm::AudibleOutput> ] [ no polarity4 | polarity4 <Alarm::InversePolarity> ] [ no severity4 | severity4 <Alarm::AlarmSeverity> ] [ no mnemonic5 | mnemonic5 <Alarm::AlarmMnemonic> ] [ no description5 | description5 <Alarm::AlarmDescription> ] [ no visible5 | visible5 <Alarm::VisibleOutput> ] [ no audible5 | audible5 <Alarm::AudibleOutput> ] [ no polarity5 | polarity5 <Alarm::InversePolarity> ] [ no severity5 | severity5 <Alarm::AlarmSeverity> ] )",
+  "resource_parameters": [
+    {
+      "name": "(name)",
+      "description": "custom profile name"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] mnemonic1",
+      "description": "mnemonic identifying the customizable external alarm 1 optional parameter with default value: \"UNDEF\" - an octet string defining mnemonic of external alarm - range: [A-Z] - length: x<=16",
+      "type": "<Alarm::AlarmMnemonic>",
+      "default": "UNDEF"
+    },
+    {
+      "name": "[no] description1",
+      "description": "description of the customizable external alarm 1 optional parameter with default value: \"Undefined\" - an octet string defining description of external alarm - length: x<=40",
+      "type": "<Alarm::AlarmDescription>",
+      "default": "Undefined"
+    },
+    {
+      "name": "[no] visible1",
+      "description": "trigger a visible alarm for external alarm 1 optional parameter with default value: \"disable\"",
+      "type": "<Alarm::VisibleOutput>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : external alarm output is visible",
+        "disable               : external alarm output is non-visible"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] audible1",
+      "description": "trigger a audible alarm for external alarm 1 optional parameter with default value: \"disable\"",
+      "type": "<Alarm::AudibleOutput>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : external alarm output is audible",
+        "disable               : external alarm output is non-audible"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] polarity1",
+      "description": "alarm polarity is normal or inverse for external alarm 1 optional parameter with default value: \"normal\"",
+      "type": "<Alarm::InversePolarity>",
+      "format": "( normal                            | inverse )",
+      "values": [
+        "normal                : alarm polarity is normal",
+        "inverse               : alarm polarity is inverse"
+      ],
+      "default": "normal"
+    },
+    {
+      "name": "[no] severity1",
+      "description": "severity level of external alarm 1 optional parameter with default value: \"major\"",
+      "type": "<Alarm::AlarmSeverity>",
+      "format": "( indeterminate                            | warning                            | minor                            | major                            | critical )",
+      "values": [
+        "indeterminate         : alarm severity is indeterminate",
+        "warning               : alarm severity is warning",
+        "minor                 : alarm severity is minor",
+        "major                 : alarm severity is major",
+        "critical              : alarm severity is critical"
+      ],
+      "default": "major"
+    },
+    {
+      "name": "[no] mnemonic2",
+      "description": "mnemonic identifying the customizable external alarm 2 optional parameter with default value: \"UNDEF\" - an octet string defining mnemonic of external alarm - range: [A-Z] - length: x<=16",
+      "type": "<Alarm::AlarmMnemonic>",
+      "default": "UNDEF"
+    },
+    {
+      "name": "[no] description2",
+      "description": "description of the customizable external alarm 2 optional parameter with default value: \"Undefined\" - an octet string defining description of external alarm - length: x<=40",
+      "type": "<Alarm::AlarmDescription>",
+      "default": "Undefined"
+    },
+    {
+      "name": "[no] visible2",
+      "description": "trigger a visible alarm for external alarm 2 optional parameter with default value: \"disable\"",
+      "type": "<Alarm::VisibleOutput>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : external alarm output is visible",
+        "disable               : external alarm output is non-visible"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] audible2",
+      "description": "trigger a audible alarm for external alarm 2 optional parameter with default value: \"disable\"",
+      "type": "<Alarm::AudibleOutput>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : external alarm output is audible",
+        "disable               : external alarm output is non-audible"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] polarity2",
+      "description": "alarm polarity is normal or inverse for external alarm 2 optional parameter with default value: \"normal\"",
+      "type": "<Alarm::InversePolarity>",
+      "format": "( normal                            | inverse )",
+      "values": [
+        "normal                : alarm polarity is normal",
+        "inverse               : alarm polarity is inverse"
+      ],
+      "default": "normal"
+    },
+    {
+      "name": "[no] severity2",
+      "description": "severity level of external alarm 2 optional parameter with default value: \"major\"",
+      "type": "<Alarm::AlarmSeverity>",
+      "format": "( indeterminate                            | warning                            | minor                            | major                            | critical )",
+      "values": [
+        "indeterminate         : alarm severity is indeterminate",
+        "warning               : alarm severity is warning",
+        "minor                 : alarm severity is minor",
+        "major                 : alarm severity is major",
+        "critical              : alarm severity is critical"
+      ],
+      "default": "major"
+    },
+    {
+      "name": "[no] mnemonic3",
+      "description": "mnemonic identifying the customizable external alarm 3 optional parameter with default value: \"UNDEF\" - an octet string defining mnemonic of external alarm - range: [A-Z] - length: x<=16",
+      "type": "<Alarm::AlarmMnemonic>",
+      "default": "UNDEF"
+    },
+    {
+      "name": "[no] description3",
+      "description": "description of the customizable external alarm 3 optional parameter with default value: \"Undefined\" - an octet string defining description of external alarm - length: x<=40",
+      "type": "<Alarm::AlarmDescription>",
+      "default": "Undefined"
+    },
+    {
+      "name": "[no] visible3",
+      "description": "trigger a visible alarm for external alarm 3 optional parameter with default value: \"disable\"",
+      "type": "<Alarm::VisibleOutput>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : external alarm output is visible",
+        "disable               : external alarm output is non-visible"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] audible3",
+      "description": "trigger a audible alarm for external alarm 3 optional parameter with default value: \"disable\"",
+      "type": "<Alarm::AudibleOutput>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : external alarm output is audible",
+        "disable               : external alarm output is non-audible"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] polarity3",
+      "description": "alarm polarity is normal or inverse for external alarm 3 optional parameter with default value: \"normal\"",
+      "type": "<Alarm::InversePolarity>",
+      "format": "( normal                            | inverse )",
+      "values": [
+        "normal                : alarm polarity is normal",
+        "inverse               : alarm polarity is inverse"
+      ],
+      "default": "normal"
+    },
+    {
+      "name": "[no] severity3",
+      "description": "severity level of external alarm 3 optional parameter with default value: \"major\"",
+      "type": "<Alarm::AlarmSeverity>",
+      "format": "( indeterminate                            | warning                            | minor                            | major                            | critical )",
+      "values": [
+        "indeterminate         : alarm severity is indeterminate",
+        "warning               : alarm severity is warning",
+        "minor                 : alarm severity is minor",
+        "major                 : alarm severity is major",
+        "critical              : alarm severity is critical"
+      ],
+      "default": "major"
+    },
+    {
+      "name": "[no] mnemonic4",
+      "description": "mnemonic identifying the customizable external alarm 4 optional parameter with default value: \"UNDEF\" - an octet string defining mnemonic of external alarm - range: [A-Z] - length: x<=16",
+      "type": "<Alarm::AlarmMnemonic>",
+      "default": "UNDEF"
+    },
+    {
+      "name": "[no] description4",
+      "description": "description of the customizable external alarm 4 optional parameter with default value: \"Undefined\" - an octet string defining description of external alarm - length: x<=40",
+      "type": "<Alarm::AlarmDescription>",
+      "default": "Undefined"
+    },
+    {
+      "name": "[no] visible4",
+      "description": "trigger a visible alarm for external alarm 4 optional parameter with default value: \"disable\"",
+      "type": "<Alarm::VisibleOutput>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : external alarm output is visible",
+        "disable               : external alarm output is non-visible"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] audible4",
+      "description": "trigger a audible alarm for external alarm 4 optional parameter with default value: \"disable\"",
+      "type": "<Alarm::AudibleOutput>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : external alarm output is audible",
+        "disable               : external alarm output is non-audible"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] polarity4",
+      "description": "alarm polarity is normal or inverse for external alarm 4 optional parameter with default value: \"normal\"",
+      "type": "<Alarm::InversePolarity>",
+      "format": "( normal                            | inverse )",
+      "values": [
+        "normal                : alarm polarity is normal",
+        "inverse               : alarm polarity is inverse"
+      ],
+      "default": "normal"
+    },
+    {
+      "name": "[no] severity4",
+      "description": "severity level of external alarm 4 optional parameter with default value: \"major\"",
+      "type": "<Alarm::AlarmSeverity>",
+      "format": "( indeterminate                            | warning                            | minor                            | major                            | critical )",
+      "values": [
+        "indeterminate         : alarm severity is indeterminate",
+        "warning               : alarm severity is warning",
+        "minor                 : alarm severity is minor",
+        "major                 : alarm severity is major",
+        "critical              : alarm severity is critical"
+      ],
+      "default": "major"
+    },
+    {
+      "name": "[no] mnemonic5",
+      "description": "mnemonic identifying the customizable external alarm 5 optional parameter with default value: \"UNDEF\" - an octet string defining mnemonic of external alarm - range: [A-Z] - length: x<=16",
+      "type": "<Alarm::AlarmMnemonic>",
+      "default": "UNDEF"
+    },
+    {
+      "name": "[no] description5",
+      "description": "description of the customizable external alarm 5 optional parameter with default value: \"Undefined\" - an octet string defining description of external alarm - length: x<=40",
+      "type": "<Alarm::AlarmDescription>",
+      "default": "Undefined"
+    },
+    {
+      "name": "[no] visible5",
+      "description": "trigger a visible alarm for external alarm 5 optional parameter with default value: \"disable\"",
+      "type": "<Alarm::VisibleOutput>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : external alarm output is visible",
+        "disable               : external alarm output is non-visible"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] audible5",
+      "description": "trigger a audible alarm for external alarm 5 optional parameter with default value: \"disable\"",
+      "type": "<Alarm::AudibleOutput>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : external alarm output is audible",
+        "disable               : external alarm output is non-audible"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] polarity5",
+      "description": "alarm polarity is normal or inverse for external alarm 5 optional parameter with default value: \"normal\"",
+      "type": "<Alarm::InversePolarity>",
+      "format": "( normal                            | inverse )",
+      "values": [
+        "normal                : alarm polarity is normal",
+        "inverse               : alarm polarity is inverse"
+      ],
+      "default": "normal"
+    },
+    {
+      "name": "[no] severity5",
+      "description": "severity level of external alarm 5 optional parameter with default value: \"major\" DS-LIN-TEST-01:automationuser>#",
+      "type": "<Alarm::AlarmSeverity>",
+      "format": "( indeterminate                            | warning                            | minor                            | major                            | critical )",
+      "values": [
+        "indeterminate         : alarm severity is indeterminate",
+        "warning               : alarm severity is warning",
+        "minor                 : alarm severity is minor",
+        "major                 : alarm severity is major",
+        "critical              : alarm severity is critical"
+      ],
+      "default": "major"
+    }
+  ],
+  "raw": "help configure alarm custom-profile\r\nCUSTOMIZABLE ALARM PROFILE CONFIGURATION COMMAND\r\n================================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the external alarm profile. The \r\nprofile is made to be assigned to a remote LT board. The profile reflects a \r\nconfiguration of external alarms parameters that corresponds to a certain \r\nenvironment where the remote board is located (in an outdoor cabinet, basement \r\ncabinet, ...). The use of a profile avoids the need to specify the parameters \r\nfor each remote board separately. The alarm profile groups all five external \r\nalarms parameters. The profile contains a description/meaning of each alarm, as \r\nwell as an indication that tells us whether or not any alarm outputs are to be \r\ntriggered if the corresponding external input alarm is raised. On top of these \r\nparameters, a mnemonic (short for the description), the polarity and the \r\nseverity are configurable. Note: The Severity parameters of custom alarm \r\nprofile i.e (severity1,severity2,severity3,severity4,severity5) are supported \r\nfor only FD-REM not other shelfs.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with alarm privileges, and executed by \r\noperators with alarm privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure alarm ( no custom-profile (name) ) | ( custom-profile (name) [ no \r\nmnemonic1 | mnemonic1 <Alarm::AlarmMnemonic> ] [ no description1 | description1 \r\n<Alarm::AlarmDescription> ] [ no visible1 | visible1 <Alarm::VisibleOutput> ] [ \r\nno audible1 | audible1 <Alarm::AudibleOutput> ] [ no polarity1 | polarity1 \r\n<Alarm::InversePolarity> ] [ no severity1 | severity1 <Alarm::AlarmSeverity> ] \r\n[ no mnemonic2 | mnemonic2 <Alarm::AlarmMnemonic> ] [ no description2 | \r\ndescription2 <Alarm::AlarmDescription> ] [ no visible2 | visible2 \r\n<Alarm::VisibleOutput> ] [ no audible2 | audible2 <Alarm::AudibleOutput> ] [ no \r\npolarity2 | polarity2 <Alarm::InversePolarity> ] [ no severity2 | severity2 \r\n<Alarm::AlarmSeverity> ] [ no mnemonic3 | mnemonic3 <Alarm::AlarmMnemonic> ] [ \r\nno description3 | description3 <Alarm::AlarmDescription> ] [ no visible3 | \r\nvisible3 <Alarm::VisibleOutput> ] [ no audible3 | audible3 \r\n<Alarm::AudibleOutput> ] [ no polarity3 | polarity3 <Alarm::InversePolarity> ] \r\n[ no severity3 | severity3 <Alarm::AlarmSeverity> ] [ no mnemonic4 | mnemonic4 \r\n<Alarm::AlarmMnemonic> ] [ no description4 | description4 \r\n<Alarm::AlarmDescription> ] [ no visible4 | visible4 <Alarm::VisibleOutput> ] [ \r\nno audible4 | audible4 <Alarm::AudibleOutput> ] [ no polarity4 | polarity4 \r\n<Alarm::InversePolarity> ] [ no severity4 | severity4 <Alarm::AlarmSeverity> ] \r\n[ no mnemonic5 | mnemonic5 <Alarm::AlarmMnemonic> ] [ no description5 | \r\ndescription5 <Alarm::AlarmDescription> ] [ no visible5 | visible5 \r\n<Alarm::VisibleOutput> ] [ no audible5 | audible5 <Alarm::AudibleOutput> ] [ no \r\npolarity5 | polarity5 <Alarm::InversePolarity> ] [ no severity5 | severity5 \r\n<Alarm::AlarmSeverity> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Customizable Alarm Profile Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(name)                     custom profile name\r\n\r\nTable \"Customizable Alarm Profile Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] mnemonic1             mnemonic identifying the customizable external alarm \r\n1\r\n                           optional parameter with default value: \"UNDEF\"\r\n\r\n                           Parameter type: <Alarm::AlarmMnemonic>\r\n                           Format:\r\n                           - an octet string defining mnemonic of external alarm\r\n                           - range: [A-Z]\r\n                           - length: x<=16 \r\n\r\n[no] description1          description of the customizable external alarm 1\r\n                           optional parameter with default value: \"Undefined\"\r\n\r\n                           Parameter type: <Alarm::AlarmDescription>\r\n                           Format:\r\n                           - an octet string defining description of external \r\nalarm\r\n                           - length: x<=40 \r\n\r\n[no] visible1              trigger a visible alarm for external alarm 1\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Alarm::VisibleOutput>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : external alarm output is \r\nvisible\r\n                           - disable               : external alarm output is \r\nnon-visible\r\n\r\n[no] audible1              trigger a audible alarm for external alarm 1\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Alarm::AudibleOutput>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : external alarm output is \r\naudible\r\n                           - disable               : external alarm output is \r\nnon-audible\r\n\r\n[no] polarity1             alarm polarity is normal or inverse for external \r\nalarm 1\r\n                           optional parameter with default value: \"normal\"\r\n\r\n                           Parameter type: <Alarm::InversePolarity>\r\n                           Format:\r\n                           ( normal\r\n                           | inverse )\r\n                           Possible values:\r\n                           - normal                : alarm polarity is normal\r\n                           - inverse               : alarm polarity is inverse\r\n\r\n[no] severity1             severity level of external alarm 1\r\n                           optional parameter with default value: \"major\"\r\n\r\n                           Parameter type: <Alarm::AlarmSeverity>\r\n                           Format:\r\n                           ( indeterminate\r\n                           | warning\r\n                           | minor\r\n                           | major\r\n                           | critical )\r\n                           Possible values:\r\n                           - indeterminate         : alarm severity is \r\nindeterminate\r\n                           - warning               : alarm severity is warning\r\n                           - minor                 : alarm severity is minor\r\n                           - major                 : alarm severity is major\r\n                           - critical              : alarm severity is critical\r\n\r\n[no] mnemonic2             mnemonic identifying the customizable external alarm \r\n2\r\n                           optional parameter with default value: \"UNDEF\"\r\n\r\n                           Parameter type: <Alarm::AlarmMnemonic>\r\n                           Format:\r\n                           - an octet string defining mnemonic of external alarm\r\n                           - range: [A-Z]\r\n                           - length: x<=16 \r\n\r\n[no] description2          description of the customizable external alarm 2\r\n                           optional parameter with default value: \"Undefined\"\r\n\r\n                           Parameter type: <Alarm::AlarmDescription>\r\n                           Format:\r\n                           - an octet string defining description of external \r\nalarm\r\n                           - length: x<=40 \r\n\r\n[no] visible2              trigger a visible alarm for external alarm 2\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Alarm::VisibleOutput>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : external alarm output is \r\nvisible\r\n                           - disable               : external alarm output is \r\nnon-visible\r\n\r\n[no] audible2              trigger a audible alarm for external alarm 2\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Alarm::AudibleOutput>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : external alarm output is \r\naudible\r\n                           - disable               : external alarm output is \r\nnon-audible\r\n\r\n[no] polarity2             alarm polarity is normal or inverse for external \r\nalarm 2\r\n                           optional parameter with default value: \"normal\"\r\n\r\n                           Parameter type: <Alarm::InversePolarity>\r\n                           Format:\r\n                           ( normal\r\n                           | inverse )\r\n                           Possible values:\r\n                           - normal                : alarm polarity is normal\r\n                           - inverse               : alarm polarity is inverse\r\n\r\n[no] severity2             severity level of external alarm 2\r\n                           optional parameter with default value: \"major\"\r\n\r\n                           Parameter type: <Alarm::AlarmSeverity>\r\n                           Format:\r\n                           ( indeterminate\r\n                           | warning\r\n                           | minor\r\n                           | major\r\n                           | critical )\r\n                           Possible values:\r\n                           - indeterminate         : alarm severity is \r\nindeterminate\r\n                           - warning               : alarm severity is warning\r\n                           - minor                 : alarm severity is minor\r\n                           - major                 : alarm severity is major\r\n                           - critical              : alarm severity is critical\r\n\r\n[no] mnemonic3             mnemonic identifying the customizable external alarm \r\n3\r\n                           optional parameter with default value: \"UNDEF\"\r\n\r\n                           Parameter type: <Alarm::AlarmMnemonic>\r\n                           Format:\r\n                           - an octet string defining mnemonic of external alarm\r\n                           - range: [A-Z]\r\n                           - length: x<=16 \r\n\r\n[no] description3          description of the customizable external alarm 3\r\n                           optional parameter with default value: \"Undefined\"\r\n\r\n                           Parameter type: <Alarm::AlarmDescription>\r\n                           Format:\r\n                           - an octet string defining description of external \r\nalarm\r\n                           - length: x<=40 \r\n\r\n[no] visible3              trigger a visible alarm for external alarm 3\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Alarm::VisibleOutput>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : external alarm output is \r\nvisible\r\n                           - disable               : external alarm output is \r\nnon-visible\r\n\r\n[no] audible3              trigger a audible alarm for external alarm 3\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Alarm::AudibleOutput>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : external alarm output is \r\naudible\r\n                           - disable               : external alarm output is \r\nnon-audible\r\n\r\n[no] polarity3             alarm polarity is normal or inverse for external \r\nalarm 3\r\n                           optional parameter with default value: \"normal\"\r\n\r\n                           Parameter type: <Alarm::InversePolarity>\r\n                           Format:\r\n                           ( normal\r\n                           | inverse )\r\n                           Possible values:\r\n                           - normal                : alarm polarity is normal\r\n                           - inverse               : alarm polarity is inverse\r\n\r\n[no] severity3             severity level of external alarm 3\r\n                           optional parameter with default value: \"major\"\r\n\r\n                           Parameter type: <Alarm::AlarmSeverity>\r\n                           Format:\r\n                           ( indeterminate\r\n                           | warning\r\n                           | minor\r\n                           | major\r\n                           | critical )\r\n                           Possible values:\r\n                           - indeterminate         : alarm severity is \r\nindeterminate\r\n                           - warning               : alarm severity is warning\r\n                           - minor                 : alarm severity is minor\r\n                           - major                 : alarm severity is major\r\n                           - critical              : alarm severity is critical\r\n\r\n[no] mnemonic4             mnemonic identifying the customizable external alarm \r\n4\r\n                           optional parameter with default value: \"UNDEF\"\r\n\r\n                           Parameter type: <Alarm::AlarmMnemonic>\r\n                           Format:\r\n                           - an octet string defining mnemonic of external alarm\r\n                           - range: [A-Z]\r\n                           - length: x<=16 \r\n\r\n[no] description4          description of the customizable external alarm 4\r\n                           optional parameter with default value: \"Undefined\"\r\n\r\n                           Parameter type: <Alarm::AlarmDescription>\r\n                           Format:\r\n                           - an octet string defining description of external \r\nalarm\r\n                           - length: x<=40 \r\n\r\n[no] visible4              trigger a visible alarm for external alarm 4\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Alarm::VisibleOutput>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : external alarm output is \r\nvisible\r\n                           - disable               : external alarm output is \r\nnon-visible\r\n\r\n[no] audible4              trigger a audible alarm for external alarm 4\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Alarm::AudibleOutput>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : external alarm output is \r\naudible\r\n                           - disable               : external alarm output is \r\nnon-audible\r\n\r\n[no] polarity4             alarm polarity is normal or inverse for external \r\nalarm 4\r\n                           optional parameter with default value: \"normal\"\r\n\r\n                           Parameter type: <Alarm::InversePolarity>\r\n                           Format:\r\n                           ( normal\r\n                           | inverse )\r\n                           Possible values:\r\n                           - normal                : alarm polarity is normal\r\n                           - inverse               : alarm polarity is inverse\r\n\r\n[no] severity4             severity level of external alarm 4\r\n                           optional parameter with default value: \"major\"\r\n\r\n                           Parameter type: <Alarm::AlarmSeverity>\r\n                           Format:\r\n                           ( indeterminate\r\n                           | warning\r\n                           | minor\r\n                           | major\r\n                           | critical )\r\n                           Possible values:\r\n                           - indeterminate         : alarm severity is \r\nindeterminate\r\n                           - warning               : alarm severity is warning\r\n                           - minor                 : alarm severity is minor\r\n                           - major                 : alarm severity is major\r\n                           - critical              : alarm severity is critical\r\n\r\n[no] mnemonic5             mnemonic identifying the customizable external alarm \r\n5\r\n                           optional parameter with default value: \"UNDEF\"\r\n\r\n                           Parameter type: <Alarm::AlarmMnemonic>\r\n                           Format:\r\n                           - an octet string defining mnemonic of external alarm\r\n                           - range: [A-Z]\r\n                           - length: x<=16 \r\n\r\n[no] description5          description of the customizable external alarm 5\r\n                           optional parameter with default value: \"Undefined\"\r\n\r\n                           Parameter type: <Alarm::AlarmDescription>\r\n                           Format:\r\n                           - an octet string defining description of external \r\nalarm\r\n                           - length: x<=40 \r\n\r\n[no] visible5              trigger a visible alarm for external alarm 5\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Alarm::VisibleOutput>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : external alarm output is \r\nvisible\r\n                           - disable               : external alarm output is \r\nnon-visible\r\n\r\n[no] audible5              trigger a audible alarm for external alarm 5\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Alarm::AudibleOutput>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : external alarm output is \r\naudible\r\n                           - disable               : external alarm output is \r\nnon-audible\r\n\r\n[no] polarity5             alarm polarity is normal or inverse for external \r\nalarm 5\r\n                           optional parameter with default value: \"normal\"\r\n\r\n                           Parameter type: <Alarm::InversePolarity>\r\n                           Format:\r\n                           ( normal\r\n                           | inverse )\r\n                           Possible values:\r\n                           - normal                : alarm polarity is normal\r\n                           - inverse               : alarm polarity is inverse\r\n\r\n[no] severity5             severity level of external alarm 5\r\n                           optional parameter with default value: \"major\"\r\n\r\n                           Parameter type: <Alarm::AlarmSeverity>\r\n                           Format:\r\n                           ( indeterminate\r\n                           | warning\r\n                           | minor\r\n                           | major\r\n                           | critical )\r\n                           Possible values:\r\n                           - indeterminate         : alarm severity is \r\nindeterminate\r\n                           - warning               : alarm severity is warning\r\n                           - minor                 : alarm severity is minor\r\n                           - major                 : alarm severity is major\r\n                           - critical              : alarm severity is critical\r\n\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 18:52:37 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 6 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 18:52:37 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 18:52:29 , Username : automationuser , Type : CLI\r\n25/10/25 18:52:37 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 16:23:57 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

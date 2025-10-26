@@ -1,0 +1,192 @@
+tree configure equipment ont
+ont 
+|  
++--interface 
+|  |  
+|  *--battery-bkup 
+|  |  
+|  *--berint 
+|  |  
+|  *--desc1 
+|  |  
+|  *--desc2 
+|  |  
+|  *--provversion 
+|  |  
+|  *--sernum 
+|  |  
+|  *--subslocid 
+|  |  
+|  +--sw-ver-pland 
+|  |  
+|  *--fec-up 
+|  |  
+|  *--bridge-map-mode 
+|  |  
+|  *--pwr-shed-prof-id 
+|  |  
+|  *--ont-enable 
+|  |  
+|  *--p2p-enable 
+|  |  
+|  *--optics-hist 
+|  |  
+|  *--sw-dnload-version 
+|  |  
+|  *--plnd-var 
+|  |  
+|  *--rf-filter 
+|  |  
+|  *--us-police-mode 
+|  |  
+|  *--enable-aes 
+|  |  
+|  *--voip-allowed 
+|  |  
+|  *--iphc-allowed 
+|  |  
+|  *--slid-visibility 
+|  |  
+|  *--log-auth-id 
+|  |  
+|  *--log-auth-pwd 
+|  |  
+|  *--cvlantrans-mode 
+|  |  
+|  *--sn-bundle-ctrl 
+|  |  
+|  *--pland-cfgfile1 
+|  |  
+|  *--pland-cfgfile2 
+|  |  
+|  *--dnload-cfgfile1 
+|  |  
+|  *--dnload-cfgfile2 
+|  |  
+|  *--us-tcpolice-mode 
+|  |  
+|  *--planned-us-rate 
+|  |  
+|  *--admin-state 
+|  |  
+|  *--oltdscppbitalign 
+|  |  
+|  *--ratelimit-us-dhcp 
+|  |  
+|  *--ratelimit-us-arp 
+|  |  
+|  *--flush-mac 
+|  |  
+|  *--template-name 
+|  |  
+|  *--evtocd 
+|  |  
+|  *--vtfd 
+|  |  
+|  +--tc-layer 
+|  |  |  
+|  |  *--olt-pm-collect 
+|  |  |  
+|  |  *--od-pm-collect 
+|  |  |  
+|  |  *--ont-pm-collect 
+|  |     
+|  +--tc-layer-threshold 
+|  |  |  
+|  |  *--lost-frags-down 
+|  |  |  
+|  |  *--lost-frags-up 
+|  |  |  
+|  |  *--bad-headers-down 
+|  |     
+|  +--mcast-tc-layer 
+|  |  |  
+|  |  *--ont-pm-collect 
+|  |     
+|  +--fec-tc-layer 
+|  |  |  
+|  |  *--olt-pm-collect 
+|  |  |  
+|  |  *--ont-pm-collect 
+|  |     
+|  +--ethernet 
+|  |  |  
+|  |  *--ont-pm-collect 
+|  |     
+|  +--xg-tc-layer 
+|  |  |  
+|  |  *--olt-pm-collect 
+|  |  |  
+|  |  *--ont-pm-collect 
+|  |     
+|  +--phy-layer 
+|  |  |  
+|  |  *--olt-pm-collect 
+|  |     
+|  +--delay-act 
+|  |  |  
+|  |  *--at 
+|  |     
+|  +--cpu-load 
+|  |  |  
+|  |  *--ont-pm-collect 
+|  |     
+|  +--memory-usage 
+|     |  
+|     *--ont-pm-collect 
+|        
++--slot 
+|  |  
+|  +--planned-card-type 
+|  |  
+|  +--plndnumdataports 
+|  |  
+|  +--plndnumvoiceports 
+|  |  
+|  *--port-type 
+|  |  
+|  *--transp-mode-rem 
+|  |  
+|  *--no-mcast-control 
+|  |  
+|  *--admin-state 
+|     
++--sw-ctrl 
+|  |  
+|  +--hw-version 
+|  |  
+|  *--ont-variant 
+|  |  
+|  *--plnd-sw-version 
+|  |  
+|  *--plnd-sw-ver-conf 
+|  |  
+|  *--sw-dwload-ver 
+|  |  
+|  *--pland-cfgfile1 
+|  |  
+|  *--pland-cfgfile2 
+|  |  
+|  *--dnload-cfgfile1 
+|  |  
+|  *--dnload-cfgfile2 
+|  |  
+|  +--delay-act 
+|     |  
+|     *--at 
+|        
++--loop 
+|  |  
+|  *--loop-detect 
+|  |  
+|  *--loop-portautoshut 
+|     
++--gis 
+|  |  
+|  *--olt-location 
+|     
++--pm-collect 
+   |  
+   *--xg-pm-collect 
+      
+DS-LIN-TEST-01:automationuser>#
