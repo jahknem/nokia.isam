@@ -1,0 +1,78 @@
+module: isam_generic_pon_utilization
+short_description: Resource module to configure generic-pon utilization
+description:
+- This command configures the generic PON (system-wide) utilization performance monitoring
+  modes for PONs and channel-pairs.
+- Supports configuration of pon pmcollect, ont pmcollect
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+options:
+  config:
+    description:
+    - A list of generic-pon utilization configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier
+      pon_pmcollect:
+        type: str
+        description:
+        - 'system-wide PON / channel-pair utilization performance monitoring with
+          default value: "none"'
+        - 'Possible values: C(none) - no pm; C(pm-enable) - enable pm; C(tca-enable)
+          - enable tca'
+        default: none
+        choices:
+        - none
+        - pm-enable
+        - tca-enable
+      ont_pmcollect:
+        type: str
+        description:
+        - 'system-wide utilization ONT detailed performance monitoring with default
+          value: "disable" DS-LIN-TEST-01:automationuser>#'
+        - 'Possible values: C(enable) - enable PM; C(disable) - disable PM'
+        default: disable
+        choices:
+        - enable
+        - disable
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure generic-pon utilization)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

@@ -1,0 +1,63 @@
+help configure equipment external-link-host
+EXTERNAL-LINK-HOST CONFIGURATION COMMANDS
+=========================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the traffic direction of the 
+configurable external-links on the host expansion card. The configurable 
+parameters are:
+  - direction: The traffic direction. Two directions are supported:
+    -- network (default): the direction is configured to allow the trafic from 
+the network
+    -- remote-lt : the direction is configured to allow the trafic to the 
+remote line termination card
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment external-link-host (faceplate-number) [ no direction | 
+direction <Equipm::ExternalLinkConfigType> ]
+
+Command Parameters
+------------------
+
+Table "External-link-host Configuration Commands" Resource Parameters
+
+Resource Identifier        Description
+
+(faceplate-number)         the faceplate number of the configurable 
+external-link
+
+Table "External-link-host Configuration Commands" Command Parameters
+
+Parameter                  Description
+
+[no] direction             the external-link traffic direction
+                           optional parameter with default value: "network"
+
+                           Parameter type: <Equipm::ExternalLinkConfigType>
+                           Format:
+                           ( network
+                           | remote-lt )
+                           Possible values:
+                           - network               : the connection direction 
+is from the network
+                           - remote-lt             : the connection direction 
+is to the remote line termination card
+
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:11:25 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:11:23 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

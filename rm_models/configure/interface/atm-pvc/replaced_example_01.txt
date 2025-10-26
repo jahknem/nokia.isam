@@ -1,0 +1,24 @@
+# Using replaced state
+
+# Before state:
+# =============
+#
+# Run on device to capture current settings for this resource:
+#    info configure interface atm-pvc
+# Example output:
+#    customer-id "enterprise_customer_1"
+
+- name: Replace interface atm-pvc customer ID with different one
+  isam_interface_atm_pvc:
+    state: replaced
+    config:
+      - name: "1/1/atm:0/0"
+        customer_id: "vip_customer_2"
+
+# After state:
+# ============
+#
+# Re-run the same info command to show the effect:
+#    info configure interface atm-pvc
+# Expected output:
+#    customer-id "vip_customer_2"

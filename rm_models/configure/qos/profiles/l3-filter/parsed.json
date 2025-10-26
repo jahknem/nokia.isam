@@ -1,0 +1,115 @@
+{
+  "title": "QOS L3 FILTER PROFILE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure an L3 filter. The created L3 \nfilter can be reused to build policy actions based on L3 filtering criteria, \ninside QoS session profiles.\n\nDSCP mask is supported with defined L3-filter name with a prefix \"DSCPMASKx_\", \n'x' must be 1~6, which means treat dscp-value as a last 'x' bits masking -The \nfirst 8 characters are UPPER CASE ALPHABETIC = DSCPMASK; and -The 9 character \nis NUMERICAL = {1, 2, 3, 4, 5, 6}; and -The 10 character is UNDERSCORE; -the \nremaining is configurable.",
+  "user_level": "The command can be accessed by operators with qos privileges, and executed by \noperators with qos privileges.",
+  "syntax": "> configure qos profiles ( no l3-filter (name) ) | ( l3-filter (name) [ no filter-type | filter-type <Qos::L3FilterType> ] [ no dst-ip-addr | dst-ip-addr <Ip::AddressAndMaskFull> ] [ no src-ip-addr | src-ip-addr <Ip::AddressAndMaskFull> ] [ no dst-ipv6-addr | dst-ipv6-addr <ipv6::PrefixAndLength> ] [ no src-ipv6-addr | src-ipv6-addr <ipv6::PrefixAndLength> ] [ no min-dst-port | min-dst-port <Qos::L4PortNumber> ] [ no max-dst-port | max-dst-port <Qos::L4PortNumber> ] [ no min-src-port | min-src-port <Qos::L4PortNumber> ] [ no max-src-port | max-src-port <Qos::L4PortNumber> ] [ no dscp-value | dscp-value <Qos::MatchDscpValue> ] [ no protocol | protocol <Qos::Protocol> ] )",
+  "resource_parameters": [
+    {
+      "name": "(name)",
+      "description": "A unique profile name"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] filter-type",
+      "description": "L3 Filter type. Indicates to what kind of ip frames (ipv4 or ipv6) the L3 filter is applicable. optional parameter with default value: \"ipv4\"",
+      "type": "<Qos::L3FilterType>",
+      "format": "( ipv4                            | ipv6 )",
+      "values": [
+        "ipv4                  : ipv4",
+        "ipv6                  : ipv6"
+      ],
+      "default": "ipv4"
+    },
+    {
+      "name": "[no] dst-ip-addr",
+      "description": "destination ipv4 address to be matched with the packet. Only applicable in case filterType is equal to ipv4. optional parameter with default value: \"0.0.0.0/0\" - IPv4-address Field type <Ip::PrefixLengthFull> - IP address prefix length - range: [0...32]",
+      "type": "<Ip::AddressAndMaskFull>",
+      "format": "<Ip::V4Address> / <Ip::PrefixLengthFull>                            Field type <Ip::V4Address>",
+      "default": "0.0.0.0/0"
+    },
+    {
+      "name": "[no] src-ip-addr",
+      "description": "source ipv4 address to be matched with the packet. Only applicable in case filterType is equal to ipv4. optional parameter with default value: \"0.0.0.0/0\" - IPv4-address Field type <Ip::PrefixLengthFull> - IP address prefix length - range: [0...32]",
+      "type": "<Ip::AddressAndMaskFull>",
+      "format": "<Ip::V4Address> / <Ip::PrefixLengthFull>                            Field type <Ip::V4Address>",
+      "default": "0.0.0.0/0"
+    },
+    {
+      "name": "[no] dst-ipv6-addr",
+      "description": "destination ipv6 address to be matched with the packet. Only applicable in case filterType is equal to ipv6. optional parameter with default value: \" :  : /0\" - IPv6-address Field type <ipv6::PrefixLength> - length of IPv6 address or prefix - range: [0...128]",
+      "type": "<ipv6::PrefixAndLength>",
+      "format": "<ipv6::Prefix> / <ipv6::PrefixLength>                            Field type <ipv6::Prefix>",
+      "default": ":  : /0"
+    },
+    {
+      "name": "[no] src-ipv6-addr",
+      "description": "source ipv6 address to be matched with the packet. Only applicable in case filterType is equal to ipv6. optional parameter with default value: \" :  : /0\" - IPv6-address Field type <ipv6::PrefixLength> - length of IPv6 address or prefix - range: [0...128]",
+      "type": "<ipv6::PrefixAndLength>",
+      "format": "<ipv6::Prefix> / <ipv6::PrefixLength>                            Field type <ipv6::Prefix>",
+      "default": ":  : /0"
+    },
+    {
+      "name": "[no] min-dst-port",
+      "description": "minimum value of the layer-4 destination port number optional parameter with default value: 0L - the layer-4 port number - range: [0...65535]",
+      "type": "<Qos::L4PortNumber>",
+      "default": "0L"
+    },
+    {
+      "name": "[no] max-dst-port",
+      "description": "maximum value of the layer-4 destination port number optional parameter with default value: 65535L - the layer-4 port number - range: [0...65535]",
+      "type": "<Qos::L4PortNumber>",
+      "default": "65535L"
+    },
+    {
+      "name": "[no] min-src-port",
+      "description": "minimum value of the layer-4 source port number optional parameter with default value: 0L - the layer-4 port number - range: [0...65535]",
+      "type": "<Qos::L4PortNumber>",
+      "default": "0L"
+    },
+    {
+      "name": "[no] max-src-port",
+      "description": "maximum value of the layer-4 source port number optional parameter with default value: 65535L - the layer-4 port number - range: [0...65535]",
+      "type": "<Qos::L4PortNumber>",
+      "default": "65535L"
+    },
+    {
+      "name": "[no] dscp-value",
+      "description": "dscp value to be matched, -1 means match all optional parameter with default value: -1L - dscp value to be matched, -1 means match all - range: [-1...63]",
+      "type": "<Qos::MatchDscpValue>",
+      "default": "-1L"
+    },
+    {
+      "name": "[no] protocol",
+      "description": "protocol to be matched with the packet optional parameter with default value: \"all\"",
+      "type": "<Qos::Protocol>",
+      "format": "( egp                            | eigrp                            | gre                            | icmp                            | icmpv6                            | igmp                            | igrp                            | ip                            | ipinip                            | ipv6                            | ipv6-frag                            | ipv6-hopopt                            | ipv6-nonxt                            | ipv6-opts                            | ipv6-route                            | ospf-igp                            | tcp                            | udp                            | rsvp                            | all                            | <Qos::ProtocolType> )",
+      "values": [
+        "egp                   : egp (IANA protocol number 8)",
+        "eigrp                 : eigrp (IANA protocol number 88)",
+        "gre                   : gre (IANA protocol number 47)",
+        "icmp                  : icmp (IANA protocol number 1)",
+        "icmpv6                : icmpv6 (IANA protocol number 58)",
+        "igmp                  : igmp (IANA protocol number 2)",
+        "igrp                  : igrp (IANA protocol number 9)",
+        "ip                    : ip (IANA protocol number 4)",
+        "ipinip                : ipinip(protocol id should be 94)",
+        "ipv6                  : ipv6 (IANA protocol number 41)",
+        "ipv6-frag             : ipv6-frag (IANA protocol number 44)",
+        "ipv6-hopopt           : ipv6-HOPOPT (IANA protocol number 0)",
+        "ipv6-nonxt            : ipv6-NoNxt (IANA protocol number 59)",
+        "ipv6-opts             : ipv6-opts (IANA protocol number 60)",
+        "ipv6-route            : ipv6-route (IANA protocol number 43)",
+        "ospf-igp              : ospf-igp (IANA protocol number 89)",
+        "tcp                   : tcp (IANA protocol number 6)",
+        "udp                   : udp (IANA protocol number 17)",
+        "rsvp                  : rsvp (IANA protocol number 46)",
+        "all                   : all are considered as match Field type <Qos::ProtocolType>",
+        "ip protocol value",
+        "range: [0...255]"
+      ],
+      "default": "all"
+    }
+  ],
+  "raw": "help configure qos profiles l3-filter\r\nQOS L3 FILTER PROFILE CONFIGURATION COMMAND\r\n===========================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure an L3 filter. The created L3 \r\nfilter can be reused to build policy actions based on L3 filtering criteria, \r\ninside QoS session profiles.\r\n\r\nDSCP mask is supported with defined L3-filter name with a prefix \"DSCPMASKx_\", \r\n'x' must be 1~6, which means treat dscp-value as a last 'x' bits masking -The \r\nfirst 8 characters are UPPER CASE ALPHABETIC = DSCPMASK; and -The 9 character \r\nis NUMERICAL = {1, 2, 3, 4, 5, 6}; and -The 10 character is UNDERSCORE; -the \r\nremaining is configurable.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by \r\noperators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos profiles ( no l3-filter (name) ) | ( l3-filter (name) [ no \r\nfilter-type | filter-type <Qos::L3FilterType> ] [ no dst-ip-addr | dst-ip-addr \r\n<Ip::AddressAndMaskFull> ] [ no src-ip-addr | src-ip-addr \r\n<Ip::AddressAndMaskFull> ] [ no dst-ipv6-addr | dst-ipv6-addr \r\n<ipv6::PrefixAndLength> ] [ no src-ipv6-addr | src-ipv6-addr \r\n<ipv6::PrefixAndLength> ] [ no min-dst-port | min-dst-port <Qos::L4PortNumber> \r\n] [ no max-dst-port | max-dst-port <Qos::L4PortNumber> ] [ no min-src-port | \r\nmin-src-port <Qos::L4PortNumber> ] [ no max-src-port | max-src-port \r\n<Qos::L4PortNumber> ] [ no dscp-value | dscp-value <Qos::MatchDscpValue> ] [ no \r\nprotocol | protocol <Qos::Protocol> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS L3 Filter Profile Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(name)                     A unique profile name\r\n\r\nTable \"QoS L3 Filter Profile Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] filter-type           L3 Filter type. Indicates to what kind of ip frames \r\n(ipv4 or ipv6) the L3 filter is applicable.\r\n                           optional parameter with default value: \"ipv4\"\r\n\r\n                           Parameter type: <Qos::L3FilterType>\r\n                           Format:\r\n                           ( ipv4\r\n                           | ipv6 )\r\n                           Possible values:\r\n                           - ipv4                  : ipv4\r\n                           - ipv6                  : ipv6\r\n\r\n[no] dst-ip-addr           destination ipv4 address to be matched with the \r\npacket. Only applicable in case filterType is equal to ipv4.\r\n                           optional parameter with default value: \"0.0.0.0/0\"\r\n\r\n                           Parameter type: <Ip::AddressAndMaskFull>\r\n                           Format:\r\n                           <Ip::V4Address> / <Ip::PrefixLengthFull>\r\n                           Field type <Ip::V4Address>\r\n                           - IPv4-address\r\n                           Field type <Ip::PrefixLengthFull>\r\n                           - IP address prefix length\r\n                           - range: [0...32]\r\n\r\n[no] src-ip-addr           source ipv4 address to be matched with the packet. \r\nOnly applicable in case filterType is equal to ipv4.\r\n                           optional parameter with default value: \"0.0.0.0/0\"\r\n\r\n                           Parameter type: <Ip::AddressAndMaskFull>\r\n                           Format:\r\n                           <Ip::V4Address> / <Ip::PrefixLengthFull>\r\n                           Field type <Ip::V4Address>\r\n                           - IPv4-address\r\n                           Field type <Ip::PrefixLengthFull>\r\n                           - IP address prefix length\r\n                           - range: [0...32]\r\n\r\n[no] dst-ipv6-addr         destination ipv6 address to be matched with the \r\npacket. Only applicable in case filterType is equal to ipv6.\r\n                           optional parameter with default value: \" :  : /0\"\r\n\r\n                           Parameter type: <ipv6::PrefixAndLength>\r\n                           Format:\r\n                           <ipv6::Prefix> / <ipv6::PrefixLength>\r\n                           Field type <ipv6::Prefix>\r\n                           - IPv6-address\r\n                           Field type <ipv6::PrefixLength>\r\n                           - length of IPv6 address or prefix\r\n                           - range: [0...128]\r\n\r\n[no] src-ipv6-addr         source ipv6 address to be matched with the packet. \r\nOnly applicable in case filterType is equal to ipv6.\r\n                           optional parameter with default value: \" :  : /0\"\r\n\r\n                           Parameter type: <ipv6::PrefixAndLength>\r\n                           Format:\r\n                           <ipv6::Prefix> / <ipv6::PrefixLength>\r\n                           Field type <ipv6::Prefix>\r\n                           - IPv6-address\r\n                           Field type <ipv6::PrefixLength>\r\n                           - length of IPv6 address or prefix\r\n                           - range: [0...128]\r\n\r\n[no] min-dst-port          minimum value of the layer-4 destination port number\r\n                           optional parameter with default value: 0L\r\n\r\n                           Parameter type: <Qos::L4PortNumber>\r\n                           Format:\r\n                           - the layer-4 port number\r\n                           - range: [0...65535]\r\n\r\n[no] max-dst-port          maximum value of the layer-4 destination port number\r\n                           optional parameter with default value: 65535L\r\n\r\n                           Parameter type: <Qos::L4PortNumber>\r\n                           Format:\r\n                           - the layer-4 port number\r\n                           - range: [0...65535]\r\n\r\n[no] min-src-port          minimum value of the layer-4 source port number\r\n                           optional parameter with default value: 0L\r\n\r\n                           Parameter type: <Qos::L4PortNumber>\r\n                           Format:\r\n                           - the layer-4 port number\r\n                           - range: [0...65535]\r\n\r\n[no] max-src-port          maximum value of the layer-4 source port number\r\n                           optional parameter with default value: 65535L\r\n\r\n                           Parameter type: <Qos::L4PortNumber>\r\n                           Format:\r\n                           - the layer-4 port number\r\n                           - range: [0...65535]\r\n\r\n[no] dscp-value            dscp value to be matched, -1 means match all\r\n                           optional parameter with default value: -1L\r\n\r\n                           Parameter type: <Qos::MatchDscpValue>\r\n                           Format:\r\n                           - dscp value to be matched, -1 means match all\r\n                           - range: [-1...63]\r\n\r\n[no] protocol              protocol to be matched with the packet\r\n                           optional parameter with default value: \"all\"\r\n\r\n                           Parameter type: <Qos::Protocol>\r\n                           Format:\r\n                           ( egp\r\n                           | eigrp\r\n                           | gre\r\n                           | icmp\r\n                           | icmpv6\r\n                           | igmp\r\n                           | igrp\r\n                           | ip\r\n                           | ipinip\r\n                           | ipv6\r\n                           | ipv6-frag\r\n                           | ipv6-hopopt\r\n                           | ipv6-nonxt\r\n                           | ipv6-opts\r\n                           | ipv6-route\r\n                           | ospf-igp\r\n                           | tcp\r\n                           | udp\r\n                           | rsvp\r\n                           | all\r\n                           | <Qos::ProtocolType> )\r\n                           Possible values:\r\n                           - egp                   : egp (IANA protocol number \r\n8)\r\n                           - eigrp                 : eigrp (IANA protocol \r\nnumber 88)\r\n                           - gre                   : gre (IANA protocol number \r\n47)\r\n                           - icmp                  : icmp (IANA protocol number \r\n1)\r\n                           - icmpv6                : icmpv6 (IANA protocol \r\nnumber 58)\r\n                           - igmp                  : igmp (IANA protocol number \r\n2)\r\n                           - igrp                  : igrp (IANA protocol number \r\n9)\r\n                           - ip                    : ip (IANA protocol number 4)\r\n                           - ipinip                : ipinip(protocol id should \r\nbe 94)\r\n                           - ipv6                  : ipv6 (IANA protocol number \r\n41)\r\n                           - ipv6-frag             : ipv6-frag (IANA protocol \r\nnumber 44)\r\n                           - ipv6-hopopt           : ipv6-HOPOPT (IANA protocol \r\nnumber 0)\r\n                           - ipv6-nonxt            : ipv6-NoNxt (IANA protocol \r\nnumber 59)\r\n                           - ipv6-opts             : ipv6-opts (IANA protocol \r\nnumber 60)\r\n                           - ipv6-route            : ipv6-route (IANA protocol \r\nnumber 43)\r\n                           - ospf-igp              : ospf-igp (IANA protocol \r\nnumber 89)\r\n                           - tcp                   : tcp (IANA protocol number \r\n6)\r\n                           - udp                   : udp (IANA protocol number \r\n17)\r\n                           - rsvp                  : rsvp (IANA protocol number \r\n46)\r\n                           - all                   : all are considered as match\r\n                           Field type <Qos::ProtocolType>\r\n                           - ip protocol value\r\n                           - range: [0...255]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

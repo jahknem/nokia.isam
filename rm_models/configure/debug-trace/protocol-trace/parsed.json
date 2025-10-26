@@ -1,0 +1,37 @@
+{
+  "title": "PROTOCOL TRACING CONFIGURATION COMMAND",
+  "description": "This commands allows the operator to enable/disable protocol tracing. The \noperator can enter the protocol, port and level of detail for which tracing can \nbe enabled. It is mandatory to enable/disable atleast one of the tracings, \nevents or packet-summary.",
+  "user_level": "The command can be accessed by operators with security privileges, and executed \nby operators with security privileges.",
+  "syntax": "> configure debug-trace ( no protocol-trace (trace-subject) protocol <Debug::Protocol> ) | ( protocol-trace (trace-subject) protocol <Debug::Protocol> syslog <Debug::SyslogMsgType> [ [ no ] events ] [ [ no ] packet-summary ] )",
+  "resource_parameters": [
+    {
+      "name": "(trace-subject)",
+      "description": "subject for which tracing is enabled(e.g ADSL line,PVC)"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "syslog",
+      "description": "msg type used to log trace msgs to syslog mandatory parameter",
+      "type": "<Debug::SyslogMsgType>",
+      "format": "( tracing1                            | tracing2                            | tracing3                            | tracing4 )",
+      "values": [
+        "tracing1              : msg type tracing1 used for syslog",
+        "tracing2              : msg type tracing2 used for syslog",
+        "tracing3              : msg type tracing3 used for syslog",
+        "tracing4              : msg type tracing4 used for syslog"
+      ]
+    },
+    {
+      "name": "[no] events",
+      "description": "enable events tracing optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] packet-summary",
+      "description": "enable pkt summary tracing optional parameter",
+      "type": "boolean"
+    }
+  ],
+  "raw": "help configure debug-trace protocol-trace\r\nPROTOCOL TRACING CONFIGURATION COMMAND\r\n======================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis commands allows the operator to enable/disable protocol tracing. The \r\noperator can enter the protocol, port and level of detail for which tracing can \r\nbe enabled. It is mandatory to enable/disable atleast one of the tracings, \r\nevents or packet-summary.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with security privileges, and executed \r\nby operators with security privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure debug-trace ( no protocol-trace (trace-subject) protocol \r\n<Debug::Protocol> ) | ( protocol-trace (trace-subject) protocol \r\n<Debug::Protocol> syslog <Debug::SyslogMsgType> [ [ no ] events ] [ [ no ] \r\npacket-summary ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Protocol Tracing Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(trace-subject)             subject for which tracing is enabled(e.g ADSL \r\nline,PVC)\r\nprotocol                   protocol to be traced\r\n\r\nTable \"Protocol Tracing Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nsyslog                     msg type used to log trace msgs to syslog\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Debug::SyslogMsgType>\r\n                           Format:\r\n                           ( tracing1\r\n                           | tracing2\r\n                           | tracing3\r\n                           | tracing4 )\r\n                           Possible values:\r\n                           - tracing1              : msg type tracing1 used for \r\nsyslog\r\n                           - tracing2              : msg type tracing2 used for \r\nsyslog\r\n                           - tracing3              : msg type tracing3 used for \r\nsyslog\r\n                           - tracing4              : msg type tracing4 used for \r\nsyslog\r\n\r\n[no] events                enable events tracing\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] packet-summary        enable pkt summary tracing\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

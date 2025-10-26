@@ -1,0 +1,76 @@
+help configure debug-trace protocol-trace
+PROTOCOL TRACING CONFIGURATION COMMAND
+======================================
+
+Command Description
+-------------------
+
+This commands allows the operator to enable/disable protocol tracing. The 
+operator can enter the protocol, port and level of detail for which tracing can 
+be enabled. It is mandatory to enable/disable atleast one of the tracings, 
+events or packet-summary.
+
+
+User Level
+----------
+
+The command can be accessed by operators with security privileges, and executed 
+by operators with security privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure debug-trace ( no protocol-trace (trace-subject) protocol 
+<Debug::Protocol> ) | ( protocol-trace (trace-subject) protocol 
+<Debug::Protocol> syslog <Debug::SyslogMsgType> [ [ no ] events ] [ [ no ] 
+packet-summary ] )
+
+Command Parameters
+------------------
+
+Table "Protocol Tracing Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(trace-subject)             subject for which tracing is enabled(e.g ADSL 
+line,PVC)
+protocol                   protocol to be traced
+
+Table "Protocol Tracing Configuration Command" Command Parameters
+
+Parameter                  Description
+
+syslog                     msg type used to log trace msgs to syslog
+                           mandatory parameter
+
+                           Parameter type: <Debug::SyslogMsgType>
+                           Format:
+                           ( tracing1
+                           | tracing2
+                           | tracing3
+                           | tracing4 )
+                           Possible values:
+                           - tracing1              : msg type tracing1 used for 
+syslog
+                           - tracing2              : msg type tracing2 used for 
+syslog
+                           - tracing3              : msg type tracing3 used for 
+syslog
+                           - tracing4              : msg type tracing4 used for 
+syslog
+
+[no] events                enable events tracing
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] packet-summary        enable pkt summary tracing
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+
+DS-LIN-TEST-01:automationuser>#

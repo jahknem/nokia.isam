@@ -1,0 +1,79 @@
+module: isam_l2uni_ont_performance_monitor
+short_description: Resource module to configure l2uni ont performance-monitor
+description:
+- This command sets the PM Mode of ONTL2UNI.
+- Supports configuration of pm collect, pm collect 64bit
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure l2uni ont performance-monitor ()'
+options:
+  config:
+    description:
+    - A list of l2uni ont performance-monitor configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (if-index) - interface index of the port
+      pm_collect:
+        type: str
+        description:
+        - 'indicates whether Ethernet Traffic Performance Monitors should be collected
+          for this Ethernet Port. with default value: "none"'
+        - 'Possible values: C(none) - no pm; C(pm-enable) - enable pm; C(tca-enable)
+          - enable tca'
+        default: none
+        choices:
+        - none
+        - pm-enable
+        - tca-enable
+      pm_collect_64bit:
+        type: str
+        description:
+        - 'indicates whether Ethernet Traffic Performance Monitors should be collected
+          for this Ethernet Port. with default value: "none"'
+        - 'Possible values: C(none) - no pm; C(pm-enable) - enable pm'
+        default: none
+        choices:
+        - none
+        - pm-enable
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure l2uni ont performance-monitor)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

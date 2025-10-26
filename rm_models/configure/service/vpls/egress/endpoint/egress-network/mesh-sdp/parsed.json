@@ -1,0 +1,9 @@
+{
+  "title": "",
+  "description": "",
+  "user_level": "",
+  "syntax": "",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure service vpls egress endpoint egre\r\nss-network mesh-sdp\u0007\r\n                                                            ^\r\ninvalid token\r\nDS-LIN-TEST-01:automationuser>#"
+}

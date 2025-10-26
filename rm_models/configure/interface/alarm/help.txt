@@ -1,0 +1,58 @@
+help configure interface alarm
+INTERFACE ALARM CONFIGURATION COMMAND
+=====================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the default severity for an alarm 
+on this type of interface.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure interface alarm (index) [ no default-severity | default-severity 
+<Itf::asamIfExtAlmReportingSeverityDefault> ]
+
+Command Parameters
+------------------
+
+Table "Interface Alarm Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(index)                    index of the IANA ifType
+
+Table "Interface Alarm Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] default-severity      default severity to be reported
+                           optional parameter with default value: "major"
+
+                           Parameter type: 
+<Itf::asamIfExtAlmReportingSeverityDefault>
+                           Format:
+                           ( indeterminate
+                           | warning
+                           | minor
+                           | major
+                           | critical )
+                           Possible values:
+                           - indeterminate         : not a definite known 
+severity
+                           - warning               : just to inform as a warning
+                           - minor                 : not service affecting
+                           - major                 : service affecting
+                           - critical              : service breaking
+
+
+DS-LIN-TEST-01:automationuser>#

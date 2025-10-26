@@ -1,0 +1,15 @@
+DS-LIN-TEST-01:automationuser># configure qos interface 1/1/5/1/6/1/1 ds-queue-sharing
+
+Error : QOS MGT error 46 : Q Sharing can only be enabled on ONT
+
+DS-LIN-TEST-01:automationuser># configure qos interface 1/1/5/1/6/1/1 us-queue-sharing
+
+Error : QOS MGT error 46 : Q Sharing can only be enabled on ONT
+
+DS-LIN-TEST-01:automationuser># configure qos interface 1/1/5/1/6/1/1 autoschedule
+
+Error : QOS MGT error 96 : AutoSchedule cannot be assigned to this interface type
+
+DS-LIN-TEST-01:automationuser># configure qos interface 1/1/5/1/6/1/1 us-vlanport-queue
+
+Error : QOS MGT error 116 : us-vlanport-queues can only be enabled on an ONT interface

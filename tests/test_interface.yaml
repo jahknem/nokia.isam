@@ -1,0 +1,13 @@
+---
+- hosts: DS-LIN-TEST-01
+  connection: network_cli
+  gather_facts: false
+  tasks:
+    - name: Gather Interface Facts
+      nokia.isam.isam_interfaces:
+        state: gathered
+      timeout: 300
+      register: result
+    - name: Display Interface Facts
+      debug:
+        msg: "{{ result }}"

@@ -1,0 +1,49 @@
+help configure ipv6-antispoofing slot
+IPV6 ANTI-SPOOFING CONFIGURATION COMMAND
+========================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the bit length of the IPv6 
+address on which IPv6 anti-spoofing based.
+
+
+User Level
+----------
+
+The command can be accessed by operators with ip privileges, and executed by 
+operators with ip privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure ipv6-antispoofing slot (slot) [ no bit-len | bit-len 
+<ipv6::bitLength> ]
+
+Command Parameters
+------------------
+
+Table "ipv6 anti-spoofing Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(slot)                     the physical number of the slot
+
+Table "ipv6 anti-spoofing Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] bit-len               bit length of the IPv6 address on which IPv6 
+anti-spoofing based
+                           optional parameter with default value: "64"
+
+                           Parameter type: <ipv6::bitLength>
+                           Format:
+                           - number of bits that is checked during IPv6 address 
+anti-spoofing.
+                           - range: [64,128]
+
+
+DS-LIN-TEST-01:automationuser>#

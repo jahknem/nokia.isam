@@ -1,0 +1,60 @@
+help configure qos ctrl-pkt-policer
+QOS LINE CONTROL PACKETS RATE LIMIT CONFIGURATION COMMAND
+=========================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure police rate and burst per protocl.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos ( no ctrl-pkt-policer (protocol-id) ) | ( ctrl-pkt-policer 
+(protocol-id) [ no sustained-rate | sustained-rate <Qos::SustainedRate> ] [ no 
+burst-size | burst-size <Qos::DslCtrlBurstSize> ] )
+
+Command Parameters
+------------------
+
+Table "QoS Line Control Packets Rate Limit Configuration Command" Resource 
+Parameters
+
+Resource Identifier        Description
+
+(protocol-id)              protocol id for arp, igmp, dhcpv4, dhcpv6, icmpv6, 
+cfm, pppox
+
+Table "QoS Line Control Packets Rate Limit Configuration Command" Command 
+Parameters
+
+Parameter                  Description
+
+[no] sustained-rate        police the user incoming packets on all pvc's for 
+the protocol of a dsl line.
+                           optional parameter with default value: 15
+
+                           Parameter type: <Qos::SustainedRate>
+                           Format:
+                           - the police rate of inc user pkts in pps
+                           - range: [1...64]
+
+[no] burst-size            police the user incoming packets on all pvc's for 
+the protocol of a dsl line.
+                           optional parameter with default value: 10
+
+                           Parameter type: <Qos::DslCtrlBurstSize>
+                           Format:
+                           - the burst size
+                           - range: [1...128]
+
+
+DS-LIN-TEST-01:automationuser>#

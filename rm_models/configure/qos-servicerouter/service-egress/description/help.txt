@@ -1,0 +1,5 @@
+help configure qos-servicerouter service-egress 
+description
+                                                                 ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

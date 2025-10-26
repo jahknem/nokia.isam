@@ -1,0 +1,510 @@
+module: isam_equipment_ont_interface
+short_description: Resource module to configure equipment ont interface
+description:
+- 'This command allows the operator to create and configure the ONT parameters. provversion
+  - when ''*''is set, it detects ONT hardware version on board and is updated accordingly.
+  sernum - User can only set it when admin state is down and admin-state cannot be
+  changed to up with default sernum (ALCL:00000000). The First 4 bytes form the vendorid
+  and the last 8 butes form the serial no. sw-ver-pland - The special string of ''AUTO''
+  is used to indicate that if this ONT''s hardware version (eqpt-ver-num in ''show
+  ont interface command) and planned variant (plnd-var) has a matching entry created
+  using ''configure equipment ont sw-ctrl'', then the plnd-sw-version from the gponOntSwVerCtlTable
+  table will be downloaded to the ONT. The special string of ''UNPLANNED'' is used
+  to avoid any download. The special string of ''DISABLED'' is used not to control
+  onu sw version, and not report mismatch alarm. The special string of ''DELAYACTIVATE''
+  is used for non-immediate activation. subslocid - 0 to 12 (36 for ngpon2) ASCII
+  character string or 0 to 20 (72 for ngpon2) HEX string depending on slidmode. sw-dnload-version
+  - The special string of ''AUTO'' is used to indicate that if this ONT''s hardware
+  version (eqpt-ver-num in ''show equipment ont interface command) and planned variant
+  (plnd-var) has a matching entry created using ''configure equipment ont sw-ctrl'',
+  then the plnd-sw-version from the gponOntSwVerCtlTable table will be downloaded
+  to the ONT. The special string of ''DISABLED'' is used to indicate this feature
+  as blocked. If sw-ver-pland is set to ''DISABLED'', sw-dnload-version can only be
+  ''DISABLED''. NOTE: In order to change power-shed-profile, provversion, sernum,
+  fec-up, us-police-mode, us_tcpolice-mode, log-auth-id and log-auth-pwd parameters,
+  the ONT state must be in Out-of-Service. If not specified, the values of the above
+  parameters stay unchanged. admin-state - cannot be modified in the same command
+  execution with any other parameter and vice versa. If not specified, the value of
+  this parameter stays unchanged.'
+- Supports configuration of battery bkup, berint, desc1 and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure equipment ont ()'
+options:
+  config:
+    description:
+    - A list of equipment ont interface configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (ont-idx) - ONT index
+      battery_bkup:
+        type: str
+        description:
+        - 'battery backup with default value: "disable"'
+        - 'Possible values: C(disable) - ONT is not equiped with battery backup; C(enable)
+          - ONT is equiped with battery backup'
+        default: disable
+        choices:
+        - disable
+        - enable
+      berint:
+        type: str
+        description:
+        - 'accumulation interval (in number of downstream frames) for ONU BER calculation
+          with default value: "8000" - BER Interval - range: [8000...100000]'
+        default: '8000'
+      desc1:
+        type: str
+        description:
+        - 'free-form textual field for user to describe the ONT with default value:
+          """" - desc - length: x<=64'
+        - 'Maximum length: 64 characters'
+      desc2:
+        type: str
+        description:
+        - 'free-form textual field for user to describe the ONT with default value:
+          """" - desc - length: x<=64'
+        - 'Maximum length: 64 characters'
+      provversion:
+        type: str
+        description:
+        - 'the provisioned version number with default value: "*" - provisioned version
+          number - length: x<=14'
+        - 'Maximum length: 14 characters'
+        default: '*'
+      sernum:
+        type: str
+        description:
+        - 'the provisioned serial number with default value: "ALCL : - vendor id -
+          4 ASCII characters - range: [a-zA-Z0-9] - length: 4 Field type <Gpon::SerialNo>
+          - serial num - 8 ASCII characters - range: [a-fA-F0-9] - length: 8'
+        default: 'ALCL : 00000000'
+      subslocid:
+        type: str
+        description:
+        - 'subscriber location id (SLID) - subsloc id, 0 to 12 (36 for ngpon2) ASCII
+          character string or 0 to 20 (72 for ngpon2) HEX string depending on slidmode
+          - length: x<=72'
+        - 'Maximum length: 72 characters'
+      sw_ver_pland:
+        type: str
+        description:
+        - planned ONT software version number. If sw-dnload-version is set to disabled,
+          sw-ver-pland cannot be set to delayactivate. mandatory parameter
+        - 'Possible values: C(auto) - download sw to onu using the sw-ctrl version;
+          C(unplanned) - avoid any download related action,but report mismatch alarm;
+          C(disabled) - not to control onu sw version, and not report mismatch alarm;
+          C(delayactivate) - for non-immediate activation Field type <Gpon::SwVerPlnd>;
+          C(length) - 1<=x<=14'
+        choices:
+        - auto
+        - unplanned
+        - disabled
+        - delayactivate
+        - ont sw version
+        - length
+      fec_up:
+        type: str
+        description:
+        - 'enable/disable use of FEC in Upstream direction with default value: "gpon
+          :'
+        - 'Possible values: C(disable) - Disable use of FEC in Upstream direction;
+          C(enable) - Enable use of FEC in Upstream direction; C(recommended) - Automatically
+          set based on planned ONT technology: gpon=disable,ngpon=enable,auto-match=enable'
+        default: 'gpon : disable, ngpon : enable, auto-match : enable'
+        choices:
+        - disable
+        - enable
+        - recommended
+      bridge_map_mode:
+        type: str
+        description:
+        - 'ont bridge map mode with default value: "1-mp-bridge-map-filter"'
+        - 'Possible values: C(1-mp-bridge-map-filter) - 1:MP bridge map mode; C(n-p-bridge-map-filter)
+          - N:P bridge map mode; C(n-mp-bridge-map-filter) - N:MP bridge map mode'
+        choices:
+        - 1-mp-bridge-map-filter
+        - n-p-bridge-map-filter
+        - n-mp-bridge-map-filter
+      pwr_shed_prof_id:
+        type: str
+        description:
+        - 'power shed profile id with default value: "none"'
+        - 'Possible values: C(none) - no profile to associate Field type <Gpon::PwrShedProfIndex>;
+          C(range) - [0...50]'
+        default: none
+        choices:
+        - none
+        - a pwr shed profile index value
+        - range
+      ont_enable:
+        type: str
+        description:
+        - 'ONT disabling decision for rogue ONTs with default value: "auto"'
+        - 'Possible values: C(auto) - OLT automatically decided on proper action;
+          C(disable) - ONT is Manually Disabled; C(enable) - ONT is Manually Enabled'
+        default: auto
+        choices:
+        - auto
+        - disable
+        - enable
+      p2p_enable:
+        type: str
+        description:
+        - 'allow port-to-port traffic exchange between ethernet UNIs on the same ONT
+          with default value: "disable"'
+        - 'Possible values: C(disable) - Disable Port-to-port traffic exchange; C(enable)
+          - Enable Port-to-port traffic exchange'
+        default: disable
+        choices:
+        - disable
+        - enable
+      optics_hist:
+        type: str
+        description:
+        - 'daily optical supervision measurements collection with default value: "disable"'
+        - 'Possible values: C(disable) - Disable daily optical supervision measurements
+          collection; C(enable) - Enable daily optical supervision measurements collection'
+        default: disable
+        choices:
+        - disable
+        - enable
+      sw_dnload_version:
+        type: str
+        description:
+        - 'standby ONT software version number to be downloaded. If sw-ver-pland is
+          set to delayactivate, sw-dnload-version cannot be set to disabled. with
+          default value: "DISABLED"'
+        - 'Possible values: C(auto) - download sw to onu using the sw-ctrl version;
+          C(disabled) - indicate this feature is blocked. If sw-ver-pland is set to
+          disabled, sw-dnload-version can only be disabled Field type <Gpon::SwVerDn>;
+          C(length) - 1<=x<=14'
+        default: DISABLED
+        choices:
+        - auto
+        - disabled
+        - ont sw version
+        - length
+      plnd_var:
+        type: str
+        description:
+        - 'planned variant of the ONT hardware version.Use DO for Data-only ONTs,SIP
+          for SIP ONTs,H.248 for MEGACO ONTs with default value: """" - planned variant
+          of the ONT hardware version - length: x<=80'
+        - 'Maximum length: 80 characters'
+      rf_filter:
+        type: str
+        description:
+        - 'filter settings for RF video with default value: "pass-low-high"'
+        - 'Possible values: C(pass-none) - Pass Nothing; C(pass-low) - Pass only Low
+          Band; C(pass-low-high) - Pass Low and High Band; C(pass-low-middle) - Pass
+          Low and Middle Band'
+        choices:
+        - pass-none
+        - pass-low
+        - pass-low-high
+        - pass-low-middle
+      us_police_mode:
+        type: str
+        description:
+        - 'upstream police mode with default value: "local"'
+        - 'Possible values: C(local) - local at OLT; C(network) - remote at OLT obsolete
+          alternative replaced by remote; C(remote) - remote at ONT'
+        default: local
+        choices:
+        - local
+        - network
+        - remote
+      enable_aes:
+        type: str
+        description:
+        - 'downstream AES encryption for all unicast (X)GEM ports pertaining to the
+          ONT with default value: "disable"'
+        - 'Possible values: C(disable) - disable downstream AES encryption; C(enable)
+          - enable downstream AES encryption'
+        default: disable
+        choices:
+        - disable
+        - enable
+      voip_allowed:
+        type: str
+        description:
+        - 'voip support on ONT with default value: "disable"'
+        - 'Possible values: C(disable) - disable voip support on ONT; C(enable) -
+          enable voip support on ONT; C(iphost) - enable voip support on ONT using
+          iphost; C(veip) - enable voip support on ONT using veip'
+        default: disable
+        choices:
+        - disable
+        - enable
+        - iphost
+        - veip
+      iphc_allowed:
+        type: str
+        description:
+        - 'iphc support on ONT with default value: "disable"'
+        - 'Possible values: C(disable) - disable iphc support on ONT; C(enable) -
+          enable iphc support on ONT'
+        default: disable
+        choices:
+        - disable
+        - enable
+      slid_visibility:
+        type: str
+        description:
+        - 'slid visibility of the interface with default value: "disabled"'
+        - 'Possible values: C(disabled) - no access using http or telnet; C(enabled-slid-on)
+          - read-only access using http or telnet; C(enabled-all) - read-write access
+          using http or telnet'
+        default: disabled
+        choices:
+        - disabled
+        - enabled-slid-on
+        - enabled-all
+      log_auth_id:
+        type: str
+        description:
+        - 'the logical id for the ont with default value: "" - ont logical id - length:
+          x<=24'
+        - 'Maximum length: 24 characters'
+      log_auth_pwd:
+        type: str
+        description:
+        - 'the password for the ont with default value: "plain : "'
+        - 'Possible values: C(prompt) - prompts the operator for a password; C(plain)
+          - the password in plain text Field type <Security::PlainPassword6>; C(length)
+          - x<=12'
+        default: 'plain :'
+        choices:
+        - prompt
+        - plain
+        - ont password
+        - length
+      cvlantrans_mode:
+        type: str
+        description:
+        - 'cvlan translation settings for all traffic except the configured multicast
+          traffic with default value: "remote"'
+        - 'Possible values: C(remote) - cvlan translate remote; C(local) - cvlan translate
+          local'
+        default: remote
+        choices:
+        - remote
+        - local
+      sn_bundle_ctrl:
+        type: str
+        description:
+        - 'sn bundling behavior associated with slid/loid with default value: "unbundle"'
+        - 'Possible values: C(unbundle) - no bundle behavior for sn with loid/slid;
+          C(bundle) - manual bundling of sn with loid/slid; C(auto) - automatically
+          bundle the sn with loid/slid when a new sn is learned'
+        default: unbundle
+        choices:
+        - unbundle
+        - bundle
+        - auto
+      pland_cfgfile1:
+        type: str
+        description:
+        - 'indicate the cfgfile1 version to be planned with default value: "DISABLED"'
+        - 'Possible values: C(auto) - download configure file to onu using the sw-ctrl
+          version Field type <Gpon::CfgFileName>; C(length) - 1<=x<=14'
+        default: DISABLED
+        choices:
+        - auto
+        - ont configure file version
+        - length
+      pland_cfgfile2:
+        type: str
+        description:
+        - 'indicate the cfgfile2 version to be planned with default value: "DISABLED"'
+        - 'Possible values: C(auto) - download configure file to onu using the sw-ctrl
+          version Field type <Gpon::CfgFileName>; C(length) - 1<=x<=14'
+        default: DISABLED
+        choices:
+        - auto
+        - ont configure file version
+        - length
+      dnload_cfgfile1:
+        type: str
+        description:
+        - 'indicate the cfgfile1 version to be downloaded with default value: "DISABLED"'
+        - 'Possible values: C(auto) - download configure file to onu using the sw-ctrl
+          version Field type <Gpon::CfgFileName>; C(length) - 1<=x<=14'
+        default: DISABLED
+        choices:
+        - auto
+        - ont configure file version
+        - length
+      dnload_cfgfile2:
+        type: str
+        description:
+        - 'indicate the cfgfile2 version to be downloaded with default value: "DISABLED"'
+        - 'Possible values: C(auto) - download configure file to onu using the sw-ctrl
+          version Field type <Gpon::CfgFileName>; C(length) - 1<=x<=14'
+        default: DISABLED
+        choices:
+        - auto
+        - ont configure file version
+        - length
+      us_tcpolice_mode:
+        type: str
+        description:
+        - 'upstream tc(gemport) police mode with default value: "local"'
+        - 'Possible values: C(local) - local at OLT; C(remote) - remote at ONT'
+        default: local
+        choices:
+        - local
+        - remote
+      planned_us_rate:
+        type: str
+        description:
+        - 'planned upstream rate with default value: "nominal-line-rate,cde : auto-match"'
+        - 'Possible values: C(nominal-line-rate) - ont inherits upstream rate from
+          nominal line rate(default); C(2.5g) - 2.5 GBit/sec; C(10g) - 10 GBit/sec;
+          C(1.25g) - 1.25 GBit/sec; C(auto-match) - upstream rate is detected when
+          onu activates; C(25g) - 25 GBit/sec'
+        choices:
+        - nominal-line-rate
+        - 2.5g
+        - 10g
+        - 1.25g
+        - auto-match
+        - 25g
+      admin_state:
+        type: str
+        description:
+        - administrative status of the interface
+        - 'Possible values: C(up) - set the admin-state to up; C(down) - set the admin-state
+          to down'
+        choices:
+        - up
+        - down
+      oltdscppbitalign:
+        type: str
+        description:
+        - 'if OLT need perform DSCP to Pbit alignment for this ONU, when the DSCP
+          to Pbit alignment is configured on the vlan port with default value: "disable"'
+        - 'Possible values: C(disable) - OLT will not do dscp-to-pbit alignment; C(enable)
+          - OLT will do dscp-to-pbit alignment'
+        default: disable
+        choices:
+        - disable
+        - enable
+      ratelimit_us_dhcp:
+        type: str
+        description:
+        - 'upstream rate limit for DHCP packets, unit is pps which means packets per
+          second with default value: "10" - ratelimit upstream DHCP packets, 0 - Disabled,
+          1..16 - Enabled (Packets Per Second limit) - range: [0...16]'
+        default: '10'
+      ratelimit_us_arp:
+        type: str
+        description:
+        - 'upstream rate limit for ARP packets, unit is pps which means packets per
+          second with default value: "10" - ratelimit upstream ARP packets, 0 - Disabled,
+          1..16 - Enabled (Packets Per Second limit) - range: [0...16]'
+        default: '10'
+      flush_mac:
+        type: str
+        description:
+        - 'flush MAC decision for UNIs of this ONT with default value: "disable"'
+        - 'Possible values: C(disable) - the MAC will not be flushed when UNIs go
+          down; C(enable) - the MAC will be flushed when UNIs go down'
+        default: disable
+        choices:
+        - disable
+        - enable
+      template_name:
+        type: str
+        description:
+        - 'Name of the Template to be used for ONU auto-provisioning with default
+          value: "DEFAULT" - Template name to be used for ONU auto provisioning -
+          range: [a-zA-Z0-9-_] - length: x<=20'
+        - 'Maximum length: 20 characters'
+        default: DEFAULT
+      evtocd:
+        type: str
+        description:
+        - 'ME Evtocd control with default value: "enable"'
+        - 'Possible values: C(disable) - Disable ME Extended VLAN tagging operation
+          configuration data; C(enable) - Enable ME Extended VLAN tagging operation
+          configuration data'
+        default: enable
+        choices:
+        - disable
+        - enable
+      vtfd:
+        type: str
+        description:
+        - 'ME Vtfd control with default value: "enable" Table "ONT Interface Configuration
+          Command" Display Parameters Specific Information:'
+        - 'Possible values: C(disable) - Disable ME VLAN tagging filter data; C(enable)
+          - Enable ME VLAN tagging filter data'
+        default: enable
+        choices:
+        - disable
+        - enable
+      oper_state:
+        type: str
+        description:
+        - operational state of the interface This element is always shown. ( up |
+          down | testing | unknown | dormant | no-value )
+        - 'Possible values: C(up) - up,traffic can pass; C(down) - down,no traffic
+          is passing; C(testing) - testing,no traffic is passing; C(unknown) - unknown;
+          C(dormant) - dormant,no traffic is passing; C(no-value) - no entry in the
+          table'
+        choices:
+        - up
+        - down
+        - testing
+        - unknown
+        - dormant
+        - no-value
+      pwr_shed_prof_name:
+        type: str
+        description:
+        - power shed profile name This element is always shown. - ignored printable
+          string
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure equipment ont interface)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

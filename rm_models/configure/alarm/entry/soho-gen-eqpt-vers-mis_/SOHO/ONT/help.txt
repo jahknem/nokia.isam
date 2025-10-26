@@ -1,0 +1,5 @@
+help configure alarm entry soho-gen-eqpt-vers-mi
+s! SOHO ONT
+                                                                                 ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

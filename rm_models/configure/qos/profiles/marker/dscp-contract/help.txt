@@ -1,0 +1,47 @@
+help configure qos profiles marker dscp-contract
+QOS DSCP CONTRACT TABLE MARKER CONFIGURATION COMMAND
+====================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a marker for a DSCP contract 
+table. To configure the DSCP codepoints in the contract table, the command 
+"configure qos profiles marker dscp-contract (name) codepoint (codepoint)" is 
+to be used.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles marker ( no dscp-contract (name) ) | ( dscp-contract 
+(name) [ [ no ] alignment ] )
+
+Command Parameters
+------------------
+
+Table "QoS DSCP Contract Table Marker Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+Table "QoS DSCP Contract Table Marker Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] alignment             enable DSCP to P-bits alignment
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+
+DS-LIN-TEST-01:automationuser>#

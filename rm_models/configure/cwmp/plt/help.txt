@@ -1,0 +1,46 @@
+help configure cwmp plt
+CWMP PLATFORM CONFIGURATION COMMANDS
+====================================
+
+Command Description
+-------------------
+
+This command configure cwmp platform for nat function.
+
+Note: Once the remaining-lease timer has expired, esponding user interface.
+
+
+User Level
+----------
+
+The command can be accessed by operators with xdsl privileges, and executed by 
+operators with xdsl privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure cwmp plt [ no adminstate | adminstate <CWMP::AdminStatus> ]
+
+Command Parameters
+------------------
+
+Table "Cwmp Platform Configuration Commands" Command Parameters
+
+Parameter                  Description
+
+[no] adminstate            enable or disable the cwmp platform
+                           optional parameter with default value: "locked"
+
+                           Parameter type: <CWMP::AdminStatus>
+                           Format:
+                           ( unlocked
+                           | locked )
+                           Possible values:
+                           - unlocked              : the identified resource is 
+allowed to be used
+                           - locked                : the identified resource is 
+not allowed to be used
+
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,5 @@
+help configure service vpls sap stp sap propagat
+e-mac-*
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

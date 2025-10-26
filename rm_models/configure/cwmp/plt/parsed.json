@@ -1,0 +1,9 @@
+{
+  "title": "",
+  "description": "",
+  "user_level": "",
+  "syntax": "",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure cwmp plt\r\nCWMP PLATFORM CONFIGURATION COMMANDS\r\n====================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command configure cwmp platform for nat function.\r\n\r\nNote: Once the remaining-lease timer has expired, esponding user interface.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with xdsl privileges, and executed by \r\noperators with xdsl privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure cwmp plt [ no adminstate | adminstate <CWMP::AdminStatus> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Cwmp Platform Configuration Commands\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] adminstate            enable or disable the cwmp platform\r\n                           optional parameter with default value: \"locked\"\r\n\r\n                           Parameter type: <CWMP::AdminStatus>\r\n                           Format:\r\n                           ( unlocked\r\n                           | locked )\r\n                           Possible values:\r\n                           - unlocked              : the identified resource is \r\nallowed to be used\r\n                           - locked                : the identified resource is \r\nnot allowed to be used\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

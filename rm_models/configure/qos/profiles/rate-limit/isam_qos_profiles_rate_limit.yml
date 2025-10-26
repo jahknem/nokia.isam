@@ -1,0 +1,179 @@
+module: isam_qos_profiles_rate_limit
+short_description: Resource module to configure qos profiles rate-limit
+description:
+- Configures a QoS rate limit profile. A QoS rate limit profile contains all rate
+  limit values related to different protocols, or total protocol values Total protocol
+  ratelimit value and supported protocol ratelimit value
+- Supports configuration of total rate, total burst, arp rate and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure qos profiles ()'
+options:
+  config:
+    description:
+    - A list of qos profiles rate-limit configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (name) - A unique profile name
+      total_rate:
+        type: str
+        description:
+        - 'committed total rate limit value with default value: 0 - protocol rate
+          limit total rate - unit: pps - range: [0...254]'
+        default: '0'
+      total_burst:
+        type: str
+        description:
+        - 'committed total rate limit burst value with default value: 0 - protocol
+          rate limit total burst - unit: pps - range: [0...254]'
+        default: '0'
+      arp_rate:
+        type: str
+        description:
+        - 'ARP rate limit value with default value: 0 - protocol rate limit value
+          - unit: pps - range: [0...254]'
+        default: '0'
+      arp_burst:
+        type: str
+        description:
+        - 'ARP burst value with default value: 0 - protocol rate limit burst - unit:
+          pps - range: [0...254]'
+        default: '0'
+      dhcp_rate:
+        type: str
+        description:
+        - 'DHCP rate limit value with default value: 0 - protocol rate limit value
+          - unit: pps - range: [0...254]'
+        default: '0'
+      dhcp_burst:
+        type: str
+        description:
+        - 'DHCP burst value with default value: 0 - protocol rate limit burst - unit:
+          pps - range: [0...254]'
+        default: '0'
+      igmp_rate:
+        type: str
+        description:
+        - 'IGMP rate limit value with default value: 0 - protocol rate limit value
+          - unit: pps - range: [0...254]'
+        default: '0'
+      igmp_burst:
+        type: str
+        description:
+        - 'IGMP burst value with default value: 0 - protocol rate limit burst - unit:
+          pps - range: [0...254]'
+        default: '0'
+      pppoe_rate:
+        type: str
+        description:
+        - 'PPPoE rate limit value with default value: 0 - protocol rate limit value
+          - unit: pps - range: [0...254]'
+        default: '0'
+      pppoe_burst:
+        type: str
+        description:
+        - 'PPPoE burst value with default value: 0 - protocol rate limit burst - unit:
+          pps - range: [0...254]'
+        default: '0'
+      nd_rate:
+        type: str
+        description:
+        - 'Nd rate limit value with default value: 0 - protocol rate limit value -
+          unit: pps - range: [0...254]'
+        default: '0'
+      nd_burst:
+        type: str
+        description:
+        - 'Nd burst value with default value: 0 - protocol rate limit burst - unit:
+          pps - range: [0...254]'
+        default: '0'
+      icmpv6_rate:
+        type: str
+        description:
+        - 'ICMP V6 rate limit value with default value: 0 - protocol rate limit value
+          - unit: pps - range: [0...254]'
+        default: '0'
+      icmpv6_burst:
+        type: str
+        description:
+        - 'ICMP V6 burst value with default value: 0 - protocol rate limit burst -
+          unit: pps - range: [0...254]'
+        default: '0'
+      mld_rate:
+        type: str
+        description:
+        - 'MLD rate limit value with default value: 0 - protocol rate limit value
+          - unit: pps - range: [0...254]'
+        default: '0'
+      mld_burst:
+        type: str
+        description:
+        - 'MLD burst value with default value: 0 - protocol rate limit burst - unit:
+          pps - range: [0...254]'
+        default: '0'
+      dhcpv6_rate:
+        type: str
+        description:
+        - 'DHCP V6 rate limit value with default value: 0 - protocol rate limit value
+          - unit: pps - range: [0...254]'
+        default: '0'
+      dhcpv6_burst:
+        type: str
+        description:
+        - 'DHCP v6 burst value with default value: 0 - protocol rate limit burst -
+          unit: pps - range: [0...254]'
+        default: '0'
+      cfm_rate:
+        type: str
+        description:
+        - 'CFM rate limit value with default value: 0 - protocol rate limit value
+          - unit: pps - range: [0...254]'
+        default: '0'
+      cfm_burst:
+        type: str
+        description:
+        - 'CFM burst value with default value: 0 - protocol rate limit burst - unit:
+          pps - range: [0...254]'
+        default: '0'
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure qos profiles rate-limit)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

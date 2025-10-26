@@ -1,0 +1,36 @@
+help configure qos profiles dscp-pbit
+QOS DSCP TO PBIT MAPPING PROFILE CONFIGURATION COMMAND
+======================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a QoS DSCP to Pbit mapping 
+profile. To configure the DSCP codepoints in the DSCP to dot1p mapping, the 
+command "configure qos profiles dscp-pbit (name) codepoint (codepoint) (value)" 
+is to be used.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by op
+erators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles ( no dscp-pbit (name) ) | ( dscp-pbit (name) )
+
+Command Parameters
+------------------
+
+Table "QoS DSCP to Pbit Mapping Profile Configuration Command" Resource 
+Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+DS-LIN-TEST-01:automationuser>#

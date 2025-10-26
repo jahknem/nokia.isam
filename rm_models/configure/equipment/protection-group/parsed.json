@@ -1,0 +1,32 @@
+{
+  "title": "PROTECTION GROUP CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a protection group.\n\nThe protection group is identified by the eqptProtGroupId attribute (index). \nThe value 1 is reserved for extension chain protection group which is always \npresent and cannot be deleted.\n\nThe protection group(s) are created implicitly by the system as part of the \ndefault configuration. Use \"show equipment protection-group\" to display the \nvalid protection group identifier(s). Note that the default admin-status for \nprotection-group 1 at system level is locked where it is always unlocked at cli \nlevel.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure equipment protection-group (prot-group-id) [ no admin-status | admin-status <Equipm::PortGroupAdminStatus> ] [ no eps-quenchfactor | eps-quenchfactor <Equipm::TimeTicks> ]",
+  "resource_parameters": [
+    {
+      "name": "(prot-group-id)",
+      "description": "Index in eqpt Prot Group Table"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] admin-status",
+      "description": "changes the administrative-status to lock or unlock optional parameter with default value: \"unlock\"",
+      "type": "<Equipm::PortGroupAdminStatus>",
+      "format": "( unlock                            | lock )",
+      "values": [
+        "unlock                : unlock",
+        "lock                  : lock"
+      ],
+      "default": "unlock"
+    },
+    {
+      "name": "[no] eps-quenchfactor",
+      "description": "timervalue of quenching mechanism(unit: 1/100sec), 0 is valid value optional parameter with default value: \"1440000\" - timer value for quench mechanish - unit: 1/100 sec DS-LIN-TEST-01:automationuser>#",
+      "type": "<Equipm::TimeTicks>",
+      "default": "1440000"
+    }
+  ],
+  "raw": "help configure equipment protection-group\r\nPROTECTION GROUP CONFIGURATION COMMAND\r\n======================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a protection group.\r\n\r\nThe protection group is identified by the eqptProtGroupId attribute (index). \r\nThe value 1 is reserved for extension chain protection group which is always \r\npresent and cannot be deleted.\r\n\r\nThe protection group(s) are created implicitly by the system as part of the \r\ndefault configuration. Use \"show equipment protection-group\" to display the \r\nvalid protection group identifier(s). Note that the default admin-status for \r\nprotection-group 1 at system level is locked where it is always unlocked at cli \r\nlevel.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure equipment protection-group (prot-group-id) [ no admin-status | \r\nadmin-status <Equipm::PortGroupAdminStatus> ] [ no eps-quenchfactor | \r\neps-quenchfactor <Equipm::TimeTicks> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Protection Group Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(prot-group-id)            Index in eqpt Prot Group Table\r\n\r\nTable \"Protection Group Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] admin-status          changes the administrative-status to lock or unlock\r\n                           optional parameter with default value: \"unlock\"\r\n\r\n                           Parameter type: <Equipm::PortGroupAdminStatus>\r\n                           Format:\r\n                           ( unlock\r\n                           | lock )\r\n                           Possible values:\r\n                           - unlock                : unlock\r\n                           - lock                  : lock\r\n\r\n[no] eps-quenchfactor      timervalue of quenching mechanism(unit: 1/100sec), 0 \r\nis valid value\r\n                           optional parameter with default value: \"1440000\"\r\n\r\n                           Parameter type: <Equipm::TimeTicks>\r\n                           Format:\r\n                           - timer value for quench mechanish\r\n                           - unit: 1/100 sec\r\n\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 19:12:06 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:12:04 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

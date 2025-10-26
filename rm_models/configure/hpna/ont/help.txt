@@ -1,0 +1,131 @@
+help configure hpna ont
+ONT HPNA CONFIGURATION COMMAND
+==============================
+
+Command Description
+-------------------
+
+This command allows the operator to modify ONT HPNA port provisioning data.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure hpna ont (uni-idx) [ cust-info <Gpon::CustomerInfo> ] [ no 
+pwr-override | pwr-override <Gpon::OntPwrShedState> ] [ no master-mode | 
+master-mode <Gpon::HpnaMasterSelect> ] [ no admin-state | admin-state 
+<Gpon::ItfAdminStatus> ]
+
+Command Parameters
+------------------
+
+Table "ONT HPNA Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(uni-idx)                  identification of the hpna interface index
+
+Table "ONT HPNA Configuration Command" Command Parameters
+
+Parameter                  Description
+
+cust-info                  information for HPNA port
+                           optional parameter
+
+                           Parameter type: <Gpon::CustomerInfo>
+                           Format:
+                           - char string
+                           - length: x<=80 
+
+[no] pwr-override          power settings to be included for data class power 
+shedding
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: <Gpon::OntPwrShedState>
+                           Format:
+                           ( enabled
+                           | disabled )
+                           Possible values:
+                           - enabled               : enabled
+                           - disabled              : disabled
+
+[no] master-mode           master mode of HPNA mac
+                           optional parameter with default value: "default"
+
+                           Parameter type: <Gpon::HpnaMasterSelect>
+                           Format:
+                           ( default
+                           | auto
+                           | forced )
+                           Possible values:
+                           - default               : default master mode
+                           - auto                  : auto master mode
+                           - forced                : forced master mode
+
+[no] admin-state           administrative status of the interface
+                           optional parameter with default value: "down"
+
+                           Parameter type: <Gpon::ItfAdminStatus>
+                           Format:
+                           ( up
+                           | down )
+                           Possible values:
+                           - up                    : set the admin-state to up
+                           - down                  : set the admin-state to down
+
+
+Table "ONT HPNA Configuration Command" Display Parameters
+
+Specific Information:
+
+Parameter                  Description
+
+ base-mac-address          base mac address
+                           This element is always shown.
+
+                           parameter type: <Ces::DestMacAddress>
+                           - a mac-address (example : 01:02:03:04:05:06) (L2 
+only)
+                           - length: 6 
+
+ port-configuration        configuration status of hpna uni
+                           This element is always shown.
+
+                           parameter type: <Gpon::HpnaConfigStatus>
+                           ( unknown
+                           | coax_12_28
+                           | phone_12_28 )
+                           Possible values:
+                           - unknown               : cant reach the ont or the 
+ont didnt return a response to the query
+                           - coax_12_28            : not supported
+                           - phone_12_28           : not supported
+
+ oper-state                the operational state of the interface
+                           This element is always shown.
+
+                           parameter type: <Itf::ifOperStatus>
+                           ( up
+                           | down
+                           | testing
+                           | unknown
+                           | dormant
+                           | no-value )
+                           Possible values:
+                           - up                    : up,traffic can pass
+                           - down                  : down,no traffic is passing
+                           - testing               : testing,no traffic is 
+passing
+                           - unknown               : unknown
+                           - dormant               : dormant,no traffic is 
+passing
+                           - no-value              : no entry in the table
+
+DS-LIN-TEST-01:automationuser>#

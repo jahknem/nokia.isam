@@ -1,0 +1,9 @@
+help configure service vpls spoke-sdp bgp ingres
+s-network disable-learni*
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/26 12:03:55 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 26/10/25 12:03:53 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,120 @@
+module: isam_qos_profiles_l2_filter
+short_description: Resource module to configure qos profiles l2-filter
+description:
+- Configures an L2 filter. The created L2 filter can be reused to build policy actions
+  based on L2 filtering criteria, inside QoS session profiles.
+- Supports configuration of dst mac addr, src mac addr, ethertype and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure qos profiles ()'
+options:
+  config:
+    description:
+    - A list of qos profiles l2-filter configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (name) - A unique profile name
+      dst_mac_addr:
+        type: str
+        description:
+        - 'destination mac address to be matched with the packet with default value:
+          "00 : 00 : 00 : 00 : 00 : 00/0" - a mac-address (example : 01:02:03:04:05:06)
+          - length: 6 Field type <Qos::MacPrefixLength> - the mac address prefix length
+          - range: [0...48]'
+        default: '00 : 00 : 00'
+      src_mac_addr:
+        type: str
+        description:
+        - 'source mac address to be matched with the packet with default value: "00
+          : 00 : 00 : 00 : 00 : 00/0" - a mac-address (example : 01:02:03:04:05:06)
+          - length: 6 Field type <Qos::MacPrefixLength> - the mac address prefix length
+          - range: [0...48]'
+        default: '00 : 00 : 00'
+      ethertype:
+        type: str
+        description:
+        - 'ethernet type to be matched with the packet with default value: "all"'
+        - 'Possible values: C(ip) - ip; C(x75) - x75; C(nbs) - nbs; C(ecma) - ecma;
+          C(chaos) - chaos; C(x25) - x25; C(arp) - arp; C(rarp) - rarp; C(appletalk)
+          - appletalk; C(snmp) - snmp; C(loopback) - loopback; C(pppoe-discovery)
+          - pppoe-discovery; C(pppoe) - pppoe; C(ipv6) - ipv6; C(all) - all ethtype
+          values are considered a match Field type <Qos::EtherType>; C(range) - [-1...65535]'
+        default: all
+        choices:
+        - ip
+        - x75
+        - nbs
+        - ecma
+        - chaos
+        - x25
+        - arp
+        - rarp
+        - appletalk
+        - snmp
+        - loopback
+        - pppoe-discovery
+        - pppoe
+        - ipv6
+        - all
+        - ethertype value
+        - range
+      dot1p_priority:
+        type: str
+        description:
+        - 'dot1p value to be matched, -1 means match all with default value: -1L -
+          dot1p value to be matched, -1 means match all - range: [-1...7]'
+        default: -1L
+      canonical_format:
+        type: str
+        description:
+        - 'canonical format indicator, -1 means match all with default value: -1L
+          - canonical format indicator, -1 means match all - range: [-1...1]'
+        default: -1L
+      vlan_id:
+        type: str
+        description:
+        - 'vlan id to be matched, -1 means match all with default value: -1L - vlan
+          id to be matched, -1 means match all - range: [-1...4095]'
+        default: -1L
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure qos profiles l2-filter)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

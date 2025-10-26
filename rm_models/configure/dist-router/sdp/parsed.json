@@ -1,0 +1,20 @@
+{
+  "title": "SDP CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure an SDP(typically corresponding to \nan MPLS tunnel).",
+  "user_level": "The command can be accessed by operators with drouter privileges, and executed \nby operators with drouter privileges.",
+  "syntax": "> configure dist-router ( no sdp (sdp-id) ) | ( sdp (sdp-id) lsp-name <Drouter::MplsLspName> )",
+  "resource_parameters": [
+    {
+      "name": "(sdp-id)",
+      "description": "SDP Identifier"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "lsp-name",
+      "description": "LSP name to set the LSP list mandatory parameter - LSP name - range: [a-zA-Z0-9-_.] - length: 1<=x<=32",
+      "type": "<Drouter::MplsLspName>"
+    }
+  ],
+  "raw": "help configure dist-router sdp\r\nSDP CONFIGURATION COMMAND\r\n=========================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure an SDP(typically corresponding to \r\nan MPLS tunnel).\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with drouter privileges, and executed \r\nby operators with drouter privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure dist-router ( no sdp (sdp-id) ) | ( sdp (sdp-id) lsp-name \r\n<Drouter::MplsLspName> )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"SDP Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(sdp-id)                   SDP Identifier\r\n\r\nTable \"SDP Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nlsp-name                   LSP name to set the LSP list\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Drouter::MplsLspName>\r\n                           Format:\r\n                           - LSP name\r\n                           - range: [a-zA-Z0-9-_.]\r\n                           - length: 1<=x<=32 \r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -73,9 +73,10 @@ class BridgesFacts(object):
 
         # debugpy.breakpoint()
 
-        params = utils.remove_empties(bridges_parser.validate_config(self.argument_spec, {"config": list_valued}, redact=True))
-
-        facts['bridges'] = params['config']
+        params = utils.remove_empties(
+            bridges_parser.validate_config(self.argument_spec, {"config": list_valued}, redact=True)
+        ) or {}
+        facts['bridges'] = params.get('config') or []
         ansible_facts['ansible_network_resources'].update(facts)
 
         return ansible_facts

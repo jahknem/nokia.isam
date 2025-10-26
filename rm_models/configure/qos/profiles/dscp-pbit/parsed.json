@@ -1,0 +1,9 @@
+{
+  "title": "QOS DSCP TO PBIT MAPPING PROFILE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a QoS DSCP to Pbit mapping \nprofile. To configure the DSCP codepoints in the DSCP to dot1p mapping, the \ncommand \"configure qos profiles dscp-pbit (name) codepoint (codepoint) (value)\" \nis to be used.",
+  "user_level": "The command can be accessed by operators with qos privileges, and executed by op\nerators with qos privileges.",
+  "syntax": "> configure qos profiles ( no dscp-pbit (name) ) | ( dscp-pbit (name) )",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure qos profiles dscp-pbit\r\nQOS DSCP TO PBIT MAPPING PROFILE CONFIGURATION COMMAND\r\n======================================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a QoS DSCP to Pbit mapping \r\nprofile. To configure the DSCP codepoints in the DSCP to dot1p mapping, the \r\ncommand \"configure qos profiles dscp-pbit (name) codepoint (codepoint) (value)\" \r\nis to be used.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by op\r\nerators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos profiles ( no dscp-pbit (name) ) | ( dscp-pbit (name) )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS DSCP to Pbit Mapping Profile Configuration Command\" Resource \r\nParameters\r\n\r\nResource Identifier        Description\r\n\r\n(name)                     A unique profile name\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

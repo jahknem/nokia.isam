@@ -1,0 +1,112 @@
+help configure qos profiles scheduler-node
+QOS SCHEDULER NODE PROFILE CONFIGURATION COMMAND
+================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a QoS scheduler node profile. The 
+scheduler node profiles contain configuration settings for the data plane 
+schedulers. These scheduler node profiles are applicable to downstream 
+schedulers on the L3 line cards. The scheduler node settings on the service hub 
+can be modified separately.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles ( no scheduler-node (name) ) | ( scheduler-node (name) 
+priority <Qos::QosPriority> weight <Qos::QosWeight> shaper-profile 
+<Qos::QosShaperProfileName> [ no ext-shaper | ext-shaper 
+<Qos::QosShaperProfileName> ] [ no mcast-inc-shape | mcast-inc-shape 
+<Qos::QosMulticastInclShaping> ] )
+
+Command Parameters
+------------------
+
+Table "QoS Scheduler Node Profile Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+Table "QoS Scheduler Node Profile Configuration Command" Command Parameters
+
+Parameter                  Description
+
+priority                   relative priority of the scheduler-node
+                           mandatory parameter
+
+                           Parameter type: <Qos::QosPriority>
+                           Format:
+                           - relative priority
+                           - range: [1...8]
+
+weight                     relative weight of the scheduler-node
+                           mandatory parameter
+
+                           Parameter type: <Qos::QosWeight>
+                           Format:
+                           - relative weight
+                           - range: [0...127]
+
+shaper-profile             the associated shaper profile. For EPON OLT in 
+downstream, this profile used for LLID shaper on 1G PON bandwidth.
+                           mandatory parameter
+
+                           Parameter type: <Qos::QosShaperProfileName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associated
+                           - name                  : enter profile name to be 
+associated
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] ext-shaper            the associated shaper profile. For EPON OLT in 
+downstream, this profile used for LLID shaper on 10G PON bandwidth.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosShaperProfileName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associated
+                           - name                  : enter profile name to be 
+associated
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] mcast-inc-shape       indicates whether downstream shaping includes Mcast
+                           optional parameter with default value: "false"
+
+                           Parameter type: <Qos::QosMulticastInclShaping>
+                           Format:
+                           ( mcast-shap-on
+                           | no-mcast-shap )
+                           Possible values:
+                           - mcast-shap-on         : Downstream shaping 
+includes Mcast
+                           - no-mcast-shap         : Downstream shaping doesnot 
+include Mcast
+
+
+DS-LIN-TEST-01:automationuser>#

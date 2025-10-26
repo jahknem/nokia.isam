@@ -1,0 +1,77 @@
+# Using overridden state
+
+# Before state:
+# -------------
+# From real device (after deleted):
+#   info configure bridge port
+DS-LIN-TEST-01:automationuser># info configure bridge port
+configure bridge
+#-------------------------------------------------------------------------------
+echo "bridge"
+#-------------------------------------------------------------------------------
+port 1/1/2/1/1/1/1
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 710
+    vlan-scope local
+  exit
+  vlan-id 20
+    tag single-tagged
+    l2fwder-vlan 720
+    vlan-scope local
+    qos priority:5
+  exit
+  vlan-id 30
+    tag single-tagged
+    l2fwder-vlan 730
+    vlan-scope local
+    qos priority:4
+  exit
+  vlan-id 99
+  exit
+  pvid 99
+exit
+#-------------------------------------------------------------------------------
+DS-LIN-TEST-01:automationuser>#
+
+- name: Apply overridden operation on Nokia ISAM (bridge port)
+  isam_bridge_port:
+    state: overridden
+    config:
+      - name: "1/1/2/1/1/1/1"
+        max_unicast_mac: "6"
+
+# After state:
+# ------------
+# Run again on the device:
+#   info configure bridge port
+DS-LIN-TEST-01:automationuser># info configure bridge port
+configure bridge
+#-------------------------------------------------------------------------------
+echo "bridge"
+#-------------------------------------------------------------------------------
+port 1/1/2/1/1/1/1
+  max-unicast-mac 6
+  vlan-id 10
+    tag single-tagged
+    l2fwder-vlan 710
+    vlan-scope local
+  exit
+  vlan-id 20
+    tag single-tagged
+    l2fwder-vlan 720
+    vlan-scope local
+    qos priority:5
+  exit
+  vlan-id 30
+    tag single-tagged
+    l2fwder-vlan 730
+    vlan-scope local
+    qos priority:4
+  exit
+  vlan-id 99
+  exit
+  pvid 99
+exit
+#-------------------------------------------------------------------------------
+DS-LIN-TEST-01:automationuser>#

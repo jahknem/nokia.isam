@@ -1,0 +1,5 @@
+help configure alarm entry sfu-ploam-deact-fail 
+! SFU ONT
+                                                                                ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

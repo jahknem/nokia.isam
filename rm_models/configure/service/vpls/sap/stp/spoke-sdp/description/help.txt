@@ -1,0 +1,13 @@
+help configure service vpls sap stp spoke-sdp de
+scription
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/26 11:38:19 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 9 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/26 11:38:19 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, 9 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,46 @@
+help configure alarm hgutr069-cust
+HGU TR069 CUSTOMIZABLE ALARM CONFIGURATION COMMAND
+==================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the HGU TR069 customizable alarms.
+
+
+User Level
+----------
+
+The command can be accessed by operators with alarm privileges, and executed by 
+operators with alarm privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure alarm ( no hgutr069-cust (alarm-id) ) | ( hgutr069-cust (alarm-id) 
+description <GPON::CustAlmDesc> )
+
+Command Parameters
+------------------
+
+Table "HGU TR069 Customizable Alarm Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(alarm-id)                 HGU TR069 customizable alarm Id
+
+Table "HGU TR069 Customizable Alarm Configuration Command" Command Parameters
+
+Parameter                  Description
+
+description                alarm description
+                           mandatory parameter
+
+                           Parameter type: <GPON::CustAlmDesc>
+                           Format:
+                           - alarm description
+                           - length: 1<=x<=64 
+
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,26 @@
+{
+  "title": "QOS DOT1P ALIGNMENT MARKER CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a marker for Dot1P alignment.\n\nDefault value for the global DSCP To Dot1P Alignment Table\n\n\nDSCP Value                              P-bit Value \n\n0-7                                   0 \n\n8-15                                   1 \n\n16-23                                   2 \n\n24-31                                   3 \n\n32-39                                   4 \n\n40-47                                   5 \n\n48-55                                   6 \n\n56-63                                   7",
+  "user_level": "The command can be accessed by operators with qos privileges, and executed by \noperators with qos privileges.",
+  "syntax": "> configure qos profiles marker ( no d1p-alignment (name) ) | ( d1p-alignment (name) (alignment) [ no dscp-pbit-prof | dscp-pbit-prof <Qos::QosDscpToPbitProfileName> ] )",
+  "resource_parameters": [
+    {
+      "name": "(name)",
+      "description": "A unique profile name"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] dscp-pbit-prof",
+      "description": "Dscp to Pbit mapping profile name applicable on this marker optional parameter with default value: \"none\"",
+      "type": "<Qos::QosDscpToPbitProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associate",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    }
+  ],
+  "raw": "help configure qos profiles marker d1p-alignment\r\nQOS DOT1P ALIGNMENT MARKER CONFIGURATION COMMAND\r\n================================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a marker for Dot1P alignment.\r\n\r\nDefault value for the global DSCP To Dot1P Alignment Table\r\n\r\n\r\nDSCP Value                              P-bit Value \r\n\r\n0-7                                   0 \r\n\r\n8-15                                   1 \r\n\r\n16-23                                   2 \r\n\r\n24-31                                   3 \r\n\r\n32-39                                   4 \r\n\r\n40-47                                   5 \r\n\r\n48-55                                   6 \r\n\r\n56-63                                   7 \r\n\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by \r\noperators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos profiles marker ( no d1p-alignment (name) ) | ( d1p-alignment \r\n(name) (alignment) [ no dscp-pbit-prof | dscp-pbit-prof \r\n<Qos::QosDscpToPbitProfileName> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS Dot1P Alignment Marker Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(name)                     A unique profile name\r\n\r\nTable \"QoS Dot1P Alignment Marker Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n(alignment)                enable dot1p alignment\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Qos::Dot1PAlignment>\r\n                           Format:\r\n                           enable\r\n                           Possible values:\r\n                           - enable                : enable dot1p alignment\r\n\r\n[no] dscp-pbit-prof        Dscp to Pbit mapping profile name applicable on this \r\nmarker\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosDscpToPbitProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociate\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

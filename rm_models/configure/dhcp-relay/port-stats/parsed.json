@@ -1,0 +1,14 @@
+{
+  "title": "DHCP RELAY USER PORT CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the DHCP relay user port \nstatistics.",
+  "user_level": "The command can be accessed by operators with dhcp privileges, and executed by \noperators with dhcp privileges.",
+  "syntax": "> configure dhcp-relay ( no port-stats (vlan-port) ) | ( port-stats (vlan-port) )",
+  "resource_parameters": [
+    {
+      "name": "(vlan-port)",
+      "description": "Identification of the ip user interface or vlan port"
+    }
+  ],
+  "command_parameters": [],
+  "raw": "help configure dhcp-relay port-stats\r\nDHCP RELAY USER PORT CONFIGURATION COMMAND\r\n==========================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the DHCP relay user port \r\nstatistics.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with dhcp privileges, and executed by \r\noperators with dhcp privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure dhcp-relay ( no port-stats (vlan-port) ) | ( port-stats (vlan-port) \r\n)\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"DHCP Relay User Port Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(vlan-port)                Identification of the ip user interface or vlan port\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,47 @@
+help configure interface atm-pvc
+EXTEND INTERFACE CONFIGURATION COMMAND
+======================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure extended interface management 
+parameters.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure interface atm-pvc (pvc-index) [ no customer-id | customer-id 
+<Itf::asamIfExtCustomerId> ]
+
+Command Parameters
+------------------
+
+Table "Extend Interface Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(pvc-index)                the ATM PVC interface index
+
+Table "Extend Interface Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] customer-id           Config the customerId per PVC 
+                           optional parameter with default value: "available"
+
+                           Parameter type: <Itf::asamIfExtCustomerId>
+                           Format:
+                           - a string identifying the customer or user
+                           - length: x<=64 
+
+
+DS-LIN-TEST-01:automationuser>#

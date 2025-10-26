@@ -1,0 +1,14 @@
+{
+  "title": "DHCP V6 RELAY USER PORT CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the DHCP v6 relay user port \nstatistics.",
+  "user_level": "The command can be accessed by operators with dhcp privileges, and executed by \noperators with dhcp privileges.",
+  "syntax": "> configure dhcp-relay ( no v6-port-stats (vlan-port) ) | ( v6-port-stats (vlan-port) )",
+  "resource_parameters": [
+    {
+      "name": "(vlan-port)",
+      "description": "identification of vlan port"
+    }
+  ],
+  "command_parameters": [],
+  "raw": "help configure dhcp-relay v6-port-stats\r\nDHCP V6 RELAY USER PORT CONFIGURATION COMMAND\r\n=============================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the DHCP v6 relay user port \r\nstatistics.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with dhcp privileges, and executed by \r\noperators with dhcp privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure dhcp-relay ( no v6-port-stats (vlan-port) ) | ( v6-port-stats \r\n(vlan-port) )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"DHCP v6 Relay User Port Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(vlan-port)                identification of vlan port\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

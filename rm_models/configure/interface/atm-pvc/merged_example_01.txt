@@ -1,0 +1,24 @@
+# Using merged state
+
+# Before state:
+# =============
+#
+# Run on device to capture current settings for this resource:
+#    info configure interface atm-pvc
+# Example output:
+#    customer-id "available"
+
+- name: Merge interface atm-pvc configuration with new customer ID
+  isam_interface_atm_pvc:
+    state: merged
+    config:
+      - name: "1/1/atm:0/0"
+        customer_id: "enterprise_customer_1"
+
+# After state:
+# ============
+#
+# Re-run the same info command to show the effect:
+#    info configure interface atm-pvc
+# Expected output:
+#    customer-id "enterprise_customer_1"

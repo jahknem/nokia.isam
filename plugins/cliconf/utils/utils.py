@@ -50,7 +50,7 @@ def removeCtrlChars(s):
 def removeAlarms(s):
     out = ''
     for l in s.splitlines(keepends=True):
-        if not re.search('^\d{2}\/\d{2}\/\d{2}',l):
-            out +=l
+        if not re.search(r'^\d{2}/\d{2}/\d{2}', l):
+            out += l
     return out
 

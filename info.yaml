@@ -1,6 +1,6 @@
 ---
 - name: Playbook which outputs all facts
-  hosts: DS-ALT1-01
+  hosts: DS-LIN-TEST-01
   gather_facts: false
   connection: network_cli
   tasks:

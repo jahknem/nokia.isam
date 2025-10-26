@@ -1,0 +1,5 @@
+help configure router interface ingress delayed-
+enable
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

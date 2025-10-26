@@ -1,0 +1,5 @@
+help configure service vpls egress eth-ring egre
+ss-network
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

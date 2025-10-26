@@ -1,0 +1,9 @@
+help configure router interface icmp ipv6 icmp6 
+unreachables
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:56:31 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:56:29 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

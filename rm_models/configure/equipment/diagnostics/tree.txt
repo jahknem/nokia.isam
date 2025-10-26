@@ -1,0 +1,60 @@
+25/10/25 16:12:03 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 16:11:57 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 16:12:03 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 16:11:19 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 16:12:16 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 16:12:29 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 16:12:29 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 16:12:29 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 16:12:42 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 16:12:41 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 16:12:42 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 16:12:29 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 16:12:55 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 16:12:41 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 16:13:08 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 16:13:06 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 16:13:22 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 16:13:20 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 16:13:22 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 16:13:06 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 16:13:35 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 16:13:35 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 16:13:20 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># tree configure equipment diagnostics
+diagnostics 
+|  
++--sfp 
+   |  
+   *--rssi-prof-id 
+   |  
+   *--rssi-state 
+      
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,220 @@
+{
+  "title": "QOS INGRESSQOS PROFILE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a QoS Ingress profile.The \nIngressQoS Profile table stores the pbit to TC mappings that can be used by a \nL2 Forwarder in the upstream and dowstream directions.",
+  "user_level": "The command can be accessed by operators with qos privileges, and executed by \noperators with qos privileges.",
+  "syntax": "> configure qos profiles ( no ingress-qos (name) ) | ( ingress-qos (name) [ no dot1-p0-tc | dot1-p0-tc <Qos::TCMask_0> ] [ no dot1-p1-tc | dot1-p1-tc <Qos::TCMask_1> ] [ no dot1-p2-tc | dot1-p2-tc <Qos::TCMask_2> ] [ no dot1-p3-tc | dot1-p3-tc <Qos::TCMask_3> ] [ no dot1-p4-tc | dot1-p4-tc <Qos::TCMask_4> ] [ no dot1-p5-tc | dot1-p5-tc <Qos::TCMask_5> ] [ no dot1-p6-tc | dot1-p6-tc <Qos::TCMask_6> ] [ no dot1-p7-tc | dot1-p7-tc <Qos::TCMask_7> ] [ [ no ] use-dei ] [ no dot1-p0-color | dot1-p0-color <Qos::NibbleMask_0> ] [ no dot1-p1-color | dot1-p1-color <Qos::NibbleMask_1> ] [ no dot1-p2-color | dot1-p2-color <Qos::NibbleMask_2> ] [ no dot1-p3-color | dot1-p3-color <Qos::NibbleMask_3> ] [ no dot1-p4-color | dot1-p4-color <Qos::NibbleMask_4> ] [ no dot1-p5-color | dot1-p5-color <Qos::NibbleMask_5> ] [ no dot1-p6-color | dot1-p6-color <Qos::NibbleMask_6> ] [ no dot1-p7-color | dot1-p7-color <Qos::NibbleMask_7> ] [ no dot1-p0-pol-tc | dot1-p0-pol-tc <Qos::PolTCMask_0> ] [ no dot1-p1-pol-tc | dot1-p1-pol-tc <Qos::PolTCMask_1> ] [ no dot1-p2-pol-tc | dot1-p2-pol-tc <Qos::PolTCMask_2> ] [ no dot1-p3-pol-tc | dot1-p3-pol-tc <Qos::PolTCMask_3> ] [ no dot1-p4-pol-tc | dot1-p4-pol-tc <Qos::PolTCMask_4> ] [ no dot1-p5-pol-tc | dot1-p5-pol-tc <Qos::PolTCMask_5> ] [ no dot1-p6-pol-tc | dot1-p6-pol-tc <Qos::PolTCMask_6> ] [ no dot1-p7-pol-tc | dot1-p7-pol-tc <Qos::PolTCMask_7> ] )",
+  "resource_parameters": [
+    {
+      "name": "(name)",
+      "description": "A unique profile name"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] dot1-p0-tc",
+      "description": "traffic class corresponding to pbit0 optional parameter with default value: 15 - traffic class corresponding to pbit0 - range: [0...7,15]",
+      "type": "<Qos::TCMask_0>",
+      "default": "15"
+    },
+    {
+      "name": "[no] dot1-p1-tc",
+      "description": "traffic class corresponding to pbit1 optional parameter with default value: 15 - traffic class corresponding to pbit1 - range: [0...7,15]",
+      "type": "<Qos::TCMask_1>",
+      "default": "15"
+    },
+    {
+      "name": "[no] dot1-p2-tc",
+      "description": "traffic class corresponding to pbit2 optional parameter with default value: 15 - traffic class corresponding to pbit2 - range: [0...7,15]",
+      "type": "<Qos::TCMask_2>",
+      "default": "15"
+    },
+    {
+      "name": "[no] dot1-p3-tc",
+      "description": "traffic class corresponding to pbit3 optional parameter with default value: 15 - traffic class corresponding to pbit3 - range: [0...7,15]",
+      "type": "<Qos::TCMask_3>",
+      "default": "15"
+    },
+    {
+      "name": "[no] dot1-p4-tc",
+      "description": "traffic class corresponding to pbit4 optional parameter with default value: 15 - traffic class corresponding to pbit4 - range: [0...7,15]",
+      "type": "<Qos::TCMask_4>",
+      "default": "15"
+    },
+    {
+      "name": "[no] dot1-p5-tc",
+      "description": "traffic class corresponding to pbit5 optional parameter with default value: 15 - traffic class corresponding to pbit5 - range: [0...7,15]",
+      "type": "<Qos::TCMask_5>",
+      "default": "15"
+    },
+    {
+      "name": "[no] dot1-p6-tc",
+      "description": "traffic class corresponding to pbit6 optional parameter with default value: 15 - traffic class corresponding to pbit6 - range: [0...7,15]",
+      "type": "<Qos::TCMask_6>",
+      "default": "15"
+    },
+    {
+      "name": "[no] dot1-p7-tc",
+      "description": "traffic class corresponding to pbit7 optional parameter with default value: 15 - traffic class corresponding to pbit7 - range: [0...7,15]",
+      "type": "<Qos::TCMask_7>",
+      "default": "15"
+    },
+    {
+      "name": "[no] use-dei",
+      "description": "enable use of DEI bit optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] dot1-p0-color",
+      "description": "ingress color corresponding to pbit0 optional parameter with default value: \"green\"",
+      "type": "<Qos::NibbleMask_0>",
+      "format": "( green                            | yellow                            | red                            | not-used )",
+      "values": [
+        "green                 : green color",
+        "yellow                : yellow color",
+        "red                   : red color",
+        "not-used              : pbit not in use"
+      ],
+      "default": "green"
+    },
+    {
+      "name": "[no] dot1-p1-color",
+      "description": "ingress color corresponding to pbit1 optional parameter with default value: \"green\"",
+      "type": "<Qos::NibbleMask_1>",
+      "format": "( green                            | yellow                            | red                            | not-used )",
+      "values": [
+        "green                 : green color",
+        "yellow                : yellow color",
+        "red                   : red color",
+        "not-used              : pbit not in use"
+      ],
+      "default": "green"
+    },
+    {
+      "name": "[no] dot1-p2-color",
+      "description": "ingress color corresponding to pbit2 optional parameter with default value: \"green\"",
+      "type": "<Qos::NibbleMask_2>",
+      "format": "( green                            | yellow                            | red                            | not-used )",
+      "values": [
+        "green                 : green color",
+        "yellow                : yellow color",
+        "red                   : red color",
+        "not-used              : pbit not in use"
+      ],
+      "default": "green"
+    },
+    {
+      "name": "[no] dot1-p3-color",
+      "description": "ingress color corresponding to pbit3 optional parameter with default value: \"green\"",
+      "type": "<Qos::NibbleMask_3>",
+      "format": "( green                            | yellow                            | red                            | not-used )",
+      "values": [
+        "green                 : green color",
+        "yellow                : yellow color",
+        "red                   : red color",
+        "not-used              : pbit not in use"
+      ],
+      "default": "green"
+    },
+    {
+      "name": "[no] dot1-p4-color",
+      "description": "ingress color corresponding to pbit4 optional parameter with default value: \"green\"",
+      "type": "<Qos::NibbleMask_4>",
+      "format": "( green                            | yellow                            | red                            | not-used )",
+      "values": [
+        "green                 : green color",
+        "yellow                : yellow color",
+        "red                   : red color",
+        "not-used              : pbit not in use"
+      ],
+      "default": "green"
+    },
+    {
+      "name": "[no] dot1-p5-color",
+      "description": "ingress color corresponding to pbit5 optional parameter with default value: \"green\"",
+      "type": "<Qos::NibbleMask_5>",
+      "format": "( green                            | yellow                            | red                            | not-used )",
+      "values": [
+        "green                 : green color",
+        "yellow                : yellow color",
+        "red                   : red color",
+        "not-used              : pbit not in use"
+      ],
+      "default": "green"
+    },
+    {
+      "name": "[no] dot1-p6-color",
+      "description": "ingress color corresponding to pbit6 optional parameter with default value: \"green\"",
+      "type": "<Qos::NibbleMask_6>",
+      "format": "( green                            | yellow                            | red                            | not-used )",
+      "values": [
+        "green                 : green color",
+        "yellow                : yellow color",
+        "red                   : red color",
+        "not-used              : pbit not in use"
+      ],
+      "default": "green"
+    },
+    {
+      "name": "[no] dot1-p7-color",
+      "description": "ingress color corresponding to pbit7 optional parameter with default value: \"green\"",
+      "type": "<Qos::NibbleMask_7>",
+      "format": "( green                            | yellow                            | red                            | not-used )",
+      "values": [
+        "green                 : green color",
+        "yellow                : yellow color",
+        "red                   : red color",
+        "not-used              : pbit not in use"
+      ],
+      "default": "green"
+    },
+    {
+      "name": "[no] dot1-p0-pol-tc",
+      "description": "policing traffic class corresponding to pbit0 optional parameter with default value: 15 - policing traffic class corresponding to pbit0 - range: [0...7,15]",
+      "type": "<Qos::PolTCMask_0>",
+      "default": "15"
+    },
+    {
+      "name": "[no] dot1-p1-pol-tc",
+      "description": "policing traffic class corresponding to pbit1 optional parameter with default value: 15 - policing traffic class corresponding to pbit1 - range: [0...7,15]",
+      "type": "<Qos::PolTCMask_1>",
+      "default": "15"
+    },
+    {
+      "name": "[no] dot1-p2-pol-tc",
+      "description": "policing traffic class corresponding to pbit2 optional parameter with default value: 15 - policing traffic class corresponding to pbit2 - range: [0...7,15]",
+      "type": "<Qos::PolTCMask_2>",
+      "default": "15"
+    },
+    {
+      "name": "[no] dot1-p3-pol-tc",
+      "description": "policing traffic class corresponding to pbit3 optional parameter with default value: 15 - policing traffic class corresponding to pbit3 - range: [0...7,15]",
+      "type": "<Qos::PolTCMask_3>",
+      "default": "15"
+    },
+    {
+      "name": "[no] dot1-p4-pol-tc",
+      "description": "policing traffic class corresponding to pbit4 optional parameter with default value: 15 - policing traffic class corresponding to pbit4 - range: [0...7,15]",
+      "type": "<Qos::PolTCMask_4>",
+      "default": "15"
+    },
+    {
+      "name": "[no] dot1-p5-pol-tc",
+      "description": "policing traffic class corresponding to pbit5 optional parameter with default value: 15 - policing traffic class corresponding to pbit5 - range: [0...7,15]",
+      "type": "<Qos::PolTCMask_5>",
+      "default": "15"
+    },
+    {
+      "name": "[no] dot1-p6-pol-tc",
+      "description": "policing traffic class corresponding to pbit6 optional parameter with default value: 15 - policing traffic class corresponding to pbit6 - range: [0...7,15]",
+      "type": "<Qos::PolTCMask_6>",
+      "default": "15"
+    },
+    {
+      "name": "[no] dot1-p7-pol-tc",
+      "description": "policing traffic class corresponding to pbit7 optional parameter with default value: 15 - policing traffic class corresponding to pbit7 - range: [0...7,15]",
+      "type": "<Qos::PolTCMask_7>",
+      "default": "15"
+    }
+  ],
+  "raw": "help configure qos profiles ingress-qos\r\nQOS INGRESSQOS PROFILE CONFIGURATION COMMAND\r\n============================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a QoS Ingress profile.The \r\nIngressQoS Profile table stores the pbit to TC mappings that can be used by a \r\nL2 Forwarder in the upstream and dowstream directions.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by \r\noperators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos profiles ( no ingress-qos (name) ) | ( ingress-qos (name) [ no \r\ndot1-p0-tc | dot1-p0-tc <Qos::TCMask_0> ] [ no dot1-p1-tc | dot1-p1-tc \r\n<Qos::TCMask_1> ] [ no dot1-p2-tc | dot1-p2-tc <Qos::TCMask_2> ] [ no \r\ndot1-p3-tc | dot1-p3-tc <Qos::TCMask_3> ] [ no dot1-p4-tc | dot1-p4-tc \r\n<Qos::TCMask_4> ] [ no dot1-p5-tc | dot1-p5-tc <Qos::TCMask_5> ] [ no \r\ndot1-p6-tc | dot1-p6-tc <Qos::TCMask_6> ] [ no dot1-p7-tc | dot1-p7-tc \r\n<Qos::TCMask_7> ] [ [ no ] use-dei ] [ no dot1-p0-color | dot1-p0-color \r\n<Qos::NibbleMask_0> ] [ no dot1-p1-color | dot1-p1-color <Qos::NibbleMask_1> ] \r\n[ no dot1-p2-color | dot1-p2-color <Qos::NibbleMask_2> ] [ no dot1-p3-color | \r\ndot1-p3-color <Qos::NibbleMask_3> ] [ no dot1-p4-color | dot1-p4-color \r\n<Qos::NibbleMask_4> ] [ no dot1-p5-color | dot1-p5-color <Qos::NibbleMask_5> ] \r\n[ no dot1-p6-color | dot1-p6-color <Qos::NibbleMask_6> ] [ no dot1-p7-color | \r\ndot1-p7-color <Qos::NibbleMask_7> ] [ no dot1-p0-pol-tc | dot1-p0-pol-tc \r\n<Qos::PolTCMask_0> ] [ no dot1-p1-pol-tc | dot1-p1-pol-tc <Qos::PolTCMask_1> ] \r\n[ no dot1-p2-pol-tc | dot1-p2-pol-tc <Qos::PolTCMask_2> ] [ no dot1-p3-pol-tc | \r\ndot1-p3-pol-tc <Qos::PolTCMask_3> ] [ no dot1-p4-pol-tc | dot1-p4-pol-tc \r\n<Qos::PolTCMask_4> ] [ no dot1-p5-pol-tc | dot1-p5-pol-tc <Qos::PolTCMask_5> ] \r\n[ no dot1-p6-pol-tc | dot1-p6-pol-tc <Qos::PolTCMask_6> ] [ no dot1-p7-pol-tc | \r\ndot1-p7-pol-tc <Qos::PolTCMask_7> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS IngressQoS Profile Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(name)                     A unique profile name\r\n\r\nTable \"QoS IngressQoS Profile Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] dot1-p0-tc            traffic class corresponding to pbit0\r\n                           optional parameter with default value: 15\r\n\r\n                           Parameter type: <Qos::TCMask_0>\r\n                           Format:\r\n                           - traffic class corresponding to pbit0\r\n                           - range: [0...7,15]\r\n\r\n[no] dot1-p1-tc            traffic class corresponding to pbit1\r\n                           optional parameter with default value: 15\r\n\r\n                           Parameter type: <Qos::TCMask_1>\r\n                           Format:\r\n                           - traffic class corresponding to pbit1\r\n                           - range: [0...7,15]\r\n\r\n[no] dot1-p2-tc            traffic class corresponding to pbit2\r\n                           optional parameter with default value: 15\r\n\r\n                           Parameter type: <Qos::TCMask_2>\r\n                           Format:\r\n                           - traffic class corresponding to pbit2\r\n                           - range: [0...7,15]\r\n\r\n[no] dot1-p3-tc            traffic class corresponding to pbit3\r\n                           optional parameter with default value: 15\r\n\r\n                           Parameter type: <Qos::TCMask_3>\r\n                           Format:\r\n                           - traffic class corresponding to pbit3\r\n                           - range: [0...7,15]\r\n\r\n[no] dot1-p4-tc            traffic class corresponding to pbit4\r\n                           optional parameter with default value: 15\r\n\r\n                           Parameter type: <Qos::TCMask_4>\r\n                           Format:\r\n                           - traffic class corresponding to pbit4\r\n                           - range: [0...7,15]\r\n\r\n[no] dot1-p5-tc            traffic class corresponding to pbit5\r\r\n\r\n                           optional parameter with default value: 15\r\n\r\n                           Parameter type: <Qos::TCMask_5>\r\n                           Format:\r\n                           - traffic class corresponding to pbit5\r\n                           - range: [0...7,15]\r\n\r\n[no] dot1-p6-tc            traffic class corresponding to pbit6\r\n                           optional parameter with default value: 15\r\n\r\n                           Parameter type: <Qos::TCMask_6>\r\n                           Format:\r\n                           - traffic class corresponding to pbit6\r\n                           - range: [0...7,15]\r\n\r\n[no] dot1-p7-tc            traffic class corresponding to pbit7\r\n                           optional parameter with default value: 15\r\n\r\n                           Parameter type: <Qos::TCMask_7>\r\n                           Format:\r\n                           - traffic class corresponding to pbit7\r\n                           - range: [0...7,15]\r\n\r\n[no] use-dei               enable use of DEI bit\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] dot1-p0-color         ingress color corresponding to pbit0\r\n                           optional parameter with default value: \"green\"\r\n\r\n                           Parameter type: <Qos::NibbleMask_0>\r\n                           Format:\r\n                           ( green\r\n                           | yellow\r\n                           | red\r\n                           | not-used )\r\n                           Possible values:\r\n                           - green                 : green color\r\n                           - yellow                : yellow color\r\n                           - red                   : red color\r\n                           - not-used              : pbit not in use\r\n\r\n[no] dot1-p1-color         ingress color corresponding to pbit1\r\n                           optional parameter with default value: \"green\"\r\n\r\n                           Parameter type: <Qos::NibbleMask_1>\r\n                           Format:\r\n                           ( green\r\n                           | yellow\r\n                           | red\r\n                           | not-used )\r\n                           Possible values:\r\n                           - green                 : green color\r\n                           - yellow                : yellow color\r\n                           - red                   : red color\r\n                           - not-used              : pbit not in use\r\n\r\n[no] dot1-p2-color         ingress color corresponding to pbit2\r\n                           optional parameter with default value: \"green\"\r\n\r\n                           Parameter type: <Qos::NibbleMask_2>\r\n                           Format:\r\n                           ( green\r\n                           | yellow\r\n                           | red\r\n                           | not-used )\r\n                           Possible values:\r\n                           - green                 : green color\r\n                           - yellow                : yellow color\r\n                           - red                   : red color\r\n                           - not-used              : pbit not in use\r\n\r\n[no] dot1-p3-color         ingress color corresponding to pbit3\r\n                           optional parameter with default value: \"green\"\r\n\r\n                           Parameter type: <Qos::NibbleMask_3>\r\n                           Format:\r\n                           ( green\r\n                           | yellow\r\n                           | red\r\n                           | not-used )\r\n                           Possible values:\r\n                           - green                 : green color\r\n                           - yellow                : yellow color\r\n                           - red                   : red color\r\n                           - not-used              : pbit not in use\r\n\r\n[no] dot1-p4-color         ingress color corresponding to pbit4\r\n                           optional parameter with default value: \"green\"\r\n\r\n                           Parameter type: <Qos::NibbleMask_4>\r\n                           Format:\r\n                           ( green\r\n                           | yellow\r\n                           | red\r\n                           | not-used )\r\n                           Possible values:\r\n                           - green                 : green color\r\n                           - yellow                : yellow color\r\n                           - red                   : red color\r\n                           - not-used              : pbit not in use\r\n\r\n[no] dot1-p5-color         ingress color corresponding to pbit5\r\n                           optional parameter with default value: \"green\"\r\n\r\n                           Parameter type: <Qos::NibbleMask_5>\r\n                           Format:\r\n                           ( green\r\n                           | yellow\r\n                           | red\r\n                           | not-used )\r\n                           Possible values:\r\n                           - green                 : green color\r\n                           - yellow                : yellow color\r\n                           - red                   : red color\r\n                           - not-used              : pbit not in use\r\n\r\n[no] dot1-p6-color         ingress color corresponding to pbit6\r\n                           optional parameter with default value: \"green\"\r\n\r\n                           Parameter type: <Qos::NibbleMask_6>\r\n                           Format:\r\n                           ( green\r\n                           | yellow\r\n                           | red\r\n                           | not-used )\r\n                           Possible values:\r\n                           - green                 : green color\r\n                           - yellow                : yellow color\r\n                           - red                   : red color\r\n                           - not-used              : pbit not in use\r\n\r\n[no] dot1-p7-color         ingress color corresponding to pbit7\r\n                           optional parameter with default value: \"green\"\r\n\r\n                           Parameter type: <Qos::NibbleMask_7>\r\n                           Format:\r\n                           ( green\r\n                           | yellow\r\n                           | red\r\n                           | not-used )\r\n                           Possible values:\r\n                           - green                 : green color\r\n                           - yellow                : yellow color\r\n                           - red                   : red color\r\n                           - not-used              : pbit not in use\r\n\r\n[no] dot1-p0-pol-tc        policing traffic class corresponding to pbit0\r\n                           optional parameter with default value: 15\r\n\r\n                           Parameter type: <Qos::PolTCMask_0>\r\n                           Format:\r\n                           - policing traffic class corresponding to pbit0\r\n                           - range: [0...7,15]\r\r\n\r\n\r\n[no] dot1-p1-pol-tc        policing traffic class corresponding to pbit1\r\n                           optional parameter with default value: 15\r\n\r\n                           Parameter type: <Qos::PolTCMask_1>\r\n                           Format:\r\n                           - policing traffic class corresponding to pbit1\r\n                           - range: [0...7,15]\r\n\r\n[no] dot1-p2-pol-tc        policing traffic class corresponding to pbit2\r\n                           optional parameter with default value: 15\r\n\r\n                           Parameter type: <Qos::PolTCMask_2>\r\n                           Format:\r\n                           - policing traffic class corresponding to pbit2\r\n                           - range: [0...7,15]\r\n\r\n[no] dot1-p3-pol-tc        policing traffic class corresponding to pbit3\r\n                           optional parameter with default value: 15\r\n\r\n                           Parameter type: <Qos::PolTCMask_3>\r\n                           Format:\r\n                           - policing traffic class corresponding to pbit3\r\n                           - range: [0...7,15]\r\n\r\n[no] dot1-p4-pol-tc        policing traffic class corresponding to pbit4\r\n                           optional parameter with default value: 15\r\n\r\n                           Parameter type: <Qos::PolTCMask_4>\r\n                           Format:\r\n                           - policing traffic class corresponding to pbit4\r\n                           - range: [0...7,15]\r\n\r\n[no] dot1-p5-pol-tc        policing traffic class corresponding to pbit5\r\n                           optional parameter with default value: 15\r\n\r\n                           Parameter type: <Qos::PolTCMask_5>\r\n                           Format:\r\n                           - policing traffic class corresponding to pbit5\r\n                           - range: [0...7,15]\r\n\r\n[no] dot1-p6-pol-tc        policing traffic class corresponding to pbit6\r\n                           optional parameter with default value: 15\r\n\r\n                           Parameter type: <Qos::PolTCMask_6>\r\n                           Format:\r\n                           - policing traffic class corresponding to pbit6\r\n                           - range: [0...7,15]\r\n\r\n[no] dot1-p7-pol-tc        policing traffic class corresponding to pbit7\r\n                           optional parameter with default value: 15\r\n\r\n                           Parameter type: <Qos::PolTCMask_7>\r\n                           Format:\r\n                           - policing traffic class corresponding to pbit7\r\n                           - range: [0...7,15]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

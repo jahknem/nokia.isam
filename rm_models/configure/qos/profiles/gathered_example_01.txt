@@ -1,0 +1,401 @@
+profiles
+queue FD_BEQ red:24:48:80
+exit
+queue FD_CLQ red:24:48:80
+exit
+queue BACKPLQ threecolour-taildrop:48:40:32
+exit
+queue FD_VideoQ tail-drop:64
+exit
+queue FD_VoiceQ tail-drop:10
+exit
+queue NNI_BECLQ red:24:48:80
+exit
+queue UNI_BECLQ red:24:48:80
+exit
+queue NNI_VideoQ tail-drop:64
+exit
+queue NNI_VoiceQ tail-drop:10
+exit
+queue UNI_VideoQ tail-drop:64
+exit
+queue UNI_VoiceQ tail-drop:10
+exit
+queue DSLNNI_BECLQ red:341:682:5
+exit
+queue DSLNNI_Video tail-drop:401
+exit
+queue DSLNNI_Voice tail-drop:49
+exit
+queue NGLT_Default gpon-tail-drop:16:512
+exit
+queue NGVR_UPLINK_BECLQ threecolour-red:149:745:5:75:373:5:1:2:100
+exit
+queue NGVR_UPLINK_VideoQ threecolour-taildrop:1813:906:2
+exit
+queue NGVR_UPLINK_VoiceQ threecolour-taildrop:46:23:2
+exit
+scheduler-node NGLT_Default priority 2 weight 50 shaper-profile none mcast-inc-shape no-mcast-shap
+exit
+scheduler-node Broadcast_Default priority 5 weight 50 shaper-profile none mcast-inc-shape no-mcast-shap
+exit
+scheduler-node Multicast_Default priority 6 weight 50 shaper-profile none mcast-inc-shape no-mcast-shap
+exit
+scheduler-node GPONShaperDN10Mbps priority 2 weight 50 shaper-profile name:GPONqssShaperDN10Mbps mcast-inc-shape no-mcast-shap
+exit
+scheduler-node GPONShaperDN30Mbps priority 2 weight 50 shaper-profile name:GPONqssShaperDN30Mbps mcast-inc-shape no-mcast-shap
+exit
+scheduler-node GPONShaperDN50Mbps priority 2 weight 50 shaper-profile name:GPONqssShaperDN50Mbps mcast-inc-shape no-mcast-shap
+exit
+scheduler-node GPONShaperDN100Mbps priority 2 weight 50 shaper-profile name:GPONqssShaperDN100Mbps mcast-inc-shape no-mcast-shap
+exit
+scheduler-node GPONShaperDN300Mbps priority 2 weight 50 shaper-profile name:GPONqssShaperDN300Mbps mcast-inc-shape no-mcast-shap
+exit
+scheduler-node GPONShaperDN600Mbps priority 2 weight 50 shaper-profile name:GPONqssShaperDN600Mbps mcast-inc-shape no-mcast-shap
+exit
+scheduler-node GPONShaperDN920Mbps priority 2 weight 50 shaper-profile name:GPONqssShaperDN920Mbps mcast-inc-shape no-mcast-shap
+exit
+scheduler-node GPONShaperDN1000Mbps priority 2 weight 50 shaper-profile name:GPONqssShaperDN1000Mbps mcast-inc-shape no-mcast-shap
+exit
+cac DataOnly res-voice-bandwidth 0 max-mcast-bandwidth 0 res-data-bandwidth 0 cac-type generic-pon-cac
+exit
+cac FD_Default res-voice-bandwidth 0 max-mcast-bandwidth 60000 res-data-bandwidth 0
+exit
+cac FD_DataVideo res-voice-bandwidth 0 max-mcast-bandwidth 3000 res-data-bandwidth 250
+exit
+cac FD_GponVideo res-voice-bandwidth 0 max-mcast-bandwidth 1900000 res-data-bandwidth 0 cac-type generic-pon-cac
+exit
+cac FD_TriplePlay res-voice-bandwidth 100 max-mcast-bandwidth 3000 res-data-bandwidth 250
+exit
+cac FD_ONTUniVideo res-voice-bandwidth 0 max-mcast-bandwidth 24000 res-data-bandwidth 0
+exit
+marker
+  d1p FD_Marker_BE default-dot1p 0
+  exit
+  d1p FD_Marker_CL default-dot1p 3
+  exit
+  d1p FD_Marker_Voice default-dot1p 6
+  exit
+exit
+policer qpp5Mbps committed-info-rate 5120 committed-burst-size 256000
+exit
+policer qpp010Mbps committed-info-rate 10240 committed-burst-size 256000
+exit
+policer qpp020Mbps committed-info-rate 20480 committed-burst-size 256000
+exit
+policer qpp030Mbps committed-info-rate 30720 committed-burst-size 256000
+exit
+policer qpp050Mbps committed-info-rate 51200 committed-burst-size 256000
+exit
+policer qpp500Mbps committed-info-rate 512000 committed-burst-size 2560000
+exit
+policer qpp600Mbps committed-info-rate 614400 committed-burst-size 2560000
+exit
+policer qpp920Mbps committed-info-rate 942080 committed-burst-size 942080
+exit
+policer P2Pqpp5Mbps committed-info-rate 5120 committed-burst-size 5120
+exit
+policer FD_Pol_Voice committed-info-rate 100 committed-burst-size 1522
+exit
+policer P2Pqpp10Mbps committed-info-rate 10240 committed-burst-size 10240
+exit
+policer P2Pqpp20Mbps committed-info-rate 20480 committed-burst-size 20480
+exit
+policer P2Pqpp30Mbps committed-info-rate 30720 committed-burst-size 30720
+exit
+policer P2Pqpp40Mbps committed-info-rate 40960 committed-burst-size 40960
+exit
+policer P2Pqpp50Mbps committed-info-rate 51200 committed-burst-size 51200
+exit
+policer P2Pqpp100Mbps committed-info-rate 102400 committed-burst-size 102400
+exit
+policer P2Pqpp200Mbps committed-info-rate 204800 committed-burst-size 204800
+exit
+policer P2Pqpp300Mbps committed-info-rate 307200 committed-burst-size 307200
+exit
+policer P2Pqpp600Mbps committed-info-rate 614400 committed-burst-size 614400
+exit
+policer FD_Pol_Data_DS committed-info-rate 3000 committed-burst-size 22000
+exit
+policer FD_Pol_Data_US committed-info-rate 256 committed-burst-size 3000
+exit
+policer P2Pqpp1000Mbps committed-info-rate 1024000 committed-burst-size 1024000
+exit
+session FD_Voice logical-flow-type pvc
+  up-policer name:FD_Pol_Voice
+  down-policer name:FD_Pol_Voice
+  up-marker name:FD_Marker_Voice
+exit
+session qpsUP5Mbps logical-flow-type generic
+  up-policer name:qpp5Mbps
+exit
+session qpsUP10Mbps logical-flow-type generic
+  up-policer name:qpp010Mbps
+exit
+session qpsUP20Mbps logical-flow-type generic
+  up-policer name:qpp020Mbps
+exit
+session qpsUP30Mbps logical-flow-type generic
+  up-policer name:qpp030Mbps
+exit
+session qpsUP50Mbps logical-flow-type generic
+  up-policer name:qpp050Mbps
+exit
+session qpsUP500Mbps logical-flow-type generic
+  up-policer name:qpp500Mbps
+exit
+session qpsUP600Mbps logical-flow-type generic
+  up-policer name:qpp600Mbps
+exit
+session qpsUP920Mbps logical-flow-type generic
+  up-policer name:qpp920Mbps
+exit
+session P2PqpsUP5Mbps logical-flow-type generic
+  up-policer name:P2Pqpp5Mbps
+exit
+session FD_HSI_premium logical-flow-type generic
+  up-policer name:FD_Pol_Data_US
+  down-policer name:FD_Pol_Data_DS
+  up-marker name:FD_Marker_CL
+exit
+session P2PqpsUP10Mbps logical-flow-type generic
+  up-policer name:P2Pqpp10Mbps
+exit
+session P2PqpsUP20Mbps logical-flow-type generic
+  up-policer name:P2Pqpp20Mbps
+exit
+session P2PqpsUP30Mbps logical-flow-type generic
+  up-policer name:P2Pqpp30Mbps
+exit
+session P2PqpsUP40Mbps logical-flow-type generic
+  up-policer name:P2Pqpp40Mbps
+exit
+session P2PqpsUP50Mbps logical-flow-type generic
+  up-policer name:P2Pqpp50Mbps
+exit
+session FD_HSI_standard logical-flow-type generic
+  up-policer name:FD_Pol_Data_US
+  down-policer name:FD_Pol_Data_DS
+  up-marker name:FD_Marker_BE
+exit
+session P2PqpsUP100Mbps logical-flow-type generic
+  up-policer name:P2Pqpp100Mbps
+exit
+session P2PqpsUP200Mbps logical-flow-type generic
+  up-policer name:P2Pqpp200Mbps
+exit
+session P2PqpsUP300Mbps logical-flow-type generic
+  up-policer name:P2Pqpp300Mbps
+exit
+session P2PqpsUP600Mbps logical-flow-type generic
+  up-policer name:P2Pqpp600Mbps
+exit
+session P2PqpsUP1000Mbps logical-flow-type generic
+  up-policer name:P2Pqpp1000Mbps
+exit
+aggrqueuesconfig DefaultDnQueuesConfig
+  q0-priority 6
+  q1-priority 6
+  q2-priority 7
+  q3-priority 8
+  q0-weight 36
+  q1-weight 64
+  q2-weight 0
+  q3-weight 0
+  q4-weight 0
+  q5-weight 0
+  q6-weight 0
+  q7-weight 0
+  q0-queue-prof name:NGLT_Default
+  q1-queue-prof name:NGLT_Default
+  q2-queue-prof name:NGLT_Default
+  q3-queue-prof name:NGLT_Default
+exit
+aggrqueuesconfig DefaultUpQueuesConfig
+exit
+shaper qssShaperDN10Mbps committed-info-rate 10240 committed-burst-size 256000
+exit
+shaper qssShaperDN30Mbps committed-info-rate 30720 committed-burst-size 256000
+exit
+shaper qssShaperDN50mbps committed-info-rate 51200 committed-burst-size 256000
+exit
+shaper qssShaperDN100Mbps committed-info-rate 102400 committed-burst-size 256000
+exit
+shaper qssShaperDN500Mbps committed-info-rate 512000 committed-burst-size 256000
+exit
+shaper qssShaperDN920Mbps committed-info-rate 942080 committed-burst-size 1024000
+exit
+shaper P2PqssShaperDN5Mbps committed-info-rate 5120 committed-burst-size 5120
+exit
+shaper P2PqssShaperDN10Mbps committed-info-rate 10240 committed-burst-size 10240
+exit
+shaper P2PqssShaperDN20Mbps committed-info-rate 20480 committed-burst-size 20480
+exit
+shaper P2PqssShaperDN30Mbps committed-info-rate 30720 committed-burst-size 30720
+exit
+shaper P2PqssShaperDN40Mbps committed-info-rate 40960 committed-burst-size 40960
+exit
+shaper P2PqssShaperDN50Mbps committed-info-rate 51200 committed-burst-size 51200
+exit
+shaper P2PqssShaperDN100Mbps committed-info-rate 102400 committed-burst-size 102400
+exit
+shaper P2PqssShaperDN200Mbps committed-info-rate 204800 committed-burst-size 204800
+exit
+shaper P2PqssShaperDN300Mbps committed-info-rate 307200 committed-burst-size 307200
+exit
+shaper P2PqssShaperDN600Mbps committed-info-rate 614400 committed-burst-size 614400
+exit
+shaper GPONqssShaperDN10Mbps committed-info-rate 0 committed-burst-size 0 excess-info-rate 10240
+  type singletokenbucketgpon
+exit
+shaper GPONqssShaperDN30Mbps committed-info-rate 0 committed-burst-size 0 excess-info-rate 30720
+  type singletokenbucketgpon
+exit
+shaper GPONqssShaperDN50Mbps committed-info-rate 0 committed-burst-size 0 excess-info-rate 51200
+  type singletokenbucketgpon
+exit
+shaper P2PqssShaperDN100Mbps committed-info-rate 102400 committed-burst-size 102400
+exit
+shaper P2PqssShaperDN200Mbps committed-info-rate 204800 committed-burst-size 204800
+exit
+shaper P2PqssShaperDN300Mbps committed-info-rate 307200 committed-burst-size 307200
+exit
+shaper P2PqssShaperDN600Mbps committed-info-rate 614400 committed-burst-size 614400
+exit
+shaper GPONqssShaperDN100Mbps committed-info-rate 0 committed-burst-size 0 excess-info-rate 102400
+  type singletokenbucketgpon
+exit
+shaper GPONqssShaperDN300Mbps committed-info-rate 0 committed-burst-size 0 excess-info-rate 307200
+  type singletokenbucketgpon
+exit
+shaper GPONqssShaperDN600Mbps committed-info-rate 0 committed-burst-size 0 excess-info-rate 614400
+  type singletokenbucketgpon
+exit
+shaper GPONqssShaperDN920Mbps committed-info-rate 0 committed-burst-size 0 excess-info-rate 942080
+  type singletokenbucketgpon
+exit
+shaper P2PqssShaperDN1000Mbps committed-info-rate 1024000 committed-burst-size 1024000
+exit
+shaper GPONqssShaperDN1000Mbps committed-info-rate 0 committed-burst-size 0 excess-info-rate 1024000
+  type singletokenbucketgpon
+exit
+bandwidth GPONqpp5Mbps committed-info-rate 0 assured-info-rate 0 excessive-info-rate 5120 delay-tolerance 32
+exit
+bandwidth GPONqpp010Mbps committed-info-rate 0 assured-info-rate 0 excessive-info-rate 10240 delay-tolerance 32
+exit
+bandwidth GPONqpp020Mbps committed-info-rate 0 assured-info-rate 0 excessive-info-rate 20480 delay-tolerance 32
+exit
+bandwidth GPONqpp030Mbps committed-info-rate 0 assured-info-rate 0 excessive-info-rate 30720 delay-tolerance 32
+exit
+bandwidth GPONqpp040Mbps committed-info-rate 0 assured-info-rate 0 excessive-info-rate 40960 delay-tolerance 32
+exit
+bandwidth GPONqpp050Mbps committed-info-rate 0 assured-info-rate 0 excessive-info-rate 51200 delay-tolerance 32
+exit
+bandwidth GPONqpp100Mbps committed-info-rate 0 assured-info-rate 0 excessive-info-rate 102400 delay-tolerance 32
+exit
+bandwidth GPONqpp200Mbps committed-info-rate 0 assured-info-rate 0 excessive-info-rate 204800 delay-tolerance 32
+exit
+bandwidth GPONqpp300Mbps committed-info-rate 0 assured-info-rate 0 excessive-info-rate 307200 delay-tolerance 32
+exit
+bandwidth GPONqpp600Mbps committed-info-rate 0 assured-info-rate 0 excessive-info-rate 614400 delay-tolerance 32
+exit
+bandwidth GPONqpp1000Mbps committed-info-rate 0 assured-info-rate 0 excessive-info-rate 1024000 delay-tolerance 32
+exit
+ingress-qos Default_TC0
+  dot1-p0-tc 0
+  dot1-p1-tc 0
+  dot1-p2-tc 0
+  dot1-p3-tc 0
+  dot1-p4-tc 0
+  dot1-p5-tc 0
+  dot1-p6-tc 0
+  dot1-p7-tc 0
+exit
+ingress-qos Default_TC1
+  dot1-p0-tc 1
+  dot1-p1-tc 1
+  dot1-p2-tc 1
+  dot1-p3-tc 1
+  dot1-p4-tc 1
+  dot1-p5-tc 1
+  dot1-p6-tc 1
+  dot1-p7-tc 1
+exit
+ingress-qos Default_TC2
+  dot1-p0-tc 2
+  dot1-p1-tc 2
+  dot1-p2-tc 2
+  dot1-p3-tc 2
+  dot1-p4-tc 2
+  dot1-p5-tc 2
+  dot1-p6-tc 2
+  dot1-p7-tc 2
+exit
+ingress-qos Default_TC3
+  dot1-p0-tc 3
+  dot1-p1-tc 3
+  dot1-p2-tc 3
+  dot1-p3-tc 3
+  dot1-p4-tc 3
+  dot1-p5-tc 3
+  dot1-p6-tc 3
+  dot1-p7-tc 3
+exit
+ingress-qos Default_TC4
+  dot1-p0-tc 4
+  dot1-p1-tc 4
+  dot1-p2-tc 4
+  dot1-p3-tc 4
+  dot1-p4-tc 4
+  dot1-p5-tc 4
+  dot1-p6-tc 4
+  dot1-p7-tc 4
+exit
+ingress-qos Default_TC5
+  dot1-p0-tc 5
+  dot1-p1-tc 5
+  dot1-p2-tc 5
+  dot1-p3-tc 5
+  dot1-p4-tc 5
+  dot1-p5-tc 5
+  dot1-p6-tc 5
+  dot1-p7-tc 5
+exit
+ingress-qos Default_TC6
+  dot1-p0-tc 6
+  dot1-p1-tc 6
+  dot1-p2-tc 6
+  dot1-p3-tc 6
+  dot1-p4-tc 6
+  dot1-p5-tc 6
+  dot1-p6-tc 6
+  dot1-p7-tc 6
+exit
+ingress-qos Default_TC7
+  dot1-p0-tc 7
+  dot1-p1-tc 7
+  dot1-p2-tc 7
+  dot1-p3-tc 7
+  dot1-p4-tc 7
+  dot1-p5-tc 7
+  dot1-p6-tc 7
+  dot1-p7-tc 7
+exit
+ingress-qos Ingress_Default
+  dot1-p0-tc 0
+  dot1-p1-tc 1
+  dot1-p2-tc 2
+  dot1-p3-tc 3
+  dot1-p4-tc 4
+  dot1-p5-tc 5
+  dot1-p6-tc 6
+  dot1-p7-tc 7
+exit
+rate-limit reserve1
+exit
+rate-limit reserve2
+exit
+rate-limit defaultllid
+  total-rate 80
+  total-burst 100
+exit

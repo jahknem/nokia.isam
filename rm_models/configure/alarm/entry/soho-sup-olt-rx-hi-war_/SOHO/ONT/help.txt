@@ -1,0 +1,9 @@
+help configure alarm entry soho-sup-olt-rx-hi-wa
+r! SOHO ONT
+                                                                                 ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:05:38 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:05:36 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

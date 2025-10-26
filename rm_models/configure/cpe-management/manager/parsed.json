@@ -1,0 +1,14 @@
+{
+  "title": "CPE MANAGER CONFIGURATION COMMAND",
+  "description": "This command allows to configure a CPE manager.",
+  "user_level": "The command can be accessed by operators with security privileges, and executed \nby operators with security privileges.",
+  "syntax": "> configure cpe-management ( no manager (address) ) | ( manager (address) )",
+  "resource_parameters": [
+    {
+      "name": "(address)",
+      "description": "the address of a CPE manager"
+    }
+  ],
+  "command_parameters": [],
+  "raw": "help configure cpe-management manager\r\nCPE MANAGER CONFIGURATION COMMAND\r\n==================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows to configure a CPE manager.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with security privileges, and executed \r\nby operators with security privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure cpe-management ( no manager (address) ) | ( manager (address) )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"CPE Manager Configuration Command \" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(address)                  the address of a CPE manager\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

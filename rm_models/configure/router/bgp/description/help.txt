@@ -1,0 +1,4 @@
+help configure router bgp description
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

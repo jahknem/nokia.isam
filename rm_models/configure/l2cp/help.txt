@@ -1,0 +1,43 @@
+help configure l2cp
+L2CP CONFIGURATION COMMAND
+==========================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the L2CP parameters.
+
+
+User Level
+----------
+
+The command can be accessed by operators with transport privileges, and 
+executed by operators with transport privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure l2cp [ no partition-type | partition-type <L2cp::PartitionType> ]
+
+Command Parameters
+------------------
+
+Table "L2CP Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] partition-type        partition type
+                           optional parameter with default value: "no-partition"
+
+                           Parameter type: <L2cp::PartitionType>
+                           Format:
+                           ( no-partition
+                           | fixed-assigned )
+                           Possible values:
+                           - no-partition          : no partitioning is 
+supported
+                           - fixed-assigned        : partitioning is supported
+
+
+DS-LIN-TEST-01:automationuser>#

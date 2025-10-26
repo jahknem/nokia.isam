@@ -1,0 +1,4 @@
+help configure pppoe-client chn
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

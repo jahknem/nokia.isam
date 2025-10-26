@@ -1,0 +1,55 @@
+help configure ima link
+IMA LINK CONFIGURATION COMMANDS
+===============================
+
+Command Description
+-------------------
+
+This command allows the operator to manage the IMA link profile.
+
+
+User Level
+----------
+
+The command can be accessed by operators with xdsl privileges, and executed by 
+operators with xdsl privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure ima ( no link (link-if-index) ) | ( link (link-if-index) grp-index 
+<Itf::ImaLine> )
+
+Command Parameters
+------------------
+
+Table "IMA Link Configuration Commands" Resource Parameters
+
+Resource Identifier        Description
+
+(link-if-index)            interface index of the port
+
+Table "IMA Link Configuration Commands" Command Parameters
+
+Parameter                  Description
+
+grp-index                  logical interface number assigned to this IMA grp 
+Link
+                           mandatory parameter
+
+                           Parameter type: <Itf::ImaLine>
+                           Format:
+                           <Eqpt::RackId> / <Eqpt::ShelfId> / <Eqpt::SlotId> / 
+<Eqpt::PortId>
+                           Field type <Eqpt::RackId>
+                           - the rack number
+                           Field type <Eqpt::ShelfId>
+                           - the shelf number
+                           Field type <Eqpt::SlotId>
+                           - the LT slot number
+                           Field type <Eqpt::PortId>
+                           - the port number
+
+
+DS-LIN-TEST-01:automationuser>#

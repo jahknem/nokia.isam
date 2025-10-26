@@ -1,0 +1,5 @@
+help configure alarm entry soho-gen-sw-dnload-f 
+! SOHO ONT
+                                                                                ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

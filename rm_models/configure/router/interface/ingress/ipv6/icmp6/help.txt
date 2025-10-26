@@ -1,0 +1,5 @@
+help configure router interface ingress ipv6 icm
+p6
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

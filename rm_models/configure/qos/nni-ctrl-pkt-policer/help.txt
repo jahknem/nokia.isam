@@ -1,0 +1,66 @@
+help configure qos nni-ctrl-pkt-policer
+QOS NNI CONTROL PKT POLICER CONFIGURATION COMMAND
+=================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a upstream QoS Nni Control Packet 
+Policer.This control packet policer serves to prevent DoS attacks from 
+subscriber premises against the control plane of the ISAM. The policing 
+parameters that can be configured are the sustainable rate in packets/sec and 
+the maximum burst size in packets.
+
+Control packets arriving at a higher rate then the sustainable rate are dropped 
+by the policer.
+
+Control packets arriving in a longer burst then the maximum burst size are 
+dropped by the policer.
+
+Control packets are packets directed to the LSM itself or inserted by the LSM. 
+The control packet protocol type depends on the applied forwarding model, and 
+can be 802.1x, ARP, RIP, DHCP, IGMP, PPPoEDiscovery , PPP LCP, PPP control, PPP 
+LCP termination acknowledgement. Policing is not applied on control packets 
+inserted by the LSM.
+
+
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos nni-ctrl-pkt-policer [ no sustained-rate | sustained-rate 
+<Qos::NniSustainedRate> ] [ no burst-size | burst-size <Qos::NniCtrlBurstSize> ]
+
+Command Parameters
+------------------
+
+Table "QoS Nni Control Pkt Policer Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] sustained-rate        max sustainable rate in packets/sec
+                           optional parameter with default value: 64
+
+                           Parameter type: <Qos::NniSustainedRate>
+                           Format:
+                           - the police rate of inc user pkts in pps
+                           - range: [1...256]
+
+[no] burst-size            max burst size, in packets
+                           optional parameter with default value: 128
+
+                           Parameter type: <Qos::NniCtrlBurstSize>
+                           Format:
+                           - the burst size
+                           - range: [1...256]
+
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,112 @@
+help configure qos profiles shaper
+QOS SHAPER PROFILE CONFIGURATION COMMAND
+========================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a QoS shaper profile. A QoS 
+shaper profile contains all settings related to a shaper. The ISAM supports 
+single token bucket shapers. EIR is only applicable if shaper type is 
+singleTokenBucketGpon. CBS is applicable only if the shaper type is 
+singleTokenBucket.
+
+The L2+ line cards support shaping on queue.
+
+1. GPON supports EIR and CIR. If CBS is non-zero for GPON; CLI will return an 
+error.
+
+2. DSL doesn't support EIR. So if user enters non-zero for EIR for DSL; CLI 
+will return an error.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles ( no shaper (name) ) | ( shaper (name) 
+committed-info-rate <Qos::ShaperCommittedInfoRate> committed-burst-size 
+<Qos::ShaperCommittedBurstSizeNew> [ no excess-info-rate | excess-info-rate 
+<Qos::ShaperExcessiveInfoRate> ] [ no type | type <Qos::ShaperType> ] [ no 
+autoshape | autoshape <Qos::AutoShape> ] )
+
+Command Parameters
+------------------
+
+Table "QoS Shaper Profile Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+Table "QoS Shaper Profile Configuration Command" Command Parameters
+
+Parameter                  Description
+
+committed-info-rate        committed information rate of a shaper
+                           mandatory parameter
+
+                           Parameter type: <Qos::ShaperCommittedInfoRate>
+                           Format:
+                           - committed information rate of a shaper
+                           - unit: kbps
+                           - range: [0...2147483647]
+
+committed-burst-size       committed burst size of shaper
+                           mandatory parameter
+
+                           Parameter type: <Qos::ShaperCommittedBurstSizeNew>
+                           Format:
+                           - committed burst size of shaper
+                           - unit: byte
+                           - range: [0,64...2147483647]
+
+[no] excess-info-rate      excessive information rate  of shaper
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::ShaperExcessiveInfoRate>
+                           Format:
+                           - excessive information rate of a shaper
+                           - unit: kbps
+                           - range: [0...2147483647]
+
+[no] type                  the shaper profile type
+                           optional parameter with default value: 
+"singletokenbucket"
+
+                           Parameter type: <Qos::ShaperType>
+                           Format:
+                           ( singletokenbucket
+                           | singletokenbucketgpon
+                           | onetokentworate
+                           | twotokenbuckettworate )
+                           Possible values:
+                           - singletokenbucket     : single Token Bucket
+                           - singletokenbucketgpon : single Token Bucket for 
+GPON
+                           - onetokentworate       : single Token Two Rate 
+Bucket
+                           - twotokenbuckettworate : two Token Two Rate Bucket
+
+[no] autoshape             enable or disable automatic shaping
+                           optional parameter with default value: 
+"no-autoshape-on"
+
+                           Parameter type: <Qos::AutoShape>
+                           Format:
+                           ( autoshape-on
+                           | no-autoshape-on )
+                           Possible values:
+                           - autoshape-on          : enable shaping based on 
+queue parameters
+                           - no-autoshape-on       : disable shaping based on 
+queue parameters
+
+
+DS-LIN-TEST-01:automationuser>#

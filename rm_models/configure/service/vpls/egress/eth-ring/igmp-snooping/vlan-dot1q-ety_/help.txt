@@ -1,0 +1,5 @@
+help configure service vpls egress eth-ring igmp
+-snooping vlan-dot1q-ety*
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,92 @@
+module: isam_pppoe_client_interface
+short_description: Resource module to configure pppoe-client interface
+description:
+- Configures PPPoE client interface parameters.
+- Supports configuration of profile name, username, password and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure pppoe-client ()'
+options:
+  config:
+    description:
+    - A list of pppoe-client interface configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (ifindex) - interface index of the PPPoE client port
+      profile_name:
+        type: str
+        description:
+        - PPP profile name mandatory parameter
+        - 'Possible values: C(name) - enter profile name to be associated Field type
+          <PPPoE::IgnoredPppProfileName>; C(length) - 1<=x<=64'
+        choices:
+        - name
+        - name of the PPP profile
+        - length
+      username:
+        type: str
+        description:
+        - 'user name for PPP authentication mandatory parameter - user name string
+          - length: x<=25'
+        - 'Maximum length: 25 characters'
+      password:
+        type: str
+        description:
+        - 'password for PPP authentication mandatory parameter - password string hidden
+          from users - length: x<=25'
+        - 'Maximum length: 25 characters'
+      mac:
+        type: str
+        description:
+        - 'specify the client MAC address for PPPoE frame with default value: "00
+          : 00 : 00 : 00 : 00 : 00" - a unicast mac-address (example : 00:01:02:03:04:05)
+          - length: 6'
+        default: '00 : 00 : 00'
+      pbit:
+        type: str
+        description:
+        - 'the Pbit value for PPPoE frame with default value: 0 - the Pbit value -
+          range: [0...7]'
+        default: '0'
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure pppoe-client interface)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

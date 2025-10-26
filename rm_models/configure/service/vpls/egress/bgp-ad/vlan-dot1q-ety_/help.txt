@@ -1,0 +1,5 @@
+help configure service vpls egress bgp-ad vlan-d
+ot1q-ety*
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

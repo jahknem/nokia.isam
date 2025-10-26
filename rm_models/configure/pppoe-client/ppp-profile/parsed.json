@@ -1,0 +1,46 @@
+{
+  "title": "PPPOE PROFILE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure PPP profile parameters.",
+  "user_level": "The command can be accessed by operators with pppoe privileges, and executed by \noperators with pppoe privileges.",
+  "syntax": "> configure pppoe-client ( no ppp-profile (name) ) | ( ppp-profile (name) [ no ipversion | ipversion <PPPoE::pppProfileIpMode> ] [ no authproto | authproto <PPPoE::pppProfileAuthenType> ] [ no mru | mru <PPPoE::PppProfileMru> ] )",
+  "resource_parameters": [
+    {
+      "name": "(name)",
+      "description": "name of the profile"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] ipversion",
+      "description": "specifying ip version during NCP phase optional parameter with default value: \"ipv4\"",
+      "type": "<PPPoE::pppProfileIpMode>",
+      "format": "( none                            | ipv4                            | dual                            | ipv6 )",
+      "values": [
+        "none                  : without NCP phase",
+        "ipv4                  : only specify ipv4 connectio n",
+        "dual                  : specify both ipv4 and ipv6 connection",
+        "ipv6                  : only specify ipv6 connection"
+      ],
+      "default": "ipv4"
+    },
+    {
+      "name": "[no] authproto",
+      "description": "the type of PPP authentication used optional parameter with default value: \"auto\"",
+      "type": "<PPPoE::pppProfileAuthenType>",
+      "format": "( auto                            | pap                            | chap )",
+      "values": [
+        "auto                  : auto selected by ONU",
+        "pap                   : only PAP negotiation",
+        "chap                  : only CHAP negotiation"
+      ],
+      "default": "auto"
+    },
+    {
+      "name": "[no] mru",
+      "description": "specifying MRU of PPP optional parameter with default value: 1500 - the MRU of PPP - range: [0...65535]",
+      "type": "<PPPoE::PppProfileMru>",
+      "default": "1500"
+    }
+  ],
+  "raw": "help configure pppoe-client ppp-profile\r\nPPPOE PROFILE CONFIGURATION COMMAND\r\n===================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure PPP profile parameters.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with pppoe privileges, and executed by \r\noperators with pppoe privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure pppoe-client ( no ppp-profile (name) ) | ( ppp-profile (name) [ no \r\nipversion | ipversion <PPPoE::pppProfileIpMode> ] [ no authproto | authproto \r\n<PPPoE::pppProfileAuthenType> ] [ no mru | mru <PPPoE::PppProfileMru> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"PPPoE Profile Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(name)                     name of the profile\r\n\r\nTable \"PPPoE Profile Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] ipversion             specifying ip version during NCP phase\r\n                           optional parameter with default value: \"ipv4\"\r\n\r\n                           Parameter type: <PPPoE::pppProfileIpMode>\r\n                           Format:\r\n                           ( none\r\n                           | ipv4\r\n                           | dual\r\n                           | ipv6 )\r\n                           Possible values:\r\n                           - none                  : without NCP phase\r\n                           - ipv4                  : only specify ipv4 connectio\r\nn\r\n                           - dual                  : specify both ipv4 and ipv6 \r\nconnection\r\n                           - ipv6                  : only specify ipv6 \r\nconnection\r\n\r\n[no] authproto             the type of PPP authentication used\r\n                           optional parameter with default value: \"auto\"\r\n\r\n                           Parameter type: <PPPoE::pppProfileAuthenType>\r\n                           Format:\r\n                           ( auto\r\n                           | pap\r\n                           | chap )\r\n                           Possible values:\r\n                           - auto                  : auto selected by ONU\r\n                           - pap                   : only PAP negotiation\r\n                           - chap                  : only CHAP negotiation\r\n\r\n[no] mru                   specifying MRU of PPP\r\n                           optional parameter with default value: 1500\r\n\r\n                           Parameter type: <PPPoE::PppProfileMru>\r\n                           Format:\r\n                           - the MRU of PPP\r\n                           - range: [0...65535]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

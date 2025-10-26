@@ -1,0 +1,31 @@
+{
+  "title": "LACP PORT CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the link aggregation port \nparameters.",
+  "user_level": "The command can be accessed by operators with lacp privileges, and executed by \noperators with lacp privileges.",
+  "syntax": "> configure link-agg port (port) [ [ no ] passive-lacp ] [ [ no ] short-timeout ] [ no actor-port-prio | actor-port-prio <Lacp::ActorPortPriority> ]",
+  "resource_parameters": [
+    {
+      "name": "(port)",
+      "description": "interface index of the port"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] passive-lacp",
+      "description": "set lacp inactive for the actor optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] short-timeout",
+      "description": "short timeout for the lacp protocol optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] actor-port-prio",
+      "description": "port priority for the actor optional parameter with default value: \"1\" - la aggregate port priority - range: [0...65535]",
+      "type": "<Lacp::ActorPortPriority>",
+      "default": "1"
+    }
+  ],
+  "raw": "help configure link-agg port\r\nLACP PORT CONFIGURATION COMMAND\r\n===============================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the link aggregation port \r\nparameters.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with lacp privileges, and executed by \r\noperators with lacp privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure link-agg port (port) [ [ no ] passive-lacp ] [ [ no ] short-timeout \r\n] [ no actor-port-prio | actor-port-prio <Lacp::ActorPortPriority> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"LACP port configuration command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(port)                     interface index of the port\r\n\r\nTable \"LACP port configuration command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] passive-lacp          set lacp inactive for the actor\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] short-timeout         short timeout for the lacp protocol\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] actor-port-prio       port priority for the actor\r\n                           optional parameter with default value: \"1\"\r\n\r\n                           Parameter type: <Lacp::ActorPortPriority>\r\n                           Format:\r\n                           - la aggregate port priority\r\n                           - range: [0...65535]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

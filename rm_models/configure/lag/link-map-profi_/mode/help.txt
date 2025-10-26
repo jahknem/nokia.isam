@@ -1,0 +1,4 @@
+help configure lag link-map-profi* mode
+                                                   ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

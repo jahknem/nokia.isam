@@ -1,0 +1,106 @@
+module: isam_qos_profiles_scheduler_node
+short_description: Resource module to configure qos profiles scheduler-node
+description:
+- Configures a QoS scheduler node profile. The scheduler node profiles contain configuration
+  settings for the data plane schedulers. These scheduler node profiles are applicable
+  to downstream schedulers on the L3 line cards. The scheduler node settings on the
+  service hub can be modified separately.
+- Supports configuration of priority, weight, shaper profile and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure qos profiles ()'
+options:
+  config:
+    description:
+    - A list of qos profiles scheduler-node configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (name) - A unique profile name
+      priority:
+        type: str
+        description:
+        - 'relative priority of the scheduler-node mandatory parameter - relative
+          priority - range: [1...8]'
+      weight:
+        type: str
+        description:
+        - 'relative weight of the scheduler-node mandatory parameter - relative weight
+          - range: [0...127]'
+      shaper_profile:
+        type: str
+        description:
+        - the associated shaper profile. For EPON OLT in downstream, this profile
+          used for LLID shaper on 1G PON bandwidth. mandatory parameter
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        choices:
+        - none
+        - name
+      ext_shaper:
+        type: str
+        description:
+        - 'the associated shaper profile. For EPON OLT in downstream, this profile
+          used for LLID shaper on 10G PON bandwidth. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      mcast_inc_shape:
+        type: str
+        description:
+        - 'indicates whether downstream shaping includes Mcast with default value:
+          "false"'
+        - 'Possible values: C(mcast-shap-on) - Downstream shaping includes Mcast;
+          C(no-mcast-shap) - Downstream shaping doesnot include Mcast'
+        default: 'false'
+        choices:
+        - mcast-shap-on
+        - no-mcast-shap
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure qos profiles scheduler-node)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

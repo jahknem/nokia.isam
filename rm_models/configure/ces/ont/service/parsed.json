@@ -1,0 +1,237 @@
+{
+  "title": "CES SERVICE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure CES service.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure ces ont ( no service (uni-idx) service-nbr <Ces::ServiceNumber> ) | ( service (uni-idx) service-nbr <Ces::ServiceNumber> [ no service-type | service-type <Ces::ServiceType> ] [ no label | label <Ces::Label> ] [ no signaling | signaling <Ces::Signalling> ] [ no timeslot-map | timeslot-map <Ces::TimeSlotMap> ] [ no payload-size | payload-size <Ces::PayloadSize> ] [ no pl-encap-delay | pl-encap-delay <Ces::PayloadEncapDelay> ] [ no timing-mode | timing-mode <Ces::TimingNode> ] [ no transmit-ckt-id | transmit-ckt-id <Ces::TransmitCktId> ] [ no expected-ckt-id | expected-ckt-id <Ces::ExpectedCktId> ] [ no maintenance-prof | maintenance-prof <Ces::MaintProfIndex> ] [ no dest-mac-address | dest-mac-address <Ces::DestMacAddress> ] [ no rtp-enable | rtp-enable <Ces::RtpEnable> ] vlan <Vlan::Index> [ no admin-up | admin-up <Ces::AdminState> ] [ no udp-port | udp-port <Ces::UdpPort> ] [ no dscp | dscp <Ces::DscpSetting> ] [ no farend-ipinfo | farend-ipinfo <Ces::FarEndIpInfo> ] [ no rtp-clock-ref | rtp-clock-ref <Ces::RtpClockRef> ] [ no rtp-ts-mode | rtp-ts-mode <Ces::RtpTimeStampMode> ] [ no rtp-ptyp-pay | rtp-ptyp-pay <Ces::RtpPayloadTypePayloadChannel> ] [ no rtp-ptyp-sig | rtp-ptyp-sig <Ces::RtpPayloadTypeSigChannel> ] [ no rtp-sync-pay | rtp-sync-pay <Ces::RtpSyncSourcePayloadChannel> ] [ no rtp-sync-sig | rtp-sync-sig <Ces::RtpSyncSourceSigChannel> ] [ no rtp-exp-ptyp-pay | rtp-exp-ptyp-pay <Ces::RtpExpectedPayloadTypePayloadChannel> ] [ no rtp-exp-ptyp-sig | rtp-exp-ptyp-sig <Ces::RtpExpectedPayloadTypeSigChannel> ] [ no rtp-exp-sync-pay | rtp-exp-sync-pay <Ces::RtpExpectedSyncSourcePayloadChannel> ] [ no rtp-exp-sync-sig | rtp-exp-sync-sig <Ces::RtpExpectedSyncSourceSigChannel> ] )",
+  "resource_parameters": [
+    {
+      "name": "(uni-idx)",
+      "description": "interface index of the ces ont uni"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] service-type",
+      "description": "underlying transport type - ethernet (l2) vs. udp/ip (l3) optional parameter with default value: \"l2\"",
+      "type": "<Ces::ServiceType>",
+      "format": "( l2                            | l3 )",
+      "values": [
+        "l2                    : Layer2 (ethernet)",
+        "l3                    : layer3 (IP/UDP)"
+      ],
+      "default": "l2"
+    },
+    {
+      "name": "[no] label",
+      "description": "label of the service optional parameter with default value: \"\" - label of the service - length: x<=20",
+      "type": "<Ces::Label>"
+    },
+    {
+      "name": "[no] signaling",
+      "description": "signaling optional parameter with default value: \"no-sig\"",
+      "type": "<Ces::Signalling>",
+      "format": "( no-sig                            | cas )",
+      "values": [
+        "no-sig                : no signalling",
+        "cas                   : carried in a separate signalling channel"
+      ],
+      "default": "no-sig"
+    },
+    {
+      "name": "[no] timeslot-map",
+      "description": "time slot map optional parameter with default value: \"ff : ff : ff : 00\" - time slot map - length: 4",
+      "type": "<Ces::TimeSlotMap>",
+      "default": "ff : ff : ff"
+    },
+    {
+      "name": "[no] payload-size",
+      "description": "payload size optional parameter with default value: 0L - payload size, applicable only if service type is unstructured;value 192 for DS1 and 256 for E1. - range: [192,256]",
+      "type": "<Ces::PayloadSize>",
+      "default": "0L"
+    },
+    {
+      "name": "[no] pl-encap-delay",
+      "description": "payload encapsulation delay optional parameter with default value: 0L - payload encapsulation delay, number of 125 microsecond frames to be encapsulated in each PW packet;only significant and required in structured mode. - range: [8,16,24,32,64]",
+      "type": "<Ces::PayloadEncapDelay>",
+      "default": "0L"
+    },
+    {
+      "name": "[no] timing-mode",
+      "description": "timing mode of the TDM service optional parameter with default value: \"adaptive\" - loop                  : loop timing",
+      "type": "<Ces::TimingNode>",
+      "format": "( net                            | diff                            | adaptive                            | loop )",
+      "values": [
+        "net                   : network timing",
+        "diff                  : differential timing",
+        "adaptive              : adaptive timing"
+      ],
+      "default": "adaptive"
+    },
+    {
+      "name": "[no] transmit-ckt-id",
+      "description": "transmit circuit id (L2 only) optional parameter with default value: \"00 : 00 : 00 : 00 : 00 : 00 : 00 : 00\" - transmit circuit id (L2 only) - length: 8",
+      "type": "<Ces::TransmitCktId>",
+      "default": "00 : 00 : 00"
+    },
+    {
+      "name": "[no] expected-ckt-id",
+      "description": "expected circuit id (L2 only) optional parameter with default value: \"00 : 00 : 00 : 00 : 00 : 00 : 00 : 00\" - expected circuit id (L2 only) - length: 8",
+      "type": "<Ces::ExpectedCktId>",
+      "default": "00 : 00 : 00"
+    },
+    {
+      "name": "[no] maintenance-prof",
+      "description": "maintenance profile optional parameter with default value: \"none\"",
+      "type": "<Ces::MaintProfIndex>",
+      "format": "( none                            | <Ces::MaintProfIndex> )",
+      "values": [
+        "none                  : no profile to associate Field type <Ces::MaintProfIndex>",
+        "a ces maintenance profile index value",
+        "range: [0...20]"
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] dest-mac-address",
+      "description": "destination mac address (L2 only) optional parameter with default value: \"00 : 00 : 00 : 00 : 00 : 00\" - a mac-address (example : 01:02:03:04:05:06) (L2 only) - length: 6",
+      "type": "<Ces::DestMacAddress>",
+      "default": "00 : 00 : 00"
+    },
+    {
+      "name": "[no] rtp-enable",
+      "description": "rtp enable optional parameter with default value: \"disabled\"",
+      "type": "<Ces::RtpEnable>",
+      "format": "( enabled                            | disabled )",
+      "values": [
+        "enabled               : enable rtp",
+        "disabled              : disable rtp"
+      ],
+      "default": "disabled"
+    },
+    {
+      "name": "vlan",
+      "description": "vlan id mandatory parameter",
+      "type": "<Vlan::Index>",
+      "format": "( <Vlan::UVlanIndex>                            | stacked : <Vlan::SVlanIndexStacked> : <Vlan::CVlanIndex> )",
+      "values": [
+        "stacked               : stacked vlan identity Field type <Vlan::UVlanIndex>",
+        "unstacked vlan identity",
+        "range: [1...4093,4096] Field type <Vlan::SVlanIndexStacked>",
+        "service vlan identity",
+        "range: [1...4093] Field type <Vlan::CVlanIndex>",
+        "customer vlan identity",
+        "range: [0...4093]"
+      ]
+    },
+    {
+      "name": "[no] admin-up",
+      "description": "administrative state of the service optional parameter with default value: \"unlocked\"",
+      "type": "<Ces::AdminState>",
+      "format": "( unlocked                            | locked )",
+      "values": [
+        "unlocked              : start sending upstream allocation grants",
+        "locked                : stop sending upstream allocation grants"
+      ],
+      "default": "unlocked"
+    },
+    {
+      "name": "[no] udp-port",
+      "description": "unique udp port number for l3 service (L3 only) optional parameter with default value: 2142L - udp port (L3 only) - range: [2142,49152...65535]",
+      "type": "<Ces::UdpPort>",
+      "default": "2142L"
+    },
+    {
+      "name": "[no] dscp",
+      "description": "DSCP Value (L3 only) optional parameter with default value: 46L - to set the DSCP value that the Voip Client will use - range: [0...63]",
+      "type": "<Ces::DscpSetting>",
+      "default": "46L"
+    },
+    {
+      "name": "[no] farend-ipinfo",
+      "description": "URI of the far-end termination point (L3 only) optional parameter with default value: \"\" - far end URI. Example = udp://<ip-addr>:<udp-port> (L3 only) - length: x<=50",
+      "type": "<Ces::FarEndIpInfo>"
+    },
+    {
+      "name": "[no] rtp-clock-ref",
+      "description": "frequency of the common timing reference (in multiples of 8 kHz) (L3 only) optional parameter with default value: 0L - frequency of the common timing reference (L3 only) - range: [0...1000]",
+      "type": "<Ces::RtpClockRef>",
+      "default": "0L"
+    },
+    {
+      "name": "[no] rtp-ts-mode",
+      "description": "Mode in which RTP timestamps are generated in the TDM to PSN direction (L3 only) optional parameter with default value: \"unknown\"",
+      "type": "<Ces::RtpTimeStampMode>",
+      "format": "( unknown                            | absolute                            | differential )",
+      "values": [
+        "unknown               : not applicable (L3 only)",
+        "absolute              : absolute mode (L3 only)",
+        "differential          : differential mode (L3 only)"
+      ],
+      "default": "unknown"
+    },
+    {
+      "name": "[no] rtp-ptyp-pay",
+      "description": "RTP payload type for the payload channel in the TDM to PSN direction (L3 only) optional parameter with default value: 96L - RTP payload type for the payload channel in the TDM to PSN direction (L3 only) - range: [96...127]",
+      "type": "<Ces::RtpPayloadTypePayloadChannel>",
+      "default": "96L"
+    },
+    {
+      "name": "[no] rtp-ptyp-sig",
+      "description": "RTP payload type for the signalling channel in the TDM to PSN direction (L3 only) optional parameter with default value: 0L - RTP payload type for the signalling channel (L3 only) - range: [0]",
+      "type": "<Ces::RtpPayloadTypeSigChannel>",
+      "default": "0L"
+    },
+    {
+      "name": "[no] rtp-sync-pay",
+      "description": "RTP synchronization source for the payload channel in the TDM to PSN direction (L3 only) optional parameter with default value: 0L - RTP synchronization source for the payload channel (L3 only) - range: [0...65535]",
+      "type": "<Ces::RtpSyncSourcePayloadChannel>",
+      "default": "0L"
+    },
+    {
+      "name": "[no] rtp-sync-sig",
+      "description": "RTP synchronization source for the signalling channel in the TDM to PSN direction (L3 only) optional parameter with default value: 0L - RTP synchronization source for the signalling channel (L3 only) - range: [0]",
+      "type": "<Ces::RtpSyncSourceSigChannel>",
+      "default": "0L"
+    },
+    {
+      "name": "[no] rtp-exp-ptyp-pay",
+      "description": "RTP expected payload type for the payload channelin the PSN to TDM direction (L3 only) optional parameter with default value: 0L - RTP payload type for the payload channel (L3 only) - range: [0...127]",
+      "type": "<Ces::RtpExpectedPayloadTypePayloadChannel>",
+      "default": "0L"
+    },
+    {
+      "name": "[no] rtp-exp-ptyp-sig",
+      "description": "RTP expected payload type for the signalling channelin the PSN to TDM direction (L3 only) optional parameter with default value: 0L - RTP payload type for the signalling channel (L3 only) - range: [0]",
+      "type": "<Ces::RtpExpectedPayloadTypeSigChannel>",
+      "default": "0L"
+    },
+    {
+      "name": "[no] rtp-exp-sync-pay",
+      "description": "RTP expected synchronization source for the payload channel in the TDM to PSN direction (L3 only) optional parameter with default value: 0L - RTP synchronization source for the payload channel (L3 only) - range: [0...65535]",
+      "type": "<Ces::RtpExpectedSyncSourcePayloadChannel>",
+      "default": "0L"
+    },
+    {
+      "name": "[no] rtp-exp-sync-sig",
+      "description": "RTP expected synchronization source for the signalling channel in the TDM to PSN direction (L3 only) optional parameter with default value: 0L - RTP synchronization source for the signalling channel (L3 only) - range: [0] Table \"CES Service Configuration Command\" Display Parameters Specific Information:",
+      "type": "<Ces::RtpExpectedSyncSourceSigChannel>",
+      "default": "0L"
+    },
+    {
+      "name": "oper-state",
+      "description": "operational state of the service This element is always shown. ( enabled | disabled | unknown )",
+      "type": "<Ces::OperState>",
+      "values": [
+        "enabled               : enable the service",
+        "disabled              : disable the service",
+        "unknown               : unknown state"
+      ]
+    },
+    {
+      "name": "maint-prof-name",
+      "description": "ces maintenance profile This element is always shown. - ignored printable string",
+      "type": "<Ces::IgnoredPrintableString>"
+    }
+  ],
+  "raw": "help configure ces ont service\r\nCES SERVICE CONFIGURATION COMMAND\r\n=================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure CES service.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure ces ont ( no service (uni-idx) service-nbr <Ces::ServiceNumber> ) | \r\n( service (uni-idx) service-nbr <Ces::ServiceNumber> [ no service-type | \r\nservice-type <Ces::ServiceType> ] [ no label | label <Ces::Label> ] [ no \r\nsignaling | signaling <Ces::Signalling> ] [ no timeslot-map | timeslot-map \r\n<Ces::TimeSlotMap> ] [ no payload-size | payload-size <Ces::PayloadSize> ] [ no \r\npl-encap-delay | pl-encap-delay <Ces::PayloadEncapDelay> ] [ no timing-mode | \r\ntiming-mode <Ces::TimingNode> ] [ no transmit-ckt-id | transmit-ckt-id \r\n<Ces::TransmitCktId> ] [ no expected-ckt-id | expected-ckt-id \r\n<Ces::ExpectedCktId> ] [ no maintenance-prof | maintenance-prof \r\n<Ces::MaintProfIndex> ] [ no dest-mac-address | dest-mac-address \r\n<Ces::DestMacAddress> ] [ no rtp-enable | rtp-enable <Ces::RtpEnable> ] vlan \r\n<Vlan::Index> [ no admin-up | admin-up <Ces::AdminState> ] [ no udp-port | \r\nudp-port <Ces::UdpPort> ] [ no dscp | dscp <Ces::DscpSetting> ] [ no \r\nfarend-ipinfo | farend-ipinfo <Ces::FarEndIpInfo> ] [ no rtp-clock-ref | \r\nrtp-clock-ref <Ces::RtpClockRef> ] [ no rtp-ts-mode | rtp-ts-mode \r\n<Ces::RtpTimeStampMode> ] [ no rtp-ptyp-pay | rtp-ptyp-pay \r\n<Ces::RtpPayloadTypePayloadChannel> ] [ no rtp-ptyp-sig | rtp-ptyp-sig \r\n<Ces::RtpPayloadTypeSigChannel> ] [ no rtp-sync-pay | rtp-sync-pay \r\n<Ces::RtpSyncSourcePayloadChannel> ] [ no rtp-sync-sig | rtp-sync-sig \r\n<Ces::RtpSyncSourceSigChannel> ] [ no rtp-exp-ptyp-pay | rtp-exp-ptyp-pay \r\n<Ces::RtpExpectedPayloadTypePayloadChannel> ] [ no rtp-exp-ptyp-sig | \r\nrtp-exp-ptyp-sig <Ces::RtpExpectedPayloadTypeSigChannel> ] [ no \r\nrtp-exp-sync-pay | rtp-exp-sync-pay <Ces::RtpExpectedSyncSourcePayloadChannel> \r\n] [ no rtp-exp-sync-sig | rtp-exp-sync-sig \r\n<Ces::RtpExpectedSyncSourceSigChannel> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"CES Service Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(uni-idx)                  interface index of the ces ont uni\r\nservice-nbr                service number\r\n\r\nTable \"CES Service Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] service-type          underlying transport type - ethernet (l2) vs. udp/ip \r\n(l3)\r\n                           optional parameter with default value: \"l2\"\r\n\r\n                           Parameter type: <Ces::ServiceType>\r\n                           Format:\r\n                           ( l2\r\n                           | l3 )\r\n                           Possible values:\r\n                           - l2                    : Layer2 (ethernet)\r\n                           - l3                    : layer3 (IP/UDP)\r\n\r\n[no] label                 label of the service\r\n                           optional parameter with default value: \"\"\r\n\r\n                           Parameter type: <Ces::Label>\r\n                           Format:\r\n                           - label of the service\r\n                           - length: x<=20 \r\n\r\n[no] signaling             signaling\r\n                           optional parameter with default value: \"no-sig\"\r\n\r\n                           Parameter type: <Ces::Signalling>\r\n                           Format:\r\n                           ( no-sig\r\n                           | cas )\r\n                           Possible values:\r\n                           - no-sig                : no signalling\r\n                           - cas                   : carried in a separate \r\nsignalling channel\r\n\r\n[no] timeslot-map          time slot map\r\n                           optional parameter with default value: \"ff : ff : ff \r\n: 00\"\r\n\r\n                           Parameter type: <Ces::TimeSlotMap>\r\n                           Format:\r\n                           - time slot map\r\n                           - length: 4 \r\n\r\n[no] payload-size          payload size\r\n                           optional parameter with default value: 0L\r\n\r\n                           Parameter type: <Ces::PayloadSize>\r\n                           Format:\r\n                           - payload size, applicable only if service type is \r\nunstructured;value 192 for DS1 and 256 for E1.\r\n                           - range: [192,256]\r\n\r\n[no] pl-encap-delay        payload encapsulation delay\r\n                           optional parameter with default value: 0L\r\n\r\n                           Parameter type: <Ces::PayloadEncapDelay>\r\n                           Format:\r\n                           - payload encapsulation delay, number of 125 \r\nmicrosecond frames to be encapsulated in each PW packet;only significant and \r\nrequired in structured mode.\r\n                           - range: [8,16,24,32,64]\r\n\r\n[no] timing-mode           timing mode of the TDM service\r\n                           optional parameter with default value: \"adaptive\"\r\n\r\n                           Parameter type: <Ces::TimingNode>\r\n                           Format:\r\n                           ( net\r\n                           | diff\r\n                           | adaptive\r\n                           | loop )\r\n                           Possible values:\r\n                           - net                   : network timing\r\n                           - diff                  : differential timing\r\n                           - adaptive              : adaptive timing\r\r\n\r\n                           - loop                  : loop timing\r\n\r\n[no] transmit-ckt-id       transmit circuit id (L2 only)\r\n                           optional parameter with default value: \"00 : 00 : 00 \r\n: 00 : 00 : 00 : 00 : 00\"\r\n\r\n                           Parameter type: <Ces::TransmitCktId>\r\n                           Format:\r\n                           - transmit circuit id (L2 only)\r\n                           - length: 8 \r\n\r\n[no] expected-ckt-id       expected circuit id (L2 only)\r\n                           optional parameter with default value: \"00 : 00 : 00 \r\n: 00 : 00 : 00 : 00 : 00\"\r\n\r\n                           Parameter type: <Ces::ExpectedCktId>\r\n                           Format:\r\n                           - expected circuit id (L2 only)\r\n                           - length: 8 \r\n\r\n[no] maintenance-prof      maintenance profile\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Ces::MaintProfIndex>\r\n                           Format:\r\n                           ( none\r\n                           | <Ces::MaintProfIndex> )\r\n                           Possible values:\r\n                           - none                  : no profile to associate\r\n                           Field type <Ces::MaintProfIndex>\r\n                           - a ces maintenance profile index value\r\n                           - range: [0...20]\r\n\r\n[no] dest-mac-address      destination mac address (L2 only)\r\n                           optional parameter with default value: \"00 : 00 : 00 \r\n: 00 : 00 : 00\"\r\n\r\n                           Parameter type: <Ces::DestMacAddress>\r\n                           Format:\r\n                           - a mac-address (example : 01:02:03:04:05:06) (L2 \r\nonly)\r\n                           - length: 6 \r\n\r\n[no] rtp-enable            rtp enable\r\n                           optional parameter with default value: \"disabled\"\r\n\r\n                           Parameter type: <Ces::RtpEnable>\r\n                           Format:\r\n                           ( enabled\r\n                           | disabled )\r\n                           Possible values:\r\n                           - enabled               : enable rtp\r\n                           - disabled              : disable rtp\r\n\r\nvlan                       vlan id\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Vlan::Index>\r\n                           Format:\r\n                           ( <Vlan::UVlanIndex>\r\n                           | stacked : <Vlan::SVlanIndexStacked> : \r\n<Vlan::CVlanIndex> )\r\n                           Possible values:\r\n                           - stacked               : stacked vlan identity\r\n                           Field type <Vlan::UVlanIndex>\r\n                           - unstacked vlan identity \r\n                           - range: [1...4093,4096]\r\n                           Field type <Vlan::SVlanIndexStacked>\r\n                           - service vlan identity\r\n                           - range: [1...4093]\r\n                           Field type <Vlan::CVlanIndex>\r\n                           - customer vlan identity \r\n                           - range: [0...4093]\r\n\r\n[no] admin-up              administrative state of the service\r\n                           optional parameter with default value: \"unlocked\"\r\n\r\n                           Parameter type: <Ces::AdminState>\r\n                           Format:\r\n                           ( unlocked\r\n                           | locked )\r\n                           Possible values:\r\n                           - unlocked              : start sending upstream \r\nallocation grants\r\n                           - locked                : stop sending upstream \r\nallocation grants\r\n\r\n[no] udp-port              unique udp port number for l3 service (L3 only)\r\n                           optional parameter with default value: 2142L\r\n\r\n                           Parameter type: <Ces::UdpPort>\r\n                           Format:\r\n                           - udp port (L3 only)\r\n                           - range: [2142,49152...65535]\r\n\r\n[no] dscp                  DSCP Value (L3 only)\r\n                           optional parameter with default value: 46L\r\n\r\n                           Parameter type: <Ces::DscpSetting>\r\n                           Format:\r\n                           - to set the DSCP value that the Voip Client will use\r\n                           - range: [0...63]\r\n\r\n[no] farend-ipinfo          URI of the far-end termination point (L3 only)\r\n                           optional parameter with default value: \"\"\r\n\r\n                           Parameter type: <Ces::FarEndIpInfo>\r\n                           Format:\r\n                           - far end URI. Example = udp://<ip-addr>:<udp-port> \r\n(L3 only)\r\n                           - length: x<=50 \r\n\r\n[no] rtp-clock-ref         frequency of the common timing reference (in \r\nmultiples of 8 kHz) (L3 only)\r\n                           optional parameter with default value: 0L\r\n\r\n                           Parameter type: <Ces::RtpClockRef>\r\n                           Format:\r\n                           - frequency of the common timing reference (L3 only)\r\n                           - range: [0...1000]\r\n\r\n[no] rtp-ts-mode           Mode in which RTP timestamps are generated in the \r\nTDM to PSN direction (L3 only)\r\n                           optional parameter with default value: \"unknown\"\r\n\r\n                           Parameter type: <Ces::RtpTimeStampMode>\r\n                           Format:\r\n                           ( unknown\r\n                           | absolute\r\n                           | differential )\r\n                           Possible values:\r\n                           - unknown               : not applicable (L3 only)\r\n                           - absolute              : absolute mode (L3 only)\r\n                           - differential          : differential mode (L3 only)\r\n\r\n[no] rtp-ptyp-pay          RTP payload type for the payload channel in the TDM \r\nto PSN direction (L3 only)\r\n                           optional parameter with default value: 96L\r\n\r\n                           Parameter type: <Ces::RtpPayloadTypePayloadChannel>\r\n                           Format:\r\n                           - RTP payload type for the payload channel in the \r\nTDM to PSN direction (L3 only)\r\n                           - range: [96...127]\r\n\r\n[no] rtp-ptyp-sig          RTP payload type for the signalling channel in the \r\nTDM to PSN direction (L3 only)\r\n                           optional parameter with default value: 0L\r\n\r\n                           Parameter type: <Ces::RtpPayloadTypeSigChannel>\r\n                           Format:\r\n                           - RTP payload type for the signalling channel (L3 \r\nonly)\r\n                           - range: [0]\r\n\r\n[no] rtp-sync-pay          RTP synchronization source for the payload channel \r\nin the TDM to PSN direction (L3 only)\r\n                           optional parameter with default value: 0L\r\n\r\n                           Parameter type: <Ces::RtpSyncSourcePayloadChannel>\r\n                           Format:\r\n                           - RTP synchronization source for the payload channel \r\n(L3 only)\r\n                           - range: [0...65535]\r\n\r\n[no] rtp-sync-sig          RTP synchronization source for the signalling \r\nchannel in the TDM to PSN direction (L3 only)\r\n                           optional parameter with default value: 0L\r\n\r\n                           Parameter type: <Ces::RtpSyncSourceSigChannel>\r\n                           Format:\r\n                           - RTP synchronization source for the signalling \r\nchannel (L3 only)\r\n                           - range: [0]\r\n\r\n[no] rtp-exp-ptyp-pay      RTP expected payload type for the payload channelin \r\nthe PSN to TDM direction (L3 only)\r\n                           optional parameter with default value: 0L\r\n\r\n                           Parameter type: \r\n<Ces::RtpExpectedPayloadTypePayloadChannel>\r\n                           Format:\r\n                           - RTP payload type for the payload channel (L3 only)\r\n                           - range: [0...127]\r\n\r\n[no] rtp-exp-ptyp-sig      RTP expected payload type for the signalling \r\nchannelin the PSN to TDM direction (L3 only)\r\n                           optional parameter with default value: 0L\r\n\r\n                           Parameter type: \r\n<Ces::RtpExpectedPayloadTypeSigChannel>\r\n                           Format:\r\n                           - RTP payload type for the signalling channel (L3 \r\nonly)\r\n                           - range: [0]\r\n\r\n[no] rtp-exp-sync-pay      RTP expected synchronization source for the payload \r\nchannel in the TDM to PSN direction (L3 only)\r\n                           optional parameter with default value: 0L\r\n\r\n                           Parameter type: \r\n<Ces::RtpExpectedSyncSourcePayloadChannel>\r\n                           Format:\r\n                           - RTP synchronization source for the payload channel \r\n(L3 only)\r\n                           - range: [0...65535]\r\n\r\n[no] rtp-exp-sync-sig      RTP expected synchronization source for the \r\nsignalling channel in the TDM to PSN direction (L3 only)\r\n                           optional parameter with default value: 0L\r\n\r\n                           Parameter type: \r\n<Ces::RtpExpectedSyncSourceSigChannel>\r\n                           Format:\r\n                           - RTP synchronization source for the signalling \r\nchannel (L3 only)\r\n                           - range: [0]\r\n\r\n\r\nTable \"CES Service Configuration Command\" Display Parameters\r\n\r\nSpecific Information:\r\n\r\nParameter                  Description\r\n\r\n oper-state                operational state of the service\r\n                           This element is always shown.\r\n\r\n                           parameter type: <Ces::OperState>\r\n                           ( enabled\r\n                           | disabled\r\n                           | unknown )\r\n                           Possible values:\r\n                           - enabled               : enable the service\r\n                           - disabled              : disable the service\r\n                           - unknown               : unknown state\r\n\r\n maint-prof-name           ces maintenance profile\r\n                           This element is always shown.\r\n\r\n                           parameter type: <Ces::IgnoredPrintableString>\r\n                           - ignored printable string\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

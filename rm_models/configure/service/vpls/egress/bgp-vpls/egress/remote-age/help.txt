@@ -1,0 +1,5 @@
+help configure service vpls egress bgp-vpls egre
+ss remote-age
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,20 @@
+{
+  "command_path": "configure interface statistics",
+  "module_file": "isam_interface_statistics.yml",
+  "status": "INCOMPLETE - DEVICE ERROR",
+  "changes": [
+    {
+      "path": "notes",
+      "action": "added",
+      "reason": "Added WARNING note: Device help command returned errors (index type detection failures). This module cannot be properly validated without working device help output."
+    }
+  ],
+  "example_files": [
+    "merged_example_01.txt",
+    "replaced_example_01.txt",
+    "overridden_example_01.txt",
+    "deleted_example_01.txt"
+  ],
+  "notes": "This command folder cannot be properly audited because the device returned errors when executing 'help configure interface statistics'. The errors indicate internal device issues with index type 196. The module definition is skeletal and should be completed once the device command help is working properly.",
+  "action_required": "Contact Nokia support to resolve the device error. Once resolved, re-run validation against the corrected help output."
+}

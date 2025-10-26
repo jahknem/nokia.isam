@@ -1,0 +1,39 @@
+help configure link-agg general
+LACP GENERAL CONFIGURATION COMMAND
+==================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the general LACP parameters.
+
+
+User Level
+----------
+
+The command can be accessed by operators with lacp privileges, and executed by 
+operators with lacp privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure link-agg general [ no priority | priority <Lacp::SysPriority> ]
+
+Command Parameters
+------------------
+
+Table "LACP general configuration command" Command Parameters
+
+Parameter                  Description
+
+[no] priority              the lacp system priority
+                           optional parameter with default value: 1
+
+                           Parameter type: <Lacp::SysPriority>
+                           Format:
+                           - the lacp system priority
+                           - range: [1...65535]
+
+
+DS-LIN-TEST-01:automationuser>#

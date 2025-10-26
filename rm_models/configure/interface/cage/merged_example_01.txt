@@ -1,0 +1,208 @@
+# Using merged state (read-only example)
+
+# Before state (live):
+# --------------------
+# Command:
+#   info configure interface cage
+DS-LIN-TEST-01:automationuser># info configure interface cage
+configure interface
+#-------------------------------------------------------------------------------
+echo "interface"
+#-------------------------------------------------------------------------------
+cage lt:1/1/2:cage:1
+  operational-mode gpon
+exit
+cage lt:1/1/2:cage:2
+  operational-mode gpon
+exit
+cage lt:1/1/2:cage:3
+  operational-mode gpon
+exit
+cage lt:1/1/2:cage:4
+  operational-mode gpon
+exit
+cage lt:1/1/2:cage:5
+  operational-mode gpon
+exit
+cage lt:1/1/2:cage:6
+  operational-mode gpon
+exit
+cage lt:1/1/2:cage:7
+  operational-mode gpon
+exit
+cage lt:1/1/2:cage:8
+  operational-mode gpon
+exit
+cage lt:1/1/2:cage:9
+  operational-mode gpon
+exit
+cage lt:1/1/2:cage:10
+  operational-mode gpon
+exit
+cage lt:1/1/2:cage:11
+  operational-mode gpon
+exit
+cage lt:1/1/2:cage:12
+  operational-mode gpon
+exit
+cage lt:1/1/2:cage:13
+  operational-mode gpon
+exit
+cage lt:1/1/2:cage:14
+  operational-mode gpon
+exit
+cage lt:1/1/2:cage:15
+  operational-mode gpon
+exit
+cage lt:1/1/2:cage:16
+  operational-mode gpon
+exit
+cage lt:1/1/5:cage:1
+  operational-mode gpon
+exit
+cage lt:1/1/5:cage:2
+  operational-mode gpon
+exit
+cage lt:1/1/5:cage:3
+  operational-mode gpon
+exit
+cage lt:1/1/5:cage:4
+  operational-mode gpon
+exit
+cage lt:1/1/5:cage:5
+  operational-mode gpon
+exit
+cage lt:1/1/5:cage:6
+  operational-mode gpon
+exit
+cage lt:1/1/5:cage:7
+  operational-mode gpon
+exit
+cage lt:1/1/5:cage:8
+  operational-mode gpon
+exit
+cage lt:1/1/5:cage:9
+  operational-mode gpon
+exit
+cage lt:1/1/5:cage:10
+  operational-mode gpon
+exit
+cage lt:1/1/5:cage:11
+  operational-mode gpon
+exit
+cage lt:1/1/5:cage:12
+  operational-mode gpon
+exit
+cage lt:1/1/5:cage:13
+  operational-mode gpon
+exit
+cage lt:1/1/5:cage:14
+  operational-mode gpon
+exit
+cage lt:1/1/5:cage:15
+  operational-mode gpon
+exit
+cage lt:1/1/5:cage:16
+  operational-mode gpon
+exit
+cage lt:1/1/6:cage:1
+  operational-mode gpon
+exit
+cage lt:1/1/6:cage:2
+  operational-mode gpon
+exit
+cage lt:1/1/6:cage:3
+  operational-mode gpon
+exit
+cage lt:1/1/6:cage:4
+  operational-mode gpon
+exit
+cage lt:1/1/6:cage:5
+  operational-mode gpon
+exit
+cage lt:1/1/6:cage:6
+  operational-mode gpon
+exit
+cage lt:1/1/6:cage:7
+  operational-mode gpon
+exit
+cage lt:1/1/6:cage:8
+  operational-mode gpon
+exit
+cage lt:1/1/6:cage:9
+  operational-mode gpon
+exit
+cage lt:1/1/6:cage:10
+  operational-mode gpon
+exit
+cage lt:1/1/6:cage:11
+  operational-mode gpon
+exit
+cage lt:1/1/6:cage:12
+  operational-mode gpon
+exit
+cage lt:1/1/6:cage:13
+  operational-mode gpon
+exit
+cage lt:1/1/6:cage:14
+  operational-mode gpon
+exit
+cage lt:1/1/6:cage:15
+  operational-mode gpon
+exit
+cage lt:1/1/6:cage:16
+  operational-mode gpon
+exit
+cage lt:1/1/7:cage:1
+  operational-mode gpon
+exit
+cage lt:1/1/7:cage:2
+  operational-mode gpon
+exit
+cage lt:1/1/7:cage:3
+  operational-mode gpon
+exit
+cage lt:1/1/7:cage:4
+  operational-mode gpon
+exit
+cage lt:1/1/7:cage:5
+  operational-mode gpon
+exit
+cage lt:1/1/7:cage:6
+  operational-mode gpon
+exit
+cage lt:1/1/7:cage:7
+  operational-mode gpon
+exit
+cage lt:1/1/7:cage:8
+  operational-mode gpon
+exit
+cage lt:1/1/7:cage:9
+  operational-mode gpon
+exit
+cage lt:1/1/7:cage:10
+  operational-mode gpon
+exit
+cage lt:1/1/7:cage:11
+  operational-mode gpon
+exit
+cage lt:1/1/7:cage:12
+  operational-mode gpon
+exit
+cage lt:1/1/7:cage:13
+  operational-mode gpon
+exit
+cage lt:1/1/7:cage:14
+  operational-mode gpon
+exit
+cage lt:1/1/7:cage:15
+  operational-mode gpon
+exit
+cage lt:1/1/7:cage:16
+  operational-mode gpon
+exit
+#-------------------------------------------------------------------------------
+DS-LIN-TEST-01:automationuser>#
+
+# Note: Changing cage operational-mode is potentially disruptive. We provide
+# gathered/read-only examples only for cage on the lab device.

@@ -1,0 +1,8 @@
+help configure port description
+                                                    ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:31:36 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,6 @@
+25/10/25 19:55:51 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:55:49 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># help configure router interface icmp icmp
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

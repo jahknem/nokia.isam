@@ -1,0 +1,5 @@
+help configure alarm entry db-rollback ! selecte
+d oswp,db cannot be operational
+                                                                       ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

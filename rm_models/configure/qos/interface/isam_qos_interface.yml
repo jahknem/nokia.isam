@@ -1,0 +1,303 @@
+module: isam_qos_interface
+short_description: Resource module to configure qos interface
+description:
+- Configures QoS settings on a user-port Interface. A user-port Interface can be a
+  DSL-link, an Shdsl-link, an Ethernet Line, a Link Aggregation Group or a pon, ont
+  or uni interface. For each Interface the operator can apply scheduling and CAC and
+  shaper settings. A scheduler node profile is used to configure egress scheduler
+  settings for each egress Interface. A CAC profile is used to configure CAC settings
+  for each Interface. A shaper profile is used to configure downstream flooding shaper
+  settings for each Interface.
+- Supports configuration of scheduler node, ingress profile, cac profile and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure qos interface ()'
+options:
+  config:
+    description:
+    - A list of qos interface configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (index) - physical port  or la-group of a user-port Interface
+      scheduler_node:
+        type: str
+        description:
+        - 'the name of the scheduler-node profile to be mapped on this user-port Interface
+          with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      ingress_profile:
+        type: str
+        description:
+        - 'the name of the ingress profile to be mapped on this user-port Interface.
+          It only used for EPON ONU interface current. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      cac_profile:
+        type: str
+        description:
+        - 'the name of the cac profile to be mapped on this user-port Interface. For
+          EPON OLT in downstream, this profile used for CAC on 1G PON bandwidth. with
+          default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      ext_cac:
+        type: str
+        description:
+        - 'the name of the cac profile to be mapped on this user-port Interface. For
+          EPON OLT in downstream, this profile used for CAC on 10G PON bandwidth.
+          with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      ds_queue_sharing:
+        type: bool
+        description:
+        - enable downstream queue sharing
+      us_queue_sharing:
+        type: bool
+        description:
+        - enable upstream queue sharing
+      ds_num_queue:
+        type: str
+        description:
+        - 'number of downstream queues per uni with default value: 4'
+        - 'Possible values: C(not-applicable) - not applicable Field type <Qos::NumberofQueues>;
+          C(range) - [4,8,1]'
+        default: '4'
+        choices:
+        - not-applicable
+        - number of queues per uni
+        - range
+      ds_num_rem_queue:
+        type: str
+        description:
+        - 'number of remote downstream queues per ont with default value: 0'
+        - 'Possible values: C(not-applicable) - not applicable Field type <Qos::NumberofQueues>;
+          C(range) - [4,8,1]'
+        default: '0'
+        choices:
+        - not-applicable
+        - number of queues per uni
+        - range
+      us_num_queue:
+        type: str
+        description:
+        - 'number of upstream queues per uni with default value: 8'
+        - 'Possible values: C(not-applicable) - not applicable Field type <Qos::NumberofQueues>;
+          C(range) - [4,8,1]'
+        default: '8'
+        choices:
+        - not-applicable
+        - number of queues per uni
+        - range
+      queue_stats_on:
+        type: bool
+        description:
+        - enable queue stats collection for ont uni [no] autoschedule
+      oper_weight:
+        type: str
+        description:
+        - 'operational weight of the ONT or UNI scheduler - relative weight - range:
+          [0...127]'
+      oper_rate:
+        type: str
+        description:
+        - 'Operational rate limit when autoShape enabled for ONT or UNI - excessive
+          information rate of a shaper - unit: kbps - range: [0...2147483647]'
+      us_vlanport_queue:
+        type: bool
+        description:
+        - Enable Vlan Port Level Queue Configuration
+      dsfld_shaper_prof:
+        type: str
+        description:
+        - 'the name of the shaper profile attached to the pon with default value:
+          "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      bandwidth_profile:
+        type: str
+        description:
+        - 'the name of the bandwidth profile. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      bandwidth_sharing:
+        type: str
+        description:
+        - 'enable or disable bandwidth sharing with default value: "no-sharing"'
+        - 'Possible values: C(no-sharing) - disable bandwidth sharing; C(ont-sharing)
+          - enable UNI level BW  or TCONT sharing across UNIs of an ONT'
+        default: no-sharing
+        choices:
+        - no-sharing
+        - ont-sharing
+      aggr_usq_profile:
+        type: str
+        description:
+        - 'the name of the aggrQueuesConfig profile applied on upstream queues of
+          an UNI. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      aggr_dsq_profile:
+        type: str
+        description:
+        - 'the name of the aggrQueuesConfig profile applied on downstream queues of
+          an UNI. with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      gem_sharing:
+        type: str
+        description:
+        - 'enable or disable gem sharing with default value: "disable"'
+        - 'Possible values: C(enable) - enable GEM sharing; C(disable) - disable GEM
+          sharing; C(not-applicable) - not applicable'
+        default: disable
+        choices:
+        - enable
+        - disable
+        - not-applicable
+      scheduler_mode:
+        type: str
+        description:
+        - 'specifies which mode is selected for scheduler with default value: "subscriber-hierarchy"'
+        - 'Possible values: C(subscriber-hierarchy) - Subscriber-based hierarchical
+          scheduling. This mode achieves subscriber fairness using a Traffic Management
+          hierarchy of subscriber levels.; C(service-hierarchy) - Service-based hierarchical
+          scheduling. This mode achieves subscriber fairness using a Traffic Management
+          hierarchy of subscriber levels, but also takes into account the service
+          priority across all subscribers to achieve service fairness.; C(service-flat)
+          - Service-based scheduling across all subscribers, using a flat class-based
+          scheduler and aggregated queues associated with the physical port (e.g.
+          PON port).'
+        choices:
+        - subscriber-hierarchy
+        - service-hierarchy
+        - service-flat
+      mc_scheduler_node:
+        type: str
+        description:
+        - 'the name of the scheduler-node profile to be mapped on multicast port with
+          default value: "name :'
+        - 'Possible values: C(none) - no profile name to associated; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: 'name : Multicast_Default'
+        choices:
+        - none
+        - name
+      bc_scheduler_node:
+        type: str
+        description:
+        - 'the name of the scheduler-node profile to be mapped on broadcast port with
+          default value: "name :'
+        - 'Possible values: C(none) - no profile name to associat ed; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: 'name : Broadcast_Default'
+        choices:
+        - none
+        - name
+      ds_schedule_tag:
+        type: str
+        description:
+        - 'specifies downstream scheduler reference with default value: "egressoutertag"
+          DS-LIN-TEST-01:automationuser>#'
+        - 'Possible values: C(egressoutertag) - system default behavior: always the
+          egress outer tag used.; C(cvlantag) - Select downstream scheduler based
+          on the c-vlan.; C(svlantag) - Select downstream scheduler based on the s-vlan.'
+        choices:
+        - egressoutertag
+        - cvlantag
+        - svlantag
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure qos interface)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

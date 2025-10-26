@@ -1,0 +1,5 @@
+help configure alarm entry mdu-sup-poe-over-yell
+ ! MDU ONT
+                                                                                 ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

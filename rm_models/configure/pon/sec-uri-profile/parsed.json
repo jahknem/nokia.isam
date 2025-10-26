@@ -1,0 +1,55 @@
+{
+  "title": "VOICE ONT SECURE URI PROFILE CONFIGURATION COMMAND",
+  "description": "This command creates a Secure URI Profile.\n\nIt provides (via pointers to other profiles) both the URI for accessing \ninformation plus the security information necessary to access the information",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure pon ( no sec-uri-profile (index) ) | ( sec-uri-profile (index) name <AsamProfileName> [ no auth-securi-prof | auth-securi-prof <Gpon::AuthProfileName> ] uri-prof <Gpon::UriProfileName> )",
+  "resource_parameters": [
+    {
+      "name": "(index)",
+      "description": "a unique profile index"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "name",
+      "description": "A string 1..32 characters long which uniquely identifies this Secure URI Profile mandatory parameter - a profile name - range: [a-zA-Z0-9-_.] - length: 1<=x<=32",
+      "type": "<AsamProfileName>"
+    },
+    {
+      "name": "[no] auth-securi-prof",
+      "description": "Authentication security profile that contains network address of the security server optional parameter with default value: \"none\"",
+      "type": "<Gpon::AuthProfileName>",
+      "format": "( none                            | <Gpon:AuthProfPtr>                            | name : <AsamProfileName> )",
+      "values": [
+        "none                  : no profile to associate",
+        "name                  : profile name Field type <Gpon:AuthProfPtr>",
+        "Index of the Authentication security profile",
+        "range: [0...20] Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "uri-prof",
+      "description": "uri profile that contains network address of the configuration server mandatory parameter Table \"Voice ONT Secure URI profile Configuration command\" Display Parameters Specific Information:",
+      "type": "<Gpon::UriProfileName>",
+      "format": "( none                            | <Gpon:UriProfilePtr>                            | name : <AsamProfileName> )",
+      "values": [
+        "none                  : no profile to associate",
+        "name                  : profile name Field type <Gpon:UriProfilePtr>",
+        "Index of the URI profile that contains the IP address of the server",
+        "range: [0...100] Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online -help."
+      ]
+    },
+    {
+      "name": "auth-securi-prof-name",
+      "description": "name of the authentication security uri profile This element is only shown in detail mode. - ignored printable string",
+      "type": "<Gpon::IgnoredPrintableString>"
+    },
+    {
+      "name": "uri-prof-name",
+      "description": "name of the uri profile This element is only shown in detail mode. - ignored printable string",
+      "type": "<Gpon::IgnoredPrintableString>"
+    }
+  ],
+  "raw": "help configure pon sec-uri-profile\r\nVOICE ONT SECURE URI PROFILE CONFIGURATION COMMAND\r\n==================================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command creates a Secure URI Profile.\r\n\r\nIt provides (via pointers to other profiles) both the URI for accessing \r\ninformation plus the security information necessary to access the information\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure pon ( no sec-uri-profile (index) ) | ( sec-uri-profile (index) name \r\n<AsamProfileName> [ no auth-securi-prof | auth-securi-prof \r\n<Gpon::AuthProfileName> ] uri-prof <Gpon::UriProfileName> )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Voice ONT Secure URI profile Configuration command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(index)                    a unique profile index\r\n\r\nTable \"Voice ONT Secure URI profile Configuration command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nname                       A string 1..32 characters long which uniquely \r\nidentifies this Secure URI Profile\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <AsamProfileName>\r\n                           Format:\r\n                           - a profile name\r\n                           - range: [a-zA-Z0-9-_.]\r\n                           - length: 1<=x<=32 \r\n\r\n[no] auth-securi-prof      Authentication security profile that contains \r\nnetwork address of the security server\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Gpon::AuthProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | <Gpon:AuthProfPtr>\r\n                           | name : <AsamProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile to associate\r\n                           - name                  : profile name\r\n                           Field type <Gpon:AuthProfPtr>\r\n                           - Index of the Authentication security profile\r\n                           - range: [0...20]\r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\nuri-prof                   uri profile that contains network address of the \r\nconfiguration server\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Gpon::UriProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | <Gpon:UriProfilePtr>\r\n                           | name : <AsamProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile to associate\r\n                           - name                  : profile name\r\n                           Field type <Gpon:UriProfilePtr>\r\n                           - Index of the URI profile that contains the IP \r\naddress of the server\r\n                           - range: [0...100]\r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with online\r\n-help.\r\n\r\n\r\nTable \"Voice ONT Secure URI profile Configuration command\" Display Parameters\r\n\r\nSpecific Information:\r\n\r\nParameter                  Description\r\n\r\n auth-securi-prof-name     name of the authentication security uri profile\r\n                           This element is only shown in detail mode.\r\n\r\n                           parameter type: <Gpon::IgnoredPrintableString>\r\n                           - ignored printable string\r\n\r\n uri-prof-name             name of the uri profile\r\n                           This element is only shown in detail mode.\r\n\r\n                           parameter type: <Gpon::IgnoredPrintableString>\r\n                           - ignored printable string\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,61 @@
+help configure mcast-control ipv4 vlan
+IGMP VLAN SYSTEM CONFIGURATION COMMAND
+======================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the IGMP parameters on a per Vlan 
+basis.
+
+
+User Level
+----------
+
+The command can be accessed by operators with igmp privileges, and executed by 
+operators with igmp privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure mcast-control ipv4 ( no vlan (vlan-id) ) | ( vlan (vlan-id) 
+netw-igmp-version <Igmp::VlanV3ProcessStatus> [ no v3-max-num-rec | 
+v3-max-num-rec <Igmp::V3MaxNumRecordReport> ] )
+
+Command Parameters
+------------------
+
+Table "IGMP Vlan System Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(vlan-id)                  index of the system vlan
+
+Table "IGMP Vlan System Configuration Command" Command Parameters
+
+Parameter                  Description
+
+netw-igmp-version          IGMP version of the protocol
+                           mandatory parameter
+
+                           Parameter type: <Igmp::VlanV3ProcessStatus>
+                           Format:
+                           ( 2
+                           | 3 )
+                           Possible values:
+                           - 2                     : IGMP version2
+                           - 3                     : IGMP version3
+
+[no] v3-max-num-rec        max num of group records in one IGMPv3 report (2 exp 
+N)
+                           optional parameter with default value: 3
+
+                           Parameter type: <Igmp::V3MaxNumRecordReport>
+                           Format:
+                           - max num of group records in one IGMPv3 or MLDv2 
+report (2 exp N)
+                           - range: [0...10]
+
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,32 @@
+{
+  "title": "SFP/XFP DIAGNOSTICS CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure RSSI profile on SFP/XFP:\n  - The slot index of the sfp\n  - The number of the sfp cage\n  - The index of rssi profile which would be configured on SFP/XFP.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure equipment diagnostics sfp (position) [ no rssi-prof-id | rssi-prof-id <Eqpt::RssiProfileIndex> ] [ no rssi-state | rssi-state <Eqpt::RssiState> ]",
+  "resource_parameters": [
+    {
+      "name": "(position)",
+      "description": "the physical sfp cage position"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] rssi-prof-id",
+      "description": "an unique index of the rssi profile(1-200) optional parameter with default value: \"65535\" - an unique index value for the rssi profile(1-200:userdefined,65535:automode) - range: [1...200,65535]",
+      "type": "<Eqpt::RssiProfileIndex>",
+      "default": "65535"
+    },
+    {
+      "name": "[no] rssi-state",
+      "description": "to enable or disable the rssi functionality of sfp for uplink ports optional parameter with default value: \"disable\"",
+      "type": "<Eqpt::RssiState>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : enable rssi functionality",
+        "disable               : disable rssi functionality"
+      ],
+      "default": "disable"
+    }
+  ],
+  "raw": "help configure equipment diagnostics sfp\r\nSFP/XFP DIAGNOSTICS CONFIGURATION COMMAND\r\n=========================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure RSSI profile on SFP/XFP:\r\n  - The slot index of the sfp\r\n  - The number of the sfp cage\r\n  - The index of rssi profile which would be configured on SFP/XFP.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure equipment diagnostics sfp (position) [ no rssi-prof-id | \r\nrssi-prof-id <Eqpt::RssiProfileIndex> ] [ no rssi-state | rssi-state \r\n<Eqpt::RssiState> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"SFP/XFP Diagnostics configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(position)                 the physical sfp cage position\r\n\r\nTable \"SFP/XFP Diagnostics configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] rssi-prof-id          an unique index of the rssi profile(1-200)\r\n                           optional parameter with default value: \"65535\"\r\n\r\n                           Parameter type: <Eqpt::RssiProfileIndex>\r\n                           Format:\r\n                           - an unique index value for the rssi \r\nprofile(1-200:userdefined,65535:automode)\r\n                           - range: [1...200,65535]\r\n\r\n[no] rssi-state            to enable or disable the rssi functionality of sfp \r\nfor uplink ports\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Eqpt::RssiState>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : enable rssi functionality\r\n                           - disable               : disable rssi functionality\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

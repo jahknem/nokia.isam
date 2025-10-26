@@ -1,0 +1,5 @@
+help configure router interface egress arp-timeo
+ut
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,156 @@
+{
+  "command_path": "configure qos interface",
+  "module_file": "isam_qos_interface.yml",
+  "device_verification": {
+    "device": "DS-LIN-TEST-01",
+    "verified_commands_run": [
+      "help configure qos interface",
+      "info configure qos interface",
+      "configure qos interface 1/1/5/2/1/1/1 queue-stats-on",
+      "configure qos interface 1/1/5/2/1/1/1 no queue-stats-on",
+      "configure qos interface 1/1/5/2/1/1/1 ds-queue-sharing",
+      "configure qos interface ont:1/1/5/2/1 ds-queue-sharing",
+      "configure qos interface 1/1/5/2/1/1/1 autoschedule",
+      "configure qos interface 1/1/5/2/1/1/1 us-vlanport-queue",
+      "configure qos interface 1/1/5/2/1/1/1 oper-weight 51",
+      "configure qos interface 1/1/5/2/1/1/1 oper-rate 1",
+      "info configure qos interface ont:1/1/5/1/6",
+      "info configure qos interface 1/1/5/1/6/1/1",
+      "configure qos interface 1/1/5/1/6/1/1 queue 0 weight 36",
+      "configure qos interface 1/1/5/1/6/1/1 queue 0 weight 34",
+      "configure qos interface 1/1/5/1/6/1/1 upstream-queue 0 bandwidth-profile name:GPONqpp200Mbps",
+      "configure qos interface 1/1/5/1/6/1/1 upstream-queue 0 bandwidth-profile name:GPONqpp100Mbps",
+      "configure qos interface 1/1/5/1/6/1/1 ds-queue-sharing",
+      "configure qos interface 1/1/5/1/6/1/1 us-queue-sharing",
+      "configure qos interface 1/1/5/1/6/1/1 autoschedule",
+      "configure qos interface 1/1/5/1/6/1/1 us-vlanport-queue",
+      "configure qos interface ont:1/1/5/1/6 ds-queue-sharing",
+      "configure qos interface ont:1/1/5/1/6 scheduler-node name:GPONShaperDN600Mbps",
+      "configure qos interface ont:1/1/5/1/6 scheduler-node name:GPONShaperDN50Mbps",
+      "configure qos interface 1/1/5/1/6/1/1 queue-stats-on",
+      "configure qos interface 1/1/5/1/6/1/1 no queue-stats-on",
+      "configure qos interface 1/1/5/1/6/1/1 upstream-queue 4 weight 7",
+      "configure qos interface 1/1/5/1/6/1/1 upstream-queue 4 weight 5",
+      "configure qos interface 1/1/5/1/6/1/1 upstream-queue 5 bandwidth-profile name:GPONqpp200Mbps",
+      "configure qos interface 1/1/5/1/6/1/1 upstream-queue 5 bandwidth-profile name:GPONqpp100Mbps"
+    ],
+    "safety": "Performed minimal reversible changes under 1/1/5/2 and 1/1/5/1/6 only. Strictly avoided any changes under 1/1/5/1/15; read-only allowed there. All changes were verified live and reverted to baseline (ONT scheduler 50Mbps; UNI queue 0 weight 34; UNI upstream-queue 0/4/5 profiles 100Mbps; queue-stats-off).",
+    "attempt_results": [
+      {
+        "command": "configure qos interface 1/1/5/2/1/1/1 ds-queue-sharing",
+        "result": "Error: QOS MGT error 46 : Q Sharing can only be enabled on ONT",
+        "note": "Not applicable on UNI interface on this platform"
+      },
+      {
+        "command": "configure qos interface 1/1/5/1/6/1/1 upstream-queue 4 weight 7",
+        "result": "Success: upstream-queue 4 weight set to 7; verified via info; reverted to 5",
+        "note": "Upstream queue weight configurable on UNI for queue 4"
+      },
+      {
+        "command": "configure qos interface 1/1/5/1/6/1/1 upstream-queue 5 bandwidth-profile name:GPONqpp200Mbps",
+        "result": "Success: upstream-queue 5 profile changed to 200Mbps; verified via info; reverted to 100Mbps",
+        "note": "Upstream queue bandwidth-profile configurable on UNI for queue 5"
+  },
+  {
+        "command": "configure qos interface ont:1/1/5/2/1 ds-queue-sharing",
+        "result": "Error: QOS MGT error 58 : Unable to enable queue sharing on ONT that has an ONT card provisioned",
+        "note": "ONT-level queue sharing blocked due to ONT card provisioning"
+      },
+      {
+        "command": "configure qos interface 1/1/5/2/1/1/1 autoschedule",
+        "result": "Error: QOS MGT error 96 : AutoSchedule cannot be assigned to this interface type",
+        "note": "Autoschedule not supported on UNI on this platform"
+      },
+      {
+        "command": "configure qos interface 1/1/5/2/1/1/1 us-vlanport-queue",
+        "result": "Error: QOS MGT error 116 : us-vlanport-queues can only be enabled on an ONT interface",
+        "note": "Not applicable on UNI interface"
+      },
+      {
+        "command": "configure qos interface 1/1/5/2/1/1/1 oper-weight 51",
+        "result": "Error: field oper-weight_ : instance can not be modified",
+        "note": "oper-weight immutable here"
+      },
+      {
+        "command": "configure qos interface 1/1/5/2/1/1/1 oper-rate 1",
+        "result": "Error: field oper-rate_ : instance can not be modified",
+        "note": "oper-rate immutable here"
+      },
+      {
+        "command": "configure qos interface 1/1/5/1/6/1/1 ds-queue-sharing",
+        "result": "Error: QOS MGT error 46 : Q Sharing can only be enabled on ONT",
+        "note": "Not applicable on UNI interface"
+      },
+      {
+        "command": "configure qos interface 1/1/5/1/6/1/1 us-queue-sharing",
+        "result": "Error: QOS MGT error 46 : Q Sharing can only be enabled on ONT",
+        "note": "Not applicable on UNI interface"
+      },
+      {
+        "command": "configure qos interface 1/1/5/1/6/1/1 autoschedule",
+        "result": "Error: QOS MGT error 96 : AutoSchedule cannot be assigned to this interface type",
+        "note": "Autoschedule not supported on UNI on this platform"
+      },
+      {
+        "command": "configure qos interface 1/1/5/1/6/1/1 us-vlanport-queue",
+        "result": "Error: QOS MGT error 116 : us-vlanport-queues can only be enabled on an ONT interface",
+        "note": "Not applicable on UNI interface"
+      },
+      {
+        "command": "configure qos interface ont:1/1/5/1/6 ds-queue-sharing",
+        "result": "Error: QOS MGT error 58 : Unable to enable queue sharing on ONT that has an ONT card provisioned",
+        "note": "ONT-level queue sharing blocked due to ONT card provisioning"
+      },
+      {
+        "command": "configure qos interface 1/1/5/1/6/1/1 queue 0 weight 36",
+        "result": "Success: weight changed to 36; verified via info; then reverted to 34",
+        "note": "Downstream queue weight is configurable on UNI"
+      },
+      {
+        "command": "configure qos interface 1/1/5/1/6/1/1 upstream-queue 0 bandwidth-profile name:GPONqpp200Mbps",
+        "result": "Success: upstream-queue 0 profile changed to 200Mbps; verified via info; then reverted to 100Mbps",
+        "note": "Upstream queue bandwidth-profile configurable on UNI"
+      },
+      {
+        "command": "configure qos interface 1/1/5/1/6/1/1 oper-rate 1",
+        "result": "Error: field oper-rate_ : instance can not be modified",
+        "note": "oper-rate immutable on this UNI"
+      },
+      {
+        "command": "configure qos interface 1/1/5/1/6/1/1 oper-weight 51",
+        "result": "Error: field oper-weight_ : instance can not be modified",
+        "note": "oper-weight immutable on this UNI"
+      },
+      {
+        "command": "configure qos interface ont:1/1/5/1/6 scheduler-node name:GPONShaperDN600Mbps",
+        "result": "Success: ONT scheduler-node set to GPONShaperDN600Mbps; oper-rate 614400; reverted to GPONShaperDN50Mbps",
+        "note": "ONT scheduler profile changes oper-rate as expected"
+      },
+      {
+        "command": "configure qos interface 1/1/5/1/6/1/1 queue-stats-on",
+        "result": "Success: queue-stats-on present in per-interface info; reverted with 'no queue-stats-on'",
+        "note": "queue-stats-on toggle works on UNI"
+      }
+    ]
+  },
+  "changes": [
+    {
+      "path": "notes",
+      "action": "corrected",
+      "reason": "Expanded CLI command syntax from placeholder to full syntax per help.txt"
+    },
+    {
+      "path": "options.config",
+      "action": "updated",
+      "reason": "Aligned fields with help: removed invalid choices for numeric queue counts, added autoschedule boolean, set defaults for scheduler-mode and ds-schedule-tag, fixed queue-stats-on description"
+    }
+  ],
+  "example_files": [
+    "gathered_example_01.txt",
+    "merged_example_01.txt",
+    "replaced_example_01.txt",
+    "deleted_example_01.txt",
+    "overridden_example_01.txt"
+  ],
+  "example_data_source": "Captured from live Nokia ISAM device DS-LIN-TEST-01 using single commands only: 'info configure qos interface' and minimal toggles 'configure qos interface 1/1/5/2/1/1/1 [no] queue-stats-on'. Inventory banners were stripped."
+}

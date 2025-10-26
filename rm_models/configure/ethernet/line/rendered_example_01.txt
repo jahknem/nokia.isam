@@ -1,0 +1,4 @@
+-- Rendered CLI (single-command example):
+configure ethernet line 1/1/8/6 admin-up
+
+(This is the single command that would be produced in state=rendered.)

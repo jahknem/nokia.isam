@@ -1,0 +1,28 @@
+{
+  "title": "APPLIQUE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure an applique.\n\nThe applique is identified by the physical slot number. The left-most slot in \nthe shelf is number 1. The following parameter can be configured for the slot:\n  - planned-type: the applique type to be inserted into the slot. The \nnot-planned parameter indicates that an applique will not be inserted into that \nslot.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure equipment applique (index) [ no planned-type | planned-type <Equipm::AppliqueType> ] [ no applique-profile | applique-profile <Equipm::CapabilityProfile> ]",
+  "resource_parameters": [
+    {
+      "name": "(index)",
+      "description": "the physical number of the applique"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] planned-type",
+      "description": "type of applique intended to be in this position optional parameter with default value: \"not-planned\"",
+      "type": "<Equipm::AppliqueType>",
+      "format": "Data driven field type                            Possible values are depending on the actual configuration and software.                            The currently allowed values can be shown with online-help.",
+      "default": "not-planned"
+    },
+    {
+      "name": "[no] applique-profile",
+      "description": "capability profile assigned to the applique board optional parameter with default value: \"not_applicable\"",
+      "type": "<Equipm::CapabilityProfile>",
+      "format": "Data driven field type                            Possible values are depending on the actual configuration and software.                            The currently allowed values can be shown with online-help."
+    }
+  ],
+  "raw": "help configure equipment applique\r\nAPPLIQUE CONFIGURATION COMMAND\r\n==============================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure an applique.\r\n\r\nThe applique is identified by the physical slot number. The left-most slot in \r\nthe shelf is number 1. The following parameter can be configured for the slot:\r\n  - planned-type: the applique type to be inserted into the slot. The \r\nnot-planned parameter indicates that an applique will not be inserted into that \r\nslot.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure equipment applique (index) [ no planned-type | planned-type \r\n<Equipm::AppliqueType> ] [ no applique-profile | applique-profile \r\n<Equipm::CapabilityProfile> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Applique Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(index)                    the physical number of the applique\r\n\r\nTable \"Applique Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] planned-type          type of applique intended to be in this position\r\n                           optional parameter with default value: \"not-planned\"\r\n\r\n                           Parameter type: <Equipm::AppliqueType>\r\n                           Format:\r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] applique-profile      capability profile assigned to the applique board\r\n                           optional parameter with default value: \r\n\"not_applicable\"\r\n\r\n                           Parameter type: <Equipm::CapabilityProfile>\r\n                           Format:\r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

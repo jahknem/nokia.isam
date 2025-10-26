@@ -1,0 +1,27 @@
+help configure port
+PORT CONFIGURATION COMMAND
+==========================
+
+Command Description
+-------------------
+
+See IHUB Interface Guide and IHUB QoS Guide for more information. The command 
+can be accessed and executed by operators with link privileges.
+
+
+User Level
+----------
+
+The command can be executed by operators with link privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure port
+
+Command Parameters
+------------------
+
+none
+DS-LIN-TEST-01:automationuser>#

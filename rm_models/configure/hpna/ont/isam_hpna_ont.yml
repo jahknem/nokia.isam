@@ -1,0 +1,127 @@
+module: isam_hpna_ont
+short_description: Resource module to configure hpna ont
+description:
+- This command allows the operator to modify ONT HPNA port provisioning data.
+- Supports configuration of cust info, pwr override, master mode and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure hpna ont ()'
+options:
+  config:
+    description:
+    - A list of hpna ont configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (uni-idx) - identification of the hpna interface index
+      cust_info:
+        type: str
+        description:
+        - 'information for HPNA port - char string - length: x<=80'
+        - 'Maximum length: 80 characters'
+      pwr_override:
+        type: str
+        description:
+        - 'power settings to be included for data class power shedding with default
+          value: "disabled"'
+        - 'Possible values: C(enabled) - enabled; C(disabled) - disabled'
+        default: disabled
+        choices:
+        - enabled
+        - disabled
+      master_mode:
+        type: str
+        description:
+        - 'master mode of HPNA mac with default value: "default"'
+        - 'Possible values: C(default) - default master mode; C(auto) - auto master
+          mode; C(forced) - forced master mode'
+        default: default
+        choices:
+        - default
+        - auto
+        - forced
+      admin_state:
+        type: str
+        description:
+        - 'administrative status of the interface with default value: "down" Table
+          "ONT HPNA Configuration Command" Display Parameters Specific Information:'
+        - 'Possible values: C(up) - set the admin-state to up; C(down) - set the admin-state
+          to down'
+        default: down
+        choices:
+        - up
+        - down
+      base_mac_address:
+        type: str
+        description:
+        - 'base mac address This element is always shown. - a mac-address (example
+          : 01:02:03:04:05:06) (L2 only) - length: 6'
+      port_configuration:
+        type: str
+        description:
+        - configuration status of hpna uni This element is always shown. ( unknown
+          | coax_12_28 | phone_12_28 )
+        - 'Possible values: C(unknown) - cant reach the ont or the ont didnt return
+          a response to the query; C(coax_12_28) - not supported; C(phone_12_28) -
+          not supported'
+        choices:
+        - unknown
+        - coax_12_28
+        - phone_12_28
+      oper_state:
+        type: str
+        description:
+        - the operational state of the interface This element is always shown. ( up
+          | down | testing | unknown | dormant | no-value )
+        - 'Possible values: C(up) - up,traffic can pass; C(down) - down,no traffic
+          is passing; C(testing) - testing,no traffic is passing; C(unknown) - unknown;
+          C(dormant) - dormant,no traffic is passing; C(no-value) - no entry in the
+          table'
+        choices:
+        - up
+        - down
+        - testing
+        - unknown
+        - dormant
+        - no-value
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure hpna ont)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

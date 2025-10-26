@@ -1,0 +1,78 @@
+module: isam_interface_cage
+short_description: Resource module to configure interface cage
+description:
+- 'Configures SLOT cage mode: - The slot index of the cage - The number of the sfp
+  cage - The index of rssi profile which would be configured on cage.'
+- Supports configuration of operational mode
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure interface cage ()'
+options:
+  config:
+    description:
+    - A list of interface cage configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (position) - the physical cage position
+      operational_mode:
+        type: str
+        description:
+        - oper-mode of the cage
+        - 'Possible values: C(not-set) - cage mode set to not set; C(gpon) - cage
+          mode set to gpon; C(xgs) - cage mode set to xgs; C(mpm-gpon-xgs) - cage
+          mode set to mpm-gpon-xgs; C(dual-gpon) - cage mode set to dual-gpon; C(u-ngpon)
+          - cage mode set to u-ngpon; C(twenty-five-g) - cage mode set to twentyfiveg;
+          C(ng-pon2) - cage mode set to ng-pon2; C(mpm-gpon-xgpon) - cage mode set
+          to mpm-gpon-xgpon'
+        choices:
+        - not-set
+        - gpon
+        - xgs
+        - mpm-gpon-xgs
+        - dual-gpon
+        - u-ngpon
+        - twenty-five-g
+        - ng-pon2
+        - mpm-gpon-xgpon
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure interface cage)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

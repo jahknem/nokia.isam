@@ -1,0 +1,73 @@
+module: isam_ethernet_line
+short_description: Resource module to configure ethernet line
+description:
+- Configures the ethernet line.
+- Supports configuration of port type, admin up
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure ethernet line ()'
+options:
+  config:
+    description:
+    - A list of ethernet line configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (if-index) - interface index of the port
+      port_type:
+        type: str
+        description:
+        - the whole network service model based on this interface
+        - 'Possible values: C(uni) - uni port type; C(nni) - nni port type; C(hc-uni)
+          - hicap uni port type; C(uplink) - uplink port type'
+        choices:
+        - uni
+        - nni
+        - hc-uni
+        - uplink
+      admin_up:
+        type: bool
+        description:
+        - admin status is up (read-only for voicefxs interface)
+        - When true, the interface/feature is enabled; when false, it is disabled
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure ethernet line)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

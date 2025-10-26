@@ -1,0 +1,59 @@
+help configure alias
+CLI ALIAS CONFIGURATION COMMAND
+===============================
+
+Command Description
+-------------------
+
+This command allows the operator to configure CLI alias commands for the system.
+
+Alias names may not match any of the reserved cli node keywords. Alias names 
+may not contain whitespace or chars '?' or '#'. Alias names may not match an 
+existing alias value.
+
+Alias values may not contain chars '?' or '#'. '\n' or '\r' are disallowed 
+unless they are used within literal string parameters. An alias value may not 
+match an existing alias name.
+
+Cli command parameters entered as part of the alias value will not be validated 
+until the alias is executed.
+
+The order of the displayed alias commands when executing the 'info configure 
+alias' command does not persist after an NT switchover or reset.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure alias (name) (value)
+
+Command Parameters
+------------------
+
+Table "CLI Alias Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     alias name
+
+Table "CLI Alias Configuration Command" Command Parameters
+
+Parameter                  Description
+
+(value)                    command string for alias
+                           mandatory parameter
+
+                           Parameter type: <CLI::AliasValue>
+                           Format:
+                           - command string for alias
+                           - length: 2<=x<=128 
+
+
+DS-LIN-TEST-01:automationuser>#

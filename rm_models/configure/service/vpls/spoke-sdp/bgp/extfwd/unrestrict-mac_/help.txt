@@ -1,0 +1,5 @@
+help configure service vpls spoke-sdp bgp extfwd
+ unrestrict-mac*
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

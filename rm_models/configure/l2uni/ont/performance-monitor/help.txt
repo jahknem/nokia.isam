@@ -1,0 +1,65 @@
+help configure l2uni ont performance-monitor
+L2 UNI ONT PERFORMANCE MONITOR CONFIGURATION COMMAND
+====================================================
+
+Command Description
+-------------------
+
+This command sets the PM Mode of ONTL2UNI.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure l2uni ont performance-monitor (if-index) [ no pm-collect | 
+pm-collect <Gpon::OntPmTcaCollect> ] [ no pm-collect-64bit | pm-collect-64bit 
+<Gpon::Ont64bitPmCollect> ]
+
+Command Parameters
+------------------
+
+Table "L2 UNI ONT Performance Monitor Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(if-index)                 interface index of the port
+
+Table "L2 UNI ONT Performance Monitor Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] pm-collect            indicates whether Ethernet Traffic Performance 
+Monitors should be collected for this Ethernet Port.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Gpon::OntPmTcaCollect>
+                           Format:
+                           ( none
+                           | pm-enable
+                           | tca-enable )
+                           Possible values:
+                           - none                  : no pm
+                           - pm-enable             : enable pm
+                           - tca-enable            : enable tca
+
+[no] pm-collect-64bit      indicates whether Ethernet Traffic Performance 
+Monitors should be collected for this Ethernet Port.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Gpon::Ont64bitPmCollect>
+                           Format:
+                           ( none
+                           | pm-enable )
+                           Possible values:
+                           - none                  : no pm
+                           - pm-enable             : enable pm
+
+
+DS-LIN-TEST-01:automationuser>#

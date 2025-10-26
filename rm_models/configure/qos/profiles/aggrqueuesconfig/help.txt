@@ -1,0 +1,764 @@
+help configure qos profiles aggrqueuesconfig
+QOS AGGRQUEUESCONFIG PROFILE CONFIGURATION COMMAND
+==================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a QoS AggrQueuesConfig 
+profile.The AggrQueuesConfig Profile table stores the attributes of 8 queues of 
+one UNI.These AggrQueuesConfig profiles are applicable to qos interface for UNI 
+Upstream and Downstream.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles ( no aggrqueuesconfig (name) ) | ( aggrqueuesconfig 
+(name) [ no q0-priority | q0-priority <Qos::Qpriority_0> ] [ no q1-priority | 
+q1-priority <Qos::Qpriority_1> ] [ no q2-priority | q2-priority 
+<Qos::Qpriority_2> ] [ no q3-priority | q3-priority <Qos::Qpriority_3> ] [ no 
+q4-priority | q4-priority <Qos::Qpriority_4> ] [ no q5-priority | q5-priority 
+<Qos::Qpriority_5> ] [ no q6-priority | q6-priority <Qos::Qpriority_6> ] [ no 
+q7-priority | q7-priority <Qos::Qpriority_7> ] [ no q0-weight | q0-weight 
+<Qos::QosWeight> ] [ no q1-weight | q1-weight <Qos::QosWeight> ] [ no q2-weight 
+| q2-weight <Qos::QosWeight> ] [ no q3-weight | q3-weight <Qos::QosWeight> ] [ 
+no q4-weight | q4-weight <Qos::QosWeight> ] [ no q5-weight | q5-weight 
+<Qos::QosWeight> ] [ no q6-weight | q6-weight <Qos::QosWeight> ] [ no q7-weight 
+| q7-weight <Qos::QosWeight> ] [ no q0-shaper-prof | q0-shaper-prof <Qos::QosSha
+perProfileName> ] [ no q1-shaper-prof | q1-shaper-prof 
+<Qos::QosShaperProfileName> ] [ no q2-shaper-prof | q2-shaper-prof 
+<Qos::QosShaperProfileName> ] [ no q3-shaper-prof | q3-shaper-prof 
+<Qos::QosShaperProfileName> ] [ no q4-shaper-prof | q4-shaper-prof 
+<Qos::QosShaperProfileName> ] [ no q5-shaper-prof | q5-shaper-prof 
+<Qos::QosShaperProfileName> ] [ no q6-shaper-prof | q6-shaper-prof 
+<Qos::QosShaperProfileName> ] [ no q7-shaper-prof | q7-shaper-prof 
+<Qos::QosShaperProfileName> ] [ no q0-queue-prof | q0-queue-prof 
+<Qos::QosQueueProfName> ] [ no q1-queue-prof | q1-queue-prof 
+<Qos::QosQueueProfName> ] [ no q2-queue-prof | q2-queue-prof 
+<Qos::QosQueueProfName> ] [ no q3-queue-prof | q3-queue-prof 
+<Qos::QosQueueProfName> ] [ no q4-queue-prof | q4-queue-prof 
+<Qos::QosQueueProfName> ] [ no q5-queue-prof | q5-queue-prof 
+<Qos::QosQueueProfName> ] [ no q6-queue-prof | q6-queue-prof 
+<Qos::QosQueueProfName> ] [ no q7-queue-prof | q7-queue-prof 
+<Qos::QosQueueProfName> ] [ no q0-bandwidth-prof | q0-bandwidth-prof <Qos::QosBa
+ndwidthProfileName> ] [ no q1-bandwidth-prof | q1-bandwidth-prof 
+<Qos::QosBandwidthProfileName> ] [ no q2-bandwidth-prof | q2-bandwidth-prof 
+<Qos::QosBandwidthProfileName> ] [ no q3-bandwidth-prof | q3-bandwidth-prof 
+<Qos::QosBandwidthProfileName> ] [ no q4-bandwidth-prof | q4-bandwidth-prof 
+<Qos::QosBandwidthProfileName> ] [ no q5-bandwidth-prof | q5-bandwidth-prof 
+<Qos::QosBandwidthProfileName> ] [ no q6-bandwidth-prof | q6-bandwidth-prof 
+<Qos::QosBandwidthProfileName> ] [ no q7-bandwidth-prof | q7-bandwidth-prof 
+<Qos::QosBandwidthProfileName> ] [ no q0-bw-sharing | q0-bw-sharing 
+<Qos::BandwidthSharing_0> ] [ no q1-bw-sharing | q1-bw-sharing 
+<Qos::BandwidthSharing_1> ] [ no q2-bw-sharing | q2-bw-sharing 
+<Qos::BandwidthSharing_2> ] [ no q3-bw-sharing | q3-bw-sharing 
+<Qos::BandwidthSharing_3> ] [ no q4-bw-sharing | q4-bw-sharing 
+<Qos::BandwidthSharing_4> ] [ no q5-bw-sharing | q5-bw-sharing 
+<Qos::BandwidthSharing_5> ] [ no q6-bw-sharing | q6-bw-sharing 
+<Qos::BandwidthSharing_6> ] [ no q7-bw-sharing | q7-bw-sharing 
+<Qos::BandwidthSharing_7> ] )
+
+Command Parameters
+------------------
+
+Table "QoS AggrQueuesConfig Profile Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+Table "QoS AggrQueuesConfig Profile Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] q0-priority           priority corresponding to queue 0
+                           optional parameter with default value: 1
+
+                           Parameter type: <Qos::Qpriority_0>
+                           Format:
+                           - priority corresponding to queue 0
+                           - range: [1...8]
+
+[no] q1-priority           priority corresponding to queue 1
+                           optional parameter with default value: 1
+
+                           Parameter type: <Qos::Qpriority_1>
+                           Format:
+                           - priority corresponding to queue 1
+
+                           - range: [1...8]
+
+[no] q2-priority           priority corresponding to queue 2
+                           optional parameter with default value: 1
+
+                           Parameter type: <Qos::Qpriority_2>
+                           Format:
+                           - priority corresponding to queue 2
+                           - range: [1...8]
+
+[no] q3-priority           priority corresponding to queue 3
+                           optional parameter with default value: 1
+
+                           Parameter type: <Qos::Qpriority_3>
+                           Format:
+                           - priority corresponding to queue 3
+                           - range: [1...8]
+
+[no] q4-priority           priority corresponding to queue 4
+                           optional parameter with default value: 1
+
+                           Parameter type: <Qos::Qpriority_4>
+                           Format:
+                           - priority corresponding to queue 4
+                           - range: [1...8]
+
+[no] q5-priority           priority corresponding to queue 5
+                           optional parameter with default value: 1
+
+                           Parameter type: <Qos::Qpriority_5>
+                           Format:
+                           - priority corresponding to queue 5
+                           - range: [1...8]
+
+[no] q6-priority           priority corresponding to queue 6
+                           optional parameter with default value: 1
+
+                           Parameter type: <Qos::Qpriority_6>
+                           Format:
+                           - priority corresponding to queue 6
+                           - range: [1...8]
+
+[no] q7-priority           priority corresponding to queue 7
+                           optional parameter with default value: 1
+
+                           Parameter type: <Qos::Qpriority_7>
+                           Format:
+                           - priority corresponding to queue 7
+                           - range: [1...8]
+
+[no] q0-weight             relative weight of the queue 0
+                           optional parameter with default value: 1
+
+                           Parameter type: <Qos::QosWeight>
+                           Format:
+                           - relative weight
+                           - range: [0...127]
+
+[no] q1-weight             relative weight of the queue 1
+                           optional parameter with default value: 1
+
+                           Parameter type: <Qos::QosWeight>
+                           Format:
+                           - relative weight
+                           - range: [0...127]
+
+[no] q2-weight             relative weight of the queue 2
+                           optional parameter with default value: 1
+
+                           Parameter type: <Qos::QosWeight>
+                           Format:
+                           - relative weight
+                           - range: [0...127]
+
+[no] q3-weight             relative weight of the queue 3
+                           optional parameter with default value: 1
+
+                           Parameter type: <Qos::QosWeight>
+                           Format:
+                           - relative weight
+                           - range: [0...127]
+
+[no] q4-weight             relative weight of the queue 4
+                           optional parameter with default value: 1
+
+                           Parameter type: <Qos::QosWeight>
+                           Format:
+                           - relative weight
+                           - range: [0...127]
+
+[no] q5-weight             relative weight of the queue 5
+                           optional parameter with default value: 1
+
+                           Parameter type: <Qos::QosWeight>
+                           Format:
+                           - relative weight
+                           - range: [0...127]
+
+[no] q6-weight             relative weight of the queue 6
+                           optional parameter with default value: 1
+
+                           Parameter type: <Qos::QosWeight>
+                           Format:
+                           - relative weight
+                           - range: [0...127]
+
+[no] q7-weight             relative weight of the queue 7
+                           optional parameter with default value: 1
+
+                           Parameter type: <Qos::QosWeight>
+                           Format:
+                           - relative weight
+                           - range: [0...127]
+
+[no] q0-shaper-prof        the associated queue 0 shaper profile.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosShaperProfileName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associated
+                           - name                  : enter profile name to be 
+associated
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q1-shaper-prof        the associated queue 1 shaper profile.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosShaperProfileName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associated
+                           - name                  : enter profile name to be 
+associated
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q2-shaper-prof        the associated queue 2 shaper profile.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosShaperProfileName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associated
+                           - name                  : enter profile name to be 
+associated
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q3-shaper-prof        the associated queue 3 shaper profile.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosShaperProfileName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associated
+                           - name                  : enter profile name to be 
+associated
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q4-shaper-prof        the associated queue 4 shaper profile.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosShaperProfileName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associated
+                           - name                  : enter profile name to be 
+associated
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q5-shaper-prof        the associated queue 5 shaper profile.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosShaperProfileName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associated
+                           - name                  : enter profile name to be 
+associated
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q6-shaper-prof        the associated queue 6 shaper profile.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosShaperProfileName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associated
+                           - name                  : enter profile name to be 
+associated
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q7-shaper-prof        the associated queue 7 shaper profile.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosShaperProfileName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associated
+                           - name                  : enter profile name to be 
+associated
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q0-queue-prof         name of the queue 0 queue profile
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosQueueProfName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associated
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q1-queue-prof         name of the queue 1 queue profile
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosQueueProfName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associated
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q2-queue-prof         name of the queue 2 queue profile
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosQueueProfName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associated
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q3-queue-prof         name of the queue 3 queue profile
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosQueueProfName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associated
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q4-queue-prof         name of the queue 4 queue profile
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosQueueProfName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associated
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q5-queue-prof         name of the queue 5 queue profile
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosQueueProfName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associated
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q6-queue-prof         name of the queue 6 queue profile
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosQueueProfName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associated
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q7-queue-prof         name of the queue 7 queue profile
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosQueueProfName>
+                           Format:
+                           ( none
+                           | name : <Qos::IgnoredQosProfileName> )
+                           Possible values:
+                           - none                  : no profile name to 
+associated
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q0-bandwidth-prof     the name of the queue 0 bandwidth profile.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosBandwidthProfileName>
+                           Format:
+                           ( name : <Qos::IgnoredQosProfileName>
+                           | none )
+                           Possible values:
+                           - none                  : no profile name to 
+associate
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q1-bandwidth-prof     the name of the queue 1 bandwidth profile.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosBandwidthProfileName>
+                           Format:
+                           ( name : <Qos::IgnoredQosProfileName>
+                           | none )
+                           Possible values:
+                           - none                  : no profile name to 
+associate
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q2-bandwidth-prof     the name of the queue 2 bandwidth profile.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosBandwidthProfileName>
+                           Format:
+                           ( name : <Qos::IgnoredQosProfileName>
+                           | none )
+                           Possible values:
+                           - none                  : no profile name to 
+associate
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q3-bandwidth-prof     the name of the queue 3 bandwidth profile.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosBandwidthProfileName>
+                           Format:
+                           ( name : <Qos::IgnoredQosProfileName>
+                           | none )
+                           Possible values:
+                           - none                  : no profile name to 
+associate
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q4-bandwidth-prof     the name of the queue 4 bandwidth profile.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosBandwidthProfileName>
+                           Format:
+                           ( name : <Qos::IgnoredQosProfileName>
+                           | none )
+                           Possible values:
+                           - none                  : no profile name to 
+associate
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q5-bandwidth-prof     the name of the queue 5 bandwidth profile.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosBandwidthProfileName>
+                           Format:
+                           ( name : <Qos::IgnoredQosProfileName>
+                           | none )
+                           Possible values:
+                           - none                  : no profile name to 
+associate
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q6-bandwidth-prof     the name of the queue 6 bandwidth profile.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosBandwidthProfileName>
+                           Format:
+                           ( name : <Qos::IgnoredQosProfileName>
+                           | none )
+                           Possible values:
+                           - none                  : no profile name to 
+associate
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q7-bandwidth-prof     the name of the queue 7 bandwidth profile.
+                           optional parameter with default value: "none"
+
+                           Parameter type: <Qos::QosBandwidthProfileName>
+                           Format:
+                           ( name : <Qos::IgnoredQosProfileName>
+                           | none )
+                           Possible values:
+                           - none                  : no profile name to 
+associate
+                           - name                  : enter profile name to be 
+associated 
+                           Data driven field type
+                           Possible values are depending on the actual 
+configuration and software.
+                           The currently allowed values can be shown with 
+online-help.
+
+[no] q0-bw-sharing         enable or  disable queue 0 bandwidth sharing
+                           optional parameter with default value: "no-sharing"
+
+                           Parameter type: <Qos::BandwidthSharing_0>
+                           Format:
+                           ( no-sharing
+                           | uni-sharing
+                           | ont-sharing )
+                           Possible values:
+                           - no-sharing            : disable bandwith sharing
+                           - uni-sharing           : enable BW or TCONT sharing 
+on a single UNI
+                           - ont-sharing           : enable BW or TCONT sharing 
+on across UNIs of an ONT
+
+[no] q1-bw-sharing         enable or  disable queue 1 bandwidth sharing
+                           optional parameter with default value: "no-sharing"
+
+                           Parameter type: <Qos::BandwidthSharing_1>
+                           Format:
+                           ( no-sharing
+                           | uni-sharing
+                           | ont-sharing )
+                           Possible values:
+                           - no-sharing            : disable bandwidth sharing
+                           - uni-sharing           : enable BW or TCONT sharing 
+on a single UNI
+                           - ont-sharing           : enable BW or TCONT sharing 
+on across UNIs of an ONT
+
+[no] q2-bw-sharing         enable or  disable queue 2 bandwidth sharing
+                           optional parameter with default value: "no-sharing"
+
+                           Parameter type: <Qos::BandwidthSharing_2>
+                           Format:
+                           ( no-sharing
+                           | uni-sharing
+                           | ont-sharing )
+                           Possible values:
+                           - no-sharing            : disable bandwidth sharing
+                           - uni-sharing           : enable BW or TCONT sharing 
+on a single UNI
+                           - ont-sharing           : enable BW or TCONT sharing 
+on across UNIs of an ONT
+
+[no] q3-bw-sharing         enable or  disable queue 3 bandwidth sharing
+                           optional parameter with default value: "no-sharing"
+
+                           Parameter type: <Qos::BandwidthSharing_3>
+                           Format:
+                           ( no-sharing
+                           | uni-sharing
+                           | ont-sharing )
+                           Possible values:
+                           - no-sharing            : disable bandwidth sharing
+                           - uni-sharing           : enable BW or TCONT sharing 
+on a single UNI
+                           - ont-sharing           : enable BW or TCONT sharing 
+on across UNIs of an ONT
+
+[no] q4-bw-sharing         enable or  disable queue 4 bandwidth sharing
+                           optional parameter with default value: "no-sharing"
+
+                           Parameter type: <Qos::BandwidthSharing_4>
+                           Format:
+                           ( no-sharing
+                           | uni-sharing
+                           | ont-sharing )
+                           Possible values:
+                           - no-sharing            : disable bandwidth sharing
+                           - uni-sharing           : enable BW or TCONT sharing 
+on a single UNI
+                           - ont-sharing           : enable BW or TCONT sharing 
+on across UNIs of an ONT
+
+[no] q5-bw-sharing         enable or  disable queue 5 bandwidth sharing
+                           optional parameter with default value: "no-sharing"
+
+                           Parameter type: <Qos::BandwidthSharing_5>
+                           Format:
+                           ( no-sharing
+                           | uni-sharing
+                           | ont-sharing )
+                           Possible values:
+                           - no-sharing            : disable bandwidth sharing
+                           - uni-sharing           : enable BW or TCONT sharing 
+on a single UNI
+                           - ont-sharing           : enable BW or TCONT sharing 
+on across UNIs of an ONT
+
+[no] q6-bw-sharing         enable or  disable queue 6 bandwidth sharing
+                           optional parameter with default value: "no-sharing"
+
+                           Parameter type: <Qos::BandwidthSharing_6>
+                           Format:
+                           ( no-sharing
+                           | uni-sharing
+                           | ont-sharing )
+                           Possible values:
+                           - no-sharing            : disable bandwidth sharing
+                           - uni-sharing           : enable BW or TCONT sharing 
+on a single UNI
+                           - ont-sharing           : enable BW or TCONT sharing 
+on across UNIs of an ONT
+
+[no] q7-bw-sharing         enable or  disable queue 7 bandwidth sharing
+                           optional parameter with default value: "no-sharing"
+
+                           Parameter type: <Qos::BandwidthSharing_7>
+                           Format:
+                           ( no-sharing
+                           | uni-sharing
+                           | ont-sharing )
+                           Possible values:
+                           - no-sharing            : disable bandwidth sharing
+                           - uni-sharing           : enable BW or TCONT sharing 
+on a single UNI
+                           - ont-sharing           : enable BW or TCONT sharing 
+on across UNIs of an ONT
+
+
+DS-LIN-TEST-01:automationuser>#

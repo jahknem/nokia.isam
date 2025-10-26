@@ -1,0 +1,17 @@
+== After change: upstream-queue 4 weight 7 ==
+... excerpt ...
+  upstream-queue 4
+    weight 7
+    bandwidth-profile name:GPONqpp100Mbps
+    bandwidth-sharing uni-sharing
+  exit
+... excerpt ...
+
+== After revert: upstream-queue 4 weight 5 ==
+... excerpt ...
+  upstream-queue 4
+    weight 5
+    bandwidth-profile name:GPONqpp100Mbps
+    bandwidth-sharing uni-sharing
+  exit
+... excerpt ...

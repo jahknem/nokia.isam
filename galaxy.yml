@@ -17,7 +17,7 @@ readme: README.md
 # @nicks:irc/im.site#channel'
 authors:
 - Katherine Case (@qalthos)
-- Jan Kühnemund (@jahknem) [Adapted from the original Ansible playbook - https://github.com/Qalthos/linkybook.utils]
+- Jan Kühnemund (@jahknem) [Adapted from the original Ansible Collection - https://github.com/Qalthos/linkybook.utils]
 
 ### OPTIONAL but strongly recommended
 # A short summary description of the collection

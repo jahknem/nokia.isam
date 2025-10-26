@@ -1,0 +1,77 @@
+module: isam_cfm_domain
+short_description: Resource module to configure cfm domain
+description:
+- This command is used to define a Maintenance Domain (MD) at particular maintenance
+  level. There are 8 possible levels. Note that once created, the MD cannot be modified.
+  To modify, delete the entry and create a new one. Note that, if an MD is deleted,
+  any subtending Maintenance Associations (MAs), and their subtending Maintenance
+  Points (MPs), will be automatically deleted onl y if CCM Admin State is locked for
+  all of the MAs.
+- Supports configuration of name, level
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure cfm ()'
+options:
+  config:
+    description:
+    - A list of cfm domain configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        description:
+        - Maintenance Domain (MD) name type and unique name mandatory parameter
+        - 'Possible values: C(dns) - DNS name (e.g. nokia.com); C(mac) - MAC address
+          plus 2 hex octets, e.g. 11:22:33:44:55:66:77:88; C(string) - A character
+          string (e.g. operator); C(none) - No MD name. Field type <Cfm::PrintableString>;
+          C(length) - 8; C(MAC address plus 2 hex octets, e.g. 11) - 22:33:44:55:66:77:88'
+        choices:
+        - dns
+        - mac
+        - string
+        - none
+        - all characters except for characters 0 to 31
+        - length
+        - MAC address plus 2 hex octets, e.g. 11
+      level:
+        type: str
+        description:
+        - 'Maintenance Domain (MD) level mandatory parameter - Maintenance Domain
+          (MD) level - range: [0...7]'
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure cfm domain)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

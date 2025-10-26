@@ -1,0 +1,4 @@
+help configure router bgp connect-retry
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

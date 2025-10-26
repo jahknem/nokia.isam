@@ -1,0 +1,9 @@
+{
+  "title": "LOG COMMAND",
+  "description": "See IHUB System Basics, Management and OAM Guide for more information. The \ncommand can be accessed and executed by operators with log privileges.",
+  "user_level": "The command can be executed by operators with log privileges.",
+  "syntax": "> configure log",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure log\r\nLOG COMMAND\r\n===========\r\n\r\nCommand Description\r\n-------------------\r\n\r\nSee IHUB System Basics, Management and OAM Guide for more information. The \r\ncommand can be accessed and executed by operators with log privileges.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be executed by operators with log privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure log\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nnone\r\nDS-LIN-TEST-01:automationuser>#"
+}

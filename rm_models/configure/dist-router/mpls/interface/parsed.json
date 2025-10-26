@@ -1,0 +1,14 @@
+{
+  "title": "INBOUND MPLS LSP CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure an inbound MPLS LSP, include the \nMPLS label of an incoming MPLS tunnel.",
+  "user_level": "The command can be accessed by operators with drouter privileges, and executed \nby operators with drouter privileges.",
+  "syntax": "> configure dist-router mpls ( no interface (index) label-map <Drouter::InSegLabel> ) | ( interface (index) label-map <Drouter::InSegLabel> )",
+  "resource_parameters": [
+    {
+      "name": "(index)",
+      "description": "MPLS enabled ip interface index"
+    }
+  ],
+  "command_parameters": [],
+  "raw": "help configure dist-router mpls interface\r\nINBOUND MPLS LSP CONFIGURATION COMMAND\r\n======================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure an inbound MPLS LSP, include the \r\nMPLS label of an incoming MPLS tunnel.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with drouter privileges, and executed \r\nby operators with drouter privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure dist-router mpls ( no interface (index) label-map \r\n<Drouter::InSegLabel> ) | ( interface (index) label-map <Drouter::InSegLabel> )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Inbound MPLS LSP Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(index)                    MPLS enabled ip interface index\r\nlabel-map                  Specify incoming MPLS label\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

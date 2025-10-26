@@ -1,0 +1,49 @@
+{
+    "ansible_check_mode": false,
+    "ansible_command_timeout": 60,
+    "ansible_config_file": "/workspaces/ansible_collections/nokia/isam/ansible.cfg",
+    "ansible_connection": "ansible.netcommon.network_cli",
+    "ansible_diff_mode": false,
+    "ansible_facts": {},
+    "ansible_forks": 5,
+    "ansible_host": "10.190.1.40",
+    "ansible_inventory_sources": [
+        "/workspaces/ansible_collections/nokia/isam/hosts.ini"
+    ],
+    "ansible_network_os": "nokia.isam.isam",
+    "ansible_password": "29U6bdWhtbTxUq9eKqLZ",
+    "ansible_persistent_connect_timeout": 60,
+    "ansible_playbook_python": "/usr/local/bin/python",
+    "ansible_run_tags": [
+        "all"
+    ],
+    "ansible_skip_tags": [],
+    "ansible_ssh_common_args": "-o StrictHostKeyChecking=no",
+    "ansible_ssh_type": "libssh",
+    "ansible_user": "automationuser",
+    "ansible_verbosity": 0,
+    "ansible_version": {
+        "full": "2.19.3",
+        "major": 2,
+        "minor": 19,
+        "revision": 3,
+        "string": "2.19.3"
+    },
+    "group_names": [
+        "isam"
+    ],
+    "groups": {
+        "all": [
+            "DS-LIN-TEST-01"
+        ],
+        "isam": [
+            "DS-LIN-TEST-01"
+        ],
+        "ungrouped": []
+    },
+    "inventory_dir": "/workspaces/ansible_collections/nokia/isam",
+    "inventory_file": "/workspaces/ansible_collections/nokia/isam/hosts.ini",
+    "inventory_hostname": "DS-LIN-TEST-01",
+    "inventory_hostname_short": "DS-LIN-TEST-01",
+    "playbook_dir": "/workspaces/ansible_collections/nokia/isam"
+}

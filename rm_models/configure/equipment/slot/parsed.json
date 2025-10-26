@@ -1,0 +1,99 @@
+{
+  "title": "SLOT CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a slot.\n\nThe slot is identified by the physical slot number. The left-most slot in the \nshelf is number 1. The following parameters can be configured for the slot:\n  - planned-type: the unit type that will be inserted into the slot. The \nnot-planned parameter indicates that a unit will not be inserted into that slot.\n  - power-down: the operator can power-up or power-down slots. This is only \napplicable to LSM.\n  - unlock: the operator can lock or unlock a unit. A unit in the locked state \ncannot be used. This attribute is only supported for the NT (the system will \nrefuse to lock the NT of a simplex system), EXT, and a managed LSM. This \nattribute is not applicable to sealed remote products (7367 SX).\n  - alarm-profile: the operator can assign a customizable alarm profile to a NT \nor LSM board. This is applicable for all NTs and LSMs.\n  - capab-profile:This parameter only applies to LSMs,NTIOs and mini-NT \nNRNT-A.For BCM based LSM boards default capab-profile is \"default\" for Intel \nbased LSM boards it is \"8vc_default\".\n  - disable-key: This Paramer should contain string between 8 and 16 \ncharacters; must contain at least one lowercase letter, one uppercase letter, \none numeric digit, and one special character, but cannot contain whitespace.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure equipment slot (index) [ no planned-type | planned-type <Equipm::BoardType> ] [ [ no ] power-down ] [ [ no ] unlock ] [ no alarm-profile | alarm-profile <Equipm::AlarmProf> ] [ no capab-profile | capab-profile <Equipm::CapabilityProfile> ] [ no board-40gkr4 | board-40gkr4 <Equipm::board40GKR4> ] [ no operational-mode | operational-mode <Equipm::OperationalMode> ] [ no dual-host-ip | dual-host-ip <Ip::V4Address> ] [ no dual-host-loc | dual-host-loc <Equipm::Dualhost> ]",
+  "resource_parameters": [
+    {
+      "name": "(index)",
+      "description": "the physical number of the slot"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] planned-type",
+      "description": "type of board intended to be in this position optional parameter with default value: \"not-planned\"",
+      "type": "<Equipm::BoardType>",
+      "format": "Data driven field type                            Possible values are depending on the actual configuration and software.                            The currently allowed values can be shown with online-help.",
+      "default": "not-planned"
+    },
+    {
+      "name": "[no] power-down",
+      "description": "power down the board optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] unlock",
+      "description": "unlock the board optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] alarm-profile",
+      "description": "customized alarm profile assigned to this board optional parameter with default value: \"none\"",
+      "type": "<Equipm::AlarmProf>",
+      "format": "( none                            | name : <PrintableString-0-32> )",
+      "values": [
+        "none                  : no profile name to associate",
+        "name                  : profile name Field type <PrintableString-0-32>",
+        "a printable string",
+        "length: x<=32"
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] capab-profile",
+      "description": "capability profile assigned to a line board optional parameter with default value: \"not_applicable\"",
+      "type": "<Equipm::CapabilityProfile>",
+      "format": "Data driven field type                            Possible values are depending on the actual configuration and software.                            The currently allowed values can be shown with online-help."
+    },
+    {
+      "name": "[no] board-40gkr4",
+      "description": "inherited, disable or enable board 40GKR4 optional parameter with default value: \"inherited\"",
+      "type": "<Equipm::board40GKR4>",
+      "format": "( inherited                            | disable                            | enable )",
+      "values": [
+        "inherited             : enable or disable 40G KR4 of the board is controlled by system level parameter",
+        "disable               : the board should not work in 40GKR4 no matter the value of system level",
+        "enable                : the board should work in 40GKR4 no matter the value of system level"
+      ],
+      "default": "inherited"
+    },
+    {
+      "name": "[no] operational-mode",
+      "description": "operation mode of the cage optional parameter with default value: \"not-set\"",
+      "type": "<Equipm::OperationalMode>",
+      "format": "( not-set                            | gpon                            | xgs                            | mpm-gpon-xgs                            | dual-gpon                            | u-ngpon                            | twenty-five-g                            | ng-pon2                            | mpm-gpon-xgpon )",
+      "values": [
+        "not-set               :  cage mode not-set",
+        "gpon                  :  cage mode set to gpon",
+        "xgs                   :  cage mode set to xgs",
+        "mpm-gpon-xgs          :  cage mode set to mpm-gpon-xgs",
+        "dual-gpon             :  cage mode set to dual-gpon",
+        "u-ngpon               :  cage mode set to u-ngpon",
+        "twenty-five-g         :  cage mode set to 25g",
+        "ng-pon2               :  cage mode set to ng-pon2",
+        "mpm-gpon-xgpon        :  cage mode set to mpm-gpon-xgpon"
+      ],
+      "default": "not-set"
+    },
+    {
+      "name": "[no] dual-host-ip",
+      "description": "dual host ip optional parameter with default value: \"0.0.0.0\" - IPv4-address",
+      "type": "<Ip::V4Address>",
+      "default": "0.0.0.0"
+    },
+    {
+      "name": "[no] dual-host-loc",
+      "description": "dual host lsm location optional parameter with default value: \"none\" DS-LIN-TEST-01:automationuser>#",
+      "type": "<Equipm::Dualhost>",
+      "format": "(   <Eqpt::MultiRackId> / <Eqpt::MultiShelfId>                            | none )",
+      "values": [
+        "none                  : no host lsm location Field type <Eqpt::MultiRackId>",
+        "the rack number Field type <Eqpt::MultiShelfId>",
+        "the shelf number"
+      ],
+      "default": "none"
+    }
+  ],
+  "raw": "help configure equipment slot\r\nSLOT CONFIGURATION COMMAND\r\n==========================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a slot.\r\n\r\nThe slot is identified by the physical slot number. The left-most slot in the \r\nshelf is number 1. The following parameters can be configured for the slot:\r\n  - planned-type: the unit type that will be inserted into the slot. The \r\nnot-planned parameter indicates that a unit will not be inserted into that slot.\r\n  - power-down: the operator can power-up or power-down slots. This is only \r\napplicable to LSM.\r\n  - unlock: the operator can lock or unlock a unit. A unit in the locked state \r\ncannot be used. This attribute is only supported for the NT (the system will \r\nrefuse to lock the NT of a simplex system), EXT, and a managed LSM. This \r\nattribute is not applicable to sealed remote products (7367 SX).\r\n  - alarm-profile: the operator can assign a customizable alarm profile to a NT \r\nor LSM board. This is applicable for all NTs and LSMs.\r\n  - capab-profile:This parameter only applies to LSMs,NTIOs and mini-NT \r\nNRNT-A.For BCM based LSM boards default capab-profile is \"default\" for Intel \r\nbased LSM boards it is \"8vc_default\".\r\n  - disable-key: This Paramer should contain string between 8 and 16 \r\ncharacters; must contain at least one lowercase letter, one uppercase letter, \r\none numeric digit, and one special character, but cannot contain whitespace.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure equipment slot (index) [ no planned-type | planned-type \r\n<Equipm::BoardType> ] [ [ no ] power-down ] [ [ no ] unlock ] [ no \r\nalarm-profile | alarm-profile <Equipm::AlarmProf> ] [ no capab-profile | \r\ncapab-profile <Equipm::CapabilityProfile> ] [ no board-40gkr4 | board-40gkr4 \r\n<Equipm::board40GKR4> ] [ no operational-mode | operational-mode \r\n<Equipm::OperationalMode> ] [ no dual-host-ip | dual-host-ip <Ip::V4Address> ] \r\n[ no dual-host-loc | dual-host-loc <Equipm::Dualhost> ] \r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Slot Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(index)                    the physical number of the slot\r\n\r\nTable \"Slot Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] planned-type          type of board intended to be in this position\r\n                           optional parameter with default value: \"not-planned\"\r\n\r\n                           Parameter type: <Equipm::BoardType>\r\n                           Format:\r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] power-down            power down the board\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] unlock                unlock the board\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] alarm-profile         customized alarm profile assigned to this board\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Equipm::AlarmProf>\r\n                           Format:\r\n                           ( none\r\n                           | name : <PrintableString-0-32> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociate\r\n                           - name                  : profile name\r\n                           Field type <PrintableString-0-32>\r\n                           - a printable string\r\n                           - length: x<=32 \r\n\r\n[no] capab-profile         capability profile assigned to a line board\r\n                           optional parameter with default value: \r\n\"not_applicable\"\r\n\r\n                           Parameter type: <Equipm::CapabilityProfile>\r\n                           Format:\r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] board-40gkr4          inherited, disable or enable board 40GKR4\r\n                           optional parameter with default value: \"inherited\"\r\n\r\n                           Parameter type: <Equipm::board40GKR4>\r\n                           Format:\r\n                           ( inherited\r\n                           | disable\r\n                           | enable )\r\n                           Possible values:\r\n                           - inherited             : enable or disable 40G KR4 \r\nof the board is controlled by system level parameter\r\n                           - disable               : the board should not work \r\nin 40GKR4 no matter the value of system level\r\n                           - enable                : the board should work in \r\n40GKR4 no matter the value of system level\r\n\r\n[no] operational-mode      operation mode of the cage\r\n                           optional parameter with default value: \"not-set\"\r\n\r\n                           Parameter type: <Equipm::OperationalMode>\r\n                           Format:\r\n                           ( not-set\r\n                           | gpon\r\n                           | xgs\r\n                           | mpm-gpon-xgs\r\n                           | dual-gpon\r\n                           | u-ngpon\r\n                           | twenty-five-g\r\n                           | ng-pon2\r\n                           | mpm-gpon-xgpon )\r\n                           Possible values:\r\n                           - not-set               :  cage mode not-set\r\n                           - gpon                  :  cage mode set to gpon\r\n                           - xgs                   :  cage mode set to xgs\r\n                           - mpm-gpon-xgs          :  cage mode set to \r\nmpm-gpon-xgs\r\n                           - dual-gpon             :  cage mode set to dual-gpon\r\n                           - u-ngpon               :  cage mode set to u-ngpon\r\n                           - twenty-five-g         :  cage mode set to 25g\r\n                           - ng-pon2               :  cage mode set to ng-pon2\r\n                           - mpm-gpon-xgpon        :  cage mode set to \r\nmpm-gpon-xgpon\r\n\r\n[no] dual-host-ip          dual host ip\r\n                           optional parameter with default value: \"0.0.0.0\"\r\n\r\n                           Parameter type: <Ip::V4Address>\r\n                           Format:\r\n                           - IPv4-address\r\n\r\n[no] dual-host-loc         dual host lsm location\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Equipm::Dualhost>\r\n                           Format:\r\n                           (   <Eqpt::MultiRackId> / <Eqpt::MultiShelfId>\r\n                           | none )\r\n                           Possible values:\r\n                           - none                  : no host lsm location\r\n                           Field type <Eqpt::MultiRackId>\r\n                           - the rack number\r\n                           Field type <Eqpt::MultiShelfId>\r\n                           - the shelf number\r\n\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 19:12:46 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:12:44 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,138 @@
+help configure equipment ont sw-ctrl
+ONT SOFTWARE CONTROL CONFIGURATION COMMAND
+==========================================
+
+Command Description
+-------------------
+
+This command creates an association between an ONT hardware version/variant and 
+an ONT software version (download and planned).
+
+hw-version - has the same meaning as the eqpt-ver-num parameter supported by 
+'show equipment ont interface' command. Special character * (asterisk) may be 
+provided in the string which means that the * character (and all subsequent 
+character positions) are considered to be automatic 'matches' for values in 
+same character positions of eqpt-ver-num parameter.
+
+ont-variant - has the same meaning as the plnd-var in 'configure equipment ont 
+interface' command
+
+Note: Combination of hw-version and ont-variant must be unique.
+
+plnd-sw-version - has the same meaning as the 'auto-sw-plnd-ver parameter 
+supported by 'show equipment ont interface' command.
+
+sw-dwload-ver - has the same meaning as the 'auto-sw-dld-ver parameter 
+supported by 'show equipment ont interface' command.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment ont ( no sw-ctrl (sw-ctrl-id) ) | ( sw-ctrl (sw-ctrl-id) 
+hw-version <Gpon::SwVer> [ no ont-variant | ont-variant <Gpon::PlndVar> ] [ no 
+plnd-sw-version | plnd-sw-version <Gpon::SwVer> ] [ no plnd-sw-ver-conf | 
+plnd-sw-ver-conf <Gpon::SwVer> ] [ no sw-dwload-ver | sw-dwload-ver 
+<Gpon::SwVer> ] [ no pland-cfgfile1 | pland-cfgfile1 <Gpon::CfgFile> ] [ no 
+pland-cfgfile2 | pland-cfgfile2 <Gpon::CfgFile> ] [ no dnload-cfgfile1 | 
+dnload-cfgfile1 <Gpon::CfgFile> ] [ no dnload-cfgfile2 | dnload-cfgfile2 
+<Gpon::CfgFile> ] )
+
+Command Parameters
+------------------
+
+Table "ONT Software Control Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(sw-ctrl-id)               software control id
+
+Table "ONT Software Control Configuration Command" Command Parameters
+
+Parameter                  Description
+
+hw-version                 ONT hardware version
+                           mandatory parameter
+
+                           Parameter type: <Gpon::SwVer>
+                           Format:
+                           - ont sw version 
+                           - length: 1<=x<=14 
+
+[no] ont-variant           planned variant of the ONT hardware version.Use DO 
+for Data-only ONTs,SIP for SIP ONTs,H.248 for MEGACO ONTs
+                           optional parameter with default value: ""
+
+                           Parameter type: <Gpon::PlndVar>
+                           Format:
+                           - planned variant of the ONT hardware version
+                           - length: x<=80 
+
+[no] plnd-sw-version       planned ONT software version number. If 
+sw-dwload-ver is set to disabled, plnd-sw-version cannot be set to 
+delayactivate.
+                           optional parameter with default value: "UNPLANNED"
+
+                           Parameter type: <Gpon::SwVer>
+                           Format:
+                           - ont sw version 
+                           - length: 1<=x<=14 
+
+[no] plnd-sw-ver-conf      software planned version confirmation
+                           optional parameter with default value: "UNPLANNED"
+
+                           Parameter type: <Gpon::SwVer>
+                           Format:
+                           - ont sw version 
+                           - length: 1<=x<=14 
+
+[no] sw-dwload-ver         software download version. If plnd-sw-version is set 
+to delayactivate, sw-dwload-ver cannot be set to disabled.
+                           optional parameter with default value: "DISABLED"
+
+                           Parameter type: <Gpon::SwVer>
+                           Format:
+                           - ont sw version 
+                           - length: 1<=x<=14 
+
+[no] pland-cfgfile1        indicate the cfgfile1 version to be planned
+                           optional parameter with default value: "DISABLED"
+
+                           Parameter type: <Gpon::CfgFile>
+                           Format:
+                           - ont configure file version 
+                           - length: 1<=x<=14 
+
+[no] pland-cfgfile2        indicate the cfgfile2 version to be planned
+                           optional parameter with default value: "DISABLED"
+
+                           Parameter type: <Gpon::CfgFile>
+                           Format:
+                           - ont configure file version 
+                           - length: 1<=x<=14 
+
+[no] dnload-cfgfile1       indicate the cfgfile1 version to be downloaded
+                           optional parameter with default value: "DISABLED"
+
+                           Parameter type: <Gpon::CfgFile>
+                           Format:
+                           - ont configure file version 
+                           - length: 1<=x<=14 
+
+[no] dnload-cfgfile2       indicate the cfgfile2 version to be planned
+                           optional parameter with default value: "DISABLED"
+
+                           Parameter type: <Gpon::CfgFile>
+                           Format:
+                           - ont configure file version 
+                           - length: 1<=x<=14 
+
+
+DS-LIN-TEST-01:automationuser>#

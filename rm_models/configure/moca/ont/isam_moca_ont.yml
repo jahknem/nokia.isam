@@ -1,0 +1,159 @@
+module: isam_moca_ont
+short_description: Resource module to configure moca ont
+description:
+- This command configures a MoCA ONT uni.
+- Supports configuration of cust info, tx pwr, net coord and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure moca ont ()'
+options:
+  config:
+    description:
+    - A list of moca ont configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (uni-idx) - identification of the uni interface index
+      cust_info:
+        type: str
+        description:
+        - 'port label with default value: "" - a printable string - length: x<=80'
+        - 'Maximum length: 80 characters'
+      tx_pwr:
+        type: str
+        description:
+        - 'target transmitter power level (dBm) with default value: -14L - transmitter
+          power level in dBm - range: [-31...0]'
+        default: -14L
+      net_coord:
+        type: str
+        description:
+        - 'moca network coordinating role with default value: "auto"'
+        - 'Possible values: C(auto) - negotiate for network coordinator; C(always)
+          - always be the network coordinator; C(never) - never be the network coordinator'
+        default: auto
+        choices:
+        - auto
+        - always
+        - never
+      snr_margin:
+        type: str
+        description:
+        - 'margin above Rx noise floor for variations in return loss (dBm) with default
+          value: 2L - threshold above measured rx noise floor in dDm - range: [-3...3]'
+        default: 2L
+      password:
+        type: str
+        description:
+        - 'hidden moca encryption key (0-17 numeric characters) with default value:
+          "" - hidden moca encryption key - length: x<=17'
+        - 'Maximum length: 17 characters'
+      privacy:
+        type: str
+        description:
+        - 'link layer security with default value: "disable"'
+        - 'Possible values: C(enable) - link-layer security activated; C(disable)
+          - link-layer security deactivated'
+        default: disable
+        choices:
+        - enable
+        - disable
+      bw_alarm_thresh:
+        type: str
+        description:
+        - 'minimum phy link bandwidth between two nodes (Mbps) with default value:
+          180L'
+        - 'Possible values: C(disable) - disable bw threshold alarm Field type <Moca::minBwAlarmThreshold>;
+          C(range) - [0,57...3200]'
+        default: 180L
+        choices:
+        - disable
+        - minimum phy link bandwidth (Mbps) between two nodes
+        - range
+      auto_pwr_ctl:
+        type: str
+        description:
+        - 'automatic power control with default value: "enable"'
+        - 'Possible values: C(enable) - apc enabled; C(disable) - apc disabled'
+        default: enable
+        choices:
+        - enable
+        - disable
+      pwr_override:
+        type: str
+        description:
+        - 'power shed override with default value: "disable"'
+        - 'Possible values: C(enable) - port is excluded from data class power shedding;
+          C(disable) - port is included in data class power shedding'
+        default: disable
+        choices:
+        - enable
+        - disable
+      admin_state:
+        type: str
+        description:
+        - 'administrative status of the interface with default value: "down" Table
+          "MoCA ONT Uni Configuration Command" Display Parameters Specific Information:'
+        - 'Possible values: C(up) - set the admin-state to up; C(down) - set the admin-state
+          to down'
+        default: down
+        choices:
+        - up
+        - down
+      oper_state:
+        type: str
+        description:
+        - operational state of the interface This element is always shown. ( up |
+          down | testing | unknown | dormant | no-value )
+        - 'Possible values: C(up) - up,traffic can pass; C(down) - down,no traffic
+          is passing; C(testing) - testing,no traffic is passing; C(unknown) - unknown;
+          C(dormant) - dormant,no traffic is passing; C(no-value) - no entry in the
+          table'
+        choices:
+        - up
+        - down
+        - testing
+        - unknown
+        - dormant
+        - no-value
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure moca ont)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

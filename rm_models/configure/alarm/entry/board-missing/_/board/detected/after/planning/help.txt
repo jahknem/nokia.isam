@@ -1,0 +1,5 @@
+help configure alarm entry board-missing ! board
+ detected after planning
+                                                                         ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

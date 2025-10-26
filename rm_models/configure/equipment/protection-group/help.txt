@@ -1,0 +1,73 @@
+help configure equipment protection-group
+PROTECTION GROUP CONFIGURATION COMMAND
+======================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a protection group.
+
+The protection group is identified by the eqptProtGroupId attribute (index). 
+The value 1 is reserved for extension chain protection group which is always 
+present and cannot be deleted.
+
+The protection group(s) are created implicitly by the system as part of the 
+default configuration. Use "show equipment protection-group" to display the 
+valid protection group identifier(s). Note that the default admin-status for 
+protection-group 1 at system level is locked where it is always unlocked at cli 
+level.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment protection-group (prot-group-id) [ no admin-status | 
+admin-status <Equipm::PortGroupAdminStatus> ] [ no eps-quenchfactor | 
+eps-quenchfactor <Equipm::TimeTicks> ]
+
+Command Parameters
+------------------
+
+Table "Protection Group Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(prot-group-id)            Index in eqpt Prot Group Table
+
+Table "Protection Group Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] admin-status          changes the administrative-status to lock or unlock
+                           optional parameter with default value: "unlock"
+
+                           Parameter type: <Equipm::PortGroupAdminStatus>
+                           Format:
+                           ( unlock
+                           | lock )
+                           Possible values:
+                           - unlock                : unlock
+                           - lock                  : lock
+
+[no] eps-quenchfactor      timervalue of quenching mechanism(unit: 1/100sec), 0 
+is valid value
+                           optional parameter with default value: "1440000"
+
+                           Parameter type: <Equipm::TimeTicks>
+                           Format:
+                           - timer value for quench mechanish
+                           - unit: 1/100 sec
+
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:12:06 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:12:04 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

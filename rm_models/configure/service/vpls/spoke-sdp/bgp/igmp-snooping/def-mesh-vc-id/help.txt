@@ -1,0 +1,5 @@
+help configure service vpls spoke-sdp bgp igmp-s
+nooping def-mesh-vc-id
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

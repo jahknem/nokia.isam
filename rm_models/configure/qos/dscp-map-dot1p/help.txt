@@ -1,0 +1,50 @@
+help configure qos dscp-map-dot1p
+QOS DSCP-TO-DOT1P ALIGNMENT FOR L3 FORWARDED TRAFFIC CONFIGURATION COMMAND
+==========================================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a DSCP-to-Dot1P Alignment Table 
+for L3 forwarded traffic.This facility allows DSCP to P-bits alignment without 
+the use of QoS session profiles via configuring a mapping table with global 
+scope. It is only applied to traffic in interfaces with L3 forwarding.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos dscp-map-dot1p (index) [ dot1p-value <Qos::DscpToDot1PAlign> ]
+
+Command Parameters
+------------------
+
+Table "QoS DSCP-to-Dot1P Alignment for L3 Forwarded Traffic Configuration 
+Command" Resource Parameters
+
+Resource Identifier        Description
+
+(index)                    the DSCP value
+
+Table "QoS DSCP-to-Dot1P Alignment for L3 Forwarded Traffic Configuration 
+Command" Command Parameters
+
+Parameter                  Description
+
+dot1p-value                the DOT1P value
+                           optional parameter
+
+                           Parameter type: <Qos::DscpToDot1PAlign>
+                           Format:
+                           - the DOT1P value
+                           - range: [0...7]
+
+
+DS-LIN-TEST-01:automationuser>#

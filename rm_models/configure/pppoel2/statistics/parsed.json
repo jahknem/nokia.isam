@@ -1,0 +1,14 @@
+{
+  "title": "PPPOE-L2 STATISTICS CONFIGURATION COMMAND",
+  "description": "This command is used to enable or disable the PPPoE L2 statistics of extensive \ncounters (on demand) on vlan-port interface.",
+  "user_level": "The command can be accessed by operators with pppoe privileges, and executed by \noperators with pppoe privileges.",
+  "syntax": "> configure pppoel2 ( no statistics (vlan-port) ) | ( statistics (vlan-port) )",
+  "resource_parameters": [
+    {
+      "name": "(vlan-port)",
+      "description": "The VLAN port interface type"
+    }
+  ],
+  "command_parameters": [],
+  "raw": "help configure pppoel2 statistics\r\nPPPOE-L2 STATISTICS CONFIGURATION COMMAND\r\n=========================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command is used to enable or disable the PPPoE L2 statistics of extensive \r\ncounters (on demand) on vlan-port interface.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with pppoe privileges, and executed by \r\noperators with pppoe privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure pppoel2 ( no statistics (vlan-port) ) | ( statistics (vlan-port) )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Pppoe-L2 Statistics Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(vlan-port)                The VLAN port interface type\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

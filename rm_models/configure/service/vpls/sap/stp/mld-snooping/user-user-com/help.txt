@@ -1,0 +1,9 @@
+help configure service vpls sap stp mld-snooping
+ user-user-com
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/26 11:34:55 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 9 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

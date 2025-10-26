@@ -1,0 +1,78 @@
+module: isam_equipment_diagnostics_sfp
+short_description: Resource module to configure equipment diagnostics sfp
+description:
+- 'Configures RSSI profile on SFP/XFP: - The slot index of the sfp - The number of
+  the sfp cage - The index of rssi profile which would be configured on SFP/XFP.'
+- Supports configuration of rssi prof id, rssi state
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure equipment diagnostics sfp ()'
+options:
+  config:
+    description:
+    - A list of equipment diagnostics sfp configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (position) - the physical sfp cage position
+      rssi_prof_id:
+        type: str
+        description:
+        - 'an unique index of the rssi profile(1-200) with default value: "65535"
+          - an unique index value for the rssi profile(1-200:userdefined,65535:automode)
+          - range: [1...200,65535]'
+        default: '65535'
+      rssi_state:
+        type: str
+        description:
+        - 'to enable or disable the rssi functionality of sfp for uplink ports with
+          default value: "disable"'
+        - 'Possible values: C(enable) - enable rssi functionality; C(disable) - disable
+          rssi functionality'
+        default: disable
+        choices:
+        - enable
+        - disable
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure equipment diagnostics sfp)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged
+EXAMPLES:
+  - gathered_example_01.txt

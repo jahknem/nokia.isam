@@ -1,0 +1,5 @@
+help configure service vpls egress bgp-ad stp pr
+opagate-mac-*
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

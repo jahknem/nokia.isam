@@ -1,0 +1,20 @@
+{
+  "title": "QOS DSCP CONTRACT TABLE MARKER CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a marker for a DSCP contract \ntable. To configure the DSCP codepoints in the contract table, the command \n\"configure qos profiles marker dscp-contract (name) codepoint (codepoint)\" is \nto be used.",
+  "user_level": "The command can be accessed by operators with qos privileges, and executed by \noperators with qos privileges.",
+  "syntax": "> configure qos profiles marker ( no dscp-contract (name) ) | ( dscp-contract (name) [ [ no ] alignment ] )",
+  "resource_parameters": [
+    {
+      "name": "(name)",
+      "description": "A unique profile name"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] alignment",
+      "description": "enable DSCP to P-bits alignment optional parameter",
+      "type": "boolean"
+    }
+  ],
+  "raw": "help configure qos profiles marker dscp-contract\r\nQOS DSCP CONTRACT TABLE MARKER CONFIGURATION COMMAND\r\n====================================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a marker for a DSCP contract \r\ntable. To configure the DSCP codepoints in the contract table, the command \r\n\"configure qos profiles marker dscp-contract (name) codepoint (codepoint)\" is \r\nto be used.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by \r\noperators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos profiles marker ( no dscp-contract (name) ) | ( dscp-contract \r\n(name) [ [ no ] alignment ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS DSCP Contract Table Marker Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(name)                     A unique profile name\r\n\r\nTable \"QoS DSCP Contract Table Marker Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] alignment             enable DSCP to P-bits alignment\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,91 @@
+module: isam_qos_profiles_policy
+short_description: Resource module to configure qos profiles policy
+description:
+- 'Configures a QoS policy profile. A policy rule groups together a policy condition
+  (filter) with a set of associated actions. A policy rule contains: - Filter type
+  (L2 filter or L3 filter) - L2 or L3 filter - Precedence of this policy rule - Policy
+  action'
+- Supports configuration of filter, precedence, policy action
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure qos profiles ()'
+options:
+  config:
+    description:
+    - A list of qos profiles policy configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (name) - A unique profile name
+      filter:
+        type: str
+        description:
+        - the filter for the policy rule mandatory parameter
+        - 'Possible values: C(l2-name) - refer to a l2 filter; C(l3-name) - refer
+          to a l3 filter Data driven field type Possible values are depending on the
+          actual configuration and software. The currently allowed values can be shown
+          with online-help. Data driven field type Possible values are depending on
+          the actual configuration and software. The currently allowed values can
+          be shown with online-help.'
+        choices:
+        - l2-name
+        - l3-name
+      precedence:
+        type: str
+        description:
+        - 'precedence value of the policy rule with default value: 10L - the precedence
+          value of the policy rule - range: [0...255]'
+        default: 10L
+      policy_action:
+        type: str
+        description:
+        - 'policy action profile applicable for the policy with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure qos profiles policy)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

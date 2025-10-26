@@ -1,0 +1,127 @@
+module: isam_e1_line
+short_description: Resource module to configure e1 line
+description:
+- Configures the E1 line.
+- Supports configuration of active, line coding, framing mode and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure e1 line ()'
+options:
+  config:
+    description:
+    - A list of e1 line configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (if-index) - interface index of the port
+      active:
+        type: bool
+        description:
+        - set the span-profile active
+      line_coding:
+        type: str
+        description:
+        - 'encoding type of the E1 interface with default value: "hdb3"'
+        - 'Possible values: C(ami) - Specifies Alternate Mark Inversion (AMI) as the
+          linecode type; C(hdb3) - Specifies High-Density Bipolar 3 (HDB3) as the
+          linecode type'
+        default: hdb3
+        choices:
+        - ami
+        - hdb3
+      framing_mode:
+        type: str
+        description:
+        - 'specifies framing of E1 interface with default value: "unframed"'
+        - 'Possible values: C(unframed) - Unframed E1 type; C(framed) - Framed E1
+          type'
+        default: unframed
+        choices:
+        - unframed
+        - framed
+      crc:
+        type: str
+        description:
+        - 'enable or disable CRC4 for this e1 interface with default value: "disable"'
+        - 'Possible values: C(disable) - no CRC4; C(enable) - Enable CRC4'
+        default: disable
+        choices:
+        - disable
+        - enable
+      multi_framing:
+        type: str
+        description:
+        - 'Specifies if multi framing to be used with default value: "disable"'
+        - 'Possible values: C(disable) - No multi framing; C(enable) - Enable multi
+          framing'
+        default: disable
+        choices:
+        - disable
+        - enable
+      transmit_clk_src:
+        type: str
+        description:
+        - 'Specifies clock source to be used for the e1 interface with default value:
+          "external"'
+        - 'Possible values: C(external) - Specifies that the network clock source
+          is used; C(internal) - Specifies that the internal clock source is used'
+        default: external
+        choices:
+        - external
+        - internal
+      line_impedance:
+        type: str
+        description:
+        - 'Nominal line impedance with default value: "120ohms"'
+        - 'Possible values: C(75ohms) - indicates the line impedance value unbalanced
+          75ohms; C(120ohms) - indicates the line impedance value balanced 120 ohms'
+        default: 120ohms
+        choices:
+        - 75ohms
+        - 120ohms
+      admin_up:
+        type: bool
+        description:
+        - admin status is up
+        - When true, the interface/feature is enabled; when false, it is disabled
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure e1 line)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

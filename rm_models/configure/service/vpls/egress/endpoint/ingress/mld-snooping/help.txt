@@ -1,0 +1,5 @@
+help configure service vpls egress endpoint ingr
+ess mld-snooping
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

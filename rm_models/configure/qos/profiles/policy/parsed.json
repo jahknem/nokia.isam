@@ -1,0 +1,42 @@
+{
+  "title": "QOS POLICY PROFILE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a QoS policy profile. A policy \nrule groups together a policy condition (filter) with a set of associated \nactions. A policy rule contains:\n  - Filter type (L2 filter or L3 filter)\n  - L2 or L3 filter\n  - Precedence of this policy rule\n  - Policy action",
+  "user_level": "The command can be accessed by operators with qos privileges, and executed by \noperators with qos privileges.",
+  "syntax": "> configure qos profiles ( no policy (name) ) | ( policy (name) filter <Qos::PolicyFilter> [ no precedence | precedence <Qos::PolicyPrecedence> ] [ no policy-action | policy-action <Qos::QosPolicyActionProfileName> ] )",
+  "resource_parameters": [
+    {
+      "name": "(name)",
+      "description": "A unique profile name"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "filter",
+      "description": "the filter for the policy rule mandatory parameter",
+      "type": "<Qos::PolicyFilter>",
+      "format": "( l2-name : <Qos::IgnoredQosProfileName>                            | l3-name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "l2-name               : refer to a l2 filter",
+        "l3-name               : refer to a l3 filter Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help. Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ]
+    },
+    {
+      "name": "[no] precedence",
+      "description": "precedence value of the policy rule optional parameter with default value: 10L - the precedence value of the policy rule - range: [0...255]",
+      "type": "<Qos::PolicyPrecedence>",
+      "default": "10L"
+    },
+    {
+      "name": "[no] policy-action",
+      "description": "policy action profile applicable for the policy optional parameter with default value: \"none\"",
+      "type": "<Qos::QosPolicyActionProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associate",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    }
+  ],
+  "raw": "help configure qos profiles policy\r\nQOS POLICY PROFILE CONFIGURATION COMMAND\r\n========================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a QoS policy profile. A policy \r\nrule groups together a policy condition (filter) with a set of associated \r\nactions. A policy rule contains:\r\n  - Filter type (L2 filter or L3 filter)\r\n  - L2 or L3 filter\r\n  - Precedence of this policy rule\r\n  - Policy action\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by \r\noperators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos profiles ( no policy (name) ) | ( policy (name) filter \r\n<Qos::PolicyFilter> [ no precedence | precedence <Qos::PolicyPrecedence> ] [ no \r\npolicy-action | policy-action <Qos::QosPolicyActionProfileName> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS Policy Profile Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(name)                     A unique profile name\r\n\r\nTable \"QoS Policy Profile Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nfilter                     the filter for the policy rule\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Qos::PolicyFilter>\r\n                           Format:\r\n                           ( l2-name : <Qos::IgnoredQosProfileName>\r\n                           | l3-name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - l2-name               : refer to a l2 filter\r\n                           - l3-name               : refer to a l3 filter\r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] precedence            precedence value of the policy rule\r\n                           optional parameter with default value: 10L\r\n\r\n                           Parameter type: <Qos::PolicyPrecedence>\r\n                           Format:\r\n                           - the precedence value of the policy rule\r\n                           - range: [0...255]\r\n\r\n[no] policy-action         policy action profile applicable for the policy\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosPolicyActionProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociate\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

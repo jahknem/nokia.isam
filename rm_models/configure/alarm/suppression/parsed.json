@@ -1,0 +1,49 @@
+{
+  "title": "ALARM SUPPRESSION FILTER CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure Suppression Alarm filter \nparameters.\n\nWithout valid interface and alarmid, suppression filter cannot be activated.",
+  "user_level": "The command can be accessed by operators with alarm privileges, and executed by \noperators with alarm privileges.",
+  "syntax": "> configure alarm suppression filterid <Alarm::suppressionfltrId> [ interface <Alarm:::suppressionFilterIndex> ] [ alarmid <Alarm::suppressionalarmIndex> ] [ no status | status <Alarm::fltrStatus> ] [ no threshold | threshold <Alarm::suppressionfltrThreshold> ]",
+  "resource_parameters": [],
+  "command_parameters": [
+    {
+      "name": "interface",
+      "description": "suppression filter interface optional parameter",
+      "type": "<Alarm:::suppressionFilterIndex>",
+      "format": "lt : <Eqpt::RackId> / <Eqpt::ShelfId> / <Eqpt::SlotId>",
+      "values": [
+        "lt                    : lt-slot Field type <Eqpt::RackId>",
+        "the rack number Field type <Eqpt::ShelfId>",
+        "the shelf number Field type <Eqpt::SlotId>",
+        "the LT slot number"
+      ]
+    },
+    {
+      "name": "alarmid",
+      "description": "alarmType optional parameter",
+      "type": "<Alarm::suppressionalarmIndex>",
+      "format": "( board-missing                            | board-init )",
+      "values": [
+        "board-missing         : board detected after planning - now missing",
+        "board-init            : board initialisation failure"
+      ]
+    },
+    {
+      "name": "[no] status",
+      "description": "filter status optional parameter with default value: \"not-used\"",
+      "type": "<Alarm::fltrStatus>",
+      "format": "( not-used                            | used )",
+      "values": [
+        "not-used              : deactivate the configured alarm filter",
+        "used                  : activate the configured alarm filter"
+      ],
+      "default": "not-used"
+    },
+    {
+      "name": "[no] threshold",
+      "description": "the threshold value of the considered alarm filter optional parameter with default value: \"1\" - the threshold value of the considered alarm filter - range: [1...100] DS-LIN-TEST-01:automationuser>#",
+      "type": "<Alarm::suppressionfltrThreshold>",
+      "default": "1"
+    }
+  ],
+  "raw": "help configure alarm suppression\r\nALARM SUPPRESSION FILTER CONFIGURATION COMMAND\r\n==============================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure Suppression Alarm filter \r\nparameters.\r\n\r\nWithout valid interface and alarmid, suppression filter cannot be activated.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with alarm privileges, and executed by \r\noperators with alarm privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure alarm suppression filterid <Alarm::suppressionfltrId> [ interface \r\n<Alarm:::suppressionFilterIndex> ] [ alarmid <Alarm::suppressionalarmIndex> ] [ \r\nno status | status <Alarm::fltrStatus> ] [ no threshold | threshold \r\n<Alarm::suppressionfltrThreshold> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Alarm Suppression Filter Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\nfilterid                   the id of the considered alarm suppression filter\r\n\r\nTable \"Alarm Suppression Filter Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\ninterface                  suppression filter interface\r\n                           optional parameter\r\n\r\n                           Parameter type: <Alarm:::suppressionFilterIndex>\r\n                           Format:\r\n                           lt : <Eqpt::RackId> / <Eqpt::ShelfId> / \r\n<Eqpt::SlotId>\r\n                           Possible values:\r\n                           - lt                    : lt-slot\r\n                           Field type <Eqpt::RackId>\r\n                           - the rack number\r\n                           Field type <Eqpt::ShelfId>\r\n                           - the shelf number\r\n                           Field type <Eqpt::SlotId>\r\n                           - the LT slot number\r\n\r\nalarmid                    alarmType\r\n                           optional parameter\r\n\r\n                           Parameter type: <Alarm::suppressionalarmIndex>\r\n                           Format:\r\n                           ( board-missing\r\n                           | board-init )\r\n                           Possible values:\r\n                           - board-missing         : board detected after \r\nplanning - now missing\r\n                           - board-init            : board initialisation \r\nfailure\r\n\r\n[no] status                filter status\r\n                           optional parameter with default value: \"not-used\"\r\n\r\n                           Parameter type: <Alarm::fltrStatus>\r\n                           Format:\r\n                           ( not-used\r\n                           | used )\r\n                           Possible values:\r\n                           - not-used              : deactivate the configured \r\nalarm filter\r\n                           - used                  : activate the configured \r\nalarm filter\r\n\r\n[no] threshold             the threshold value of the considered alarm filter\r\n                           optional parameter with default value: \"1\"\r\n\r\n                           Parameter type: <Alarm::suppressionfltrThreshold>\r\n                           Format:\r\n                           - the threshold value of the considered alarm filter\r\n                           - range: [1...100]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 19:08:06 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:08:04 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 19:08:06 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

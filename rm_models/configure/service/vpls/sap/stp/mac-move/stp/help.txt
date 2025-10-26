@@ -1,0 +1,4 @@
+help configure service vpls sap stp mac-move stp
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,101 @@
+help configure ces ont profile
+CES MAINTENANCE PROFILE CONFIGURATION COMMAND
+=============================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure CES Maintenance profile.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure ces ont ( no profile (profile-idx) ) | ( profile (profile-idx) 
+profile-name <AsamProfileName> [ no jitter-buff-max | jitter-buff-max 
+<Ces::JitterBuffMax> ] [ no fill-policy | fill-policy <Ces::FillPolicy> ] [ no 
+rbit-recv-policy | rbit-recv-policy <Ces::RbitRecvPolicy> ] [ no 
+lbit-recv-policy | lbit-recv-policy <Ces::LbitRecvPolicy> ] )
+
+Command Parameters
+------------------
+
+Table "CES Maintenance Profile Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(profile-idx)              ces maintenance profile index value
+
+Table "CES Maintenance Profile Configuration Command" Command Parameters
+
+Parameter                  Description
+
+profile-name               ces maintenance profile name
+                           mandatory parameter
+
+                           Parameter type: <AsamProfileName>
+                           Format:
+                           - a profile name
+                           - range: [a-zA-Z0-9-_.]
+                           - length: 1<=x<=32 
+
+[no] jitter-buff-max       maximum depth of the jitter buffer
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Ces::JitterBuffMax>
+                           Format:
+                           - maximum depth for jitter buffer in micro 
+seconds.For values except 0 that are not multiples of 8 are rounded up so that 
+the result is effective range of 1..200 milliseconds
+                           - range: [0...1600]
+
+[no] fill-policy           payload bit pattern
+                           optional parameter with default value: "ont-default"
+
+                           Parameter type: <Ces::FillPolicy>
+                           Format:
+                           ( ont-default
+                           | all-ones
+                           | idle )
+                           Possible values:
+                           - ont-default           : ONT default vendor-specific
+                           - all-ones              : play out all 1s
+                           - idle                  : play out DS1 idle
+
+[no] rbit-recv-policy      rbit receive policy
+                           optional parameter with default value: "no-act"
+
+                           Parameter type: <Ces::RbitRecvPolicy>
+                           Format:
+                           ( no-act
+                           | all-ones
+                           | idle )
+                           Possible values:
+                           - no-act                : no action
+                           - all-ones              : use service-specific 
+RAI/REI/RDI code
+                           - idle                  : idle signalling and idle 
+payload
+
+[no] lbit-recv-policy      lbit receive policy
+                           optional parameter with default value: "ssais"
+
+                           Parameter type: <Ces::LbitRecvPolicy>
+                           Format:
+                           ( ssais
+                           | idle )
+                           Possible values:
+                           - ssais                 : use service specific AIS 
+code
+                           - idle                  : idle signalling and idle 
+payload
+
+
+DS-LIN-TEST-01:automationuser>#

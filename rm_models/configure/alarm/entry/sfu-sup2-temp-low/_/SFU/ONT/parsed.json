@@ -1,0 +1,9 @@
+{
+  "title": "",
+  "description": "",
+  "user_level": "",
+  "syntax": "",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "25/10/25 19:02:25 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:02:23 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 19:02:25 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:02:09 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser># help configure alarm entry sfu-sup2-temp-low ! S\r\nFU ONT\u0007\r\n                                                                             ^\r\ninvalid token\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,63 @@
+help configure equipment diagnostics sfp
+SFP/XFP DIAGNOSTICS CONFIGURATION COMMAND
+=========================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure RSSI profile on SFP/XFP:
+  - The slot index of the sfp
+  - The number of the sfp cage
+  - The index of rssi profile which would be configured on SFP/XFP.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment diagnostics sfp (position) [ no rssi-prof-id | 
+rssi-prof-id <Eqpt::RssiProfileIndex> ] [ no rssi-state | rssi-state 
+<Eqpt::RssiState> ]
+
+Command Parameters
+------------------
+
+Table "SFP/XFP Diagnostics configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(position)                 the physical sfp cage position
+
+Table "SFP/XFP Diagnostics configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] rssi-prof-id          an unique index of the rssi profile(1-200)
+                           optional parameter with default value: "65535"
+
+                           Parameter type: <Eqpt::RssiProfileIndex>
+                           Format:
+                           - an unique index value for the rssi 
+profile(1-200:userdefined,65535:automode)
+                           - range: [1...200,65535]
+
+[no] rssi-state            to enable or disable the rssi functionality of sfp 
+for uplink ports
+                           optional parameter with default value: "disable"
+
+                           Parameter type: <Eqpt::RssiState>
+                           Format:
+                           ( enable
+                           | disable )
+                           Possible values:
+                           - enable                : enable rssi functionality
+                           - disable               : disable rssi functionality
+
+
+DS-LIN-TEST-01:automationuser>#

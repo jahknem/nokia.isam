@@ -1,0 +1,13 @@
+help configure service vpls egress egress-networ
+k spoke-sdp <create> : keyword
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/26 00:06:03 major alarm occurred for ip-addr 192.168.222.10  : Successful Management login, 7 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/26 00:06:03 major alarm cleared for ip-addr 192.168.222.10  : Successful Management login, 7 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,45 @@
+DS-LIN-TEST-01:automationuser># info configure ethernet ont 1/1/2/1/1/1/1
+configure ethernet
+#-------------------------------------------------------------------------------
+echo "ethernet"
+#-------------------------------------------------------------------------------
+ont 1/1/2/1/1/1/1
+  cust-info YTest-Proxy
+  auto-detect auto
+  admin-state up
+exit
+#-------------------------------------------------------------------------------
+
+-- single-command to set cust-info (merged example):
+DS-LIN-TEST-01:automationuser># configure ethernet ont 1/1/2/1/1/1/1 cust-info TEMP-EXAMPLE
+DS-LIN-TEST-01:automationuser>configure>ethernet>ont>1/1/2/1/1/1/1#
+
+-- verify after change:
+DS-LIN-TEST-01:automationuser># info configure ethernet ont 1/1/2/1/1/1/1
+configure ethernet
+#-------------------------------------------------------------------------------
+echo "ethernet"
+#-------------------------------------------------------------------------------
+ont 1/1/2/1/1/1/1
+  cust-info TEMP-EXAMPLE
+  auto-detect auto
+  admin-state up
+exit
+#-------------------------------------------------------------------------------
+
+-- revert to baseline:
+DS-LIN-TEST-01:automationuser># configure ethernet ont 1/1/2/1/1/1/1 cust-info YTest-Proxy
+DS-LIN-TEST-01:automationuser>configure>ethernet>ont>1/1/2/1/1/1/1#
+
+-- final verify restored:
+DS-LIN-TEST-01:automationuser># info configure ethernet ont 1/1/2/1/1/1/1
+configure ethernet
+#-------------------------------------------------------------------------------
+echo "ethernet"
+#-------------------------------------------------------------------------------
+ont 1/1/2/1/1/1/1
+  cust-info YTest-Proxy
+  auto-detect auto
+  admin-state up
+exit
+#-------------------------------------------------------------------------------

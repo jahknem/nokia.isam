@@ -1,0 +1,29 @@
+{
+  "title": "INTERFACE ALARM CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the default severity for an alarm \non this type of interface.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure interface alarm (index) [ no default-severity | default-severity <Itf::asamIfExtAlmReportingSeverityDefault> ]",
+  "resource_parameters": [
+    {
+      "name": "(index)",
+      "description": "index of the IANA ifType"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] default-severity",
+      "description": "default severity to be reported optional parameter with default value: \"major\"",
+      "type": "<Itf::asamIfExtAlmReportingSeverityDefault>",
+      "format": "( indeterminate                            | warning                            | minor                            | major                            | critical )",
+      "values": [
+        "indeterminate         : not a definite known severity",
+        "warning               : just to inform as a warning",
+        "minor                 : not service affecting",
+        "major                 : service affecting",
+        "critical              : service breaking"
+      ],
+      "default": "major"
+    }
+  ],
+  "raw": "help configure interface alarm\r\nINTERFACE ALARM CONFIGURATION COMMAND\r\n=====================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the default severity for an alarm \r\non this type of interface.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure interface alarm (index) [ no default-severity | default-severity \r\n<Itf::asamIfExtAlmReportingSeverityDefault> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Interface Alarm Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(index)                    index of the IANA ifType\r\n\r\nTable \"Interface Alarm Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] default-severity      default severity to be reported\r\n                           optional parameter with default value: \"major\"\r\n\r\n                           Parameter type: \r\n<Itf::asamIfExtAlmReportingSeverityDefault>\r\n                           Format:\r\n                           ( indeterminate\r\n                           | warning\r\n                           | minor\r\n                           | major\r\n                           | critical )\r\n                           Possible values:\r\n                           - indeterminate         : not a definite known \r\nseverity\r\n                           - warning               : just to inform as a warning\r\n                           - minor                 : not service affecting\r\n                           - major                 : service affecting\r\n                           - critical              : service breaking\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

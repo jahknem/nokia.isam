@@ -1,0 +1,5 @@
+help configure alarm entry mdu-gen-mdu-env3 ! MD
+U ONT
+                                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

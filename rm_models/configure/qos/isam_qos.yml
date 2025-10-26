@@ -1,0 +1,107 @@
+module: isam_qos
+short_description: Resource module to configure qos
+description:
+- This command allows the operator to specify global QoS parameters. The ATM overhead
+  factor is used to calculate ATM bandwidth required by streams for which bandwidth
+  parameters are specified as Ethernet bandwidth. The ATM overhead factor specifies
+  in terms of percentage what part of a given raw ATM bit rate will be available for
+  Ethernet frames. The default value is 85%, which means a typical overhead of 15%
+  for ATM/AAL5. QoS management will use this value to deduct the available Ethernet
+  rate on ATM-based DSL interfaces. The Eth EFM overhead factor is used to calculate
+  EFM bandwidth required by streams for which bandwidth parameters are specified as
+  Ethernet bandwidth. The Eth EFM overhead factor specifies in terms of percentage
+  what part of a given raw EFM bit rate will be available for Ethernet frames. The
+  default value is 97%, which means a typical overhead of 3% for EFM Encapsulation.
+  The enable alignment is used to enable or disable the DSCP to P-bits alignment for
+  all the L3 forwarded traffic. The Global CAC-mode selection switch determines whether
+  Connection Admission Control relies on the guaranteed sync rate or the actual line
+  rate of the physical interface.
+- Supports configuration of atm overhead fact, eth efm fact, enable alignment and
+  more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+options:
+  config:
+    description:
+    - A list of qos configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier
+      atm_overhead_fact:
+        type: str
+        description:
+        - 'over head factor introduced by atm layer with default value: 85 - over
+          head factor introduced by atm layer - unit: % - range: [1...100]'
+        default: '85'
+      eth_efm_fact:
+        type: str
+        description:
+        - 'value to estimate bandwidth overhead inserted by efm layer with default
+          value: 97 - value to estimate bandwidth overhead inserted by efm layer -
+          unit: % - range: [1...100]'
+        default: '97'
+      enable_alignment:
+        type: bool
+        description:
+        - DSCP to P-bit alignment for all forwarded L3 traffic
+      cac_mode:
+        type: str
+        description:
+        - 'This object stores an global CAC mode selection switch with default value:
+          "msr"'
+        - 'Possible values: C(nocac) - no cac in system; C(msr) - base on minimum
+          synchronized rate; C(alr) - base on actual line rate'
+        default: msr
+        choices:
+        - nocac
+        - msr
+        - alr
+      use_dei:
+        type: bool
+        description:
+        - Enable global control of DEI aware
+      set_dei:
+        type: bool
+        description:
+        - Enable global control of DEI remark
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure qos)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

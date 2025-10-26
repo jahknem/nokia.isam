@@ -1,0 +1,305 @@
+module: isam_bridge_port
+short_description: Resource module to configure bridge port
+description:
+- 'This command allows the operator to specify various parameters applicable to a
+  specific bridge port. These parameters determine the handling of frames on the bridge
+  port. Priority Regeneration Profile: these profiles are predetermined. Following
+  profiles are available: - Profile 1: Trusted Port - Profile 2: Best Effort - Profile
+  3: Controlled Load, all priority 3 traffic - Profile 4: Controlled Load, all priority
+  4 traffic - Profile 5: Background - Profile 6: Best Effort, Controlled Load, Voice
+  - Profile 7: Best Effort, Controlled Load, Voice according 802.1d Annex G - Profile
+  8: Best Effort, Voice - Profile 9: L2 VPN with 3 traffic classes - Profile 10: L2
+  VPN with 4 traffic classes Details on these profiles can be obtained using a show
+  command. The parameter ''acceptable-frame-type'' controls the format of frames received
+  from the users. The parameter can take either of three values, single-tagged: This
+  configuration allows the user to send single tagged frames. The VLAN-id of tagged
+  frames will be verified against the configured port-vlan associations. Untagged
+  frames and priority tagged frames will be discarded (in absence of configuration
+  on how to handle untagged and priority tagged frames). Double tagged frames will
+  be discarded. The configuration of this value should be completed with the configuration
+  of: - one or more port-vlan associations. The configuration of this value should
+  not be combined with the configuration of: - a port default vlan, or - a port-protocol
+  default vlan for PPPoE, or - a terminated PPPoE interface, or - a port-protocol
+  default vlan for IPoE, or - a terminated IPoE interface. untagged: This configuration
+  allows the user to send untagged frames and on some types of HW also priority tagged
+  frames. Processing untagged / priority tagged frames requires additional configuration.
+  Such frames will be discarded in absence of such additional configuration. The configuration
+  of the acceptable-Frame-Type to this value results also in the autonomous creation
+  by the system of an ''IGMP channel'' and of an ''802.1x Port'' associated to this
+  Bridge Port. These objects are created with default values such that the corresponding
+  function is ''disabled''. The configuration this value should be completed with
+  the creation of: - one or more port-vlan associations and - a port default vlan,
+  and/or - a port-protocol default vlan for PPPoE, and/or - a port-protocol default
+  vlan for IPoE, or instead of a port-protocol default vlan for PPPoE. - a terminated
+  PPPoE interface, or or instead of a port-protocol default vlan for IPoE. - a terminated
+  IPoE interface. However, note that this value is not always strictly forced on all
+  HW. E.g. some type of LSMs will accept and forward single tagged frames when the
+  VLAN-id matches a configured port-vlan association. Other type of LSMs will always
+  discard single tagged frame. Note that for the multivlan feature, tagged user traffic
+  will be sent but the "acceptable frame types" must be set to "untagged". mixed-untagged:
+  This value allows the user to send single tagged frames, untagged frames, and on
+  some types of HW also priority tagged frames. The VLAN-id of single tagged frames
+  will be verified against the configured port-vlan associations. Untagged / priority
+  tagged frames will be processed according additional configuration. Such frames
+  will be discarded in absence of such additional configuration. The configuration
+  of this value should be completed with the configuration of: - one or more port-vlan
+  associations, and - a port default vlan, and/or - a port-protocol default vlan for
+  PPPoE, and/or - a port-protocol default vlan for IPoE. default-priority: The selection
+  of the port default-priority can apply provided the priority-policy at node level
+  is port-default. mac-learn-off : The configuration value has no effect in case the
+  bridge port is used for IpoA CC and EPON boards: the system accepts all values but
+  no mac learning will be done. max-unicast-mac: The value 65535 indicates that there
+  is not max mac control on vlan port. Remark: Please note that in case the RADIUS
+  server returns a VLAN for 802.1x authenticated ports, it is recommended to not configure
+  a port default VLAN ID (PVID) on that user port. In any case, the VLAN ID returned
+  by the RADIUS server may not equal the pre- configured PVID on the user port. In
+  addition, the returned VLAN ID by the RADIUS server may not be configured as the
+  PVID on the user port after successful 802.1x authentication.'
+- Supports configuration of pvid, default priority, mac learn off and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure bridge ( no port (port) ) | ( port (port) [ no pvid | pvid <Network::StackedVlan> ] [ no default-priority | default-priority <Vlan::Priority> ] [ [ no ] mac-learn-off ] [ no max-unicast-mac | max-unicast-mac <Vlan::MaxMac> ] [ no qos-profile | qos-profile <Qos::QosSessionProfileName> ] [ no prio-regen-prof | prio-regen-prof <Vlan::PrioRegenProfile> ] [ no prio-regen-name | prio-regen-name <Vlan::PrioRegenProfileName> ] [ no max-committed-mac | max-committed-mac <Vlan::ComitMaxMac> ] [ no mirror-mode | mirror-mode <Vlan::MirrorMode> ] [ no mirror-vlan | mirror-vlan <Vlan::MirrorVlan> ] [ no outervlancapture | outervlancapture <Vlan::OuterVlan> ] [ no direction | direction <Vlan::outerVlanCaptureDirection> ] [ no pvid-tagging-flag | pvid-tagging-flag <Vlan::PvidTaggingFlag> ] [ no ds-pbit-mode | ds-pbit-mode <Vlan::DSPbitMode> ] [ no default-tpid | default-tpid <Vlan::Tpid> ] )'
+options:
+  config:
+    description:
+    - A list of bridge port configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (port) - identity of a port(e.g. uplink port, atm pvc, efm port, eth port,
+          la group ...)
+      pvid:
+        type: str
+        description:
+        - 'default vlan id for untagged frames with default value: "stacked : 0 : 4097"'
+        - 'Possible values: C(stacked) - stacked vlan identity Field type <Network::UVlanIndex>;
+          C(range) - [0...4093]'
+        default: 'stacked : 0 : 4097'
+        choices:
+        - stacked
+        - unstacked vlan identity
+        - range
+        - service vlan identity
+        - customer vlan identity
+      default_priority:
+        type: str
+        description:
+        - 'priority to be set in upstream frames with default value: 0 - priority
+          of ethernet frames - range: [0...7]'
+        default: '0'
+      mac_learn_off:
+        type: bool
+        description:
+        - disable self learning of mac address
+      max_unicast_mac:
+        type: str
+        description:
+        - 'max uncommitted unicast mac addresses with default value: "1" - number
+          of unicast mac addresses - range: [1...65535]'
+        default: '1'
+      qos_profile:
+        type: str
+        description:
+        - 'qos profile name with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      prio_regen_prof:
+        type: str
+        description:
+        - 'priority regeneration profile with default value: "none"'
+        - 'Possible values: C(none) - default value; C(trusted-port) - trusted port;
+          C(best-effort) - best effort; C(cl-all-prio-3) - controlled load, all priority
+          3 traffic; C(cl-all-prio-4) - controlled load, all priority 4 traffic; C(background)
+          - background; C(be-cl-voice) - best effort, controlled load, voice; C(be-cl-1d-voice)
+          - best effort, controlled load, 802.Id Annex G voice; C(be-voice) - best
+          effort voice; C(l2-vpn-3) - L2 VPN with 3 traffic classes; C(l2-vpn-4) -
+          L2 VPN with 4 traffic classes; C(11) - operator-defined profile; C(12) -
+          operator-defined profile; C(13) - operator-defined profile; C(14) - operator-defined
+          profile; C(15) - operator-defined profile; C(16) - operator-defined profile;
+          C(17) - operator-defined profile; C(18) - operator-defined profile; C(19)
+          - operator-defined profile; C(20) - operator-defined profile; C(21) - operator-defined
+          profile; C(22) - operator-defined profile; C(23) - operator-defined profile;
+          C(24) - operator-defined profile; C(25) - operator-defined profile; C(26)
+          - operator-defined profile; C(27) - operator-defined profile; C(28) - operator-defined
+          profile; C(29) - operator-defined profile; C(30) - operator-defined profile;
+          C(31) - operator-defined profile; C(32) - operator-defined profile'
+        default: none
+        choices:
+        - none
+        - trusted-port
+        - best-effort
+        - cl-all-prio-3
+        - cl-all-prio-4
+        - background
+        - be-cl-voice
+        - be-cl-1d-voice
+        - be-voice
+        - l2-vpn-3
+        - l2-vpn-4
+        - '11'
+        - '12'
+        - '13'
+        - '14'
+        - '15'
+        - '16'
+        - '17'
+        - '18'
+        - '19'
+        - '20'
+        - '21'
+        - '22'
+        - '23'
+        - '24'
+        - '25'
+        - '26'
+        - '27'
+        - '28'
+        - '29'
+        - '30'
+        - '31'
+        - '32'
+      prio_regen_name:
+        type: str
+        description:
+        - 'priority regeneration profile name with default value: "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+      max_committed_mac:
+        type: str
+        description:
+        - 'max committed unicast mac addresses. 65535 means the committed value is
+          the same as max-unicast-mac with default value: "65535" - number of unicast
+          mac addresses - range: [0...128,65535]'
+        default: '65535'
+      mirror_mode:
+        type: str
+        description:
+        - 'flow mirroring mode of the bridge port with default value: "disable"'
+        - 'Possible values: C(disable) - disable mirror vlan tag; C(overwrite-outer-vlan)
+          - overwrite outer vlan tag with mirror vlan tag; C(insert-mirror-vlan) -
+          prepend mirror vlan tag to outer vlan tag'
+        default: disable
+        choices:
+        - disable
+        - overwrite-outer-vlan
+        - insert-mirror-vlan
+      mirror_vlan:
+        type: str
+        description:
+        - 'vlan-id to be inserted into mirrored packets. This configuration value
+          has no effect in case mirroring mode of the bridgeport is disabled (mirror-mode).
+          with default value: 0 - mirroring vlan id - range: [0...4093]'
+        default: '0'
+      outervlancapture:
+        type: str
+        description:
+        - 'specify outer VLAN which has to be matched for mirroring the packets received
+          on bridge port. with default value: 0 - outer vlan id - range: [0...4093]'
+        default: '0'
+      direction:
+        type: str
+        description:
+        - 'The direction on which the packets has to be captured and mirrored. with
+          default value: "bidirection"'
+        - 'Possible values: C(ingress) - enable mirroring in ingress; C(egress) -
+          enable mirroring in egress; C(bidirection) - enable mirroring in both directions'
+        default: bidirection
+        choices:
+        - ingress
+        - egress
+        - bidirection
+      pvid_tagging_flag:
+        type: str
+        description:
+        - 'pvid will be tagged in ONU or in OLT. with default value: "onu"'
+        - 'Possible values: C(onu) - pvid is handled in ONU.; C(olt) - pvid is handled
+          in OLT.'
+        default: onu
+        choices:
+        - onu
+        - olt
+      ds_pbit_mode:
+        type: str
+        description:
+        - 'downstream p-bits mode with default value: "auto"'
+        - 'Possible values: C(auto) - transparency for DSL and translated for GPON;
+          C(translated) - for known p-bits the inverse translation is performed in
+          downstream; unknown p-bits are forwarded unchanged in downstream; C(transparency)
+          - all p-bits are forwarded unchanged in downstream; C(filtervlanandpbit)
+          - for matched vlan and p-bit the inverse translation is performed in downstream;
+          unmatched are discarded in downstream'
+        default: auto
+        choices:
+        - auto
+        - translated
+        - transparency
+        - filtervlanandpbit
+      default_tpid:
+        type: str
+        description:
+        - 'configure default outer tpid with default value: "8100" - vlan tpid hex
+          string(example : 8100), scope is 600-ffff - range: [a-fA-F0-9] - length:
+          1<=x<=4'
+        default: '8100'
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure bridge port)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged
+EXAMPLES:
+  - deleted_example_01.txt
+  - merged_example_01.txt
+  - overridden_example_01.txt
+  - replaced_example_01.txt
+  - gathered_example_01.txt
+  - rendered_example_01.txt
+  - parsed_example_01.txt
+

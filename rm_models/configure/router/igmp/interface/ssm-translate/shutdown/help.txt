@@ -1,0 +1,5 @@
+help configure router igmp interface ssm-transla
+te shutdown
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

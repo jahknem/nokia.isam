@@ -1,0 +1,33 @@
+EXTERNAL-LINK-HOST CONFIGURATION COMMANDS
+
+Command Description
+-------------------
+
+This command allows the operator to configure the traffic direction of the configurable external-links on the host expansion card. The configurable parameters are:
+  - direction: The traffic direction. Two directions are supported: network (default) and remote-lt.
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment external-link-host (faceplate-number) [ no direction | direction <Equipm::ExternalLinkConfigType> ]
+
+Command Parameters
+------------------
+
+Table "External-link-host Configuration Commands" Resource Parameters
+Resource Identifier        Description
+
+(faceplate-number)         the faceplate number of the configurable external-link
+
+Table "External-link-host Configuration Commands" Command Parameters
+Parameter                  Description
+
+[no] direction             the external-link traffic direction (default: network)
+
+DS-LIN-TEST-01:automationuser>#

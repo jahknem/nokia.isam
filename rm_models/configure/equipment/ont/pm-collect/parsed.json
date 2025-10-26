@@ -1,0 +1,26 @@
+{
+  "title": "ONT XGPON CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the ONT,parameters,enable/disable \nPerformance monitors.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure equipment ont pm-collect (ont-idx) [ no xg-pm-collect | xg-pm-collec t <Gpon::OntPmCollect> ]",
+  "resource_parameters": [
+    {
+      "name": "(ont-idx)",
+      "description": "ONT index"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] xg-pm-collect",
+      "description": "enable/disable Performance monitors optional parameter with default value: \"disable\"",
+      "type": "<Gpon::OntPmCollect>",
+      "format": "( enable                            | disable )",
+      "values": [
+        "enable                : enable PM",
+        "disable               : disable PM"
+      ],
+      "default": "disable"
+    }
+  ],
+  "raw": "help configure equipment ont pm-collect\r\nONT XGPON CONFIGURATION COMMAND\r\n===============================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the ONT,parameters,enable/disable \r\nPerformance monitors.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure equipment ont pm-collect (ont-idx) [ no xg-pm-collect | xg-pm-collec\r\nt <Gpon::OntPmCollect> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"ONT xgpon Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(ont-idx)                  ONT index\r\n\r\nTable \"ONT xgpon Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] xg-pm-collect         enable/disable Performance monitors\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Gpon::OntPmCollect>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : enable PM\r\n                           - disable               : disable PM\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,33 @@
+{
+  "command_path": "configure bridge port",
+  "module_file": "isam_bridge_port.yml",
+  "device_verification": {
+    "device": "DS-LIN-TEST-01",
+    "verified_commands_run": [
+      "help configure bridge port",
+      "info configure bridge port"
+    ],
+    "example_port_used": "1/1/2/1/1/1/1",
+    "safety": "No changes performed on or near restricted port 1/1/5/1/15; read-only only there."
+  },
+  "changes": [
+    {
+      "path": "notes",
+      "action": "corrected",
+      "reason": "Expanded CLI command syntax from placeholder to full syntax per help.txt"
+    },
+    {
+      "path": "options.config.suboptions.pvid.default",
+      "action": "corrected",
+      "reason": "Align default to help.txt: 'stacked : 0 : 4097'"
+    }
+  ],
+  "example_files": [
+    "merged_example_01.txt",
+    "replaced_example_01.txt",
+    "overridden_example_01.txt",
+    "deleted_example_01.txt"
+  ],
+  "example_data_source": "Captured from live Nokia ISAM device DS-LIN-TEST-01. Examples show before/after for a reversible change to max-unicast-mac on a safe test bridge port (1/1/2/1/1/1/1).",
+  "notes": "Examples and YAML strictly derived from help.txt and live info output. VLAN blocks included as printed by device; only max-unicast-mac toggled for demonstration."
+}

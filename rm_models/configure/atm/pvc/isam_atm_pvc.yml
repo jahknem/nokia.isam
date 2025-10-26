@@ -1,0 +1,109 @@
+module: isam_atm_pvc
+short_description: Resource module to configure atm pvc
+description:
+- 'Configures an ATM PVC. The admin status allows or disallows traffic on the PVC.
+  The encapsulation type configures the way higher-layer traffic is encapsulated in
+  the AAL5 container. The LLC Encapsulation method allows the multiplexing of multiple
+  protocols over a single ATM VC. The protocol type of each PDU is identified by a
+  prefixed IEEE 802.2 LLC header. In the VC Multiplexing method, each ATM VC carries
+  PDUs of exactly one protocol type. When multiple protocols must be transported,
+  there is a separate VC for each protocol type. Use of the encapsulations: - llc-snap
+  and vc-mux-bridged-8023 can be used for cross-connects, ibridge, PPPoE, and IPoE
+  - llc-snap-routed and vc-mux-routed can be used for IPoA - llc-nlpid and vc-mux-pppoa
+  can be used for PPPoA - none can be used for ATM pseudowire It is also possible
+  to automatically detect the used encapsulation type on the link. - automatic:ip
+  is used for auto-detection between llc-snap, vc-mux-bridged-8023, llc-snap-routed,
+  and vc-mux-routed; ipoe and ipoa dataframes are accepted; - automatic:ppp is used
+  for auto-detection between llc-snap, vc-mux-bridged-8023, llc-nlpid, and vc-mux-pppoa;
+  pppoa and pppoe dataframes are accepted; - automatic:pppoa is used for auto-detection
+  between llc-nlpid and vc-mux-pppoa, only pppoa dataframes are accepted; - automatic:ipoe-ppp
+  is used for auto-detection between llc-snap, vc-mux-bridged-8023, llc-nlpid and
+  vc-mux-pppoa; ipoe, pppoa and pppoe dataframes are accepted; The only encapsulation
+  type supported on L2 LTs is llc-snap.'
+- Supports configuration of admin down, aal5 encap type
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure atm ()'
+options:
+  config:
+    description:
+    - A list of atm pvc configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (port-index) - the atm static Interface with vpi and vci
+      admin_down:
+        type: bool
+        description:
+        - disable traffic flow
+        - When true, the interface/feature is enabled; when false, it is disabled
+      aal5_encap_type:
+        type: str
+        description:
+        - 'encapsulation method for traffic in an AAL5 container with default value:
+          "llc-snap"'
+        - 'Possible values: C(llc-snap) - logical link control encapsulation bridged
+          protocol; C(llc-snap-routed) - logical link control encapsulation routed
+          protocol; C(llc-nlpid) - logical link control encapsulation pppoa protocol;
+          C(vc-mux-bridged-8023) - virtual channel multiplex bridged protocol; C(vc-mux-routed)
+          - virtual channel multiplex routed protocol; C(vc-mux-pppoa) - virtual channel
+          multiplex pppoa protocol; C(automatic) - automatic detection of encapsulation
+          type; C(none) - no encapsulation type Possible values:; C(ip) - autodetection
+          of the used ip encapsulation; C(ppp) - autodetection of the used ppp encapsulation;
+          C(pppoa) - autodetection of the used pppoa encapsulation; C(ipoe-ppp) -
+          autodetection of the used ip or ppp encapsulation'
+        default: llc-snap
+        choices:
+        - llc-snap
+        - llc-snap-routed
+        - llc-nlpid
+        - vc-mux-bridged-8023
+        - vc-mux-routed
+        - vc-mux-pppoa
+        - automatic
+        - none
+        - ip
+        - ppp
+        - pppoa
+        - ipoe-ppp
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure atm pvc)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

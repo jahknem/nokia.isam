@@ -1,0 +1,451 @@
+help configure generic-pon utilization threshold
+GENERIC PON UTILIZATION TCA THRESHOLD CONFIGURATION COMMAND
+===========================================================
+
+Command Description
+-------------------
+
+This command configures the generic PON (system-wide) utilization TCA threshold 
+parameters for PONs and channel-pairs.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure generic-pon utilization threshold [ no txmcutilhi | txmcutilhi 
+<Gpon::PonUtilTcaThresholdPercent> ] [ no txmcutilmd | txmcutilmd 
+<Gpon::PonUtilTcaThresholdPercent> ] [ no txmcutillo | txmcutillo 
+<Gpon::PonUtilTcaThresholdPercent> ] [ no txtotutilhi | txtotutilhi 
+<Gpon::PonUtilTcaThresholdPercent> ] [ no txtotutilmd | txtotutilmd 
+<Gpon::PonUtilTcaThresholdPercent> ] [ no txtotutillo | txtotutillo 
+<Gpon::PonUtilTcaThresholdPercent> ] [ no rxtotutilhi | rxtotutilhi 
+<Gpon::PonUtilTcaThresholdPercent> ] [ no rxtotutilmd | rxtotutilmd 
+<Gpon::PonUtilTcaThresholdPercent> ] [ no rxtotutillo | rxtotutillo 
+<Gpon::PonUtilTcaThresholdPercent> ] [ no dbacongperiodhi | dbacongperiodhi 
+<Gpon::PonUtilTcaThresholdPercent> ] [ no dbacongperiodmd | dbacongperiodmd 
+<Gpon::PonUtilTcaThresholdPercent> ] [ no dbacongperiodlo | dbacongperiodlo 
+<Gpon::PonUtilTcaThresholdPercent> ] [ no txucdropfrmhi | txucdropfrmhi 
+<Gpon::PonUtilTcaDroppedPacketsThreshold> ] [ no txucdropfrmmd | txucdropfrmmd 
+<Gpon::PonUtilTcaDroppedPacketsThreshold> ] [ no txucdropfrmlo | txucdropfrmlo 
+<Gpon::PonUtilTcaDroppedPacketsThreshold> ] [ no txmcdropfrmhi | txmcdropfrmhi 
+<Gpon::PonUtilTcaDroppedPacketsThreshold> ] [ no txmcdropfrmmd | txmcdropfrmmd 
+<Gpon::PonUtilTcaDroppedPacketsThreshold> ] [ no txmcdropfrmlo | txmcdropfrmlo 
+<Gpon::PonUtilTcaDroppedPacketsThreshold> ] [ no txbcdropfrmhi | txbcdropfrmhi 
+<Gpon::PonUtilTcaDroppedPacketsThreshold> ] [ no txbcdropfrmmd | txbcdropfrmmd 
+<Gpon::PonUtilTcaDroppedPacketsThreshold> ] [ no txbcdropfrmlo | txbcdropfrmlo 
+<Gpon::PonUtilTcaDroppedPacketsThreshold> ] [ no rxtotdropfrmhi | 
+rxtotdropfrmhi <Gpon::PonUtilTcaDroppedPacketsThreshold> ] [ no rxtotdropfrmmd 
+| rxtotdropfrmmd <Gpon::PonUtilTcaDroppedPacketsThreshold> ] [ no 
+rxtotdropfrmlo | rxtotdropfrmlo <Gpon::PonUtilTcaDroppedPacketsThreshold> ] [ 
+no numtcint | numtcint <Gpon::PonUtilTcaInterval> ] [ no numtcintdba | 
+numtcintdba <Gpon::PonUtilTcaInterval> ] [ no dbacongthresh | dbacongthresh 
+<Gpon::PonUtilTcaCongThreshold> ]
+
+Command Parameters
+------------------
+
+Table "Generic PON Utilization TCA Threshold Configuration Command" Command 
+Parameters
+
+Parameter                  Description
+
+[no] txmcutilhi            Utilization level (percentage) that will result in 
+declaration of T-TXMCUTILHI alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: <Gpon::PonUtilTcaThresholdPercent>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaThresholdPercent> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaThresholdPercent>
+                           - utilization percentage threshold
+                           - range: [0...100]
+
+[no] txmcutilmd            Utilization level (percentage) that will result in 
+declaration of T-TXMCUTILMD alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: <Gpon::PonUtilTcaThresholdPercent>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaThresholdPercent> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaThresholdPercent>
+                           - utilization percentage threshold
+                           - range: [0...100]
+
+[no] txmcutillo            Utilization level (percentage) that will result in 
+declaration of T-TXMCUTILLO alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: <Gpon::PonUtilTcaThresholdPercent>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaThresholdPercent> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaThresholdPercent>
+                           - utilization percentage threshold
+                           - range: [0...100]
+
+[no] txtotutilhi           Utilization level (percentage) that will result in 
+declaration of T-TXTOTUTILHI alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: <Gpon::PonUtilTcaThresholdPercent>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaThresholdPercent> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaThresholdPercent>
+                           - utilization percentage threshold
+                           - range: [0...100]
+
+[no] txtotutilmd           Utilization level (percentage) that will result in 
+declaration of T-TXTOTUTILMD alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: <Gpon::PonUtilTcaThresholdPercent>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaThresholdPercent> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaThresholdPercent>
+                           - utilization percentage threshold
+                           - range: [0...100]
+
+[no] txtotutillo           Utilization level (percentage) that will result in 
+declaration of T-TXTOTUTILLO alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: <Gpon::PonUtilTcaThresholdPercent>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaThresholdPercent> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaThresholdPercent>
+                           - utilization percentage threshold
+                           - range: [0...100]
+
+[no] rxtotutilhi           Utilization level (percentage) that will result in 
+declaration of T-RXTOTUTILHI alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: <Gpon::PonUtilTcaThresholdPercent>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaThresholdPercent> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaThresholdPercent>
+                           - utilization percentage threshold
+                           - range: [0...100]
+
+[no] rxtotutilmd           Utilization level (percentage) that will result in 
+declaration of T-RXTOTUTILMD alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: <Gpon::PonUtilTcaThresholdPercent>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaThresholdPercent> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaThresholdPercent>
+                           - utilization percentage threshold
+                           - range: [0...100]
+
+[no] rxtotutillo           Utilization level (percentage) that will result in 
+declaration of T-RXTOTUTILLO alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: <Gpon::PonUtilTcaThresholdPercent>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaThresholdPercent> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaThresholdPercent>
+                           - utilization percentage threshold
+                           - range: [0...100]
+
+[no] dbacongperiodhi       Utilization level (percentage) that will result in 
+declaration of T-DBACONGPERIODHI alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: <Gpon::PonUtilTcaThresholdPercent>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaThresholdPercent> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaThresholdPercent>
+                           - utilization percentage threshold
+                           - range: [0...100]
+
+[no] dbacongperiodmd       Utilization level (percentage) that will result in 
+declaration of T-DBACONGPERIODMD alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: <Gpon::PonUtilTcaThresholdPercent>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaThresholdPercent> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaThresholdPercent>
+                           - utilization percentage threshold
+                           - range: [0...100]
+
+[no] dbacongperiodlo       Utilization level (percentage) that will result in de
+claration of T-DBACONGPERIODLO alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: <Gpon::PonUtilTcaThresholdPercent>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaThresholdPercent> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaThresholdPercent>
+                           - utilization percentage threshold
+                           - range: [0...100]
+
+[no] txucdropfrmhi         Number of dropped frames that will result in 
+declaration of T-TXUCDROPFRMHI alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: 
+<Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaDroppedPacketsThreshold> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           - dropped frames threshold
+                           - range: [0...1000000000]
+
+[no] txucdropfrmmd         Number of dropped frames that will result in 
+declaration of T-TXUCDROPFRMMD alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: 
+<Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaDroppedPacketsThreshold> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           - dropped frames threshold
+                           - range: [0...1000000000]
+
+[no] txucdropfrmlo         Number of dropped frames that will result in 
+declaration of T-TXUCDROPFRMLO alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: 
+<Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaDroppedPacketsThreshold> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           - dropped frames threshold
+                           - range: [0...1000000000]
+
+[no] txmcdropfrmhi         Number of dropped frames that will result in 
+declaration of T-TXMCDROPFRMHI alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: 
+<Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaDroppedPacketsThreshold> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           - dropped frames threshold
+                           - range: [0...1000000000]
+
+[no] txmcdropfrmmd         Number of dropped frames that will result in 
+declaration of T-TXMCDROPFRMMD alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: 
+<Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaDroppedPacketsThreshold> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           - dropped frames threshold
+                           - range: [0...1000000000]
+
+[no] txmcdropfrmlo         Number of dropped frames that will result in 
+declaration of T-TXMCDROPFRMLO alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: 
+<Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaDroppedPacketsThreshold> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           - dropped frames threshold
+                           - range: [0...1000000000]
+
+[no] txbcdropfrmhi         Number of dropped frames that will result in 
+declaration of T-TXBCDROPFRMHI alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: 
+<Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaDroppedPacketsThreshold> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           - dropped frames threshold
+                           - range: [0...1000000000]
+
+[no] txbcdropfrmmd         Number of dropped frames that will result in 
+declaration of T-TXBCDROPFRMMD alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: 
+<Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaDroppedPacketsThreshold> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           - dropped frames threshold
+                           - range: [0...1000000000]
+
+[no] txbcdropfrmlo         Number of dropped frames that will result in 
+declaration of T-TXBCDROPFRMLO alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: 
+<Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaDroppedPacketsThreshold> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           - dropped frames threshold
+                           - range: [0...1000000000]
+
+[no] rxtotdropfrmhi        Dropped frames that will result in declaration of 
+T-RXTOTCDROPFRMHI alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: 
+<Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaDroppedPacketsThreshold> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           - dropped frames threshold
+                           - range: [0...1000000000]
+
+[no] rxtotdropfrmmd        Number of dropped frames that will result in 
+declaration of T-RXTOTDROPFRMMD alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: 
+<Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaDroppedPacketsThreshold> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           - dropped frames threshold
+                           - range: [0...1000000000]
+
+[no] rxtotdropfrmlo        Number of dropped frames that will result in 
+declaration of T-RXTOTCDROPFRMLO alarm
+                           optional parameter with default value: "disabled"
+
+                           Parameter type: 
+<Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           Format:
+                           ( disabled
+                           | <Gpon::PonUtilTcaDroppedPacketsThreshold> )
+                           Possible values:
+                           - disabled              : threshold is disabled
+                           Field type <Gpon::PonUtilTcaDroppedPacketsThreshold>
+                           - dropped frames threshold
+                           - range: [0...1000000000]
+
+[no] numtcint               Number of contiguous 5-minute intervals for the 
+non-DBA PON utilization thresholds to be exceeded for TCA alarm generation or 
+clearing
+                           optional parameter with default value: "1"
+
+                           Parameter type: <Gpon::PonUtilTcaInterval>
+                           Format:
+                           ( 1
+                           | <Gpon::PonUtilTcaInterval> )
+                           Possible values:
+                           - 1                     : Initial Default
+                           Field type <Gpon::PonUtilTcaInterval>
+                           - interval threshold
+                           - range: [1...96]
+
+[no] numtcintdba            Number of contiguous 5-minute intervals for the DBA 
+PON congestion thresholds to be exceeded for TCA alarm generation or clearing
+                           optional parameter with default value: "1"
+
+                           Parameter type: <Gpon::PonUtilTcaInterval>
+                           Format:
+                           ( 1
+                           | <Gpon::PonUtilTcaInterval> )
+                           Possible values:
+                           - 1                     : Initial Default
+                           Field type <Gpon::PonUtilTcaInterval>
+                           - interval threshold
+                           - range: [1...96]
+
+[no] dbacongthresh          Configured DBA congestion threshold as a percentage 
+of the maximum consumable bandwidth
+                           optional parameter with default value: "90"
+
+                           Parameter type: <Gpon::PonUtilTcaCongThreshold>
+                           Format:
+                           ( 90
+                           | <Gpon::PonUtilTcaCongThreshold> )
+                           Possible values:
+                           - 90                    : Initial Default
+                           Field type <Gpon::PonUtilTcaCongThreshold>
+                           - dba congestion percentage threshold
+                           - range: [0...100]
+
+
+DS-LIN-TEST-01:automationuser>#

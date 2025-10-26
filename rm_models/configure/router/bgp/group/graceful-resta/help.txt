@@ -1,0 +1,4 @@
+help configure router bgp group graceful-resta
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

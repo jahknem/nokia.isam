@@ -1,0 +1,21 @@
+{
+  "title": "ERROR LOG CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure parameters related to the error \nlog.",
+  "user_level": "The command can be accessed by operators with alarm privileges, and executed by \noperators with alarm privileges.",
+  "syntax": "> configure error [ no log-full-action | log-full-action <Error::errorLogFullAction> ]",
+  "resource_parameters": [],
+  "command_parameters": [
+    {
+      "name": "[no] log-full-action",
+      "description": "set the action when error log buffer is full optional parameter with default value: \"wrap\"",
+      "type": "<Error::errorLogFullAction>",
+      "format": "( wrap                            | halt )",
+      "values": [
+        "wrap                  : older log records are overwritten by recent ones",
+        "halt                  : logging is stopped until the log buffer is reset"
+      ],
+      "default": "wrap"
+    }
+  ],
+  "raw": "help configure error\r\nERROR LOG CONFIGURATION COMMAND\r\n===============================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure parameters related to the error \r\nlog.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with alarm privileges, and executed by \r\noperators with alarm privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure error [ no log-full-action | log-full-action \r\n<Error::errorLogFullAction> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Error Log Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] log-full-action       set the action when error log buffer is full\r\n                           optional parameter with default value: \"wrap\"\r\n\r\n                           Parameter type: <Error::errorLogFullAction>\r\n                           Format:\r\n                           ( wrap\r\n                           | halt )\r\n                           Possible values:\r\n                           - wrap                  : older log records are \r\noverwritten by recent ones\r\n                           - halt                  : logging is stopped until \r\nthe log buffer is reset\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

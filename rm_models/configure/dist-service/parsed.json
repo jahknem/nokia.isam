@@ -1,0 +1,46 @@
+{
+  "title": "DISTRIBUTED SERVICE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a distributed service.",
+  "user_level": "The command can be accessed by operators with drouter privileges, and executed \nby operators with drouter privileges.",
+  "syntax": "> configure dist-service (service-id) [ no service-type | service-type <Drouter::ServiceType> ] [ no qos-profile | qos-profile <Qos::QosSessionProfileName> ]",
+  "resource_parameters": [
+    {
+      "name": "(service-id)",
+      "description": "Service Identifier"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] service-type",
+      "description": "Service type to be configured optional parameter with default value: \"apipe\"",
+      "type": "<Drouter::ServiceType>",
+      "format": "( unknown                            | epipe                            | p3pipe                            | tls                            | vprn                            | ies                            | mirror                            | apipe                            | fpipe                            | ipipe                            | cpipe )",
+      "values": [
+        "unknown               : unknown",
+        "epipe                 : epipe",
+        "p3pipe                : p3pipe",
+        "tls                   : tls",
+        "vprn                  : vprn",
+        "ies                   : ies",
+        "mirror                : mirror",
+        "apipe                 : apipe",
+        "fpipe                 : fpipe",
+        "ipipe                 : ipipe",
+        "cpipe                 : cpipe"
+      ],
+      "default": "apipe"
+    },
+    {
+      "name": "[no] qos-profile",
+      "description": "qos profile attached to the service optional parameter with default value: \"none\"",
+      "type": "<Qos::QosSessionProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associate",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    }
+  ],
+  "raw": "help configure dist-service\r\nDISTRIBUTED SERVICE CONFIGURATION COMMAND\r\n=========================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a distributed service.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with drouter privileges, and executed \r\nby operators with drouter privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure dist-service (service-id) [ no service-type | service-type \r\n<Drouter::ServiceType> ] [ no qos-profile | qos-profile \r\n<Qos::QosSessionProfileName> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Distributed Service Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(service-id)               Service Identifier\r\n\r\nTable \"Distributed Service Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] service-type          Service type to be configured\r\n                           optional parameter with default value: \"apipe\"\r\n\r\n                           Parameter type: <Drouter::ServiceType>\r\n                           Format:\r\n                           ( unknown\r\n                           | epipe\r\n                           | p3pipe\r\n                           | tls\r\n                           | vprn\r\n                           | ies\r\n                           | mirror\r\n                           | apipe\r\n                           | fpipe\r\n                           | ipipe\r\n                           | cpipe )\r\n                           Possible values:\r\n                           - unknown               : unknown\r\n                           - epipe                 : epipe\r\n                           - p3pipe                : p3pipe\r\n                           - tls                   : tls\r\n                           - vprn                  : vprn\r\n                           - ies                   : ies\r\n                           - mirror                : mirror\r\n                           - apipe                 : apipe\r\n                           - fpipe                 : fpipe\r\n                           - ipipe                 : ipipe\r\n                           - cpipe                 : cpipe\r\n\r\n[no] qos-profile           qos profile attached to the service\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosSessionProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociate\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

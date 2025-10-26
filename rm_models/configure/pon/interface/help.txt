@@ -1,0 +1,351 @@
+help configure pon interface
+PON INTERFACE CONFIGURATION COMMAND
+===================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the provisioning data associated 
+with a PON interface.
+
+Note: The value of sig-degrade-th must be greater than sig-fail-th (i.e. 
+sig-degrade-th must represent a lower BER value)
+
+The value of closest-ont can be changed only after setting the administrative 
+status to down.
+
+The value of diff-reach can be changed only after setting the administrative 
+status to down.
+
+The value of fec-dn can be changed only after setting the administrative status 
+to down. If the FEC change is made while the admin status is up, then it must 
+be set to down and then put back to up for the change to take place.
+
+The value of auth-method can be changed only after setting the administrative 
+status to down.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure pon interface (pon-idx) [ no label | label <Gpon::Label> ] [ no 
+ber-calc-period | ber-calc-period <Gpon::BerCalcPeriod> ] [ no polling-period | 
+polling-period <Gpon::PollingPeriod> ] [ no sig-degrade-th | sig-degrade-th 
+<Gpon::SignalDegThreshold> ] [ no sig-fail-th | sig-fail-th 
+<Gpon::SignalFailThreshold> ] [ no fec-dn | fec-dn <Gpon::FecDn> ] [ no 
+raman-reduct | raman-reduct <Gpon::RamanReduct> ] [ no closest-ont | closest-ont
+ <Gpon::OntDistance> ] [ no diff-reach | diff-reach <Gpon::PonDiffReach> ] [ no 
+pon-tag | pon-tag <Gpon::PonTag> ] [ no pon-id | pon-id <Gpon::PonXgId> ] [ no 
+mcast-encrypt | mcast-encrypt <Gpon::McEncrypt> ] [ no auth-method | 
+auth-method <Gpon::AuthMethod> ] [ no ponid-interval | ponid-interval 
+<Gpon::GponIdInterval> ] [ no ponid-odn | ponid-odn <Gpon::GponIdOdn> ] [ no 
+ponid-identifier | ponid-identifier <Gpon::GponId> ] [ no max-ranging-onts | 
+max-ranging-onts <Gpon::MaxRangingOnts> ] [ no tconts-per-frame | 
+tconts-per-frame <Gpon::TcontsPerFrame> ] [ no admin-state | admin-state 
+<Gpon::ItfAdminStatus> ] [ no pon-speed | pon-speed <Gpon::PonSpeed> ] [ no 
+burst-overhead | burst-overhead <Gpon::BurstModeOverhead> ] [ no onu-prov-mode 
+| onu-prov-mode <Gpon::OnuProvMode> ]
+
+Command Parameters
+------------------
+
+Table "Pon Interface Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(pon-idx)                  pon index
+
+Table "Pon Interface Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] label                 label of the pon port
+                           optional parameter with default value: ""
+
+                           Parameter type: <Gpon::Label>
+                           Format:
+                           - char string
+                           - length: x<=80 
+
+[no] ber-calc-period       measurement period to determine whether a signal 
+degraded alarm has occurred for an ont
+                           optional parameter with default value: 10L
+
+                           Parameter type: <Gpon::BerCalcPeriod>
+                           Format:
+                           - ber measurement period
+                           - unit: 1/10 sec
+                           - range: [1...864000]
+
+[no] polling-period        period between two consecutive times the 
+autodetection procedure on pon is executed
+                           optional parameter with default value: 100L
+
+                           Parameter type: <Gpon::PollingPeriod>
+                           Format:
+                           - polling period
+                           - unit: 1/10 sec
+                           - range: [1...864000]
+
+[no] sig-degrade-th        ber threshold used to detect signal degrade alarms 
+for onts
+                           optional parameter with default value: 9L
+
+                           Parameter type: <Gpon::SignalDegThreshold>
+                           Format:
+                           - signal degrade threshold (x)
+                           - unit: 10 ^ (-x)
+                           - range: [4...10]
+
+[no] sig-fail-th           ber threshold used to detect a signal fail alarms 
+for onts
+                           optional parameter with default value: 5L
+
+                           Parameter type: <Gpon::SignalFailThreshold>
+                           Format:
+                           - signal fail threshold (x)
+                           - unit: 10 ^ (-x)
+                           - range: [3...8]
+
+[no] fec-dn                use of fec in downstream direction for all olt 
+transmissions
+                           optional parameter with default value: 
+"disable,ngpon : enable"
+
+                           Parameter type: <Gpon::FecDn>
+                           Format:
+                           ( enable
+                           | disable )
+                           Possible values:
+                           - enable                : fec is enabled
+                           - disable               : fec is disabled
+
+[no] raman-reduct          use of raman reduction code for overlay video in 
+downstream direction
+                           optional parameter with default value: "disable"
+
+                           Parameter type: <Gpon::RamanReduct>
+                           Format:
+                           ( enable
+                           | disable )
+                           Possible values:
+                           - enable                : raman reduction code 
+enabled
+                           - disable               : raman reduction code 
+disabled
+
+[no] closest-ont           the distance of the closest ont on the pon
+                           optional parameter with default value: 0L
+
+                           Parameter type: <Gpon::OntDistance>
+                           Format:
+                           - closest ont distance(ngpon range is [0,20] unit: 
+km)
+                           - unit: km
+                           - range: [0...40]
+
+[no] diff-reach            the maximum differential logical reach on the PON
+                           optional parameter with default value: 20L
+
+                           Parameter type: <Gpon::PonDiffReach>
+                           Format:
+                           - pon differential reach(ngpon range is [20,40] 
+unit: km)
+                           - unit: km
+                           - range: [20,34,40]
+
+[no] pon-tag               label of the pon port
+                           optional parameter with default value: 
+"0000000000000000"
+
+                           Parameter type: <Gpon::PonTag>
+                           Format:
+                           - Pon Tag - 16 hex characters
+                           - length: x<=16 
+
+[no] pon-id                label of the pon port
+                           optional parameter with default value: "00000000"
+
+                           Parameter type: <Gpon::PonXgId>
+                           Format:
+                           - Pon Id - 8 hex characters
+                           - length: x<=8 
+
+[no] mcast-encrypt         Multicast encryption enable
+                           optional parameter with default value: "disable"
+
+                           Parameter type: <Gpon::McEncrypt>
+                           Format:
+                           ( enable
+                           | disable )
+                           Possible values:
+                           - enable                : mcast encryption is enabled
+                           - disable               : mcast encryption is 
+disabled
+
+[no] auth-method           ont authentication mode option for this pon 
+interface level
+                           optional parameter with default value: "sn-slid"
+
+                           Parameter type: <Gpon::AuthMethod>
+                           Format:
+                           ( sn-slid
+                           | logical
+                           | loidpre
+                           | logical-std
+                           | loidpre-std
+                           | loid-sn-slid )
+                           Possible values:
+                           - sn-slid               : sn and slid authentication
+                           - logical               : logical authentication
+                           - loidpre               : loid precedence mix 
+authentication
+                           - logical-std           : standard logical 
+authentication
+                           - loidpre-std           : standard loid precedence 
+mix authentication
+                           - loid-sn-slid          : loid,sn and slid mixing 
+authentication
+
+[no] ponid-interval        interval to send GPON-ID PLOAM message in second
+                           optional parameter with default value: 0L
+
+                           Parameter type: <Gpon::GponIdInterval>
+                           Format:
+                           - interval time
+                           - unit: second
+                           - range: [0...60]
+
+[no] ponid-odn             ODN class of the pon port
+                           optional parameter with default value: "auto"
+
+                           Parameter type: <Gpon::GponIdOdn>
+                           Format:
+                           ( a
+                           | b
+                           | bplus
+                           | c
+                           | cplus
+                           | auto )
+                           Possible values:
+                           - a                     : ODN Level A
+                           - b                     : ODN Level B
+                           - bplus                 : ODN Level B+
+                           - c                     : ODN Level C
+                           - cplus                 : ODN Level C+
+                           - auto                  : Auto Detected
+
+[no] ponid-identifier      label of the pon port
+                           optional parameter with default value: 
+"00000000000000"
+
+                           Parameter type: <Gpon::GponId>
+                           Format:
+                           - Pon Id - 14 hex characters
+                           - length: 14 
+
+[no] max-ranging-onts      max ranging ont number for guaranteed bandwidth cac
+                           optional parameter with default value: 128L
+
+                           Parameter type: <Gpon::MaxRangingOnts>
+                           Format:
+                           - ranging onts number;if 0 indicates bandwidth 
+calculated by provisioned onts; other value indicates pre-configured onts
+                           - range: [0...128]
+
+[no] tconts-per-frame      max service tcont number per gtc frame
+                           optional parameter with default value: "64L,xgs : 
+44L,ngpon : 16L"
+
+                           Parameter type: <Gpon::TcontsPerFrame>
+                           Format:
+                           - maximum number of tconts per upstream frame, to cal
+culate guaranteed bandwidth(GPON range is [1...64], XGSPON and XGPON1 
+range[0...64])
+                           - range: [0...64]
+
+[no] admin-state           administrative status of the interface
+                           optional parameter with default value: "down"
+
+                           Parameter type: <Gpon::ItfAdminStatus>
+                           Format:
+                           ( up
+                           | down )
+                           Possible values:
+                           - up                    : set the admin-state to up
+                           - down                  : set the admin-state to down
+
+[no] pon-speed             pon speed
+                           optional parameter with default value: "nominal"
+
+                           Parameter type: <Gpon::PonSpeed>
+                           Format:
+                           ( nominal
+                           | 10g-10g
+                           | 10g-2.5g )
+                           Possible values:
+                           - nominal               : nominal line rate of the 
+pon technology : 2.5g down / 1.25g up for gpon; 10g down / dual-rate up for 
+ngpon 
+                           - 10g-10g               : 10g down / 10g up
+                           - 10g-2.5g              : 10g down / 2.5g up
+
+[no] burst-overhead        burst mode overhead
+                           optional parameter with default value: "robust"
+
+                           Parameter type: <Gpon::BurstModeOverhead>
+                           Format:
+                           ( robust
+                           | reduced )
+                           Possible values:
+                           - robust                : robust
+                           - reduced               : reduced
+
+[no] onu-prov-mode         ONU auto provisioning mode
+                           optional parameter with default value: "semi-auto"
+
+                           Parameter type: <Gpon::OnuProvMode>
+                           Format:
+                           ( semi-auto
+                           | auto )
+                           Possible values:
+                           - semi-auto             : ONU semi-auto 
+provisioning. Template file needs to be specified in ONT config
+                           - auto                  : ONU auto provisioning. 
+Template file selection done automatically based on ONT type
+
+
+Table "Pon Interface Configuration Command" Display Parameters
+
+Specific Information:
+
+Parameter                  Description
+
+ oper-state                operational state of the interface
+                           This element is always shown.
+
+                           parameter type: <Itf::ifOperStatus>
+                           ( up
+                           | down
+                           | testing
+                           | unknown
+                           | dormant
+                           | no-value )
+                           Possible values:
+                           - up                    : up,traffic can pass
+                           - down                  : down,no traffic is passing
+                           - testing               : testing,no traffic is 
+passing
+                           - unknown               : unknown
+                           - dormant               : dormant,no traffic is 
+passing
+                           - no-value              : no entry in the table
+
+DS-LIN-TEST-01:automationuser>#

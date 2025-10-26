@@ -1,0 +1,37 @@
+{
+  "title": "DROUTER IP CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a distributed router IP interface \non a linecard and assign an IP address.",
+  "user_level": "The command can be accessed by operators with drouter privileges, and executed \nby operators with drouter privileges.",
+  "syntax": "> configure dist-router ( no interface (lt-vlan) ) | ( interface (lt-vlan) [ no addrtype | addrtype <Drouter::IpAddressType> ] ip-address <Drouter::IntfAddAndMask> [ [ no ] mpls ] )",
+  "resource_parameters": [
+    {
+      "name": "(lt-vlan)",
+      "description": "lt-vlan index"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] addrtype",
+      "description": "specify the type of IP address optional parameter with default value: \"ipv4\"",
+      "type": "<Drouter::IpAddressType>",
+      "format": "( ipv4                            | ipv6 )",
+      "values": [
+        "ipv4                  : ipv4",
+        "ipv6                  : ipv6"
+      ],
+      "default": "ipv4"
+    },
+    {
+      "name": "ip-address",
+      "description": "specify IP Address mandatory parameter - IP Address Field type <Drouter::PrefixLength> - prefix length of the subnet - range: [1...31]",
+      "type": "<Drouter::IntfAddAndMask>",
+      "format": "<Drouter::V4AddressHex> / <Drouter::PrefixLength>                            Field type <Drouter::V4AddressHex>"
+    },
+    {
+      "name": "[no] mpls",
+      "description": "enable MPLS on the IP interface optional parameter",
+      "type": "boolean"
+    }
+  ],
+  "raw": "help configure dist-router interface\r\nDROUTER IP CONFIGURATION COMMAND\r\n================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a distributed router IP interface \r\non a linecard and assign an IP address.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with drouter privileges, and executed \r\nby operators with drouter privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure dist-router ( no interface (lt-vlan) ) | ( interface (lt-vlan) [ no \r\naddrtype | addrtype <Drouter::IpAddressType> ] ip-address \r\n<Drouter::IntfAddAndMask> [ [ no ] mpls ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Drouter IP Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(lt-vlan)                  lt-vlan index\r\n\r\nTable \"Drouter IP Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] addrtype              specify the type of IP address\r\n                           optional parameter with default value: \"ipv4\"\r\n\r\n                           Parameter type: <Drouter::IpAddressType>\r\n                           Format:\r\n                           ( ipv4\r\n                           | ipv6 )\r\n                           Possible values:\r\n                           - ipv4                  : ipv4\r\n                           - ipv6                  : ipv6\r\n\r\nip-address                 specify IP Address\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Drouter::IntfAddAndMask>\r\n                           Format:\r\n                           <Drouter::V4AddressHex> / <Drouter::PrefixLength>\r\n                           Field type <Drouter::V4AddressHex>\r\n                           - IP Address\r\n                           Field type <Drouter::PrefixLength>\r\n                           - prefix length of the subnet\r\n                           - range: [1...31]\r\n\r\n[no] mpls                  enable MPLS on the IP interface\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

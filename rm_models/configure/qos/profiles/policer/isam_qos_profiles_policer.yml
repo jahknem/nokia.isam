@@ -1,0 +1,200 @@
+module: isam_qos_profiles_policer
+short_description: Resource module to configure qos profiles policer
+description:
+- Configures a QoS policer profile. A QoS policer profile contains all settings related
+  to a policer. The ISAM supports single token bucket policers, where the action upon
+  conformance is either pass or discard. The L3 line cards units support both upstream
+  and downstream policing. A policer profile can be used within a QoS session profile
+  for upstream and downstream policing. The L2 line cards units do not support policing.
+  The SHub/IHub supports ingress policing, but it does not use policer profiles. See
+  the section about the QoS Ingress Policing Configuration Command to set up ingress
+  policing on the SHub/IHub.
+- Supports configuration of committed info rate, committed burst size, policer type
+  and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure qos profiles ()'
+options:
+  config:
+    description:
+    - A list of qos profiles policer configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (name) - A unique profile name
+      committed_info_rate:
+        type: str
+        description:
+        - 'committed information rate of a policer mandatory parameter - information
+          rate - unit: kbps - range: [0...2147483647]'
+      committed_burst_size:
+        type: str
+        description:
+        - 'committed burst size of a policer mandatory parameter - committed burst
+          size of a policer - unit: bytes - range: [0...134217728]'
+      policer_type:
+        type: str
+        description:
+        - 'the policer type with default value: "single-token- bucket"'
+        - 'Possible values: C(single-token-bucket) - single token bucket; C(trtcm)
+          - trtcm Policer; C(trtcmwithcosrfc2698) - trTCMwithCoS RFC2698 policer;
+          C(trtcmwithcosrfc4115) - trTCMwithCoS RFC4115 policer'
+        default: single-token-
+        choices:
+        - single-token-bucket
+        - trtcm
+        - trtcmwithcosrfc2698
+        - trtcmwithcosrfc4115
+      excess_info_rate:
+        type: str
+        description:
+        - 'excess information rate of a policer for trtcm with default value: 0 -
+          information rate - unit: kbps - range: [0...2147483647]'
+        default: '0'
+      excess_burst_size:
+        type: str
+        description:
+        - 'excess burst size of a policer for trtcm with default value: 64 - excess
+          burst size of a policer - unit: bytes - range: [0...134217728]'
+        default: '64'
+      coupling_flag:
+        type: str
+        description:
+        - 'the coupling flag of a policer for trtcm with default value: "disable"'
+        - 'Possible values: C(enable) - enable; C(disable) - disable'
+        default: disable
+        choices:
+        - enable
+        - disable
+      color_mode:
+        type: str
+        description:
+        - 'the color mode of a policer for trtcm with default value: "color-blind"'
+        - 'Possible values: C(color-blind) - color blind mode; C(color-aware) - color
+          aware mode'
+        default: color-blind
+        choices:
+        - color-blind
+        - color-aware
+      green_action:
+        type: str
+        description:
+        - 'action for green packet of a policer for trtcm, mar ker profile for green
+          packet with default value: "pass"'
+        - 'Possible values: C(pass) - pass; C(remark) - remark; C(setouterdei) - setOuterDEI
+          Data driven field type Possible values are depending on the actual configuration
+          and software. The currently allowed values can be shown with online-help.'
+        default: pass
+        choices:
+        - pass
+        - remark
+        - setouterdei
+      yellow_action:
+        type: str
+        description:
+        - 'action for yellow packet of a policer for trtcm, marker profile for yellow
+          packet with default value: "pass"'
+        - 'Possible values: C(pass) - pass; C(discard) - discard; C(remark) - remark;
+          C(setouterdei) - setOuterDEI Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: pass
+        choices:
+        - pass
+        - discard
+        - remark
+        - setouterdei
+      red_action:
+        type: str
+        description:
+        - 'action for red packet of a policer for trtcm, marker profile for red packet
+          with default value: "discard"'
+        - 'Possible values: C(pass) - pass; C(discard) - discard; C(remark) - remark;
+          C(setouterdei) - setOuterDEI Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: discard
+        choices:
+        - pass
+        - discard
+        - remark
+        - setouterdei
+      policed_size_ctrl:
+        type: str
+        description:
+        - 'control for policed frame size with default value: "auto-controlled"'
+        - 'Possible values: C(auto-controlled) - backward compatibility for all LTs;
+          C(ingress-mode) - policer working with ingress packet size; C(egress-mode)
+          - policer working with egress packet size; C(rmv4b-ingress) - policer working
+          on packet size with 4 bytes removed from ingress'
+        choices:
+        - auto-controlled
+        - ingress-mode
+        - egress-mode
+        - rmv4b-ingress
+      peak_info_rate:
+        type: str
+        description:
+        - 'peak information rate of a policer for trtcm with default value: 0 - peak
+          information rate, for RFC2698 - unit: kbps - range: [0...2147483647]'
+        default: '0'
+      peak_burst_size:
+        type: str
+        description:
+        - 'peak burst size of a policer for trtcm with default value: 0 - peak burst
+          size of a policer, for RFC2698 - unit: bytes - range: [0...134217728]'
+        default: '0'
+      cos_threshold:
+        type: str
+        description:
+        - 'cos threshold profile name applicable on the profile with default value:
+          "none"'
+        - 'Possible values: C(none) - no profile name to associate; C(name) - enter
+          profile name to be associated Data driven field type Possible values are
+          depending on the actual configuration and software. The currently allowed
+          values can be shown with online-help.'
+        default: none
+        choices:
+        - none
+        - name
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure qos profiles policer)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

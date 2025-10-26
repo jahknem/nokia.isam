@@ -1,0 +1,66 @@
+tree configure equipment sfpe1t1
+sfpe1t1 
+|  
++--clock 
+|  |  
+|  *--clocksource 
+|     
++--tdmintf 
+|  |  
+|  *--window-number 
+|  |  
+|  *--window-length 
+|     
++--pwtdm 
+|  |  
+|  +--channel 
+|  |  
+|  +--packet-length 
+|  |  
+|  +--jitter-buff-size 
+|  |  
+|  +--vlanid 
+|  |  
+|  +--priority 
+|  |  
+|  +--conseq-number 
+|  |  
+|  +--ecid-rx 
+|  |  
+|  +--ecid-tx 
+|  |  
+|  +--source-mac 
+|  |  
+|  +--dest-mac 
+|     
++--framer 
+|  |  
+|  *--frame-mode 
+|  |  
+|  *--iwf-on-liu 
+|  |  
+|  *--liu-on-liu 
+|  |  
+|  *--pm-to-iwf 
+|  |  
+|  *--ais-to-iwf 
+|  |  
+|  *--rai-to-iwf 
+|  |  
+|  *--rei-to-iwf 
+|  |  
+|  *--pm-to-liu 
+|  |  
+|  *--ais-to-liu 
+|  |  
+|  *--rai-to-liu 
+|  |  
+|  *--rei-to-liu 
+|     
++--liu 
+   |  
+   *--distance 
+   |  
+   *--cable-impedance 
+      
+DS-LIN-TEST-01:automationuser>#

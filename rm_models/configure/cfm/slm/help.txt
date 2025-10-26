@@ -1,0 +1,42 @@
+help configure cfm slm
+SYNTHETIC LOSS MEASUREMENT CONFIGURATION COMMANDS
+=================================================
+
+Command Description
+-------------------
+
+This command can be used to configure the parameters for synthetic loss 
+measurement
+
+
+User Level
+----------
+
+The command can be accessed by operators with alarm , oam , vlan privileges, 
+and executed by operators with alarm , oam , vlan privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure cfm slm [ no inactivity-time | inactivity-time 
+<Cfm::slmInactivityTime> ]
+
+Command Parameters
+------------------
+
+Table "Synthetic Loss Measurement configuration Commands" Command Parameters
+
+Parameter                  Description
+
+[no] inactivity-time       value of slm inactivity timer
+                           optional parameter with default value: 100L
+
+                           Parameter type: <Cfm::slmInactivityTime>
+                           Format:
+                           - inactivity time
+                           - unit: seconds
+                           - range: [10...100]
+
+
+DS-LIN-TEST-01:automationuser>#

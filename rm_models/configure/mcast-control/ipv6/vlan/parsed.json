@@ -1,0 +1,31 @@
+{
+  "title": "MLD VLAN SYSTEM CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the MLD parameters on a per Vlan \nbasis.",
+  "user_level": "The command can be accessed by operators with igmp privileges, and executed by \noperators with igmp privileges.",
+  "syntax": "> configure mcast-control ipv6 ( no vlan (vlan-id) ) | ( vlan (vlan-id) netw-mld-version <Igmp::VlanMldV2ProcessStatus> [ no mldv2-max-num-rec | mldv2-max-num-rec <Igmp::MldV2MaxNumRecordReport> ] )",
+  "resource_parameters": [
+    {
+      "name": "(vlan-id)",
+      "description": "index of the system vlan"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "netw-mld-version",
+      "description": "MLD version of the protocol mandatory parameter",
+      "type": "<Igmp::VlanMldV2ProcessStatus>",
+      "format": "( 1                            | 2 )",
+      "values": [
+        "1                     : MLD version1",
+        "2                     : MLD version2"
+      ]
+    },
+    {
+      "name": "[no] mldv2-max-num-rec",
+      "description": "max num of group records in one MLDv2 report (2 exp N) optional parameter with default value: 3 - max num of group records in one MLDv2 report (2 exp N) - range: [0...10]",
+      "type": "<Igmp::MldV2MaxNumRecordReport>",
+      "default": "3"
+    }
+  ],
+  "raw": "help configure mcast-control ipv6 vlan\r\nMLD VLAN SYSTEM CONFIGURATION COMMAND\r\n=====================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the MLD parameters on a per Vlan \r\nbasis.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with igmp privileges, and executed by \r\noperators with igmp privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure mcast-control ipv6 ( no vlan (vlan-id) ) | ( vlan (vlan-id) \r\nnetw-mld-version <Igmp::VlanMldV2ProcessStatus> [ no mldv2-max-num-rec | \r\nmldv2-max-num-rec <Igmp::MldV2MaxNumRecordReport> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"MLD Vlan System Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(vlan-id)                  index of the system vlan\r\n\r\nTable \"MLD Vlan System Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nnetw-mld-version           MLD version of the protocol\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Igmp::VlanMldV2ProcessStatus>\r\n                           Format:\r\n                           ( 1\r\n                           | 2 )\r\n                           Possible values:\r\n                           - 1                     : MLD version1\r\n                           - 2                     : MLD version2\r\n\r\n[no] mldv2-max-num-rec     max num of group records in one MLDv2 report (2 exp \r\nN)\r\n                           optional parameter with default value: 3\r\n\r\n                           Parameter type: <Igmp::MldV2MaxNumRecordReport>\r\n                           Format:\r\n                           - max num of group records in one MLDv2 report (2 \r\nexp N)\r\n                           - range: [0...10]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

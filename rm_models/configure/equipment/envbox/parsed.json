@@ -1,0 +1,15 @@
+{
+  "title": "ENVIRONMENT MONITORING CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure environment monitoring status to \nenable/disable the data relay from an external monitor box connected on the \nNTIO board of ISAM to the monitor server. The operator can configure the \nfollowing parameters:\n  - enable-supervise: enable relay of environment monitoring from an external \nmonitor box.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure equipment envbox [ [ no ] enable-supervise ]",
+  "resource_parameters": [],
+  "command_parameters": [
+    {
+      "name": "[no] enable-supervise",
+      "description": "enable environment monitoring relay optional parameter",
+      "type": "boolean"
+    }
+  ],
+  "raw": "help configure equipment envbox\r\nENVIRONMENT MONITORING CONFIGURATION COMMAND\r\n============================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure environment monitoring status to \r\nenable/disable the data relay from an external monitor box connected on the \r\nNTIO board of ISAM to the monitor server. The operator can configure the \r\nfollowing parameters:\r\n  - enable-supervise: enable relay of environment monitoring from an external \r\nmonitor box.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure equipment envbox [ [ no ] enable-supervise ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Environment Monitoring Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] enable-supervise      enable environment monitoring relay\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

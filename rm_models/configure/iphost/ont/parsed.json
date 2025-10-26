@@ -1,0 +1,128 @@
+{
+  "title": "VOICE ONT IP-HOST CONFIGURATION COMMAND",
+  "description": "This command creates an IP host in the ONT.It must be created prior to creating \nservices on an ONT that will use this IP stack.\n\nPrior to entering this command the following must have been already created: \nS-VLAN to associate for this stack The ONT for this stack\n\nIf DHCP is enabled, the addressed obtain will override manual provisioning of \nip-address, net-mask, default-router NOTE: Allowable range for IP address is \n0.0.0.0 to 255.255.255.255 OLT prohibits the entry of the following range of \nwell-known IP addresses: 224.0.0.0 to 239.255.255.255 (multicast) 127.0.0.0 to \n127.255.255.255 (loopback) 256.256.256.256 (broadcast)",
+  "user_level": "The command can be accessed by operators with sip,megaco,vlan privileges, and \nexecuted by operators with sip,megaco,vlan privileges.",
+  "syntax": "> configure iphost ( no ont (index) ) | ( ont (index) [ no ip-address | ip-address <Gpon::Ipaddr> ] [ no net-mask | net-mask <Gpon::Ipaddr> ] [ no default-router | default-router <Gpon::Ipaddr> ] [ no dns-addr | dns-addr <Gpon::Ipaddr> ] [ no sec-dns-addr | sec-dns-addr <Gpon::Ipaddr> ] [ no dhcp | dhcp <Gpon::IpHostDhcp> ] [ no dhcp-dscp | dhcp-dscp <Gpon::SigDscp> ] [ no host-id | host-id <Gpon::ClientID> ] [ no ping | ping <Gpon::Ping> ] [ no traceroute | traceroute <Gpon::Traceroute> ] [ vlan <Vlan::Index> ] [ no admin-state | admin-state <Gpon::ItfAdminStatus> ] )",
+  "resource_parameters": [
+    {
+      "name": "(index)",
+      "description": "a unique interface index"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] ip-address",
+      "description": "IP address of the IP Host at the ONT.  Note: IP@ and net-mask are required parameters and need to be entered at the same time. optional parameter with default value: \"0.0.0.0\" - IPv4-address",
+      "type": "<Gpon::Ipaddr>",
+      "default": "0.0.0.0"
+    },
+    {
+      "name": "[no] net-mask",
+      "description": "IP address network mask of the IP Host at the ONT. Note: IP@ and net-mask are required parameters and need to be entered at the same time. optional parameter with default value: \"0.0.0.0\" - IPv4-address",
+      "type": "<Gpon::Ipaddr>",
+      "default": "0.0.0.0"
+    },
+    {
+      "name": "[no] default-router",
+      "description": "IP address of the default router optional parameter with default value: \"0.0.0.0\" - IPv4-address",
+      "type": "<Gpon::Ipaddr>",
+      "default": "0.0.0.0"
+    },
+    {
+      "name": "[no] dns-addr",
+      "description": "address of the primary DNS server(when dhcp is disabled) optional parameter with default value: \"0.0.0.0\" - IPv4-address",
+      "type": "<Gpon::Ipaddr>",
+      "default": "0.0.0.0"
+    },
+    {
+      "name": "[no] sec-dns-addr",
+      "description": "address of the secondary DNS server(when dhcp is disabled) optional parameter with default value: \"0.0.0.0\" - IPv4-address",
+      "type": "<Gpon::Ipaddr>",
+      "default": "0.0.0.0"
+    },
+    {
+      "name": "[no] dhcp",
+      "description": "designate whether DHCP is enabled optional parameter with default value: \"disabled\"",
+      "type": "<Gpon::IpHostDhcp>",
+      "format": "( enabled                            | disabled )",
+      "values": [
+        "enabled               : DHCP is enabled",
+        "disabled              : DHCP is disabled"
+      ],
+      "default": "disabled"
+    },
+    {
+      "name": "[no] dhcp-dscp",
+      "description": "dscp value for use in outgoing dhcp packets optional parameter with default value: 24 - dscp value - range: [0...63]",
+      "type": "<Gpon::SigDscp>",
+      "default": "24"
+    },
+    {
+      "name": "[no] host-id",
+      "description": "dhcp option 61 clientid associated with the ip host optional parameter with default value: \"\" - to uniquely identify the VoIP Client. - length: x<=25",
+      "type": "<Gpon::ClientID>"
+    },
+    {
+      "name": "[no] ping",
+      "description": "determines whether host should respond to ping optional parameter with default value: \"disabled\"",
+      "type": "<Gpon::Ping>",
+      "format": "( enabled                            | disabled )",
+      "values": [
+        "enabled               : enable the ping facility",
+        "disabled              : disable the ping facility"
+      ],
+      "default": "disabled"
+    },
+    {
+      "name": "[no] traceroute",
+      "description": "determines whether host should respond to traceroute messages optional parameter with default value: \"disabled\"",
+      "type": "<Gpon::Traceroute>",
+      "format": "( enabled                            | disabled )",
+      "values": [
+        "enabled               : enable the traceroute facility",
+        "disabled              : disable the traceroute facility"
+      ],
+      "default": "disabled"
+    },
+    {
+      "name": "vlan",
+      "description": "vlan-id optional parameter",
+      "type": "<Vlan::Index>",
+      "format": "( <Vlan::UVlanIndex>                            | stacked : <Vlan::SVlanIndexStacked> : <Vlan::CVlanIndex> )",
+      "values": [
+        "stacked               : stacked vlan identity Field type <Vlan::UVlanIndex>",
+        "unstacked vlan identity",
+        "range: [1...4093,4096] Field type <Vlan::SVlanIndexStacked>",
+        "service vlan identity",
+        "range: [1...4093] Field type <Vlan::CVlanIndex>",
+        "customer vlan identity",
+        "range: [0...4093]"
+      ]
+    },
+    {
+      "name": "[no] admin-state",
+      "description": "administrative state of the interface optional parameter with default value: \"up\" Table \"Voice Ont IP-Host Configuration Command\" Display Parameters Specific Information:",
+      "type": "<Gpon::ItfAdminStatus>",
+      "format": "( up                            | down )",
+      "values": [
+        "up                    : set the admin-state to up",
+        "down                  : set the admin-state to down"
+      ],
+      "default": "up"
+    },
+    {
+      "name": "oper-state",
+      "description": "operational state of the interface This element is always shown. ( up | down | testing | unknown | dormant | no-value ) DS-LIN-TEST-01:automationuser>#",
+      "type": "<Itf::ifOperStatus>",
+      "values": [
+        "up                    : up,traffic can pass",
+        "down                  : down,no traffic is passing",
+        "testing               : testing,no traffic is passing",
+        "unknown               : unknown",
+        "dormant               : dormant,no traffic is passing",
+        "no-value              : no entry in the table"
+      ]
+    }
+  ],
+  "raw": "help configure iphost ont\r\nVOICE ONT IP-HOST CONFIGURATION COMMAND\r\n=======================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command creates an IP host in the ONT.It must be created prior to creating \r\nservices on an ONT that will use this IP stack.\r\n\r\nPrior to entering this command the following must have been already created: \r\nS-VLAN to associate for this stack The ONT for this stack\r\n\r\nIf DHCP is enabled, the addressed obtain will override manual provisioning of \r\nip-address, net-mask, default-router NOTE: Allowable range for IP address is \r\n0.0.0.0 to 255.255.255.255 OLT prohibits the entry of the following range of \r\nwell-known IP addresses: 224.0.0.0 to 239.255.255.255 (multicast) 127.0.0.0 to \r\n127.255.255.255 (loopback) 256.256.256.256 (broadcast)\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with sip,megaco,vlan privileges, and \r\nexecuted by operators with sip,megaco,vlan privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure iphost ( no ont (index) ) | ( ont (index) [ no ip-address | \r\nip-address <Gpon::Ipaddr> ] [ no net-mask | net-mask <Gpon::Ipaddr> ] [ no \r\ndefault-router | default-router <Gpon::Ipaddr> ] [ no dns-addr | dns-addr \r\n<Gpon::Ipaddr> ] [ no sec-dns-addr | sec-dns-addr <Gpon::Ipaddr> ] [ no dhcp | \r\ndhcp <Gpon::IpHostDhcp> ] [ no dhcp-dscp | dhcp-dscp <Gpon::SigDscp> ] [ no \r\nhost-id | host-id <Gpon::ClientID> ] [ no ping | ping <Gpon::Ping> ] [ no \r\ntraceroute | traceroute <Gpon::Traceroute> ] [ vlan <Vlan::Index> ] [ no \r\nadmin-state | admin-state <Gpon::ItfAdminStatus> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Voice Ont IP-Host Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(index)                    a unique interface index\r\n\r\nTable \"Voice Ont IP-Host Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] ip-address            IP address of the IP Host at the ONT.  Note: IP@ and \r\nnet-mask are required parameters and need to be entered at the same time.\r\n                           optional parameter with default value: \"0.0.0.0\"\r\n\r\n                           Parameter type: <Gpon::Ipaddr>\r\n                           Format:\r\n                           - IPv4-address\r\n\r\n[no] net-mask              IP address network mask of the IP Host at the ONT. \r\nNote: IP@ and net-mask are required parameters and need to be entered at the \r\nsame time.\r\n                           optional parameter with default value: \"0.0.0.0\"\r\n\r\n                           Parameter type: <Gpon::Ipaddr>\r\n                           Format:\r\n                           - IPv4-address\r\n\r\n[no] default-router        IP address of the default router\r\n                           optional parameter with default value: \"0.0.0.0\"\r\n\r\n                           Parameter type: <Gpon::Ipaddr>\r\n                           Format:\r\n                           - IPv4-address\r\n\r\n[no] dns-addr              address of the primary DNS server(when dhcp is \r\ndisabled)\r\n                           optional parameter with default value: \"0.0.0.0\"\r\n\r\n                           Parameter type: <Gpon::Ipaddr>\r\n                           Format:\r\n                           - IPv4-address\r\n\r\n[no] sec-dns-addr          address of the secondary DNS server(when dhcp is \r\ndisabled)\r\n                           optional parameter with default value: \"0.0.0.0\"\r\n\r\n                           Parameter type: <Gpon::Ipaddr>\r\n                           Format:\r\n                           - IPv4-address\r\n\r\n[no] dhcp                  designate whether DHCP is enabled\r\n                           optional parameter with default value: \"disabled\"\r\n\r\n                           Parameter type: <Gpon::IpHostDhcp>\r\n                           Format:\r\n                           ( enabled\r\n                           | disabled )\r\n                           Possible values:\r\n                           - enabled               : DHCP is enabled\r\n                           - disabled              : DHCP is disabled\r\n\r\n[no] dhcp-dscp             dscp value for use in outgoing dhcp packets\r\n                           optional parameter with default value: 24\r\n\r\n                           Parameter type: <Gpon::SigDscp>\r\n                           Format:\r\n                           - dscp value\r\n                           - range: [0...63]\r\n\r\n[no] host-id               dhcp option 61 clientid associated with the ip host\r\n                           optional parameter with default value: \"\"\r\n\r\n                           Parameter type: <Gpon::ClientID>\r\n                           Format:\r\n                           - to uniquely identify the VoIP Client.\r\n                           - length: x<=25 \r\n\r\n[no] ping                  determines whether host should respond to ping\r\n                           optional parameter with default value: \"disabled\"\r\n\r\n                           Parameter type: <Gpon::Ping>\r\n                           Format:\r\n                           ( enabled\r\n                           | disabled )\r\n                           Possible values:\r\n                           - enabled               : enable the ping facility\r\n                           - disabled              : disable the ping facility\r\n\r\n[no] traceroute            determines whether host should respond to traceroute \r\nmessages\r\n                           optional parameter with default value: \"disabled\"\r\n\r\n                           Parameter type: <Gpon::Traceroute>\r\n                           Format:\r\n                           ( enabled\r\n                           | disabled )\r\n                           Possible values:\r\n                           - enabled               : enable the traceroute \r\nfacility\r\n                           - disabled              : disable the traceroute \r\nfacility\r\n\r\nvlan                       vlan-id\r\n                           optional parameter\r\n\r\n                           Parameter type: <Vlan::Index>\r\n                           Format:\r\n                           ( <Vlan::UVlanIndex>\r\n                           | stacked : <Vlan::SVlanIndexStacked> : \r\n<Vlan::CVlanIndex> )\r\n                           Possible values:\r\n                           - stacked               : stacked vlan identity\r\n                           Field type <Vlan::UVlanIndex>\r\n                           - unstacked vlan identity \r\n                           - range: [1...4093,4096]\r\n                           Field type <Vlan::SVlanIndexStacked>\r\n                           - service vlan identity\r\n                           - range: [1...4093]\r\n                           Field type <Vlan::CVlanIndex>\r\n                           - customer vlan identity \r\n                           - range: [0...4093]\r\n\r\n[no] admin-state           administrative state of the interface\r\n                           optional parameter with default value: \"up\"\r\n\r\n                           Parameter type: <Gpon::ItfAdminStatus>\r\n                           Format:\r\n                           ( up\r\n                           | down )\r\n                           Possible values:\r\n                           - up                    : set the admin-state to up\r\n                           - down                  : set the admin-state to down\r\n\r\n\r\nTable \"Voice Ont IP-Host Configuration Command\" Display Parameters\r\n\r\nSpecific Information:\r\n\r\nParameter                  Description\r\n\r\n oper-state                operational state of the interface\r\n                           This element is always shown.\r\n\r\n                           parameter type: <Itf::ifOperStatus>\r\n                           ( up\r\n                           | down\r\n                           | testing\r\n                           | unknown\r\n                           | dormant\r\n                           | no-value )\r\n                           Possible values:\r\n                           - up                    : up,traffic can pass\r\n                           - down                  : down,no traffic is passing\r\n                           - testing               : testing,no traffic is \r\npassing\r\n                           - unknown               : unknown\r\n                           - dormant               : dormant,no traffic is \r\npassing\r\n                           - no-value              : no entry in the table\r\n\r\nDS-LIN-TEST-01:automationuser># \r\n\r\n25/10/25 19:16:53 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:16:51 , Username : automationuser , Type : CLI\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,123 @@
+help configure atm pvc
+ATM PVC CONFIGURATION COMMAND
+=============================
+
+Command Description
+-------------------
+
+This command allows the operator to configure an ATM PVC.
+
+The admin status allows or disallows traffic on the PVC.
+
+The encapsulation type configures the way higher-layer traffic is encapsulated 
+in the AAL5 container.
+
+The LLC Encapsulation method allows the multiplexing of multiple protocols over 
+a single ATM VC. The protocol type of each PDU is identified by a prefixed IEEE 
+802.2 LLC header.
+
+
+In the VC Multiplexing method, each ATM VC carries PDUs of exactly one protocol 
+type. When multiple protocols must be transported, there is a separate VC for 
+each protocol type.
+
+Use of the encapsulations:
+  - llc-snap and vc-mux-bridged-8023 can be used for cross-connects, ibridge, 
+PPPoE, and IPoE
+  - llc-snap-routed and vc-mux-routed can be used for IPoA
+  - llc-nlpid and vc-mux-pppoa can be used for PPPoA
+  - none can be used for ATM pseudowire
+
+It is also possible to automatically detect the used encapsulation type on the 
+link.
+  - automatic:ip is used for auto-detection between llc-snap, 
+vc-mux-bridged-8023, llc-snap-routed, and vc-mux-routed; ipoe and ipoa 
+dataframes are accepted;
+  - automatic:ppp is used for auto-detection between llc-snap, 
+vc-mux-bridged-8023, llc-nlpid, and vc-mux-pppoa; pppoa and pppoe dataframes 
+are accepted;
+  - automatic:pppoa is used for auto-detection between llc-nlpid and 
+vc-mux-pppoa, only pppoa dataframes are accepted;
+  - automatic:ipoe-ppp is used for auto-detection between llc-snap, 
+vc-mux-bridged-8023, llc-nlpid and vc-mux-pppoa; ipoe, pppoa and pppoe 
+dataframes are accepted;
+
+The only encapsulation type supported on L2 LTs is llc-snap.
+
+
+User Level
+----------
+
+The command can be accessed by operators with atm privileges, and executed by 
+operators with atm privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure atm ( no pvc (port-index) ) | ( pvc (port-index) [ [ no ] 
+admin-down ] [ no aal5-encap-type | aal5-encap-type <Atm::VccEncapType> ] )
+
+Command Parameters
+------------------
+
+Table "ATM PVC Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(port-index)               the atm static Interface with vpi and vci
+
+Table "ATM PVC Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] admin-down            disable traffic flow
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] aal5-encap-type       encapsulation method for traffic in an AAL5 container
+                           optional parameter with default value: "llc-snap"
+
+                           Parameter type: <Atm::VccEncapType>
+                           Format:
+                           ( llc-snap
+                           | llc-snap-routed
+                           | llc-nlpid
+                           | vc-mux-bridged-8023
+                           | vc-mux-routed
+                           | vc-mux-pppoa
+                           | none
+                           | automatic : ip
+                           | automatic : ppp
+                           | automatic : pppoa
+                           | automatic : ipoe-ppp )
+                           Possible values:
+                           - llc-snap              : logical link control 
+encapsulation bridged protocol
+                           - llc-snap-routed       : logical link control 
+encapsulation routed protocol
+                           - llc-nlpid             : logical link control 
+encapsulation pppoa protocol
+                           - vc-mux-bridged-8023   : virtual channel multiplex 
+bridged protocol
+                           - vc-mux-routed         : virtual channel multiplex 
+routed protocol
+                           - vc-mux-pppoa          : virtual channel multiplex 
+pppoa protocol
+                           - automatic             : automatic detection of 
+encapsulation type
+                           - none                  : no encapsulation type
+                           Possible values:
+                           - ip                    : autodetection of the used 
+ip encapsulation
+                           - ppp                   : autodetection of the used 
+ppp encapsulation
+                           - pppoa                 : autodetection of the used 
+pppoa encapsulation
+                           - ipoe-ppp              : autodetection of the used 
+ip or ppp encapsulation
+
+
+DS-LIN-TEST-01:automationuser>#

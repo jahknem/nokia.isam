@@ -1,0 +1,32 @@
+{
+  "title": "QOS DSL CONTROL PKT POLICER CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure a upstream QoS Dsl Control Packet \nPolicer.This control packet policer serves to prevent DoS attacks from \nsubscriber premises against the control plane of the ISAM. The policing \nparameters that can be configured are the sustainable rate in packets/sec and \nthe maximum burst size in packets.\n\nControl packets arriving at a higher rate then the sustainable rate are dropped \nby the policer.\n\nControl packets arriving in a longer burst then the maximum burst size are \ndropped by the policer.\n\nControl packets are packets directed to the LSM itself or inserted by the LSM. \nThe control packet protocol type depends on the applied forwarding model, and \ncan be 802.1x, ARP, RIP, DHCP, IGMP, PPPoEDiscovery , PPP LCP, PPP control, PPP \nLCP termination acknowledgement. Policing is not applied on control packets \ninserted by the LSM.\n\nThis command allows the operator to control the DSL line level control packet \npolicer (enable or disable) for control protocol packets that remains in the \ndata plane. And this feature is supported only for ARP and RIP protocol.",
+  "user_level": "The command can be accessed by operators with qos privileges, and executed by \noperators with qos privileges.",
+  "syntax": "> configure qos dsl-ctrl-pkt-policer [ no sustained-rate | sustained-rate <Qos::SustainedRate> ] [ no burst-size | burst-size <Qos::DslCtrlBurstSize> ] [ no protocol-ctrl | protocol-ctrl <Qos::ControlProtocolPolicerCtrl> ]",
+  "resource_parameters": [],
+  "command_parameters": [
+    {
+      "name": "[no] sustained-rate",
+      "description": "max sustainable rate in packets/sec optional parameter with default value: 15 - the police rate of inc user pkts in pps - range: [1...64]",
+      "type": "<Qos::SustainedRate>",
+      "default": "15"
+    },
+    {
+      "name": "[no] burst-size",
+      "description": "max burst size, in packets optional parameter with default value: 10 - the burst size - range: [1...128]",
+      "type": "<Qos::DslCtrlBurstSize>",
+      "default": "10"
+    },
+    {
+      "name": "[no] protocol-ctrl",
+      "description": "DSL control packet policer applicability for control protocol packets that remain in data plane. Currently under this only ARP and RIP control packets are controlled. optional parameter with default value: \"police-arprip\"",
+      "type": "<Qos::ControlProtocolPolicerCtrl>",
+      "format": "( police-arprip                            | nopolice-arprip )",
+      "values": [
+        "police-arprip         : police arp rip packets by the dsl-ctrl-policer if handled as data packet",
+        "nopolice-arprip       : no police arp rip packets by the dsl-ctrl-policer if handled as data packet"
+      ]
+    }
+  ],
+  "raw": "help configure qos dsl-ctrl-pkt-policer\r\nQOS DSL CONTROL PKT POLICER CONFIGURATION COMMAND\r\n=================================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure a upstream QoS Dsl Control Packet \r\nPolicer.This control packet policer serves to prevent DoS attacks from \r\nsubscriber premises against the control plane of the ISAM. The policing \r\nparameters that can be configured are the sustainable rate in packets/sec and \r\nthe maximum burst size in packets.\r\n\r\nControl packets arriving at a higher rate then the sustainable rate are dropped \r\nby the policer.\r\n\r\nControl packets arriving in a longer burst then the maximum burst size are \r\ndropped by the policer.\r\n\r\nControl packets are packets directed to the LSM itself or inserted by the LSM. \r\nThe control packet protocol type depends on the applied forwarding model, and \r\ncan be 802.1x, ARP, RIP, DHCP, IGMP, PPPoEDiscovery , PPP LCP, PPP control, PPP \r\nLCP termination acknowledgement. Policing is not applied on control packets \r\ninserted by the LSM.\r\n\r\nThis command allows the operator to control the DSL line level control packet \r\npolicer (enable or disable) for control protocol packets that remains in the \r\ndata plane. And this feature is supported only for ARP and RIP protocol.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with qos privileges, and executed by \r\noperators with qos privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure qos dsl-ctrl-pkt-policer [ no sustained-rate | sustained-rate \r\n<Qos::SustainedRate> ] [ no burst-size | burst-size <Qos::DslCtrlBurstSize> ] [ \r\nno protocol-ctrl | protocol-ctrl <Qos::ControlProtocolPolicerCtrl> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"QoS Dsl Control Pkt Policer Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] sustained-rate        max sustainable rate in packets/sec\r\n                           optional parameter with default value: 15\r\n\r\n                           Parameter type: <Qos::SustainedRate>\r\n                           Format:\r\n                           - the police rate of inc user pkts in pps\r\n                           - range: [1...64]\r\n\r\n[no] burst-size            max burst size, in packets\r\n                           optional parameter with default value: 10\r\n\r\n                           Parameter type: <Qos::DslCtrlBurstSize>\r\n                           Format:\r\n                           - the burst size\r\n                           - range: [1...128]\r\n\r\n[no] protocol-ctrl         DSL control packet policer applicability for control \r\nprotocol packets that remain in data plane. Currently under this only ARP and \r\nRIP control packets are controlled.\r\n                           optional parameter with default value: \r\n\"police-arprip\"\r\n\r\n                           Parameter type: <Qos::ControlProtocolPolicerCtrl>\r\n                           Format:\r\n                           ( police-arprip\r\n                           | nopolice-arprip )\r\n                           Possible values:\r\n                           - police-arprip         : police arp rip packets by \r\nthe dsl-ctrl-policer if handled as data packet\r\n                           - nopolice-arprip       : no police arp rip packets \r\nby the dsl-ctrl-policer if handled as data packet\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,54 @@
+help configure equipment ont gis
+ONT GIS CONFIGURATION COMMAND
+=============================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the ONT GIS parameters.
+
+olt-location - when default value disable is set, OLT won't care about ONT GIS 
+info, when enable is set, OLT would provison OLT's location to ONT
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment ont gis (ont-idx) [ no olt-location | olt-location 
+<Gpon::OltLocation> ]
+
+Command Parameters
+------------------
+
+Table "ONT GIS Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(ont-idx)                  ONT index
+
+Table "ONT GIS Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] olt-location          GIS settings for this ONT
+                           optional parameter with default value: "disable"
+
+                           Parameter type: <Gpon::OltLocation>
+                           Format:
+                           ( disable
+                           | enable )
+                           Possible values:
+                           - disable               : the OLT GIS info will not 
+be used
+                           - enable                : the OLT GIS info will be 
+used
+
+
+DS-LIN-TEST-01:automationuser>#

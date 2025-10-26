@@ -41,7 +41,7 @@ class Interfaces(ResourceModule):
 
     def __init__(self, module):
         super(Interfaces, self).__init__(
-            empty_fact_val={},
+            empty_fact_val=[],
             facts_module=Facts(module),
             module=module,
             resource="interfaces",

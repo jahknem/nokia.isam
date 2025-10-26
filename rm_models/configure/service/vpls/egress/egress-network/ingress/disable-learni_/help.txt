@@ -1,0 +1,5 @@
+help configure service vpls egress egress-networ
+k ingress disable-learni*
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

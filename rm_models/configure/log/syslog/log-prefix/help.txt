@@ -1,0 +1,4 @@
+help configure log syslog log-prefix
+                                                   ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

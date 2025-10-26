@@ -1,0 +1,82 @@
+{
+  "title": "ONT HPNA CONFIGURATION COMMAND",
+  "description": "This command allows the operator to modify ONT HPNA port provisioning data.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure hpna ont (uni-idx) [ cust-info <Gpon::CustomerInfo> ] [ no pwr-override | pwr-override <Gpon::OntPwrShedState> ] [ no master-mode | master-mode <Gpon::HpnaMasterSelect> ] [ no admin-state | admin-state <Gpon::ItfAdminStatus> ]",
+  "resource_parameters": [
+    {
+      "name": "(uni-idx)",
+      "description": "identification of the hpna interface index"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "cust-info",
+      "description": "information for HPNA port optional parameter - char string - length: x<=80",
+      "type": "<Gpon::CustomerInfo>"
+    },
+    {
+      "name": "[no] pwr-override",
+      "description": "power settings to be included for data class power shedding optional parameter with default value: \"disabled\"",
+      "type": "<Gpon::OntPwrShedState>",
+      "format": "( enabled                            | disabled )",
+      "values": [
+        "enabled               : enabled",
+        "disabled              : disabled"
+      ],
+      "default": "disabled"
+    },
+    {
+      "name": "[no] master-mode",
+      "description": "master mode of HPNA mac optional parameter with default value: \"default\"",
+      "type": "<Gpon::HpnaMasterSelect>",
+      "format": "( default                            | auto                            | forced )",
+      "values": [
+        "default               : default master mode",
+        "auto                  : auto master mode",
+        "forced                : forced master mode"
+      ],
+      "default": "default"
+    },
+    {
+      "name": "[no] admin-state",
+      "description": "administrative status of the interface optional parameter with default value: \"down\" Table \"ONT HPNA Configuration Command\" Display Parameters Specific Information:",
+      "type": "<Gpon::ItfAdminStatus>",
+      "format": "( up                            | down )",
+      "values": [
+        "up                    : set the admin-state to up",
+        "down                  : set the admin-state to down"
+      ],
+      "default": "down"
+    },
+    {
+      "name": "base-mac-address",
+      "description": "base mac address This element is always shown. - a mac-address (example : 01:02:03:04:05:06) (L2 only) - length: 6",
+      "type": "<Ces::DestMacAddress>"
+    },
+    {
+      "name": "port-configuration",
+      "description": "configuration status of hpna uni This element is always shown. ( unknown | coax_12_28 | phone_12_28 )",
+      "type": "<Gpon::HpnaConfigStatus>",
+      "values": [
+        "unknown               : cant reach the ont or the ont didnt return a response to the query",
+        "coax_12_28            : not supported",
+        "phone_12_28           : not supported"
+      ]
+    },
+    {
+      "name": "oper-state",
+      "description": "the operational state of the interface This element is always shown. ( up | down | testing | unknown | dormant | no-value )",
+      "type": "<Itf::ifOperStatus>",
+      "values": [
+        "up                    : up,traffic can pass",
+        "down                  : down,no traffic is passing",
+        "testing               : testing,no traffic is passing",
+        "unknown               : unknown",
+        "dormant               : dormant,no traffic is passing",
+        "no-value              : no entry in the table"
+      ]
+    }
+  ],
+  "raw": "help configure hpna ont\r\nONT HPNA CONFIGURATION COMMAND\r\n==============================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to modify ONT HPNA port provisioning data.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure hpna ont (uni-idx) [ cust-info <Gpon::CustomerInfo> ] [ no \r\npwr-override | pwr-override <Gpon::OntPwrShedState> ] [ no master-mode | \r\nmaster-mode <Gpon::HpnaMasterSelect> ] [ no admin-state | admin-state \r\n<Gpon::ItfAdminStatus> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"ONT HPNA Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(uni-idx)                  identification of the hpna interface index\r\n\r\nTable \"ONT HPNA Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\ncust-info                  information for HPNA port\r\n                           optional parameter\r\n\r\n                           Parameter type: <Gpon::CustomerInfo>\r\n                           Format:\r\n                           - char string\r\n                           - length: x<=80 \r\n\r\n[no] pwr-override          power settings to be included for data class power \r\nshedding\r\n                           optional parameter with default value: \"disabled\"\r\n\r\n                           Parameter type: <Gpon::OntPwrShedState>\r\n                           Format:\r\n                           ( enabled\r\n                           | disabled )\r\n                           Possible values:\r\n                           - enabled               : enabled\r\n                           - disabled              : disabled\r\n\r\n[no] master-mode           master mode of HPNA mac\r\n                           optional parameter with default value: \"default\"\r\n\r\n                           Parameter type: <Gpon::HpnaMasterSelect>\r\n                           Format:\r\n                           ( default\r\n                           | auto\r\n                           | forced )\r\n                           Possible values:\r\n                           - default               : default master mode\r\n                           - auto                  : auto master mode\r\n                           - forced                : forced master mode\r\n\r\n[no] admin-state           administrative status of the interface\r\n                           optional parameter with default value: \"down\"\r\n\r\n                           Parameter type: <Gpon::ItfAdminStatus>\r\n                           Format:\r\n                           ( up\r\n                           | down )\r\n                           Possible values:\r\n                           - up                    : set the admin-state to up\r\n                           - down                  : set the admin-state to down\r\n\r\n\r\nTable \"ONT HPNA Configuration Command\" Display Parameters\r\n\r\nSpecific Information:\r\n\r\nParameter                  Description\r\n\r\n base-mac-address          base mac address\r\n                           This element is always shown.\r\n\r\n                           parameter type: <Ces::DestMacAddress>\r\n                           - a mac-address (example : 01:02:03:04:05:06) (L2 \r\nonly)\r\n                           - length: 6 \r\n\r\n port-configuration        configuration status of hpna uni\r\n                           This element is always shown.\r\n\r\n                           parameter type: <Gpon::HpnaConfigStatus>\r\n                           ( unknown\r\n                           | coax_12_28\r\n                           | phone_12_28 )\r\n                           Possible values:\r\n                           - unknown               : cant reach the ont or the \r\nont didnt return a response to the query\r\n                           - coax_12_28            : not supported\r\n                           - phone_12_28           : not supported\r\n\r\n oper-state                the operational state of the interface\r\n                           This element is always shown.\r\n\r\n                           parameter type: <Itf::ifOperStatus>\r\n                           ( up\r\n                           | down\r\n                           | testing\r\n                           | unknown\r\n                           | dormant\r\n                           | no-value )\r\n                           Possible values:\r\n                           - up                    : up,traffic can pass\r\n                           - down                  : down,no traffic is passing\r\n                           - testing               : testing,no traffic is \r\npassing\r\n                           - unknown               : unknown\r\n                           - dormant               : dormant,no traffic is \r\npassing\r\n                           - no-value              : no entry in the table\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

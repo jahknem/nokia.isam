@@ -1,0 +1,38 @@
+{
+  "title": "L2 UNI ONT PERFORMANCE MONITOR CONFIGURATION COMMAND",
+  "description": "This command sets the PM Mode of ONTL2UNI.",
+  "user_level": "The command can be accessed by operators with equipment privileges, and \nexecuted by operators with equipment privileges.",
+  "syntax": "> configure l2uni ont performance-monitor (if-index) [ no pm-collect | pm-collect <Gpon::OntPmTcaCollect> ] [ no pm-collect-64bit | pm-collect-64bit <Gpon::Ont64bitPmCollect> ]",
+  "resource_parameters": [
+    {
+      "name": "(if-index)",
+      "description": "interface index of the port"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] pm-collect",
+      "description": "indicates whether Ethernet Traffic Performance Monitors should be collected for this Ethernet Port. optional parameter with default value: \"none\"",
+      "type": "<Gpon::OntPmTcaCollect>",
+      "format": "( none                            | pm-enable                            | tca-enable )",
+      "values": [
+        "none                  : no pm",
+        "pm-enable             : enable pm",
+        "tca-enable            : enable tca"
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] pm-collect-64bit",
+      "description": "indicates whether Ethernet Traffic Performance Monitors should be collected for this Ethernet Port. optional parameter with default value: \"none\"",
+      "type": "<Gpon::Ont64bitPmCollect>",
+      "format": "( none                            | pm-enable )",
+      "values": [
+        "none                  : no pm",
+        "pm-enable             : enable pm"
+      ],
+      "default": "none"
+    }
+  ],
+  "raw": "help configure l2uni ont performance-monitor\r\nL2 UNI ONT PERFORMANCE MONITOR CONFIGURATION COMMAND\r\n====================================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command sets the PM Mode of ONTL2UNI.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure l2uni ont performance-monitor (if-index) [ no pm-collect | \r\npm-collect <Gpon::OntPmTcaCollect> ] [ no pm-collect-64bit | pm-collect-64bit \r\n<Gpon::Ont64bitPmCollect> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"L2 UNI ONT Performance Monitor Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(if-index)                 interface index of the port\r\n\r\nTable \"L2 UNI ONT Performance Monitor Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] pm-collect            indicates whether Ethernet Traffic Performance \r\nMonitors should be collected for this Ethernet Port.\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Gpon::OntPmTcaCollect>\r\n                           Format:\r\n                           ( none\r\n                           | pm-enable\r\n                           | tca-enable )\r\n                           Possible values:\r\n                           - none                  : no pm\r\n                           - pm-enable             : enable pm\r\n                           - tca-enable            : enable tca\r\n\r\n[no] pm-collect-64bit      indicates whether Ethernet Traffic Performance \r\nMonitors should be collected for this Ethernet Port.\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Gpon::Ont64bitPmCollect>\r\n                           Format:\r\n                           ( none\r\n                           | pm-enable )\r\n                           Possible values:\r\n                           - none                  : no pm\r\n                           - pm-enable             : enable pm\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

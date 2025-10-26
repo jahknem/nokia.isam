@@ -1,0 +1,5 @@
+help configure service vpls sap stp spoke-sdp in
+terface
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

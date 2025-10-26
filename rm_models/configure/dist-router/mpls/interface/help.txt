@@ -1,0 +1,35 @@
+help configure dist-router mpls interface
+INBOUND MPLS LSP CONFIGURATION COMMAND
+======================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure an inbound MPLS LSP, include the 
+MPLS label of an incoming MPLS tunnel.
+
+
+User Level
+----------
+
+The command can be accessed by operators with drouter privileges, and executed 
+by operators with drouter privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure dist-router mpls ( no interface (index) label-map 
+<Drouter::InSegLabel> ) | ( interface (index) label-map <Drouter::InSegLabel> )
+
+Command Parameters
+------------------
+
+Table "Inbound MPLS LSP Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(index)                    MPLS enabled ip interface index
+label-map                  Specify incoming MPLS label
+
+DS-LIN-TEST-01:automationuser>#

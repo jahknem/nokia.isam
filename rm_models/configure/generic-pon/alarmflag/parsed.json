@@ -1,0 +1,9 @@
+{
+  "title": "",
+  "description": "",
+  "user_level": "",
+  "syntax": "",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure generic-pon alarmflag\r\nSYSTEM PONLOS ALARM RE-DEFINE SWITCH\r\n====================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command configures PONLOS (system-wide) alarm redefine switch for PONs and \r\nchannel-pairs.\r\n\r\nif disable, \"PONLOS\" means original Loss of Signal; if disable, \"PONLOS\" will \r\nbe redefined for trunk fiber broken\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with equipment privileges, and \r\nexecuted by operators with equipment privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure generic-pon alarmflag [ no ponlos-alarm-ctrl | ponlos-alarm-ctrl \r\n<Gpon::Alarmflag> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"System PONLOS Alarm Re-define Switch\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] ponlos-alarm-ctrl     if disable, PONLOS means original Loss of Signal; if \r\nenable, PONLOS will be redefined for trunk fiber broken\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Gpon::Alarmflag>\r\n                           Format:\r\n                           ( enable\r\n                           | disable )\r\n                           Possible values:\r\n                           - enable                : enable means trunk Fibler \r\ncutfoff alarm\r\n                           - disable               : disable means PONLOS alarm\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

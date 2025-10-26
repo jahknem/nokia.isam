@@ -1,0 +1,36 @@
+{
+  "title": "IGMP SYSTEM CDR TYPE CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure the IGMP system Call Detail Record",
+  "user_level": "The command can be accessed by operators with igmp privileges, and executed by \noperators with igmp privileges.",
+  "syntax": "> configure mcast-control system cdr-type [ [ no ] periodic ] [ no period | peri od <Igmp::IntermGenCDRPeriod> ] [ [ no ] attempt-max-pview ] [ [ no ] attempt-blackout ] [ [ no ] attempt-no-perm ]",
+  "resource_parameters": [],
+  "command_parameters": [
+    {
+      "name": "[no] periodic",
+      "description": "interim CDR records generated for fullview/preview optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] period",
+      "description": "intermediate CDR generation period optional parameter with default value: 15 - intermediate CDR generation period, in multiples of 5 - unit: min - range: [15...60]",
+      "type": "<Igmp::IntermGenCDRPeriod>",
+      "default": "15"
+    },
+    {
+      "name": "[no] attempt-max-pview",
+      "description": "CDR generated when max nbr preview exceeded is true optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] attempt-blackout",
+      "description": "CDR generated allowed when blackout period is active optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] attempt-no-perm",
+      "description": "CDR generated to join a mcast with no access rights optional parameter",
+      "type": "boolean"
+    }
+  ],
+  "raw": "help configure mcast-control system cdr-type\r\nIGMP SYSTEM CDR TYPE CONFIGURATION COMMAND\r\n==========================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure the IGMP system Call Detail Record\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with igmp privileges, and executed by \r\noperators with igmp privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure mcast-control system cdr-type [ [ no ] periodic ] [ no period | peri\r\nod <Igmp::IntermGenCDRPeriod> ] [ [ no ] attempt-max-pview ] [ [ no ] \r\nattempt-blackout ] [ [ no ] attempt-no-perm ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"IGMP System CDR Type Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] periodic              interim CDR records generated for fullview/preview\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] period                intermediate CDR generation period\r\n                           optional parameter with default value: 15\r\n\r\n                           Parameter type: <Igmp::IntermGenCDRPeriod>\r\n                           Format:\r\n                           - intermediate CDR generation period, in multiples \r\nof 5\r\n                           - unit: min\r\n                           - range: [15...60]\r\n\r\n[no] attempt-max-pview     CDR generated when max nbr preview exceeded is true\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] attempt-blackout      CDR generated allowed when blackout period is active\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] attempt-no-perm       CDR generated to join a mcast with no access rights\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

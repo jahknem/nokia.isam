@@ -1,0 +1,9 @@
+{
+  "title": "",
+  "description": "",
+  "user_level": "",
+  "syntax": "",
+  "resource_parameters": [],
+  "command_parameters": [],
+  "raw": "help configure cpe-management\r\nCPE REMOTE MANAGEMENT SYSTEM CONFIGURATION COMMANDS\r\n===================================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows to configure CPE Remote Management System;\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with security privileges, and executed \r\nby operators with security privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure cpe-management [ no proxy-mode | proxy-mode <CpeProxy::SystemMode> \r\n] [ vlan-id <CpeProxy::VlanIndex> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"CPE Remote Management System Configuration Commands\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] proxy-mode            set the CPE Proxy mode\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <CpeProxy::SystemMode>\r\n                           Format:\r\n                           ( snmp\r\n                           | none )\r\n                           Possible values:\r\n                           - snmp                  : this mode is relaying SNMP \r\nmessages\r\n                           - none                  : disables the cpeproxy\r\n\r\nvlan-id                    configure the svlan number.\r\n                           obsolete parameter that will be ignored\r\n\r\n                           Parameter type: <CpeProxy::VlanIndex>\r\n                           Format:\r\n                           - cpe ipproxy vlan number\r\n                           - range: [0...4093]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

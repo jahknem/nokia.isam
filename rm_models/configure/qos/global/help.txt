@@ -1,0 +1,131 @@
+help configure qos global
+QOS BOARD-LEVEL QUEUE AND PERFORMANCE CONFIGURATION COMMAND
+===========================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure various parameters related to 
+board-level traffic load and packet loss.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos global (index) [ no buffer-occ-thresh | buffer-occ-thresh 
+<Qos::PercentThresh> ] [ [ no ] queue-stats ] [ [ no ] dsload-tca ] [ no 
+dsload-thresh | dsload-thresh <Qos::PercentThresh> ] [ [ no ] buffer-tca ] [ no 
+up-buf-thresh | up-buf-thresh <Qos::UpAggrBufOvflwTcaTh> ] [ no up-obc-thresh | 
+up-obc-thresh <Qos::UpObcAggrBufOvflwTcaTh> ] [ no dn-obc-thresh | 
+dn-obc-thresh <Qos::DnObcAggrBufOvflwTcaTh> ] [ no dn-buf-thresh | 
+dn-buf-thresh <Qos::DnUcAggrBufOvflwTcaTh> ] [ no part-buf-thresh | 
+part-buf-thresh <Qos::PartBufThresh> ]
+
+Command Parameters
+------------------
+
+Table "QoS Board-Level Queue and Performance Configuration Command" Resource 
+Parameters
+
+Resource Identifier        Description
+
+(index)                    the physical number of the slot
+
+Table "QoS Board-Level Queue and Performance Configuration Command" Command 
+Parameters
+
+Parameter                  Description
+
+[no] buffer-occ-thresh     the ratio of occupied data buffer entries to the LT 
+global data buffer size, above which the partial buffer threshold alarm will be 
+triggered.(only applicable to low priority traffic i.e. BE and CL)
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::PercentThresh>
+                           Format:
+                           - Percentage of the QoS Thresh
+                           - range: [0...100]
+
+[no] queue-stats           enable or disable generation of queue statistics
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] dsload-tca            enable or disable the threshold crossing alarm 
+associated to card-level load of downstream traffic
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] dsload-thresh         Percentage of LT fan-out load above which the alarm 
+will be triggered.
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::PercentThresh>
+                           Format:
+                           - Percentage of the QoS Thresh
+                           - range: [0...100]
+
+[no] buffer-tca            enable the threshold crossover alarm of aggregation 
+buffer overflow
+                           optional parameter
+
+                           Parameter type: boolean
+                           
+
+[no] up-buf-thresh         the threshold of upstream aggregation buffer 
+overflow TCA.
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::UpAggrBufOvflwTcaTh>
+                           Format:
+                           - Qos thresh
+                           - range: [0...2147483647]
+
+[no] up-obc-thresh         The threshold of OBC-directed upstream aggregation 
+buffer overflow TCA.
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::UpObcAggrBufOvflwTcaTh>
+                           Format:
+                           - Qos thresh
+                           - range: [0...2147483647]
+
+[no] dn-obc-thresh         The threshold of downstream OBC-directed aggregation 
+buffer overflow TCA.
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::DnObcAggrBufOvflwTcaTh>
+                           Format:
+                           - Qos thresh
+                           - range: [0...2147483647]
+
+[no] dn-buf-thresh         The threshold of downstream data aggregation buffer 
+overflow TCA.
+                           optional parameter with default value: 0
+
+                           Parameter type: <Qos::DnUcAggrBufOvflwTcaTh>
+                           Format:
+                           - Qos thresh
+                           - range: [0...2147483647]
+
+[no] part-buf-thresh       The threshold of dropped lower class packets of 
+global buffer occupancy threshold overflow TCA.
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Qos::PartBufThresh>
+                           Format:
+                           - threshold of dropped lower class packets of global 
+buffer. range: [0...18446744073709551615]
+
+
+DS-LIN-TEST-01:automationuser>#

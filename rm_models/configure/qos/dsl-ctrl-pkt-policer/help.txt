@@ -1,0 +1,85 @@
+help configure qos dsl-ctrl-pkt-policer
+QOS DSL CONTROL PKT POLICER CONFIGURATION COMMAND
+=================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a upstream QoS Dsl Control Packet 
+Policer.This control packet policer serves to prevent DoS attacks from 
+subscriber premises against the control plane of the ISAM. The policing 
+parameters that can be configured are the sustainable rate in packets/sec and 
+the maximum burst size in packets.
+
+Control packets arriving at a higher rate then the sustainable rate are dropped 
+by the policer.
+
+Control packets arriving in a longer burst then the maximum burst size are 
+dropped by the policer.
+
+Control packets are packets directed to the LSM itself or inserted by the LSM. 
+The control packet protocol type depends on the applied forwarding model, and 
+can be 802.1x, ARP, RIP, DHCP, IGMP, PPPoEDiscovery , PPP LCP, PPP control, PPP 
+LCP termination acknowledgement. Policing is not applied on control packets 
+inserted by the LSM.
+
+This command allows the operator to control the DSL line level control packet 
+policer (enable or disable) for control protocol packets that remains in the 
+data plane. And this feature is supported only for ARP and RIP protocol.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos dsl-ctrl-pkt-policer [ no sustained-rate | sustained-rate 
+<Qos::SustainedRate> ] [ no burst-size | burst-size <Qos::DslCtrlBurstSize> ] [ 
+no protocol-ctrl | protocol-ctrl <Qos::ControlProtocolPolicerCtrl> ]
+
+Command Parameters
+------------------
+
+Table "QoS Dsl Control Pkt Policer Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] sustained-rate        max sustainable rate in packets/sec
+                           optional parameter with default value: 15
+
+                           Parameter type: <Qos::SustainedRate>
+                           Format:
+                           - the police rate of inc user pkts in pps
+                           - range: [1...64]
+
+[no] burst-size            max burst size, in packets
+                           optional parameter with default value: 10
+
+                           Parameter type: <Qos::DslCtrlBurstSize>
+                           Format:
+                           - the burst size
+                           - range: [1...128]
+
+[no] protocol-ctrl         DSL control packet policer applicability for control 
+protocol packets that remain in data plane. Currently under this only ARP and 
+RIP control packets are controlled.
+                           optional parameter with default value: 
+"police-arprip"
+
+                           Parameter type: <Qos::ControlProtocolPolicerCtrl>
+                           Format:
+                           ( police-arprip
+                           | nopolice-arprip )
+                           Possible values:
+                           - police-arprip         : police arp rip packets by 
+the dsl-ctrl-policer if handled as data packet
+                           - nopolice-arprip       : no police arp rip packets 
+by the dsl-ctrl-policer if handled as data packet
+
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,27 @@
+help configure cfm y1731pm
+CFM PM-PROACTIVE TEST MANAGEMENT COMMAND
+========================================
+
+Command Description
+-------------------
+
+This command is used to configure PM-Proactive tests.
+
+
+User Level
+----------
+
+The command can be accessed by operators with alarm , oam , vlan privileges, 
+and executed by operators with alarm , oam , vlan privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure cfm y1731pm
+
+Command Parameters
+------------------
+
+none
+DS-LIN-TEST-01:automationuser>#

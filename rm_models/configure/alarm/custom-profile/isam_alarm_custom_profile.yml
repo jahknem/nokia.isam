@@ -1,0 +1,373 @@
+module: isam_alarm_custom_profile
+short_description: Resource module to configure alarm custom-profile
+description:
+- 'Configures the external alarm profile. The profile is made to be assigned to a
+  remote LT board. The profile reflects a configuration of external alarms parameters
+  that corresponds to a certain environment where the remote board is located (in
+  an outdoor cabinet, basement cabinet, ...). The use of a profile avoids the need
+  to specify the parameters for each remote board separately. The alarm profile groups
+  all five external alarms parameters. The profile contains a description/meaning
+  of each alarm, as well as an indication that tells us whether or not any alarm outputs
+  are to be triggered if the corresponding external input alarm is raised. On top
+  of these parameters, a mnemonic (short for the description), the polarity and the
+  severity are configurable. Note: The Severity parameters of custom alarm profile
+  i.e (severity1,severity2,severity3,severity4,severity5) are supported for only FD-REM
+  not other shelfs.'
+- Supports configuration of mnemonic1, description1, visible1 and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure alarm ()'
+options:
+  config:
+    description:
+    - A list of alarm custom-profile configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (name) - custom profile name
+      mnemonic1:
+        type: str
+        description:
+        - 'mnemonic identifying the customizable external alarm 1 with default value:
+          "UNDEF" - an octet string defining mnemonic of external alarm - range: [A-Z]
+          - length: x<=16'
+        - 'Maximum length: 16 characters'
+        default: UNDEF
+      description1:
+        type: str
+        description:
+        - 'description of the customizable external alarm 1 with default value: "Undefined"
+          - an octet string defining description of external alarm - length: x<=40'
+        - 'Maximum length: 40 characters'
+        default: Undefined
+      visible1:
+        type: str
+        description:
+        - 'trigger a visible alarm for external alarm 1 with default value: "disable"'
+        - 'Possible values: C(enable) - external alarm output is visible; C(disable)
+          - external alarm output is non-visible'
+        default: disable
+        choices:
+        - enable
+        - disable
+      audible1:
+        type: str
+        description:
+        - 'trigger a audible alarm for external alarm 1 with default value: "disable"'
+        - 'Possible values: C(enable) - external alarm output is audible; C(disable)
+          - external alarm output is non-audible'
+        default: disable
+        choices:
+        - enable
+        - disable
+      polarity1:
+        type: str
+        description:
+        - 'alarm polarity is normal or inverse for external alarm 1 with default value:
+          "normal"'
+        - 'Possible values: C(normal) - alarm polarity is normal; C(inverse) - alarm
+          polarity is inverse'
+        default: normal
+        choices:
+        - normal
+        - inverse
+      severity1:
+        type: str
+        description:
+        - 'severity level of external alarm 1 with default value: "major"'
+        - Alarms below this threshold will not be reported
+        - 'Possible values: C(indeterminate) - alarm severity is indeterminate; C(warning)
+          - alarm severity is warning; C(minor) - alarm severity is minor; C(major)
+          - alarm severity is major; C(critical) - alarm severity is critical'
+        default: major
+        choices:
+        - indeterminate
+        - warning
+        - minor
+        - major
+        - critical
+      mnemonic2:
+        type: str
+        description:
+        - 'mnemonic identifying the customizable external alarm 2 with default value:
+          "UNDEF" - an octet string defining mnemonic of external alarm - range: [A-Z]
+          - length: x<=16'
+        - 'Maximum length: 16 characters'
+        default: UNDEF
+      description2:
+        type: str
+        description:
+        - 'description of the customizable external alarm 2 with default value: "Undefined"
+          - an octet string defining description of external alarm - length: x<=40'
+        - 'Maximum length: 40 characters'
+        default: Undefined
+      visible2:
+        type: str
+        description:
+        - 'trigger a visible alarm for external alarm 2 with default value: "disable"'
+        - 'Possible values: C(enable) - external alarm output is visible; C(disable)
+          - external alarm output is non-visible'
+        default: disable
+        choices:
+        - enable
+        - disable
+      audible2:
+        type: str
+        description:
+        - 'trigger a audible alarm for external alarm 2 with default value: "disable"'
+        - 'Possible values: C(enable) - external alarm output is audible; C(disable)
+          - external alarm output is non-audible'
+        default: disable
+        choices:
+        - enable
+        - disable
+      polarity2:
+        type: str
+        description:
+        - 'alarm polarity is normal or inverse for external alarm 2 with default value:
+          "normal"'
+        - 'Possible values: C(normal) - alarm polarity is normal; C(inverse) - alarm
+          polarity is inverse'
+        default: normal
+        choices:
+        - normal
+        - inverse
+      severity2:
+        type: str
+        description:
+        - 'severity level of external alarm 2 with default value: "major"'
+        - Alarms below this threshold will not be reported
+        - 'Possible values: C(indeterminate) - alarm severity is indeterminate; C(warning)
+          - alarm severity is warning; C(minor) - alarm severity is minor; C(major)
+          - alarm severity is major; C(critical) - alarm severity is critical'
+        default: major
+        choices:
+        - indeterminate
+        - warning
+        - minor
+        - major
+        - critical
+      mnemonic3:
+        type: str
+        description:
+        - 'mnemonic identifying the customizable external alarm 3 with default value:
+          "UNDEF" - an octet string defining mnemonic of external alarm - range: [A-Z]
+          - length: x<=16'
+        - 'Maximum length: 16 characters'
+        default: UNDEF
+      description3:
+        type: str
+        description:
+        - 'description of the customizable external alarm 3 with default value: "Undefined"
+          - an octet string defining description of external alarm - length: x<=40'
+        - 'Maximum length: 40 characters'
+        default: Undefined
+      visible3:
+        type: str
+        description:
+        - 'trigger a visible alarm for external alarm 3 with default value: "disable"'
+        - 'Possible values: C(enable) - external alarm output is visible; C(disable)
+          - external alarm output is non-visible'
+        default: disable
+        choices:
+        - enable
+        - disable
+      audible3:
+        type: str
+        description:
+        - 'trigger a audible alarm for external alarm 3 with default value: "disable"'
+        - 'Possible values: C(enable) - external alarm output is audible; C(disable)
+          - external alarm output is non-audible'
+        default: disable
+        choices:
+        - enable
+        - disable
+      polarity3:
+        type: str
+        description:
+        - 'alarm polarity is normal or inverse for external alarm 3 with default value:
+          "normal"'
+        - 'Possible values: C(normal) - alarm polarity is normal; C(inverse) - alarm
+          polarity is inverse'
+        default: normal
+        choices:
+        - normal
+        - inverse
+      severity3:
+        type: str
+        description:
+        - 'severity level of external alarm 3 with default value: "major"'
+        - Alarms below this threshold will not be reported
+        - 'Possible values: C(indeterminate) - alarm severity is indeterminate; C(warning)
+          - alarm severity is warning; C(minor) - alarm severity is minor; C(major)
+          - alarm severity is major; C(critical) - alarm severity is critical'
+        default: major
+        choices:
+        - indeterminate
+        - warning
+        - minor
+        - major
+        - critical
+      mnemonic4:
+        type: str
+        description:
+        - 'mnemonic identifying the customizable external alarm 4 with default value:
+          "UNDEF" - an octet string defining mnemonic of external alarm - range: [A-Z]
+          - length: x<=16'
+        - 'Maximum length: 16 characters'
+        default: UNDEF
+      description4:
+        type: str
+        description:
+        - 'description of the customizable external alarm 4 with default value: "Undefined"
+          - an octet string defining description of external alarm - length: x<=40'
+        - 'Maximum length: 40 characters'
+        default: Undefined
+      visible4:
+        type: str
+        description:
+        - 'trigger a visible alarm for external alarm 4 with default value: "disable"'
+        - 'Possible values: C(enable) - external alarm output is visible; C(disable)
+          - external alarm output is non-visible'
+        default: disable
+        choices:
+        - enable
+        - disable
+      audible4:
+        type: str
+        description:
+        - 'trigger a audible alarm for external alarm 4 with default value: "disable"'
+        - 'Possible values: C(enable) - external alarm output is audible; C(disable)
+          - external alarm output is non-audible'
+        default: disable
+        choices:
+        - enable
+        - disable
+      polarity4:
+        type: str
+        description:
+        - 'alarm polarity is normal or inverse for external alarm 4 with default value:
+          "normal"'
+        - 'Possible values: C(normal) - alarm polarity is normal; C(inverse) - alarm
+          polarity is inverse'
+        default: normal
+        choices:
+        - normal
+        - inverse
+      severity4:
+        type: str
+        description:
+        - 'severity level of external alarm 4 with default value: "major"'
+        - Alarms below this threshold will not be reported
+        - 'Possible values: C(indeterminate) - alarm severity is indeterminate; C(warning)
+          - alarm severity is warning; C(minor) - alarm severity is minor; C(major)
+          - alarm severity is major; C(critical) - alarm severity is critical'
+        default: major
+        choices:
+        - indeterminate
+        - warning
+        - minor
+        - major
+        - critical
+      mnemonic5:
+        type: str
+        description:
+        - 'mnemonic identifying the customizable external alarm 5 with default value:
+          "UNDEF" - an octet string defining mnemonic of external alarm - range: [A-Z]
+          - length: x<=16'
+        - 'Maximum length: 16 characters'
+        default: UNDEF
+      description5:
+        type: str
+        description:
+        - 'description of the customizable external alarm 5 with default value: "Undefined"
+          - an octet string defining description of external alarm - length: x<=40'
+        - 'Maximum length: 40 characters'
+        default: Undefined
+      visible5:
+        type: str
+        description:
+        - 'trigger a visible alarm for external alarm 5 with default value: "disable"'
+        - 'Possible values: C(enable) - external alarm output is visible; C(disable)
+          - external alarm output is non-visible'
+        default: disable
+        choices:
+        - enable
+        - disable
+      audible5:
+        type: str
+        description:
+        - 'trigger a audible alarm for external alarm 5 with default value: "disable"'
+        - 'Possible values: C(enable) - external alarm output is audible; C(disable)
+          - external alarm output is non-audible'
+        default: disable
+        choices:
+        - enable
+        - disable
+      polarity5:
+        type: str
+        description:
+        - 'alarm polarity is normal or inverse for external alarm 5 with default value:
+          "normal"'
+        - 'Possible values: C(normal) - alarm polarity is normal; C(inverse) - alarm
+          polarity is inverse'
+        default: normal
+        choices:
+        - normal
+        - inverse
+      severity5:
+        type: str
+        description:
+        - 'severity level of external alarm 5 with default value: "major" DS-LIN-TEST-01:automationuser>#'
+        - Alarms below this threshold will not be reported
+        - 'Possible values: C(indeterminate) - alarm severity is indeterminate; C(warning)
+          - alarm severity is warning; C(minor) - alarm severity is minor; C(major)
+          - alarm severity is major; C(critical) - alarm severity is critical'
+        default: major
+        choices:
+        - indeterminate
+        - warning
+        - minor
+        - major
+        - critical
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure alarm custom-profile)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

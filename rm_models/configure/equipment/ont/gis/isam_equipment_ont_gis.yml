@@ -1,0 +1,69 @@
+module: isam_equipment_ont_gis
+short_description: Resource module to configure equipment ont gis
+description:
+- Configures the ONT GIS parameters. olt-location - when default value disable is
+  set, OLT won't care about ONT GIS info, when enable is set, OLT would provison OLT's
+  location to ONT
+- Supports configuration of olt location
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure equipment ont gis ()'
+options:
+  config:
+    description:
+    - A list of equipment ont gis configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (ont-idx) - ONT index
+      olt_location:
+        type: str
+        description:
+        - 'GIS settings for this ONT with default value: "disable"'
+        - 'Possible values: C(disable) - the OLT GIS info will not be used; C(enable)
+          - the OLT GIS info will be used'
+        default: disable
+        choices:
+        - disable
+        - enable
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure equipment ont gis)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

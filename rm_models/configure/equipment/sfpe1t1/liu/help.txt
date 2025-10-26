@@ -1,0 +1,64 @@
+help configure equipment sfpe1t1 liu
+2XE1/DS1 LINE INTERFACE UNIT SFP CONFIGURATION COMMAND
+======================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure distance and cable impedance on 
+the 2xE1/DS1 sfp:
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure equipment sfpe1t1 liu (position) [ no distance | distance 
+<Eqpt::distance> ] [ no cable-impedance | cable-impedance 
+<Eqpt::CableImpedance> ]
+
+Command Parameters
+------------------
+
+Table "2xE1/DS1 Line Interface Unit SFP configuration Command" Resource 
+Parameters
+
+Resource Identifier        Description
+
+(position)                 the physical sfp cage position
+
+Table "2xE1/DS1 Line Interface Unit SFP configuration Command" Command 
+Parameters
+
+Parameter                  Description
+
+[no] distance              distance can be configured as shorthaul or longhaul
+                           optional parameter with default value: "shorthaul"
+
+                           Parameter type: <Eqpt::distance>
+                           Format:
+                           ( shorthaul
+                           | longhaul )
+                           Possible values:
+                           - shorthaul             : distance shorthaul
+                           - longhaul              : distance longhaul
+
+[no] cable-impedance       cable impedance can be configured 75ohms or 120ohms 
+                           optional parameter with default value: "120ohms"
+
+                           Parameter type: <Eqpt::CableImpedance>
+                           Format:
+                           ( 75ohms
+                           | 120ohms )
+                           Possible values:
+                           - 75ohms                : cable impedance 75 ohms
+                           - 120ohms               : cable impedance 120 ohms
+
+
+DS-LIN-TEST-01:automationuser>#

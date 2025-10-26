@@ -1,0 +1,36 @@
+{
+  "title": "MAINTENANCE DOMAIN CONFIGURATION COMMAND",
+  "description": "This command is used to define a Maintenance Domain (MD) at particular \nmaintenance level. There are 8 possible levels. Note that once created, the MD \ncannot be modified. To modify, delete the entry and create a new one.\n\nNote that, if an MD is deleted, any subtending Maintenance Associations (MAs), \nand their subtending Maintenance Points (MPs), will be automatically deleted onl\ny if CCM Admin State is locked for all of the MAs.",
+  "user_level": "The command can be accessed by operators with alarm , oam , vlan privileges, \nand executed by operators with alarm , oam , vlan privileges.",
+  "syntax": "> configure cfm ( no domain (domain-index) ) | ( domain (domain-index) name <Cfm::FormatedName> level <Cfm::MdLevelType> )",
+  "resource_parameters": [
+    {
+      "name": "(domain-index)",
+      "description": "Maintenance Domain (MD) index"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "name",
+      "description": "Maintenance Domain (MD) name type and unique name mandatory parameter",
+      "type": "<Cfm::FormatedName>",
+      "format": "( dns : <Cfm::PrintableString>                            | mac : <Cfm::MacAddress>                            | string : <Cfm::PrintableString>                            | none )",
+      "values": [
+        "dns                   : DNS name (e.g. nokia.com)",
+        "mac                   : MAC address plus 2 hex octets, e.g. 11:22:33:44:55:66:77:88",
+        "string                : A character string (e.g. operator)",
+        "none                  : No MD name. Field type <Cfm::PrintableString>",
+        "all characters except for characters 0 to 31",
+        "length: 1<=x<=43 Field type <Cfm::MacAddress>",
+        "MAC address plus 2 hex octets, e.g. 11:22:33:44:55:66:77:88",
+        "length: 8"
+      ]
+    },
+    {
+      "name": "level",
+      "description": "Maintenance Domain (MD) level mandatory parameter - Maintenance Domain (MD) level - range: [0...7]",
+      "type": "<Cfm::MdLevelType>"
+    }
+  ],
+  "raw": "help configure cfm domain\r\nMAINTENANCE DOMAIN CONFIGURATION COMMAND\r\n========================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command is used to define a Maintenance Domain (MD) at particular \r\nmaintenance level. There are 8 possible levels. Note that once created, the MD \r\ncannot be modified. To modify, delete the entry and create a new one.\r\n\r\nNote that, if an MD is deleted, any subtending Maintenance Associations (MAs), \r\nand their subtending Maintenance Points (MPs), will be automatically deleted onl\r\ny if CCM Admin State is locked for all of the MAs.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with alarm , oam , vlan privileges, \r\nand executed by operators with alarm , oam , vlan privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure cfm ( no domain (domain-index) ) | ( domain (domain-index) name \r\n<Cfm::FormatedName> level <Cfm::MdLevelType> )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Maintenance Domain Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(domain-index)             Maintenance Domain (MD) index\r\n\r\nTable \"Maintenance Domain Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\nname                       Maintenance Domain (MD) name type and unique name\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Cfm::FormatedName>\r\n                           Format:\r\n                           ( dns : <Cfm::PrintableString>\r\n                           | mac : <Cfm::MacAddress>\r\n                           | string : <Cfm::PrintableString>\r\n                           | none )\r\n                           Possible values:\r\n                           - dns                   : DNS name (e.g. nokia.com)\r\n                           - mac                   : MAC address plus 2 hex \r\noctets, e.g. 11:22:33:44:55:66:77:88\r\n                           - string                : A character string (e.g. \r\noperator)\r\n                           - none                  : No MD name.\r\n                           Field type <Cfm::PrintableString>\r\n                           - all characters except for characters 0 to 31\r\n                           - length: 1<=x<=43 \r\n                           Field type <Cfm::MacAddress>\r\n                           - MAC address plus 2 hex octets, e.g. \r\n11:22:33:44:55:66:77:88\r\n                           - length: 8 \r\n\r\nlevel                      Maintenance Domain (MD) level\r\n                           mandatory parameter\r\n\r\n                           Parameter type: <Cfm::MdLevelType>\r\n                           Format:\r\n                           - Maintenance Domain (MD) level\r\n                           - range: [0...7]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,102 @@
+module: isam_ces_ont_profile
+short_description: Resource module to configure ces ont profile
+description:
+- Configures CES Maintenance profile.
+- Supports configuration of profile name, jitter buff max, fill policy and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure ces ont ()'
+options:
+  config:
+    description:
+    - A list of ces ont profile configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (profile-idx) - ces maintenance profile index value
+      profile_name:
+        type: str
+        description:
+        - 'ces maintenance profile name mandatory parameter - a profile name - range:
+          [a-zA-Z0-9-_.] - length: 1<=x<=32'
+      jitter_buff_max:
+        type: str
+        description:
+        - 'maximum depth of the jitter buffer with default value: "0" - maximum depth
+          for jitter buffer in micro seconds.For values except 0 that are not multiples
+          of 8 are rounded up so that the result is effective range of 1..200 milliseconds
+          - range: [0...1600]'
+        default: '0'
+      fill_policy:
+        type: str
+        description:
+        - 'payload bit pattern with default value: "ont-default"'
+        - 'Possible values: C(ont-default) - ONT default vendor-specific; C(all-ones)
+          - play out all 1s; C(idle) - play out DS1 idle'
+        default: ont-default
+        choices:
+        - ont-default
+        - all-ones
+        - idle
+      rbit_recv_policy:
+        type: str
+        description:
+        - 'rbit receive policy with default value: "no-act"'
+        - 'Possible values: C(no-act) - no action; C(all-ones) - use service-specific
+          RAI/REI/RDI code; C(idle) - idle signalling and idle payload'
+        default: no-act
+        choices:
+        - no-act
+        - all-ones
+        - idle
+      lbit_recv_policy:
+        type: str
+        description:
+        - 'lbit receive policy with default value: "ssais"'
+        - 'Possible values: C(ssais) - use service specific AIS code; C(idle) - idle
+          signalling and idle payload'
+        default: ssais
+        choices:
+        - ssais
+        - idle
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure ces ont profile)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

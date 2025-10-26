@@ -1,0 +1,5 @@
+help configure alarm entry mdu-sup-olt-rx-low ! 
+MDU ONT
+                                                                              ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,6 @@
+DS-LIN-TEST-01:automationuser># info configure equipment protection-element
+configure equipment
+#-------------------------------------------------------------------------------
+echo "equipment"
+#-------------------------------------------------------------------------------
+DS-LIN-TEST-01:automationuser>#

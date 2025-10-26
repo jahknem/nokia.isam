@@ -1,0 +1,5 @@
+help configure service vpls egress eth-ring extf
+wd eth-ring
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

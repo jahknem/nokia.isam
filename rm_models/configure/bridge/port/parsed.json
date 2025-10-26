@@ -1,0 +1,184 @@
+{
+  "title": "BRIDGE PORT CONFIGURATION COMMAND",
+  "description": "This command allows the operator to specify various parameters applicable to a \nspecific bridge port. These parameters determine the handling of frames on the \nbridge port.\n\nPriority Regeneration Profile: these profiles are predetermined. Following \nprofiles are available:\n  - Profile 1: Trusted Port\n  - Profile 2: Best Effort\n  - Profile 3: Controlled Load, all priority 3 traffic\n  - Profile 4: Controlled Load, all priority 4 traffic\n  - Profile 5: Background\n  - Profile 6: Best Effort, Controlled Load, Voice\n  - Profile 7: Best Effort, Controlled Load, Voice according 802.1d Annex G\n  - Profile 8: Best Effort, Voice\n  - Profile 9: L2 VPN with 3 traffic classes\n  - Profile 10: L2 VPN with 4 traffic classes\n\nDetails on these profiles can be obtained using a show command.\n\nThe parameter 'acceptable-frame-type' controls the format of frames received \nfrom the users. The parameter can take either of three values,\n\nsingle-tagged: This configuration allows the user to send single tagged frames. \nThe VLAN-id of tagged frames will be verified against the configured port-vlan \nassociations. Untagged frames and priority tagged frames will be discarded (in \nabsence of configuration on how to handle untagged and priority tagged frames). \nDouble tagged frames will be discarded. The configuration of this value should \nbe completed with the configuration of:\n  - one or more port-vlan associations.\n\nThe configuration of this value should not be combined with the configuration \nof:\n  - a port default vlan, or\n  - a port-protocol default vlan for PPPoE, or\n  - a terminated PPPoE interface, or\n  - a port-protocol default vlan for IPoE, or\n  - a terminated IPoE interface.\n\nuntagged: This configuration allows the user to send untagged frames and on \nsome types of HW also priority tagged frames. Processing untagged / priority \ntagged frames requires additional configuration. Such frames will be discarded \nin absence of such additional configuration. The configuration of the \nacceptable-Frame-Type to this value results also in the autonomous creation by \nthe system of an 'IGMP channel' and of an '802.1x Port' associated to this \nBridge Port. These objects are created with default values such that the \ncorresponding function is 'disabled'. The configuration this value should be \ncompleted with the creation of:\n  - one or more port-vlan associations and\n  - a port default vlan, and/or\n  - a port-protocol default vlan for PPPoE, and/or\n  - a port-protocol default vlan for IPoE,\n\nor instead of a port-protocol default vlan for PPPoE.\n  - a terminated PPPoE interface, or\n\nor instead of a port-protocol default vlan for IPoE.\n  - a terminated IPoE interface.\n\nHowever, note that this value is not always strictly forced on all HW. E.g. \nsome type of LSMs will accept and forward single tagged frames when the VLAN-id \nmatches a configured port-vlan association. Other type of LSMs will always \ndiscard single tagged frame.\n\nNote that for the multivlan feature, tagged user traffic will be sent but the \n\"acceptable frame types\" must be set to \"untagged\".\n\nmixed-untagged: This value allows the user to send single tagged frames, \nuntagged frames, and on some types of HW also priority tagged frames. The \nVLAN-id of single tagged frames will be verified against the configured \nport-vlan associations. Untagged / priority tagged frames will be processed \naccording additional configuration. Such frames will be discarded in absence of \nsuch additional configuration. The configuration of this value should be \ncompleted with the configuration of:\n  - one or more port-vlan associations, and\n  - a port default vlan, and/or\n  - a port-protocol default vlan for PPPoE, and/or\n  - a port-protocol default vlan for IPoE.\n\ndefault-priority: The selection of the port default-priority can apply provided \nthe priority-policy at node level is port-default.\n\nmac-learn-off : The configuration value has no effect in case the bridge port is\n used for IpoA CC and EPON boards: the system accepts all values but no mac \nlearning will be done.\n\nmax-unicast-mac: The value 65535 indicates that there is not max mac control on \nvlan port.\n\n\n\nRemark: Please note that in case the RADIUS server returns a VLAN for 802.1x \nauthenticated ports, it is recommended to not configure a port default VLAN ID \n(PVID) on that user port. In any case, the VLAN ID returned by the RADIUS \nserver may not equal the pre- configured PVID on the user port. In addition, \nthe returned VLAN ID by the RADIUS server may not be configured as the PVID on \nthe user port after successful 802.1x authentication.",
+  "user_level": "The command can be accessed by operators with vlan privileges, and executed by \noperators with vlan privileges.",
+  "syntax": "> configure bridge ( no port (port) ) | ( port (port) [ no pvid | pvid <Network::StackedVlan> ] [ no default-priority | default-priority <Vlan::Priority> ] [ [ no ] mac-learn-off ] [ no max-unicast-mac | max-unicast-mac <Vlan::MaxMac> ] [ no qos-profile | qos-profile <Qos::QosSessionProfileName> ] [ no prio-regen-prof | prio-regen-prof <Vlan::PrioRegenProfile> ] [ no prio-regen-name | prio-regen-name <Vlan::PrioRegenProfileName> ] [ no max-committed-mac | max-committed-mac <Vlan::ComitMaxMac> ] [ no mirror-mode | mirror-mode <Vlan::MirrorMode> ] [ no mirror-vlan | mirror-vlan <Vlan::MirrorVlan> ] [ no outervlancapture | outervlancapture <Vlan::OuterVlan> ] [ no direction | direction <Vlan::outerVlanCaptureDirection> ] [ no pvid-tagging-flag | pvid-tagging-flag <Vlan::PvidTaggingFlag> ] [ no ds-pbit-mode | ds-pbit-mode <Vlan::DSPbitMode> ] [ no default-tpid | default-tpid <Vlan::Tpid> ] )",
+  "resource_parameters": [
+    {
+      "name": "(port)",
+      "description": "identity of a port(e.g. uplink port, atm pvc, efm port, eth port, la group ...)"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] pvid",
+      "description": "default vlan id for untagged frames optional parameter with default value: \"stacked : 0 : 4097\"",
+      "type": "<Network::StackedVlan>",
+      "format": "( <Network::UVlanIndex>                            | stacked : <Network::SVlanIndex> : <Network::CVlanIndex> )",
+      "values": [
+        "stacked               : stacked vlan identity Field type <Network::UVlanIndex>",
+        "unstacked vlan identity",
+        "range: [1...4093] Field type <Network::SVlanIndex>",
+        "service vlan identity",
+        "range: [2...4093] Field type <Network::CVlanIndex>",
+        "customer vlan identity",
+        "range: [0...4093]"
+      ],
+      "default": "stacked : 0"
+    },
+    {
+      "name": "[no] default-priority",
+      "description": "priority to be set in upstream frames optional parameter with default value:  0 - priority of ethernet frames - range: [0...7]",
+      "type": "<Vlan::Priority>",
+      "default": "0"
+    },
+    {
+      "name": "[no] mac-learn-off",
+      "description": "disable self learning of mac address optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] max-unicast-mac",
+      "description": "max uncommitted unicast mac addresses optional parameter with default value: \"1\" - number of unicast mac addresses - range: [1...65535]",
+      "type": "<Vlan::MaxMac>",
+      "default": "1"
+    },
+    {
+      "name": "[no] qos-profile",
+      "description": "qos profile name optional parameter with default value: \"none\"",
+      "type": "<Qos::QosSessionProfileName>",
+      "format": "( none                            | name : <Qos::IgnoredQosProfileName> )",
+      "values": [
+        "none                  : no profile name to associate",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] prio-regen-prof",
+      "description": "priority regeneration profile optional parameter with default value: \"none\"",
+      "type": "<Vlan::PrioRegenProfile>",
+      "format": "( none                            | trusted-port                            | best-effort                            | cl-all-prio-3                            | cl-all-prio-4                            | background                            | be-cl-voice                            | be-cl-1d-voice                            | be-voice                            | l2-vpn-3                            | l2-vpn-4                            | 11                            | 12                            | 13                            | 14                            | 15                            | 16                            | 17                            | 18                            | 19                            | 20                            | 21                            | 22                            | 23                            | 24                            | 25                            | 26                            | 27                            | 28                            | 29                            | 30                            | 31                            | 32 )",
+      "values": [
+        "none                  : default value",
+        "trusted-port          : trusted port",
+        "best-effort           : best effort",
+        "cl-all-prio-3         : controlled load, all priority 3 traffic",
+        "cl-all-prio-4         : controlled load, all priority 4 traffic",
+        "background            : background",
+        "be-cl-voice           : best effort, controlled load, voice",
+        "be-cl-1d-voice        : best effort, controlled load, 802.Id Annex G voice",
+        "be-voice              : best effort voice",
+        "l2-vpn-3              : L2 VPN with 3 traffic classes",
+        "l2-vpn-4              : L2 VPN with 4 traffic classes",
+        "11                    : operator-defined profile",
+        "12                    : operator-defined profile",
+        "13                    : operator-defined profile",
+        "14                    : operator-defined profile",
+        "15                    : operator-defined profile",
+        "16                    : operator-defined profile",
+        "17                    : operator-defined profile",
+        "18                    : operator-defined profile",
+        "19                    : operator-defined profile",
+        "20                    : operator-defined profile",
+        "21                    : operator-defined profile",
+        "22                    : operator-defined profile",
+        "23                    : operator-defined profile",
+        "24                    : operator-defined profile",
+        "25                    : operator-defined profile",
+        "26                    : operator-defined profile",
+        "27                    : operator-defined profile",
+        "28                    : operator-defined profile",
+        "29                    : operator-defined profile",
+        "30                    : operator-defined profile",
+        "31                    : operator-defined profile",
+        "32                    : operator-defined profile"
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] prio-regen-name",
+      "description": "priority regeneration profile name optional parameter with default value: \"none\"",
+      "type": "<Vlan::PrioRegenProfileName>",
+      "format": "( none                            | name : <Vlan::IgnoredVlanProfileName> )",
+      "values": [
+        "none                  : no profile name to associate",
+        "name                  : enter profile name to be associated Data driven field type Possible values are depending on the actual configuration and software. The currently allowed values can be shown with online-help."
+      ],
+      "default": "none"
+    },
+    {
+      "name": "[no] max-committed-mac",
+      "description": "max committed unicast mac addresses. 65535 means the committed value is the same as max-unicast-mac optional parameter with default value: \"65535\" - number of unicast mac addresses - range: [0...128,65535]",
+      "type": "<Vlan::ComitMaxMac>",
+      "default": "65535"
+    },
+    {
+      "name": "[no] mirror-mode",
+      "description": "flow mirroring mode of the bridge port optional parameter with default value: \"disable\"",
+      "type": "<Vlan::MirrorMode>",
+      "format": "( disable                            | overwrite-outer-vlan                            | insert-mirror-vlan )",
+      "values": [
+        "disable               : disable mirror vlan tag",
+        "overwrite-outer-vlan  : overwrite outer vlan tag with mirror vlan tag",
+        "insert-mirror-vlan    : prepend mirror vlan tag to outer vlan tag"
+      ],
+      "default": "disable"
+    },
+    {
+      "name": "[no] mirror-vlan",
+      "description": "vlan-id to be inserted into mirrored packets. This configuration value has no effect in case mirroring mode of the bridgeport is disabled (mirror-mode). optional parameter with default value: 0 - mirroring vlan id - range: [0...4093]",
+      "type": "<Vlan::MirrorVlan>",
+      "default": "0"
+    },
+    {
+      "name": "[no] outervlancapture",
+      "description": "specify outer VLAN which has to be matched for mirroring the packets received on bridge port. optional parameter with default value: 0 - outer vlan id - range: [0...4093]",
+      "type": "<Vlan::OuterVlan>",
+      "default": "0"
+    },
+    {
+      "name": "[no] direction",
+      "description": "The direction on which the packets has to be captured and mirrored. optional parameter with default value: \"bidirection\"",
+      "type": "<Vlan::outerVlanCaptureDirection>",
+      "format": "( ingress                            | egress                            | bidirection )",
+      "values": [
+        "ingress               : enable mirroring in ingress",
+        "egress                : enable mirroring in egress",
+        "bidirection           : enable mirroring in both directions"
+      ],
+      "default": "bidirection"
+    },
+    {
+      "name": "[no] pvid-tagging-flag",
+      "description": "pvid will be tagged in ONU or in OLT. optional parameter with default value: \"onu\"",
+      "type": "<Vlan::PvidTaggingFlag>",
+      "format": "( onu                            | olt )",
+      "values": [
+        "onu                   : pvid is handled in ONU.",
+        "olt                   : pvid is handled in OLT."
+      ],
+      "default": "onu"
+    },
+    {
+      "name": "[no] ds-pbit-mode",
+      "description": "downstream p-bits mode optional parameter with default value: \"auto\"",
+      "type": "<Vlan::DSPbitMode>",
+      "format": "( auto                            | translated                            | transparency                            | filtervlanandpbit )",
+      "values": [
+        "auto                  : transparency for DSL and translated for GPON",
+        "translated            : for known p-bits the inverse translation is performed in downstream; unknown p-bits are forwarded unchanged in downstream",
+        "transparency          : all p-bits are forwarded unchanged in downstream",
+        "filtervlanandpbit     : for matched vlan and p-bit the inverse translation is performed in downstream; unmatched are discarded in downstream"
+      ],
+      "default": "auto"
+    },
+    {
+      "name": "[no] default-tpid",
+      "description": "configure default outer tpid optional parameter with default value: \"8100\" - vlan tpid hex string(example : 8100), scope is 600-ffff - range: [a-fA-F0-9] - length: 1<=x<=4",
+      "type": "<Vlan::Tpid>",
+      "default": "8100"
+    }
+  ],
+  "raw": "help configure bridge port\r\nBRIDGE PORT CONFIGURATION COMMAND\r\n=================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to specify various parameters applicable to a \r\nspecific bridge port. These parameters determine the handling of frames on the \r\nbridge port.\r\n\r\nPriority Regeneration Profile: these profiles are predetermined. Following \r\nprofiles are available:\r\n  - Profile 1: Trusted Port\r\n  - Profile 2: Best Effort\r\n  - Profile 3: Controlled Load, all priority 3 traffic\r\n  - Profile 4: Controlled Load, all priority 4 traffic\r\n  - Profile 5: Background\r\n  - Profile 6: Best Effort, Controlled Load, Voice\r\n  - Profile 7: Best Effort, Controlled Load, Voice according 802.1d Annex G\r\n  - Profile 8: Best Effort, Voice\r\n  - Profile 9: L2 VPN with 3 traffic classes\r\n  - Profile 10: L2 VPN with 4 traffic classes\r\n\r\nDetails on these profiles can be obtained using a show command.\r\n\r\nThe parameter 'acceptable-frame-type' controls the format of frames received \r\nfrom the users. The parameter can take either of three values,\r\n\r\nsingle-tagged: This configuration allows the user to send single tagged frames. \r\nThe VLAN-id of tagged frames will be verified against the configured port-vlan \r\nassociations. Untagged frames and priority tagged frames will be discarded (in \r\nabsence of configuration on how to handle untagged and priority tagged frames). \r\nDouble tagged frames will be discarded. The configuration of this value should \r\nbe completed with the configuration of:\r\n  - one or more port-vlan associations.\r\n\r\nThe configuration of this value should not be combined with the configuration \r\nof:\r\n  - a port default vlan, or\r\n  - a port-protocol default vlan for PPPoE, or\r\n  - a terminated PPPoE interface, or\r\n  - a port-protocol default vlan for IPoE, or\r\n  - a terminated IPoE interface.\r\n\r\nuntagged: This configuration allows the user to send untagged frames and on \r\nsome types of HW also priority tagged frames. Processing untagged / priority \r\ntagged frames requires additional configuration. Such frames will be discarded \r\nin absence of such additional configuration. The configuration of the \r\nacceptable-Frame-Type to this value results also in the autonomous creation by \r\nthe system of an 'IGMP channel' and of an '802.1x Port' associated to this \r\nBridge Port. These objects are created with default values such that the \r\ncorresponding function is 'disabled'. The configuration this value should be \r\ncompleted with the creation of:\r\n  - one or more port-vlan associations and\r\n  - a port default vlan, and/or\r\n  - a port-protocol default vlan for PPPoE, and/or\r\n  - a port-protocol default vlan for IPoE,\r\n\r\nor instead of a port-protocol default vlan for PPPoE.\r\n  - a terminated PPPoE interface, or\r\n\r\nor instead of a port-protocol default vlan for IPoE.\r\n  - a terminated IPoE interface.\r\n\r\nHowever, note that this value is not always strictly forced on all HW. E.g. \r\nsome type of LSMs will accept and forward single tagged frames when the VLAN-id \r\nmatches a configured port-vlan association. Other type of LSMs will always \r\ndiscard single tagged frame.\r\n\r\nNote that for the multivlan feature, tagged user traffic will be sent but the \r\n\"acceptable frame types\" must be set to \"untagged\".\r\n\r\nmixed-untagged: This value allows the user to send single tagged frames, \r\nuntagged frames, and on some types of HW also priority tagged frames. The \r\nVLAN-id of single tagged frames will be verified against the configured \r\nport-vlan associations. Untagged / priority tagged frames will be processed \r\naccording additional configuration. Such frames will be discarded in absence of \r\nsuch additional configuration. The configuration of this value should be \r\ncompleted with the configuration of:\r\n  - one or more port-vlan associations, and\r\n  - a port default vlan, and/or\r\n  - a port-protocol default vlan for PPPoE, and/or\r\n  - a port-protocol default vlan for IPoE.\r\n\r\ndefault-priority: The selection of the port default-priority can apply provided \r\nthe priority-policy at node level is port-default.\r\n\r\nmac-learn-off : The configuration value has no effect in case the bridge port is\r\n used for IpoA CC and EPON boards: the system accepts all values but no mac \r\nlearning will be done.\r\n\r\nmax-unicast-mac: The value 65535 indicates that there is not max mac control on \r\nvlan port.\r\n\r\n\r\n\r\nRemark: Please note that in case the RADIUS server returns a VLAN for 802.1x \r\nauthenticated ports, it is recommended to not configure a port default VLAN ID \r\n(PVID) on that user port. In any case, the VLAN ID returned by the RADIUS \r\nserver may not equal the pre- configured PVID on the user port. In addition, \r\nthe returned VLAN ID by the RADIUS server may not be configured as the PVID on \r\nthe user port after successful 802.1x authentication.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with vlan privileges, and executed by \r\noperators with vlan privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure bridge ( no port (port) ) | ( port (port) [ no pvid | pvid \r\n<Network::StackedVlan> ] [ no default-priority | default-priority \r\n<Vlan::Priority> ] [ [ no ] mac-learn-off ] [ no max-unicast-mac | \r\nmax-unicast-mac <Vlan::MaxMac> ] [ no qos-profile | qos-profile \r\n<Qos::QosSessionProfileName> ] [ no prio-regen-prof | prio-regen-prof \r\n<Vlan::PrioRegenProfile> ] [ no prio-regen-name | prio-regen-name \r\n<Vlan::PrioRegenProfileName> ] [ no max-committed-mac | max-committed-mac \r\n<Vlan::ComitMaxMac> ] [ no mirror-mode | mirror-mode <Vlan::MirrorMode> ] [ no \r\nmirror-vlan | mirror-vlan <Vlan::MirrorVlan> ] [ no outervlancapture | \r\noutervlancapture <Vlan::OuterVlan> ] [ no direction | direction \r\n<Vlan::outerVlanCaptureDirection> ] [ no pvid-tagging-flag | pvid-tagging-flag \r\n<Vlan::PvidTaggingFlag> ] [ no ds-pbit-mode | ds-pbit-mode <Vlan::DSPbitMode> ] \r\n[ no default-tpid | default-tpid <Vlan::Tpid> ] )\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Bridge Port Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(port)                     identity of a port(e.g. uplink port, atm pvc, efm \r\nport, eth port, la group ...)\r\n\r\nTable \"Bridge Port Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] pvid                  default vlan id for untagged frames\r\n                           optional parameter with default value: \"stacked : 0 \r\n: 4097\"\r\n\r\n                           Parameter type: <Network::StackedVlan>\r\n                           Format:\r\n                           ( <Network::UVlanIndex>\r\n                           | stacked : <Network::SVlanIndex> : \r\n<Network::CVlanIndex> )\r\n                           Possible values:\r\n                           - stacked               : stacked vlan identity\r\n                           Field type <Network::UVlanIndex>\r\n                           - unstacked vlan identity \r\n                           - range: [1...4093]\r\n                           Field type <Network::SVlanIndex>\r\n                           - service vlan identity\r\n                           - range: [2...4093]\r\n                           Field type <Network::CVlanIndex>\r\n                           - customer vlan identity \r\n                           - range: [0...4093]\r\n\r\n[no] default-priority      priority to be set in upstream frames\r\n                           optional parameter with default value:  0\r\n\r\n                           Parameter type: <Vlan::Priority>\r\n                           Format:\r\n                           - priority of ethernet frames\r\n                           - range: [0...7]\r\n\r\n[no] mac-learn-off         disable self learning of mac address\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] max-unicast-mac       max uncommitted unicast mac addresses\r\n                           optional parameter with default value: \"1\"\r\n\r\n                           Parameter type: <Vlan::MaxMac>\r\n                           Format:\r\n                           - number of unicast mac addresses\r\n                           - range: [1...65535]\r\n\r\n[no] qos-profile           qos profile name\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Qos::QosSessionProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Qos::IgnoredQosProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociate\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] prio-regen-prof       priority regeneration profile\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Vlan::PrioRegenProfile>\r\n                           Format:\r\n                           ( none\r\n                           | trusted-port\r\n                           | best-effort\r\n                           | cl-all-prio-3\r\n                           | cl-all-prio-4\r\n                           | background\r\n                           | be-cl-voice\r\n                           | be-cl-1d-voice\r\n                           | be-voice\r\n                           | l2-vpn-3\r\n                           | l2-vpn-4\r\n                           | 11\r\n                           | 12\r\n                           | 13\r\n                           | 14\r\n                           | 15\r\n                           | 16\r\n                           | 17\r\n                           | 18\r\n                           | 19\r\n                           | 20\r\n                           | 21\r\n                           | 22\r\n                           | 23\r\n                           | 24\r\n                           | 25\r\n                           | 26\r\n                           | 27\r\n                           | 28\r\n                           | 29\r\n                           | 30\r\n                           | 31\r\n                           | 32 )\r\n                           Possible values:\r\n                           - none                  : default value\r\n                           - trusted-port          : trusted port\r\n                           - best-effort           : best effort\r\n                           - cl-all-prio-3         : controlled load, all \r\npriority 3 traffic\r\n                           - cl-all-prio-4         : controlled load, all \r\npriority 4 traffic\r\n                           - background            : background\r\n                           - be-cl-voice           : best effort, controlled \r\nload, voice\r\n                           - be-cl-1d-voice        : best effort, controlled \r\nload, 802.Id Annex G voice\r\n                           - be-voice              : best effort voice\r\n                           - l2-vpn-3              : L2 VPN with 3 traffic \r\nclasses\r\n                           - l2-vpn-4              : L2 VPN with 4 traffic \r\nclasses\r\n                           - 11                    : operator-defined profile\r\n                           - 12                    : operator-defined profile\r\n                           - 13                    : operator-defined profile\r\n                           - 14                    : operator-defined profile\r\n                           - 15                    : operator-defined profile\r\n                           - 16                    : operator-defined profile\r\n                           - 17                    : operator-defined profile\r\n                           - 18                    : operator-defined profile\r\n                           - 19                    : operator-defined profile\r\n                           - 20                    : operator-defined profile\r\n                           - 21                    : operator-defined profile\r\n                           - 22                    : operator-defined profile\r\n                           - 23                    : operator-defined profile\r\n                           - 24                    : operator-defined profile\r\n                           - 25                    : operator-defined profile\r\n                           - 26                    : operator-defined profile\r\n                           - 27                    : operator-defined profile\r\n                           - 28                    : operator-defined profile\r\n                           - 29                    : operator-defined profile\r\n                           - 30                    : operator-defined profile\r\n                           - 31                    : operator-defined profile\r\n                           - 32                    : operator-defined profile\r\n\r\n[no] prio-regen-name       priority regeneration profile name\r\n                           optional parameter with default value: \"none\"\r\n\r\n                           Parameter type: <Vlan::PrioRegenProfileName>\r\n                           Format:\r\n                           ( none\r\n                           | name : <Vlan::IgnoredVlanProfileName> )\r\n                           Possible values:\r\n                           - none                  : no profile name to \r\nassociate\r\n                           - name                  : enter profile name to be \r\nassociated \r\n                           Data driven field type\r\n                           Possible values are depending on the actual \r\nconfiguration and software.\r\n                           The currently allowed values can be shown with \r\nonline-help.\r\n\r\n[no] max-committed-mac     max committed unicast mac addresses. 65535 means the \r\ncommitted value is the same as max-unicast-mac\r\n                           optional parameter with default value: \"65535\"\r\n\r\n                           Parameter type: <Vlan::ComitMaxMac>\r\n                           Format:\r\n                           - number of unicast mac addresses\r\n                           - range: [0...128,65535]\r\n\r\n[no] mirror-mode           flow mirroring mode of the bridge port\r\n                           optional parameter with default value: \"disable\"\r\n\r\n                           Parameter type: <Vlan::MirrorMode>\r\n                           Format:\r\n                           ( disable\r\n                           | overwrite-outer-vlan\r\n                           | insert-mirror-vlan )\r\n                           Possible values:\r\n                           - disable               : disable mirror vlan tag\r\n                           - overwrite-outer-vlan  : overwrite outer vlan tag \r\nwith mirror vlan tag\r\n                           - insert-mirror-vlan    : prepend mirror vlan tag to \r\nouter vlan tag\r\n\r\n[no] mirror-vlan           vlan-id to be inserted into mirrored packets. This \r\nconfiguration value has no effect in case mirroring mode of the bridgeport is \r\ndisabled (mirror-mode).\r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Vlan::MirrorVlan>\r\n                           Format:\r\n                           - mirroring vlan id\r\n                           - range: [0...4093]\r\n\r\n[no] outervlancapture      specify outer VLAN which has to be matched for \r\nmirroring the packets received on bridge port.\r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Vlan::OuterVlan>\r\n                           Format:\r\n                           - outer vlan id\r\n                           - range: [0...4093]\r\n\r\n[no] direction             The direction on which the packets has to be captured\r\n and mirrored.\r\n                           optional parameter with default value: \"bidirection\"\r\n\r\n                           Parameter type: <Vlan::outerVlanCaptureDirection>\r\n                           Format:\r\n                           ( ingress\r\n                           | egress\r\n                           | bidirection )\r\n                           Possible values:\r\n                           - ingress               : enable mirroring in ingress\r\n                           - egress                : enable mirroring in egress\r\n                           - bidirection           : enable mirroring in both \r\ndirections\r\n\r\n[no] pvid-tagging-flag     pvid will be tagged in ONU or in OLT.\r\n                           optional parameter with default value: \"onu\"\r\n\r\n                           Parameter type: <Vlan::PvidTaggingFlag>\r\n                           Format:\r\n                           ( onu\r\n                           | olt )\r\n                           Possible values:\r\n                           - onu                   : pvid is handled in ONU.\r\n                           - olt                   : pvid is handled in OLT.\r\n\r\n[no] ds-pbit-mode          downstream p-bits mode\r\n                           optional parameter with default value: \"auto\"\r\n\r\n                           Parameter type: <Vlan::DSPbitMode>\r\n                           Format:\r\n                           ( auto\r\n                           | translated\r\n                           | transparency\r\n                           | filtervlanandpbit )\r\n                           Possible values:\r\n                           - auto                  : transparency for DSL and \r\ntranslated for GPON\r\n                           - translated            : for known p-bits the \r\ninverse translation is performed in downstream; unknown p-bits are forwarded \r\nunchanged in downstream\r\n                           - transparency          : all p-bits are forwarded \r\nunchanged in downstream\r\n                           - filtervlanandpbit     : for matched vlan and p-bit \r\nthe inverse translation is performed in downstream; unmatched are discarded in \r\ndownstream\r\n\r\n[no] default-tpid          configure default outer tpid\r\n                           optional parameter with default value: \"8100\"\r\n\r\n                           Parameter type: <Vlan::Tpid>\r\n                           Format:\r\n                           - vlan tpid hex string(example : 8100), scope is \r\n600-ffff\r\n                           - range: [a-fA-F0-9]\r\n                           - length: 1<=x<=4 \r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

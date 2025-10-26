@@ -1,0 +1,94 @@
+module: isam_generic_pon_ont
+short_description: Resource module to configure generic-pon ont
+description:
+- This command is to configure the system wide ONT related parameters.
+- Supports configuration of slid mode, sn bundle timer, sw ver mis block and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+options:
+  config:
+    description:
+    - A list of generic-pon ont configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier
+      slid_mode:
+        type: str
+        description:
+        - 'display interpretation for gpon/ngpon2 subscriber location id with default
+          value: "ascii"'
+        - 'Possible values: C(ascii) - ascii interpretation for subscriber location;
+          C(hexa-dec) - hexadecimal mode interpretation for subscriber location'
+        default: ascii
+        choices:
+        - ascii
+        - hexa-dec
+      sn_bundle_timer:
+        type: str
+        description:
+        - 'the system timer for bundling sn with loid/slid when gpon/ngpon2 ont is
+          in auto-bundle mode with default value: 24L - the system timer for auto
+          bundling sn - unit: hour - range: [1...72]'
+        default: 24L
+      sw_ver_mis_block:
+        type: str
+        description:
+        - 'the control behavior of user traffic block when for gpon/ngpon2 ont version
+          mismatch with default value: "enable"'
+        - 'Possible values: C(enable) - block the user traffic when ont version mismatch;
+          C(disable) - do not block the user traffic when ont version mismatch'
+        default: enable
+        choices:
+        - enable
+        - disable
+      sn_autounlock:
+        type: str
+        description:
+        - 'unlock ONT automatically after ONT authenticated with default value: "disable"'
+        - 'Possible values: C(disable) - disable unlock ONT automatically after ONT
+          authenticated; C(enable) - enable unlock ONT automatically after ONT authenticated'
+        default: disable
+        choices:
+        - disable
+        - enable
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure generic-pon ont)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

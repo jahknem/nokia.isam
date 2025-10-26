@@ -1,0 +1,5 @@
+help configure service vpls spoke-sdp bgp interf
+ace spoke-sdp
+                                                            ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

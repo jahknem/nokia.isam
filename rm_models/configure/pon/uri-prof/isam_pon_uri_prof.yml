@@ -1,0 +1,70 @@
+module: isam_pon_uri_prof
+short_description: Resource module to configure pon uri-prof
+description:
+- This command creates the URI profile for accessing the configuration server. These
+  profiles are normally associated with Voip Services.
+- Supports configuration of name, address, version
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure pon ()'
+options:
+  config:
+    description:
+    - A list of pon uri-prof configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        description:
+        - 'profile name mandatory parameter - a profile name - range: [a-zA-Z0-9-_.]
+          - length: 1<=x<=32'
+      address:
+        type: str
+        description:
+        - 'uri profile address that contains a Fully Qualified Domain Name (FQDN)
+          or an IP Address (in dot notation) with default value: "" - uri profile
+          address - length: x<=100'
+        - 'Maximum length: 100 characters'
+      version:
+        type: str
+        description:
+        - 'uri profile version number with default value: 1L - uri profile version
+          number - range: [1...2147483647]'
+        default: 1L
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure pon uri-prof)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

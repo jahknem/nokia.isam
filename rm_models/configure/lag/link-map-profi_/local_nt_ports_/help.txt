@@ -1,0 +1,5 @@
+help configure lag link-map-profi* local_nt_port
+s*
+                                                   ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

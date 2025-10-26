@@ -1,0 +1,51 @@
+help configure qos profiles marker d1p
+QOS SINGLE DOT1P MARKER CONFIGURATION COMMAND
+=============================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a marker for singleDot1P.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles marker ( no d1p (name) ) | ( d1p (name) default-dot1p 
+<Qos::ExtVlanSysPrio> )
+
+Command Parameters
+------------------
+
+Table "QoS Single Dot1P Marker Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+Table "QoS Single Dot1P Marker Configuration Command" Command Parameters
+
+Parameter                  Description
+
+default-dot1p              the default dot-1p bit value to be applied on all 
+frames
+                           mandatory parameter
+
+                           Parameter type: <Qos::ExtVlanSysPrio>
+                           Format:
+                           - the dot-1p bit value
+                           - range: [0...7]
+
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:37:30 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

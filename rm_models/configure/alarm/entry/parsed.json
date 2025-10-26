@@ -1,0 +1,57 @@
+{
+  "title": "ALARM ENTRY CONFIGURATION COMMAND",
+  "description": "This command allows the operator to manage local alarm entries.",
+  "user_level": "The command can be accessed by operators with alarm privileges, and executed by \noperators with alarm privileges.",
+  "syntax": "> configure alarm entry (index) [ no severity | severity <Alarm::alarmSeverity> ] [ [ no ] service-affecting ] [ [ no ] reporting ] [ [ no ] logging ]",
+  "resource_parameters": [
+    {
+      "name": "(index)",
+      "description": "alarm type"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] severity",
+      "description": "assign a severity level to this alarm optional parameter with default value: \"minor\"",
+      "type": "<Alarm::alarmSeverity>",
+      "format": "( indeterminate                            | warning                            | minor                            | major                            | critical                            | ignore )",
+      "values": [
+        "indeterminate         : not a definite known severity level",
+        "warning               : just to inform as a warning",
+        "minor                 : not service affecting",
+        "major                 : service affecting",
+        "critical              : service breaking",
+        "ignore                : alarm is not processed by the system"
+      ],
+      "default": "minor"
+    },
+    {
+      "name": "[no] service-affecting",
+      "description": "make this alarm service affecting optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] reporting",
+      "description": "enable reporting of this alarm optional parameter",
+      "type": "boolean"
+    },
+    {
+      "name": "[no] logging",
+      "description": "enable logging of this alarm optional parameter Table \"Alarm Entry Configuration Command\" Display Parameters Specific Information:",
+      "type": "boolean"
+    },
+    {
+      "name": "category",
+      "description": "category of an alarm This element is always shown. ( communications | qos | processing-error | equipment | environmental )",
+      "type": "<Alarm::category>",
+      "values": [
+        "communications        : communications related alar ms",
+        "qos                   : QoS related alarms",
+        "processing-error      : processing failure related alarms",
+        "equipment             : equipment related alarms",
+        "environmental         : environmental related alarms"
+      ]
+    }
+  ],
+  "raw": "help configure alarm entry\r\nALARM ENTRY CONFIGURATION COMMAND\r\n=================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to manage local alarm entries.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with alarm privileges, and executed by \r\noperators with alarm privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure alarm entry (index) [ no severity | severity <Alarm::alarmSeverity> \r\n] [ [ no ] service-affecting ] [ [ no ] reporting ] [ [ no ] logging ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"Alarm Entry Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(index)                    alarm type\r\n\r\nTable \"Alarm Entry Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] severity              assign a severity level to this alarm\r\n                           optional parameter with default value: \"minor\"\r\n\r\n                           Parameter type: <Alarm::alarmSeverity>\r\n                           Format:\r\n                           ( indeterminate\r\n                           | warning\r\n                           | minor\r\n                           | major\r\n                           | critical\r\n                           | ignore )\r\n                           Possible values:\r\n                           - indeterminate         : not a definite known \r\nseverity level\r\n                           - warning               : just to inform as a warning\r\n                           - minor                 : not service affecting\r\n                           - major                 : service affecting\r\n                           - critical              : service breaking\r\n                           - ignore                : alarm is not processed by \r\nthe system\r\n\r\n[no] service-affecting     make this alarm service affecting\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\r\n\r\n\r\n[no] reporting             enable reporting of this alarm\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n[no] logging               enable logging of this alarm\r\n                           optional parameter\r\n\r\n                           Parameter type: boolean\r\n                           \r\n\r\n\r\nTable \"Alarm Entry Configuration Command\" Display Parameters\r\n\r\nSpecific Information:\r\n\r\nParameter                  Description\r\n\r\n category                  category of an alarm\r\n                           This element is always shown.\r\n\r\n                           parameter type: <Alarm::category>\r\n                           ( communications\r\n                           | qos\r\n                           | processing-error\r\n                           | equipment\r\n                           | environmental )\r\n                           Possible values:\r\n                           - communications        : communications related alar\r\nms\r\n                           - qos                   : QoS related alarms\r\n                           - processing-error      : processing failure related \r\nalarms\r\n                           - equipment             : equipment related alarms\r\n                           - environmental         : environmental related \r\nalarms\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

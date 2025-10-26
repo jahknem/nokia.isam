@@ -1,0 +1,5 @@
+help configure router interface egress ipv6 icmp
+6
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,59 @@
+25/10/25 19:30:57 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># help configure pon
+PON CONFIGURATION COMMAND
+=========================
+
+Command Description
+-------------------
+
+This command allows the operator to configure range mode of all GPON interface.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure pon [ no pwrbrst-mode | pwrbrst-mode <Gpon::PowerBurstMode> ] [ no 
+range-mode | range-mode <Gpon::RangeMode> ]
+
+Command Parameters
+------------------
+
+Table "Pon Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] pwrbrst-mode          power burst detection mode for gpon
+                           optional parameter with default value: "disable"
+
+                           Parameter type: <Gpon::PowerBurstMode>
+                           Format:
+                           ( disable
+                           | enable )
+                           Possible values:
+                           - disable               : disable power burst 
+detection mode
+                           - enable                : enable power burst 
+detection mode
+
+[no] range-mode            range mode for gpon
+                           optional parameter with default value: "normal"
+
+                           Parameter type: <Gpon::RangeMode>
+                           Format:
+                           ( normal
+                           | alientolerant )
+                           Possible values:
+                           - normal                : use normal mode
+                           - alientolerant         : use alien tolerant range 
+mode which allows ONTs to range in the presence of Alien ONUs
+
+
+DS-LIN-TEST-01:automationuser>#

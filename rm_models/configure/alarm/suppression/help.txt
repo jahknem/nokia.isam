@@ -1,0 +1,101 @@
+help configure alarm suppression
+ALARM SUPPRESSION FILTER CONFIGURATION COMMAND
+==============================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure Suppression Alarm filter 
+parameters.
+
+Without valid interface and alarmid, suppression filter cannot be activated.
+
+
+User Level
+----------
+
+The command can be accessed by operators with alarm privileges, and executed by 
+operators with alarm privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure alarm suppression filterid <Alarm::suppressionfltrId> [ interface 
+<Alarm:::suppressionFilterIndex> ] [ alarmid <Alarm::suppressionalarmIndex> ] [ 
+no status | status <Alarm::fltrStatus> ] [ no threshold | threshold 
+<Alarm::suppressionfltrThreshold> ]
+
+Command Parameters
+------------------
+
+Table "Alarm Suppression Filter Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+filterid                   the id of the considered alarm suppression filter
+
+Table "Alarm Suppression Filter Configuration Command" Command Parameters
+
+Parameter                  Description
+
+interface                  suppression filter interface
+                           optional parameter
+
+                           Parameter type: <Alarm:::suppressionFilterIndex>
+                           Format:
+                           lt : <Eqpt::RackId> / <Eqpt::ShelfId> / 
+<Eqpt::SlotId>
+                           Possible values:
+                           - lt                    : lt-slot
+                           Field type <Eqpt::RackId>
+                           - the rack number
+                           Field type <Eqpt::ShelfId>
+                           - the shelf number
+                           Field type <Eqpt::SlotId>
+                           - the LT slot number
+
+alarmid                    alarmType
+                           optional parameter
+
+                           Parameter type: <Alarm::suppressionalarmIndex>
+                           Format:
+                           ( board-missing
+                           | board-init )
+                           Possible values:
+                           - board-missing         : board detected after 
+planning - now missing
+                           - board-init            : board initialisation 
+failure
+
+[no] status                filter status
+                           optional parameter with default value: "not-used"
+
+                           Parameter type: <Alarm::fltrStatus>
+                           Format:
+                           ( not-used
+                           | used )
+                           Possible values:
+                           - not-used              : deactivate the configured 
+alarm filter
+                           - used                  : activate the configured 
+alarm filter
+
+[no] threshold             the threshold value of the considered alarm filter
+                           optional parameter with default value: "1"
+
+                           Parameter type: <Alarm::suppressionfltrThreshold>
+                           Format:
+                           - the threshold value of the considered alarm filter
+                           - range: [1...100]
+
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:08:06 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:08:04 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:08:06 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, 8 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

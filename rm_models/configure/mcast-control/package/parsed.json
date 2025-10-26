@@ -1,0 +1,31 @@
+{
+  "title": "MCAST PACKAGE BITMAPS CONFIGURATION COMMAND",
+  "description": "This command allows the operator to configure mcast package bitmaps. The \npackage is intended primarily for use by a network/element manager, such as an \nAMS, to support multiple sets of packages in different regions.\n\nA package is a group of zero or more multicast sources that share a common \naccess permission. Grouping the source channels into one or more packages \nprovides flexibility for the service provider to deliver different levels of \nservices to the end users; for example, \"Basic Package\", \"Middle-Tier Package\", \nand \"Premium Package\".\n\nNOTE:There is no requirement to configure the package. If the package is \nmodified, there is no effect on the multicast source.",
+  "user_level": "The command can be accessed by operators with igmp privileges, and executed by \noperators with igmp privileges.",
+  "syntax": "> configure mcast-control package (index) [ no name | name <Igmp::igmpPackageName> ] [ no template-name | template-name <Igmp::igmpPackageTemplateName> ] [ no template-version | template-version <Igmp::igmpPackageTemplateVersion> ]",
+  "resource_parameters": [
+    {
+      "name": "(index)",
+      "description": "index of the package"
+    }
+  ],
+  "command_parameters": [
+    {
+      "name": "[no] name",
+      "description": "name of the package optional parameter with default value: \"\" - a printable string - length: x<=32",
+      "type": "<Igmp::igmpPackageName>"
+    },
+    {
+      "name": "[no] template-name",
+      "description": "name of the service template containing this pkg optional parameter with default value: \"\" - a printable string - length: x<=32",
+      "type": "<Igmp::igmpPackageTemplateName>"
+    },
+    {
+      "name": "[no] template-version",
+      "description": "version of the service template containing this pkg optional parameter with default value: 0 - version of the service template containing this package - range: [0...65535]",
+      "type": "<Igmp::igmpPackageTemplateVersion>",
+      "default": "0"
+    }
+  ],
+  "raw": "help configure mcast-control package\r\nMCAST PACKAGE BITMAPS CONFIGURATION COMMAND\r\n===========================================\r\n\r\nCommand Description\r\n-------------------\r\n\r\nThis command allows the operator to configure mcast package bitmaps. The \r\npackage is intended primarily for use by a network/element manager, such as an \r\nAMS, to support multiple sets of packages in different regions.\r\n\r\nA package is a group of zero or more multicast sources that share a common \r\naccess permission. Grouping the source channels into one or more packages \r\nprovides flexibility for the service provider to deliver different levels of \r\nservices to the end users; for example, \"Basic Package\", \"Middle-Tier Package\", \r\nand \"Premium Package\".\r\n\r\nNOTE:There is no requirement to configure the package. If the package is \r\nmodified, there is no effect on the multicast source.\r\n\r\n\r\nUser Level\r\n----------\r\n\r\nThe command can be accessed by operators with igmp privileges, and executed by \r\noperators with igmp privileges.\r\n\r\nCommand Syntax\r\n--------------\r\n\r\nThe command has the following syntax:\r\n> configure mcast-control package (index) [ no name | name \r\n<Igmp::igmpPackageName> ] [ no template-name | template-name \r\n<Igmp::igmpPackageTemplateName> ] [ no template-version | template-version \r\n<Igmp::igmpPackageTemplateVersion> ]\r\n\r\nCommand Parameters\r\n------------------\r\n\r\nTable \"mcast Package Bitmaps Configuration Command\" Resource Parameters\r\n\r\nResource Identifier        Description\r\n\r\n(index)                    index of the package\r\n\r\nTable \"mcast Package Bitmaps Configuration Command\" Command Parameters\r\n\r\nParameter                  Description\r\n\r\n[no] name                  name of the package\r\n                           optional parameter with default value: \"\"\r\n\r\n                           Parameter type: <Igmp::igmpPackageName>\r\n                           Format:\r\n                           - a printable string\r\n                           - length: x<=32 \r\n\r\n[no] template-name         name of the service template containing this pkg\r\n                           optional parameter with default value: \"\"\r\n\r\n                           Parameter type: <Igmp::igmpPackageTemplateName>\r\n                           Format:\r\n                           - a printable string\r\n                           - length: x<=32 \r\n\r\n[no] template-version      version of the service template containing this pkg\r\n                           optional parameter with default value: 0\r\n\r\n                           Parameter type: <Igmp::igmpPackageTemplateVersion>\r\n                           Format:\r\n                           - version of the service template containing this \r\npackage\r\n                           - range: [0...65535]\r\n\r\n\r\nDS-LIN-TEST-01:automationuser>#"
+}

@@ -1,0 +1,5 @@
+help configure router <router-name> : "Base"|"ma
+nagement" Default
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,34 @@
+help configure dhcp-relay port-stats
+DHCP RELAY USER PORT CONFIGURATION COMMAND
+==========================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the DHCP relay user port 
+statistics.
+
+
+User Level
+----------
+
+The command can be accessed by operators with dhcp privileges, and executed by 
+operators with dhcp privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure dhcp-relay ( no port-stats (vlan-port) ) | ( port-stats (vlan-port) 
+)
+
+Command Parameters
+------------------
+
+Table "DHCP Relay User Port Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(vlan-port)                Identification of the ip user interface or vlan port
+
+DS-LIN-TEST-01:automationuser>#

@@ -1,0 +1,4 @@
+help configure router interface icmp ipv6
+                                                      ^
+invalid token
+DS-LIN-TEST-01:automationuser>#

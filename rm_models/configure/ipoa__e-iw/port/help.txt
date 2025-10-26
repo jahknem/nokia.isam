@@ -1,0 +1,54 @@
+help configure ipoa/e-iw port
+IPOA/E IW INTERWORKING PORT CONFIGURATION COMMAND
+=================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure the parameter on the IPOA L2 
+interworking port level
+
+
+User Level
+----------
+
+The command can be accessed by operators with ip privileges, and executed by 
+operators with ip privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure ipoa/e-iw ( no port (interworking-port) ) | ( port 
+(interworking-port) [ user-ip <Ip::V4AddressHex> ] [ gw-ip <Ip::V4AddressHex> ] 
+)
+
+Command Parameters
+------------------
+
+Table "IPoA/E IW Interworking Port Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(interworking-port)        index of rack/shelf/slot/port user-bridgeport
+
+Table "IPoA/E IW Interworking Port Configuration Command" Command Parameters
+
+Parameter                  Description
+
+user-ip                    ip address for user
+                           optional parameter
+
+                           Parameter type: <Ip::V4AddressHex>
+                           Format:
+                           - IPv4-address
+
+gw-ip                      ip address for next-hop gateway
+                           optional parameter
+
+                           Parameter type: <Ip::V4AddressHex>
+                           Format:
+                           - IPv4-address
+
+
+DS-LIN-TEST-01:automationuser>#

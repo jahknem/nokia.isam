@@ -1,0 +1,13 @@
+help configure alarm entry soho-sup2-bias-lwarn 
+! SOHO ONT
+                                                                                ^
+invalid token
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:06:58 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:06:55 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:06:58 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:06:42 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#

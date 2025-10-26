@@ -1,0 +1,268 @@
+module: isam_pon_interface
+short_description: Resource module to configure pon interface
+description:
+- 'Configures the provisioning data associated with a PON interface. Note: The value
+  of sig-degrade-th must be greater than sig-fail-th (i.e. sig-degrade-th must represent
+  a lower BER value) The value of closest-ont can be changed only after setting the
+  administrative status to down. The value of diff-reach can be changed only after
+  setting the administrative status to down. The value of fec-dn can be changed only
+  after setting the administrative status to down. If the FEC change is made while
+  the admin status is up, then it must be set to down and then put back to up for
+  the change to take place. The value of auth-method can be changed only after setting
+  the administrative status to down.'
+- Supports configuration of label, ber calc period, polling period and more
+version_added: 1.0.0
+author: Jan Kühnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- 'Implements CLI command: C(configure pon interface ()'
+options:
+  config:
+    description:
+    - A list of pon interface configurations
+    - Each entry represents one resource to be configured
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - The resource identifier for this configuration
+        - (pon-idx) - pon index
+      label:
+        type: str
+        description:
+        - 'label of the pon port with default value: "" - char string - length: x<=80'
+        - 'Maximum length: 80 characters'
+      ber_calc_period:
+        type: str
+        description:
+        - 'measurement period to determine whether a signal degraded alarm has occurred
+          for an ont with default value: 10L - ber measurement period - unit: 1/10
+          sec - range: [1...864000]'
+        default: 10L
+      polling_period:
+        type: str
+        description:
+        - 'period between two consecutive times the autodetection procedure on pon
+          is executed with default value: 100L - polling period - unit: 1/10 sec -
+          range: [1...864000]'
+        default: 100L
+      sig_degrade_th:
+        type: str
+        description:
+        - 'ber threshold used to detect signal degrade alarms for onts with default
+          value: 9L - signal degrade threshold (x) - unit: 10 ^ (-x) - range: [4...10]'
+        default: 9L
+      sig_fail_th:
+        type: str
+        description:
+        - 'ber threshold used to detect a signal fail alarms for onts with default
+          value: 5L - signal fail threshold (x) - unit: 10 ^ (-x) - range: [3...8]'
+        default: 5L
+      fec_dn:
+        type: str
+        description:
+        - 'use of fec in downstream direction for all olt transmissions with default
+          value: "disable,ngpon : enable"'
+        - 'Possible values: C(enable) - fec is enabled; C(disable) - fec is disabled'
+        choices:
+        - enable
+        - disable
+      raman_reduct:
+        type: str
+        description:
+        - 'use of raman reduction code for overlay video in downstream direction with
+          default value: "disable"'
+        - 'Possible values: C(enable) - raman reduction code enabled; C(disable) -
+          raman reduction code disabled'
+        default: disable
+        choices:
+        - enable
+        - disable
+      closest_ont:
+        type: str
+        description:
+        - 'the distance of the closest ont on the pon with default value: 0L - closest
+          ont distance(ngpon range is [0,20] unit: km) - unit: km - range: [0...40]'
+        default: 0L
+      diff_reach:
+        type: str
+        description:
+        - 'the maximum differential logical reach on the PON with default value: 20L
+          - pon differential reach(ngpon range is [20,40] unit: km) - unit: km - range:
+          [20,34,40]'
+        default: 20L
+      pon_tag:
+        type: str
+        description:
+        - 'label of the pon port with default value: "0000000000000000" - Pon Tag
+          - 16 hex characters - length: x<=16'
+        - 'Maximum length: 16 characters'
+      pon_id:
+        type: str
+        description:
+        - 'label of the pon port with default value: "00000000" - Pon Id - 8 hex characters
+          - length: x<=8'
+        - 'Maximum length: 8 characters'
+        default: '00000000'
+      mcast_encrypt:
+        type: str
+        description:
+        - 'Multicast encryption enable with default value: "disable"'
+        - 'Possible values: C(enable) - mcast encryption is enabled; C(disable) -
+          mcast encryption is disabled'
+        default: disable
+        choices:
+        - enable
+        - disable
+      auth_method:
+        type: str
+        description:
+        - 'ont authentication mode option for this pon interface level with default
+          value: "sn-slid"'
+        - 'Possible values: C(sn-slid) - sn and slid authentication; C(logical) -
+          logical authentication; C(loidpre) - loid precedence mix authentication;
+          C(logical-std) - standard logical authentication; C(loidpre-std) - standard
+          loid precedence mix authentication; C(loid-sn-slid) - loid,sn and slid mixing
+          authentication'
+        default: sn-slid
+        choices:
+        - sn-slid
+        - logical
+        - loidpre
+        - logical-std
+        - loidpre-std
+        - loid-sn-slid
+      ponid_interval:
+        type: str
+        description:
+        - 'interval to send GPON-ID PLOAM message in second with default value: 0L
+          - interval time - unit: second - range: [0...60]'
+        default: 0L
+      ponid_odn:
+        type: str
+        description:
+        - 'ODN class of the pon port with default value: "auto"'
+        - 'Possible values: C(a) - ODN Level A; C(b) - ODN Level B; C(bplus) - ODN
+          Level B+; C(c) - ODN Level C; C(cplus) - ODN Level C+; C(auto) - Auto Detected'
+        default: auto
+        choices:
+        - a
+        - b
+        - bplus
+        - c
+        - cplus
+        - auto
+      ponid_identifier:
+        type: str
+        description:
+        - 'label of the pon port with default value: "00000000000000" - Pon Id - 14
+          hex characters - length: 14'
+      max_ranging_onts:
+        type: str
+        description:
+        - 'max ranging ont number for guaranteed bandwidth cac with default value:
+          128L - ranging onts number;if 0 indicates bandwidth calculated by provisioned
+          onts; other value indicates pre-configured onts - range: [0...128]'
+        default: 128L
+      tconts_per_frame:
+        type: str
+        description:
+        - 'max service tcont number per gtc frame with default value: "64L,xgs : -
+          maximum number of tconts per upstream frame, to cal culate guaranteed bandwidth(GPON
+          range is [1...64], XGSPON and XGPON1 range[0...64]) - range: [0...64]'
+        default: '64L, xgs : 44L, ngpon : 16L'
+      admin_state:
+        type: str
+        description:
+        - 'administrative status of the interface with default value: "down"'
+        - 'Possible values: C(up) - set the admin-state to up; C(down) - set the admin-state
+          to down'
+        default: down
+        choices:
+        - up
+        - down
+      pon_speed:
+        type: str
+        description:
+        - 'pon speed with default value: "nominal"'
+        - 'Possible values: C(nominal) - nominal line rate of the pon technology :
+          2.5g down / 1.25g up for gpon; 10g down / dual-rate up for ngpon; C(10g-10g)
+          - 10g down / 10g up; C(10g-2.5g) - 10g down / 2.5g up'
+        default: nominal
+        choices:
+        - nominal
+        - 10g-10g
+        - 10g-2.5g
+      burst_overhead:
+        type: str
+        description:
+        - 'burst mode overhead with default value: "robust"'
+        - 'Possible values: C(robust) - robust; C(reduced) - reduced'
+        default: robust
+        choices:
+        - robust
+        - reduced
+      onu_prov_mode:
+        type: str
+        description:
+        - 'ONU auto provisioning mode with default value: "semi-auto" Table "Pon Interface
+          Configuration Command" Display Parameters Specific Information:'
+        - 'Possible values: C(semi-auto) - ONU semi-auto provisioning. Template file
+          needs to be specified in ONT config; C(auto) - ONU auto provisioning. Template
+          file selection done automatically based on ONT type'
+        default: semi-auto
+        choices:
+        - semi-auto
+        - auto
+      oper_state:
+        type: str
+        description:
+        - operational state of the interface This element is always shown. ( up |
+          down | testing | unknown | dormant | no-value )
+        - 'Possible values: C(up) - up,traffic can pass; C(down) - down,no traffic
+          is passing; C(testing) - testing,no traffic is passing; C(unknown) - unknown;
+          C(dormant) - dormant,no traffic is passing; C(no-value) - no entry in the
+          table'
+        choices:
+        - up
+        - down
+        - testing
+        - unknown
+        - dormant
+        - no-value
+  running_config:
+    description:
+    - This option is used only with state I(parsed)
+    - The value of this option should be the output received from the device
+    - by executing the command C(info configure pon interface)
+    - For state I(parsed) active connection to remote host is not required
+    type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    - The states I(rendered), I(gathered) and I(parsed) do not perform any changes
+      on the device
+    - State I(merged) - Merges the provided configuration with existing configuration
+    - State I(replaced) - Replaces the configuration of specified resources
+    - State I(overridden) - Overrides all resource configurations with provided config
+    - State I(deleted) - Deletes the specified resource configurations
+    - State I(gathered) - Gathers current configuration from the device and returns
+      structured data
+    - State I(rendered) - Renders the configuration as CLI commands without connecting
+      to device
+    - State I(parsed) - Parses the configuration from C(running_config) parameter
+      into structured data
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged

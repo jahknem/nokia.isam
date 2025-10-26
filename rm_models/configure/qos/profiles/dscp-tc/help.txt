@@ -1,0 +1,35 @@
+help configure qos profiles dscp-tc
+QOS DSCP TO TC MAPPING PROFILE CONFIGURATION COMMAND
+====================================================
+
+Command Description
+-------------------
+
+This command allows the operator to configure a QoS DSCP to Tc mapping profile. 
+To configure the DSCP codepoints in the DSCP to tc mapping, the command 
+"configure qos profiles dscp-tc (name) codepoint (codepoint) (value)" is to be 
+used.
+
+
+User Level
+----------
+
+The command can be accessed by operators with qos privileges, and executed by 
+operators with qos privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure qos profiles ( no dscp-tc (name) ) | ( dscp-tc (name) )
+
+Command Parameters
+------------------
+
+Table "QoS DSCP to Tc Mapping Profile Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(name)                     A unique profile name
+
+DS-LIN-TEST-01:automationuser>#

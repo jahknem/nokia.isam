@@ -1,0 +1,101 @@
+help configure pon auth-sec-prof
+GPON AUTHENTICATION SECURITY PROFILE CONFIGURATION COMMAND
+==========================================================
+
+Command Description
+-------------------
+
+This command creates the profile for accessing the server storing 
+authentication security information for contacting network addresses. These 
+profiles are normally associated with Voip Services that must reference common 
+authentication information.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure pon ( no auth-sec-prof (index) ) | ( auth-sec-prof (index) name 
+<AsamProfileName> [ no validation-scheme | validation-scheme 
+<Gpon::AuthSecValScheme> ] [ no user-name | user-name <Gpon::AuthUserName> ] [ 
+no password | password <Security::Password5> ] [ no realm | realm <Gpon::Realm> 
+] )
+
+Command Parameters
+------------------
+
+Table "GPON Authentication Security Profile Configuration Command" Resource 
+Parameters
+
+Resource Identifier        Description
+
+(index)                    profile index
+
+Table "GPON Authentication Security Profile Configuration Command" Command 
+Parameters
+
+Parameter                  Description
+
+name                       profile name
+                           mandatory parameter
+
+                           Parameter type: <AsamProfileName>
+                           Format:
+                           - a profile name
+                           - range: [a-zA-Z0-9-_.]
+                           - length: 1<=x<=32 
+
+[no] validation-scheme     validation scheme required for authentication
+                           optional parameter with default value: "md5-digest"
+
+                           Parameter type: <Gpon::AuthSecValScheme>
+                           Format:
+                           ( disabled
+                           | md5-digest
+                           | basic-authentic )
+                           Possible values:
+                           - disabled              : Validation disabled
+                           - md5-digest            : validate using md5 digest 
+authentication
+                           - basic-authentic       : Validate using basic 
+authentication
+
+[no] user-name             user name required for authentication
+                           optional parameter with default value: ""
+
+                           Parameter type: <Gpon::AuthUserName>
+                           Format:
+                           - user name required for authentication
+                           - length: x<=50 
+
+[no] password              password required for authentication
+                           optional parameter with default value: "plain : "
+
+                           Parameter type: <Security::Password5>
+                           Format:
+                           ( prompt
+                           | plain : <Security::PlainPassword5> )
+                           Possible values:
+                           - prompt                : prompts the operator for a 
+password
+                           - plain                 : the password in plain text
+                           Field type <Security::PlainPassword5>
+                           - authentication string
+                           - length: x<=25 
+
+[no] realm                 realm required for authentication
+                           optional parameter with default value: ""
+
+                           Parameter type: <Gpon::Realm>
+                           Format:
+                           - realm required for authentication
+                           - length: x<=25 
+
+
+DS-LIN-TEST-01:automationuser>#

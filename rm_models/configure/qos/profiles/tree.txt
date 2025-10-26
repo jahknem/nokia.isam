@@ -1,0 +1,525 @@
+25/10/24 15:29:00 major alarm occurred for ip-addr 192.168.222.19  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/24 15:29:00 major alarm occurred for ip-addr 192.168.222.19  : Successful Management login, 6 , Username : automationuser , Type : CLI
+25/10/24 15:29:00 major alarm cleared for ip-addr 192.168.222.19  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/24 15:29:13 major alarm cleared for ip-addr 192.168.222.19  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/24 15:29:26 major alarm occurred for ip-addr 192.168.222.19  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/24 15:29:39 major alarm occurred for ip-addr 192.168.222.19  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/24 15:29:39 major alarm cleared for ip-addr 192.168.222.19  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/24 15:29:52 major alarm occurred for ip-addr 192.168.222.19  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/24 15:29:52 major alarm cleared for ip-addr 192.168.222.19  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/24 15:30:05 major alarm cleared for ip-addr 192.168.222.19  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/24 15:30:18 major alarm occurred for ip-addr 192.168.222.19  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/24 15:30:31 major alarm occurred for ip-addr 192.168.222.19  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/24 15:30:31 major alarm cleared for ip-addr 192.168.222.19  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/24 15:30:45 major alarm cleared for ip-addr 192.168.222.19  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/24 15:30:58 major alarm occurred for ip-addr 192.168.222.19  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/24 15:31:12 major alarm cleared for ip-addr 192.168.222.19  : Successful Management login, 6 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># tree configure qos profiles
+profiles 
+|  
++--queue 
+|  |  
+|  +--(bac-complex-type) 
+|  |  
+|  *--unit 
+|     
++--scheduler-node 
+|  |  
+|  +--priority 
+|  |  
+|  +--weight 
+|  |  
+|  +--shaper-profile 
+|  |  
+|  *--ext-shaper 
+|  |  
+|  *--mcast-inc-shape 
+|     
++--cac 
+|  |  
+|  +--res-voice-bandwidth 
+|  |  
+|  +--max-mcast-bandwidth 
+|  |  
+|  +--res-data-bandwidth 
+|  |  
+|  *--cac-type 
+|     
++--marker 
+|  |  
+|  +--d1p 
+|  |  |  
+|  |  +--default-dot1p 
+|  |     
+|  +--dscp 
+|  |  |  
+|  |  +--default-dscp 
+|  |  |  
+|  |  *--(alignment) 
+|  |     
+|  +--dscp-contract 
+|  |  |  
+|  |  *--(alignment) 
+|  |  |  
+|  |  +--codepoint 
+|  |     |  
+|  |     *--dscp-value 
+|  |        
+|  +--d1p-dscp-contract 
+|  |  |  
+|  |  +--dot1p-value 
+|  |  |  
+|  |  *--(alignment) 
+|  |  |  
+|  |  +--codepoint 
+|  |     |  
+|  |     *--dscp-value 
+|  |        
+|  +--d1p-dscp 
+|  |  |  
+|  |  +--default-dscp 
+|  |  |  
+|  |  +--default-dot1p 
+|  |     
+|  +--d1p-alignment 
+|  |  |  
+|  |  +--(alignment) 
+|  |  |  
+|  |  *--dscp-pbit-prof 
+|  |     
+|  +--dot1p-remark 
+|     |  
+|     +--dot1p-value 
+|        |  
+|        *--remark-value 
+|           
++--policer 
+|  |  
+|  +--committed-info-rate 
+|  |  
+|  +--committed-burst-size 
+|  |  
+|  *--policer-type 
+|  |  
+|  *--excess-info-rate 
+|  |  
+|  *--excess-burst-size 
+|  |  
+|  *--coupling-flag 
+|  |  
+|  *--color-mode 
+|  |  
+|  *--green-action 
+|  |  
+|  *--yellow-action 
+|  |  
+|  *--red-action 
+|  |  
+|  *--policed-size-ctrl 
+|  |  
+|  *--peak-info-rate 
+|  |  
+|  *--peak-burst-size 
+|  |  
+|  *--cos-threshold 
+|     
++--l2-filter 
+|  |  
+|  *--dst-mac-addr 
+|  |  
+|  *--src-mac-addr 
+|  |  
+|  *--ethertype 
+|  |  
+|  *--dot1p-priority 
+|  |  
+|  *--canonical-format 
+|  |  
+|  *--vlan-id 
+|     
++--l3-filter 
+|  |  
+|  *--filter-type 
+|  |  
+|  *--dst-ip-addr 
+|  |  
+|  *--src-ip-addr 
+|  |  
+|  *--dst-ipv6-addr 
+|  |  
+|  *--src-ipv6-addr 
+|  |  
+|  *--min-dst-port 
+|  |  
+|  *--max-dst-port 
+|  |  
+|  *--min-src-port 
+|  |  
+|  *--max-src-port 
+|  |  
+|  *--dscp-value 
+|  |  
+|  *--protocol 
+|     
++--policy-action 
+|  |  
+|  *--dscp-value 
+|  |  
+|  *--dot1p-value 
+|  |  
+|  *--(discard-packet) 
+|  |  
+|  *--(shared-policer) 
+|  |  
+|  *--policer-profile 
+|  |  
+|  *--(count) 
+|  |  
+|  *--mirror-vlan 
+|  |  
+|  *--tc-value 
+|     
++--policy 
+|  |  
+|  +--filter 
+|  |  
+|  *--precedence 
+|  |  
+|  *--policy-action 
+|     
++--session 
+|  |  
+|  +--logical-flow-type 
+|  |  
+|  *--up-policer 
+|  |  
+|  *--down-policer 
+|  |  
+|  *--up-marker 
+|  |  
+|  *--ing-outer-marker 
+|  |  
+|  *--ds-schedule-tag 
+|  |  
+|  *--up-policer-per-tc 
+|  |  
+|  *--up-dscptotc-prof 
+|  |  
+|  *--dn-dscptotc-prof 
+|  |  
+|  *--up-pbittotc-prof 
+|  |  
+|  *--dn-pbittotc-prof 
+|  |  
+|  *--up-default-tc 
+|  |  
+|  *--dn-default-tc 
+|  |  
+|  +--up-policy 
+|  |     
+|  +--down-policy 
+|  |     
+|  +--rem-up-policy 
+|  |     
+|  +--rem-down-policy 
+|        
++--aggrqueuesconfig 
+|  |  
+|  *--q0-priority 
+|  |  
+|  *--q1-priority 
+|  |  
+|  *--q2-priority 
+|  |  
+|  *--q3-priority 
+|  |  
+|  *--q4-priority 
+|  |  
+|  *--q5-priority 
+|  |  
+|  *--q6-priority 
+|  |  
+|  *--q7-priority 
+|  |  
+|  *--q0-weight 
+|  |  
+|  *--q1-weight 
+|  |  
+|  *--q2-weight 
+|  |  
+|  *--q3-weight 
+|  |  
+|  *--q4-weight 
+|  |  
+|  *--q5-weight 
+|  |  
+|  *--q6-weight 
+|  |  
+|  *--q7-weight 
+|  |  
+|  *--q0-shaper-prof 
+|  |  
+|  *--q1-shaper-prof 
+|  |  
+|  *--q2-shaper-prof 
+|  |  
+|  *--q3-shaper-prof 
+|  |  
+|  *--q4-shaper-prof 
+|  |  
+|  *--q5-shaper-prof 
+|  |  
+|  *--q6-shaper-prof 
+|  |  
+|  *--q7-shaper-prof 
+|  |  
+|  *--q0-queue-prof 
+|  |  
+|  *--q1-queue-prof 
+|  |  
+|  *--q2-queue-prof 
+|  |  
+|  *--q3-queue-prof 
+|  |  
+|  *--q4-queue-prof 
+|  |  
+|  *--q5-queue-prof 
+|  |  
+|  *--q6-queue-prof 
+|  |  
+|  *--q7-queue-prof 
+|  |  
+|  *--q0-bandwidth-prof 
+|  |  
+|  *--q1-bandwidth-prof 
+|  |  
+|  *--q2-bandwidth-prof 
+|  |  
+|  *--q3-bandwidth-prof 
+|  |  
+|  *--q4-bandwidth-prof 
+|  |  
+|  *--q5-bandwidth-prof 
+|  |  
+|  *--q6-bandwidth-prof 
+|  |  
+|  *--q7-bandwidth-prof 
+|  |  
+|  *--q0-bw-sharing 
+|  |  
+|  *--q1-bw-sharing 
+|  |  
+|  *--q2-bw-sharing 
+|  |  
+|  *--q3-bw-sharing 
+|  |  
+|  *--q4-bw-sharing 
+|  |  
+|  *--q5-bw-sharing 
+|  |  
+|  *--q6-bw-sharing 
+|  |  
+|  *--q7-bw-sharing 
+|     
++--shaper 
+|  |  
+|  +--committed-info-rate 
+|  |  
+|  +--committed-burst-size 
+|  |  
+|  *--excess-info-rate 
+|  |  
+|  *--type 
+|  |  
+|  *--autoshape 
+|     
++--bandwidth 
+|  |  
+|  +--committed-info-rate 
+|  |  
+|  +--assured-info-rate 
+|  |  
+|  +--excessive-info-rate 
+|  |  
+|  *--delay-tolerance 
+|  |  
+|  *--assu-burst-size 
+|  |  
+|  *--exce-burst-size 
+|  |  
+|  *--dbru 
+|     
++--ingress-qos 
+|  |  
+|  *--dot1-p0-tc 
+|  |  
+|  *--dot1-p1-tc 
+|  |  
+|  *--dot1-p2-tc 
+|  |  
+|  *--dot1-p3-tc 
+|  |  
+|  *--dot1-p4-tc 
+|  |  
+|  *--dot1-p5-tc 
+|  |  
+|  *--dot1-p6-tc 
+|  |  
+|  *--dot1-p7-tc 
+|  |  
+|  *--(use-dei) 
+|  |  
+|  *--dot1-p0-color 
+|  |  
+|  *--dot1-p1-color 
+|  |  
+|  *--dot1-p2-color 
+|  |  
+|  *--dot1-p3-color 
+|  |  
+|  *--dot1-p4-color 
+|  |  
+|  *--dot1-p5-color 
+|  |  
+|  *--dot1-p6-color 
+|  |  
+|  *--dot1-p7-color 
+|  |  
+|  *--dot1-p0-pol-tc 
+|  |  
+|  *--dot1-p1-pol-tc 
+|  |  
+|  *--dot1-p2-pol-tc 
+|  |  
+|  *--dot1-p3-pol-tc 
+|  |  
+|  *--dot1-p4-pol-tc 
+|  |  
+|  *--dot1-p5-pol-tc 
+|  |  
+|  *--dot1-p6-pol-tc 
+|  |  
+|  *--dot1-p7-pol-tc 
+|     
++--rate-limit 
+|  |  
+|  *--total-rate 
+|  |  
+|  *--total-burst 
+|  |  
+|  *--arp-rate 
+|  |  
+|  *--arp-burst 
+|  |  
+|  *--dhcp-rate 
+|  |  
+|  *--dhcp-burst 
+|  |  
+|  *--igmp-rate 
+|  |  
+|  *--igmp-burst 
+|  |  
+|  *--pppoe-rate 
+|  |  
+|  *--pppoe-burst 
+|  |  
+|  *--nd-rate 
+|  |  
+|  *--nd-burst 
+|  |  
+|  *--icmpv6-rate 
+|  |  
+|  *--icmpv6-burst 
+|  |  
+|  *--mld-rate 
+|  |  
+|  *--mld-burst 
+|  |  
+|  *--dhcpv6-rate 
+|  |  
+|  *--dhcpv6-burst 
+|  |  
+|  *--cfm-rate 
+|  |  
+|  *--cfm-burst 
+|     
++--dscp-pbit 
+|  |  
+|  +--codepoint 
+|     |  
+|     *--dot1p-value 
+|        
++--dscp-tc 
+|  |  
+|  +--codepoint 
+|     |  
+|     *--tc-value 
+|        
++--policer-per-tc 
+|  |  
+|  +--tc-policer 
+|     |  
+|     *--policer 
+|        
++--cos-threshold 
+   |  
+   *--tc0-threshold 
+   |  
+   *--tc1-threshold 
+   |  
+   *--tc2-threshold 
+   |  
+   *--tc3-threshold 
+   |  
+   *--tc4-threshold 
+   |  
+   *--tc5-threshold 
+   |  
+   *--tc6-threshold 
+   |  
+   *--tc7-threshold 
+      
+DS-LIN-TEST-01:automationuser>#

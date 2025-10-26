@@ -1,0 +1,79 @@
+help configure ani ont tca-thresh
+ANI ONT THERSHOLD CONFIGURATION COMMAND
+=======================================
+
+Command Description
+-------------------
+
+This command edits provisioning data associated with an ONT ANI.
+
+
+User Level
+----------
+
+The command can be accessed by operators with equipment privileges, and 
+executed by operators with equipment privileges.
+
+Command Syntax
+--------------
+
+The command has the following syntax:
+> configure ani ont ( no tca-thresh (ont-idx) ) | ( tca-thresh (ont-idx) [ no 
+lower-optical-th | lower-optical-th <Gpon::OpticalthreshLow> ] [ no 
+upper-optical-th | upper-optical-th <Gpon::OpticalthreshHigh> ] [ no 
+rssi-profile | rssi-profile <Gpon::RssiProfileId> ] )
+
+Command Parameters
+------------------
+
+Table "ANI ONT Thershold Configuration Command" Resource Parameters
+
+Resource Identifier        Description
+
+(ont-idx)                  ont index
+
+Table "ANI ONT Thershold Configuration Command" Command Parameters
+
+Parameter                  Description
+
+[no] lower-optical-th      indicates the optical level the ONT uses to declare 
+the Low received.Value 0.5 dBm means ONT internal choice which would be MIB 
+default 1
+                           optional parameter with default value: 0.5
+
+                           Parameter type: <Gpon::OpticalthreshLow>
+                           Format:
+                           - optical level ONT uses to declare the low recieved
+                           - unit: dBm
+                           - range: [-127...0.5]
+
+[no] upper-optical-th      indicates the optical level the ONT uses to declare 
+the High received.Value 0.5 dBm means ONT internal choice which would be MIB 
+default 1
+                           optional parameter with default value: 0.5
+
+                           Parameter type: <Gpon::OpticalthreshHigh>
+                           Format:
+                           - optical level ONT uses to declare the high recieved
+                           - unit: dBm
+                           - range: [-127...0.5]
+
+[no] rssi-profile          an unique index of the rssi profile(0-200)
+                           optional parameter with default value: "0"
+
+                           Parameter type: <Gpon::RssiProfileId>
+                           Format:
+                           - an unique index value for the rssi profile(0-200 
+configurable)
+                           - range: [0...200]
+
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:08:19 major alarm occurred for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:08:18 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser># 
+
+25/10/25 19:08:19 major alarm cleared for ip-addr 192.168.222.11  : Successful Management login, TimeStamp : 25/10/25 19:08:04 , Username : automationuser , Type : CLI
+
+DS-LIN-TEST-01:automationuser>#
