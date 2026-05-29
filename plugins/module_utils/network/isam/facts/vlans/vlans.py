@@ -49,7 +49,7 @@ class VlansFacts(object):
             data = connection.get("info configure vlan id detail")
 
         # parse native config using the Vlans template
-        vlans_parser = VlansTemplate(lines=data.splitlines(), module=self._module)
+        vlans_parser = VlansTemplate(lines=self._flatten_config(data), module=self._module)
         objs = list(vlans_parser.parse().values())
 
         ansible_facts['ansible_network_resources'].pop('vlans', None)
@@ -62,3 +62,24 @@ class VlansFacts(object):
         ansible_facts['ansible_network_resources'].update(facts)
 
         return ansible_facts
+
+    def _flatten_config(self, data):
+        lines = []
+        current_id = None
+        for line in (data or "").splitlines():
+            stripped = line.strip()
+            if not stripped or stripped.startswith("#") or stripped.startswith("echo"):
+                continue
+            if stripped in ("configure", "configure vlan", "exit"):
+                continue
+
+            if stripped.startswith("id "):
+                parts = stripped.split()
+                if len(parts) > 1:
+                    current_id = parts[1]
+                lines.append(stripped)
+            elif current_id and line[:1].isspace():
+                lines.append("id {0} {1}".format(current_id, stripped))
+            else:
+                lines.append(stripped)
+        return lines

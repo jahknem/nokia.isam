@@ -110,7 +110,7 @@ class Ethernet_line(ResourceModule):
             wantd = {}
 
         # remove superfluous config for overridden and deleted
-        if self.state in ["overridden", "deleted"]:
+        if self.state in ["deleted"]:
             for k, have in iteritems(haved):
                 if k not in wantd:
                     self._compare(want={}, have=have)
@@ -124,7 +124,54 @@ class Ethernet_line(ResourceModule):
            the `want` and `have` data with the `parsers` defined
            for the Ethernet_line network resource.
         """
-        self.compare(parsers=self.parsers, want=want, have=have)
+        force = self.state == "overridden" and bool(want)
+
+        if force or want.get("port_type") != have.get("port_type"):
+            if want.get("port_type") is not None:
+                self.commands.append(
+                    "configure ethernet line {0} port-type {1}".format(
+                        want["if_index"], want["port_type"]
+                    )
+                )
+            elif have.get("port_type") is not None:
+                self.commands.append(
+                    "configure ethernet no line {0} port-type {1}".format(
+                        have["if_index"], have["port_type"]
+                    )
+                )
+
+        if force or want.get("admin_up") != have.get("admin_up"):
+            if want.get("admin_up") is not None:
+                prefix = "" if want["admin_up"] else "no "
+                self.commands.append(
+                    "configure ethernet line {0} {1}admin-up".format(
+                        want["if_index"], prefix
+                    )
+                )
+            elif have.get("admin_up") is not None:
+                prefix = "" if have["admin_up"] else "no "
+                self.commands.append(
+                    "configure ethernet no line {0} {1}admin-up".format(
+                        have["if_index"], prefix
+                    )
+                )
+
+        want_mau = {entry["index"]: entry for entry in want.get("mau") or []}
+        have_mau = {entry["index"]: entry for entry in have.get("mau") or []}
+        for index, entry in iteritems(want_mau):
+            before = have_mau.get(index, {})
+            if (force or entry.get("mau_type") != before.get("mau_type")) and entry.get("mau_type") is not None:
+                self.commands.append(
+                    "configure ethernet line {0} mau {1} type {2}".format(
+                        want["if_index"], index, entry["mau_type"]
+                    )
+                )
+            if (force or entry.get("power") != before.get("power")) and entry.get("power") is not None:
+                self.commands.append(
+                    "configure ethernet line {0} mau {1} power {2}".format(
+                        want["if_index"], index, entry["power"]
+                    )
+                )
 
     def _compare_entries(self, want, have):
         """Compares the entries in the `want` and `have` data
