@@ -56,7 +56,9 @@ class Bridges(ResourceModule):
         :rtype: A dictionary
         :returns: The result from module execution
         """
-        if self.state not in ["parsed", "gathered"]:
+        if self.state == "rendered":
+            self.generate_commands()
+        elif self.state not in ["parsed", "gathered"]:
             self.generate_commands()
             self.run_commands()
         return self.result
@@ -65,8 +67,8 @@ class Bridges(ResourceModule):
         """ Generate configuration commands to send based on
             want, have and desired state.
         """
-        wantd = {entry['name']: entry for entry in self.want}
-        haved = {entry['name']: entry for entry in self.have}
+        wantd = self._index_by_port(self.want)
+        haved = self._index_by_port(self.have)
 
         # if state is merged, merge want onto have and then compare
         if self.state == "merged":
@@ -95,3 +97,15 @@ class Bridges(ResourceModule):
            for the Bridges network resource.
         """
         self.compare(parsers=self.parsers, want=want, have=have)
+
+    def _index_by_port(self, data):
+        if not data:
+            return {}
+        if isinstance(data, dict):
+            data = data.get("port", [])
+        indexed = {}
+        for entry in data:
+            port = entry.get("port") or entry.get("id")
+            if port:
+                indexed[port] = entry
+        return indexed

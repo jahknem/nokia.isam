@@ -4,7 +4,6 @@
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, print_function
-from typing import Tuple
 
 __metaclass__ = type
 
@@ -15,11 +14,7 @@ for a given resource, parsed, and the facts tree is populated
 based on the configuration.
 """
 
-from copy import deepcopy
-from anytree import Node, PreOrderIter
-import debugpy
-
-from ansible.module_utils.six import iteritems
+from anytree import Node
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )

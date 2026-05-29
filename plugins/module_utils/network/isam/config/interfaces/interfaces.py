@@ -48,6 +48,12 @@ class Interfaces(ResourceModule):
             tmplt=InterfacesTemplate(),
         )
         self.parsers = [
+            "name",
+            "admin_up",
+            "link_updown_trap",
+            "user",
+            "severity",
+            "port_type",
         ]
 
     def execute_module(self):
@@ -56,7 +62,9 @@ class Interfaces(ResourceModule):
         :rtype: A dictionary
         :returns: The result from module execution
         """
-        if self.state not in ["parsed", "gathered"]:
+        if self.state == "rendered":
+            self.generate_commands()
+        elif self.state not in ["parsed", "gathered"]:
             self.generate_commands()
             self.run_commands()
         return self.result
@@ -65,8 +73,8 @@ class Interfaces(ResourceModule):
         """ Generate configuration commands to send based on
             want, have and desired state.
         """
-        wantd = {entry['name']: entry for entry in self.want}
-        haved = {entry['name']: entry for entry in self.have}
+        wantd = self._index_by_id(self.want)
+        haved = self._index_by_id(self.have)
 
         # if state is merged, merge want onto have and then compare
         if self.state == "merged":
@@ -95,3 +103,21 @@ class Interfaces(ResourceModule):
            for the Interfaces network resource.
         """
         self.compare(parsers=self.parsers, want=want, have=have)
+
+    def _index_by_id(self, data):
+        indexed = {}
+        for entry in data or []:
+            normalized = dict(entry)
+            if "id" in normalized and "name" not in normalized:
+                normalized["name"] = normalized["id"]
+            if "admin-up" in normalized and "admin_up" not in normalized:
+                normalized["admin_up"] = normalized["admin-up"]
+            if "link-updown-trap" in normalized and "link_updown_trap" not in normalized:
+                normalized["link_updown_trap"] = normalized["link-updown-trap"]
+            if "port-type" in normalized and "port_type" not in normalized:
+                normalized["port_type"] = normalized["port-type"]
+
+            key = normalized.get("name") or normalized.get("id")
+            if key:
+                indexed[key] = normalized
+        return indexed

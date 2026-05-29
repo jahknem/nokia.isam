@@ -44,3 +44,57 @@ class TestIsamFactsModule(TestIsamModule):
         self.assertIn("interfaces", anr)
         self.assertIsInstance(anr["interfaces"], list)
         self.assertEqual(anr["interfaces"], [])
+
+    def test_isam_facts_bridges_port_vlan(self):
+        class BridgeConn:
+            def get(self, cmd):
+                if cmd == "info configure bridge flat":
+                    return "\n".join(
+                        [
+                            "configure bridge ageing-time 400",
+                            "configure bridge port 1/1/2/1 pvid 99",
+                            "configure bridge port 1/1/2/1 vlan-id 99 tag single-tagged",
+                        ]
+                    )
+                return ""
+
+        self.get_resource_connection_facts.return_value = BridgeConn()
+
+        set_module_args(dict(gather_network_resources=["bridges"]))
+        result = self.execute_module(changed=False)
+        bridges = result["ansible_facts"]["ansible_network_resources"]["bridges"]
+
+        self.assertEqual(bridges.get("ageing_time"), 400)
+        self.assertTrue(bridges.get("port"))
+        self.assertEqual(bridges["port"][0].get("port"), "1/1/2/1")
+
+    def test_isam_facts_interfaces_keys_are_canonical(self):
+        class InterfaceConn:
+            def get(self, cmd):
+                if cmd == "info configure interface port flat":
+                    return "\n".join(
+                        [
+                            "configure interface port uni:1/1/1/1 admin-up",
+                            "configure interface port uni:1/1/1/1 link-updown-trap",
+                            "configure interface port uni:1/1/1/1 port-type nni",
+                            "configure interface port uni:1/1/1/1 user test-user",
+                        ]
+                    )
+                return ""
+
+        self.get_resource_connection_facts.return_value = InterfaceConn()
+
+        set_module_args(dict(gather_network_resources=["interfaces"]))
+        result = self.execute_module(changed=False)
+        interfaces = result["ansible_facts"]["ansible_network_resources"]["interfaces"]
+
+        self.assertTrue(interfaces)
+        interface = interfaces[0]
+        self.assertIn("name", interface)
+        self.assertIn("admin_up", interface)
+        self.assertIn("link_updown_trap", interface)
+        self.assertIn("port_type", interface)
+        self.assertNotIn("id", interface)
+        self.assertNotIn("admin-up", interface)
+        self.assertNotIn("link-updown-trap", interface)
+        self.assertNotIn("port-type", interface)

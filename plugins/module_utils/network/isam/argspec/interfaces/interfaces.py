@@ -36,9 +36,9 @@ class InterfacesArgs(object):  # pylint: disable=R0903
             "type": "list",
             "elements": "dict",
             "options": {
-                "id": {"type": "str"},
-                "admin-up": {"type": "bool"},
-                "link-updown-trap": {"type": "bool"},
+                "name": {"type": "str", "aliases": ["id"]},
+                "admin_up": {"type": "bool", "aliases": ["admin-up"]},
+                "link_updown_trap": {"type": "bool", "aliases": ["link-updown-trap"]},
                 "user": {"type": "str"},
                 "severity": {
                     "type": "str",
@@ -54,16 +54,26 @@ class InterfacesArgs(object):  # pylint: disable=R0903
                     ],
                     "default": "no-value",
                 },
-                "port-type": {
+                "port_type": {
                     "type": "str",
+                    "aliases": ["port-type"],
                     "choices": ["uni", "nni", "hc-uni", "uplink"],
                     "default": "uni",
                 },
             },
         },
+        "running_config": {"type": "str"},
         "state": {
             "type": "str",
-            "choices": ["merged", "replaced", "overridden", "deleted", "gathered"],
+            "choices": [
+                "merged",
+                "replaced",
+                "overridden",
+                "deleted",
+                "gathered",
+                "rendered",
+                "parsed",
+            ],
             "default": "merged",
         },
     }  # pylint: disable=C0301

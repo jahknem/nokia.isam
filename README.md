@@ -8,21 +8,22 @@ Currently available modules are:
 * cli_command
 * cli_config
 * isam_interfaces
-
-Future modules will include:
 * isam_bridges
-* isam_ethernet_ont
+* isam_ethernet_line
 * isam_facts
+* isam_vlans
+
+Module roadmap (TODO):
+* isam_ethernet_ont
 * isam_ont_interfaces
 * isam_ont_slots
 * isam_ping
 * isam_qos_interfaces
-* isam_vlans
 
 ## Requirements & Installation
 ### Requirements
-* Ansible 2.9 or higher
-* Python 3.6 or higher
+* Ansible 2.15 or higher
+* Python 3.10 or higher
 * Nokia ISAM FTTN 7330 device running ISAM Release R6.2.04m
  or higher
 
@@ -42,6 +43,28 @@ To use this collection the following needs to be added to the inventory:
 ansible_connection: ansible.netcommon.network_cli
 ansible_network_os: nokia.isam.isam
 ```
+When using `gather_facts: true`, Ansible's default `smart` resolver does not
+automatically map `nokia.isam.isam` to this collection's facts module.
+
+Add this to `ansible.cfg`:
+```ini
+[defaults]
+facts_modules = smart, nokia.isam.isam_facts
+```
+
+Or set it in inventory/group vars:
+```yaml
+ansible_facts_modules:
+  - smart
+  - nokia.isam.isam_facts
+```
+
+You can always run facts explicitly as a task:
+```yaml
+- name: Gather ISAM facts
+  nokia.isam.isam_facts:
+```
+
 Some modules take a long time to complete due to the slow nature of the device. To increase the timeout for these modules the following can be added to the inventory:
 ```
 ansible_command_timeout : 150

@@ -148,8 +148,17 @@ class VlansArgs(object):  # pylint: disable=R0903
                 "mac-unauth": {"type": "bool"},
             },
         },
+        "running_config": {"type": "str"},
         "state": {
             "type": "str",
-            "choices": ["merged", "replaced", "overridden", "deleted", "gathered"],
+            "choices": [
+                "merged",
+                "replaced",
+                "overridden",
+                "deleted",
+                "gathered",
+                "rendered",
+                "parsed",
+            ],
         },
     }  # pylint: disable=C0301
