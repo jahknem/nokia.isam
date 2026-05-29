@@ -28,6 +28,7 @@ class FactsArgs(object):  # pylint: disable=R0903
         'ethernet_onts',
         'equipment_onts',
         'qos_interfaces',
+        'isam_equipment',
         'vlans',
         'qos_profiles',
         'xdsl_lines',
