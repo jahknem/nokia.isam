@@ -20,6 +20,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ethe
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.equipment_onts.equipment_onts import Equipment_ontsFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.qos_interfaces.qos_interfaces import Qos_interfacesFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.vlans.vlans import VlansFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.qos_profiles.qos_profiles import Qos_profilesFacts
 
 
 FACT_LEGACY_SUBSETS = {}
@@ -32,6 +33,7 @@ FACT_RESOURCE_SUBSETS = dict(
     equipment_onts=Equipment_ontsFacts,
     qos_interfaces=Qos_interfacesFacts,
     vlans=VlansFacts,
+    qos_profiles=Qos_profilesFacts,
 )
 
 
