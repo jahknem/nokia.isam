@@ -22,6 +22,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.qos_
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.vlans.vlans import VlansFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.qos_profiles.qos_profiles import Qos_profilesFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_lines.xdsl_lines import Xdsl_linesFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_profiles.xdsl_profiles import Xdsl_profilesFacts
 
 
 FACT_LEGACY_SUBSETS = {}
@@ -36,6 +37,7 @@ FACT_RESOURCE_SUBSETS = dict(
     vlans=VlansFacts,
     qos_profiles=Qos_profilesFacts,
     xdsl_lines=Xdsl_linesFacts,
+    xdsl_profiles=Xdsl_profilesFacts,
 )
 
 

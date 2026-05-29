@@ -31,6 +31,7 @@ class FactsArgs(object):  # pylint: disable=R0903
         'vlans',
         'qos_profiles',
         'xdsl_lines',
+        'xdsl_profiles',
     ]
 
     argument_spec = {
