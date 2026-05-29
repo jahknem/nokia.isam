@@ -25,6 +25,7 @@ class FactsArgs(object):  # pylint: disable=R0903
         'bridges',
         'ethernet_line',
         'vlans',
+        'qos_profiles',
     ]
 
     argument_spec = {
