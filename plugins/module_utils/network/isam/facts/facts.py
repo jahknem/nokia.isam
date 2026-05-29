@@ -24,6 +24,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.qos_
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_lines.xdsl_lines import Xdsl_linesFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_profiles.xdsl_profiles import Xdsl_profilesFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.link_agg.link_agg import Link_aggFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xstp.xstp import XstpFacts
 
 
 FACT_LEGACY_SUBSETS = {}
@@ -40,6 +41,7 @@ FACT_RESOURCE_SUBSETS = dict(
     xdsl_lines=Xdsl_linesFacts,
     xdsl_profiles=Xdsl_profilesFacts,
     link_agg=Link_aggFacts,
+    xstp=XstpFacts,
 )
 
 
