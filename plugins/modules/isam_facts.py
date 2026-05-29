@@ -73,7 +73,15 @@ EXAMPLES = """
 """
 
 RETURN = """
-See the respective resource module parameters for the tree.
+ansible_facts:
+  description: Facts collected from the device.
+  returned: always
+  type: dict
+warnings:
+  description: Warnings emitted while collecting facts.
+  returned: when warnings are present
+  type: list
+  elements: str
 """
 
 from ansible.module_utils.basic import AnsibleModule

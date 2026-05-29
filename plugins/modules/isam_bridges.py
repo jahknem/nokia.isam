@@ -150,6 +150,8 @@ options:
           vlan_id:
             type: list
             elements: dict
+            description:
+            - VLAN membership entries for the bridge port.
             suboptions:
               id:
                 type: str

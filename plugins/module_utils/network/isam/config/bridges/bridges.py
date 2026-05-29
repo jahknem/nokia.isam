@@ -41,7 +41,7 @@ class Bridges(ResourceModule):
 
     def __init__(self, module):
         super(Bridges, self).__init__(
-            empty_fact_val={},
+            empty_fact_val=[],
             facts_module=Facts(module),
             module=module,
             resource="bridges",
