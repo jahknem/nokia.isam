@@ -14,6 +14,7 @@ version_added: 1.0.0
 author: Jan Kuhnemund (@jahknem)
 options:
   config:
+    description: PON interface configuration entries.
     type: list
     elements: dict
     suboptions:
@@ -42,6 +43,7 @@ options:
         choices: [up, down]
         description: Administrative state of the interface.
       tc_layer:
+        description: TC-layer performance monitoring settings.
         type: dict
         suboptions:
           pm_collect:
