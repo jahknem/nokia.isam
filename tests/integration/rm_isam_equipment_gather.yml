@@ -1,0 +1,14 @@
+---
+- name: check GATHERED state
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Gather equipment config
+      nokia.isam.isam_equipment:
+        state: gathered
+      timeout: 300
+      register: isam_equipment
+
+    - name: output equipment
+      ansible.builtin.debug:
+        msg: "{{ isam_equipment }}"
