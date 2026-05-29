@@ -15,6 +15,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.f
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.interfaces.interfaces import InterfacesFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.bridges.bridges import BridgesFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ethernet_line.ethernet_line import Ethernet_lineFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.isam_equipment.isam_equipment import Isam_equipmentFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.vlans.vlans import VlansFacts
 
 
@@ -23,6 +24,7 @@ FACT_RESOURCE_SUBSETS = dict(
     interfaces=InterfacesFacts,
     bridges=BridgesFacts,
     ethernet_line=Ethernet_lineFacts,
+    isam_equipment=Isam_equipmentFacts,
     vlans=VlansFacts,
 )
 
