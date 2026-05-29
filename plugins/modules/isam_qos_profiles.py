@@ -24,10 +24,12 @@ options:
     description: QoS profile entries.
     suboptions:
       profile_type:
+        description: QoS profile family.
         type: str
         required: true
         choices: [queue, scheduler-node, cac, marker-d1p, policer, session, aggrqueuesconfig, shaper, bandwidth, ingress-qos, rate-limit]
       name:
+        description: QoS profile name or identifier.
         type: str
         required: true
       attributes:
@@ -38,6 +40,7 @@ options:
     type: str
     description: Output from C(info configure qos profiles), used with state C(parsed).
   state:
+    description: Desired resource state.
     type: str
     default: merged
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]

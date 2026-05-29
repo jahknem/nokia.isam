@@ -15,55 +15,73 @@ version_added: 1.0.0
 author: Jan Kuehnemund
 options:
   config:
+    description: Equipment configuration grouped by resource type.
     type: dict
     suboptions:
       shelves:
+        description: Equipment shelf entries.
         type: list
         elements: dict
         suboptions:
           id:
+            description: Shelf identifier.
             type: str
             required: true
           planned_type:
+            description: Planned shelf type.
             type: str
       slots:
+        description: Equipment slot entries.
         type: list
         elements: dict
         suboptions:
           id:
+            description: Slot identifier.
             type: str
             required: true
           planned_type:
+            description: Planned slot type.
             type: str
           unlock:
+            description: Convenience flag for unlocking the slot.
             type: bool
           admin_state:
+            description: Administrative slot state.
             type: str
             choices: [locked, unlocked]
       appliques:
+        description: Equipment applique entries.
         type: list
         elements: dict
         suboptions:
           id:
+            description: Applique identifier.
             type: str
             required: true
           planned_type:
+            description: Planned applique type.
             type: str
       protection_groups:
+        description: Equipment protection group entries.
         type: list
         elements: dict
         suboptions:
           id:
+            description: Protection group identifier.
             type: int
             required: true
           admin_status:
+            description: Protection group administrative status.
             type: str
             choices: [lock, unlock]
           eps_quenchfactor:
+            description: EPS quench factor.
             type: int
   running_config:
+    description: Device-native running configuration for parsed state.
     type: str
   state:
+    description: Desired resource state.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -96,21 +114,27 @@ EXAMPLES = """
 
 RETURN = """
 before:
+  description: Configuration prior to module execution.
   returned: when state is merged, replaced, overridden, or deleted
   type: dict
 after:
+  description: Configuration after module execution.
   returned: when changed
   type: dict
 commands:
+  description: Commands sent to the device or produced in check mode.
   returned: when state is merged, replaced, overridden, or deleted
   type: list
 rendered:
+  description: Rendered device-native commands.
   returned: when state is rendered
   type: list
 gathered:
+  description: Gathered structured equipment data.
   returned: when state is gathered
   type: dict
 parsed:
+  description: Parsed structured equipment data.
   returned: when state is parsed
   type: dict
 """
