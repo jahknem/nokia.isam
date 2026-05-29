@@ -27,6 +27,7 @@ class FactsArgs(object):  # pylint: disable=R0903
         'pon_interfaces',
         'ethernet_onts',
         'equipment_onts',
+        'qos_interfaces',
         'vlans',
     ]
 

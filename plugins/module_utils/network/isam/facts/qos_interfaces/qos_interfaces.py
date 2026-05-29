@@ -1,0 +1,100 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
+from anytree import Node
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.qos_interfaces.qos_interfaces import Qos_interfacesArgs
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.qos_interfaces import Qos_interfacesTemplate
+
+
+class Qos_interfacesFacts(object):
+    """The isam qos_interfaces facts class."""
+
+    def __init__(self, module, subspec="config", options="options"):
+        self._module = module
+        self.argument_spec = Qos_interfacesArgs.argument_spec
+
+    def get_config(self, connection):
+        return connection.get("info configure qos interface")
+
+    def populate_facts(self, connection, ansible_facts, data=None):
+        facts = {}
+
+        if not data:
+            data = self.get_config(connection)
+        if type(data) == tuple:
+            data = data[0]
+        data = self._flatten_config(data)
+
+        parser = Qos_interfacesTemplate(lines=data, module=self._module)
+        objs = list(parser.parse().values())
+
+        for item in objs:
+            for key in ["queue", "upstream_queue", "ds_rem_queue"]:
+                if isinstance(item.get(key), dict):
+                    item[key] = list(item[key].values())
+
+        ansible_facts["ansible_network_resources"].pop("qos_interfaces", None)
+        params = utils.remove_empties(
+            parser.validate_config(self.argument_spec, {"config": objs}, redact=True)
+        )
+        facts["qos_interfaces"] = params.get("config", [])
+        ansible_facts["ansible_network_resources"].update(facts)
+        return ansible_facts
+
+    def _count_spaces(self, line):
+        return len(line) - len(line.lstrip(" "))
+
+    def _parse_config_to_tree(self, config):
+        if not config:
+            return None
+        last_spaces = 0
+        root = None
+        parent_node = None
+        prev_node = None
+
+        for line in config.splitlines():
+            if line.startswith("echo") or line.startswith("#"):
+                continue
+
+            stripped = line.split("#", 1)[0].strip()
+            if not stripped:
+                continue
+
+            if parent_node is None:
+                root = Node(stripped)
+                parent_node = root
+                prev_node = root
+            elif stripped == "exit":
+                if self._count_spaces(line) < last_spaces and parent_node.parent:
+                    parent_node = parent_node.parent
+                else:
+                    continue
+            elif self._count_spaces(line) > last_spaces:
+                parent_node = prev_node
+                prev_node = Node(stripped, parent=prev_node)
+            else:
+                prev_node = Node(stripped, parent=parent_node)
+
+            last_spaces = self._count_spaces(line)
+        return root
+
+    def _flatten_config(self, config):
+        if not config:
+            return []
+        lines = [line.strip() for line in config.splitlines() if line.strip()]
+        if lines and all(line.startswith("configure qos interface") for line in lines):
+            return lines
+        root = self._parse_config_to_tree(config)
+        if root is None:
+            return []
+        flat_config = []
+        for leaf in root.leaves:
+            line = []
+            for node in leaf.path:
+                line.append(node.name)
+            flat_config.append(" ".join(line))
+        return flat_config
