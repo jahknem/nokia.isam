@@ -34,7 +34,6 @@ class BridgesArgs(object):  # pylint: disable=R0903
     argument_spec = {
         "config": {
             "type": "dict",
-            "elements": "dict",
             "options": {
                 "ageing_time": {"type": "int", "default": 300},
                 "port": {
@@ -89,7 +88,7 @@ class BridgesArgs(object):  # pylint: disable=R0903
                         "max-commited-mac": {"type": "int"},
                         "mirror-mode": {
                             "type": "str",
-                            "choices": ["disable", "overwrite-outer-vlan"],
+                            "choices": ["disable", "overwrite-outer-vlan", "insert-mirror-vlan"],
                         },
                         "mirror-vlan": {"type": "int"},
                         "pvid-tagging-flag": {
@@ -98,7 +97,7 @@ class BridgesArgs(object):  # pylint: disable=R0903
                         },
                         "ds-pbit-mode": {
                             "type": "str",
-                            "choices": ["auto", "translated", "transparency"],
+                            "choices": ["auto", "translated", "transparency", "filtervlanandpbit"],
                         },
                         "vlan_id": {
                             "type": "list",
@@ -121,19 +120,19 @@ class BridgesArgs(object):  # pylint: disable=R0903
                                 "qos": {"type": "str", "default": "none"},
                                 "qos_profile": {"type": "str", "default": "none"},
                                 "prior_best_effort": {
-                                    "type": "boolean",
+                                    "type": "bool",
                                     "default": "none",
                                 },
                                 "prior_background": {
-                                    "type": "boolean",
+                                    "type": "bool",
                                     "default": "none",
                                 },
-                                "prior_spare": {"type": "boolean"},
-                                "prior_exc_effort": {"type": "boolean"},
-                                "prior_ctrl_load": {"type": "boolean"},
-                                "prior_less_100ms": {"type": "boolean"},
-                                "prior_less_10ms": {"type": "boolean"},
-                                "prior_nw_ctrl": {"type": "boolean"},
+                                "prior_spare": {"type": "bool"},
+                                "prior_exc_effort": {"type": "bool"},
+                                "prior_ctrl_load": {"type": "bool"},
+                                "prior_less_100ms": {"type": "bool"},
+                                "prior_less_10ms": {"type": "bool"},
+                                "prior_nw_ctrl": {"type": "bool"},
                                 "in_qos_prof_name": {"type": "str"},
                                 "max_up_qos_policy": {"type": "int"},
                                 "max_ip_antispoof": {"type": "int"},
@@ -150,9 +149,18 @@ class BridgesArgs(object):  # pylint: disable=R0903
                 },
             },
         },
+        "running_config": {"type": "str"},
         "state": {
             "type": "str",
-            "choices": ["gathered", "merged", "replaced", "overridden", "deleted"],
+            "choices": [
+                "gathered",
+                "merged",
+                "replaced",
+                "overridden",
+                "deleted",
+                "rendered",
+                "parsed",
+            ],
             "default": "merged",
         },
     }  # pylint: disable=C0301

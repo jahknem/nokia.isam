@@ -1,4 +1,4 @@
-1#!/usr/bin/python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 # Copyright 2022 Red Hat
 # GNU General Public License v3.0+
@@ -26,22 +26,25 @@ options:
     type: list
     elements: dict
     suboptions:
-      id:
+      name:
         type: str
-        description: 
-        - configure a specific interface port
-      admin-up:
-        type: bool
-        description: 
-        - If the interface has been activated administratevly
-      link-updown-trap:
-        type: bool
+        aliases: [id]
         description:
-        - If up/down state changes of the interface should be trapped     
+        - configure a specific interface port
+      admin_up:
+        type: bool
+        aliases: [admin-up]
+        description:
+        - If the interface has been activated administratevly
+      link_updown_trap:
+        type: bool
+        aliases: [link-updown-trap]
+        description:
+        - If up/down state changes of the interface should be trapped
       user:
         type: str
         description:
-         - description of the user connected to this interface. (only supported for physical interfaces)
+          - description of the user connected to this interface. (only supported for physical interfaces)
       severity:
         type: str
         description:
@@ -65,7 +68,8 @@ options:
         - default
         - no-value
         default: no-value
-      port-type:
+      port_type:
+        aliases: [port-type]
         description:
         - The whole network service model based on this interface
         type: str
@@ -75,6 +79,11 @@ options:
         - hc-uni
         - uplink
         default: uni
+  running_config:
+    description:
+    - This option is used only with state C(parsed).
+    - The value should be the output of C(info configure interface port flat).
+    type: str
 
   state:
     description:
@@ -86,10 +95,34 @@ options:
     - overridden
     - deleted
     - gathered
+    - rendered
+    - parsed
     default: merged
 """
 
 EXAMPLES = """
+- name: Gather interface facts
+  nokia.isam.isam_interfaces:
+    state: gathered
+
+- name: Enable interface and set alarm behavior
+  nokia.isam.isam_interfaces:
+    state: merged
+    config:
+      - name: "ethernet-line:1/1/8/1"
+        admin_up: true
+        link_updown_trap: true
+        severity: warning
+        port_type: nni
+
+- name: Legacy aliases are still accepted
+  nokia.isam.isam_interfaces:
+    state: merged
+    config:
+      - id: "ethernet-line:1/1/8/2"
+        admin-up: true
+        link-updown-trap: false
+        port-type: uni
 
 """
 

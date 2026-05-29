@@ -84,3 +84,25 @@ class TestIsamVlansModule(TestIsamModule):
         set_module_args(dict(state="gathered"), ignore_provider_arg)
         result = self.execute_module(changed=False)
         self.assertEqual(result.get("gathered"), [])
+
+    def test_isam_vlans_rendered_smoke(self):
+        set_module_args(
+            dict(
+                state="rendered",
+                config=[
+                    {
+                        "id": "100",
+                        "mode": "residential-bridge",
+                        "name": "HomeNet",
+                    }
+                ],
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        self.assertIn("rendered", result)
+        self.assertIsInstance(result.get("rendered"), list)
+
+    def test_isam_vlans_parsed_requires_running_config(self):
+        set_module_args(dict(state="parsed"), ignore_provider_arg)
+        self.execute_module(failed=True)

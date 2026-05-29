@@ -46,3 +46,22 @@ class TestIsamBridgesModule(TestIsamModule):
 
         result = self.execute_module(changed=False)
         self.assertEqual(result.get("gathered"), [])
+
+    def test_isam_bridges_rendered_smoke(self):
+        set_module_args(
+            dict(
+                config={
+                    "ageing_time": 300,
+                    "port": [{"port": "1/1/8/1", "pvid": 99}],
+                },
+                state="rendered",
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        self.assertIn("rendered", result)
+        self.assertIsInstance(result.get("rendered"), list)
+
+    def test_isam_bridges_parsed_requires_running_config(self):
+        set_module_args(dict(state="parsed"), ignore_provider_arg)
+        self.execute_module(failed=True)

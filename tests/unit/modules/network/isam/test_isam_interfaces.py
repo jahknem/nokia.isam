@@ -57,17 +57,15 @@ class TestIsamInterfacesModule(TestIsamModule):
 
         parsed = [
             dict(
-                id="vlan-port:1/1/8/1",
-                **{
-                    "admin-up": True,
-                    "port-type": "uni",
-                    "user": "john_doe",
-                    "severity": "major",
-                },
+                name="vlan-port:1/1/8/1",
+                admin_up=True,
+                port_type="uni",
+                user="john_doe",
+                severity="major",
             )
         ]
         result = self.execute_module(changed=False)
-        self.assertEqual(result["parsed"][0]["id"], parsed[0]["id"])  # id
+        self.assertEqual(result["parsed"][0]["name"], parsed[0]["name"])
         for k, v in parsed[0].items():
             self.assertEqual(result["parsed"][0].get(k), v)
 
@@ -92,18 +90,16 @@ class TestIsamInterfacesModule(TestIsamModule):
 
         gathered = [
             dict(
-                id="vlan-port:1/1/8/1",
-                **{
-                    "admin-up": True,
-                    "port-type": "uni",
-                    "user": "john_doe",
-                    "severity": "major",
-                },
+                name="vlan-port:1/1/8/1",
+                admin_up=True,
+                port_type="uni",
+                user="john_doe",
+                severity="major",
             )
         ]
 
         result = self.execute_module(changed=False)
-        self.assertEqual(result["gathered"][0]["id"], gathered[0]["id"])  # id
+        self.assertEqual(result["gathered"][0]["name"], gathered[0]["name"])
         for k, v in gathered[0].items():
             self.assertEqual(result["gathered"][0].get(k), v)
 
@@ -113,13 +109,11 @@ class TestIsamInterfacesModule(TestIsamModule):
             dict(
                 config=[
                     dict(
-                        id="vlan-port:1/1/8/1",
-                        **{
-                            "admin-up": True,
-                            "port-type": "uni",
-                            "user": "john_doe",
-                            "severity": "major",
-                        },
+                        name="vlan-port:1/1/8/1",
+                        admin_up=True,
+                        port_type="uni",
+                        user="john_doe",
+                        severity="major",
                     )
                 ],
                 state="rendered",
@@ -133,3 +127,7 @@ class TestIsamInterfacesModule(TestIsamModule):
         self.assertTrue(any(cmd.startswith("configure interface port vlan-port:1/1/8/1") for cmd in cmds))
         self.assertTrue(any("admin-up" in cmd for cmd in cmds))
         self.assertTrue(any("port-type uni" in cmd for cmd in cmds))
+
+    def test_isam_interfaces_parsed_requires_running_config(self):
+        set_module_args(dict(state="parsed"), ignore_provider_arg)
+        self.execute_module(failed=True)

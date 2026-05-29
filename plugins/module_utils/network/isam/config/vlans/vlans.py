@@ -48,6 +48,52 @@ class Vlans(ResourceModule):
             tmplt=VlansTemplate(),
         )
         self.parsers = [
+            "id",
+            "id_with_mode",
+            "name",
+            "mode",
+            "sntp-proxy",
+            "priority",
+            "vmac-not-in-opt61",
+            "new-broadcast",
+            "protocol-filter",
+            "pppoe-relay-tag",
+            "drly-srv-usr-side",
+            "new-secure-fwd",
+            "aging-time",
+            "l2cp-transparent",
+            "in-qos-prof-name",
+            "ipv4-mcast-ctrl",
+            "ipv6-mcast-ctrl",
+            "mac-mcast-ctrl",
+            "dis-proto-rip",
+            "proto-ntp",
+            "dis-ip-antispoof",
+            "unknown-unicast",
+            "pt2ptgem-flooding",
+            "mac-movement-ctrl",
+            "cvlan4095passthru",
+            "arp-snooping",
+            "arp-polling",
+            "arp-polling-ip",
+            "mac-unauth",
+            "dhcp-opt82-ext",
+            "dhcp-opt82-nni",
+            "dhcp-opt82-uplink",
+            "circuit-id-dhcp",
+            "remote-id-dhcp",
+            "relay-id-dhcp",
+            "linerates",
+            "l2-encaps",
+            "vlanaware",
+            "circuit-id-pppoe",
+            "remote-id-pppoe",
+            "dhcpv6-identifiers",
+            "dhcpv6-flags",
+            "enterprise-number",
+            "icmpv6-sec-fltr",
+            "vmac-translation",
+            "vmac-dnstr-filter",
         ]
 
     def execute_module(self):
@@ -56,7 +102,9 @@ class Vlans(ResourceModule):
         :rtype: A dictionary
         :returns: The result from module execution
         """
-        if self.state not in ["parsed", "gathered"]:
+        if self.state == "rendered":
+            self.generate_commands()
+        elif self.state not in ["parsed", "gathered"]:
             self.generate_commands()
             self.run_commands()
         return self.result
@@ -65,8 +113,8 @@ class Vlans(ResourceModule):
         """ Generate configuration commands to send based on
             want, have and desired state.
         """
-        wantd = {entry['name']: entry for entry in self.want}
-        haved = {entry['name']: entry for entry in self.have}
+        wantd = {entry['id']: entry for entry in self.want}
+        haved = {entry['id']: entry for entry in self.have}
 
         # if state is merged, merge want onto have and then compare
         if self.state == "merged":

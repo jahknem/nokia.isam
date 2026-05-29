@@ -14,10 +14,6 @@ for a given resource, parsed, and the facts tree is populated
 based on the configuration.
 """
 
-from copy import deepcopy
-import debugpy
-
-from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
@@ -36,6 +32,24 @@ class InterfacesFacts(object):
         self._module = module
         self.argument_spec = InterfacesArgs.argument_spec
 
+    @staticmethod
+    def _canonicalize_entry(item):
+        entry = dict(item)
+        if "id" in entry and "name" not in entry:
+            entry["name"] = entry["id"]
+        if "admin-up" in entry and "admin_up" not in entry:
+            entry["admin_up"] = entry["admin-up"]
+        if "link-updown-trap" in entry and "link_updown_trap" not in entry:
+            entry["link_updown_trap"] = entry["link-updown-trap"]
+        if "port-type" in entry and "port_type" not in entry:
+            entry["port_type"] = entry["port-type"]
+
+        entry.pop("id", None)
+        entry.pop("admin-up", None)
+        entry.pop("link-updown-trap", None)
+        entry.pop("port-type", None)
+        return entry
+
     def populate_facts(self, connection, ansible_facts, data=None):
         """ Populate the facts for Interfaces network resource
 
@@ -51,8 +65,6 @@ class InterfacesFacts(object):
            
         if not data:
             data = connection.get("info configure interface port flat")
-            self._module.warn(f"LINES={len(data.splitlines())}")
-            self._module.warn(data[:1000])
 
         # parse native config using the Interfaces template
         # the template 'getval' regexes expect lines starting with 'port ...'
@@ -71,13 +83,16 @@ class InterfacesFacts(object):
         valued = parsed.values()
         objs = list(valued)
 
+        objs = [self._canonicalize_entry(item) for item in objs]
+
 
         ansible_facts['ansible_network_resources'].pop('interfaces', None)
 
         params = utils.remove_empties(
             interfaces_parser.validate_config(self.argument_spec, {"config": objs}, redact=True)
         ) or {}
-        facts['interfaces'] = params.get('config') or []
+        validated = params.get('config') or []
+        facts['interfaces'] = [self._canonicalize_entry(item) for item in validated]
         ansible_facts['ansible_network_resources'].update(facts)
 
         return ansible_facts
