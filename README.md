@@ -13,12 +13,28 @@ Currently available modules are:
 * isam_facts
 * isam_vlans
 
-Module roadmap (TODO):
-* isam_ethernet_ont
-* isam_ont_interfaces
-* isam_ont_slots
-* isam_ping
-* isam_qos_interfaces
+Resource module roadmap (TODO):
+
+The detailed live command tree and resource roadmap are documented in:
+
+* `docs/command_tree.md`
+* `docs/resource_module_roadmap.md`
+
+First planned config resource branches:
+
+* `isam_pon_interfaces`
+* `isam_ethernet_onts`
+* `isam_equipment_onts`
+* `isam_qos_interfaces`
+* `isam_qos_profiles`
+* `isam_xdsl_lines`
+* `isam_xdsl_profiles`
+* `isam_link_agg`
+* `isam_xstp`
+* `isam_equipment`
+
+Status and management data should generally be added as structured `isam_facts`
+resources before introducing dedicated read-only info modules.
 
 ## Requirements & Installation
 ### Requirements
