@@ -29,6 +29,7 @@ class FactsArgs(object):  # pylint: disable=R0903
         'equipment_onts',
         'qos_interfaces',
         'vlans',
+        'qos_profiles',
     ]
 
     argument_spec = {
