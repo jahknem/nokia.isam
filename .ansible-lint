@@ -1,0 +1,11 @@
+exclude_paths:
+  - .git/
+  - __pycache__/
+  - .tox/
+  - tests/
+
+skip_list:
+  - yaml  # Galaxy format uses non-standard YAML
+  - fqcn-builtins  # Modules running CLI commands intentionally
+
+quiet: true

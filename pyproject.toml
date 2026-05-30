@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[tool.pytest.ini_options]
+testpaths = ["tests/unit/modules/network/isam"]
+pythonpath = ["."]
+
+[tool.coverage.run]
+source = ["plugins/module_utils", "plugins/modules"]
+omit = ["*/tests/*"]
+
+[tool.flake8]
+max_line_length = 160
+extend_ignore = ["E501", "W503"]
+exclude = [".git", "__pycache__", "*.pyc"]
+
+[tool.pylint]
+max_line_length = 160
+disable = ["C0301", "C0114", "C0115", "C0116", "R0903", "R0913", "W0613", "W0703"]
+ignore = ["__pycache__", ".git"]

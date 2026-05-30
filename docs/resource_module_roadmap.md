@@ -1,6 +1,6 @@
 # Resource Module Roadmap
 
-This roadmap maps live `DS-LIN-TEST-01` command families and Nokia CLI PDF references to future Ansible resource modules.
+This roadmap maps live `DS-LIN-TEST-01` command families and Nokia CLI PDF references to Ansible resource modules.
 
 The first implementation target for configuration modules is generally:
 
@@ -21,7 +21,6 @@ Example layout:
 /home/jahknem/Projects/BlueNetworks/nokia.isam
 /home/jahknem/Projects/BlueNetworks/nokia.isam.worktrees/isam-pon-interfaces
 /home/jahknem/Projects/BlueNetworks/nokia.isam.worktrees/isam-ethernet-onts
-/home/jahknem/Projects/BlueNetworks/nokia.isam.worktrees/isam-qos-interfaces
 ```
 
 Each branch should create final-path files, not temporary `argspec_todo` files:
@@ -33,23 +32,51 @@ plugins/module_utils/network/isam/config/<resource>/<resource>.py
 plugins/module_utils/network/isam/facts/<resource>/<resource>.py
 plugins/module_utils/network/isam/rm_templates/<resource>.py
 tests/unit/modules/network/isam/test_isam_<resource>.py
-rm_models/<resource>.yaml
 ```
 
-## First 10 Module Branches
+## Completed Modules (Merged to main)
 
-| Priority | Branch | Module | Command families | Main PDF references | Type |
-| --- | --- | --- | --- | --- | --- |
-| 1 | `feature/isam-pon-interfaces` | `isam_pon_interfaces` | `configure pon interface` | `58_-_PonConfigurationCommands.pdf`, `202_-_PonManagementCommands.pdf` | config resource |
-| 2 | `feature/isam-ethernet-onts` | `isam_ethernet_onts` | `configure ethernet ont` | `43_-_EthernetUserPortsConfigurationCommands.pdf`, `44_-_ONTEthernetPortConfigurationCommand.pdf`, `218_-_EthernetManagementCommands.pdf` | config resource |
-| 3 | `feature/isam-equipment-onts` | `isam_equipment_onts` | `configure equipment ont` | `5_-_EquipmentConfigurationCommands.pdf`, `6_-_GponONTConfigurationCommands.pdf`, `214_-_EquipmentManagementCommands.pdf` | config resource |
-| 4 | `feature/isam-qos-interfaces` | `isam_qos_interfaces` | `configure qos interface` | `21_-_QoSConfigurationCommands.pdf` | config resource |
-| 5 | `feature/isam-qos-profiles` | `isam_qos_profiles` | `configure qos profiles` | `21_-_QoSConfigurationCommands.pdf` | config resource |
-| 6 | `feature/isam-xdsl-lines` | `isam_xdsl_lines` | `configure xdsl line` | `35_-_XDSLBondingConfigurationCommands.pdf`, `37_-_SHDSLConfigurationCommands.pdf` | config resource |
-| 7 | `feature/isam-xdsl-profiles` | `isam_xdsl_profiles` | `configure xdsl service-profile`, `spectrum-profile`, `dpbo-profile`, `vect-profile`, `vce-profile` | `35_-_XDSLBondingConfigurationCommands.pdf`, `37_-_SHDSLConfigurationCommands.pdf` | config resource |
-| 8 | `feature/isam-link-agg` | `isam_link_agg` | `configure link-agg group`, `configure link-agg port` | `54_-_LACPConfigurationCommands.pdf` | config resource |
-| 9 | `feature/isam-xstp` | `isam_xstp` | `configure xstp general`, `configure xstp port` | `55_-_MSTPConfigurationCommands.pdf`, `200_-_MSTPManagementCommands.pdf` | config resource |
-| 10 | `feature/isam-equipment` | `isam_equipment` | `configure equipment shelf`, `slot`, `applique`, `protection-group` | `5_-_EquipmentConfigurationCommands.pdf`, `214_-_EquipmentManagementCommands.pdf` | config resource |
+All 10 first-priority resource modules are implemented, validated against `DS-LIN-TEST-01`, and merged to `main`.
+
+| Priority | Module | Command families | Live Commands | States Validated |
+| --- | --- | --- | --- | --- |
+| 1 | `isam_pon_interfaces` | `configure pon interface` | 129 | gathered, rendered, parsed, merged/--check, replaced/--check, overridden/--check, deleted/--check |
+| 2 | `isam_ethernet_onts` | `configure ethernet ont` | 88 | same |
+| 3 | `isam_equipment_onts` | `configure equipment ont` | 146 | same |
+| 4 | `isam_qos_interfaces` | `configure qos interface` | 1394 | same |
+| 5 | `isam_qos_profiles` | `configure qos profiles` | 137 | same |
+| 6 | `isam_xdsl_lines` | `configure xdsl line` | 96 | same |
+| 7 | `isam_xdsl_profiles` | `configure xdsl` profiles | 82 | same |
+| 8 | `isam_link_agg` | `configure link-agg` | 108 | same |
+| 9 | `isam_xstp` | `configure xstp` | 37 | same |
+| 10 | `isam_equipment` | `configure equipment` (shelf/slot/applique/protection-group) | 16 | same |
+
+Unit tests: **56/56 passed** across all 15 modules.
+
+## Next 20 Modules (Planned)
+
+| Priority | Module | Command families | Live Commands | Notes |
+| --- | --- | --- | --- | --- |
+| 11 | `isam_alarm` | `configure alarm` (filter, entry, custom-profile, delta-log, log-sev-level) | 66 | Alarm filtering and logging |
+| 12 | `isam_traps` | `configure trap` (definition, manager) | 34 | SNMP trap definitions |
+| 13 | `isam_interface_cages` | `configure interface cage` | 64 | Interface cage/grouping |
+| 14 | `isam_ntp_onts` | `configure ntp ont` | 48 | ONT NTP configuration |
+| 15 | `isam_qos_maps` | `configure qos tc-map-dot1p`, `dscp-map-dot1p`, `up-ctrl-pkt`, `dn-ctrl-pkt` | 89 | QoS mapping tables |
+| 16 | `isam_system` | `configure system` (security, sntp, sync-if-timing, syslog, id, transaction) | 63 | Global system settings |
+| 17 | `isam_vlan_global` | `configure vlan` (broadcast-frames, priority-regen, tpid, vmac-address-format) | 14 | VLAN global settings |
+| 18 | `isam_voice_sip` | `configure voice sip` | 5 | Voice/SIP configuration |
+| 19 | `isam_xdsl_bonding` | `configure xdsl-bonding` | 1 | XDSL bonding/grouping |
+| 20 | `isam_dhcp_server` | `configure dhcp-server` | 1 | DHCP server singleton |
+| 21 | `isam_generic_pon` | `configure generic-pon` | 1 | Global PON settings |
+| 22 | `isam_iphost` | `configure iphost` | 1 | IP host configuration |
+| 23 | `isam_li_vlan` | `configure li_vlan` | 1 | Lawful intercept VLAN |
+| 24 | `isam_multicast` | `configure igmp`, `mcast-control` | 2 | Multicast/IGMP |
+| 25 | `isam_software_mngt` | `configure software-mngt` (database, oswp, sw-replacement-mode) | 4 | Software management (high risk) |
+| 26 | `isam_ani_onts` | `configure ani ont` | 48 | ANI ONT TCA thresholds |
+| 27 | `isam_mcast_general` | `configure mcast general` | 2 | Multicast general settings |
+| 28 | `isam_xdsl_boards` | `configure xdsl board`, `vp-board` | 4 | XDSL board configuration |
+| 29 | `isam_equipment_replan` | `configure equipment replan` | 1 | Equipment replan |
+| 30 | `isam_interface_alarms` | `configure interface alarm` | 3 | Interface alarm settings |
 
 ## Additional Config Resource Candidates
 
