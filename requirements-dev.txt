@@ -1,3 +1,10 @@
 ansible-pylibssh
 debugpy
 anytree
+pytest
+pytest-cov
+flake8
+ansible-lint
+pylint
+mypy
+types-python-slugify
