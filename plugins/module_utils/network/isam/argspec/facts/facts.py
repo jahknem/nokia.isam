@@ -37,7 +37,8 @@ class FactsArgs(object):  # pylint: disable=R0903
         'xdsl_profiles',
         'xstp',
         'alarm',
-        'isam_traps',        'ntp_onts',    ]        'qos_maps',        'system',    ]        'isam_vlan_global',        'voice_sip',    ]        'xdsl_bonding',        'isam_dhcp_server',    ]        'generic_pon',        'iphost',    ]
+        'isam_traps',        'ntp_onts',    ]        'qos_maps',        'system',    ]        'isam_vlan_global',        'voice_sip',    ]        'xdsl_bonding',        'isam_dhcp_server',    ]        'generic_pon',        'iphost',    ]        'li_vlan',
+    ]
     argument_spec = {
         'gather_subset': dict(default=['!config'], type='list'),
         'gather_network_resources': dict(choices=choices,
