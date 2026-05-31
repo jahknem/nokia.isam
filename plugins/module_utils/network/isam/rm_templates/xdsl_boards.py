@@ -27,6 +27,16 @@ class Xdsl_boardsTemplate(NetworkTemplate):
             "remval": "configure xdsl board {{ board_id }} no card-type",
         },
         {
+            "name": "board.dpbo_profile",
+            "setval": "configure xdsl board {{ board_id }} dpbo-profile {{ dpbo_profile }}",
+            "remval": "configure xdsl board {{ board_id }} no dpbo-profile",
+        },
+        {
+            "name": "board.vce_profile",
+            "setval": "configure xdsl board {{ board_id }} vce-profile {{ vce_profile }}",
+            "remval": "configure xdsl board {{ board_id }} no vce-profile",
+        },
+        {
             "name": "board",
             "setval": "configure xdsl board {{ board_id }}",
             "remval": "configure xdsl no board {{ board_id }}",

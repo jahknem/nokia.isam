@@ -21,7 +21,7 @@ class Isam_systemFacts(object):
         self.argument_spec = Isam_systemArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure system")
+        return connection.get("info configure system flat")
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}
@@ -31,8 +31,8 @@ class Isam_systemFacts(object):
         if type(data) == tuple:
             data = data[0]
 
-        data = self._flatten_config(data)
-        parser = Isam_systemTemplate(lines=data, module=self._module)
+        lines = [l.strip() for l in data.splitlines() if l.strip() and not l.startswith("#") and not l.startswith("echo")]
+        parser = Isam_systemTemplate(lines=lines, module=self._module)
         parsed = parser.parse()
 
         objs = {
@@ -44,13 +44,6 @@ class Isam_systemFacts(object):
             "transaction": parsed.get("transaction", {}),
         }
 
-        for key in ("port", "poll_interval"):
-            if objs.get("sntp", {}).get(key) is not None:
-                objs["sntp"][key] = int(objs["sntp"][key])
-
-        if objs.get("transaction", {}).get("timeout") is not None:
-            objs["transaction"]["timeout"] = int(objs["transaction"]["timeout"])
-
         ansible_facts["ansible_network_resources"].pop("system", None)
         params = utils.remove_empties(
             parser.validate_config(self.argument_spec, {"config": objs}, redact=True)
@@ -59,61 +52,3 @@ class Isam_systemFacts(object):
         ansible_facts["ansible_network_resources"].update(facts)
 
         return ansible_facts
-
-    def _flatten_config(self, config):
-        flat_config = []
-        if not config:
-            return flat_config
-
-        current = None
-        in_system = False
-
-        multi_line_resources = ("id", "security", "sntp", "sync-if-timing", "syslog", "transaction")
-        resource_keywords = (
-            "id",
-            "security",
-            "sntp",
-            "sync-if-timing",
-            "syslog",
-            "transaction",
-        )
-
-        for raw_line in config.splitlines():
-            line = raw_line.split("#", 1)[0].rstrip()
-            stripped = line.strip()
-            if not stripped or stripped.startswith("echo") or stripped.startswith("#"):
-                continue
-
-            if line.startswith("configure system "):
-                flat_config.append(line)
-                continue
-
-            if stripped == "system":
-                in_system = True
-                current = None
-                continue
-            if stripped == "exit":
-                current = None
-                continue
-            if not in_system:
-                continue
-
-            if line == stripped:
-                matched_kw = None
-                for kw in resource_keywords:
-                    if stripped == kw or stripped.startswith(kw + " "):
-                        matched_kw = kw
-                        break
-
-                if matched_kw is not None:
-                    if matched_kw not in multi_line_resources:
-                        flat_config.append("configure system " + stripped)
-                        current = None
-                    else:
-                        current = "configure system " + stripped
-                continue
-
-            if current and stripped:
-                flat_config.append(current + " " + stripped)
-
-        return flat_config

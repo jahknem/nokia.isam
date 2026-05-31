@@ -32,7 +32,7 @@ class Ntp_ontsFacts(object):
 
     def get_config(self, connection):
         """Wrapper method for `connection.get()`."""
-        return connection.get("info configure ntp")
+        return connection.get("info configure ntp flat")
 
     def populate_facts(self, connection, ansible_facts, data=None):
         """Populate the facts for Ntp_onts network resource."""

@@ -21,7 +21,7 @@ class Isam_vlan_globalFacts(object):
         self.argument_spec = Isam_vlan_globalArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure vlan")
+        return connection.get("info configure vlan flat")
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}
