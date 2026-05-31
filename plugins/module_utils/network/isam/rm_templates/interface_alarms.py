@@ -17,6 +17,19 @@ class Interface_alarmsTemplate(NetworkTemplate):
 
     PARSERS = [
         {
+            "name": "name",
+            "getval": re.compile(
+                r"^configure\s+interface\s+alarm\s+(?P<name>\S+)\s+.*$"
+            ),
+            "setval": "configure interface alarm {{ name }}",
+            "result": {
+                "{{ name }}": {
+                    "name": "{{ name }}",
+                }
+            },
+            "shared": True,
+        },
+        {
             "name": "default_severity",
             "getval": re.compile(
                 r"^configure\s+interface\s+alarm\s+(?P<name>\S+)\s+default-severity\s+(?P<default_severity>\S+)\s*$"
@@ -29,10 +42,5 @@ class Interface_alarmsTemplate(NetworkTemplate):
                     "default_severity": "{{ default_severity }}",
                 }
             },
-        },
-        {
-            "name": "entry",
-            "setval": "configure interface alarm {{ name }}",
-            "remval": "configure interface alarm no {{ name }}",
         },
     ]
