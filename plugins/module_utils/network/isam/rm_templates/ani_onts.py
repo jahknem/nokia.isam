@@ -17,7 +17,20 @@ class Ani_ontsTemplate(NetworkTemplate):
 
     PARSERS = [
         {
-            "name": "ont_idx.tca_profile",
+            "name": "ont_idx",
+            "getval": re.compile(
+                r"^configure\s+ani\s+ont\s+(?P<ont_idx>\S+)\s+.*$"
+            ),
+            "setval": "configure ani ont {{ ont_idx }}",
+            "result": {
+                "{{ ont_idx }}": {
+                    "ont_idx": "{{ ont_idx }}",
+                }
+            },
+            "shared": True,
+        },
+        {
+            "name": "tca_profile",
             "getval": re.compile(
                 r"^configure\s+ani\s+ont\s+(?P<ont_idx>\S+)\s+tca-profile\s+(?P<tca_profile>\S+)\s*$"
             ),
@@ -30,7 +43,7 @@ class Ani_ontsTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "ont_idx.admin_state",
+            "name": "admin_state",
             "getval": re.compile(
                 r"^configure\s+ani\s+ont\s+(?P<ont_idx>\S+)\s+admin-state\s+(?P<admin_state>\S+)\s*$"
             ),
@@ -41,10 +54,5 @@ class Ani_ontsTemplate(NetworkTemplate):
                     "admin_state": "{{ admin_state }}",
                 }
             },
-        },
-        {
-            "name": "ont_idx",
-            "setval": "configure ani ont {{ ont_idx }}",
-            "remval": "configure ani ont no {{ ont_idx }}",
         },
     ]
