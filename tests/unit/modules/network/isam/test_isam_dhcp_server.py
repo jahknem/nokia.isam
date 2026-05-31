@@ -187,7 +187,7 @@ class TestIsamDhcpServerModule(TestIsamModule):
             ignore_provider_arg,
         )
         result = self.execute_module(changed=True)
-        self.assertIn("configure dhcp-server no start-addr", result["commands"])
-        self.assertIn("configure dhcp-server no end-addr", result["commands"])
-        self.assertIn("configure dhcp-server no subnet-mask", result["commands"])
-        self.assertIn("configure dhcp-server no lease-time", result["commands"])
+        self.assertIn("no configure dhcp-server start-addr", result["commands"])
+        self.assertIn("no configure dhcp-server end-addr", result["commands"])
+        self.assertIn("no configure dhcp-server subnet-mask", result["commands"])
+        self.assertIn("no configure dhcp-server lease-time", result["commands"])
