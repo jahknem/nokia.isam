@@ -1,0 +1,50 @@
+module: isam_interface_alarms
+short_description: Resource module to configure interface alarm default severity
+description:
+- Manages C(configure interface alarm) default severity settings on Nokia ISAM devices.
+version_added: 1.0.0
+author: Jan Khnemund
+notes:
+- Tested against Nokia ISAM 6.2.04ng
+- This module works with connection C(network_cli)
+- Implements CLI command: C(configure interface alarm ())
+options:
+  config:
+    description: Interface alarm configurations.
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        required: true
+        description:
+        - Resource identifier (index of the IANA ifType).
+      default_severity:
+        type: str
+        choices:
+        - indeterminate
+        - warning
+        - minor
+        - major
+        - critical
+        description:
+        - Default severity to be reported with default value "major".
+        - Alarms below this threshold will not be reported.
+  running_config:
+    description:
+    - This option is used only with state I(parsed).
+    - The value of this option should be the output received from the device
+      by executing the command C(info configure interface alarm).
+    type: str
+  state:
+    description: The state the configuration should be left in.
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged
