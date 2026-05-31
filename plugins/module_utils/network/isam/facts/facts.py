@@ -27,7 +27,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.link_agg.link_agg import Link_aggFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xstp.xstp import XstpFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.alarm.alarm import AlarmFacts
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.traps.traps import Isam_trapsFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.interface_cages.interface_cages import InterfaceCagesFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ntp_onts.ntp_onts import Ntp_ontsFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.traps.traps import Isam_trapsFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.interface_cages.interface_cages import InterfaceCagesFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ntp_onts.ntp_onts import Ntp_ontsFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.qos_maps.qos_maps import Qos_mapsFacts
 
 FACT_LEGACY_SUBSETS = {}
 FACT_RESOURCE_SUBSETS = dict(
@@ -46,8 +46,7 @@ FACT_RESOURCE_SUBSETS = dict(
     link_agg=Link_aggFacts,
     xstp=XstpFacts,
     alarm=AlarmFacts,
-    isam_traps=Isam_trapsFacts,    interface_cages=InterfaceCagesFacts,)    ntp_onts=Ntp_ontsFacts,
-)
+    isam_traps=Isam_trapsFacts,    interface_cages=InterfaceCagesFacts,)    ntp_onts=Ntp_ontsFacts,    qos_maps=Qos_mapsFacts,)
 
 class Facts(FactsBase):
     """ The fact class for isam
