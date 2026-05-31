@@ -27,6 +27,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.link_agg.link_agg import Link_aggFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xstp.xstp import XstpFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.alarm.alarm import AlarmFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.traps.traps import Isam_trapsFacts
 
 
 FACT_LEGACY_SUBSETS = {}
@@ -46,6 +47,7 @@ FACT_RESOURCE_SUBSETS = dict(
     link_agg=Link_aggFacts,
     xstp=XstpFacts,
     alarm=AlarmFacts,
+    isam_traps=Isam_trapsFacts,
 )
 
 
