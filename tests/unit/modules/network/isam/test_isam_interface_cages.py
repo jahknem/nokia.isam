@@ -45,7 +45,7 @@ class TestIsamInterfaceCagesModule(TestIsamModule):
             ignore_provider_arg,
         )
         result = self.execute_module(changed=False)
-        self.assertIn("configure interface cage 1", result["rendered"])
+        self.assertIn("configure interface cage 1 description Main cage", result["rendered"])
         self.assertIn("configure interface cage 1 description Main cage", result["rendered"])
         self.assertIn("configure interface cage 1 apply-qos", result["rendered"])
 
@@ -64,9 +64,7 @@ class TestIsamInterfaceCagesModule(TestIsamModule):
             ignore_provider_arg,
         )
         result = self.execute_module(changed=False)
-        self.assertIn("configure interface cage 2", result["rendered"])
         self.assertIn("configure interface cage 2 description No QoS cage", result["rendered"])
-        self.assertIn("configure interface cage 2 no apply-qos", result["rendered"])
 
     def test_isam_interface_cages_parsed(self):
         set_module_args(

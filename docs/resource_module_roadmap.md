@@ -51,32 +51,35 @@ All 10 first-priority resource modules are implemented, validated against `DS-LI
 | 9 | `isam_xstp` | `configure xstp` | 37 | same |
 | 10 | `isam_equipment` | `configure equipment` (shelf/slot/applique/protection-group) | 16 | same |
 
-Unit tests: **56/56 passed** across all 15 modules.
+Unit tests: **105/105 passed** across all 35 modules.
 
-## Next 20 Modules (Planned)
+## All Implemented Modules
 
-| Priority | Module | Command families | Live Commands | Notes |
-| --- | --- | --- | --- | --- |
-| 11 | `isam_alarm` | `configure alarm` (filter, entry, custom-profile, delta-log, log-sev-level) | 66 | Alarm filtering and logging |
-| 12 | `isam_traps` | `configure trap` (definition, manager) | 34 | SNMP trap definitions |
-| 13 | `isam_interface_cages` | `configure interface cage` | 64 | Interface cage/grouping |
-| 14 | `isam_ntp_onts` | `configure ntp ont` | 48 | ONT NTP configuration |
-| 15 | `isam_qos_maps` | `configure qos tc-map-dot1p`, `dscp-map-dot1p`, `up-ctrl-pkt`, `dn-ctrl-pkt` | 89 | QoS mapping tables |
-| 16 | `isam_system` | `configure system` (security, sntp, sync-if-timing, syslog, id, transaction) | 63 | Global system settings |
-| 17 | `isam_vlan_global` | `configure vlan` (broadcast-frames, priority-regen, tpid, vmac-address-format) | 14 | VLAN global settings |
-| 18 | `isam_voice_sip` | `configure voice sip` | 5 | Voice/SIP configuration |
-| 19 | `isam_xdsl_bonding` | `configure xdsl-bonding` | 1 | XDSL bonding/grouping |
-| 20 | `isam_dhcp_server` | `configure dhcp-server` | 1 | DHCP server singleton |
-| 21 | `isam_generic_pon` | `configure generic-pon` | 1 | Global PON settings |
-| 22 | `isam_iphost` | `configure iphost` | 1 | IP host configuration |
-| 23 | `isam_li_vlan` | `configure li_vlan` | 1 | Lawful intercept VLAN |
-| 24 | `isam_multicast` | `configure igmp`, `mcast-control` | 2 | Multicast/IGMP |
-| 25 | `isam_software_mngt` | `configure software-mngt` (database, oswp, sw-replacement-mode) | 4 | Software management (high risk) |
-| 26 | `isam_ani_onts` | `configure ani ont` | 48 | ANI ONT TCA thresholds |
-| 27 | `isam_mcast_general` | `configure mcast general` | 2 | Multicast general settings |
-| 28 | `isam_xdsl_boards` | `configure xdsl board`, `vp-board` | 4 | XDSL board configuration |
-| 29 | `isam_equipment_replan` | `configure equipment replan` | 1 | Equipment replan |
-| 30 | `isam_interface_alarms` | `configure interface alarm` | 3 | Interface alarm settings |
+All 30 roadmap modules plus 5 legacy modules are implemented and merged to `main`.
+
+| Priority | Module | Command families | States Validated |
+| --- | --- | --- | --- |
+| 1-10 | First 10 | See completed table above | all 7 canonical states |
+| 11 | `isam_alarm` | `configure alarm` | gathered, rendered, parsed, merged/--check |
+| 12 | `isam_traps` | `configure trap` | gathered, rendered, parsed, merged/--check |
+| 13 | `isam_interface_cages` | `configure interface cage` | gathered, rendered, parsed, merged/--check |
+| 14 | `isam_ntp_onts` | `configure ntp ont` | gathered, rendered, parsed, merged/--check |
+| 15 | `isam_qos_maps` | `configure qos tc-map-dot1p`, `dscp-map-dot1p` | gathered, rendered, parsed, merged/--check |
+| 16 | `isam_system` | `configure system` | gathered, rendered, parsed, merged/--check |
+| 17 | `isam_vlan_global` | `configure vlan` global settings | gathered, rendered, parsed, merged/--check |
+| 18 | `isam_voice_sip` | `configure voice sip` | gathered, rendered, parsed, merged/--check |
+| 19 | `isam_xdsl_bonding` | `configure xdsl-bonding` | gathered, rendered, parsed, merged/--check |
+| 20 | `isam_dhcp_server` | `configure dhcp-server` | gathered, rendered, parsed, merged/--check |
+| 21 | `isam_generic_pon` | `configure generic-pon` | gathered, rendered, parsed, merged/--check |
+| 22 | `isam_iphost` | `configure iphost` | gathered, rendered, parsed, merged/--check |
+| 23 | `isam_li_vlan` | `configure li_vlan` | gathered, rendered, parsed, merged/--check |
+| 24 | `isam_multicast` | `configure igmp`, `mcast-control` | gathered, rendered, parsed, merged/--check |
+| 25 | `isam_software_mngt` | `configure software-mngt` | gathered, rendered, parsed, merged/--check |
+| 26 | `isam_ani_onts` | `configure ani ont` | gathered, rendered, parsed, merged/--check |
+| 27 | `isam_mcast_general` | `configure mcast general` | gathered, rendered, parsed, merged/--check |
+| 28 | `isam_xdsl_boards` | `configure xdsl board`, `vp-board` | gathered, rendered, parsed, merged/--check |
+| 29 | `isam_equipment_replan` | `configure equipment replan` | gathered, rendered, parsed, merged/--check |
+| 30 | `isam_interface_alarms` | `configure interface alarm` | gathered, rendered, parsed, merged/--check |
 
 ## Additional Config Resource Candidates
 

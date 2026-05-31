@@ -45,7 +45,7 @@ class TestIsamGenericPonModule(TestIsamModule):
         set_module_args(dict(running_config=running, state="parsed"), ignore_provider_arg)
 
         result = self.execute_module(changed=False)
-        self.assertEqual(result["parsed"]["dpinteg_threshold"], "50")
+        self.assertEqual(result["parsed"]["dpinteg_threshold"], 50)
 
     def test_isam_generic_pon_gathered(self):
         sample = dedent(
@@ -62,12 +62,12 @@ class TestIsamGenericPonModule(TestIsamModule):
         set_module_args(dict(state="gathered"), ignore_provider_arg)
 
         result = self.execute_module(changed=False)
-        self.assertEqual(result["gathered"]["dpinteg_threshold"], "75")
+        self.assertEqual(result["gathered"]["dpinteg_threshold"], 75)
 
     def test_isam_generic_pon_rendered(self):
         set_module_args(
             dict(
-                config=dict(dpinteg_threshold="50"),
+                config=dict(dpinteg_threshold=50),
                 state="rendered",
             ),
             ignore_provider_arg,
