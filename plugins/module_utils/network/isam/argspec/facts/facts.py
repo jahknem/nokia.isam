@@ -21,19 +21,20 @@ class FactsArgs(object):  # pylint: disable=R0903
 
     choices = [
         'all',
-        'interfaces',
         'bridges',
         'ethernet_line',
-        'pon_interfaces',
         'ethernet_onts',
         'equipment_onts',
-        'qos_interfaces',
+        'interface_cages',
+        'interfaces',
         'isam_equipment',
-        'vlans',
+        'link_agg',
+        'pon_interfaces',
+        'qos_interfaces',
         'qos_profiles',
+        'vlans',
         'xdsl_lines',
         'xdsl_profiles',
-        'link_agg',
         'xstp',
     ]
 
