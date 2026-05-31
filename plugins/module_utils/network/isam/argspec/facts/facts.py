@@ -35,6 +35,7 @@ class FactsArgs(object):  # pylint: disable=R0903
         'xdsl_profiles',
         'link_agg',
         'xstp',
+        'isam_traps',
     ]
 
     argument_spec = {
