@@ -23,9 +23,9 @@ class Isam_systemArgs(object):  # pylint: disable=R0903
                 "security": {
                     "type": "dict",
                     "options": {
-                        "ssh": {"type": "bool"},
-                        "telnet": {"type": "bool"},
-                        "snmp": {"type": "bool"},
+                        "ssh": {"type": "str"},
+                        "telnet": {"type": "str"},
+                        "snmp": {"type": "str"},
                     },
                 },
                 "sntp": {

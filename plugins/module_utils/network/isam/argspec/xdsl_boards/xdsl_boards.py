@@ -19,6 +19,8 @@ class Xdsl_boardsArgs(object):  # pylint: disable=R0903
                         "board_id": {"type": "str", "required": True},
                         "admin_state": {"type": "str", "choices": ["up", "down"]},
                         "card_type": {"type": "str"},
+                        "dpbo_profile": {"type": "str"},
+                        "vce_profile": {"type": "str"},
                     },
                 },
                 "vp_boards": {

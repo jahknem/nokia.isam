@@ -24,7 +24,10 @@ class Qos_mapsFacts(object):
         facts = {}
 
         if not data:
-            data = connection.get("info configure qos")
+            data = connection.get("info configure qos tc-map-dot1p flat") + "\n" + \
+                   connection.get("info configure qos dscp-map-dot1p flat") + "\n" + \
+                   connection.get("info configure qos up-ctrl-pkt flat") + "\n" + \
+                   connection.get("info configure qos dn-ctrl-pkt flat")
 
         parser = Qos_mapsTemplate(lines=data.splitlines(), module=self._module)
         objs = parser.parse()

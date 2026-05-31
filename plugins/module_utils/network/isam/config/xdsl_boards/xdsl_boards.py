@@ -24,6 +24,8 @@ class Xdsl_boards(ResourceModule):
     BOARD_FIELDS = [
         "admin_state",
         "card_type",
+        "dpbo_profile",
+        "vce_profile",
     ]
     VP_BOARD_FIELDS = [
         "admin_state",
