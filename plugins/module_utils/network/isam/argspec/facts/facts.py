@@ -34,6 +34,7 @@ class FactsArgs(object):  # pylint: disable=R0903
         'xdsl_lines',
         'xdsl_profiles',
         'link_agg',
+        'ani_onts',
         'xstp',
     ]
 
