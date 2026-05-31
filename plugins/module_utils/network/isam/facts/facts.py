@@ -25,8 +25,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.qos_
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_lines.xdsl_lines import Xdsl_linesFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_profiles.xdsl_profiles import Xdsl_profilesFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.link_agg.link_agg import Link_aggFacts
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ani_onts.ani_onts import Ani_ontsFacts
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xstp.xstp import XstpFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ani_onts.ani_onts import Ani_ontsFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_boards.xdsl_boards import Xdsl_boardsFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xstp.xstp import XstpFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.alarm.alarm import AlarmFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.traps.traps import Isam_trapsFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.interface_cages.interface_cages import InterfaceCagesFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ntp_onts.ntp_onts import Ntp_ontsFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.qos_maps.qos_maps import Qos_mapsFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.system.system import Isam_systemFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.vlan_global.vlan_global import Isam_vlan_globalFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.voice_sip.voice_sip import Isam_voice_sipFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_bonding.xdsl_bonding import Xdsl_bondingFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.dhcp_server.dhcp_server import Isam_dhcp_serverFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.generic_pon.generic_pon import Generic_ponFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.iphost.iphost import IphostFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.li_vlan.li_vlan import Li_vlanFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.multicast.multicast import MulticastFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.mcast_general.mcast_general import Mcast_generalFactsfrom ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.software_mngt.software_mngt import Software_mngtFacts
 
@@ -45,8 +44,7 @@ FACT_RESOURCE_SUBSETS = dict(
     xdsl_lines=Xdsl_linesFacts,
     xdsl_profiles=Xdsl_profilesFacts,
     link_agg=Link_aggFacts,
-    ani_onts=Ani_ontsFacts,
-    xstp=XstpFacts,
+    ani_onts=Ani_ontsFacts,    xdsl_boards=Xdsl_boardsFacts,    xstp=XstpFacts,
     alarm=AlarmFacts,
     isam_traps=Isam_trapsFacts,    interface_cages=InterfaceCagesFacts,)    ntp_onts=Ntp_ontsFacts,    qos_maps=Qos_mapsFacts,)    system=Isam_systemFacts,    isam_vlan_global=Isam_vlan_globalFacts,)    voice_sip=Isam_voice_sipFacts,    xdsl_bonding=Xdsl_bondingFacts,)    isam_dhcp_server=Isam_dhcp_serverFacts,    generic_pon=Generic_ponFacts,)    iphost=IphostFacts,    li_vlan=Li_vlanFacts,)    multicast=MulticastFacts,    mcast_general=Mcast_generalFacts,)    software_mngt=Software_mngtFacts,
 )

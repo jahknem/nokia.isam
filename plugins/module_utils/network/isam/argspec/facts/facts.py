@@ -35,12 +35,11 @@ class FactsArgs(object):  # pylint: disable=R0903
         'vlans',
         'xdsl_lines',
         'xdsl_profiles',
-<<<<<<< HEAD
 =======
         'link_agg',
+<<<<<<< HEAD
         'ani_onts',
->>>>>>> feature/isam-ani-onts
-        'xstp',
+>>>>>>> feature/isam-ani-onts        'xdsl_boards',        'xstp',
         'alarm',
         'isam_traps',        'ntp_onts',    ]        'qos_maps',        'system',    ]        'isam_vlan_global',        'voice_sip',    ]        'xdsl_bonding',        'isam_dhcp_server',    ]        'generic_pon',        'iphost',    ]        'li_vlan',        'multicast',    ]        'mcast_general',        'software_mngt',    ]
     argument_spec = {
