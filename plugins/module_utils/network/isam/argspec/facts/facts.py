@@ -41,6 +41,8 @@ class FactsArgs(object):  # pylint: disable=R0903
         'li_vlan',
         'link_agg',
         'mcast_general',
+        'igmp',
+        'mcast_control',
         'multicast',
         'ntp_onts',
         'pon_interfaces',
@@ -62,5 +64,6 @@ class FactsArgs(object):  # pylint: disable=R0903
         'gather_subset': dict(default=['!config'], type='list'),
         'gather_network_resources': dict(choices=choices,
                                           type='list'),
+        'gather_configuration': dict(default=False, type='bool'),
         'provider': dict(type='dict', no_log=True),
     }
