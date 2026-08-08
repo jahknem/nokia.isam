@@ -58,7 +58,7 @@ class Xstp(ResourceModule):
         self._compare_ports(want.get("ports", []), have.get("ports", []))
 
     def _compare_general(self, want, have):
-        if self.state in ["overridden", "deleted"]:
+        if self.state in ["overridden", "replaced", "deleted"]:
             if "enable_stp" not in want and have.get("enable_stp") is True:
                 self.addcmd({"general": {"enable_stp": False}}, "general.enable_stp")
 
@@ -79,7 +79,7 @@ class Xstp(ResourceModule):
             haved = {k: v for k, v in iteritems(haved) if k in wantd or not wantd}
             wantd = {}
 
-        if self.state in ["overridden", "deleted"]:
+        if self.state in ["overridden", "replaced", "deleted"]:
             # The observed port field has no documented no-form; leave unmentioned ports unchanged.
             haved = {k: v for k, v in iteritems(haved) if k in wantd}
 

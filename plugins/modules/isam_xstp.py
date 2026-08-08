@@ -12,7 +12,7 @@ short_description: Manage Nokia ISAM XSTP configuration.
 description:
   - Manages C(configure xstp general) and C(configure xstp port) configuration.
 version_added: 1.0.0
-author: Ansible Network Engineer
+author: Jan Kühnemund (@jahknem)
 options:
   config:
     description: The provided XSTP configuration.

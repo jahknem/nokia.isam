@@ -56,5 +56,10 @@ class Xdsl_bonding(ResourceModule):
                 self.commands.append("configure xdsl-bonding no group-assembly-time")
             return
 
+        if self.state == "replaced":
+            if want is None and have is not None:
+                self.commands.append("configure xdsl-bonding no group-assembly-time")
+                return
+
         if want is not None and want != have:
             self.addcmd({"group_assembly_time": want}, "group_assembly_time")
