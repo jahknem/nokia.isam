@@ -7,6 +7,10 @@ __metaclass__ = type
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    unwrap_response,
+    validate_config_safe,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.equipment_replan.equipment_replan import (
     Equipment_replanArgs,
 )
@@ -27,25 +31,16 @@ class Equipment_replanFacts(object):
 
         if not data:
             data = self.get_config(connection)
-        if type(data) == tuple:
-            data = data[0]
+        data = unwrap_response(data)
 
         objs = self._parse_config(data)
         ansible_facts["ansible_network_resources"].pop("equipment_replan", None)
         params = utils.remove_empties(
-            self._validate(self.argument_spec, {"config": objs})
+            validate_config_safe(self.argument_spec, {"config": objs})
         )
         facts["equipment_replan"] = params.get("config", {})
         ansible_facts["ansible_network_resources"].update(facts)
         return ansible_facts
-
-    def _validate(self, argument_spec, data):
-        try:
-            return utils.validate_config(argument_spec, data, redact=True)
-        except TypeError:
-            return utils.validate_config(argument_spec, data)
-        except AttributeError:
-            return data
 
     def _parse_config(self, config):
         result = {}

@@ -28,6 +28,7 @@ class Ani_onts(ResourceModule):
             tmplt=Ani_ontsTemplate(),
         )
         self.parsers = [
+            "tca_thresh",
             "tca_profile",
             "admin_state",
         ]

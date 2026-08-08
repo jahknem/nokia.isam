@@ -31,6 +31,7 @@ class Isam_dhcp_server(ResourceModule):
             "end_addr",
             "subnet_mask",
             "lease_time",
+            "restart",
         ]
         self.want = self._normalize_config(self.want)
         self.have = self._normalize_config(self.have)

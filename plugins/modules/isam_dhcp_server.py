@@ -11,7 +11,7 @@ short_description: Manages DHCP server configuration on Nokia ISAM.
 description:
   - Manages the DHCP server configuration including start address, end address, subnet mask, and lease time.
 version_added: 1.0.0
-author: Jan Kuehnemund
+author: Jan Kühnemund (@jahknem)
 options:
   config:
     description: DHCP server configuration.

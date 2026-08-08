@@ -11,7 +11,7 @@ short_description: Manages Nokia ISAM alarm configuration.
 description:
   - Manages C(configure alarm) log, entry, filter, suppression, delta-log, custom-profile, and HGU TR069 custom alarm settings.
 version_added: 1.0.0
-author: Jan Kuehnemund
+author: Jan Kühnemund (@jahknem)
 options:
   config:
     description: Alarm configuration grouped by resource type.

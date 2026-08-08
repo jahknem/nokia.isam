@@ -4,8 +4,6 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-from copy import deepcopy
-
 from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
@@ -52,7 +50,7 @@ class Alarm(ResourceModule):
                 haved = {k: v for k, v in iteritems(haved) if k in wantd} if wantd else {}
             wantd = {}
 
-        if self.state in ["overridden", "deleted"]:
+        if self.state in ["overridden", "replaced", "deleted"]:
             for k, have in iteritems(haved):
                 if k not in wantd:
                     self._compare(want={}, have=have)

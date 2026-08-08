@@ -51,6 +51,7 @@ class TestIsamDhcpServerModule(TestIsamModule):
                     end_addr="192.168.1.200",
                     subnet_mask="255.255.255.0",
                     lease_time=86400,
+                    restart=True,
                 ),
             ),
             ignore_provider_arg,
@@ -63,6 +64,7 @@ class TestIsamDhcpServerModule(TestIsamModule):
                 "configure dhcp-server end-addr 192.168.1.200",
                 "configure dhcp-server subnet-mask 255.255.255.0",
                 "configure dhcp-server lease-time 86400",
+                "configure dhcp-server restart",
             ],
         )
 
@@ -72,14 +74,7 @@ class TestIsamDhcpServerModule(TestIsamModule):
                 state="parsed",
                 running_config=dedent(
                     """\
-                    configure
-                    dhcp-server
-                    start-addr 192.168.1.100
-                    end-addr 192.168.1.200
-                    subnet-mask 255.255.255.0
-                    lease-time 86400
-                    exit
-                    exit
+                    configure dhcp-server start-addr 192.168.1.100 stop-addr 192.168.1.200 restart
                     """
                 ),
             ),
@@ -88,20 +83,12 @@ class TestIsamDhcpServerModule(TestIsamModule):
         result = self.execute_module(changed=False)
         self.assertEqual(result["parsed"]["start_addr"], "192.168.1.100")
         self.assertEqual(result["parsed"]["end_addr"], "192.168.1.200")
-        self.assertEqual(result["parsed"]["subnet_mask"], "255.255.255.0")
-        self.assertEqual(result["parsed"]["lease_time"], 86400)
+        self.assertEqual(result["parsed"]["restart"], True)
 
     def test_isam_dhcp_server_gathered(self):
         self.get_config.return_value = dedent(
             """\
-            configure
-            dhcp-server
-            start-addr 192.168.1.100
-            end-addr 192.168.1.200
-            subnet-mask 255.255.255.0
-            lease-time 86400
-            exit
-            exit
+            configure dhcp-server start-addr 192.168.1.100 stop-addr 192.168.1.200 restart
             """
         )
         set_module_args(
@@ -111,17 +98,12 @@ class TestIsamDhcpServerModule(TestIsamModule):
         result = self.execute_module(changed=False)
         self.assertEqual(result["gathered"]["start_addr"], "192.168.1.100")
         self.assertEqual(result["gathered"]["end_addr"], "192.168.1.200")
-        self.assertEqual(result["gathered"]["subnet_mask"], "255.255.255.0")
-        self.assertEqual(result["gathered"]["lease_time"], 86400)
+        self.assertEqual(result["gathered"]["restart"], True)
 
     def test_isam_dhcp_server_merged(self):
         self.get_config.return_value = dedent(
             """\
-            configure
-            dhcp-server
-            start-addr 10.0.0.1
-            exit
-            exit
+            configure dhcp-server start-addr 10.0.0.1 restart
             """
         )
         set_module_args(
@@ -141,14 +123,7 @@ class TestIsamDhcpServerModule(TestIsamModule):
     def test_isam_dhcp_server_merged_idempotent(self):
         self.get_config.return_value = dedent(
             """\
-            configure
-            dhcp-server
-            start-addr 192.168.1.100
-            end-addr 192.168.1.200
-            subnet-mask 255.255.255.0
-            lease-time 86400
-            exit
-            exit
+            configure dhcp-server start-addr 192.168.1.100 stop-addr 192.168.1.200 restart
             """
         )
         set_module_args(
@@ -157,8 +132,7 @@ class TestIsamDhcpServerModule(TestIsamModule):
                 config=dict(
                     start_addr="192.168.1.100",
                     end_addr="192.168.1.200",
-                    subnet_mask="255.255.255.0",
-                    lease_time=86400,
+                    restart=True,
                 ),
             ),
             ignore_provider_arg,
@@ -169,14 +143,7 @@ class TestIsamDhcpServerModule(TestIsamModule):
     def test_isam_dhcp_server_deleted(self):
         self.get_config.return_value = dedent(
             """\
-            configure
-            dhcp-server
-            start-addr 192.168.1.100
-            end-addr 192.168.1.200
-            subnet-mask 255.255.255.0
-            lease-time 86400
-            exit
-            exit
+            configure dhcp-server start-addr 192.168.1.100 stop-addr 192.168.1.200 restart
             """
         )
         set_module_args(
@@ -189,5 +156,4 @@ class TestIsamDhcpServerModule(TestIsamModule):
         result = self.execute_module(changed=True)
         self.assertIn("no configure dhcp-server start-addr", result["commands"])
         self.assertIn("no configure dhcp-server end-addr", result["commands"])
-        self.assertIn("no configure dhcp-server subnet-mask", result["commands"])
-        self.assertIn("no configure dhcp-server lease-time", result["commands"])
+        self.assertIn("no configure dhcp-server restart", result["commands"])

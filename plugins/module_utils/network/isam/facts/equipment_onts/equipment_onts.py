@@ -5,6 +5,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    unwrap_response,
+    validate_config_safe,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.equipment_onts.equipment_onts import (
     Equipment_ontsArgs,
 )
@@ -25,25 +29,16 @@ class Equipment_ontsFacts(object):
 
         if not data:
             data = self.get_config(connection)
-        if type(data) == tuple:
-            data = data[0]
+        data = unwrap_response(data)
 
         objs = self._parse_config(data)
         ansible_facts["ansible_network_resources"].pop("equipment_onts", None)
         params = utils.remove_empties(
-            self._validate(self.argument_spec, {"config": objs})
+            validate_config_safe(self.argument_spec, {"config": objs})
         )
         facts["equipment_onts"] = params.get("config", {})
         ansible_facts["ansible_network_resources"].update(facts)
         return ansible_facts
-
-    def _validate(self, argument_spec, data):
-        try:
-            return utils.validate_config(argument_spec, data, redact=True)
-        except TypeError:
-            return utils.validate_config(argument_spec, data)
-        except AttributeError:
-            return data
 
     def _parse_config(self, config):
         result = {"interfaces": [], "slots": [], "sw_ctrls": []}
@@ -52,6 +47,14 @@ class Equipment_ontsFacts(object):
 
         if not config:
             return result
+
+        lines = [line.strip() for line in str(config).splitlines() if line.strip()]
+        if any(line.startswith("configure equipment ont ") for line in lines):
+            config = "\n".join(
+                line.replace("configure equipment ont ", "", 1)
+                for line in lines
+                if line.startswith("configure equipment ont ")
+            )
 
         for raw_line in config.splitlines():
             line = raw_line.strip()

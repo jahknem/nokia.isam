@@ -17,17 +17,18 @@ class Ani_ontsTemplate(NetworkTemplate):
 
     PARSERS = [
         {
-            "name": "ont_idx",
+            "name": "tca_thresh",
             "getval": re.compile(
-                r"^configure\s+ani\s+ont\s+(?P<ont_idx>\S+)\s+.*$"
+                r"^configure\s+ani\s+ont\s+tca-thresh\s+(?P<ont_idx>\S+)(?:\s+.*)?$"
             ),
-            "setval": "configure ani ont {{ ont_idx }}",
+            "setval": "configure ani ont tca-thresh {{ ont_idx }}",
+            "shared": True,
             "result": {
                 "{{ ont_idx }}": {
                     "ont_idx": "{{ ont_idx }}",
+                    "tca_thresh": True,
                 }
             },
-            "shared": True,
         },
         {
             "name": "tca_profile",
