@@ -24,6 +24,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.vl
     VlansArgs,
 )
 
+
 class VlansFacts(object):
     """ The isam vlans facts class
     """

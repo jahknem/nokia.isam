@@ -4,17 +4,111 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-from copy import deepcopy
-
-from ansible.module_utils.six import iteritems
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import dict_merge
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    dict_merge,
+)
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
     ResourceModule,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
+    Facts,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.voice_sip import (
     Isam_voice_sipTemplate,
 )
+
+
+LINEID_SYN_PROF_FIELDS = [
+    ("syntax_pattern", "syntax-pattern", "bool"),
+    ("pots_syntax", "pots-syntax", "bool"),
+    ("cas_r2_syntax", "cas-r2-syntax", "bool"),
+    ("cas_r1_syntax", "cas-r1-syntax", "bool"),
+    ("isdn_syntax", "isdn-syntax", "str"),
+]
+
+VSP_FIELDS = [
+    ("domain_name", "domain-name", "str"),
+    ("admin_status", "admin-status", "bool"),
+    ("tinfo", "tinfo", "bool"),
+    ("ta4", "ta4", "bool"),
+    ("ttir1", "ttir1", "bool"),
+    ("t_acm_delta", "t-acm-delta", "bool"),
+    ("access_held_time", "access-held-time", "bool"),
+    ("awaiting_time", "awaiting-time", "bool"),
+    ("digit_send_mode", "digit-send-mode", "bool"),
+    ("overlap_484_act", "overlap-484-act", "bool"),
+    ("dmpm_intdg", "dmpm-intdg", "bool"),
+    ("timer_b", "timer-b", "int"),
+    ("timer_f", "timer-f", "int"),
+    ("timer_t1", "timer-t1", "int"),
+    ("timer_t2", "timer-t2", "int"),
+]
+
+REGISTER_FIELDS = [
+    ("register_uri", "register-uri", "bool"),
+    ("register_intv", "register-intv", "bool"),
+    ("reg_retry_intv", "reg-retry-intv", "bool"),
+    ("reg_prev_ava_intv", "reg-prev-ava-intv", "bool"),
+    ("reg_head_start", "reg-head-start", "bool"),
+    ("reg_start_min", "reg-start-min", "bool"),
+    ("init_reg_delay", "init-reg-delay", "bool"),
+]
+
+REDUNDANCY_FIELDS = [
+    ("support_redun", "support-redun", "bool"),
+    ("dns_purge_timer", "dns-purge-timer", "bool"),
+    ("dns_ini_retr_int", "dns-ini-retr-int", "bool"),
+    ("dns_max_retr_nbr", "dns-max-retr-nbr", "bool"),
+    ("fg_monitor_method", "fg-monitor-method", "bool"),
+    ("fg_monitor_int", "fg-monitor-int", "bool"),
+    ("bg_monitor_method", "bg-monitor-method", "bool"),
+    ("bg_monitor_int", "bg-monitor-int", "bool"),
+    ("stable_obs_period", "stable-obs-period", "bool"),
+    ("fo_hystersis", "fo-hystersis", "bool"),
+    ("del_upd_threshold", "del-upd-threshold", "bool"),
+]
+
+SYSTEM_FIELDS = [
+    ("session_timer", "session-timer", "bool"),
+    ("status", "status", "bool"),
+    ("min_se_time", "min-se-time", "bool"),
+    ("se_time", "se-time", "bool"),
+    ("admin_status", "admin-status", "bool"),
+]
+
+REDUNDANCY_CMD_FIELDS = [
+    ("start_time", "start-time", "bool"),
+    ("end_time", "end-time", "bool"),
+    ("fail_x_type", "fail-x-type", "str"),
+    ("geo_fail_over", "geo-fail-over", "str"),
+]
+
+STATISTICS_BOOL_FIELDS = [
+    ("stats_5min_config", "stats-5min-config", "bool"),
+    ("cdr_config", "cdr-config", "bool"),
+]
+
+STATISTICS_CONFIG_FIELDS = [
+    ("per_line", "per-line"),
+    ("per_board", "per-board"),
+    ("per_system", "per-system"),
+    ("per_call", "per-call"),
+    ("out_any_rsp", "out-any-rsp"),
+    ("out_180_rsp", "out-180-rsp"),
+    ("out_200_rsp", "out-200-rsp"),
+    ("in_any_rsp", "in-any-rsp"),
+    ("in_180_rsp", "in-180-rsp"),
+    ("in_200_rsp", "in-200-rsp"),
+]
+
+CAS_NSM_PROF_FIELDS = [
+    ("international_prefix", "international-prefix", "str"),
+    ("country_code", "country-code", "str"),
+    ("outg_cpn_length", "outg-cpn-length", "int"),
+    ("version_nbr", "version-nbr", "bool"),
+    ("outg_from_no_cgpn", "outg-from-no-cgpn", "bool"),
+    ("national_prefix", "national-prefix", "bool"),
+]
 
 
 class Isam_voice_sip(ResourceModule):
@@ -28,25 +122,6 @@ class Isam_voice_sip(ResourceModule):
             resource="voice_sip",
             tmplt=Isam_voice_sipTemplate(),
         )
-        self.parsers = {
-            "registrar": [
-                "registrar.server",
-                "registrar.port",
-                "registrar.realm",
-            ],
-            "proxy": [
-                "proxy.server",
-                "proxy.port",
-            ],
-            "codec": ["codec.priority"],
-            "sip_profile": [
-                "sip_profile.timer_t1",
-                "sip_profile.timer_t2",
-            ],
-        }
-        self.want = self._normalize_config(self.want)
-        self.have = self._normalize_config(self.have)
-        self.before = deepcopy(self.have)
 
     def execute_module(self):
         if self.state == "rendered":
@@ -60,45 +135,227 @@ class Isam_voice_sip(ResourceModule):
         want = self.want or {}
         have = self.have or {}
 
-        for section, parsers in iteritems(self.parsers):
-            want_section = want.get(section)
-            have_section = have.get(section)
+        if self.state == "merged":
+            want = dict_merge(have, want)
 
-            if section in ("codec", "sip_profile"):
-                wantd = self._index_by_id(want_section or [])
-                haved = self._index_by_id(have_section or [])
+        if self.state == "deleted":
+            want = {}
 
-                if self.state == "merged":
-                    wantd = dict_merge(haved, wantd)
+        self._compare_lineid_syn_prof(
+            want.get("lineid_syn_prof", []),
+            have.get("lineid_syn_prof", []),
+        )
+        self._compare_vsp(
+            want.get("vsp", []),
+            have.get("vsp", []),
+        )
+        self._compare_register(
+            want.get("register", []),
+            have.get("register", []),
+        )
+        self._compare_redundancy(
+            want.get("redundancy", []),
+            have.get("redundancy", []),
+        )
+        self._compare_system(
+            want.get("system", {}),
+            have.get("system", {}),
+        )
+        self._compare_redundancy_cmd(
+            want.get("redundancy_cmd", []),
+            have.get("redundancy_cmd", []),
+        )
+        self._compare_statistics(
+            want.get("statistics", {}),
+            have.get("statistics", {}),
+        )
+        self._compare_cas_nsm_prof(
+            want.get("cas_nsm_prof", []),
+            have.get("cas_nsm_prof", []),
+        )
 
-                if self.state == "deleted":
-                    haved = {k: v for k, v in iteritems(haved) if k in wantd or not wantd}
-                    wantd = {}
+    def _compare_lineid_syn_prof(self, want, have):
+        want_dict = {e["name"]: e for e in want}
+        have_dict = {e["name"]: e for e in have}
 
-                if self.state in ["overridden", "deleted"]:
-                    for key, entry in iteritems(haved):
-                        if key not in wantd:
-                            self._compare_entry({}, entry, parsers)
+        if self.state in ("overridden", "deleted"):
+            for name, entry in have_dict.items():
+                if name not in want_dict:
+                    self.addcmd(entry, "lineid_syn_prof", negate=True)
 
-                for key, entry in iteritems(wantd):
-                    self._compare_entry(entry, haved.pop(key, {}), parsers)
-            else:
-                if self.state == "deleted":
-                    if want_section:
-                        self._compare_entry({}, have_section or {}, parsers)
-                else:
-                    self._compare_entry(want_section or {}, have_section or {}, parsers)
+        for name, want_entry in want_dict.items():
+            have_entry = have_dict.get(name, {})
+            cmd = self._build_named_cmd(
+                "lineid-syn-prof", name, want_entry, have_entry,
+                LINEID_SYN_PROF_FIELDS,
+            )
+            if cmd:
+                self.commands.append(cmd)
 
-    def _compare_entry(self, want, have, parsers):
-        self.compare(parsers=parsers, want=want, have=have)
+    def _compare_vsp(self, want, have):
+        want_dict = {e["name"]: e for e in want}
+        have_dict = {e["name"]: e for e in have}
 
-    def _index_by_id(self, entries):
-        result = {}
-        for entry in entries or []:
-            key = entry.get("priority") if "priority" in entry else entry.get("name")
-            if key is not None:
-                result[str(key)] = entry
-        return result
+        if self.state in ("overridden", "deleted"):
+            for name, entry in have_dict.items():
+                if name not in want_dict:
+                    self.addcmd(entry, "vsp.id", negate=True)
 
-    def _normalize_config(self, config):
-        return deepcopy(config or {})
+        for name, want_entry in want_dict.items():
+            have_entry = have_dict.get(name, {})
+            cmd = self._build_named_cmd(
+                "vsp", name, want_entry, have_entry, VSP_FIELDS,
+            )
+            if cmd:
+                self.commands.append(cmd)
+
+    def _compare_register(self, want, have):
+        want_dict = {e["name"]: e for e in want}
+        have_dict = {e["name"]: e for e in have}
+
+        if self.state in ("overridden", "deleted"):
+            for name, entry in have_dict.items():
+                if name not in want_dict:
+                    self.addcmd(entry, "register.id", negate=True)
+
+        for name, want_entry in want_dict.items():
+            have_entry = have_dict.get(name, {})
+            cmd = self._build_named_cmd(
+                "register", name, want_entry, have_entry, REGISTER_FIELDS,
+            )
+            if cmd:
+                self.commands.append(cmd)
+
+    def _compare_redundancy(self, want, have):
+        want_dict = {e["name"]: e for e in want}
+        have_dict = {e["name"]: e for e in have}
+
+        if self.state in ("overridden", "deleted"):
+            for name, entry in have_dict.items():
+                if name not in want_dict:
+                    self.addcmd(entry, "redundancy.id", negate=True)
+
+        for name, want_entry in want_dict.items():
+            have_entry = have_dict.get(name, {})
+            cmd = self._build_named_cmd(
+                "redundancy", name, want_entry, have_entry, REDUNDANCY_FIELDS,
+            )
+            if cmd:
+                self.commands.append(cmd)
+
+    def _compare_system(self, want, have):
+        want = want or {}
+        have = have or {}
+
+        if self.state in ("overridden", "deleted"):
+            for py_name, cli_name, ftype in SYSTEM_FIELDS:
+                if py_name not in want and have.get(py_name) is True:
+                    self.commands.append(
+                        "configure voice sip system no %s" % cli_name
+                    )
+
+        cmd = self._build_named_cmd("system", None, want, have, SYSTEM_FIELDS)
+        if cmd:
+            self.commands.append(cmd)
+
+    def _compare_redundancy_cmd(self, want, have):
+        want_dict = {e["name"]: e for e in want}
+        have_dict = {e["name"]: e for e in have}
+
+        if self.state in ("overridden", "deleted"):
+            for name, entry in have_dict.items():
+                if name not in want_dict:
+                    self.addcmd(entry, "redundancy_cmd.id", negate=True)
+
+        for name, want_entry in want_dict.items():
+            have_entry = have_dict.get(name, {})
+            cmd = self._build_named_cmd(
+                "redundancy-cmd", name, want_entry, have_entry,
+                REDUNDANCY_CMD_FIELDS,
+            )
+            if cmd:
+                self.commands.append(cmd)
+
+    def _compare_statistics(self, want, have):
+        want = want or {}
+        have = have or {}
+
+        if self.state in ("overridden", "deleted"):
+            for py_name, cli_name, ftype in STATISTICS_BOOL_FIELDS:
+                if py_name not in want and have.get(py_name) is True:
+                    self.commands.append(
+                        "configure voice sip statistics no %s" % cli_name
+                    )
+
+        for py_name, cli_name, ftype in STATISTICS_BOOL_FIELDS:
+            if py_name in want and want[py_name] != have.get(py_name):
+                if want[py_name] is True:
+                    self.commands.append(
+                        "configure voice sip statistics %s" % cli_name
+                    )
+                elif want[py_name] is False:
+                    self.commands.append(
+                        "configure voice sip statistics no %s" % cli_name
+                    )
+
+        want_config = {}
+        have_config = {}
+        for py_name, cli_name in STATISTICS_CONFIG_FIELDS:
+            if py_name in want:
+                want_config[py_name] = want[py_name]
+            if py_name in have:
+                have_config[py_name] = have[py_name]
+
+        if want_config != have_config:
+            parts = ["configure voice sip statistics stats-config"]
+            for py_name, cli_name in STATISTICS_CONFIG_FIELDS:
+                if want.get(py_name) is True:
+                    parts.append(cli_name)
+            self.commands.append(" ".join(parts))
+
+    def _compare_cas_nsm_prof(self, want, have):
+        want_dict = {e["name"]: e for e in want}
+        have_dict = {e["name"]: e for e in have}
+
+        if self.state in ("overridden", "deleted"):
+            for name, entry in have_dict.items():
+                if name not in want_dict:
+                    self.addcmd(entry, "cas_nsm_prof.id", negate=True)
+
+        for name, want_entry in want_dict.items():
+            have_entry = have_dict.get(name, {})
+            cmd = self._build_named_cmd(
+                "cas-nsm-prof", name, want_entry, have_entry,
+                CAS_NSM_PROF_FIELDS,
+            )
+            if cmd:
+                self.commands.append(cmd)
+
+    @staticmethod
+    def _build_named_cmd(cli_section, name, want_entry, have_entry, field_defs):
+        parts = ["configure", "voice", "sip", cli_section]
+        if name:
+            parts.append(name)
+        has_diff = False
+
+        for py_name, cli_name, ftype in field_defs:
+            if py_name in want_entry:
+                wval = want_entry[py_name]
+                hval = have_entry.get(py_name)
+                if wval != hval:
+                    has_diff = True
+                    if ftype == "bool":
+                        if wval is True:
+                            parts.append(cli_name)
+                        elif wval is False:
+                            parts.extend(["no", cli_name])
+                    elif ftype == "str":
+                        if wval is not None:
+                            parts.extend([cli_name, str(wval)])
+                    elif ftype == "int":
+                        if wval is not None:
+                            parts.extend([cli_name, str(wval)])
+
+        if has_diff:
+            return " ".join(parts)
+        return None

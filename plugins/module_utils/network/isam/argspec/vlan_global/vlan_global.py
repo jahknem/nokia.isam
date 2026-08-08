@@ -24,6 +24,15 @@ class Isam_vlan_globalArgs(object):  # pylint: disable=R0903
                     "options": {
                         "dot1p": {"type": "int", "required": True},
                         "regen_dot1p": {"type": "int"},
+                        "profile_name": {"type": "str"},
+                        "pbit0": {"type": "int"},
+                        "pbit1": {"type": "int"},
+                        "pbit2": {"type": "int"},
+                        "pbit3": {"type": "int"},
+                        "pbit4": {"type": "int"},
+                        "pbit5": {"type": "int"},
+                        "pbit6": {"type": "int"},
+                        "pbit7": {"type": "int"},
                     },
                 },
                 "tpid": {
@@ -40,8 +49,9 @@ class Isam_vlan_globalArgs(object):  # pylint: disable=R0903
                     "options": {
                         "format": {
                             "type": "str",
-                            "choices": ["canonical", "non-canonical"],
+                            "choices": ["canonical", "non-canonical", "host-id"],
                         },
+                        "host_id": {"type": "int"},
                     },
                 },
             },

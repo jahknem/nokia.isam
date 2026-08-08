@@ -5,6 +5,9 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    unwrap_response,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.vlan_global.vlan_global import (
     Isam_vlan_globalArgs,
 )
@@ -28,8 +31,7 @@ class Isam_vlan_globalFacts(object):
 
         if not data:
             data = self.get_config(connection)
-        if type(data) == tuple:
-            data = data[0]
+        data = unwrap_response(data)
 
         data = self._flatten_config(data)
         parser = Isam_vlan_globalTemplate(lines=data, module=self._module)
@@ -44,10 +46,16 @@ class Isam_vlan_globalFacts(object):
         priority_regen = list(parsed.get("priority_regen", {}).values())
         if priority_regen:
             for entry in priority_regen:
-                if "dot1p" in entry:
+                for key in list(entry.keys()):
+                    if entry[key] == "":
+                        entry.pop(key)
+                if "dot1p" in entry and entry["dot1p"] != "":
                     entry["dot1p"] = int(entry["dot1p"])
-                if "regen_dot1p" in entry:
+                if "regen_dot1p" in entry and entry["regen_dot1p"] != "":
                     entry["regen_dot1p"] = int(entry["regen_dot1p"])
+                for pbit in ("pbit0", "pbit1", "pbit2", "pbit3", "pbit4", "pbit5", "pbit6", "pbit7"):
+                    if pbit in entry and entry[pbit] != "":
+                        entry[pbit] = int(entry[pbit])
             objs["priority_regen"] = priority_regen
 
         tpid = parsed.get("tpid", {})
@@ -56,6 +64,10 @@ class Isam_vlan_globalFacts(object):
 
         vmac_address_format = parsed.get("vmac_address_format", {})
         if vmac_address_format:
+            if vmac_address_format.get("host_id") == "":
+                vmac_address_format.pop("host_id")
+            elif "host_id" in vmac_address_format:
+                vmac_address_format["host_id"] = int(vmac_address_format["host_id"])
             objs["vmac_address_format"] = vmac_address_format
 
         ansible_facts["ansible_network_resources"].pop("isam_vlan_global", None)

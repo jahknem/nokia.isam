@@ -136,9 +136,37 @@ class Isam_traps(ResourceModule):
                     else:
                         self._remove_entry_fields(have_entry, section, key_field)
 
+        if self.state == "replaced":
+            # Reset trap-type bools in have entries that are omitted from
+            # the matching want entry; priority and shaping fields are
+            # already handled by _compare_entry below.
+            for key, want_entry in iteritems(w_map):
+                have_entry = h_map.get(key, {})
+                if have_entry:
+                    self._reset_omitted_trap_types(
+                        want_entry, have_entry, section, key_field
+                    )
+
         for key, want_entry in iteritems(w_map):
             have_entry = h_map.pop(key, {})
             self._compare_entry(want_entry, have_entry, section, key_field)
+
+    def _reset_omitted_trap_types(self, want, have, section, key_field):
+        """Set omitted trap-type bools in want to False so that
+        _compare_manager_fields emits the appropriate 'no' commands.
+
+        For 'replaced' state, trap-type bools that are True in have but
+        absent from want should be reset to their default (disabled).
+        Shaping fields and priority are already handled by
+        _compare_manager_fields / _compare_definition_fields when the
+        corresponding want value is None/absent.
+        """
+        if section not in ("managers", "v6managers"):
+            return
+        for cli_name in TRAP_TYPE_NAMES:
+            field = cli_name.replace("-", "_")
+            if field not in want and have.get(field) is True:
+                want[field] = False
 
     def _remove_entry_fields(self, entry, section, key_field):
         if section == "definitions":

@@ -61,7 +61,6 @@ class Isam_system(ResourceModule):
 
             if self.state == "deleted":
                 if want_section is not None:
-                    have_section = have_section
                     want_section = {}
                 else:
                     have_section = {}
