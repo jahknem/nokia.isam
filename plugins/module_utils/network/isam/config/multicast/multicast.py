@@ -4,9 +4,6 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-from copy import deepcopy
-
-from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
 )
@@ -67,7 +64,7 @@ class Multicast(ResourceModule):
         self._compare_mcast_control(want.get("mcast_control", {}), have.get("mcast_control", {}))
 
     def _compare_igmp(self, want, have):
-        if self.state in ["overridden", "deleted"]:
+        if self.state in ["overridden", "replaced", "deleted"]:
             for key, negate_val in [("mld_snooping", False), ("mld_querier", False),
                                      ("igmp_snooping", False), ("igmp_querier", False)]:
                 if key not in want and have.get(key) is True:
@@ -79,7 +76,7 @@ class Multicast(ResourceModule):
                 self.addcmd({"igmp": {key: want.get(key)}}, "igmp." + key)
 
     def _compare_mcast_control(self, want, have):
-        if self.state in ["overridden", "deleted"]:
+        if self.state in ["overridden", "replaced", "deleted"]:
             if "admin_state" not in want and have.get("admin_state") is True:
                 self.addcmd({"mcast_control": {"admin_state": False}}, "mcast_control.admin_state")
 

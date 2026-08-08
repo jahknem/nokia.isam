@@ -12,7 +12,7 @@ version_added: 1.0.0
 short_description: Manages Nokia ISAM link aggregation configuration
 description:
 - Manages C(configure link-agg port) and C(configure link-agg group) configuration.
-author: Jan Kuehnemund
+author: Jan Kühnemund (@jahknem)
 notes:
 - Tested against Nokia ISAM with OS Version R6.2.04ng.
 options:

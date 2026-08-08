@@ -13,7 +13,7 @@ short_description: Manage QoS maps on Nokia ISAM devices
 description:
 - Manage QoS mapping tables on Nokia ISAM devices.
 - Supports C(tc-map-dot1p), C(dscp-map-dot1p), C(up-ctrl-pkt), and C(dn-ctrl-pkt) sub-families.
-author: Jan Kuehnemund
+author: Jan Kühnemund (@jahknem)
 notes:
 - Tested against read-only output from Nokia ISAM 6.2.04ng.
 options:

@@ -18,10 +18,22 @@ class MulticastTemplate(NetworkTemplate):
     # fmt: off
     PARSERS = [
         {
+            "name": "igmp.mcast_svc_context",
+            "getval": re.compile(
+                r"^configure\sigmp\smcast-svc-context\s(?P<mcast_svc_context>\S+)$"
+            ),
+            "setval": "configure igmp mcast-svc-context {{ igmp.mcast_svc_context }}",
+            "result": {
+                "igmp": {
+                    "mcast_svc_context": "{{ mcast_svc_context }}",
+                },
+            },
+        },
+        {
             "name": "igmp.mld_snooping",
             "compval": "mld_snooping",
             "getval": re.compile(
-                r"^configure\sigmp\smcast-svc-context\s(?P<negate>no\s)?(?P<mld_snooping>mld-snooping)$"
+                r"^configure\sigmp\smcast-svc-context\s(?P<negate>no\s)?(?P<mld_snooping>mld-snooping)(?:\s+.*)?$"
             ),
             "setval": "configure igmp mcast-svc-context {{ 'no ' if igmp.mld_snooping == false else '' }}mld-snooping",
             "result": {
@@ -34,7 +46,7 @@ class MulticastTemplate(NetworkTemplate):
             "name": "igmp.mld_querier",
             "compval": "mld_querier",
             "getval": re.compile(
-                r"^configure\sigmp\smcast-svc-context\s(?P<negate>no\s)?(?P<mld_querier>mld-querier)$"
+                r"^configure\sigmp\smcast-svc-context\s(?P<negate>no\s)?(?P<mld_querier>mld-querier)(?:\s+.*)?$"
             ),
             "setval": "configure igmp mcast-svc-context {{ 'no ' if igmp.mld_querier == false else '' }}mld-querier",
             "result": {
@@ -47,7 +59,7 @@ class MulticastTemplate(NetworkTemplate):
             "name": "igmp.igmp_snooping",
             "compval": "igmp_snooping",
             "getval": re.compile(
-                r"^configure\sigmp\smcast-svc-context\s(?P<negate>no\s)?(?P<igmp_snooping>igmp-snooping)$"
+                r"^configure\sigmp\smcast-svc-context\s(?P<negate>no\s)?(?P<igmp_snooping>igmp-snooping)(?:\s+.*)?$"
             ),
             "setval": "configure igmp mcast-svc-context {{ 'no ' if igmp.igmp_snooping == false else '' }}igmp-snooping",
             "result": {
@@ -60,7 +72,7 @@ class MulticastTemplate(NetworkTemplate):
             "name": "igmp.igmp_querier",
             "compval": "igmp_querier",
             "getval": re.compile(
-                r"^configure\sigmp\smcast-svc-context\s(?P<negate>no\s)?(?P<igmp_querier>igmp-querier)$"
+                r"^configure\sigmp\smcast-svc-context\s(?P<negate>no\s)?(?P<igmp_querier>igmp-querier)(?:\s+.*)?$"
             ),
             "setval": "configure igmp mcast-svc-context {{ 'no ' if igmp.igmp_querier == false else '' }}igmp-querier",
             "result": {
@@ -73,7 +85,7 @@ class MulticastTemplate(NetworkTemplate):
             "name": "igmp.query_interval",
             "compval": "query_interval",
             "getval": re.compile(
-                r"^configure\sigmp\smcast-svc-context\squery-interval\s(?P<query_interval>\d+)$"
+                r"^configure\sigmp\smcast-svc-context\squery-interval\s(?P<query_interval>\d+)(?:\s+.*)?$"
             ),
             "setval": "configure igmp mcast-svc-context query-interval {{ igmp.query_interval }}",
             "result": {
@@ -86,7 +98,7 @@ class MulticastTemplate(NetworkTemplate):
             "name": "igmp.query_response_interval",
             "compval": "query_response_interval",
             "getval": re.compile(
-                r"^configure\sigmp\smcast-svc-context\squery-response-interval\s(?P<query_response_interval>\d+)$"
+                r"^configure\sigmp\smcast-svc-context\squery-response-interval\s(?P<query_response_interval>\d+)(?:\s+.*)?$"
             ),
             "setval": "configure igmp mcast-svc-context query-response-interval {{ igmp.query_response_interval }}",
             "result": {
@@ -99,7 +111,7 @@ class MulticastTemplate(NetworkTemplate):
             "name": "igmp.robustness_count",
             "compval": "robustness_count",
             "getval": re.compile(
-                r"^configure\sigmp\smcast-svc-context\srobustness-count\s(?P<robustness_count>\d+)$"
+                r"^configure\sigmp\smcast-svc-context\srobustness-count\s(?P<robustness_count>\d+)(?:\s+.*)?$"
             ),
             "setval": "configure igmp mcast-svc-context robustness-count {{ igmp.robustness_count }}",
             "result": {
@@ -109,10 +121,22 @@ class MulticastTemplate(NetworkTemplate):
             },
         },
         {
+            "name": "mcast_control.mcast_svc_context",
+            "getval": re.compile(
+                r"^configure\smcast-control\smcast-svc-context\s(?P<mcast_svc_context>\S+)$"
+            ),
+            "setval": "configure mcast-control mcast-svc-context {{ mcast_control.mcast_svc_context }}",
+            "result": {
+                "mcast_control": {
+                    "mcast_svc_context": "{{ mcast_svc_context }}",
+                },
+            },
+        },
+        {
             "name": "mcast_control.admin_state",
             "compval": "admin_state",
             "getval": re.compile(
-                r"^configure\smcast-control\s(?P<negate>no\s)?(?P<admin_state>admin-state)$"
+                r"^configure\smcast-control\s(?P<negate>no\s)?(?P<admin_state>admin-state)(?:\s+.*)?$"
             ),
             "setval": "configure mcast-control {{ 'no ' if mcast_control.admin_state == false else '' }}admin-state",
             "result": {
@@ -125,7 +149,7 @@ class MulticastTemplate(NetworkTemplate):
             "name": "mcast_control.max_groups",
             "compval": "max_groups",
             "getval": re.compile(
-                r"^configure\smcast-control\smax-groups\s(?P<max_groups>\d+)$"
+                r"^configure\smcast-control\smax-groups\s(?P<max_groups>\d+)(?:\s+.*)?$"
             ),
             "setval": "configure mcast-control max-groups {{ mcast_control.max_groups }}",
             "result": {
@@ -138,7 +162,7 @@ class MulticastTemplate(NetworkTemplate):
             "name": "mcast_control.max_sources",
             "compval": "max_sources",
             "getval": re.compile(
-                r"^configure\smcast-control\smax-sources\s(?P<max_sources>\d+)$"
+                r"^configure\smcast-control\smax-sources\s(?P<max_sources>\d+)(?:\s+.*)?$"
             ),
             "setval": "configure mcast-control max-sources {{ mcast_control.max_sources }}",
             "result": {

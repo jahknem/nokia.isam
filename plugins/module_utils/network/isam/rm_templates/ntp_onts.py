@@ -25,6 +25,21 @@ class Ntp_ontsTemplate(NetworkTemplate):
     # fmt: off
     PARSERS = [
         {
+            "name": "ntp_ont",
+            "compval": "ont_id",
+            "getval": re.compile(
+                r"""
+                configure\sntp\sont\s(?P<ont_id>\S+)
+                $""", re.VERBOSE),
+            "setval": "configure ntp ont {{ ont_id }}",
+            "remval": "configure ntp no ont {{ ont_id }}",
+            "result": {
+                "{{ ont_id }}": {
+                    "ont_id": "{{ ont_id }}",
+                },
+            },
+        },
+        {
             "name": "ntp_ont.server",
             "compval": "server",
             "getval": re.compile(

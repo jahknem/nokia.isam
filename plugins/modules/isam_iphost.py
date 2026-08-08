@@ -11,7 +11,7 @@ short_description: Manage IP host configuration on Nokia ISAM.
 description:
   - Manages C(configure iphost) configuration.
 version_added: 1.0.0
-author: Ansible Network Engineer
+author: Jan Kühnemund (@jahknem)
 options:
   config:
     description: The provided IP host configuration.

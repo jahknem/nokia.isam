@@ -51,6 +51,10 @@ class Iphost(ResourceModule):
         if self.state == "deleted":
             want = {}
 
+        # name has no CLI no-form, so 'replaced' is functionally
+        # identical to 'merged': the value is set when provided and
+        # left unchanged when omitted.
+
         self._compare(want, have)
 
     def _compare(self, want, have):

@@ -208,7 +208,6 @@ class Qos_profilesTemplate(NetworkTemplate):
         return result
 
 
-
 Qos_profilesTemplate.PARSERS = [
     {
         "name": "profile_type",

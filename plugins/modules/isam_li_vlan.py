@@ -11,7 +11,7 @@ short_description: Manage LI VLAN configuration on Nokia ISAM.
 description:
   - Manages C(configure li_vlan vlan-id) configuration.
 version_added: 1.0.0
-author: Ansible Network Engineer
+author: Jan Kühnemund (@jahknem)
 options:
   config:
     description: The provided LI VLAN configuration.

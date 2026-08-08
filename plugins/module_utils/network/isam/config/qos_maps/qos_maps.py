@@ -4,9 +4,6 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-from copy import deepcopy
-
-from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
     ResourceModule,
 )
@@ -73,6 +70,7 @@ class Qos_maps(ResourceModule):
         wantd = self.want or {}
         haved = self.have or {}
 
+        # merged: merge want into have so unmentioned entries/fields are preserved
         if self.state == "merged":
             for field in wantd:
                 want_list = wantd.get(field) or []
@@ -82,6 +80,7 @@ class Qos_maps(ResourceModule):
                 merged = dict_merge(have_dict, want_dict)
                 wantd[field] = list(merged.values())
 
+        # deleted: if want is empty, delete every field and return
         if self.state == "deleted":
             for field in list(haved.keys()):
                 if field not in wantd or not wantd:
@@ -90,20 +89,29 @@ class Qos_maps(ResourceModule):
                 self.commands = list(dict.fromkeys(self.commands))
                 return
 
+        # overridden/deleted: remove entire fields present in have but absent from want
         if self.state in ["overridden", "deleted"]:
             for field in haved:
                 if field not in wantd:
                     self._del_commands(haved.get(field), field)
 
+        # replaced/overridden/deleted: for each field in want, delete sub-entries
+        # present in have but absent from want, then add/update entries to match want.
+        # For merged the dict_merge above already copied all have entries into wantd
+        # so the deletion branch below is a no-op for that state.
+        #
+        # replaced leaves fields entirely absent from want untouched (no field-level
+        # deletion), which is already guaranteed because this loop only processes
+        # fields that ARE in wantd.
         for field in wantd:
             want_list = wantd.get(field) or []
             have_list = haved.get(field) or []
             want_keys = {self._key(e, field) for e in want_list}
-            have_keys = {self._key(e, field) for e in have_list}
 
-            for entry in have_list:
-                if self._key(entry, field) not in want_keys:
-                    self._del_commands([entry], field)
+            if self.state in ("replaced", "overridden", "deleted"):
+                for entry in have_list:
+                    if self._key(entry, field) not in want_keys:
+                        self._del_commands([entry], field)
 
             for entry in want_list:
                 k = self._key(entry, field)

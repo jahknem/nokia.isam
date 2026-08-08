@@ -11,6 +11,8 @@ class Qos_mapsArgs(object):  # pylint: disable=R0903
     _tc_map_dot1p_options = {
         "dot1p": {"type": "int", "required": True},
         "tc": {"type": "int"},
+        "dpcolor": {"type": "str"},
+        "policer_color": {"type": "str"},
     }
 
     _dscp_map_dot1p_options = {

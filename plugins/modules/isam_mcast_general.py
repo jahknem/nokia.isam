@@ -12,7 +12,7 @@ short_description: Manage Nokia ISAM multicast general configuration.
 description:
   - Manages C(configure mcast general) configuration.
 version_added: 1.0.0
-author: Ansible Network Engineer
+author: Jan Kühnemund (@jahknem)
 options:
   config:
     description: The provided multicast general configuration.

@@ -7,6 +7,9 @@ __metaclass__ = type
 from anytree import Node
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    unwrap_response,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.link_agg.link_agg import (
     Link_aggArgs,
 )
@@ -30,8 +33,7 @@ class Link_aggFacts(object):
 
         if not data:
             data = self.get_config(connection)
-        if type(data) == tuple:
-            data = data[0]
+        data = unwrap_response(data)
 
         data = self._flatten_config(data)
         parser = Link_aggTemplate(lines=data, module=self._module)
@@ -115,7 +117,6 @@ class Link_aggFacts(object):
         root = self._parse_config_to_tree(config)
         if root is None:
             return []
-
 
         flat_config = []
         for leaf in root.leaves:
