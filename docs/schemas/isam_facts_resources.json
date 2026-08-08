@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/jahknem/nokia.isam/docs/schemas/isam_facts_resources.json",
+  "title": "Nokia ISAM network resources returned by isam_facts",
+  "type": "object",
+  "properties": {
+    "interfaces": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/resource"}
+    },
+    "pon_interfaces": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/resource"}
+    },
+    "equipment_onts": {
+      "type": "object",
+      "properties": {
+        "interfaces": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/resource"}
+        },
+        "slots": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/resource"}
+        },
+        "sw_ctrls": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/resource"}
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "resource": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}
