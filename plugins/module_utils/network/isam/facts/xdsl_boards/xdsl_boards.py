@@ -7,6 +7,10 @@ __metaclass__ = type
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    unwrap_response,
+    validate_config_safe,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.xdsl_boards.xdsl_boards import (
     Xdsl_boardsArgs,
 )
@@ -20,32 +24,28 @@ class Xdsl_boardsFacts(object):
         self.argument_spec = Xdsl_boardsArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure xdsl board")
+        return "\n".join(
+            [
+                connection.get("info configure xdsl board"),
+                connection.get("info configure xdsl vp-board"),
+            ]
+        )
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}
 
         if not data:
             data = self.get_config(connection)
-        if type(data) == tuple:
-            data = data[0]
+        data = unwrap_response(data)
 
         objs = self._parse_config(data)
         ansible_facts["ansible_network_resources"].pop("xdsl_boards", None)
         params = utils.remove_empties(
-            self._validate(self.argument_spec, {"config": objs})
+            validate_config_safe(self.argument_spec, {"config": objs})
         )
         facts["xdsl_boards"] = params.get("config", {})
         ansible_facts["ansible_network_resources"].update(facts)
         return ansible_facts
-
-    def _validate(self, argument_spec, data):
-        try:
-            return utils.validate_config(argument_spec, data, redact=True)
-        except TypeError:
-            return utils.validate_config(argument_spec, data)
-        except AttributeError:
-            return data
 
     def _parse_config(self, config):
         result = {"boards": [], "vp_boards": []}
