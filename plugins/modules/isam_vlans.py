@@ -15,10 +15,10 @@ __metaclass__ = type
 DOCUMENTATION = """
 ---
 module: isam_vlans
-version_added: 2.9
+version_added: 1.0.0
 short_description: 'Manage VLAN attributes on Nokia ISAM MSAN devices.'
 description: 'This module manages VLAN configuration and facts on Nokia ISAM MSAN devices.'
-author: Jan Kuehnemund
+author: Jan Kühnemund (@jahknem)
 notes:
 - 'Tested against Nokia ISAM with OS Version R6.2.04m'
 options:
@@ -89,6 +89,125 @@ options:
         - Enable DHCP(v4/v6) server transparency at the user side when DHCP(v4/v6) relay is enabled. Only applicable for CC forwarder
         type: bool
         default: false
+      dhcp-opt82-ext:
+        description:
+        - Configure DHCP option 82 handling for subscriber-side DHCP frames.
+        type: str
+        choices:
+        - enable
+        - add-or-forward
+      dhcp-opt82-nni:
+        description:
+        - Enable DHCP option 82 processing on the network-to-network interface.
+        type: bool
+      dhcp-opt82-uplink:
+        description:
+        - Enable DHCP option 82 processing on uplink DHCP traffic.
+        type: bool
+      circuit-id-dhcp:
+        description:
+        - Configure the DHCP option 82 circuit-id format.
+        type: str
+        choices:
+        - physical-id
+      remote-id-dhcp:
+        description:
+        - Configure the DHCP option 82 remote-id format.
+        type: str
+        choices:
+        - customer-id
+      relay-id-dhcp:
+        description:
+        - Enable DHCP relay-id insertion.
+        type: bool
+      dhcp-linerate:
+        description:
+        - Enable DHCP line-rate information insertion.
+        type: bool
+      pppoe-linerate:
+        description:
+        - Enable PPPoE line-rate information insertion.
+        type: bool
+      dhcpv6-linerate:
+        description:
+        - Enable DHCPv6 line-rate information insertion.
+        type: bool
+      pppoe-l2-encaps:
+        description:
+        - Enable PPPoE Layer 2 encapsulation information insertion.
+        type: bool
+      dhcp-l2-encaps:
+        description:
+        - Enable DHCP Layer 2 encapsulation information insertion.
+        type: bool
+      dhcpv6-l2-encaps:
+        description:
+        - Enable DHCPv6 Layer 2 encapsulation information insertion.
+        type: bool
+      l2-encaps1:
+        description:
+        - Enable first Layer 2 encapsulation information insertion.
+        type: bool
+      pppoer-vlanaware:
+        description:
+        - Enable VLAN-aware PPPoE relay behavior.
+        type: bool
+      dhcpr-vlanaware:
+        description:
+        - Enable VLAN-aware DHCP relay behavior.
+        type: bool
+      dhcpv6r-vlanaware:
+        description:
+        - Enable VLAN-aware DHCPv6 relay behavior.
+        type: bool
+      circuit-id-pppoe:
+        description:
+        - Configure the PPPoE circuit-id format.
+        type: str
+        choices:
+        - physical-id
+      remote-id-pppoe:
+        description:
+        - Configure the PPPoE remote-id format.
+        type: str
+        choices:
+        - customer-id
+      dhcpv6-itf-id:
+        description:
+        - Configure the DHCPv6 interface-id format.
+        type: str
+        choices:
+        - physical-id
+      dhcpv6-remote-id:
+        description:
+        - Configure the DHCPv6 remote-id format.
+        type: str
+        choices:
+        - customer-id
+      dhcpv6-relay-id:
+        description:
+        - Enable DHCPv6 relay-id insertion.
+        type: bool
+      dhcpv6-trst-port:
+        description:
+        - Enable DHCPv6 trusted-port behavior.
+        type: bool
+      enterprise-number:
+        description:
+        - Configure the enterprise number used in DHCPv6 relay options.
+        type: int
+      vmac-translation:
+        description:
+        - Enable virtual MAC address translation.
+        type: bool
+      vmac-dnstr-filter:
+        description:
+        - Enable virtual MAC downstream filter behavior.
+        type: bool
+      icmpv6-sec-fltr:
+        description:
+        - Enable ICMPv6 security filtering.
+        type: bool
       new-secure-fwd:
         description:
         - Enable secure forwarding for the VLAN. On GPON and L2+ LT boards, this can only be controlled at S-VLAN level
@@ -167,6 +286,10 @@ options:
         description:
         - 'Enable mac unauthorized default: forward the frame to this vlan if authorization failed'
         type: bool
+  running_config:
+    description:
+    - Device native VLAN configuration to parse when I(state) is C(parsed).
+    type: str
   state:
     description:
     - The state the configuration should be left in.
@@ -177,16 +300,49 @@ options:
     - overridden
     - deleted
     - gathered
+    - rendered
+    - parsed
+    default: merged
 """
 
 EXAMPLES = """
+- name: Gather VLAN facts from the device
+  nokia.isam.isam_vlans:
+    state: gathered
 
+- name: Create or update a residential bridge VLAN
+  nokia.isam.isam_vlans:
+    state: merged
+    config:
+      - id: "100"
+        name: "customers-100"
+        mode: residential-bridge
+        priority: 3
+        new-broadcast: enable
+        protocol-filter: pass-pppoe-ipoe
+        dhcp-opt82-ext: add-or-forward
+        circuit-id-dhcp: physical-id
+        remote-id-dhcp: customer-id
+        vmac-translation: true
+        ipv4-mcast-ctrl: true
+        arp-snooping: true
+
+- name: Render VLAN commands without applying them
+  nokia.isam.isam_vlans:
+    state: rendered
+    config:
+      - id: "stacked:200:10"
+        name: "wholesale-200-10"
+        mode: cross-connect
+        new-secure-fwd: enable
+        pppoe-relay-tag: configurable
+        unknown-unicast: false
 """
 
 RETURN = """
 before:
   description: The configuration prior to the module execution.
-  returned: when I(state) is C(merged), C(replaced), C(overridden), C(deleted) or C(purged)
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: dict
   sample: >
     This output will always be in the same format as the
@@ -200,7 +356,7 @@ after:
     module argspec.
 commands:
   description: The set of commands pushed to the remote device.
-  returned: when I(state) is C(merged), C(replaced), C(overridden), C(deleted) or C(purged)
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
   sample:
     - sample command 1
@@ -243,7 +399,7 @@ def main():
     """
     Main entry point for module execution
 
-    :returns: the result form module invocation
+    :returns: the result from module invocation
     """
     module = AnsibleModule(
         argument_spec=VlansArgs.argument_spec,

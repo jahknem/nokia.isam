@@ -160,5 +160,6 @@ class VlansArgs(object):  # pylint: disable=R0903
                 "rendered",
                 "parsed",
             ],
+            "default": "merged",
         },
     }  # pylint: disable=C0301

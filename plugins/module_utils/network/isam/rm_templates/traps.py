@@ -90,7 +90,7 @@ class Isam_trapsTemplate(NetworkTemplate):
             {
                 "name": "definition",
                 "getval": re.compile(
-                    r"^configure\strap\sdefinition\s(?P<name>\S+)(?:\s.*)?$"
+                    r"^configure\strap\sdefinition\s(?P<name>\S+)$"
                 ),
                 "setval": "configure trap definition {{ name }}",
                 "result": {

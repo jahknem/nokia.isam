@@ -87,17 +87,6 @@ class Isam_trapsFacts(object):
 
         in_trap = False
         current_resource = None
-        resource_key = None
-
-        resource_prefixes = {
-            "definition ": "definition",
-            "manager ": "manager",
-            "v6manager ": "v6manager",
-            "definition": "definition",
-            "manager": "manager",
-            "v6manager": "v6manager",
-        }
-
         for raw_line in config.splitlines():
             line = raw_line.split("#", 1)[0].rstrip()
             stripped = line.strip()
@@ -111,13 +100,11 @@ class Isam_trapsFacts(object):
             if stripped == "trap":
                 in_trap = True
                 current_resource = None
-                resource_key = None
                 continue
 
             if stripped == "exit":
                 if current_resource:
                     current_resource = None
-                    resource_key = None
                 elif in_trap:
                     in_trap = False
                 continue

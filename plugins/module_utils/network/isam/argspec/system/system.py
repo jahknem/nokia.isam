@@ -18,22 +18,38 @@ class Isam_systemArgs(object):  # pylint: disable=R0903
                         "name": {"type": "str"},
                         "location": {"type": "str"},
                         "contact": {"type": "str"},
+                        "node_id": {"type": "str"},
+                        "nt_intercon_vlan": {"type": "int"},
+                        "internal_nw_vlan": {"type": "int"},
+                        "system_mac": {"type": "str"},
                     },
                 },
                 "security": {
                     "type": "dict",
                     "options": {
-                        "ssh": {"type": "str"},
-                        "telnet": {"type": "str"},
-                        "snmp": {"type": "str"},
+                        "ssh": {"type": "bool"},
+                        "telnet": {"type": "bool"},
+                        "snmp": {"type": "bool"},
                     },
                 },
                 "sntp": {
                     "type": "dict",
                     "options": {
                         "server": {"type": "str"},
+                        "server_ip_addr": {"type": "str"},
                         "port": {"type": "int"},
                         "poll_interval": {"type": "int"},
+                        "polling_rate": {"type": "int"},
+                        "enabled": {"type": "bool"},
+                        "timezone_offset": {"type": "int"},
+                        "servers": {
+                            "type": "list",
+                            "elements": "dict",
+                            "options": {
+                                "ip_address": {"type": "str", "required": True},
+                                "priority": {"type": "int"},
+                            },
+                        },
                     },
                 },
                 "syslog": {
@@ -42,6 +58,24 @@ class Isam_systemArgs(object):  # pylint: disable=R0903
                         "server": {"type": "str"},
                         "facility": {"type": "str"},
                         "severity": {"type": "str"},
+                        "destinations": {
+                            "type": "list",
+                            "elements": "dict",
+                            "options": {
+                                "name": {"type": "str", "required": True},
+                                "type": {"type": "str"},
+                            },
+                        },
+                        "routes": {
+                            "type": "list",
+                            "elements": "dict",
+                            "options": {
+                                "destination": {"type": "str", "required": True},
+                                "msg_type": {"type": "str"},
+                                "facility": {"type": "str"},
+                                "severities": {"type": "list", "elements": "str"},
+                            },
+                        },
                     },
                 },
                 "sync_if_timing": {
@@ -55,6 +89,7 @@ class Isam_systemArgs(object):  # pylint: disable=R0903
                     "type": "dict",
                     "options": {
                         "timeout": {"type": "int"},
+                        "log_full_action": {"type": "str"},
                     },
                 },
             },

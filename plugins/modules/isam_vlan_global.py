@@ -11,7 +11,7 @@ short_description: Manages global VLAN configuration on Nokia ISAM.
 description:
   - Manages global C(configure vlan) resources including broadcast-frames, priority-regen, tpid, and vmac-address-format.
 version_added: 1.0.0
-author: Jan Kuehnemund
+author: Jan Kühnemund (@jahknem)
 options:
   config:
     description: VLAN global configuration.

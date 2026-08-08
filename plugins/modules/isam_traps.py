@@ -11,7 +11,7 @@ short_description: Manages Nokia ISAM trap definition and manager configuration.
 description:
   - Manages C(configure trap) resources for trap definitions, SNMP managers, and IPv6 managers.
 version_added: 1.0.0
-author: Jan Kuehnemund
+author: Jan Kühnemund (@jahknem)
 options:
   config:
     description: Trap configuration grouped by resource type.
@@ -43,6 +43,72 @@ options:
             description: Trap manager priority.
             type: str
             choices: [urgent, high, medium, low]
+          cold_start_trap: &trap_bool
+            description: Enable or disable this trap type for the manager.
+            type: bool
+          link_down_trap: *trap_bool
+          link_up_trap: *trap_bool
+          auth_fail_trap: *trap_bool
+          change_trap: *trap_bool
+          line_test_trap: *trap_bool
+          init_started_trap: *trap_bool
+          lic_key_chg_occr: *trap_bool
+          topology_chg: *trap_bool
+          selt_state_chg: *trap_bool
+          dhcp_sess_pre: *trap_bool
+          alarm_chg_trap: *trap_bool
+          phys_line_trap: *trap_bool
+          eqpt_change_trap: *trap_bool
+          success_set_trap: *trap_bool
+          other_alarm_trap: *trap_bool
+          warning_trap: *trap_bool
+          minor_trap: *trap_bool
+          major_trap: *trap_bool
+          critical_trap: *trap_bool
+          redundancy_trap: *trap_bool
+          eqpt_prot_trap: *trap_bool
+          craft_login_trap: *trap_bool
+          restart_trap: *trap_bool
+          ntr_trap: *trap_bool
+          rad_srvr_fail: *trap_bool
+          login_occr_trap: *trap_bool
+          logout_occr_trap: *trap_bool
+          trapmngr_chg_trap: *trap_bool
+          mst_genral: *trap_bool
+          mst_error: *trap_bool
+          mst_protocol_mig: *trap_bool
+          mst_inv_bpdu_rx: *trap_bool
+          mst_reg_conf_chg: *trap_bool
+          dying_gasp: *trap_bool
+          alrm_chg_occur: *trap_bool
+          mac_auth_fail: *trap_bool
+          new_ont_alrm: *trap_bool
+          ont_prov_status: *trap_bool
+          outofsync: *trap_bool
+          actual_cp_changed: *trap_bool
+          register_node: *trap_bool
+          avail_bw_changed: *trap_bool
+          login_occr6_trap: *trap_bool
+          logout_occr6_trap: *trap_bool
+          trapmgr_chg6_trap: *trap_bool
+          ont_prov_template: *trap_bool
+          auto_replan_board: *trap_bool
+          max_per_window:
+            description: Maximum traps sent per shaping window.
+            type: int
+          window_size:
+            description: Trap shaping window size.
+            type: int
+          max_queue_size:
+            description: Maximum queued traps for shaping.
+            type: int
+          min_interval:
+            description: Minimum interval between sent traps.
+            type: int
+          min_severity:
+            description: Minimum severity to send to the manager.
+            type: str
+            choices: [indeterminate, warning, minor, major, critical]
       v6managers:
         description: SNMP IPv6 trap manager entries keyed by IPv6 address.
         type: list
@@ -56,6 +122,70 @@ options:
             description: Trap manager priority.
             type: str
             choices: [urgent, high, medium, low]
+          cold_start_trap: *trap_bool
+          link_down_trap: *trap_bool
+          link_up_trap: *trap_bool
+          auth_fail_trap: *trap_bool
+          change_trap: *trap_bool
+          line_test_trap: *trap_bool
+          init_started_trap: *trap_bool
+          lic_key_chg_occr: *trap_bool
+          topology_chg: *trap_bool
+          selt_state_chg: *trap_bool
+          dhcp_sess_pre: *trap_bool
+          alarm_chg_trap: *trap_bool
+          phys_line_trap: *trap_bool
+          eqpt_change_trap: *trap_bool
+          success_set_trap: *trap_bool
+          other_alarm_trap: *trap_bool
+          warning_trap: *trap_bool
+          minor_trap: *trap_bool
+          major_trap: *trap_bool
+          critical_trap: *trap_bool
+          redundancy_trap: *trap_bool
+          eqpt_prot_trap: *trap_bool
+          craft_login_trap: *trap_bool
+          restart_trap: *trap_bool
+          ntr_trap: *trap_bool
+          rad_srvr_fail: *trap_bool
+          login_occr_trap: *trap_bool
+          logout_occr_trap: *trap_bool
+          trapmngr_chg_trap: *trap_bool
+          mst_genral: *trap_bool
+          mst_error: *trap_bool
+          mst_protocol_mig: *trap_bool
+          mst_inv_bpdu_rx: *trap_bool
+          mst_reg_conf_chg: *trap_bool
+          dying_gasp: *trap_bool
+          alrm_chg_occur: *trap_bool
+          mac_auth_fail: *trap_bool
+          new_ont_alrm: *trap_bool
+          ont_prov_status: *trap_bool
+          outofsync: *trap_bool
+          actual_cp_changed: *trap_bool
+          register_node: *trap_bool
+          avail_bw_changed: *trap_bool
+          login_occr6_trap: *trap_bool
+          logout_occr6_trap: *trap_bool
+          trapmgr_chg6_trap: *trap_bool
+          ont_prov_template: *trap_bool
+          auto_replan_board: *trap_bool
+          max_per_window:
+            description: Maximum traps sent per shaping window.
+            type: int
+          window_size:
+            description: Trap shaping window size.
+            type: int
+          max_queue_size:
+            description: Maximum queued traps for shaping.
+            type: int
+          min_interval:
+            description: Minimum interval between sent traps.
+            type: int
+          min_severity:
+            description: Minimum severity to send to the manager.
+            type: str
+            choices: [indeterminate, warning, minor, major, critical]
   running_config:
     description: Device-native running configuration for parsed state.
     type: str

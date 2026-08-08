@@ -18,123 +18,100 @@ class Isam_voice_sipTemplate(NetworkTemplate):
     # fmt: off
     PARSERS = [
         {
-            "name": "registrar.server",
-            "compval": "server",
+            "name": "lineid_syn_prof",
             "getval": re.compile(
-                r"^configure\svoice\ssip\sregistrar\sserver\s(?P<server>\S+)$"
+                r"^configure voice sip lineid-syn-prof\s+(?P<name>\S+)(?:\s+.*)?$"
             ),
-            "setval": "configure voice sip registrar server {{ server }}",
-            "remval": "configure voice sip registrar no server",
+            "setval": "configure voice sip lineid-syn-prof {{ name }}",
+            "shared": True,
             "result": {
-                "registrar": {
-                    "server": "{{ server }}",
+                "lineid_syn_prof": {
+                    "{{ name }}": {},
                 },
             },
         },
         {
-            "name": "registrar.port",
-            "compval": "port",
+            "name": "vsp.id",
             "getval": re.compile(
-                r"^configure\svoice\ssip\sregistrar\sport\s(?P<port>\d+)$"
+                r"^configure voice sip vsp\s+(?P<name>\S+)(?:\s+.*)?$"
             ),
-            "setval": "configure voice sip registrar port {{ port }}",
-            "remval": "configure voice sip registrar no port",
+            "setval": "configure voice sip vsp {{ name }}",
+            "shared": True,
             "result": {
-                "registrar": {
-                    "port": "{{ port }}",
+                "vsp": {
+                    "{{ name }}": {},
                 },
             },
         },
         {
-            "name": "registrar.realm",
-            "compval": "realm",
+            "name": "register.id",
             "getval": re.compile(
-                r"^configure\svoice\ssip\sregistrar\srealm\s(?P<realm>\S+)$"
+                r"^configure voice sip register\s+(?P<name>\S+)(?:\s+.*)?$"
             ),
-            "setval": "configure voice sip registrar realm {{ realm }}",
-            "remval": "configure voice sip registrar no realm",
+            "setval": "configure voice sip register {{ name }}",
+            "shared": True,
             "result": {
-                "registrar": {
-                    "realm": "{{ realm }}",
+                "register": {
+                    "{{ name }}": {},
                 },
             },
         },
         {
-            "name": "proxy.server",
-            "compval": "server",
+            "name": "redundancy.id",
             "getval": re.compile(
-                r"^configure\svoice\ssip\sproxy\sserver\s(?P<server>\S+)$"
+                r"^configure voice sip redundancy\s+(?P<name>\S+)(?:\s+.*)?$"
             ),
-            "setval": "configure voice sip proxy server {{ server }}",
-            "remval": "configure voice sip proxy no server",
+            "setval": "configure voice sip redundancy {{ name }}",
+            "shared": True,
             "result": {
-                "proxy": {
-                    "server": "{{ server }}",
+                "redundancy": {
+                    "{{ name }}": {},
                 },
             },
         },
         {
-            "name": "proxy.port",
-            "compval": "port",
+            "name": "system.id",
             "getval": re.compile(
-                r"^configure\svoice\ssip\sproxy\sport\s(?P<port>\d+)$"
+                r"^configure voice sip system(?:\s+.*)?$"
             ),
-            "setval": "configure voice sip proxy port {{ port }}",
-            "remval": "configure voice sip proxy no port",
+            "setval": "configure voice sip system",
             "result": {
-                "proxy": {
-                    "port": "{{ port }}",
+                "system": {},
+            },
+        },
+        {
+            "name": "redundancy_cmd.id",
+            "getval": re.compile(
+                r"^configure voice sip redundancy-cmd\s+(?P<name>\S+)(?:\s+.*)?$"
+            ),
+            "setval": "configure voice sip redundancy-cmd {{ name }}",
+            "shared": True,
+            "result": {
+                "redundancy_cmd": {
+                    "{{ name }}": {},
                 },
             },
         },
         {
-            "name": "codec.priority",
-            "compval": "priority",
+            "name": "statistics.id",
             "getval": re.compile(
-                r"^configure\svoice\ssip\scodec\spriority\s(?P<priority>\d+)\stype\s(?P<type>\S+)$"
+                r"^configure voice sip statistics(?:\s+.*)?$"
             ),
-            "setval": "configure voice sip codec priority {{ priority }} type {{ type }}",
-            "remval": "configure voice sip codec priority {{ priority }}",
+            "setval": "configure voice sip statistics",
             "result": {
-                "codec": {
-                    "{{ priority }}": {
-                        "priority": "{{ priority }}",
-                        "type": "{{ type }}",
-                    },
-                },
+                "statistics": {},
             },
         },
         {
-            "name": "sip_profile.timer_t1",
-            "compval": "timer_t1",
+            "name": "cas_nsm_prof.id",
             "getval": re.compile(
-                r"^configure\svoice\ssip\ssip-profile\s(?P<name>\S+)\stimer-t1\s(?P<timer_t1>\d+)$"
+                r"^configure voice sip cas-nsm-prof\s+(?P<name>\S+)(?:\s+.*)?$"
             ),
-            "setval": "configure voice sip sip-profile {{ name }} timer-t1 {{ timer_t1 }}",
-            "remval": "configure voice sip sip-profile {{ name }} no timer-t1",
+            "setval": "configure voice sip cas-nsm-prof {{ name }}",
+            "shared": True,
             "result": {
-                "sip_profile": {
-                    "{{ name }}": {
-                        "name": "{{ name }}",
-                        "timer_t1": "{{ timer_t1 }}",
-                    },
-                },
-            },
-        },
-        {
-            "name": "sip_profile.timer_t2",
-            "compval": "timer_t2",
-            "getval": re.compile(
-                r"^configure\svoice\ssip\ssip-profile\s(?P<name>\S+)\stimer-t2\s(?P<timer_t2>\d+)$"
-            ),
-            "setval": "configure voice sip sip-profile {{ name }} timer-t2 {{ timer_t2 }}",
-            "remval": "configure voice sip sip-profile {{ name }} no timer-t2",
-            "result": {
-                "sip_profile": {
-                    "{{ name }}": {
-                        "name": "{{ name }}",
-                        "timer_t2": "{{ timer_t2 }}",
-                    },
+                "cas_nsm_prof": {
+                    "{{ name }}": {},
                 },
             },
         },
