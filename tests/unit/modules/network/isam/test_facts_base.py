@@ -4,6 +4,8 @@ from anytree import Node
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts import facts_base
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.facts.facts import FactsArgs
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import FACT_RESOURCE_SUBSETS
 from ansible_collections.nokia.isam.tests.unit.compat.mock import patch
 
 
@@ -178,3 +180,13 @@ def test_multicast_command_families_have_separate_owners():
         "configure igmp mcast-svc-context default\nconfigure mcast-control admin-state",
         "mcast_control",
     ) == "configure mcast-control admin-state"
+
+
+def test_dhcp_server_alias_uses_one_command_owner():
+    config = "configure dhcp-server start-addr 192.0.2.10\nconfigure interface port 1/1/1"
+    assert facts_base.select_resource_config(config, "dhcp_server") == "configure dhcp-server start-addr 192.0.2.10"
+    assert facts_base.select_resource_config(config, "isam_dhcp_server") == "configure dhcp-server start-addr 192.0.2.10"
+
+
+def test_facts_choices_are_registered_resources():
+    assert set(FactsArgs.choices) - {"all"} <= set(FACT_RESOURCE_SUBSETS)

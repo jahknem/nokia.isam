@@ -69,6 +69,10 @@ RESOURCE_CONFIG_EXCLUDES = {
     ),
 }
 
+RESOURCE_ALIASES = {
+    "isam_dhcp_server": "dhcp_server",
+}
+
 
 def validate_resource_config_ownership(resource_prefixes=None, resource_excludes=None):
     """Validate that configured prefixes have one unambiguous owner."""
@@ -101,6 +105,7 @@ def validate_resource_config_ownership(resource_prefixes=None, resource_excludes
 validate_resource_config_ownership()
 def select_resource_config(config, resource):
     """Select flat configure lines belonging to one resource family."""
+    resource = RESOURCE_ALIASES.get(resource, resource)
     config = unwrap_response(config)
     if isinstance(config, (list, tuple)):
         config = "\n".join(str(line) for line in config)

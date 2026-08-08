@@ -56,6 +56,7 @@ FACT_RESOURCE_SUBSETS = dict(
     alarm=AlarmFacts,
     ani_onts=Ani_ontsFacts,
     bridges=BridgesFacts,
+    dhcp_server=Isam_dhcp_serverFacts,
     equipment_onts=Equipment_ontsFacts,
     equipment_replan=Equipment_replanFacts,
     ethernet_line=Ethernet_lineFacts,
