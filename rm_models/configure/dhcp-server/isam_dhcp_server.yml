@@ -10,16 +10,29 @@ notes:
 options:
   config:
     description:
-    - A list of dhcp-server configurations
-    - Each entry represents one resource to be configured
-    type: list
-    elements: dict
+    - DHCP server configuration
+    type: dict
     suboptions:
-      name:
+      start_addr:
         type: str
-        required: true
         description:
-        - The resource identifier
+        - First address in the dynamic IPv4 pool
+      end_addr:
+        type: str
+        description:
+        - Compatibility alias for stop_addr
+      stop_addr:
+        type: str
+        description:
+        - Last address in the dynamic IPv4 pool
+      subnet_mask:
+        type: str
+      lease_time:
+        type: int
+      lease_time_enabled:
+        type: bool
+      restart:
+        type: bool
   running_config:
     description:
     - This option is used only with state I(parsed)

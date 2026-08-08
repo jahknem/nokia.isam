@@ -50,6 +50,10 @@ class Isam_dhcp_serverFacts(object):
         params = utils.remove_empties(
             parser.validate_config(self.argument_spec, {"config": objs}, redact=True)
         )
+        if parsed.get("lease_time_enabled") is False:
+            params.setdefault("config", {})["lease_time_enabled"] = False
+        if parsed.get("end_addr"):
+            params.setdefault("config", {})["stop_addr"] = parsed["end_addr"]
         facts["isam_dhcp_server"] = params.get("config", {})
         facts["dhcp_server"] = facts["isam_dhcp_server"]
         ansible_facts["ansible_network_resources"].update(facts)
@@ -82,7 +86,7 @@ class Isam_dhcp_serverFacts(object):
             if not in_dhcp_server:
                 continue
 
-            if line == stripped and stripped.startswith(("start-addr ", "end-addr ", "subnet-mask ", "lease-time ")):
+            if line == stripped and stripped.startswith(("start-addr ", "stop-addr ", "end-addr ", "subnet-mask ", "lease-time ", "no lease-time")):
                 flat_config.append("configure dhcp-server " + stripped)
 
         return flat_config

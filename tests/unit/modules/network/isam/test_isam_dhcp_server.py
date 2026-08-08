@@ -61,10 +61,32 @@ class TestIsamDhcpServerModule(TestIsamModule):
             result["rendered"],
             [
                 "configure dhcp-server start-addr 192.168.1.100",
-                "configure dhcp-server end-addr 192.168.1.200",
+                "configure dhcp-server stop-addr 192.168.1.200",
                 "configure dhcp-server subnet-mask 255.255.255.0",
                 "configure dhcp-server lease-time 86400",
                 "configure dhcp-server restart",
+            ],
+        )
+
+    def test_isam_dhcp_server_documented_stop_addr_and_no_lease_time(self):
+        set_module_args(
+            dict(
+                state="rendered",
+                config=dict(
+                    start_addr="192.168.1.100",
+                    stop_addr="192.168.1.200",
+                    lease_time_enabled=False,
+                ),
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        self.assertEqual(
+            result["rendered"],
+            [
+                "configure dhcp-server start-addr 192.168.1.100",
+                "configure dhcp-server stop-addr 192.168.1.200",
+                "configure dhcp-server no lease-time",
             ],
         )
 
@@ -84,6 +106,21 @@ class TestIsamDhcpServerModule(TestIsamModule):
         self.assertEqual(result["parsed"]["start_addr"], "192.168.1.100")
         self.assertEqual(result["parsed"]["end_addr"], "192.168.1.200")
         self.assertEqual(result["parsed"]["restart"], True)
+
+    def test_isam_dhcp_server_parsed_documented_syntax(self):
+        set_module_args(
+            dict(
+                state="parsed",
+                running_config=dedent(
+                    """\
+                    configure dhcp-server start-addr 192.168.1.100 stop-addr 192.168.1.200 no lease-time
+                    """
+                ),
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["parsed"]["end_addr"], "192.168.1.200")
 
     def test_isam_dhcp_server_gathered(self):
         self.get_config.return_value = dedent(
@@ -117,7 +154,7 @@ class TestIsamDhcpServerModule(TestIsamModule):
             ignore_provider_arg,
         )
         result = self.execute_module(changed=True)
-        self.assertIn("configure dhcp-server end-addr 10.0.0.100", result["commands"])
+        self.assertIn("configure dhcp-server stop-addr 10.0.0.100", result["commands"])
         self.assertIn("configure dhcp-server subnet-mask 255.255.255.0", result["commands"])
 
     def test_isam_dhcp_server_merged_idempotent(self):
@@ -155,5 +192,5 @@ class TestIsamDhcpServerModule(TestIsamModule):
         )
         result = self.execute_module(changed=True)
         self.assertIn("no configure dhcp-server start-addr", result["commands"])
-        self.assertIn("no configure dhcp-server end-addr", result["commands"])
+        self.assertIn("no configure dhcp-server stop-addr", result["commands"])
         self.assertIn("no configure dhcp-server restart", result["commands"])

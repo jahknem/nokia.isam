@@ -46,6 +46,11 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.l2cp
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.l2cp_session.l2cp_session import L2cpSessionFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.l2cp_user_port.l2cp_user_port import L2cpUserPortFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.linetest.linetest import LinetestFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.pon_variants.pon_variants import (
+    Ngpon2_channel_groupsFacts,
+    Epon_interfacesFacts,
+    Channel_pair_pmFacts,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.equipment_replan.equipment_replan import Equipment_replanFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.generic_pon.generic_pon import Generic_ponFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.interface_alarms.interface_alarms import Interface_alarmsFacts
@@ -56,6 +61,9 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.mcas
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.multicast.multicast import MulticastFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.operational import (
     Active_alarmsFacts,
+    Dhcp_relay_sessionsFacts,
+    Dhcp_relay_port_statsFacts,
+    Dhcp_relay_v6_port_statsFacts,
     Equipment_statusFacts,
     Interface_statusFacts,
     Ont_statusFacts,
@@ -84,6 +92,9 @@ FACT_RESOURCE_SUBSETS = dict(
     ani_onts=Ani_ontsFacts,
     bridges=BridgesFacts,
     dhcp_server=Isam_dhcp_serverFacts,
+    dhcp_relay_sessions=Dhcp_relay_sessionsFacts,
+    dhcp_relay_port_stats=Dhcp_relay_port_statsFacts,
+    dhcp_relay_v6_port_stats=Dhcp_relay_v6_port_statsFacts,
     isam_dhcp_relay=Isam_dhcp_relayFacts,
     isam_arp_relay=Isam_arp_relayFacts,
     isam_cfm=CfmFacts,
@@ -94,6 +105,9 @@ FACT_RESOURCE_SUBSETS = dict(
     l2cp_session=L2cpSessionFacts,
     l2cp_user_port=L2cpUserPortFacts,
     linetest=LinetestFacts,
+    ngpon2_channel_groups=Ngpon2_channel_groupsFacts,
+    epon_interfaces=Epon_interfacesFacts,
+    channel_pair_pm=Channel_pair_pmFacts,
     equipment_onts=Equipment_ontsFacts,
     equipment_replan=Equipment_replanFacts,
     ethernet_line=Ethernet_lineFacts,

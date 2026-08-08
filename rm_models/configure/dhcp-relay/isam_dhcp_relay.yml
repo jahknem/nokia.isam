@@ -20,6 +20,14 @@ options:
         required: true
         description:
         - The resource identifier
+      port_stats:
+        type: bool
+        description:
+        - Enable DHCPv4 relay statistics for the VLAN user port
+      v6_port_stats:
+        type: bool
+        description:
+        - Enable DHCPv6 relay statistics for the VLAN user port
   running_config:
     description:
     - This option is used only with state I(parsed)

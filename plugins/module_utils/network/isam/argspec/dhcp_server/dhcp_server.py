@@ -14,8 +14,10 @@ class Isam_dhcp_serverArgs(object):  # pylint: disable=R0903
             "options": {
                 "start_addr": {"type": "str"},
                 "end_addr": {"type": "str"},
+                "stop_addr": {"type": "str"},
                 "subnet_mask": {"type": "str"},
                 "lease_time": {"type": "int"},
+                "lease_time_enabled": {"type": "bool"},
                 "restart": {"type": "bool"},
             },
         },

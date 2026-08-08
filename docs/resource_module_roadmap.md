@@ -144,6 +144,9 @@ Initial operational fact subsets are now available through `isam_facts`:
 | `ont_ranging_status` | `show equipment ont ranging-status channel-pair` |
 | `ont_software_status` | `show equipment ont sw-version`, `sw-download` |
 | `pon_pm_status` | `show pon interface tc-layer current-interval` |
+| `dhcp_relay_sessions` | `show dhcp-relay session` |
+| `dhcp_relay_port_stats` | Parameterized `show dhcp-relay port-stats <port>` |
+| `dhcp_relay_v6_port_stats` | Parameterized `show dhcp-relay v6-port-stats <port>` |
 
 Dedicated read-only `*_info` modules can be added later only for highly parameterized lookups where `isam_facts` becomes awkward.
 

@@ -31,6 +31,7 @@ class Isam_dhcp_server(ResourceModule):
             "end_addr",
             "subnet_mask",
             "lease_time",
+            "lease_time_enabled",
             "restart",
         ]
         self.want = self._normalize_config(self.want)
@@ -59,6 +60,13 @@ class Isam_dhcp_server(ResourceModule):
             want = {}
 
         self.compare(parsers=self.parsers, want=want, have=have)
+        if self.want.get("lease_time_enabled") is False and self.have.get("lease_time_enabled") is not False:
+            self.commands.append("configure dhcp-server no lease-time")
 
     def _normalize_config(self, config):
-        return deepcopy(config or {})
+        normalized = deepcopy(config or {})
+        # end_addr was the original collection API; stop_addr is the ISAM CLI name.
+        if normalized.get("stop_addr") is not None:
+            normalized.setdefault("end_addr", normalized["stop_addr"])
+            normalized.pop("stop_addr", None)
+        return normalized
