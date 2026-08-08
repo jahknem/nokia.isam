@@ -20,6 +20,10 @@ options:
         required: true
         description:
         - The resource identifier
+      statistics:
+        type: bool
+        description:
+        - Enable detailed ARP relay statistics for the VLAN port
   running_config:
     description:
     - This option is used only with state I(parsed)

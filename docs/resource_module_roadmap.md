@@ -81,6 +81,10 @@ All 30 roadmap modules plus 5 legacy modules are implemented and merged to `main
 | 29 | `isam_xdsl_boards` | `configure xdsl board`, `vp-board` | gathered, rendered, parsed, merged/--check |
 | 30 | `isam_equipment_replan` | `configure equipment replan` | gathered, rendered, parsed, merged/--check |
 | 31 | `isam_interface_alarms` | `configure interface alarm` | gathered, rendered, parsed, merged/--check |
+| 32 | `isam_dhcp_relay` | `configure dhcp-relay` | gathered, rendered, parsed, merged/--check |
+| 33 | `isam_arp_relay` | `configure arp-relay` | gathered, rendered, parsed, merged/--check |
+| 34 | `isam_pppoe_client_*` | `configure pppoe-client` | parsed, rendered, merged/--check |
+| 35 | `isam_pppoel2_statistics` | `configure pppoel2 statistics` | parsed, rendered, merged/--check |
 
 ## Additional Config Resource Candidates
 

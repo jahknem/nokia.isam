@@ -20,6 +20,7 @@ RESOURCE_CONFIG_PREFIXES = {
     "ani_onts": ("configure ani ont ",),
     "bridges": ("configure bridge ",),
     "dhcp_server": ("configure dhcp-server ",),
+    "isam_dhcp_relay": ("configure dhcp-relay ",),
     "equipment_onts": ("configure equipment ont ",),
     "equipment_replan": ("configure equipment replan ",),
     "ethernet_line": ("configure ethernet line ",),
@@ -29,6 +30,7 @@ RESOURCE_CONFIG_PREFIXES = {
     "interface_cages": ("configure interface cage ",),
     "interfaces": ("configure interface port ",),
     "iphost": ("configure iphost",),
+    "isam_arp_relay": ("configure arp-relay ",),
     "isam_equipment": ("configure equipment ",),
     "isam_traps": ("configure trap ",),
     "isam_vlan_global": (
