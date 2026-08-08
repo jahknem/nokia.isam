@@ -249,3 +249,30 @@ class TestIsamFactsModule(TestIsamModule):
         self.assertNotIn("mcast_control", resources)
         self.assertIn("dhcp_server", resources)
         self.assertNotIn("isam_dhcp_server", resources)
+
+    def test_isam_facts_operational_resources_use_show_commands(self):
+        class OperationalConn:
+            def __init__(self):
+                self.commands = []
+
+            def get(self, command):
+                self.commands.append(command)
+                if command == "show alarm current table":
+                    return "ALARM  SEVERITY  SOURCE  DESCRIPTION\n1  major  shelf-1  Test alarm"
+                return ""
+
+        connection = OperationalConn()
+        self.get_resource_connection_facts.return_value = connection
+        set_module_args(
+            dict(
+                gather_configuration=True,
+                gather_network_resources=["active_alarms"],
+            )
+        )
+
+        result = self.execute_module(changed=False)
+        self.assertEqual(connection.commands, ["show alarm current table"])
+        self.assertEqual(
+            result["ansible_facts"]["ansible_network_resources"]["active_alarms"]["alarms"][0]["alarm_id"],
+            "1",
+        )
