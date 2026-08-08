@@ -36,6 +36,8 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xstp
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.alarm.alarm import AlarmFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ani_onts.ani_onts import Ani_ontsFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.dhcp_server.dhcp_server import Isam_dhcp_serverFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.dhcp_relay.dhcp_relay import Isam_dhcp_relayFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.arp_relay.arp_relay import Isam_arp_relayFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.equipment_replan.equipment_replan import Equipment_replanFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.generic_pon.generic_pon import Generic_ponFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.interface_alarms.interface_alarms import Interface_alarmsFacts
@@ -74,6 +76,8 @@ FACT_RESOURCE_SUBSETS = dict(
     ani_onts=Ani_ontsFacts,
     bridges=BridgesFacts,
     dhcp_server=Isam_dhcp_serverFacts,
+    isam_dhcp_relay=Isam_dhcp_relayFacts,
+    isam_arp_relay=Isam_arp_relayFacts,
     equipment_onts=Equipment_ontsFacts,
     equipment_replan=Equipment_replanFacts,
     ethernet_line=Ethernet_lineFacts,

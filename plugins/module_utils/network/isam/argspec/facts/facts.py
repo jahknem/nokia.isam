@@ -39,6 +39,8 @@ class FactsArgs(object):  # pylint: disable=R0903
         'iphost',
         'isam_equipment',
         'isam_dhcp_server',
+        'isam_dhcp_relay',
+        'isam_arp_relay',
         'isam_traps',
         'isam_vlan_global',
         'li_vlan',
