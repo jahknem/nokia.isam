@@ -97,7 +97,7 @@ def parse_status_table(output):
                 continue
         if not headers or not line.strip() or line.strip().startswith(("-", "=", "#")):
             continue
-        if line.lower().startswith(("port count", "slot count", "pon count")):
+        if line.lower().startswith(("port count", "slot count", "pon count")) or " count :" in line.lower():
             continue
         if widths:
             fields = []
