@@ -167,3 +167,14 @@ def test_resource_config_ownership_rejects_duplicate_prefixes():
         assert "collision" in str(exc)
     else:
         raise AssertionError("duplicate resource prefixes were accepted")
+
+
+def test_multicast_command_families_have_separate_owners():
+    assert facts_base.select_resource_config(
+        "configure igmp mcast-svc-context default\nconfigure mcast-control admin-state",
+        "igmp",
+    ) == "configure igmp mcast-svc-context default"
+    assert facts_base.select_resource_config(
+        "configure igmp mcast-svc-context default\nconfigure mcast-control admin-state",
+        "mcast_control",
+    ) == "configure mcast-control admin-state"
