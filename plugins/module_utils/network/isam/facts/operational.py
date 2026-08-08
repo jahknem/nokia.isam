@@ -12,6 +12,16 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ont_
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.alarm_status import (
     AlarmStatusParser,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ont_ranging_status import (
+    OntRangingStatusParser,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ont_software.ont_software import (
+    parse_ont_sw_download,
+    parse_ont_sw_version,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.tc_layer_current_interval.tc_layer_current_interval import (
+    parse_tc_layer_current_interval,
+)
 
 OPERATIONAL_FACT_RESOURCES = frozenset(
     (
@@ -21,6 +31,9 @@ OPERATIONAL_FACT_RESOURCES = frozenset(
         "ont_status",
         "pon_status",
         "software_status",
+        "ont_ranging_status",
+        "ont_software_status",
+        "pon_pm_status",
     )
 )
 
@@ -86,3 +99,30 @@ class Active_alarmsFacts(_OperationalFacts):
 class Software_statusFacts(_OperationalFacts):
     command = "show software-mngt oswp"
     key = "software_status"
+
+
+class Ont_ranging_statusFacts(_OperationalFacts):
+    command = "show equipment ont ranging-status channel-pair"
+    key = "ont_ranging_status"
+
+    def parse(self, output):
+        return OntRangingStatusParser().parse(output)
+
+
+class Ont_software_statusFacts(_OperationalFacts):
+    key = "ont_software_status"
+
+    def populate_facts(self, connection, ansible_facts, data=None):
+        ansible_facts["ansible_network_resources"][self.key] = {
+            "sw_version": parse_ont_sw_version(connection.get("show equipment ont sw-version")),
+            "sw_download": parse_ont_sw_download(connection.get("show equipment ont sw-download")),
+        }
+        return ansible_facts
+
+
+class Pon_pm_statusFacts(_OperationalFacts):
+    command = "show pon interface tc-layer current-interval"
+    key = "pon_pm_status"
+
+    def parse(self, output):
+        return parse_tc_layer_current_interval(output)
