@@ -18,7 +18,7 @@ short_description: Manages Nokia ISAM NTP ONT attributes.
 description:
   - Manages C(configure ntp ont) attributes on Nokia ISAM.
 version_added: 1.0.0
-author: Jan Kuhnemund (@jahknem)
+author: Jan Kühnemund (@jahknem)
 options:
   config:
     description: The provided NTP ONT configuration.
@@ -73,7 +73,7 @@ EXAMPLES = """
 RETURN = """
 before:
   description: The configuration prior to module execution.
-  returned: when I(state) is C(merged), C(replaced), C(overridden), C(deleted) or C(purged)
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
 after:
   description: The resulting configuration after module execution.
@@ -81,7 +81,7 @@ after:
   type: list
 commands:
   description: The set of commands pushed to the remote device.
-  returned: when I(state) is C(merged), C(replaced), C(overridden), C(deleted) or C(purged)
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
 rendered:
   description: The provided configuration in device-native format.

@@ -14,6 +14,8 @@ class Mcast_generalArgs(object):
             "options": {
                 "admin_state": {"type": "bool"},
                 "forward_method": {"type": "str"},
+                "fast_change": {"type": "bool"},
+                "package_member": {"type": "str"},
             },
         },
         "running_config": {"type": "str"},

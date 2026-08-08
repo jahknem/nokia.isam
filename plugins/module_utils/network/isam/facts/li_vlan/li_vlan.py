@@ -7,6 +7,9 @@ __metaclass__ = type
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    unwrap_response,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.li_vlan.li_vlan import (
     Li_vlanArgs,
 )
@@ -26,9 +29,10 @@ class Li_vlanFacts(object):
         facts = {}
 
         if not data:
-            data = connection.get("info configure li_vlan")
+            data = connection.get("info configure li_vlan flat")
+        data = unwrap_response(data)
 
-        parser = Li_vlanTemplate(lines=data.splitlines())
+        parser = Li_vlanTemplate(lines=[line.strip() for line in data.splitlines()])
         parsed = parser.parse()
 
         ansible_facts["ansible_network_resources"].pop("li_vlan", None)

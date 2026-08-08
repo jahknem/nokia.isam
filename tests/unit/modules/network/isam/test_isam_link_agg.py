@@ -136,3 +136,29 @@ class TestIsamLinkAggModule(TestIsamModule):
         )
         result = self.execute_module(changed=False)
         self.assertEqual(result["commands"], [])
+
+    def test_isam_link_agg_replaced_port_fields(self):
+        self.get_config.return_value = dedent(
+            """
+            configure link-agg port 1/1/8/1 passive-lacp
+            configure link-agg port 1/1/8/1 short-timeout
+            configure link-agg port 1/1/8/1 actor-port-prio 32768
+            """
+        )
+        set_module_args(
+            dict(
+                config=dict(
+                    ports=[dict(id="1/1/8/1", passive_lacp=True)],
+                ),
+                state="replaced",
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=True)
+        self.assertEqual(
+            set(result["commands"]),
+            set([
+                "configure link-agg port 1/1/8/1 no short-timeout",
+                "configure link-agg port 1/1/8/1 no actor-port-prio",
+            ]),
+        )

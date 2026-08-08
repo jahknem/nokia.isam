@@ -12,7 +12,7 @@ short_description: Manage Nokia ISAM multicast configuration.
 description:
   - Manages C(configure igmp mcast-svc-context) and C(configure mcast-control) configuration.
 version_added: 1.0.0
-author: Ansible Network Engineer
+author: Jan Kühnemund (@jahknem)
 options:
   config:
     description: The provided multicast configuration.
@@ -22,6 +22,9 @@ options:
         description: IGMP multicast service context settings.
         type: dict
         suboptions:
+          mcast_svc_context:
+            description: Multicast service context name.
+            type: str
           mld_snooping:
             description: Enable or disable MLD snooping.
             type: bool
@@ -47,6 +50,9 @@ options:
         description: Multicast control settings.
         type: dict
         suboptions:
+          mcast_svc_context:
+            description: Multicast service context name.
+            type: str
           admin_state:
             description: Enable or disable multicast control.
             type: bool
@@ -75,10 +81,12 @@ EXAMPLES = """
   nokia.isam.isam_multicast:
     config:
       igmp:
+        mcast_svc_context: default
         mld_snooping: true
         igmp_snooping: true
         query_interval: 125
       mcast_control:
+        mcast_svc_context: default
         admin_state: true
         max_groups: 256
     state: merged

@@ -51,6 +51,10 @@ class Li_vlan(ResourceModule):
         if self.state == "deleted":
             want = {}
 
+        # vlan_id has no CLI no-form, so 'replaced' is functionally
+        # identical to 'merged': the value is set when provided and
+        # left unchanged when omitted.
+
         self._compare(want, have)
 
     def _compare(self, want, have):

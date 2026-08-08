@@ -26,7 +26,12 @@ class Qos_mapsTemplate(NetworkTemplate):
 
     @classmethod
     def _render_tc_map_dot1p(cls, data):
-        return "configure qos tc-map-dot1p {0} tc {1}".format(data["dot1p"], data["tc"])
+        cmd = "configure qos tc-map-dot1p {0} tc {1}".format(data["dot1p"], data["tc"])
+        if data.get("dpcolor"):
+            cmd += " dpcolor {0}".format(data["dpcolor"])
+        if data.get("policer_color"):
+            cmd += " policer-color {0}".format(data["policer_color"])
+        return cmd
 
     @classmethod
     def _render_no_tc_map_dot1p(cls, data):
@@ -70,24 +75,18 @@ class Qos_mapsTemplate(NetworkTemplate):
             "dn_ctrl_pkt": [],
         }
 
-        tc_re = re.compile(r"^tc-map-dot1p\s+(?P<dot1p>\d+)\s+tc\s+(?P<tc>\d+)\s*$")
-        dscp_re = re.compile(r"^dscp-map-dot1p\s+(?P<dscp>\S+)\s+dot1p\s+(?P<dot1p>\d+)\s*$")
+        tc_re = re.compile(r"^tc-map-dot1p\s+(?P<dot1p>\d+)\s+tc\s+(?P<tc>\d+)(?:\s+dpcolor\s+(?P<dpcolor>\S+))?(?:\s+policer-color\s+(?P<policer_color>\S+))?\s*$")
+        dscp_re = re.compile(r"^dscp-map-dot1p\s+(?P<dscp>\S+)\s+(?:dot1p|dot1p-value)\s+(?P<dot1p>\d+)\s*$")
         up_ctrl_re = re.compile(r"^up-ctrl-pkt\s+(?P<protocol>\S+)\s+queue\s+(?P<queue>\d+)(?:\s+profile\s+(?P<profile>\S+))?\s*$")
         dn_ctrl_re = re.compile(r"^dn-ctrl-pkt\s+(?P<protocol>\S+)\s+queue\s+(?P<queue>\d+)(?:\s+profile\s+(?P<profile>\S+))?\s*$")
-
-        in_qos = False
 
         for raw_line in self._lines:
             stripped = raw_line.strip()
             if not stripped or stripped.startswith("#") or stripped.startswith("echo "):
                 continue
-            if stripped == "configure qos":
-                in_qos = True
-                continue
-            if stripped == "exit" and in_qos:
-                in_qos = False
-                continue
-            if not in_qos:
+            if stripped.startswith("configure qos "):
+                stripped = stripped[len("configure qos "):]
+            elif stripped in ("configure", "qos", "exit"):
                 continue
 
             match = tc_re.match(stripped)
@@ -96,6 +95,10 @@ class Qos_mapsTemplate(NetworkTemplate):
                     "dot1p": int(match.group("dot1p")),
                     "tc": int(match.group("tc")),
                 })
+                if match.group("dpcolor"):
+                    result["tc_map_dot1p"][-1]["dpcolor"] = match.group("dpcolor")
+                if match.group("policer_color"):
+                    result["tc_map_dot1p"][-1]["policer_color"] = match.group("policer_color")
                 continue
 
             match = dscp_re.match(stripped)

@@ -15,6 +15,7 @@ class MulticastArgs(object):
                 "igmp": {
                     "type": "dict",
                     "options": {
+                        "mcast_svc_context": {"type": "str"},
                         "mld_snooping": {"type": "bool"},
                         "mld_querier": {"type": "bool"},
                         "igmp_snooping": {"type": "bool"},
@@ -27,6 +28,7 @@ class MulticastArgs(object):
                 "mcast_control": {
                     "type": "dict",
                     "options": {
+                        "mcast_svc_context": {"type": "str"},
                         "admin_state": {"type": "bool"},
                         "max_groups": {"type": "int"},
                         "max_sources": {"type": "int"},

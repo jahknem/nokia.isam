@@ -6,6 +6,9 @@ __metaclass__ = type
 
 from anytree import Node
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    unwrap_response,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.qos_interfaces.qos_interfaces import Qos_interfacesArgs
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.qos_interfaces import Qos_interfacesTemplate
 
@@ -25,8 +28,7 @@ class Qos_interfacesFacts(object):
 
         if not data:
             data = self.get_config(connection)
-        if type(data) == tuple:
-            data = data[0]
+        data = unwrap_response(data)
         data = self._flatten_config(data)
 
         parser = Qos_interfacesTemplate(lines=data, module=self._module)

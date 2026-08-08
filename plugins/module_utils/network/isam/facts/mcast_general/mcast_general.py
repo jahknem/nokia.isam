@@ -7,6 +7,9 @@ __metaclass__ = type
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    unwrap_response,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.mcast_general.mcast_general import (
     Mcast_generalArgs,
 )
@@ -23,7 +26,8 @@ class Mcast_generalFacts(object):
         facts = {}
 
         if not data:
-            data = connection.get("info configure mcast general")
+            data = connection.get("info configure mcast general flat")
+        data = unwrap_response(data)
 
         mcast_general_config = self._parse_mcast_general_config(data)
 
@@ -45,6 +49,10 @@ class Mcast_generalFacts(object):
             if not line or line.startswith("#") or line.startswith("echo "):
                 continue
 
+            if line.startswith("configure mcast general "):
+                self._parse_general_option(line[len("configure mcast general "):], mcast_general)
+                continue
+
             if line == "general":
                 section = "general"
                 continue
@@ -64,3 +72,9 @@ class Mcast_generalFacts(object):
             config["admin_state"] = False
         elif line.startswith("forward-method "):
             config["forward_method"] = line.split(None, 1)[1]
+        elif line.startswith("fast-change"):
+            config["fast_change"] = True
+        elif line.startswith("no fast-change"):
+            config["fast_change"] = False
+        elif line.startswith("package-member "):
+            config["package_member"] = line.split(None, 1)[1]

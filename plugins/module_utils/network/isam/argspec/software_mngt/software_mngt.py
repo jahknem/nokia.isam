@@ -17,11 +17,20 @@ class Software_mngtArgs(object):
                     "options": {
                         "version": {"type": "str"},
                         "url": {"type": "str"},
+                        "backup": {"type": "str"},
+                        "backupv6": {"type": "str"},
+                        "auto_backup_interval": {"type": "int"},
                     },
                 },
                 "oswp": {
-                    "type": "dict",
+                    "type": "list",
+                    "elements": "dict",
                     "options": {
+                        "id": {"type": "str", "required": True},
+                        "primary_file_server_id": {"type": "str"},
+                        "second_file_server_id": {"type": "str"},
+                        "activate": {"type": "bool"},
+                        "auto_verify": {"type": "bool"},
                         "admin_state": {"type": "bool"},
                     },
                 },

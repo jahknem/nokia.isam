@@ -12,7 +12,7 @@ short_description: Manage Nokia ISAM software management configuration.
 description:
   - Manages C(configure software-mngt database), C(software-mngt oswp), and C(software-mngt sw-replacement-mode) configuration.
 version_added: 1.0.0
-author: Ansible Network Engineer
+author: Jan Kühnemund (@jahknem)
 options:
   config:
     description: The provided software management configuration.

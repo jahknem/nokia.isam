@@ -4,7 +4,6 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
 )
@@ -33,6 +32,8 @@ class Mcast_general(ResourceModule):
         self.parsers = [
             "admin_state",
             "forward_method",
+            "fast_change",
+            "package_member",
         ]
 
     def execute_module(self):
@@ -53,12 +54,26 @@ class Mcast_general(ResourceModule):
         if self.state == "deleted":
             want = {}
 
-        if self.state in ["overridden", "deleted"]:
+        if self.state in ["overridden", "deleted", "replaced"]:
             if "admin_state" not in want and have.get("admin_state") is True:
                 self.addcmd({"admin_state": False}, "admin_state")
+
+        if self.state == "replaced":
+            # fast_change has a CLI no-form; reset to default when omitted
+            if "fast_change" not in want and have.get("fast_change") is True:
+                self.addcmd({"fast_change": False}, "fast_change")
+            # forward_method and package_member have no device no-form,
+            # so under 'replaced' they are only set when explicitly
+            # provided (same as 'merged').
 
         if "admin_state" in want and want.get("admin_state") != have.get("admin_state"):
             self.addcmd({"admin_state": want.get("admin_state")}, "admin_state")
 
         if "forward_method" in want and want.get("forward_method") != have.get("forward_method"):
             self.addcmd({"forward_method": want.get("forward_method")}, "forward_method")
+
+        if "fast_change" in want and want.get("fast_change") != have.get("fast_change"):
+            self.addcmd({"fast_change": want.get("fast_change")}, "fast_change")
+
+        if "package_member" in want and want.get("package_member") != have.get("package_member"):
+            self.addcmd({"package_member": want.get("package_member")}, "package_member")

@@ -119,6 +119,61 @@ class TestIsamQosMapsModule(TestIsamModule):
         self.assertIn("configure qos up-ctrl-pkt dhcp queue 0 profile default", rendered)
         self.assertIn("configure qos dn-ctrl-pkt dhcp queue 0 profile default", rendered)
 
+    def test_isam_qos_maps_replaced(self):
+        class FakeConn:
+            _map = {
+                "info configure qos tc-map-dot1p flat": (
+                    "tc-map-dot1p 0 tc 0\ntc-map-dot1p 7 tc 7\n"
+                ),
+                "info configure qos dscp-map-dot1p flat": (
+                    "dscp-map-dot1p CS0 dot1p 0\ndscp-map-dot1p EF dot1p 5\n"
+                ),
+                "info configure qos up-ctrl-pkt flat": (
+                    "up-ctrl-pkt dhcp queue 0 profile default\n"
+                    "up-ctrl-pkt arp queue 0\n"
+                ),
+                "info configure qos dn-ctrl-pkt flat": (
+                    "dn-ctrl-pkt dhcp queue 0 profile default\n"
+                    "dn-ctrl-pkt arp queue 0\n"
+                ),
+            }
+
+            def get(self, cmd):
+                return self._map.get(cmd, "")
+
+        self.get_resource_connection_facts.return_value = FakeConn()
+        set_module_args(
+            dict(
+                state="replaced",
+                config={
+                    # dot1p=7 removed from want → should be deleted
+                    "tc_map_dot1p": [
+                        {"dot1p": 0, "tc": 0},
+                    ],
+                    # CS0 dot1p changed 0→3, EF unchanged, AF11 is new
+                    "dscp_map_dot1p": [
+                        {"dscp": "CS0", "dot1p": 3},
+                        {"dscp": "EF", "dot1p": 5},
+                        {"dscp": "AF11", "dot1p": 1},
+                    ],
+                    # up_ctrl_pkt / dn_ctrl_pkt omitted → left untouched
+                },
+            ),
+            ignore_provider_arg,
+        )
+
+        expected_commands = sorted([
+            "configure qos no tc-map-dot1p 7",
+            "configure qos dscp-map-dot1p CS0 dot1p 3",
+            "configure qos dscp-map-dot1p AF11 dot1p 1",
+        ])
+        result = self.execute_module(changed=True, commands=expected_commands)
+        commands = result.get("commands", [])
+        # verify no commands are generated for untouched fields
+        for cmd in commands:
+            self.assertNotIn("up-ctrl-pkt", cmd)
+            self.assertNotIn("dn-ctrl-pkt", cmd)
+
     def test_isam_qos_maps_gathered_empty(self):
         class FakeConn:
             def get(self, cmd):

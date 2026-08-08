@@ -39,5 +39,27 @@ class Mcast_generalTemplate(NetworkTemplate):
                 "forward_method": "{{ forward_method }}",
             },
         },
+        {
+            "name": "fast_change",
+            "compval": "fast_change",
+            "getval": re.compile(
+                r"^configure\smcast\sgeneral\s(?P<negate>no\s)?(?P<fast_change>fast-change)(?:\s+.*)?$"
+            ),
+            "setval": "configure mcast general {{ 'no ' if fast_change == false else '' }}fast-change",
+            "result": {
+                "fast_change": "{{ False if negate is defined else True }}",
+            },
+        },
+        {
+            "name": "package_member",
+            "compval": "package_member",
+            "getval": re.compile(
+                r"^configure\smcast\sgeneral\spackage-member\s(?P<package_member>.+)$"
+            ),
+            "setval": "configure mcast general package-member {{ package_member }}",
+            "result": {
+                "package_member": "{{ package_member }}",
+            },
+        },
     ]
     # fmt: on

@@ -54,7 +54,6 @@ def _top_bool_parser(field, cli_name):
 def _queue_parser(list_name, field, cli_name, value_re=r"\S+", value_type="string", negatable=False):
     result_filter = "|int" if value_type == "int" else "|string"
     no_part = r"(?P<negate>no\s%s)|" % re.escape(cli_name) if negatable else ""
-    set_no = "{{ 'no ' if negate is defined else '' }}" if negatable else ""
     return {
         "name": "interface.%s.%s" % (list_name, field),
         "compval": field,

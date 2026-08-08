@@ -7,6 +7,9 @@ __metaclass__ = type
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    unwrap_response,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.software_mngt.software_mngt import (
     Software_mngtArgs,
 )
@@ -23,7 +26,8 @@ class Software_mngtFacts(object):
         facts = {}
 
         if not data:
-            data = connection.get("info configure software-mngt")
+            data = connection.get("info configure software-mngt flat")
+        data = unwrap_response(data)
 
         software_mngt_config = self._parse_software_mngt_config(data)
 
@@ -37,12 +41,16 @@ class Software_mngtFacts(object):
         return ansible_facts
 
     def _parse_software_mngt_config(self, config):
-        software_mngt = {"database": {}, "oswp": {}, "sw_replacement_mode": {}}
+        software_mngt = {"database": {}, "oswp": [], "sw_replacement_mode": {}}
         section = None
 
         for raw_line in config.splitlines():
             line = raw_line.strip()
             if not line or line.startswith("#") or line.startswith("echo "):
+                continue
+
+            if line.startswith("configure software-mngt "):
+                self._parse_flat_line(line[len("configure software-mngt "):], software_mngt)
                 continue
 
             if line == "database":
@@ -75,10 +83,38 @@ class Software_mngtFacts(object):
 
     def _parse_oswp_option(self, line, oswp):
         if line == "admin-state":
-            oswp["admin_state"] = True
+            oswp.append({"admin_state": True})
         elif line == "no admin-state":
-            oswp["admin_state"] = False
+            oswp.append({"admin_state": False})
 
     def _parse_sw_replacement_mode_option(self, line, sw_rm):
         if line.startswith("mode "):
             sw_rm["mode"] = line.split(None, 1)[1]
+
+    def _parse_flat_line(self, line, software_mngt):
+        parts = line.split()
+        if not parts:
+            return
+        if parts[0] == "sw-replacement-mode" and len(parts) > 1:
+            software_mngt["sw_replacement_mode"]["mode"] = parts[1]
+        elif parts[0] == "oswp" and len(parts) > 1:
+            entry = {"id": parts[1]}
+            self._copy_token_value(parts, "primary-file-server-id", entry, "primary_file_server_id")
+            self._copy_token_value(parts, "second-file-server-id", entry, "second_file_server_id")
+            entry["activate"] = "activate" in parts and "no" not in parts[max(parts.index("activate") - 1, 0):parts.index("activate")]
+            entry["auto_verify"] = "auto-verify" in parts and "no" not in parts[max(parts.index("auto-verify") - 1, 0):parts.index("auto-verify")]
+            software_mngt["oswp"].append(entry)
+        elif parts[0] == "database":
+            database = software_mngt["database"]
+            if "backup" in parts:
+                self._copy_token_value(parts, "backup", database, "backup")
+            if "backupv6" in parts:
+                self._copy_token_value(parts, "backupv6", database, "backupv6")
+            if "auto-backup-intvl" in parts:
+                self._copy_token_value(parts, "auto-backup-intvl", database, "auto_backup_interval")
+
+    def _copy_token_value(self, parts, token, target, key):
+        if token in parts:
+            index = parts.index(token) + 1
+            if index < len(parts):
+                target[key] = parts[index]

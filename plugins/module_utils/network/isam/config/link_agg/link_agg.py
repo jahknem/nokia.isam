@@ -132,6 +132,8 @@ class Link_agg(ResourceModule):
             if field in want and want.get(field) != have.get(field):
                 prefix = "" if want[field] else "no "
                 self.commands.append("configure link-agg port {0} {1}{2}".format(port_id, prefix, command))
+            elif field not in want and have.get(field) is not None and self.state in ["replaced", "overridden"]:
+                self.commands.append("configure link-agg port {0} no {1}".format(port_id, command))
 
         if want.get("actor_port_prio") != have.get("actor_port_prio"):
             if want.get("actor_port_prio") is not None:

@@ -14,7 +14,7 @@ description:
 - Manage initial support for C(configure qos profiles) on Nokia ISAM devices.
 - The module supports live-observed profile identities and common scalar fields.
 - Complex nested profile data can be supplied as raw strings in C(attributes).
-author: Jan Kuehnemund
+author: Jan Kühnemund (@jahknem)
 notes:
 - Tested against read-only output from Nokia ISAM 6.2.04ng.
 options:
