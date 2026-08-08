@@ -10,16 +10,21 @@ notes:
 options:
   config:
     description:
-    - A list of cfm configurations
-    - Each entry represents one resource to be configured
-    type: list
-    elements: dict
+    - The CFM command tree, including maintenance domains, associations, MEPs, SLM,
+      and Y.1731 PM tests.
+    type: dict
     suboptions:
-      name:
-        type: str
-        required: true
-        description:
-        - The resource identifier
+      domains:
+        type: list
+        elements: dict
+        description: Maintenance domains and their associations and MEPs.
+      slm:
+        type: dict
+        description: Synthetic loss measurement global settings.
+      y1731pm:
+        type: list
+        elements: dict
+        description: Y.1731 proactive measurement tests.
   running_config:
     description:
     - This option is used only with state I(parsed)

@@ -31,6 +31,9 @@ RESOURCE_CONFIG_PREFIXES = {
     "interfaces": ("configure interface port ",),
     "iphost": ("configure iphost",),
     "isam_arp_relay": ("configure arp-relay ",),
+    "isam_cfm": ("configure cfm ",),
+    "efm_oam_interface": ("configure efm-oam interface ",),
+    "isam_ipv6_antispoofing_slot": ("configure ipv6-antispoofing slot ",),
     "isam_equipment": ("configure equipment ",),
     "isam_traps": ("configure trap ",),
     "isam_vlan_global": (
