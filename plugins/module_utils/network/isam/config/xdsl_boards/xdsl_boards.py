@@ -77,7 +77,7 @@ class Xdsl_boards(ResourceModule):
                     self.addcmd(have, parser_prefix, negate=True)
             return
 
-        if self.state == "overridden":
+        if self.state in ["replaced", "overridden"]:
             for item_key, have in iteritems(haved):
                 if item_key not in wantd:
                     self.addcmd(have, parser_prefix, negate=True)

@@ -63,7 +63,7 @@ class Xdsl_lines(ResourceModule):
             haved = {k: v for k, v in iteritems(haved) if k in wantd or not wantd}
             wantd = {}
 
-        if self.state in ["overridden", "deleted"]:
+        if self.state in ["replaced", "overridden", "deleted"]:
             for k, have in iteritems(haved):
                 if k not in wantd:
                     self._compare(want={}, have=have)

@@ -12,7 +12,7 @@ description:
   - Manages C(configure xdsl-bonding) configuration.
   - Currently supports group-assembly-time settings.
 version_added: 1.0.0
-author: Jan Kuehnemund
+author: Jan Kühnemund (@jahknem)
 options:
   config:
     description: XDSL bonding configuration.

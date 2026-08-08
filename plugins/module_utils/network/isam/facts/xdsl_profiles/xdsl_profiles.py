@@ -4,6 +4,9 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    unwrap_response,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.xdsl_profiles.xdsl_profiles import (
     Xdsl_profilesArgs,
 )
@@ -31,15 +34,14 @@ class Xdsl_profilesFacts(object):
         output = []
         for command in commands:
             data = connection.get(command)
-            output.append(data[0] if type(data) == tuple else data)
+            output.append(unwrap_response(data))
         return "\n".join(output)
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}
         if not data:
             data = self.get_config(connection)
-        if type(data) == tuple:
-            data = data[0]
+        data = unwrap_response(data)
 
         params = self.template.normalize(self.template.parse(data))
         ansible_facts["ansible_network_resources"].pop("xdsl_profiles", None)
