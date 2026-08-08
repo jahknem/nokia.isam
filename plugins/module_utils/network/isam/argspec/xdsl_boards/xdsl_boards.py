@@ -29,6 +29,8 @@ class Xdsl_boardsArgs(object):  # pylint: disable=R0903
                     "options": {
                         "vp_board_id": {"type": "str", "required": True},
                         "admin_state": {"type": "str", "choices": ["up", "down"]},
+                        "lt_expect": {"type": "str"},
+                        "vp_link": {"type": "str"},
                     },
                 },
             },

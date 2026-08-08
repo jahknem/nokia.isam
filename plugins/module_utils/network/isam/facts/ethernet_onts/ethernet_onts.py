@@ -35,7 +35,7 @@ class Ethernet_ontsFacts(object):
 
     def get_config(self, connection):
         """Wrapper method for `connection.get()`."""
-        return connection.get("info configure ethernet ont")
+        return connection.get("info configure ethernet ont flat")
 
     def populate_facts(self, connection, ansible_facts, data=None):
         """Populate the facts for Ethernet_onts network resource."""

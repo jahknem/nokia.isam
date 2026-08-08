@@ -24,7 +24,7 @@ class Equipment_replanFacts(object):
         self.argument_spec = Equipment_replanArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure equipment replan")
+        return connection.get("info configure equipment replan flat")
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}
@@ -52,6 +52,8 @@ class Equipment_replanFacts(object):
             line = raw_line.strip()
             if not line or line.startswith("#") or line.startswith("echo"):
                 continue
+            if line.startswith("configure equipment replan "):
+                line = line[len("configure equipment replan "):]
             parts = line.split()
             if parts[0] == "boardautoreplan" and len(parts) >= 2:
                 result["board_auto_replan"] = parts[1]

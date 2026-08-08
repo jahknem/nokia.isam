@@ -6,6 +6,8 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts import facts_base
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.facts.facts import FactsArgs
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import FACT_RESOURCE_SUBSETS
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.interfaces import InterfacesTemplate
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.qos_profiles import Qos_profilesTemplate
 from ansible_collections.nokia.isam.tests.unit.compat.mock import patch
 
 
@@ -158,6 +160,43 @@ def test_select_resource_config_filters_shared_flat_configuration():
     assert facts_base.select_resource_config(config, "pon_interfaces") == (
         "configure pon interface 1/1/5/1 admin-state up"
     )
+
+
+def test_unmatched_resource_config_lines_uses_parser_matches():
+    config = "\n".join(
+        [
+            "configure interface port pon:1/1/5/1 admin-up",
+            "configure interface port pon:1/1/5/1 unsupported-option",
+        ]
+    )
+
+    with facts_base.track_network_template_matches() as matched_lines:
+        parser = InterfacesTemplate(
+            lines=["port pon:1/1/5/1 admin-up", "port pon:1/1/5/1 unsupported-option"]
+        )
+        parser.parse()
+
+    assert facts_base.unmatched_resource_config_lines(
+        config, "interfaces", matched_lines
+    ) == ["configure interface port pon:1/1/5/1 unsupported-option"]
+
+
+def test_unmatched_resource_config_lines_tracks_custom_parser_consumption():
+    config = "\n".join(
+        [
+            "configure qos profiles queue FD_BEQ red:24:48:80",
+            "exit",
+            "configure qos profiles unsupported-command value",
+        ]
+    )
+
+    with facts_base.track_network_template_matches() as matched_lines:
+        parser = Qos_profilesTemplate(lines=config.splitlines())
+        parser.parse()
+
+    assert facts_base.unmatched_resource_config_lines(
+        config, "qos_profiles", matched_lines
+    ) == ["configure qos profiles unsupported-command value"]
 
 
 def test_resource_config_ownership_rejects_duplicate_prefixes():

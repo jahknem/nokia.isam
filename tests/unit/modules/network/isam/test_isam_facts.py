@@ -130,3 +130,122 @@ class TestIsamFactsModule(TestIsamModule):
         self.assertEqual(resources["interfaces"][0]["name"], "pon:1/1/5/1")
         self.assertEqual(resources["pon_interfaces"][0]["name"], "1/1/5/1")
         self.assertEqual(resources["equipment_onts"]["interfaces"][0]["ont_idx"], "1/1/5/1/100")
+
+    def test_isam_facts_warns_for_unmatched_owned_configuration(self):
+        class ConfigurationConn:
+            def get(self, cmd):
+                return "\n".join(
+                    [
+                        "configure interface port pon:1/1/5/1 admin-up",
+                        "configure interface port pon:1/1/5/1 unsupported-option",
+                    ]
+                )
+
+        self.get_resource_connection_facts.return_value = ConfigurationConn()
+        set_module_args(
+            dict(
+                gather_configuration=True,
+                gather_network_resources=["interfaces"],
+            )
+        )
+
+        result = self.execute_module(changed=False)
+        self.assertEqual(len(result["warnings"]), 1)
+        self.assertIn(
+            "configure interface port pon:1/1/5/1 unsupported-option",
+            result["warnings"][0],
+        )
+        self.assertNotIn("unsupported-option", str(result["ansible_facts"]))
+
+    def test_isam_facts_warns_for_unmatched_custom_parser_configuration(self):
+        class ConfigurationConn:
+            def get(self, cmd):
+                return "\n".join(
+                    [
+                        "configure qos profiles unsupported-command value",
+                        "configure qos profiles queue FD_BEQ red:24:48:80",
+                    ]
+                )
+
+        self.get_resource_connection_facts.return_value = ConfigurationConn()
+        set_module_args(
+            dict(
+                gather_configuration=True,
+                gather_network_resources=["qos_profiles"],
+            )
+        )
+
+        result = self.execute_module(changed=False)
+        self.assertEqual(len(result["warnings"]), 1)
+        self.assertIn(
+            "configure qos profiles unsupported-command value",
+            result["warnings"][0],
+        )
+
+    def test_isam_facts_keeps_selected_multicast_aliases(self):
+        class ConfigurationConn:
+            def get(self, cmd):
+                return "\n".join(
+                    [
+                        "configure igmp mcast-svc-context default",
+                        "configure mcast-control admin-state enable",
+                    ]
+                )
+
+        self.get_resource_connection_facts.return_value = ConfigurationConn()
+        set_module_args(
+            dict(
+                gather_configuration=True,
+                gather_network_resources=["multicast", "igmp", "mcast_control"],
+            )
+        )
+
+        result = self.execute_module(changed=False)
+        resources = result["ansible_facts"]["ansible_network_resources"]
+
+        self.assertEqual(set(resources), {"multicast", "igmp", "mcast_control"})
+        self.assertTrue(resources["multicast"])
+        self.assertTrue(resources["igmp"])
+        self.assertTrue(resources["mcast_control"])
+
+    def test_isam_facts_keeps_explicit_dhcp_alias(self):
+        class ConfigurationConn:
+            def get(self, cmd):
+                return "configure dhcp-server start-addr 192.0.2.10"
+
+        self.get_resource_connection_facts.return_value = ConfigurationConn()
+        set_module_args(
+            dict(
+                gather_configuration=True,
+                gather_network_resources=["dhcp_server", "isam_dhcp_server"],
+            )
+        )
+
+        result = self.execute_module(changed=False)
+        resources = result["ansible_facts"]["ansible_network_resources"]
+
+        self.assertEqual(set(resources), {"dhcp_server", "isam_dhcp_server"})
+        self.assertEqual(resources["dhcp_server"], resources["isam_dhcp_server"])
+
+    def test_isam_facts_all_uses_canonical_alias_resources(self):
+        class ConfigurationConn:
+            def get(self, cmd):
+                return "\n".join(
+                    [
+                        "configure igmp mcast-svc-context default",
+                        "configure mcast-control admin-state enable",
+                        "configure dhcp-server start-addr 192.0.2.10",
+                    ]
+                )
+
+        self.get_resource_connection_facts.return_value = ConfigurationConn()
+        set_module_args(dict(gather_configuration=True, gather_network_resources=["all"]))
+
+        result = self.execute_module(changed=False)
+        resources = result["ansible_facts"]["ansible_network_resources"]
+
+        self.assertIn("multicast", resources)
+        self.assertNotIn("igmp", resources)
+        self.assertNotIn("mcast_control", resources)
+        self.assertIn("dhcp_server", resources)
+        self.assertNotIn("isam_dhcp_server", resources)

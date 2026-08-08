@@ -21,7 +21,7 @@ class Pon_interfacesFacts(object):
         self.argument_spec = Pon_interfacesArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure pon interface")
+        return connection.get("info configure pon interface flat")
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}

@@ -2,6 +2,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import unwrap_response
+
 __metaclass__ = type
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
@@ -26,9 +28,14 @@ class IphostFacts(object):
         facts = {}
 
         if not data:
-            data = connection.get("info configure iphost")
+            data = connection.get("info configure iphost flat")
 
-        parser = IphostTemplate(lines=data.splitlines())
+        if isinstance(data, tuple):
+            data = data[0]
+
+        data = unwrap_response(data)
+
+        parser = IphostTemplate(lines=[line.strip() for line in str(data or "").splitlines() if line.strip()])
         parsed = parser.parse()
 
         ansible_facts["ansible_network_resources"].pop("iphost", None)

@@ -5,6 +5,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
+
 __metaclass__ = type
 
 """
@@ -41,7 +43,7 @@ class Ethernet_lineFacts(object):
         """Wrapper method for `connection.get()`
         This method exists solely to allow the unit test framework to mock device connection calls.
         """
-        return connection.get("info configure ethernet line")
+        return connection.get("info configure ethernet line flat")
 
     def populate_facts(self, connection, ansible_facts, data=None):
         """ Populate the facts for Ethernet_line network resource
@@ -59,7 +61,11 @@ class Ethernet_lineFacts(object):
         if not data:
             data = self.get_config(connection)
         data = unwrap_response(data)
-        data = flatten_indented_tree(data)
+        lines = str(data or "").splitlines()
+        if any(line.strip().startswith("configure ethernet line ") for line in lines):
+            data = self._compact_lines(lines, "configure ethernet line ")
+        else:
+            data = flatten_indented_tree(data)
 
         # parse native config using the Ethernet_line template
         ethernet_line_parser = Ethernet_lineTemplate(lines=data, module=self._module)
@@ -79,3 +85,20 @@ class Ethernet_lineFacts(object):
         ansible_facts['ansible_network_resources'].update(facts)
 
         return ansible_facts
+
+    @staticmethod
+    def _compact_lines(lines, prefix):
+        clauses = re.compile(
+            r"(?:port-type\s+\S+|(?:no\s+)?admin-up|"
+            r"mau\s+\d+\s+(?:type|power)\s+\S+|"
+            r"tca-line-threshold\s+(?:no\s+)?(?:enable|los|fcs|rx-octets|tx-octets|los-day|fcs-day|rx-octets-day|tx-octets-day)(?:\s+\S+)?)"
+        )
+        result = []
+        for raw in lines:
+            line = raw.strip()
+            if not line.startswith(prefix):
+                continue
+            identifier, body = line[len(prefix):].split(None, 1)
+            matches = list(clauses.finditer(body))
+            result.extend(prefix + identifier + " " + match.group(0) for match in matches)
+        return result

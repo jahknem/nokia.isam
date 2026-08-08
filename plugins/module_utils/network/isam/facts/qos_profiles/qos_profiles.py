@@ -24,9 +24,11 @@ class Qos_profilesFacts(object):
         facts = {}
 
         if not data:
-            data = connection.get("info configure qos profiles")
+            data = connection.get("info configure qos profiles flat")
 
-        parser = Qos_profilesTemplate(lines=data.splitlines(), module=self._module)
+        if isinstance(data, tuple):
+            data = data[0]
+        parser = Qos_profilesTemplate(lines=str(data or "").splitlines(), module=self._module)
         objs = list(parser.parse().values())
 
         ansible_facts["ansible_network_resources"].pop("qos_profiles", None)

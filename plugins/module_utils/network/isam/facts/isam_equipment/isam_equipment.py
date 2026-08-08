@@ -24,7 +24,7 @@ class Isam_equipmentFacts(object):
         self.argument_spec = Isam_equipmentArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure equipment")
+        return connection.get("info configure equipment flat")
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}

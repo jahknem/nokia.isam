@@ -42,6 +42,20 @@ class InterfaceCagesTemplate(NetworkTemplate):
             "shared": True,
         },
         {
+            "name": "cage.operational_mode",
+            "compval": "operational_mode",
+            "getval": re.compile(
+                r"^configure\sinterface\scage\s(?P<id>\S+)\soperational-mode\s(?P<operational_mode>\S+)\s*$"
+            ),
+            "setval": "configure interface cage {{ id }} operational-mode {{ operational_mode }}",
+            "result": {
+                "{{ id }}": {
+                    "id": "{{ id }}",
+                    "operational_mode": "{{ operational_mode }}",
+                },
+            },
+        },
+        {
             "name": "cage.description",
             "compval": "description",
             "getval": re.compile(

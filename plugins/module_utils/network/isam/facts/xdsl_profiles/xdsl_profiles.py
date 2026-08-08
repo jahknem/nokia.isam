@@ -25,11 +25,11 @@ class Xdsl_profilesFacts(object):
 
     def get_config(self, connection):
         commands = [
-            "info configure xdsl service-profile",
-            "info configure xdsl spectrum-profile",
-            "info configure xdsl dpbo-profile",
-            "info configure xdsl vect-profile",
-            "info configure xdsl vce-profile",
+            "info configure xdsl service-profile flat",
+            "info configure xdsl spectrum-profile flat",
+            "info configure xdsl dpbo-profile flat",
+            "info configure xdsl vect-profile flat",
+            "info configure xdsl vce-profile flat",
         ]
         output = []
         for command in commands:

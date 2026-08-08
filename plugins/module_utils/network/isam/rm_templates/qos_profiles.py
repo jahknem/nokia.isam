@@ -169,6 +169,9 @@ class Qos_profilesTemplate(NetworkTemplate):
             if stripped == "profiles":
                 in_profiles = True
                 continue
+            if stripped.startswith("configure qos profiles "):
+                stripped = stripped[len("configure qos profiles "):]
+                in_profiles = True
             if stripped in ("configure qos", "configure qos profiles"):
                 in_profiles = True
                 continue
