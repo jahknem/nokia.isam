@@ -45,6 +45,14 @@ options:
         specific subset should not be collected.
     required: false
     version_added: "2.9"
+  gather_configuration:
+    description:
+      - Read the complete flat configuration once and pass it to each selected
+        resource parser. This avoids one device request per resource.
+    required: false
+    default: false
+    type: bool
+    version_added: "1.1.0"
 """
 
 EXAMPLES = """
@@ -70,6 +78,14 @@ EXAMPLES = """
 - isam_facts:
     gather_subset: min
     gather_network_resources: interfaces
+
+# Read one complete configuration and reuse it for multiple resource parsers
+- isam_facts:
+    gather_configuration: true
+    gather_network_resources:
+      - interfaces
+      - pon_interfaces
+      - equipment_onts
 """
 
 RETURN = """

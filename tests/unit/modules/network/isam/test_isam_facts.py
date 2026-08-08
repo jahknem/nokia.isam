@@ -98,3 +98,35 @@ class TestIsamFactsModule(TestIsamModule):
         self.assertNotIn("admin-up", interface)
         self.assertNotIn("link-updown-trap", interface)
         self.assertNotIn("port-type", interface)
+
+    def test_isam_facts_reuses_one_configuration_for_selected_resources(self):
+        class ConfigurationConn:
+            def __init__(self):
+                self.commands = []
+
+            def get(self, cmd):
+                self.commands.append(cmd)
+                return "\n".join(
+                    [
+                        "configure interface port pon:1/1/5/1 admin-up",
+                        "configure pon interface 1/1/5/1 admin-state up",
+                        "configure equipment ont interface 1/1/5/1/100 sernum TMBB:00000000",
+                    ]
+                )
+
+        connection = ConfigurationConn()
+        self.get_resource_connection_facts.return_value = connection
+        set_module_args(
+            dict(
+                gather_configuration=True,
+                gather_network_resources=["interfaces", "pon_interfaces", "equipment_onts"],
+            )
+        )
+
+        result = self.execute_module(changed=False)
+        resources = result["ansible_facts"]["ansible_network_resources"]
+
+        self.assertEqual(connection.commands, ["info configure flat"])
+        self.assertEqual(resources["interfaces"][0]["name"], "pon:1/1/5/1")
+        self.assertEqual(resources["pon_interfaces"][0]["name"], "1/1/5/1")
+        self.assertEqual(resources["equipment_onts"]["interfaces"][0]["ont_idx"], "1/1/5/1/100")
