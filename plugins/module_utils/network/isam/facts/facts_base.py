@@ -73,6 +73,10 @@ RESOURCE_ALIASES = {
     "isam_dhcp_server": "dhcp_server",
 }
 
+RESOURCE_AGGREGATES = {
+    "multicast": ("igmp", "mcast_control"),
+}
+
 
 def validate_resource_config_ownership(resource_prefixes=None, resource_excludes=None):
     """Validate that configured prefixes have one unambiguous owner."""
@@ -95,6 +99,13 @@ def validate_resource_config_ownership(resource_prefixes=None, resource_excludes
             if not any(prefix.startswith(parent) or parent.startswith(prefix) for parent in prefixes[resource]):
                 raise ValueError("resource exclusion %s does not belong to %s" % (prefix, resource))
 
+    if resource_prefixes is None:
+        for resource, members in RESOURCE_AGGREGATES.items():
+            if resource in prefixes:
+                raise ValueError("aggregate resource must not own command prefixes: %s" % resource)
+            if any(member not in prefixes for member in members):
+                raise ValueError("aggregate resource %s references an unknown member" % resource)
+
     if collisions:
         details = ", ".join("%s (%s, %s)" % collision for collision in collisions)
         raise ValueError("resource config prefix collision: %s" % details)
@@ -106,6 +117,13 @@ validate_resource_config_ownership()
 def select_resource_config(config, resource):
     """Select flat configure lines belonging to one resource family."""
     resource = RESOURCE_ALIASES.get(resource, resource)
+    if resource in RESOURCE_AGGREGATES:
+        return "\n".join(
+            selected
+            for member in RESOURCE_AGGREGATES[resource]
+            for selected in [select_resource_config(config, member)]
+            if selected
+        )
     config = unwrap_response(config)
     if isinstance(config, (list, tuple)):
         config = "\n".join(str(line) for line in config)
