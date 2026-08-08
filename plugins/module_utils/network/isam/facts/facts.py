@@ -44,6 +44,15 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ipho
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.li_vlan.li_vlan import Li_vlanFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.mcast_general.mcast_general import Mcast_generalFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.multicast.multicast import MulticastFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.operational import (
+    Active_alarmsFacts,
+    Equipment_statusFacts,
+    Interface_statusFacts,
+    Ont_statusFacts,
+    Pon_statusFacts,
+    Software_statusFacts,
+    OPERATIONAL_FACT_RESOURCES,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ntp_onts.ntp_onts import Ntp_ontsFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.qos_maps.qos_maps import Qos_mapsFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.software_mngt.software_mngt import Software_mngtFacts
@@ -57,6 +66,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl
 
 FACT_LEGACY_SUBSETS = {}
 FACT_RESOURCE_SUBSETS = dict(
+    active_alarms=Active_alarmsFacts,
     alarm=AlarmFacts,
     ani_onts=Ani_ontsFacts,
     bridges=BridgesFacts,
@@ -65,10 +75,12 @@ FACT_RESOURCE_SUBSETS = dict(
     equipment_replan=Equipment_replanFacts,
     ethernet_line=Ethernet_lineFacts,
     ethernet_onts=Ethernet_ontsFacts,
+    equipment_status=Equipment_statusFacts,
     generic_pon=Generic_ponFacts,
     interface_alarms=Interface_alarmsFacts,
     interface_cages=InterfaceCagesFacts,
     interfaces=InterfacesFacts,
+    interface_status=Interface_statusFacts,
     iphost=IphostFacts,
     isam_dhcp_server=Isam_dhcp_serverFacts,
     isam_equipment=Isam_equipmentFacts,
@@ -81,11 +93,14 @@ FACT_RESOURCE_SUBSETS = dict(
     mcast_control=MulticastFacts,
     multicast=MulticastFacts,
     ntp_onts=Ntp_ontsFacts,
+    ont_status=Ont_statusFacts,
     pon_interfaces=Pon_interfacesFacts,
+    pon_status=Pon_statusFacts,
     qos_interfaces=Qos_interfacesFacts,
     qos_maps=Qos_mapsFacts,
     qos_profiles=Qos_profilesFacts,
     software_mngt=Software_mngtFacts,
+    software_status=Software_statusFacts,
     system=Isam_systemFacts,
     vlans=VlansFacts,
     voice_sip=Isam_voice_sipFacts,
@@ -147,15 +162,15 @@ class Facts(FactsBase):
                 )
 
         for key, instance in instances:
-            resource_data = data
-            if self._module.params.get("gather_configuration"):
+            resource_data = None if key in OPERATIONAL_FACT_RESOURCES else data
+            if self._module.params.get("gather_configuration") and key not in OPERATIONAL_FACT_RESOURCES:
                 resource_data = select_resource_config(data, key)
                 # Avoid falling back to another device request when this
                 # resource has no configured lines in the shared snapshot.
                 if resource_data == "":
                     resource_data = "\n"
             try:
-                if self._module.params.get("gather_configuration") and resource_data.strip():
+                if self._module.params.get("gather_configuration") and resource_data and resource_data.strip():
                     with track_network_template_matches() as matched_lines:
                         instance.populate_facts(self._connection, self.ansible_facts, resource_data)
                     if matched_lines.observed:
@@ -220,7 +235,11 @@ class Facts(FactsBase):
         :return: the facts gathered
         """
         requested_resources = resource_facts_type or self._module.params.get("gather_network_resources")
-        if data is None and self._module.params.get("gather_configuration") and requested_resources:
+        needs_configuration = requested_resources and (
+            "all" in requested_resources
+            or any(resource not in OPERATIONAL_FACT_RESOURCES for resource in requested_resources)
+        )
+        if data is None and self._module.params.get("gather_configuration") and needs_configuration:
             data = self._connection.get("info configure flat")
 
         if self.VALID_RESOURCE_SUBSETS:
