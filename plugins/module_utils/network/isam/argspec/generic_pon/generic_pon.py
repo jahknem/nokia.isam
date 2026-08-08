@@ -12,7 +12,29 @@ class Generic_ponArgs(object):  # pylint: disable=R0903
         "config": {
             "type": "dict",
             "options": {
-                "dpinteg_threshold": {"type": "str", "aliases": ["dpinteg-threshold"]},
+                "dpinteg_threshold": {"type": "int"},
+                "utilization": {
+                    "type": "dict",
+                    "options": {
+                        "pon_pmcollect": {"type": "bool"},
+                        "ont_pmcollect": {"type": "bool"},
+                    },
+                },
+                "ont": {
+                    "type": "dict",
+                    "options": {
+                        "slid_mode": {"type": "bool"},
+                        "sn_bundle_timer": {"type": "bool"},
+                        "sw_ver_mis_block": {"type": "bool"},
+                        "sn_autounlock": {"type": "bool"},
+                    },
+                },
+                "alarmflag": {
+                    "type": "dict",
+                    "options": {
+                        "ponlos_alarm_ctrl": {"type": "bool"},
+                    },
+                },
             },
         },
         "running_config": {"type": "str"},
