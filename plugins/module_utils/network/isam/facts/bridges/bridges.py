@@ -21,6 +21,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.br
     BridgesArgs,
 )
 
+
 class BridgesFacts(object):
     """ The isam bridges facts class
     """
@@ -41,17 +42,12 @@ class BridgesFacts(object):
         """
         facts = {}
 
-        # if not debugpy.is_client_connected():
-        #     debugpy.listen(("localhost",3000))
-        #     debugpy.wait_for_client()
         if not data:
             data = connection.get("info configure bridge flat")
-        
+
         bridge_config = self._parse_bridge_config(data)
 
         ansible_facts['ansible_network_resources'].pop('bridges', None)
-
-        # debugpy.breakpoint()
 
         facts['bridges'] = utils.remove_empties(bridge_config) or {}
         ansible_facts['ansible_network_resources'].update(facts)

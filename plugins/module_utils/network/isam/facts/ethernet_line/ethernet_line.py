@@ -14,9 +14,12 @@ for a given resource, parsed, and the facts tree is populated
 based on the configuration.
 """
 
-from anytree import Node
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    flatten_indented_tree,
+    unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ethernet_line import (
     Ethernet_lineTemplate,
@@ -24,6 +27,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.ethernet_line.ethernet_line import (
     Ethernet_lineArgs,
 )
+
 
 class Ethernet_lineFacts(object):
     """ The isam ethernet_line facts class
@@ -54,13 +58,12 @@ class Ethernet_lineFacts(object):
 
         if not data:
             data = self.get_config(connection)
-        if type(data) == tuple:
-            data = data[0]
-        data = self._flatten_config(data)
+        data = unwrap_response(data)
+        data = flatten_indented_tree(data)
 
         # parse native config using the Ethernet_line template
         ethernet_line_parser = Ethernet_lineTemplate(lines=data, module=self._module)
-        
+
         objs = list(ethernet_line_parser.parse().values())
 
         for item in objs:
@@ -76,70 +79,3 @@ class Ethernet_lineFacts(object):
         ansible_facts['ansible_network_resources'].update(facts)
 
         return ansible_facts
-
-    # Counts the number of spaces at the beginning of a string
-    def _count_spaces(self, line):
-        spaces = 0
-        for char in line:
-            if char == ' ':
-                spaces += 1
-            else:
-                break
-        return spaces
-
-    # Parses the config into a tree structure and cleans up the config so that only relevant data is returned
-    # The tree structure is determined by the number of spaces at the beginning of each line
-    def _parse_config_to_tree(self, config):
-        if not config:
-            return None
-        chapter = 0
-        last_spaces = 0
-        root = None
-        parent_node = None
-        for line in config.splitlines():
-
-            # Check if line is valid
-            if line.startswith('echo') or line.startswith('#'):
-                continue
-
-            # Only here the actual content begins
-            # Check if parent node exists. Otherwise create it using first line
-            if parent_node is None:
-                root = Node(line.split('#',1)[0].strip())
-                parent_node = root
-                prev_node = root
-                
-            # The "exit" string is not relevant for us but we need to keep track of the indentation. If the indent is smaller than the previous line, we need to go up the tree
-            elif "exit" in line:
-                if self._count_spaces(line) < last_spaces:
-                    parent_node = parent_node.parent   
-                else: 
-                    continue
-
-            # Check if line is a child of the previous line as a greater indent means the line has to be a child of the previous line
-            elif self._count_spaces(line) > last_spaces:
-                parent_node = prev_node
-                prev_node = Node(line.split('#',1)[0].strip(), parent=prev_node)
-            
-            # In all other cases the current line is a sibling of the previous line
-            else:
-                prev_node = Node(line.split('#',1)[0].strip(), parent=parent_node)
-            
-            # In any case, the indentation spaces of the current line become the last spaces to be used for the next line
-            last_spaces = self._count_spaces(line)
-        return root
-
-
-    def _flatten_config(self, config):
-        if not config:
-            return None
-        flat_config = []
-        root = self._parse_config_to_tree(config)
-        for leave in root.leaves:
-            line = []
-            for node in leave.path:
-                line.append(node.name)
-            flat_config.append(" ".join(line))
-        return flat_config
-
-    

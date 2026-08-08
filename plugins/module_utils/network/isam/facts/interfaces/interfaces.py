@@ -23,6 +23,8 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.interfaces.interfaces import (
     InterfacesArgs,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import unwrap_response
+
 
 class InterfacesFacts(object):
     """ The isam interfaces facts class
@@ -62,20 +64,21 @@ class InterfacesFacts(object):
         """
         facts = {}
         objs = []
-           
+
         if not data:
             data = connection.get("info configure interface port flat")
+        data = unwrap_response(data)
 
         # parse native config using the Interfaces template
         # the template 'getval' regexes expect lines starting with 'port ...'
         # but the device output contains 'configure interface port ...'
         # so strip the leading prefix and ignore non-config lines
         raw_lines = []
-        for line in data.splitlines():
+        for line in str(data or "").splitlines():
             line = line.strip()
             if not line or line.startswith('#'):
                 continue
-            if line.startswith('configure interface '):
+            if line.startswith('configure interface port '):
                 raw_lines.append(line.replace('configure interface ', '', 1))
 
         interfaces_parser = InterfacesTemplate(lines=raw_lines, module=self._module)
@@ -84,7 +87,6 @@ class InterfacesFacts(object):
         objs = list(valued)
 
         objs = [self._canonicalize_entry(item) for item in objs]
-
 
         ansible_facts['ansible_network_resources'].pop('interfaces', None)
 

@@ -33,18 +33,20 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 ^configure\sbridge\s(?P<negate_ageing_time>no\sageing-time)|(ageing-time\s(?P<ageing_time>\S+))$
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge ageing-time {{ ageing_time }}",
+            "remval": "configure bridge no ageing-time",
             "result": {
                 "ageing_time": "{{ 300 if negate_ageing_time is defined else ageing_time|int }}",
             },
         },
         {
             "name": "bridge_port",
+            "compval": "port",
             "getval": re.compile(
                 r"""
                 ^configure\sbridge\sport\s(?P<id>\S+)
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ port }}",
             "result": {
                 "port": {
                     "{{ id }}":
@@ -53,12 +55,29 @@ class BridgesTemplate(NetworkTemplate):
             },
         },
         {
+            "name": "pvid",
+            "getval": re.compile(
+                r"""
+                configure\sbridge\sport\s(?P<id>\S+)\s((?P<negate_pvid>no\spvid)|(pvid\s(?P<pvid>\d+)))
+                $""", re.VERBOSE),
+            "setval": "configure bridge port {{ id }} pvid {{ pvid }}",
+            "remval": "configure bridge port {{ id }} no pvid",
+            "result": {
+                "port": {
+                    "{{ id }}": {
+                        "pvid": "{{ none if negate_pvid is defined else pvid|int }}",
+                    },
+                },
+            },
+        },
+        {
             "name": "default_priority",
             "getval": re.compile(
                 r"""
-                configure\sbridge\sport\s(?P<id>\S+)\s(?P<negate_default_priority>no\sdefault-priority)|(?P<default_priority>default-priority)
+                configure\sbridge\sport\s(?P<id>\S+)\s((?P<negate_default_priority>no\sdefault-priority)|(default-priority\s(?P<default_priority>\S+)))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} default-priority {{ default_priority }}",
+            "remval": "configure bridge port {{ id }} no default-priority",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -73,7 +92,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\s(?P<negate_mac_learn_off>no\smac-learn-off)|(?P<mac_learn_off>mac-learn-off)
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} mac-learn-off",
+            "remval": "configure bridge port {{ id }} no mac-learn-off",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -88,7 +108,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\s((?P<negate_max_unicast_mac>no max-unicast-mac)|(max-unicast-mac (?P<max_unicast_mac>\d)))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} max-unicast-mac {{ max_unicast_mac }}",
+            "remval": "configure bridge port {{ id }} no max-unicast-mac",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -103,11 +124,12 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\s((?P<negate_qos_profile>no\sqos-profile)|(qos-profile\s(?P<qos_profile>\S+)))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} qos-profile {{ qos_profile }}",
+            "remval": "configure bridge port {{ id }} no qos-profile",
             "result": {
                 "port": {
                     "{{ id }}": {
-                        "qos_profile": "{{ none if negate is defined else qos_profile|string }}",
+                        "qos_profile": "{{ none if negate_qos_profile is defined else qos_profile|string }}",
                     },
                 },
             },
@@ -118,11 +140,12 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\s((?P<negate_prio_regen_prof>no\sprio-regen-prof)|(prio-regen-prof\s(?P<prio_regen_prof>\S+)))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} prio-regen-prof {{ prio_regen_prof }}",
+            "remval": "configure bridge port {{ id }} no prio-regen-prof",
             "result": {
                 "port": {
                     "{{ id }}": {
-                        "prio_regen_prof": "{{ none if negate is defined else prio_regen_prof|string }}",
+                        "prio_regen_prof": "{{ none if negate_prio_regen_prof is defined else prio_regen_prof|string }}",
                     },
                 },
             },
@@ -131,9 +154,10 @@ class BridgesTemplate(NetworkTemplate):
             "name": "prio_regen_name",
             "getval": re.compile(
                 r"""
-                configure\sbridge\sport\s(?P<id>\S+)\s(?P<negate_prio_regen_name>no\sprio-regen-name)|(prio-regen-name(?P<prio_regen_name>(none|trusted-port|best-effort|cl-all-prio-3|cl-all-prio-4|background|be-cl-voice|be-cl-ld-voice|be-voice|l2-vpn-3|l2-vpn-4|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32)))
+                configure\sbridge\sport\s(?P<id>\S+)\s(?P<negate_prio_regen_name>no\sprio-regen-name)|(prio-regen-name\s(?P<prio_regen_name>(none|trusted-port|best-effort|cl-all-prio-3|cl-all-prio-4|background|be-cl-voice|be-cl-ld-voice|be-voice|l2-vpn-3|l2-vpn-4|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32)))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} prio-regen-name {{ prio_regen_name }}",
+            "remval": "configure bridge port {{ id }} no prio-regen-name",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -148,7 +172,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\s(?P<negate_max_comitted_mac>no\smax-committed-mac)|(max-committed-mac\s(?P<max_comitted_mac>(\d+)))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} max-committed-mac {{ max_comitted_mac }}",
+            "remval": "configure bridge port {{ id }} no max-committed-mac",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -163,7 +188,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\s(?P<negate_mirror_mode>no\smirror-mode)|(mirror-mode\s(?P<mirror_mode>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} mirror-mode {{ mirror_mode }}",
+            "remval": "configure bridge port {{ id }} no mirror-mode",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -178,11 +204,12 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\s(?P<negate_mirror_vlan>no\smirror-vlan)|(mirror-vlan\s(?P<mirror_vlan>(\d+|\#)))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} mirror-vlan {{ mirror_vlan }}",
+            "remval": "configure bridge port {{ id }} no mirror-vlan",
             "result": {
                 "port": {
                     "{{ id }}": {
-                        "mirror_vlan": "{{ none if negate is defined else mirror_vlan|int }}",
+                        "mirror_vlan": "{{ none if negate_mirror_vlan is defined else mirror_vlan|int }}",
                     },
                 },
             },
@@ -193,7 +220,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\s(?P<negate_pvid_tagging_flag>no\spvid-tagging-flag)|(pvid-tagging-flag\s(?P<pvid_tagging_flag>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} pvid-tagging-flag {{ pvid_tagging_flag }}",
+            "remval": "configure bridge port {{ id }} no pvid-tagging-flag",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -208,7 +236,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\s(?P<negate_ds_pbit_mode>no\sds-pbit-mode)|(ds-pbit-mode\s(?P<ds_pbit_mode>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} ds-pbit-mode {{ ds_pbit_mode }}",
+            "remval": "configure bridge port {{ id }} no ds-pbit-mode",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -223,7 +252,7 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 ^configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<vlan_id>(\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }}",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -241,7 +270,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<vlan_id>(\S+))\s(?P<negate_tag>no\stag)|(tag\s(?P<tag>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} tag {{ tag }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no tag",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -260,7 +290,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<vlan_id>(\S+))(?P<negate_l2fwder_vlan>nol2fwder-vlan)|(l2fwder-vlan\s(?P<l2fwder_vlan>\d+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} l2fwder-vlan {{ l2fwder_vlan }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no l2fwder-vlan",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -279,7 +310,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_vlan_scope>no\svlan-scope)|(vlan-scope\s(?P<vlan_scope>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} vlan-scope {{ vlan_scope }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no vlan-scope",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -298,7 +330,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_qos>no qos)|(qos\s(?P<qos>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} qos {{ qos }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no qos",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -312,12 +345,14 @@ class BridgesTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "qos_profile",
+            "name": "vlan_qos_profile",
+            "compval": "qos_profile",
             "getval": re.compile(
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_qos_profile>no qos-profile)|(qos-profile\s(?P<qos_profile>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} qos-profile {{ qos_profile }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no qos-profile",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -336,7 +371,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_best_effort>no\sprior-best-effort)|(prior-best-effort\s(?P<prior_best_effort>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-best-effort {{ prior_best_effort }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-best-effort",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -355,7 +391,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_background>no\sprior-background)|(prior-background\s(?P<prior_background>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-background {{ prior_background }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-background",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -374,7 +411,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_spare>no\sprior-spar)|(prior-spare\s(?P<prior_spare>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-spare {{ prior_spare }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-spare",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -393,7 +431,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_exc_effort>no\sprior-exc-effort)|(prior-exc-effort\s(?P<prior_exc_effort>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-exc-effort {{ prior_exc_effort }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-exc-effort",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -412,7 +451,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_ctrl_load>no\sprior-ctrl-load)|(prior-ctrl-load\s(?P<prior_ctrl_load>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-ctrl-load {{ prior_ctrl_load }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-ctrl-load",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -431,7 +471,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_less_100ms>no\sprior-less-100ms)|(prior-less-100ms\s(?P<prior_less_100ms>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-less-100ms {{ prior_less_100ms }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-less-100ms",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -450,7 +491,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_less_10ms>no\sprior-less-10ms)|(prior-less-10ms\s(?P<prior_less_10ms>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-less-10ms {{ prior_less_10ms }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-less-10ms",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -469,7 +511,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_nw_ctrl>no\sprior-nw-ctrl)|(prior-nw-ctrl\s(?P<prior_nw_ctrl>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-nw-ctrl {{ prior_nw_ctrl }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-nw-ctrl",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -488,7 +531,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_in_qos_prof_name>no\sin-qos-prof-name)|(in-qos-prof-name\s(?P<in_qos_prof_name>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} in-qos-prof-name {{ in_qos_prof_name }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no in-qos-prof-name",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -507,13 +551,14 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_max_up_qos_policy>no\smax-up-qos-policy)|(max-up-qos-policy\s(?P<max_up_qos_policy>(\d|\#)))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} max-up-qos-policy {{ max_up_qos_policy }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no max-up-qos-policy",
             "result": {
                 "port": {
                     "{{ id }}": {
                         "vlan": {
                             "{{ vlan_id}}": {
-                                "max_up_qos_policy": "{{ 0 if negate is defined else max_up_qos_policy|int }}",
+                                "max_up_qos_policy": "{{ 0 if negate_max_up_qos_policy is defined else max_up_qos_policy|int }}",
                             },
                         },
                     },
@@ -526,7 +571,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_max_ip_antispoof>no\smax-ip-antispoof)|(max-ip-antispoof\s(?P<max_ip_antispoof>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} max-ip-antispoof {{ max_ip_antispoof }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no max-ip-antispoof",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -540,18 +586,20 @@ class BridgesTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "max_unicast_mac",
+            "name": "vlan_max_unicast_mac",
+            "compval": "max_unicast_mac",
             "getval": re.compile(
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_max_unicast_mac>no\smax-unicast-mac)|(max-unicast-mac\s(?P<max_unicast_mac>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} max-unicast-mac {{ max_unicast_mac }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no max-unicast-mac",
             "result": {
                 "port": {
                     "{{ id }}": {
                         "vlan": {
                             "{{ vlan_id}}": {
-                                "max_unicast_mac": "{{ 65535 if negate is defined else max_unicast_mac|int }}",
+                                "max_unicast_mac": "{{ 65535 if negate_max_unicast_mac is defined else max_unicast_mac|int }}",
                             },
                         },
                     },
@@ -564,7 +612,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_max_ipv6_antispf>no\smax-ipv6-antispf)|(max-ipv6-antispf\s(?P<max_ipv6_antispf>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} max-ipv6-antispf {{ max_ipv6_antispf }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no max-ipv6-antispf",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -583,7 +632,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_mac_learn_ctrl>no\smac-learn-ctrl)|(mac-learn-ctrl\s(?P<mac_learn_ctrl>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} mac-learn-ctrl {{ mac_learn_ctrl }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no mac-learn-ctrl",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -602,7 +652,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_min_cvlan_id>no\smin-cvlan-id)|(min-cvlan-id\s(?P<min_cvlan_id>(\d+|\#)))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} min-cvlan-id {{ min_cvlan_id }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no min-cvlan-id",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -621,7 +672,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_max_cvlan_id>no\smax-cvlan-id)|(max-cvlan-id\s(?P<max_cvlan_id>(\d+|\#)))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} max-cvlan-id {{ max_cvlan_id }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no max-cvlan-id",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -640,7 +692,8 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_ds_dedicated_q>no\sds-dedicated-q)|(ds-dedicated-q\s(?P<ds_dedicated_q>\S+))
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} ds-dedicated-q {{ ds_dedicated_q }}",
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no ds-dedicated-q",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -660,7 +713,7 @@ class BridgesTemplate(NetworkTemplate):
                 \s+(?P<negate> no)?
                 \s+tpid\s(?P<tpid>[a-zA-Z0-9_]*)
                 $""", re.VERBOSE),
-            "setval": "",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} tpid {{ tpid }}",
             "result": {
                 "port": {
                     "{{ id }}": {

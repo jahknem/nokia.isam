@@ -348,6 +348,59 @@ class TestIsamEthernetLineModule(TestIsamModule):
         result = self.execute_module(changed=True)
         self.assertEqual(set(result["commands"]), set(commands))
 
+    def test_isam_ethernet_line_replaced(self):
+        # test replaced: omitted port_type is negated; unmentioned ports stay untouched.
+        # NOTE: admin_up omission cannot be tested here — admin-up is present in the raw
+        # config but does NOT appear in the parsed ``have`` data due to a template parser
+        # limitation (the ``admin_up`` key is never populated).  Once that parser issue is
+        # fixed, a negation test for admin_up can be added.
+        self.get_config.return_value = dedent("""configure ethernet
+        #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        echo "ethernet"
+        #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        line 1/1/8/1
+          port-type uni
+          admin-up
+          mau 1
+            type 1000basebx10d
+            power up
+          exit
+        exit
+        line 1/1/8/2
+          port-type uni
+          admin-up
+          mau 1
+            type 1000basebx10d
+            power up
+          exit
+        exit
+        #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        """),
+        set_module_args(
+            dict(
+                config=[
+                    dict(
+                        if_index="1/1/8/2",
+                        mau=[
+                            dict(
+                                index=1,
+                                mau_type="10gbaser",
+                                power="up"
+                            )
+                        ]
+                    ),
+                ],
+                state="replaced",
+            ),
+            ignore_provider_arg,
+        )
+        commands = [
+            "configure ethernet no line 1/1/8/2 port-type uni",
+            "configure ethernet line 1/1/8/2 mau 1 type 10gbaser",
+        ]
+        result = self.execute_module(changed=True)
+        self.assertEqual(set(result["commands"]), set(commands))
+
     def test_isam_ethernet_line_deleted(self):
         # test deleted
         self.get_config.return_value = dedent("""configure ethernet

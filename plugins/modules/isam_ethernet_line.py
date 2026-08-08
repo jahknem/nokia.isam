@@ -59,8 +59,8 @@ options:
         required: true
       port_type:
         type: str
-        description: 
-        - optional parameter with default value "uni" 
+        description:
+        - optional parameter with default value "uni"
         - the whole network service model based on this interface.
         choices:
         - "uni"
@@ -69,9 +69,9 @@ options:
         - "uplink"
       admin_up:
         type: bool
-        description: 
-        - optional parameter 
-        - admin status is up (read-only for voicefxs interface).        
+        description:
+        - optional parameter
+        - admin status is up (read-only for voicefxs interface).
       tca_line_threshold:
         type: dict
         description: |
@@ -291,7 +291,7 @@ EXAMPLES = """
 RETURN = """
 before:
   description: The configuration prior to the module execution.
-  returned: when I(state) is C(merged), C(replaced), C(overridden), C(deleted) or C(purged)
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: dict
   sample: >
     This output will always be in the same format as the
@@ -305,7 +305,7 @@ after:
     module argspec.
 commands:
   description: The set of commands pushed to the remote device.
-  returned: when I(state) is C(merged), C(replaced), C(overridden), C(deleted) or C(purged)
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
   sample:
     - sample command 1
@@ -348,7 +348,7 @@ def main():
     """
     Main entry point for module execution
 
-    :returns: the result form module invocation
+    :returns: the result from module invocation
     """
     module = AnsibleModule(
         argument_spec=Ethernet_lineArgs.argument_spec,
