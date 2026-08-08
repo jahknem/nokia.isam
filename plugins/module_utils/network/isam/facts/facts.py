@@ -12,6 +12,9 @@ calls the appropriate facts gathering function
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.facts.facts import (
     FactsBase,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    select_resource_config,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.interfaces.interfaces import InterfacesFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.bridges.bridges import BridgesFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ethernet_line.ethernet_line import Ethernet_lineFacts
@@ -97,6 +100,42 @@ class Facts(FactsBase):
     def __init__(self, module):
         super(Facts, self).__init__(module)
 
+    def get_network_resources_facts(self, facts_resource_obj_map, resource_facts_type=None, data=None):
+        """Gather resources while reusing one full configuration when requested."""
+        if not resource_facts_type:
+            resource_facts_type = self._gather_network_resources
+        runnable_subsets = self.gen_runable(
+            resource_facts_type,
+            frozenset(facts_resource_obj_map.keys()),
+            resource_facts=True,
+        )
+        if not runnable_subsets:
+            return
+
+        self.ansible_facts["ansible_net_gather_network_resources"] = list(runnable_subsets)
+        instances = []
+        for key in runnable_subsets:
+            fact_cls = facts_resource_obj_map.get(key)
+            if fact_cls:
+                instances.append((key, fact_cls(self._module)))
+            else:
+                self._warnings.extend(
+                    ["network resource fact gathering for '%s' is not supported" % key]
+                )
+
+        for key, instance in instances:
+            resource_data = data
+            if self._module.params.get("gather_configuration"):
+                resource_data = select_resource_config(data, key)
+                # Avoid falling back to another device request when this
+                # resource has no configured lines in the shared snapshot.
+                if resource_data == "":
+                    resource_data = "\n"
+            try:
+                instance.populate_facts(self._connection, self.ansible_facts, resource_data)
+            except Exception as exc:
+                self._module.fail_json(msg=str(exc))
+
     def get_facts(self, legacy_facts_type=None, resource_facts_type=None, data=None):
         """ Collect the facts for isam
 
@@ -106,6 +145,10 @@ class Facts(FactsBase):
         :rtype: dict
         :return: the facts gathered
         """
+        requested_resources = resource_facts_type or self._module.params.get("gather_network_resources")
+        if data is None and self._module.params.get("gather_configuration") and requested_resources:
+            data = self._connection.get("info configure flat")
+
         if self.VALID_RESOURCE_SUBSETS:
             self.get_network_resources_facts(FACT_RESOURCE_SUBSETS, resource_facts_type, data)
 
