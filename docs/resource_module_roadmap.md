@@ -133,6 +133,9 @@ Initial operational fact subsets are now available through `isam_facts`:
 | `interface_status` | `show interface port` |
 | `active_alarms` | `show alarm current table` |
 | `software_status` | `show software-mngt oswp` |
+| `ont_ranging_status` | `show equipment ont ranging-status channel-pair` |
+| `ont_software_status` | `show equipment ont sw-version`, `sw-download` |
+| `pon_pm_status` | `show pon interface tc-layer current-interval` |
 
 Dedicated read-only `*_info` modules can be added later only for highly parameterized lookups where `isam_facts` becomes awkward.
 
