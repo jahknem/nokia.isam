@@ -29,6 +29,24 @@ This Ansible Collection contains modules to manage Nokia ISAM FTTN 7330 devices.
 | --- | --- |
 | `isam_facts` | Collects facts and structured network resources from all registered modules |
 
+The facts module also provides opt-in shared configuration gathering. It reads
+the complete flat configuration with one `info configure flat` request and
+passes that response to each selected resource parser:
+
+```yaml
+- name: Read once and reuse for multiple resource parsers
+  nokia.isam.isam_facts:
+    gather_configuration: true
+    gather_network_resources:
+      - interfaces
+      - pon_interfaces
+      - equipment_onts
+```
+
+The result contains the normal resource structures under
+`ansible_facts.ansible_network_resources`. The bulk result schema is in
+`docs/schemas/isam_facts_resources.json`.
+
 ### Legacy Modules
 | Module | Description |
 | --- | --- |
