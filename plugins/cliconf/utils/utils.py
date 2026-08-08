@@ -2,9 +2,6 @@ import itertools
 import logging
 import re
 from datetime import datetime
-from unittest import result
-from xml.etree.ElementTree import ElementTree
-
 LOG_FORMAT = '%(asctime)-15s %(filename)s %(funcName)s line %(lineno)d %(levelname)s:  %(message)s'
 
 
@@ -44,7 +41,6 @@ def removeCtrlChars(s):
     control_chars = ''.join(map(chr, itertools.chain(range(0x00,0x20), range(0x7f,0xa0))))
     control_char_re = re.compile('[%s]' % re.escape(control_chars))
     satinized_s = control_char_re.sub('', s)
-    difference = diff(s,satinized_s)
     return satinized_s
 
 def removeAlarms(s):

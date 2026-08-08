@@ -24,7 +24,6 @@ __metaclass__ = type
 import re
 
 from ansible.plugins.terminal import TerminalBase
-from ansible.errors import AnsibleConnectionFailure
 
 
 

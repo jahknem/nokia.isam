@@ -19,7 +19,6 @@
 
 from __future__ import absolute_import, division, print_function
 import re
-from xml.etree import ElementTree as ET
 
 
 __metaclass__ = type
@@ -39,7 +38,6 @@ import json
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
 from ansible.plugins.cliconf import CliconfBase
-from ansible_collections.nokia.isam.plugins.cliconf.utils.utils import  getFirstXMLElementText, getXMLElements, removeAlarms, removeCtrlChars
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.config import (
     NetworkConfig,
     dumps,
