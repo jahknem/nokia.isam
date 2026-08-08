@@ -123,6 +123,17 @@ qos_status
 system_status
 ```
 
+Initial operational fact subsets are now available through `isam_facts`:
+
+| Resource | Read-only command |
+| --- | --- |
+| `equipment_status` | `show equipment slot` |
+| `ont_status` | `show equipment ont status pon` |
+| `pon_status` | `show pon interface` |
+| `interface_status` | `show interface port` |
+| `active_alarms` | `show alarm current table` |
+| `software_status` | `show software-mngt oswp` |
+
 Dedicated read-only `*_info` modules can be added later only for highly parameterized lookups where `isam_facts` becomes awkward.
 
 ## Module Boundary Rules

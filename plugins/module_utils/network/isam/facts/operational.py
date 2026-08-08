@@ -7,8 +7,6 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.isam
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ont_operational.ont_operational import (
     parse_operational_facts,
-    parse_ont_operational,
-    parse_pon_operational,
     parse_status_table,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.alarm_status import (
@@ -58,7 +56,7 @@ class Ont_statusFacts(_OperationalFacts):
     key = "ont_status"
 
     def parse(self, output):
-        return parse_ont_operational(output)
+        return parse_status_table(output)
 
 
 class Pon_statusFacts(_OperationalFacts):
@@ -66,7 +64,7 @@ class Pon_statusFacts(_OperationalFacts):
     key = "pon_status"
 
     def parse(self, output):
-        return parse_pon_operational(output)
+        return parse_status_table(output)
 
 
 class Interface_statusFacts(_OperationalFacts):
