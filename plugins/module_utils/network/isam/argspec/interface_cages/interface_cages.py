@@ -39,6 +39,7 @@ class InterfaceCagesArgs(object):  # pylint: disable=R0903
                 "id": {"type": "str", "required": True},
                 "description": {"type": "str"},
                 "apply_qos": {"type": "bool"},
+                "operational_mode": {"type": "str"},
             },
         },
         "running_config": {"type": "str"},

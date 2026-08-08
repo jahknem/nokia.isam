@@ -13,7 +13,11 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.f
     FactsBase,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    RESOURCE_ALIASES,
+    RESOURCE_AGGREGATES,
     select_resource_config,
+    track_network_template_matches,
+    unmatched_resource_config_lines,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.interfaces.interfaces import InterfacesFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.bridges.bridges import BridgesFacts
@@ -115,10 +119,26 @@ class Facts(FactsBase):
         if not runnable_subsets:
             return
 
-        self.ansible_facts["ansible_net_gather_network_resources"] = list(runnable_subsets)
+        requested = resource_facts_type
+        if requested is None:
+            requested = self._module.params.get("gather_network_resources")
+        requested = requested or []
+        all_requested = not requested or "all" in requested
+        explicitly_requested = {item for item in requested if not item.startswith("!") and item != "all"}
+
+        # Several public resources share one parser and one logical fact tree.
+        # Run that parser once, otherwise later aliases can erase earlier output.
+        logical_resources = {}
+        for key in sorted(runnable_subsets):
+            logical_key = self._logical_resource(key)
+            logical_resources.setdefault(logical_key, []).append(key)
+
+        self.ansible_facts["ansible_net_gather_network_resources"] = sorted(runnable_subsets)
         instances = []
-        for key in runnable_subsets:
+        for key in sorted(logical_resources):
             fact_cls = facts_resource_obj_map.get(key)
+            if fact_cls is None and key in RESOURCE_AGGREGATES:
+                fact_cls = facts_resource_obj_map.get(RESOURCE_AGGREGATES[key][0])
             if fact_cls:
                 instances.append((key, fact_cls(self._module)))
             else:
@@ -135,9 +155,60 @@ class Facts(FactsBase):
                 if resource_data == "":
                     resource_data = "\n"
             try:
-                instance.populate_facts(self._connection, self.ansible_facts, resource_data)
+                if self._module.params.get("gather_configuration") and resource_data.strip():
+                    with track_network_template_matches() as matched_lines:
+                        instance.populate_facts(self._connection, self.ansible_facts, resource_data)
+                    if matched_lines.observed:
+                        unmatched = unmatched_resource_config_lines(data, key, matched_lines)
+                        if unmatched:
+                            self._warnings.append(
+                                "unmatched configuration for '%s': %s"
+                                % (key, "; ".join(unmatched))
+                            )
+                else:
+                    instance.populate_facts(self._connection, self.ansible_facts, resource_data)
             except Exception as exc:
                 self._module.fail_json(msg=str(exc))
+
+            self._project_logical_resource(
+                key,
+                logical_resources[key],
+                explicitly_requested,
+                all_requested,
+            )
+
+    @staticmethod
+    def _logical_resource(resource):
+        """Return the parser-owned resource for an alias or aggregate."""
+        resource = RESOURCE_ALIASES.get(resource, resource)
+        for aggregate, members in RESOURCE_AGGREGATES.items():
+            if resource in members:
+                return aggregate
+        return resource
+
+    def _project_logical_resource(self, logical_key, selected_keys, explicitly_requested, all_requested):
+        """Expose one parser result under the requested public resource names."""
+        resources = self.ansible_facts["ansible_network_resources"]
+        aggregate_members = RESOURCE_AGGREGATES.get(logical_key, ())
+        public_keys = set()
+        if all_requested:
+            public_keys.add(logical_key)
+        else:
+            public_keys.update(key for key in selected_keys if key in explicitly_requested)
+
+        # An explicitly requested alias remains available alongside the canonical
+        # all-resource result, but implicit gathering never duplicates it.
+        public_keys.update(
+            key for key in explicitly_requested
+            if self._logical_resource(key) == logical_key and key != logical_key
+        )
+
+        values = {key: resources.get(key, {}) for key in (logical_key,) + tuple(aggregate_members)}
+        aliases = [key for key in selected_keys if key in RESOURCE_ALIASES]
+        values.update({key: resources.get(RESOURCE_ALIASES[key], {}) for key in aliases})
+        for key in set(values):
+            resources.pop(key, None)
+        resources.update({key: values.get(key, values.get(logical_key, {})) for key in sorted(public_keys)})
 
     def get_facts(self, legacy_facts_type=None, resource_facts_type=None, data=None):
         """ Collect the facts for isam

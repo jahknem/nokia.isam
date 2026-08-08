@@ -4,8 +4,15 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+from contextlib import contextmanager
+import copy
+import re
+
 from anytree import Node
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (
+    NetworkTemplate,
+)
 
 
 RESOURCE_CONFIG_PREFIXES = {
@@ -142,6 +149,81 @@ def select_resource_config(config, resource):
         ):
             selected.append(line)
     return "\n".join(selected)
+
+
+@contextmanager
+def track_network_template_matches():
+    """Track lines accepted by shared and custom NetworkTemplate parsers.
+
+    The common parser exposes parser regexes, but resource templates are also
+    allowed to override ``parse``.  For those parsers, compare parses of
+    progressively longer input copies after the normal parse has completed.
+    A line which changes the result was consumed by the parser.
+    """
+    class MatchedLines(list):
+        observed = False
+
+    matched_lines = MatchedLines()
+    original_parse = NetworkTemplate.parse
+    original_init = NetworkTemplate.__init__
+    templates = []
+
+    def parse(template):
+        matched_lines.observed = True
+        for line in template._lines:
+            if any(re.match(parser["getval"], line) for parser in template._tmplt.PARSERS):
+                matched_lines.append(line)
+        return original_parse(template)
+
+    def init(template, *args, **kwargs):
+        original_init(template, *args, **kwargs)
+        templates.append(template)
+
+    NetworkTemplate.parse = parse
+    NetworkTemplate.__init__ = init
+    try:
+        yield matched_lines
+    finally:
+        for template in templates:
+            parser = type(template).parse
+            if parser is original_parse or parser is parse:
+                continue
+            try:
+                empty_replay = copy.copy(template)
+                empty_replay._lines = []
+                previous = parser(empty_replay)
+                for index, line in enumerate(template._lines):
+                    replay = copy.copy(template)
+                    replay._lines = template._lines[: index + 1]
+                    current = parser(replay)
+                    if current != previous:
+                        matched_lines.append(line)
+                    previous = current
+                matched_lines.observed = True
+            except Exception:
+                # Tracking must never alter the result or error handling of a
+                # resource parser that cannot be safely replayed.
+                continue
+        NetworkTemplate.__init__ = original_init
+        NetworkTemplate.parse = original_parse
+
+
+def unmatched_resource_config_lines(config, resource, matched_lines):
+    """Return owned configure lines not accepted by a resource parser."""
+    selected = select_resource_config(config, resource)
+    if not selected or not matched_lines:
+        return [] if not selected else selected.splitlines()
+
+    return [
+        line
+        for line in selected.splitlines()
+        if not any(
+            line == matched
+            or line.endswith(" " + matched)
+            or matched.endswith(" " + line)
+            for matched in matched_lines
+        )
+    ]
 
 
 def unwrap_response(data):

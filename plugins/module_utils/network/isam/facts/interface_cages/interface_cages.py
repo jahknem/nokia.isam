@@ -5,6 +5,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
+
 __metaclass__ = type
 
 """
@@ -34,7 +36,7 @@ class InterfaceCagesFacts(object):
         self.argument_spec = InterfaceCagesArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure interface cage")
+        return connection.get("info configure interface cage flat")
 
     def populate_facts(self, connection, ansible_facts, data=None):
         """ Populate the facts for InterfaceCages network resource
@@ -79,6 +81,14 @@ class InterfaceCagesFacts(object):
             if not stripped or stripped.startswith("#") or stripped.startswith("echo"):
                 continue
             if stripped in ("configure", "configure interface", "exit"):
+                continue
+
+            if stripped.startswith("configure interface cage "):
+                if " description " in stripped and re.search(r"\s(?:no\s+)?apply-qos$", stripped):
+                    description, qos = re.split(r"\s(?=(?:no\s+)?apply-qos$)", stripped, maxsplit=1)
+                    lines.extend([description, description.rsplit(" description ", 1)[0] + " " + qos])
+                else:
+                    lines.append(stripped)
                 continue
 
             if stripped.startswith("cage "):

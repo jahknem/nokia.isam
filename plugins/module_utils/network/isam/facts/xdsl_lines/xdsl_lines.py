@@ -2,6 +2,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
+
 __metaclass__ = type
 
 """
@@ -29,7 +31,7 @@ class Xdsl_linesFacts(object):
 
     def get_config(self, connection):
         """Wrapper method for `connection.get()` used by unit tests."""
-        return connection.get("info configure xdsl line")
+        return connection.get("info configure xdsl line flat")
 
     @staticmethod
     def _canonicalize_entry(item):
@@ -110,6 +112,17 @@ class Xdsl_linesFacts(object):
     def _flatten_config(self, config):
         if not config:
             return []
+        lines = [line.strip() for line in str(config).splitlines() if line.strip()]
+        if any(line.startswith("configure xdsl line ") for line in lines):
+            result = []
+            clauses = re.compile(r"(?:service-profile|spectrum-profile|dpbo-profile|vect-profile)\s+\S+|(?:no\s+)?admin-up")
+            for line in lines:
+                match = re.match(r"(configure xdsl line\s+\S+\s+)(.*)", line)
+                if match:
+                    result.extend(match.group(1) + clause.group(0) for clause in clauses.finditer(match.group(2)))
+                else:
+                    result.append(line)
+            return result
         root = self._parse_config_to_tree(config)
         if root is None:
             return []

@@ -61,6 +61,15 @@ class Qos_profilesArgs(object):  # pylint: disable=R0903
         "attributes": {"type": "list", "elements": "str"},
     }
 
+    for _queue_index in range(8):
+        _profile_options.update(
+            {
+                "q{0}-priority".format(_queue_index): {"type": "int"},
+                "q{0}-weight".format(_queue_index): {"type": "int"},
+                "q{0}-queue-prof".format(_queue_index): {"type": "str"},
+            }
+        )
+
     argument_spec = {
         "config": {
             "type": "list",

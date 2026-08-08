@@ -10,7 +10,7 @@ class FakeConnection:
 
     def get(self, command):
         self.commands.append(command)
-        if command == "info configure xdsl board":
+        if command == "info configure xdsl board flat":
             return "board 1/1/1 annex-a"
         return "vp-board 1/1/1 profile default"
 
@@ -27,8 +27,8 @@ def test_xdsl_boards_gathers_board_and_vp_board():
         facts.populate_facts(connection, ansible_facts)
 
     assert connection.commands == [
-        "info configure xdsl board",
-        "info configure xdsl vp-board",
+        "info configure xdsl board flat",
+        "info configure xdsl vp-board flat",
     ]
     assert ansible_facts["ansible_network_resources"]["xdsl_boards"] == {
         "boards": [{"board_id": "1/1/1", "annex_a": True}],

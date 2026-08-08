@@ -5,6 +5,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
+
 __metaclass__ = type
 
 """
@@ -47,7 +49,7 @@ class VlansFacts(object):
         objs = []
 
         if not data:
-            data = connection.get("info configure vlan id detail")
+            data = connection.get("info configure vlan id flat")
 
         # parse native config using the Vlans template
         vlans_parser = VlansTemplate(lines=self._flatten_config(data), module=self._module)
@@ -65,6 +67,20 @@ class VlansFacts(object):
         return ansible_facts
 
     def _flatten_config(self, data):
+        if any(line.strip().startswith("configure vlan id ") for line in (data or "").splitlines()):
+            result = []
+            for line in data.splitlines():
+                line = line.strip()
+                if not line.startswith("configure vlan id "):
+                    continue
+                match = re.match(r"configure vlan id (\S+)\s+(.*)", line)
+                if not match:
+                    result.append(line)
+                    continue
+                vlan_id, body = match.groups()
+                for clause in re.findall(r'(?:name\s+(?:"[^"]+"|\S+)|mode\s+\S+)', body):
+                    result.append("id {0} {1}".format(vlan_id, clause))
+            return result
         lines = []
         current_id = None
         for line in (data or "").splitlines():

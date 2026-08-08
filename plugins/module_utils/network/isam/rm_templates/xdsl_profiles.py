@@ -91,10 +91,14 @@ class Xdsl_profilesTemplate(object):
         for raw in (config or "").splitlines():
             if not raw.strip() or raw.lstrip().startswith("#") or raw.lstrip().startswith("echo"):
                 continue
+            indent = len(raw) - len(raw.lstrip(" "))
             content = raw.strip()
             if content == "configure xdsl":
                 continue
-            entries.append((len(raw) - len(raw.lstrip(" ")), content))
+            if content.startswith("configure xdsl "):
+                content = content[len("configure xdsl "):]
+                indent = 0
+            entries.append((indent, content))
 
         for index, (indent, content) in enumerate(entries):
             if content == "exit":
@@ -105,8 +109,16 @@ class Xdsl_profilesTemplate(object):
 
             profile_key = self._profile_key(content)
             if level == 0 and profile_key:
-                current = self._new_profile(profile_key, content)
-                result[profile_key].append(current)
+                candidate = self._new_profile(profile_key, content)
+                current = next(
+                    (item for item in result[profile_key] if item.get("id") == candidate.get("id")),
+                    None,
+                )
+                if current is None:
+                    current = candidate
+                    result[profile_key].append(current)
+                else:
+                    current.update(candidate)
                 stack = []
                 continue
 
@@ -178,6 +190,20 @@ class Xdsl_profilesTemplate(object):
         profile = {"id": int(rest[0]) if rest and rest[0].isdigit() else rest[0]}
         if len(rest) >= 3 and rest[1] == "name":
             profile["name"] = rest[2]
+            rest = rest[3:]
+        else:
+            rest = rest[1:]
+        index = 0
+        while index < len(rest):
+            key = rest[index]
+            if key in BOOL_KEYS or key == "active":
+                self._parse_profile_leaf(profile, key)
+                index += 1
+            elif index + 1 < len(rest):
+                self._parse_profile_leaf(profile, "%s %s" % (key, rest[index + 1]))
+                index += 2
+            else:
+                index += 1
         return profile
 
     def _parse_profile_leaf(self, profile, content):

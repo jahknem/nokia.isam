@@ -22,7 +22,7 @@ class Equipment_ontsFacts(object):
         self.argument_spec = Equipment_ontsArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure equipment ont")
+        return connection.get("info configure equipment ont flat")
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}

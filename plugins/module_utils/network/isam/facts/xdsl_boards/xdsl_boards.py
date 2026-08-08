@@ -26,8 +26,8 @@ class Xdsl_boardsFacts(object):
     def get_config(self, connection):
         return "\n".join(
             [
-                connection.get("info configure xdsl board"),
-                connection.get("info configure xdsl vp-board"),
+                unwrap_response(connection.get("info configure xdsl board flat")),
+                unwrap_response(connection.get("info configure xdsl vp-board flat")),
             ]
         )
 
@@ -61,6 +61,8 @@ class Xdsl_boardsFacts(object):
                 continue
             if line in ("configure xdsl",):
                 continue
+            if line.startswith("configure xdsl "):
+                line = line[len("configure xdsl "):]
             if line == "exit":
                 if current is not None:
                     result[current_type].append(current)

@@ -2,6 +2,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
+
 __metaclass__ = type
 
 from anytree import Node
@@ -21,7 +23,7 @@ class Qos_interfacesFacts(object):
         self.argument_spec = Qos_interfacesArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure qos interface")
+        return connection.get("info configure qos interface flat")
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}
@@ -89,7 +91,7 @@ class Qos_interfacesFacts(object):
             return []
         lines = [line.strip() for line in config.splitlines() if line.strip()]
         if lines and all(line.startswith("configure qos interface") for line in lines):
-            return lines
+            return self._compact_lines(lines)
         root = self._parse_config_to_tree(config)
         if root is None:
             return []
@@ -100,3 +102,23 @@ class Qos_interfacesFacts(object):
                 line.append(node.name)
             flat_config.append(" ".join(line))
         return flat_config
+
+    @staticmethod
+    def _compact_lines(lines):
+        clauses = re.compile(
+            r"(?:scheduler-node|ingress-profile|cac-profile|ext-cac|ds-queue-sharing|"
+            r"us-queue-sharing|ds-num-queue|ds-num-rem-queue|us-num-queue|queue-stats-on|"
+            r"autoschedule|oper-weight|oper-rate|us-vlanport-queue|dsfld-shaper-prof|"
+            r"bandwidth-profile|bandwidth-sharing|aggr-usq-profile|aggr-dsq-profile|"
+            r"gem-sharing|scheduler-mode|mc-scheduler-node|bc-scheduler-node|ds-schedule-tag)\s+\S+|"
+            r"(?:queue|upstream-queue|ds-rem-queue)\s+\d+\s+(?:priority|weight|oper-weight|"
+            r"queue-profile|shaper-profile|bandwidth-profile|ext-bw|bandwidth-sharing)\s+\S+"
+        )
+        result = []
+        for line in lines:
+            match = re.match(r"(configure qos interface\s+\S+\s+)(.*)", line)
+            if not match:
+                result.append(line)
+                continue
+            result.extend(match.group(1) + clause.group(0) for clause in clauses.finditer(match.group(2)))
+        return result

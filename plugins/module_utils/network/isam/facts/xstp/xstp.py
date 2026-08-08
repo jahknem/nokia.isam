@@ -23,7 +23,7 @@ class XstpFacts(object):
         facts = {}
 
         if not data:
-            data = connection.get("info configure xstp")
+            data = connection.get("info configure xstp flat")
 
         xstp_config = self._parse_xstp_config(data)
 
