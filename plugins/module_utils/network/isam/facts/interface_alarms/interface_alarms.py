@@ -93,8 +93,6 @@ class Interface_alarmsFacts(object):
         if not config:
             return []
 
-        from anytree import Node
-
         root = self._parse_config_to_tree(config)
         if root is None:
             return []

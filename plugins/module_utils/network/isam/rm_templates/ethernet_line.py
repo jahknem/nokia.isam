@@ -19,6 +19,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
     NetworkTemplate,
 )
 
+
 class Ethernet_lineTemplate(NetworkTemplate):
     def __init__(self, lines=None, module=None):
         super(Ethernet_lineTemplate, self).__init__(lines=lines, tmplt=self, module=module)
@@ -162,14 +163,14 @@ class Ethernet_lineTemplate(NetworkTemplate):
                     "tca_line_threshold": {
                         "fcs_day": "{{ if tca_line_threshold_fcs_day is defined and negate_tca_line_threshold_fcs_day is not defined then tca_line_threshold_fcs_day else 0}}",
                     }
-                }   
+                }
             },
         },
         {
             "name": "line.tca_line_threshold_rx_octets_day",
             "getval": re.compile(
                 r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_rx_octets_day>no\srx-octets-day)|rx-octets-day\s(?P<tca_line_threshold_rx_octets_day>\d+)) 
+                configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_rx_octets_day>no\srx-octets-day)|rx-octets-day\s(?P<tca_line_threshold_rx_octets_day>\d+))
                 $""", re.VERBOSE),
             "setval": "",
             "result": {
@@ -268,7 +269,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
                         "{{ index }}": {
                             "index": "{{ index }}",
                             "autonegotiate": "{{ False if no_mau_autonegotiate is defined else True }}",
-                        }   
+                        }
                     }
                 }
             },
@@ -279,7 +280,7 @@ class Ethernet_lineTemplate(NetworkTemplate):
                 r"""
                 configure\sethernet\sline\s(?P<if_index>\S+)\smau\s(?P<index>\d+)\s((?P<no_mau_cap100base_tfd>no\scap100base-tfd)|(?P<mau_cap100base_tfd>cap100base-tfd))
                 $""", re.VERBOSE),
-            "setval": "configure ethernet line {{ if_index }} mau {{ index }} {{ 'no' if no_mau_cap100base_tfd is defined else '' }} cap100base-tfd", 
+            "setval": "configure ethernet line {{ if_index }} mau {{ index }} {{ 'no' if no_mau_cap100base_tfd is defined else '' }} cap100base-tfd",
             "result": {
                 "{{ if_index }}": {
                     "if_index": "{{ if_index }}",

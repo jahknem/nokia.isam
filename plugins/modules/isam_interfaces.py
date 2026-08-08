@@ -14,10 +14,10 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 module: isam_interfaces
-version_added: 2.9
+version_added: 1.0.0
 short_description: 'Manages interface attributes of Nokia ISAM MSAN devices.'
 description: 'This module manages interface attributes of Nokia ISAM MSAN devices'
-author: Jan Kuehnemund
+author: Jan Kühnemund (@jahknem)
 notes:
 - 'Tested against Nokia ISAM with OS Version R6.2.04m'
 options:
@@ -129,7 +129,7 @@ EXAMPLES = """
 RETURN = """
 before:
   description: The configuration prior to the module execution.
-  returned: when I(state) is C(merged), C(replaced), C(overridden), C(deleted) or C(purged)
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: dict
   sample: >
     This output will always be in the same format as the
@@ -143,7 +143,7 @@ after:
     module argspec.
 commands:
   description: The set of commands pushed to the remote device.
-  returned: when I(state) is C(merged), C(replaced), C(overridden), C(deleted) or C(purged)
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
   sample:
     - sample command 1
@@ -186,7 +186,7 @@ def main():
     """
     Main entry point for module execution
 
-    :returns: the result form module invocation
+    :returns: the result from module invocation
     """
     module = AnsibleModule(
         argument_spec=InterfacesArgs.argument_spec,
@@ -199,7 +199,7 @@ def main():
             ["state", "parsed", ["running_config"]],
         ],
         supports_check_mode=True,
-    )        
+    )
 
     result = Interfaces(module).execute_module()
     module.exit_json(**result)

@@ -93,7 +93,7 @@ EXAMPLES = """
 RETURN = """
 before:
   description: The configuration prior to module execution.
-  returned: when I(state) is C(merged), C(replaced), C(overridden), C(deleted) or C(purged)
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
 after:
   description: The resulting configuration after module execution.
@@ -101,7 +101,7 @@ after:
   type: list
 commands:
   description: The set of commands pushed to the remote device.
-  returned: when I(state) is C(merged), C(replaced), C(overridden), C(deleted) or C(purged)
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
 rendered:
   description: The provided configuration in device-native format.

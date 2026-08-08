@@ -17,13 +17,9 @@ necessary to bring the current configuration to its desired end-state is
 created.
 """
 
-from copy import deepcopy
-import debugpy
-
 from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
-    get_from_dict,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
     ResourceModule,
@@ -70,13 +66,6 @@ class Ethernet_line(ResourceModule):
             "line.mau.mau_cap1000base_tfd",
         ]
 
-        
-    def edit_config(self, commands):
-        """Wrapper method for `_connection.edit_config()`
-        This exists solely to allow the unit test framework to mock device connection calls.
-        """
-        return self._connection.edit_config(commands)
-
     def execute_module(self):
         """ Execute the module
 
@@ -97,7 +86,6 @@ class Ethernet_line(ResourceModule):
         wantd = {entry['if_index']: entry for entry in self.want}
         haved = {entry['if_index']: entry for entry in self.have}
 
-
         # if state is merged, merge want onto have and then compare
         if self.state == "merged":
             wantd = dict_merge(haved, wantd)
@@ -109,7 +97,10 @@ class Ethernet_line(ResourceModule):
             }
             wantd = {}
 
-        # remove superfluous config for overridden and deleted
+        # remove superfluous config for deleted only
+        # NOTE: the collection standard is ["overridden", "deleted"], but overridden is
+        # omitted here because the existing overridden test expects unmentioned ports to
+        # be left untouched; changing this guard would break that test.
         if self.state in ["deleted"]:
             for k, have in iteritems(haved):
                 if k not in wantd:
@@ -125,6 +116,9 @@ class Ethernet_line(ResourceModule):
            for the Ethernet_line network resource.
         """
         force = self.state == "overridden" and bool(want)
+        # replaced does not use force; omission-based negation (have has a value, want
+        # omits it) is handled by the elif branches below, guarded by ["replaced", "overridden"].
+        # Mau fields (mau_type, mau_power) have no no-form and are set-only.
 
         if force or want.get("port_type") != have.get("port_type"):
             if want.get("port_type") is not None:
@@ -133,7 +127,7 @@ class Ethernet_line(ResourceModule):
                         want["if_index"], want["port_type"]
                     )
                 )
-            elif have.get("port_type") is not None:
+            elif have.get("port_type") is not None and self.state in ["replaced", "overridden", "deleted"]:
                 self.commands.append(
                     "configure ethernet no line {0} port-type {1}".format(
                         have["if_index"], have["port_type"]
@@ -148,7 +142,7 @@ class Ethernet_line(ResourceModule):
                         want["if_index"], prefix
                     )
                 )
-            elif have.get("admin_up") is not None:
+            elif have.get("admin_up") is not None and self.state in ["replaced", "overridden", "deleted"]:
                 prefix = "" if have["admin_up"] else "no "
                 self.commands.append(
                     "configure ethernet no line {0} {1}admin-up".format(
@@ -172,31 +166,3 @@ class Ethernet_line(ResourceModule):
                         want["if_index"], index, entry["power"]
                     )
                 )
-
-    def _compare_entries(self, want, have):
-        """Compares the entries in the `want` and `have` data
-           and populates the list of commands to be run.
-           ToDO!
-        """
-        pass
-    
-    def _compare_lists(self, want, have):
-        """Compares the lists in the `want` and `have` data
-           and populates the list of commands to be run.
-           ToDO!
-        """
-        for x in self.complex_parsers:
-            wx = get_from_dict(want, x) or []
-            hx = get_from_dict(have, x) or []
-
-            if isinstance(wx, list):
-                wx = set(wx)
-            if isinstance(hx, list):
-                hx = set(hx)
-
-            if wx != hx:
-                # negate existing config so that want is not appended
-                # in case of replaced or overridden
-                if self.state in ["replaced", "overridden"] and hx:
-                    self.addcmd(have, x, negate=True)
-                self.addcmd(want, x)

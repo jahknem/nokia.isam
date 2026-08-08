@@ -4,6 +4,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+from copy import deepcopy
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
 )
@@ -29,9 +30,6 @@ class Generic_pon(ResourceModule):
             resource="generic_pon",
             tmplt=Generic_ponTemplate(),
         )
-        self.parsers = [
-            "dpinteg_threshold",
-        ]
 
     def execute_module(self):
         if self.state == "rendered":
@@ -51,17 +49,53 @@ class Generic_pon(ResourceModule):
         if self.state == "deleted":
             want = {}
 
-        self._compare(want, have)
+        self._compare_dpinteg_threshold(want, have)
+        self._compare_utilization(want, have)
+        self._compare_ont(want, have)
+        self._compare_alarmflag(want, have)
 
-    def _compare(self, want, have):
-        for key in self.parsers:
-            if key in want and want.get(key) != have.get(key):
-                self.addcmd({key: want.get(key)}, key)
+    def _compare_dpinteg_threshold(self, want, have):
+        wk = want.get("dpinteg_threshold")
+        hk = have.get("dpinteg_threshold")
+        if wk is not None and wk != hk:
+            self.addcmd({"dpinteg_threshold": wk}, "dpinteg_threshold")
+        # NOTE: dpinteg_threshold has no no-form in the template (no `negate`
+        # in getval, no `'no ' if ...` in setval), so it cannot be negated for
+        # replaced/overridden states when absent from want.
+
+    def _compare_utilization(self, want, have):
+        wsec = want.get("utilization", {})
+        hsec = have.get("utilization", {})
+        self._compare_section("utilization", wsec, hsec,
+                              ["pon_pmcollect", "ont_pmcollect"])
+
+    def _compare_ont(self, want, have):
+        wsec = want.get("ont", {})
+        hsec = have.get("ont", {})
+        self._compare_section("ont", wsec, hsec,
+                              ["slid_mode", "sn_bundle_timer", "sw_ver_mis_block", "sn_autounlock"])
+
+    def _compare_alarmflag(self, want, have):
+        wsec = want.get("alarmflag", {})
+        hsec = have.get("alarmflag", {})
+        self._compare_section("alarmflag", wsec, hsec,
+                              ["ponlos_alarm_ctrl"])
+
+    def _compare_section(self, section, want, have, fields):
+        for field in fields:
+            wv = want.get(field)
+            hv = have.get(field)
+            if wv is not None and wv != hv:
+                self.addcmd({section: {field: wv}}, section + "." + field)
+            elif (
+                self.state in ["replaced", "overridden"]
+                and hv is not None
+                and wv is None
+            ):
+                # Negate: field present in have but absent from want
+                self.addcmd({section: {field: False}}, section + "." + field)
 
     def _normalize(self, data):
         if not data:
             return {}
-        normalized = dict(data)
-        if "dpinteg-threshold" in normalized and "dpinteg_threshold" not in normalized:
-            normalized["dpinteg_threshold"] = normalized.pop("dpinteg-threshold")
-        return normalized
+        return deepcopy(data)

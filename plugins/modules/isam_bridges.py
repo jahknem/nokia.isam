@@ -13,11 +13,11 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 DOCUMENTATION = """
-module: isam_bridge
-short_description: 'Manages <> attributes of isam <resource>.'
-description: 'Manages <> attributes of isam <resource>'
+module: isam_bridges
+short_description: 'Manages bridge configuration on Nokia ISAM devices.'
+description: 'Manages bridge configuration including ageing time, bridge ports, VLAN membership, and port parameters on Nokia ISAM devices.'
 version_added: 1.0.0
-author: Ansible Network Engineer
+author: Jan Kühnemund (@jahknem)
 notes:
   - 'Tested against Nokia ISAM with OS Version R6.2.04m'
 options:
@@ -27,7 +27,7 @@ options:
     suboptions:
       ageing_time:
         type: int
-        description: 
+        description:
         - "optional parameter with default value: 300"
         - ageing timeout for dynamic macentries
         default: 300
@@ -276,14 +276,14 @@ options:
                 - This object configures the upper boundary of CVLAN range for protocol awareness for S-VLAN cross-connect(Tunnel)
               ds-dedicated-q:
                 type: bool
-                description: 
+                description:
                 - 'optional parameter with default value: "disable"'
               tpid:
                 type: str
                 description:
                 - 'optional parameter with default value: "8100"'
                 - 'This object configures vlan port tpid in hex values'
-    
+
   state:
     description:
     - The state the configuration should be left in
@@ -298,13 +298,68 @@ options:
 """
 
 EXAMPLES = """
+# Gathered example
+# Retrieve existing bridge configuration from the device
+- name: Gather bridge facts
+  nokia.isam.isam_bridges:
+    state: gathered
 
+# Merged example
+# Configure bridge ageing time and port parameters
+- name: Merge bridge configuration
+  nokia.isam.isam_bridges:
+    config:
+      ageing_time: 300
+      port:
+        - port: "1/1/x1"
+          pvid: 100
+          default-priority: 0
+          vlan_id:
+            - id: "100"
+              tag: "untagged"
+    state: merged
+
+# Rendered example
+# Render bridge configuration as device-native commands (offline)
+- name: Render bridge configuration
+  nokia.isam.isam_bridges:
+    config:
+      ageing_time: 300
+      port:
+        - port: "1/1/x1"
+          pvid: 100
+          vlan_id:
+            - id: "100"
+              tag: "untagged"
+    state: rendered
+
+# Replaced example
+- name: Replace bridge configuration
+  nokia.isam.isam_bridges:
+    config:
+      ageing_time: 600
+      port:
+        - port: "1/1/x1"
+          pvid: 200
+          mac-learn-off: false
+          vlan_id:
+            - id: "200"
+              tag: "single-tagged"
+    state: replaced
+
+# Deleted example
+- name: Delete bridge port configuration
+  nokia.isam.isam_bridges:
+    config:
+      port:
+        - port: "1/1/x1"
+    state: deleted
 """
 
 RETURN = """
 before:
   description: The configuration prior to the module execution.
-  returned: when I(state) is C(merged), C(replaced), C(overridden), C(deleted) or C(purged)
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: dict
   sample: >
     This output will always be in the same format as the
@@ -318,7 +373,7 @@ after:
     module argspec.
 commands:
   description: The set of commands pushed to the remote device.
-  returned: when I(state) is C(merged), C(replaced), C(overridden), C(deleted) or C(purged)
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
   sample:
     - sample command 1
@@ -361,7 +416,7 @@ def main():
     """
     Main entry point for module execution
 
-    :returns: the result form module invocation
+    :returns: the result from module invocation
     """
     module = AnsibleModule(
         argument_spec=BridgesArgs.argument_spec,

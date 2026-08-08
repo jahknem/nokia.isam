@@ -7,6 +7,9 @@ __metaclass__ = type
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    unwrap_response,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.generic_pon.generic_pon import (
     Generic_ponArgs,
 )
@@ -26,9 +29,10 @@ class Generic_ponFacts(object):
         facts = {}
 
         if not data:
-            data = connection.get("info configure generic-pon")
+            data = connection.get("info configure generic-pon flat")
+        data = unwrap_response(data)
 
-        parser = Generic_ponTemplate(lines=data.splitlines())
+        parser = Generic_ponTemplate(lines=[line.strip() for line in data.splitlines()])
         parsed = parser.parse()
 
         ansible_facts["ansible_network_resources"].pop("generic_pon", None)

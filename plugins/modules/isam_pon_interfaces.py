@@ -11,7 +11,7 @@ short_description: Manages Nokia ISAM PON interface attributes.
 description:
   - Resource module for C(configure pon interface).
 version_added: 1.0.0
-author: Jan Kuhnemund (@jahknem)
+author: Jan Kühnemund (@jahknem)
 options:
   config:
     description: PON interface configuration entries.

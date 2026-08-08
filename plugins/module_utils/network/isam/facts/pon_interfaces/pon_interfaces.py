@@ -6,6 +6,9 @@ __metaclass__ = type
 
 from anytree import Node
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    unwrap_response,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.pon_interfaces.pon_interfaces import Pon_interfacesArgs
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.pon_interfaces import Pon_interfacesTemplate
 
@@ -24,8 +27,7 @@ class Pon_interfacesFacts(object):
         facts = {}
         if not data:
             data = self.get_config(connection)
-        if type(data) == tuple:
-            data = data[0]
+        data = unwrap_response(data)
         data = self._flatten_config(data)
 
         pon_interfaces_parser = Pon_interfacesTemplate(lines=data, module=self._module)
@@ -81,6 +83,9 @@ class Pon_interfacesFacts(object):
     def _flatten_config(self, config):
         if not config:
             return None
+        lines = [line.strip() for line in str(config).splitlines() if line.strip()]
+        if any(line.startswith("configure pon interface ") for line in lines):
+            return [line for line in lines if line.startswith("configure pon interface ")]
         root = self._parse_config_to_tree(config)
         if root is None:
             return None

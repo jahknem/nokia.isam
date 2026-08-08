@@ -11,7 +11,7 @@ short_description: Manage generic PON data path integrity threshold.
 description:
   - Manages C(configure generic-pon dpinteg-threshold) configuration.
 version_added: 1.0.0
-author: Ansible Network Engineer
+author: Jan Kühnemund (@jahknem)
 options:
   config:
     description: The provided generic PON configuration.
