@@ -1,0 +1,1 @@
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.pon_variants.pon_variants import Epon_interfacesFacts

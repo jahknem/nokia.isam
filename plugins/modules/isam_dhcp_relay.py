@@ -17,8 +17,10 @@ options:
         type: str
         required: true
       port_stats:
+        description: Enable DHCPv4 relay statistics for the VLAN user port.
         type: bool
       v6_port_stats:
+        description: Enable DHCPv6 relay statistics for the VLAN user port.
         type: bool
   running_config:
     type: str

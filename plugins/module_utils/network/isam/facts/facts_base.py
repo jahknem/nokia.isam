@@ -39,6 +39,9 @@ RESOURCE_CONFIG_PREFIXES = {
     "l2cp_session": ("configure l2cp session ",),
     "l2cp_user_port": ("configure l2cp user-port ",),
     "linetest": ("configure linetest ",),
+    "ngpon2_channel_groups": ("configure channel-group ",),
+    "epon_interfaces": ("configure epon interface ",),
+    "channel_pair_pm": ("configure channel-pair interface ",),
     "isam_equipment": ("configure equipment ",),
     "isam_traps": ("configure trap ",),
     "isam_vlan_global": (

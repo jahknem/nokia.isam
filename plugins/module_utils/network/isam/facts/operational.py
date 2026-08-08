@@ -34,6 +34,9 @@ OPERATIONAL_FACT_RESOURCES = frozenset(
         "ont_ranging_status",
         "ont_software_status",
         "pon_pm_status",
+        "dhcp_relay_sessions",
+        "dhcp_relay_port_stats",
+        "dhcp_relay_v6_port_stats",
     )
 )
 
@@ -126,3 +129,35 @@ class Pon_pm_statusFacts(_OperationalFacts):
 
     def parse(self, output):
         return parse_tc_layer_current_interval(output)
+
+
+class Dhcp_relay_sessionsFacts(_OperationalFacts):
+    command = "show dhcp-relay session"
+    key = "dhcp_relay_sessions"
+
+    def parse(self, output):
+        return parse_status_table(output) or parse_operational_facts(output)
+
+
+class Dhcp_relay_port_statsFacts(_OperationalFacts):
+    key = "dhcp_relay_port_stats"
+
+    def populate_facts(self, connection, ansible_facts, data=None):
+        # Nokia requires a port (and optionally VLAN) for this command.
+        ansible_facts["ansible_network_resources"][self.key] = []
+        return ansible_facts
+
+    def parse(self, output):
+        return parse_status_table(output) or parse_operational_facts(output)
+
+
+class Dhcp_relay_v6_port_statsFacts(_OperationalFacts):
+    key = "dhcp_relay_v6_port_stats"
+
+    def populate_facts(self, connection, ansible_facts, data=None):
+        # Nokia requires a port (and optionally VLAN) for this command.
+        ansible_facts["ansible_network_resources"][self.key] = []
+        return ansible_facts
+
+    def parse(self, output):
+        return parse_status_table(output) or parse_operational_facts(output)

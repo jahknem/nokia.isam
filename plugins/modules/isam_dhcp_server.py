@@ -9,7 +9,7 @@ DOCUMENTATION = """
 module: isam_dhcp_server
 short_description: Manages DHCP server configuration on Nokia ISAM.
 description:
-  - Manages the DHCP server configuration including start address, end address, subnet mask, and lease time.
+  - Manages the DHCP server configuration including the dynamic IPv4 pool, subnet mask, lease time, and restart flag.
 version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:
@@ -21,7 +21,10 @@ options:
         description: Starting IP address for DHCP pool.
         type: str
       end_addr:
-        description: Ending IP address for DHCP pool.
+        description: Compatibility alias for stop_addr.
+        type: str
+      stop_addr:
+        description: Stopping IP address for DHCP pool.
         type: str
       subnet_mask:
         description: Subnet mask for DHCP pool.
@@ -29,6 +32,12 @@ options:
       lease_time:
         description: Lease time in seconds.
         type: int
+      lease_time_enabled:
+        description: Whether the device DHCP lease-time setting is enabled. Set false to render no lease-time.
+        type: bool
+      restart:
+        description: Restart the DHCP server.
+        type: bool
   running_config:
     description: Device-native running configuration for parsed state.
     type: str
@@ -49,7 +58,7 @@ EXAMPLES = """
     state: rendered
     config:
       start_addr: 192.168.1.100
-      end_addr: 192.168.1.200
+      stop_addr: 192.168.1.200
       subnet_mask: 255.255.255.0
       lease_time: 86400
 

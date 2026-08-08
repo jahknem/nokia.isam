@@ -30,9 +30,9 @@ class Isam_dhcp_serverTemplate(NetworkTemplate):
         {
             "name": "end_addr",
             "compval": "end_addr",
-            "getval": re.compile(r"^configure\sdhcp-server\send-addr\s(?P<end_addr>\S+)$"),
-            "setval": "configure dhcp-server end-addr {{ end_addr }}",
-            "remval": "configure dhcp-server end-addr",
+            "getval": re.compile(r"^configure\sdhcp-server\s(?:stop|end)-addr\s(?P<end_addr>\S+)$"),
+            "setval": "configure dhcp-server stop-addr {{ end_addr }}",
+            "remval": "configure dhcp-server stop-addr",
             "result": {
                 "end_addr": "{{ end_addr }}",
             },
@@ -55,6 +55,17 @@ class Isam_dhcp_serverTemplate(NetworkTemplate):
             "remval": "configure dhcp-server lease-time",
             "result": {
                 "lease_time": "{{ lease_time }}",
+                "lease_time_enabled": True,
+            },
+        },
+        {
+            "name": "lease_time_enabled",
+            "compval": "lease_time_enabled",
+            "getval": re.compile(r"^configure\sdhcp-server\sno\slease-time$"),
+            "setval": "configure dhcp-server no lease-time",
+            "remval": "configure dhcp-server lease-time",
+            "result": {
+                "lease_time_enabled": False,
             },
         },
         {
@@ -75,7 +86,7 @@ class Isam_dhcp_serverTemplate(NetworkTemplate):
                 r"start-addr\s(?P<start_addr>\S+)\s+"
                 r"(?:stop-addr|end-addr)\s(?P<end_addr>\S+)"
                 r"(?:\s+subnet-mask\s(?P<subnet_mask>\S+))?"
-                r"(?:\s+lease-time\s(?P<lease_time>\d+))?"
+                r"(?:\s+(?P<negate_lease_time>no\s+)?lease-time(?:\s(?P<lease_time>\d+))?)?"
                 r"(?:\s+(?P<negate_restart>no\s)?restart)?"
                 r"(?:\s+.*)?$"
             ),
@@ -84,6 +95,7 @@ class Isam_dhcp_serverTemplate(NetworkTemplate):
                 "end_addr": "{{ end_addr }}",
                 "subnet_mask": "{{ subnet_mask|default('') }}",
                 "lease_time": "{{ lease_time|default('') }}",
+                "lease_time_enabled": "{{ False if negate_lease_time|default('') else True }}",
                 "restart": "{{ False if negate_restart|default('') else True }}",
             },
         },
