@@ -180,6 +180,10 @@ def test_multicast_command_families_have_separate_owners():
         "configure igmp mcast-svc-context default\nconfigure mcast-control admin-state",
         "mcast_control",
     ) == "configure mcast-control admin-state"
+    assert facts_base.select_resource_config(
+        "configure igmp mcast-svc-context default\nconfigure system id name test\nconfigure mcast-control admin-state",
+        "multicast",
+    ) == "configure igmp mcast-svc-context default\nconfigure mcast-control admin-state"
 
 
 def test_dhcp_server_alias_uses_one_command_owner():
