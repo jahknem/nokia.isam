@@ -14,6 +14,7 @@ class Ani_ontsArgs(object):  # pylint: disable=R0903
             "elements": "dict",
             "options": {
                 "ont_idx": {"type": "str", "required": True},
+                "tca_thresh": {"type": "bool"},
                 "tca_profile": {"type": "str"},
                 "admin_state": {"type": "str", "choices": ["up", "down"]},
             },

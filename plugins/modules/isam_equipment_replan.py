@@ -12,7 +12,7 @@ short_description: Resource module to configure equipment replan
 description:
   - Manages C(configure equipment replan) settings on Nokia ISAM devices.
 version_added: 1.0.0
-author: Jan Khnemund (@jahknem)
+author: Jan Kühnemund (@jahknem)
 notes:
   - Tested against Nokia ISAM 6.2.04ng
   - This module works with connection C(network_cli)

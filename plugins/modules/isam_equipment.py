@@ -12,7 +12,7 @@ description:
   - Manages the initial core C(configure equipment) resources for shelves, slots, appliques, and protection groups.
   - C(equipment ont) is intentionally excluded and belongs in a separate resource module.
 version_added: 1.0.0
-author: Jan Kuehnemund
+author: Jan Kühnemund (@jahknem)
 options:
   config:
     description: Equipment configuration grouped by resource type.

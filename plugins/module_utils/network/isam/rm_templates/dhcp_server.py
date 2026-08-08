@@ -57,5 +57,35 @@ class Isam_dhcp_serverTemplate(NetworkTemplate):
                 "lease_time": "{{ lease_time }}",
             },
         },
+        {
+            "name": "restart",
+            "compval": "restart",
+            "getval": re.compile(
+                r"^configure\sdhcp-server\s(?P<negate_restart>no\s)?restart$"
+            ),
+            "setval": "configure dhcp-server {{ 'no ' if restart == false else '' }}restart",
+            "result": {
+                "restart": "{{ False if negate_restart else True }}",
+            },
+        },
+        {
+            "name": "dhcp_packed",
+            "getval": re.compile(
+                r"^configure\sdhcp-server\s"
+                r"start-addr\s(?P<start_addr>\S+)\s+"
+                r"(?:stop-addr|end-addr)\s(?P<end_addr>\S+)"
+                r"(?:\s+subnet-mask\s(?P<subnet_mask>\S+))?"
+                r"(?:\s+lease-time\s(?P<lease_time>\d+))?"
+                r"(?:\s+(?P<negate_restart>no\s)?restart)?"
+                r"(?:\s+.*)?$"
+            ),
+            "result": {
+                "start_addr": "{{ start_addr }}",
+                "end_addr": "{{ end_addr }}",
+                "subnet_mask": "{{ subnet_mask|default('') }}",
+                "lease_time": "{{ lease_time|default('') }}",
+                "restart": "{{ False if negate_restart|default('') else True }}",
+            },
+        },
     ]
     # fmt: on

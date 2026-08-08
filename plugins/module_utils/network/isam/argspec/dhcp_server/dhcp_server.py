@@ -16,6 +16,7 @@ class Isam_dhcp_serverArgs(object):  # pylint: disable=R0903
                 "end_addr": {"type": "str"},
                 "subnet_mask": {"type": "str"},
                 "lease_time": {"type": "int"},
+                "restart": {"type": "bool"},
             },
         },
         "running_config": {"type": "str"},
