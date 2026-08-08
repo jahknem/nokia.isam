@@ -41,6 +41,11 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.arp_
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.cfm.cfm import CfmFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.efm_oam.efm_oam import EfmOamFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ipv6_antispoofing_slot.ipv6_antispoofing_slot import Isam_ipv6_antispoofing_slotFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.dist_service.dist_service import Isam_dist_serviceFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.l2cp.l2cp import L2cpFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.l2cp_session.l2cp_session import L2cpSessionFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.l2cp_user_port.l2cp_user_port import L2cpUserPortFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.linetest.linetest import LinetestFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.equipment_replan.equipment_replan import Equipment_replanFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.generic_pon.generic_pon import Generic_ponFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.interface_alarms.interface_alarms import Interface_alarmsFacts
@@ -84,6 +89,11 @@ FACT_RESOURCE_SUBSETS = dict(
     isam_cfm=CfmFacts,
     efm_oam_interface=EfmOamFacts,
     isam_ipv6_antispoofing_slot=Isam_ipv6_antispoofing_slotFacts,
+    isam_dist_service=Isam_dist_serviceFacts,
+    l2cp=L2cpFacts,
+    l2cp_session=L2cpSessionFacts,
+    l2cp_user_port=L2cpUserPortFacts,
+    linetest=LinetestFacts,
     equipment_onts=Equipment_ontsFacts,
     equipment_replan=Equipment_replanFacts,
     ethernet_line=Ethernet_lineFacts,

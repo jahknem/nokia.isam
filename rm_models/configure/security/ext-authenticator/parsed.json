@@ -1,0 +1,13 @@
+{
+  "title": "Security 802.1x Port Authentication Management Command",
+  "description": "Manage a port or virtual channel in the scope of 802.1x authentication.",
+  "user_level": "aaa",
+  "syntax": "admin security ext-authenticator (port) [ (clear-statistics) ]",
+  "resource_parameters": [
+    {"name": "port", "type": "Eqpt port or virtual channel identifier", "required": true}
+  ],
+  "command_parameters": [
+    {"name": "clear-statistics", "type": "flag", "required": false}
+  ],
+  "raw": "Source: docs/nokia_docs/227_-_SecurityManagementCommands.pdf and 228_-_SecurityManagementCommands.pdf"
+}

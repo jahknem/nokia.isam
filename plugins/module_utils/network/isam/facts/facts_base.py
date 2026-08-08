@@ -34,6 +34,11 @@ RESOURCE_CONFIG_PREFIXES = {
     "isam_cfm": ("configure cfm ",),
     "efm_oam_interface": ("configure efm-oam interface ",),
     "isam_ipv6_antispoofing_slot": ("configure ipv6-antispoofing slot ",),
+    "isam_dist_service": ("configure dist-service ",),
+    "l2cp": ("configure l2cp ",),
+    "l2cp_session": ("configure l2cp session ",),
+    "l2cp_user_port": ("configure l2cp user-port ",),
+    "linetest": ("configure linetest ",),
     "isam_equipment": ("configure equipment ",),
     "isam_traps": ("configure trap ",),
     "isam_vlan_global": (

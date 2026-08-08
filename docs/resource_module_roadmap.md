@@ -85,6 +85,10 @@ All 30 roadmap modules plus 5 legacy modules are implemented and merged to `main
 | 33 | `isam_arp_relay` | `configure arp-relay` | gathered, rendered, parsed, merged/--check |
 | 34 | `isam_pppoe_client_*` | `configure pppoe-client` | parsed, rendered, merged/--check |
 | 35 | `isam_pppoel2_statistics` | `configure pppoel2 statistics` | parsed, rendered, merged/--check |
+| 36 | `isam_l2cp*` | `configure l2cp` | gathered, rendered, parsed, merged/--check |
+| 37 | `isam_dist_service` | `configure dist-service` | gathered, rendered, parsed, merged/--check |
+| 38 | `isam_linetest` | `configure linetest` | gathered, rendered, parsed |
+| 39 | `isam_security_ext_authenticator` | `admin security ext-authenticator` | rendered, parsed |
 
 ## Additional Config Resource Candidates
 
