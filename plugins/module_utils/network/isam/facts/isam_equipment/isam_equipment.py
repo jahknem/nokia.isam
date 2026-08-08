@@ -5,6 +5,9 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    unwrap_response,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.isam_equipment.isam_equipment import (
     Isam_equipmentArgs,
 )
@@ -28,8 +31,7 @@ class Isam_equipmentFacts(object):
 
         if not data:
             data = self.get_config(connection)
-        if type(data) == tuple:
-            data = data[0]
+        data = unwrap_response(data)
 
         data = self._flatten_config(data)
         parser = Isam_equipmentTemplate(lines=data, module=self._module)
