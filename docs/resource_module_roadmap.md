@@ -73,13 +73,14 @@ All 30 roadmap modules plus 5 legacy modules are implemented and merged to `main
 | 21 | `isam_generic_pon` | `configure generic-pon` | gathered, rendered, parsed, merged/--check |
 | 22 | `isam_iphost` | `configure iphost` | gathered, rendered, parsed, merged/--check |
 | 23 | `isam_li_vlan` | `configure li_vlan` | gathered, rendered, parsed, merged/--check |
-| 24 | `isam_multicast` | `configure igmp`, `mcast-control` | gathered, rendered, parsed, merged/--check |
-| 25 | `isam_software_mngt` | `configure software-mngt` | gathered, rendered, parsed, merged/--check |
-| 26 | `isam_ani_onts` | `configure ani ont` | gathered, rendered, parsed, merged/--check |
-| 27 | `isam_mcast_general` | `configure mcast general` | gathered, rendered, parsed, merged/--check |
-| 28 | `isam_xdsl_boards` | `configure xdsl board`, `vp-board` | gathered, rendered, parsed, merged/--check |
-| 29 | `isam_equipment_replan` | `configure equipment replan` | gathered, rendered, parsed, merged/--check |
-| 30 | `isam_interface_alarms` | `configure interface alarm` | gathered, rendered, parsed, merged/--check |
+| 24 | `isam_igmp` | `configure igmp` | gathered, rendered, parsed, merged/--check |
+| 25 | `isam_mcast_control` | `configure mcast-control` | gathered, rendered, parsed, merged/--check |
+| 26 | `isam_software_mngt` | `configure software-mngt` | gathered, rendered, parsed, merged/--check |
+| 27 | `isam_ani_onts` | `configure ani ont` | gathered, rendered, parsed, merged/--check |
+| 28 | `isam_mcast_general` | `configure mcast general` | gathered, rendered, parsed, merged/--check |
+| 29 | `isam_xdsl_boards` | `configure xdsl board`, `vp-board` | gathered, rendered, parsed, merged/--check |
+| 30 | `isam_equipment_replan` | `configure equipment replan` | gathered, rendered, parsed, merged/--check |
+| 31 | `isam_interface_alarms` | `configure interface alarm` | gathered, rendered, parsed, merged/--check |
 
 ## Additional Config Resource Candidates
 
@@ -93,7 +94,8 @@ All 30 roadmap modules plus 5 legacy modules are implemented and merged to `main
 | `isam_interface_alarms` | `configure interface alarm` | Could also be folded into interfaces. |
 | `isam_iphost` | `configure iphost` | Needs PDF review before module boundary is final. |
 | `isam_li_vlan` | `configure li_vlan` | Small singleton or VLAN extension. |
-| `isam_multicast` | `configure igmp`, `mcast`, `mcast-control` | Keep together unless schemas diverge. |
+| `isam_igmp` | `configure igmp` | Owns IGMP snooping, querier, and query parameters. |
+| `isam_mcast_control` | `configure mcast-control` | Owns multicast-control limits and administrative state. |
 | `isam_ntp_onts` | `configure ntp ont` | ONT-specific management/config resource. |
 | `isam_qos_maps` | `configure qos tc-map-dot1p`, `dscp-map-dot1p`, `up-ctrl-pkt`, `dn-ctrl-pkt` | Separate from interface bindings and profiles. |
 | `isam_software_mngt` | `configure software-mngt` | High operational risk; implement late and carefully. |
