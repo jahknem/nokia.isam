@@ -54,7 +54,12 @@ class TestIsamDistServiceModule(TestIsamModule):
         self.assertEqual(result["commands"], ["configure dist-service 100 qos-profile gold"])
 
     def test_deleted_check_mode(self):
-        self.get_config.return_value = "configure dist-service 100 service-type epipe\nconfigure dist-service 100 qos-profile gold"
+        self.get_config.return_value = "\n".join([
+            "configure dist-service 100 service-type epipe",
+            "configure dist-service 100 qos-profile gold",
+            "configure dist-service 200 service-type epipe",
+            "configure dist-service 200 qos-profile silver",
+        ])
         set_module_args(dict(state="deleted", config=[dict(name="100")]), True)
         result = self.execute_module(changed=True)
-        self.assertEqual(result["commands"], ["no configure dist-service 100 no service-type", "no configure dist-service 100 no qos-profile"])
+        self.assertEqual(result["commands"], ["configure dist-service 100 no service-type", "configure dist-service 100 no qos-profile"])

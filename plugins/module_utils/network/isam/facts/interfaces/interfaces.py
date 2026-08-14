@@ -23,7 +23,10 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.interfaces.interfaces import (
     InterfacesArgs,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import unwrap_response
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_scoped_config,
+    unwrap_response,
+)
 
 
 class InterfacesFacts(object):
@@ -52,6 +55,20 @@ class InterfacesFacts(object):
         entry.pop("port-type", None)
         return entry
 
+    def get_config(self, connection):
+        config = self._module.params.get("config") or []
+        commands = [
+            "info configure interface port %s detail flat" % item["name"]
+            for item in config
+        ]
+        return get_scoped_config(
+            self._module,
+            connection,
+            config,
+            "info configure interface port flat",
+            commands,
+        )
+
     def populate_facts(self, connection, ansible_facts, data=None):
         """ Populate the facts for Interfaces network resource
 
@@ -66,7 +83,7 @@ class InterfacesFacts(object):
         objs = []
 
         if not data:
-            data = connection.get("info configure interface port flat")
+            data = self.get_config(connection)
         data = unwrap_response(data)
 
         # parse native config using the Interfaces template

@@ -5,7 +5,10 @@ from anytree import Node
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts import facts_base
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.facts.facts import FactsArgs
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import FACT_RESOURCE_SUBSETS
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
+    FACT_LEGACY_SUBSETS,
+    FACT_RESOURCE_SUBSETS,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.interfaces import InterfacesTemplate
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.qos_profiles import Qos_profilesTemplate
 from ansible_collections.nokia.isam.tests.unit.compat.mock import patch
@@ -233,3 +236,19 @@ def test_dhcp_server_alias_uses_one_command_owner():
 
 def test_facts_choices_are_registered_resources():
     assert set(FactsArgs.choices) - {"all"} <= set(FACT_RESOURCE_SUBSETS)
+
+
+def test_operational_subsets_are_not_configuration_resources():
+    assert {
+        "active_alarms",
+        "dhcp_relay",
+        "equipment_status",
+        "interface_status",
+        "ont_status",
+        "ont_ranging_status",
+        "ont_software_status",
+        "pon_pm_status",
+        "pon_status",
+        "software_status",
+    } <= set(FACT_LEGACY_SUBSETS)
+    assert not set(FACT_LEGACY_SUBSETS).intersection(FACT_RESOURCE_SUBSETS)

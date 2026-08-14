@@ -30,3 +30,13 @@ class TestEfmOam(TestIsamModule):
             "name": "1/1/1/1", "admin_up": True, "passive_mode": False,
             "keep_alive_intvl": "120", "response_intvl": "5",
         }])
+
+    def test_deleted_is_idempotent_for_unknown_interface(self):
+        self.module = isam_efm_oam_interface
+        set_module_args({
+            "state": "deleted",
+            "config": [{"name": "1/1/1/1"}],
+            "_ansible_check_mode": True,
+        }, True)
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["commands"], [])

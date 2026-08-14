@@ -12,10 +12,12 @@ The isam ethernet_onts fact class.
 """
 
 from anytree import Node
+import shlex
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_scoped_config,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.ethernet_onts.ethernet_onts import (
@@ -35,7 +37,18 @@ class Ethernet_ontsFacts(object):
 
     def get_config(self, connection):
         """Wrapper method for `connection.get()`."""
-        return connection.get("info configure ethernet ont flat")
+        config = self._module.params.get("config") or []
+        commands = [
+            "info configure ethernet ont %s flat detail" % item["uni_idx"]
+            for item in config
+        ]
+        return get_scoped_config(
+            self._module,
+            connection,
+            config,
+            "info configure ethernet ont flat",
+            commands,
+        )
 
     def populate_facts(self, connection, ansible_facts, data=None):
         """Populate the facts for Ethernet_onts network resource."""
@@ -96,7 +109,7 @@ class Ethernet_ontsFacts(object):
         for raw_line in config.splitlines():
             line = raw_line.strip()
             if line.startswith("configure ethernet ont "):
-                flat_lines.append(line)
+                flat_lines.extend(self._split_packed_line(line))
         if flat_lines:
             return flat_lines
 
@@ -113,3 +126,29 @@ class Ethernet_ontsFacts(object):
             else:
                 flat_config.append("configure ethernet " + line)
         return flat_config
+
+    _PACKED_WORDS = {
+        "cust-info", "auto-detect", "power-control", "pse-class",
+        "pse-pw-priority", "pwr-override", "lpt-mode", "admin-state",
+    }
+
+    def _split_packed_line(self, line):
+        try:
+            tokens = shlex.split(line)
+        except ValueError:
+            return [line]
+        starts = [
+            index for index, token in enumerate(tokens[4:], 4)
+            if (token in self._PACKED_WORDS and (index == 4 or tokens[index - 1] != "no"))
+            or (token == "no" and index + 1 < len(tokens) and tokens[index + 1] in self._PACKED_WORDS)
+        ]
+        if not starts:
+            return [line]
+        prefix = " ".join(tokens[:4])
+        result = []
+        for start, end in zip(starts, starts[1:] + [len(tokens)]):
+            segment = tokens[start:end]
+            if segment and segment[0] == "cust-info" and len(segment) > 1:
+                segment = [segment[0], '"' + " ".join(segment[1:]) + '"']
+            result.append(prefix + " " + " ".join(segment))
+        return result

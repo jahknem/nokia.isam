@@ -1,0 +1,1 @@
+configure linetest session 1/1/1/1 test-type dual no diagnosis-call

@@ -42,10 +42,14 @@ class Ntp_onts(ResourceModule):
             tmplt=Ntp_ontsTemplate(),
         )
         self.parsers = [
-            "ntp_ont.server",
-            "ntp_ont.port",
-            "ntp_ont.poll_interval",
-            "ntp_ont.enable",
+            "ntp_ont.client_state",
+            "ntp_ont.config_mode",
+            "ntp_ont.server1_ip_addr",
+            "ntp_ont.server2_ip_addr",
+            "ntp_ont.server3_ip_addr",
+            "ntp_ont.oper_mode",
+            "ntp_ont.key_identifier",
+            "ntp_ont.key",
         ]
 
     def execute_module(self):
@@ -71,7 +75,7 @@ class Ntp_onts(ResourceModule):
             }
             wantd = {}
 
-        if self.state in ["replaced", "overridden", "deleted"]:
+        if self.state in ["overridden", "deleted"]:
             for k, have in iteritems(haved):
                 if k not in wantd:
                     self._compare(want={}, have=have)

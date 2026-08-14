@@ -6,6 +6,7 @@
 from __future__ import absolute_import, division, print_function
 
 import re
+import shlex
 
 __metaclass__ = type
 
@@ -69,6 +70,24 @@ class VlansFacts(object):
     def _flatten_config(self, data):
         if any(line.strip().startswith("configure vlan id ") for line in (data or "").splitlines()):
             result = []
+            flag_keys = {
+                "sntp-proxy", "vmac-not-in-opt61", "drly-srv-usr-side", "dhcp-opt82-nni",
+                "dhcp-opt82-uplink", "relay-id-dhcp", "dhcp-linerate", "pppoe-linerate",
+                "dhcpv6-linerate", "pppoe-l2-encaps", "dhcp-l2-encaps", "dhcpv6-l2-encaps",
+                "l2-encaps1", "pppoer-vlanaware", "dhcpr-vlanaware", "dhcpv6r-vlanaware",
+                "dhcpv6-relay-id", "dhcpv6-trst-port", "vmac-translation", "vmac-dnstr-filter",
+                "icmpv6-sec-fltr", "l2cp-transparent", "ipv4-mcast-ctrl", "ipv6-mcast-ctrl",
+                "mac-mcast-ctrl", "dis-proto-rip", "proto-ntp", "dis-ip-antispoof",
+                "unknown-unicast", "pt2ptgem-flooding", "mac-movement-ctrl", "arp-snooping",
+                "arp-polling", "mac-unauth",
+            }
+            value_keys = {
+                "mode", "name", "priority", "new-broadcast", "protocol-filter", "pppoe-relay-tag",
+                "new-secure-fwd", "aging-time", "in-qos-prof-name", "dhcp-opt82-ext",
+                "circuit-id-dhcp", "remote-id-dhcp", "circuit-id-pppoe", "remote-id-pppoe",
+                "dhcpv6-itf-id", "dhcpv6-remote-id", "enterprise-number", "arp-polling-ip",
+                "cvlan4095passthru",
+            }
             for line in data.splitlines():
                 line = line.strip()
                 if not line.startswith("configure vlan id "):
@@ -78,8 +97,27 @@ class VlansFacts(object):
                     result.append(line)
                     continue
                 vlan_id, body = match.groups()
-                for clause in re.findall(r'(?:name\s+(?:"[^"]+"|\S+)|mode\s+\S+)', body):
-                    result.append("id {0} {1}".format(vlan_id, clause))
+                tokens = shlex.split(body)
+                result.append("id {0}".format(vlan_id))
+                index = 0
+                while index < len(tokens):
+                    negate = tokens[index] == "no"
+                    key_index = index + 1 if negate else index
+                    if key_index >= len(tokens):
+                        break
+                    key = tokens[key_index]
+                    if key in flag_keys:
+                        result.append("  {0}{1}".format("no " if negate else "", key))
+                        index = key_index + 1
+                    elif key in value_keys and key_index + 1 < len(tokens):
+                        result.append(
+                            "  {0}{1} {2}".format(
+                                "no " if negate else "", key, tokens[key_index + 1]
+                            )
+                        )
+                        index = key_index + 2
+                    else:
+                        index += 1
             return result
         lines = []
         current_id = None

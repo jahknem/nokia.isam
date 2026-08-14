@@ -18,6 +18,23 @@ class Generic_ponArgs(object):  # pylint: disable=R0903
                     "options": {
                         "pon_pmcollect": {"type": "bool"},
                         "ont_pmcollect": {"type": "bool"},
+                        "threshold": {
+                            "type": "dict",
+                            "options": {
+                                field: {"type": "str"}
+                                for field in (
+                                    "txmcutilhi", "txmcutilmd", "txmcutillo",
+                                    "txtotutilhi", "txtotutilmd", "txtotutillo",
+                                    "rxtotutilhi", "rxtotutilmd", "rxtotutillo",
+                                    "dbacongperiodhi", "dbacongperiodmd", "dbacongperiodlo",
+                                    "txucdropfrmhi", "txucdropfrmmd", "txucdropfrmlo",
+                                    "txmcdropfrmhi", "txmcdropfrmmd", "txmcdropfrmlo",
+                                    "txbcdropfrmhi", "txbcdropfrmmd", "txbcdropfrmlo",
+                                    "rxtotdropfrmhi", "rxtotdropfrmmd", "rxtotdropfrmlo",
+                                    "numtcint", "numtcintdba", "dbacongthresh",
+                                )
+                            },
+                        },
                     },
                 },
                 "ont": {

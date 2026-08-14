@@ -87,10 +87,12 @@ class Qos_interfaces(ResourceModule):
             wantd = dict_merge(haved, wantd)
 
         if self.state == "deleted":
-            haved = {k: v for k, v in iteritems(haved) if k in wantd or not wantd}
-            wantd = {}
+            if not wantd:
+                wantd = {}
+            else:
+                haved = {k: v for k, v in iteritems(haved) if k in wantd}
 
-        if self.state in ["overridden", "deleted"]:
+        if self.state == "overridden" or (self.state == "deleted" and not self.want):
             for k, have in iteritems(haved):
                 if k not in wantd:
                     self._compare(want={}, have=have)
@@ -99,7 +101,21 @@ class Qos_interfaces(ResourceModule):
             self._compare(want=want, have=haved.pop(k, {}))
 
     def _compare(self, want, have):
-        self.compare(parsers=self.top_parsers, want=want, have=have)
+        if self.state == "deleted" and want:
+            requested = {
+                key for key in want
+                if key not in {"name", "id", "queue", "upstream_queue", "ds_rem_queue"}
+            }
+            for field in requested:
+                value = have.get(field)
+                if value is not None:
+                    self.addcmd(
+                        {"name": have.get("name", want.get("name")), field: value},
+                        "interface.%s" % field,
+                        True,
+                    )
+        else:
+            self.compare(parsers=self.top_parsers, want=want, have=have)
         for list_name, parsers in iteritems(self.list_parsers):
             self._compare_list(list_name, parsers, want, have)
 
@@ -107,7 +123,10 @@ class Qos_interfaces(ResourceModule):
         wantd = {entry["id"]: entry for entry in want.get(list_name, [])}
         haved = {entry["id"]: entry for entry in have.get(list_name, [])}
 
-        if self.state in ["overridden", "deleted"]:
+        targeted_delete = self.state == "deleted" and any(
+            key not in {"name", "id"} for key in want
+        )
+        if self.state == "overridden" or (self.state == "deleted" and not targeted_delete):
             for key, have_entry in iteritems(haved):
                 if key not in wantd:
                     self._compare_list_entry(parsers, {}, have_entry, have.get("name"))

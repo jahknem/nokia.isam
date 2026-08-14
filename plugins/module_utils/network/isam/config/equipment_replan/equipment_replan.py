@@ -44,6 +44,9 @@ class Equipment_replan(ResourceModule):
             for k, v in have.items():
                 want.setdefault(k, v)
 
+        if self.state == "deleted":
+            want = {}
+
         if self.state in ["overridden", "deleted"]:
             if have and not want:
                 self.addcmd(have, "board_auto_replan", negate=True)

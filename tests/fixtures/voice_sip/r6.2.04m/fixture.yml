@@ -1,0 +1,7 @@
+schema_version: 1
+resource: voice_sip
+device_type: Nokia ISAM 7330 FTTN
+software_version: R6.2.04m
+command: info configure voice sip flat
+captured_at: 2026-08-10
+source: sanitized-live-capture

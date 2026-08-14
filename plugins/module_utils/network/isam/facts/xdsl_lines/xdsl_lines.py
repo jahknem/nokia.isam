@@ -115,7 +115,21 @@ class Xdsl_linesFacts(object):
         lines = [line.strip() for line in str(config).splitlines() if line.strip()]
         if any(line.startswith("configure xdsl line ") for line in lines):
             result = []
-            clauses = re.compile(r"(?:service-profile|spectrum-profile|dpbo-profile|vect-profile)\s+\S+|(?:no\s+)?admin-up")
+            value_words = (
+                "service-profile|spectrum-profile|dpbo-profile|vect-profile|rtx-profile|sos-profile|"
+                "carrier-data-mode|transfer-mode|vect-qln-mode|vect-fallback"
+            )
+            flag_words = (
+                "ansi-t1413|etsi-dts|g992-1-a|g992-1-b|g992-2-a|g992-3-a|g992-3-b|g992-3-aj|"
+                "g992-3-l1|g992-3-l2|g992-3-am|g992-5-a|g992-5-b|ansi-t1.424|etsi-ts|itu-g993-1|"
+                "ieee-802.3ah|g992-5-aj|g992-5-am|g993-2-8a|g993-2-8b|g993-2-8c|g993-2-8d|"
+                "g993-2-12a|g993-2-12b|"
+                "g993-2-17a|g993-2-30a|g993-2-35b|imp-noise-sensor|auto-switch"
+            )
+            clauses = re.compile(
+                r"(?:" + value_words + r")\s+\S+|no\s+(?:" + value_words + r")"
+                r"|(?:no\s+)?(?:" + flag_words + r")|(?:no\s+)?admin-up"
+            )
             for line in lines:
                 match = re.match(r"(configure xdsl line\s+\S+\s+)(.*)", line)
                 if match:

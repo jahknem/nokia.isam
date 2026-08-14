@@ -44,6 +44,11 @@ class Ethernet_onts(ResourceModule):
         self.parsers = [
             "ont.cust_info",
             "ont.auto_detect",
+            "ont.power_control",
+            "ont.pse_class",
+            "ont.pse_pw_priority",
+            "ont.pwr_override",
+            "ont.lpt_mode",
             "ont.admin_state",
         ]
 
@@ -65,12 +70,24 @@ class Ethernet_onts(ResourceModule):
             wantd = dict_merge(haved, wantd)
 
         if self.state == "deleted":
+            # Ethernet ONTs have no object-level remove command.  An identity
+            # alone must not reset every customer-facing attribute.
+            requested = self._module.params.get("config") or []
+            if requested and all(
+                not any(
+                    value is not None
+                    for key, value in entry.items()
+                    if key not in {"uni_idx", "name"}
+                )
+                for entry in requested
+            ):
+                return
             haved = {
                 k: v for k, v in iteritems(haved) if k in wantd or not wantd
             }
             wantd = {}
 
-        if self.state in ["replaced", "overridden", "deleted"]:
+        if self.state in ["overridden", "deleted"]:
             for k, have in iteritems(haved):
                 if k not in wantd:
                     self._compare(want={}, have=have)

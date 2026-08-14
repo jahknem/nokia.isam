@@ -1,0 +1,7 @@
+schema_version: 1
+resource: equipment_status
+device_type: Nokia ISAM 7330 FTTN
+software_version: R6.2.04m
+command: show equipment slot
+captured_at: 2026-08-10
+source: synthetic-regression

@@ -79,7 +79,7 @@ class Xstp(ResourceModule):
             haved = {k: v for k, v in iteritems(haved) if k in wantd or not wantd}
             wantd = {}
 
-        if self.state in ["overridden", "replaced", "deleted"]:
+        if self.state in ["overridden", "deleted"]:
             # The observed port field has no documented no-form; leave unmentioned ports unchanged.
             haved = {k: v for k, v in iteritems(haved) if k in wantd}
 

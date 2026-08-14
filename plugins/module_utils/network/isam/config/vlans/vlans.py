@@ -18,6 +18,7 @@ created.
 """
 
 from ansible.module_utils.six import iteritems
+from ansible.module_utils.six.moves import shlex_quote
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
 )
@@ -111,6 +112,20 @@ class Vlans(ResourceModule):
         """ Generate configuration commands to send based on
             want, have and desired state.
         """
+        if self.state == "rendered":
+            rendered = self._render_vlan_config(
+                self._module.params.get("config") or self.want
+            )
+            self.commands = rendered
+            self.result["rendered"] = rendered
+            return
+
+        if self.state in ("merged", "replaced", "overridden", "deleted"):
+            commands = self._generate_vlan_state_commands()
+            self.commands = commands
+            self.result["commands"] = commands
+            return
+
         wantd = {entry['id']: entry for entry in self.want}
         haved = {entry['id']: entry for entry in self.have}
 
@@ -141,3 +156,58 @@ class Vlans(ResourceModule):
            for the Vlans network resource.
         """
         self.compare(parsers=self.parsers, want=want, have=have)
+
+    def _render_vlan_config(self, config):
+        commands = []
+        for vlan in config or []:
+            prefix = "configure vlan id {0}".format(vlan["id"])
+            for field in self.parsers:
+                if field in ("id", "id_with_mode") or vlan.get(field) is None:
+                    continue
+                value = vlan[field]
+                if field == "name":
+                    value = shlex_quote(str(value))
+                if value is False:
+                    commands.append("{0} no {1}".format(prefix, field))
+                elif value is True:
+                    commands.append("{0} {1}".format(prefix, field))
+                else:
+                    commands.append("{0} {1} {2}".format(prefix, field, value))
+        return commands
+
+    def _generate_vlan_state_commands(self):
+        want = {str(item["id"]): item for item in self.want or []}
+        have = {str(item["id"]): item for item in self.have or []}
+        commands = []
+
+        if self.state == "deleted":
+            targets = want.keys() if want else have.keys()
+            return ["configure vlan no id {0}".format(vlan_id) for vlan_id in targets]
+
+        if self.state == "overridden":
+            for vlan_id in have:
+                if vlan_id not in want:
+                    commands.append("configure vlan no id {0}".format(vlan_id))
+
+        for vlan_id, desired in want.items():
+            current = have.get(vlan_id, {})
+            if self.state == "replaced":
+                for field in current:
+                    if field not in desired and field != "id":
+                        commands.append("configure vlan id {0} no {1}".format(vlan_id, field))
+            elif self.state == "merged":
+                desired = dict(current, **desired)
+
+            for field, value in desired.items():
+                if field == "id" or value is None:
+                    continue
+                if value == current.get(field):
+                    continue
+                if value is False:
+                    commands.append("configure vlan id {0} no {1}".format(vlan_id, field))
+                elif value is True:
+                    commands.append("configure vlan id {0} {1}".format(vlan_id, field))
+                else:
+                    rendered = shlex_quote(str(value)) if field == "name" else value
+                    commands.append("configure vlan id {0} {1} {2}".format(vlan_id, field, rendered))
+        return commands

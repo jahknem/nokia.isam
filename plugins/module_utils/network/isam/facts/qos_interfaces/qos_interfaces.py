@@ -9,6 +9,7 @@ __metaclass__ = type
 from anytree import Node
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_scoped_config,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.qos_interfaces.qos_interfaces import Qos_interfacesArgs
@@ -23,7 +24,18 @@ class Qos_interfacesFacts(object):
         self.argument_spec = Qos_interfacesArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure qos interface flat")
+        config = self._module.params.get("config") or []
+        commands = [
+            "info configure qos interface %s flat" % item["name"]
+            for item in config
+        ]
+        return get_scoped_config(
+            self._module,
+            connection,
+            config,
+            "info configure qos interface flat",
+            commands,
+        )
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}
@@ -107,10 +119,11 @@ class Qos_interfacesFacts(object):
     def _compact_lines(lines):
         clauses = re.compile(
             r"(?:scheduler-node|ingress-profile|cac-profile|ext-cac|ds-queue-sharing|"
-            r"us-queue-sharing|ds-num-queue|ds-num-rem-queue|us-num-queue|queue-stats-on|"
-            r"autoschedule|oper-weight|oper-rate|us-vlanport-queue|dsfld-shaper-prof|"
+            r"us-queue-sharing|ds-num-queue|ds-num-rem-queue|"
+            r"oper-weight|oper-rate|dsfld-shaper-prof|"
             r"bandwidth-profile|bandwidth-sharing|aggr-usq-profile|aggr-dsq-profile|"
             r"gem-sharing|scheduler-mode|mc-scheduler-node|bc-scheduler-node|ds-schedule-tag)\s+\S+|"
+            r"(?:no\s+)?(?:queue-stats-on|autoschedule|us-vlanport-queue)(?=\s|$)|"
             r"(?:queue|upstream-queue|ds-rem-queue)\s+\d+\s+(?:priority|weight|oper-weight|"
             r"queue-profile|shaper-profile|bandwidth-profile|ext-bw|bandwidth-sharing)\s+\S+"
         )

@@ -58,6 +58,22 @@ class Isam_vlan_globalTemplate(NetworkTemplate):
             },
         },
         {
+            "name": "priority_regen.dot1p_no_regen",
+            "compval": "priority_regen",
+            "getval": re.compile(
+                r"^configure\s+vlan\s+priority-regen\s+dot1p\s+(?P<dot1p>\d+)\s+no\s+regen-dot1p$"
+            ),
+            "setval": "configure vlan priority-regen dot1p {{ priority_regen.dot1p }} regen-dot1p {{ priority_regen.regen_dot1p }}",
+            "remval": "configure vlan priority-regen dot1p {{ priority_regen.dot1p }} no regen-dot1p",
+            "result": {
+                "priority_regen": {
+                    "{{ dot1p }}": {
+                        "dot1p": "{{ dot1p }}",
+                    },
+                },
+            },
+        },
+        {
             "name": "tpid.value",
             "compval": "value",
             "getval": re.compile(
@@ -70,6 +86,14 @@ class Isam_vlan_globalTemplate(NetworkTemplate):
                     "value": "{{ value }}",
                 },
             },
+        },
+        {
+            "name": "tpid.no_value",
+            "compval": "value",
+            "getval": re.compile(r"^configure\s+vlan\s+no\s+tpid$"),
+            "setval": "configure vlan tpid {{ value }}",
+            "remval": "configure vlan no tpid",
+            "result": {"tpid": {}},
         },
         {
             "name": "vmac_address_format.format",
@@ -85,6 +109,14 @@ class Isam_vlan_globalTemplate(NetworkTemplate):
                     "host_id": "{{ host_id }}",
                 },
             },
+        },
+        {
+            "name": "vmac_address_format.no_format",
+            "compval": "format",
+            "getval": re.compile(r"^configure\s+vlan\s+no\s+vmac-address-format$"),
+            "setval": "configure vlan vmac-address-format {{ format }}",
+            "remval": "configure vlan no vmac-address-format",
+            "result": {"vmac_address_format": {}},
         },
     ]
     # fmt: on

@@ -39,8 +39,48 @@ class Xdsl_lines(ResourceModule):
             "spectrum_profile",
             "dpbo_profile",
             "vect_profile",
+            "rtx_profile",
+            "sos_profile",
             "admin_up",
         ]
+        self.parsers.extend(
+            [
+                "carrier_data_mode",
+                "transfer_mode",
+                "vect_qln_mode",
+                "vect_fallback",
+                "ansi_t1413",
+                "etsi_dts",
+                "g992_1_a",
+                "g992_1_b",
+                "g992_2_a",
+                "g992_3_a",
+                "g992_3_b",
+                "g992_3_aj",
+                "g992_3_l1",
+                "g992_3_l2",
+                "g992_3_am",
+                "g992_5_a",
+                "g992_5_b",
+                "ansi_t1_424",
+                "etsi_ts",
+                "itu_g993_1",
+                "ieee_802_3ah",
+                "g992_5_aj",
+                "g992_5_am",
+                "g993_2_8a",
+                "g993_2_8b",
+                "g993_2_8c",
+                "g993_2_8d",
+                "g993_2_12a",
+                "g993_2_12b",
+                "g993_2_17a",
+                "g993_2_30a",
+                "g993_2_35b",
+                "imp_noise_sensor",
+                "auto_switch",
+            ]
+        )
 
     def execute_module(self):
         """Execute the module."""
@@ -63,7 +103,7 @@ class Xdsl_lines(ResourceModule):
             haved = {k: v for k, v in iteritems(haved) if k in wantd or not wantd}
             wantd = {}
 
-        if self.state in ["replaced", "overridden", "deleted"]:
+        if self.state in ["overridden", "deleted"]:
             for k, have in iteritems(haved):
                 if k not in wantd:
                     self._compare(want={}, have=have)

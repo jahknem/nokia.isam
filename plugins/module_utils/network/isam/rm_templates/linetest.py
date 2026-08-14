@@ -63,7 +63,9 @@ class LinetestTemplate(object):
         commands = []
         for field in fields:
             key = field.replace("-", "_")
-            if item.get(key) is not None:
+            if key in item and item.get(key) is None and field in ("group-opt", "busy-overwrite", "force-measure"):
+                commands.append("%s %s %s no" % (prefix, " ".join(values), field))
+            elif item.get(key) is not None:
                 commands.append("%s %s %s %s" % (prefix, " ".join(values), field, item[key]))
         return commands
 
@@ -71,13 +73,18 @@ class LinetestTemplate(object):
         field_set = set(fields)
         while parts:
             field = parts.pop(0)
+            unset = field == "no"
+            if unset and parts:
+                field = parts.pop(0)
             if field not in field_set:
                 # Operational commands and unknown output are intentionally ignored.
                 if parts and parts[0] not in field_set:
                     parts.pop(0)
                 continue
-            if parts:
+            if parts and not unset:
                 item[field.replace("-", "_")] = parts.pop(0)
+            elif unset:
+                item[field.replace("-", "_")] = None
 
     def _add(self, items, item, *keys):
         existing = next((entry for entry in items if all(entry.get(key) == item.get(key) for key in keys)), None)

@@ -79,6 +79,11 @@ def parse_status_table(output):
 
     for index, raw_line in enumerate(lines):
         line = raw_line.rstrip()
+        if headers and "|" in line and not line.lstrip().startswith(("#", "=")):
+            candidate = [part.strip() for part in line.split("|")]
+            if len(candidate) == len(headers) and all(candidate):
+                rows.append(dict(zip(headers, candidate)))
+                continue
         if "|" in line and not line.lstrip().startswith(("#", "=")):
             candidate = [part.strip() for part in line.split("|")]
             if len(candidate) > 1 and any(candidate):

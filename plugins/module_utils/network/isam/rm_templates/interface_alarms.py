@@ -32,14 +32,14 @@ class Interface_alarmsTemplate(NetworkTemplate):
         {
             "name": "default_severity",
             "getval": re.compile(
-                r"^configure\s+interface\s+alarm\s+(?P<name>\S+)\s+default-severity\s+(?P<default_severity>\S+)\s*$"
+                r"^configure\s+interface\s+alarm\s+(?P<name>\S+)\s+(?:(?P<negate>no\s+)default-severity|default-severity\s+(?P<default_severity>\S+))\s*$"
             ),
             "setval": "configure interface alarm {{ name }} default-severity {{ default_severity }}",
             "remval": "configure interface alarm {{ name }} no default-severity",
             "result": {
                 "{{ name }}": {
                     "name": "{{ name }}",
-                    "default_severity": "{{ default_severity }}",
+                    "default_severity": "{{ '' if negate is defined else default_severity }}",
                 }
             },
         },

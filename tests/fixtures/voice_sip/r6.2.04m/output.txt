@@ -1,0 +1,9 @@
+configure voice sip lineid-syn-prof profile1 isdn-syntax ""
+configure voice sip vsp vsp1 domain-name DomainName.com no admin-status no tinfo no ta4 no ttir1 no t-acm-delta no access-held-time no awaiting-time no digit-send-mode no overlap-484-act no dmpm-intdgt-expid no dial-start-timer no dial-long-timer no dial-short-timer no uri-type no rfc2833-pl-type no rfc2833-process no min-data-jitter no init-data-jitter no max-data-jitter no release-mode no dyn-pt-nego-type no vbd-g711a-pl-type no vbd-g711u-pl-type no vbd-mode no warmline-dl-timer timer-b 32000 timer-f 32000 timer-t1 500 timer-t2 4000 no reg-sub no dtmf-sip-info no sub-period no sub-head-start no t38-same-udp no dhcp-option82 no sspprofile no signaling-ipmode no tls-cafile no media-ipmode
+configure voice sip register vsp1 no register-uri no register-intv no reg-retry-intv no reg-prev-ava-intv no reg-head-start no reg-start-min no init-reg-delay
+configure voice sip redundancy vsp1 no support-redun no dns-purge-timer no dns-ini-retr-int no dns-max-retr-nbr no fg-monitor-method no fg-monitor-int no bg-monitor-method no bg-monitor-int no stable-obs-period no fo-hystersis no del-upd-threshold no auto-server-fo no auto-server-fb no auto-sos-fo no auto-sos-fb no rtry-after-thrsh no options-max-fwd no dns-redun-mode no fail-obs-timer no fg-intv-503 no time-thrsh-503 no nbr-thrsh-503 no auto-srv-fo-timer
+configure voice sip system session-timer no status no min-se-time no se-time no admin-status
+configure voice sip redundancy-cmd vsp1 fail-x-type geo-fail-over
+configure voice sip statistics no stats-5min-config no cdr-config
+configure voice sip statistics stats-config per-line per-board per-system per-call out-any-rsp in-any-rsp
+configure voice sip cas-nsm-prof common-cas-profile international-prefix "#" country-code "#" outg-cpn-length 0

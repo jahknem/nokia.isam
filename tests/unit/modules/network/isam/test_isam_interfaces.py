@@ -131,3 +131,25 @@ class TestIsamInterfacesModule(TestIsamModule):
     def test_isam_interfaces_parsed_requires_running_config(self):
         set_module_args(dict(state="parsed"), ignore_provider_arg)
         self.execute_module(failed=True)
+
+    def test_isam_interfaces_deleted_preserves_uni_siblings(self):
+        class FakeConn:
+            def get(self, cmd):
+                return "\n".join([
+                    "configure interface port vlan-port:1/1/8/1 admin-up",
+                    "configure interface port vlan-port:1/1/8/1 port-type uni",
+                    "configure interface port vlan-port:1/1/8/2 admin-up",
+                    "configure interface port vlan-port:1/1/8/2 port-type uni",
+                ])
+
+        self.get_resource_connection_facts.return_value = FakeConn()
+        set_module_args(
+            dict(
+                config=[{"name": "vlan-port:1/1/8/1"}],
+                state="deleted",
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=True)
+        self.assertTrue(any("1/1/8/1" in command for command in result["commands"]))
+        self.assertFalse(any("1/1/8/2" in command for command in result["commands"]))

@@ -72,12 +72,18 @@ class Xdsl_boardsFacts(object):
 
             parts = line.split()
             if parts[0] == "board" and len(parts) >= 2:
+                if current_type == "boards" and current is not None and current.get("board_id") == parts[1]:
+                    self._set_pairs(current, parts[2:])
+                    continue
                 if current is not None:
                     result[current_type].append(current)
                 current_type = "boards"
                 current = {"board_id": parts[1]}
                 self._set_pairs(current, parts[2:])
             elif parts[0] == "vp-board" and len(parts) >= 2:
+                if current_type == "vp_boards" and current is not None and current.get("vp_board_id") == parts[1]:
+                    self._set_pairs(current, parts[2:])
+                    continue
                 if current is not None:
                     result[current_type].append(current)
                 current_type = "vp_boards"
@@ -92,6 +98,9 @@ class Xdsl_boardsFacts(object):
         return result
 
     def _set_pairs(self, item, parts):
+        if len(parts) >= 2 and parts[0] == "no" and parts[1] == "admin-state":
+            item["admin_state"] = False
+            parts = parts[2:]
         idx = 0
         while idx < len(parts):
             key = parts[idx].replace("-", "_")

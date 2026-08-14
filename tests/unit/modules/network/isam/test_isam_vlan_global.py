@@ -178,3 +178,24 @@ class TestIsamVlanGlobalModule(TestIsamModule):
             result["gathered"]["vmac_address_format"],
             dict(format="non-canonical"),
         )
+
+    def test_isam_vlan_global_negative_forms(self):
+        set_module_args(
+            dict(
+                state="parsed",
+                running_config=dedent(
+                    """\
+                    configure vlan
+                    priority-regen dot1p 3 no regen-dot1p
+                    no tpid
+                    no vmac-address-format
+                    exit
+                    """
+                ),
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["parsed"]["priority_regen"], [{"dot1p": 3}])
+        self.assertNotIn("tpid", result["parsed"])
+        self.assertNotIn("vmac_address_format", result["parsed"])

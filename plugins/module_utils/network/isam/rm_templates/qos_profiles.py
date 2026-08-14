@@ -17,6 +17,34 @@ def _to_native(value):
     return value
 
 
+_QUEUE_FIELDS = tuple(
+    "q{0}-{1}".format(index, field)
+    for index in range(8)
+    for field in ("priority", "weight", "queue-prof", "shaper-prof", "bandwidth-prof", "bw-sharing")
+)
+_RATE_FIELDS = tuple(
+    "{0}-{1}".format(name, suffix)
+    for name in ("arp", "dhcp", "igmp", "pppoe", "nd", "icmpv6", "mld", "dhcpv6", "cfm")
+    for suffix in ("rate", "burst")
+)
+_PBIT_FIELDS = tuple(
+    "dot1-p{0}-{1}".format(index, suffix)
+    for index in range(8)
+    for suffix in ("color", "pol-tc")
+)
+_POLICER_FIELDS = (
+    "policer-type", "excess-burst-size", "coupling-flag", "color-mode",
+    "green-action", "yellow-action", "red-action", "policed-size-ctrl",
+    "peak-info-rate", "peak-burst-size", "cos-threshold",
+)
+_SESSION_FIELDS = (
+    "ing-outer-marker", "ds-schedule-tag", "up-policer-per-tc",
+    "up-dscptotc-prof", "dn-dscptotc-prof", "up-pbittotc-prof",
+    "dn-pbittotc-prof", "up-default-tc", "dn-default-tc",
+)
+_BANDWIDTH_FIELDS = ("assu-burst-size", "exce-burst-size", "dbru")
+
+
 class Qos_profilesTemplate(NetworkTemplate):
     """Parser and renderer for ``configure qos profiles``."""
 
@@ -33,13 +61,13 @@ class Qos_profilesTemplate(NetworkTemplate):
         "rate-limit",
     )
     _INLINE_ORDER = {
-        "queue": ("queue-type",),
-        "scheduler-node": ("priority", "weight", "shaper-profile"),
+        "queue": ("queue-type", "unit"),
+        "scheduler-node": ("priority", "weight", "shaper-profile", "ext-shaper"),
         "cac": ("res-voice-bandwidth", "max-mcast-bandwidth", "res-data-bandwidth"),
         "marker-d1p": ("default-dot1p",),
         "policer": ("committed-info-rate", "committed-burst-size"),
         "session": ("logical-flow-type",),
-        "shaper": ("committed-info-rate", "committed-burst-size"),
+        "shaper": ("committed-info-rate", "committed-burst-size", "autoshape"),
         "bandwidth": ("committed-info-rate", "assured-info-rate", "excessive-info-rate"),
     }
     _CHILD_KEY_MAP = {"type": "shaper-type"}
@@ -62,19 +90,53 @@ class Qos_profilesTemplate(NetworkTemplate):
         "dot1-p5-tc",
         "dot1-p6-tc",
         "dot1-p7-tc",
+        "use-dei",
     ))
+    _KNOWN_CHILD_KEYS.update(_QUEUE_FIELDS)
+    _KNOWN_CHILD_KEYS.update(_RATE_FIELDS)
+    _KNOWN_CHILD_KEYS.update(_PBIT_FIELDS)
+    _KNOWN_CHILD_KEYS.update(_POLICER_FIELDS)
+    _KNOWN_CHILD_KEYS.update(_SESSION_FIELDS)
+    _KNOWN_CHILD_KEYS.update(_BANDWIDTH_FIELDS)
     _FIELDS = (
         "profile_type",
         "queue-type",
+        "unit",
         "priority",
         "weight",
         "shaper-profile",
+        "ext-shaper",
+        "autoshape",
         "mcast-inc-shape",
         "res-voice-bandwidth",
         "max-mcast-bandwidth",
         "res-data-bandwidth",
         "cac-type",
         "default-dot1p",
+        "use-dei",
+        "policer-type",
+        "excess-burst-size",
+        "coupling-flag",
+        "color-mode",
+        "green-action",
+        "yellow-action",
+        "red-action",
+        "policed-size-ctrl",
+        "peak-info-rate",
+        "peak-burst-size",
+        "cos-threshold",
+        "ing-outer-marker",
+        "ds-schedule-tag",
+        "up-policer-per-tc",
+        "up-dscptotc-prof",
+        "dn-dscptotc-prof",
+        "up-pbittotc-prof",
+        "dn-pbittotc-prof",
+        "up-default-tc",
+        "dn-default-tc",
+        "assu-burst-size",
+        "exce-burst-size",
+        "dbru",
         "committed-info-rate",
         "committed-burst-size",
         "excess-info-rate",
@@ -97,7 +159,7 @@ class Qos_profilesTemplate(NetworkTemplate):
         "dot1-p6-tc",
         "dot1-p7-tc",
         "attributes",
-    )
+    ) + _QUEUE_FIELDS + _RATE_FIELDS + _PBIT_FIELDS + _POLICER_FIELDS + _SESSION_FIELDS + _BANDWIDTH_FIELDS
 
     def __init__(self, lines=None, module=None):
         super(Qos_profilesTemplate, self).__init__(lines=lines, tmplt=self, module=module)
@@ -126,7 +188,10 @@ class Qos_profilesTemplate(NetworkTemplate):
             if data.get(field) is None:
                 return None
             cli_field = "type" if field == "shaper-type" else field
-            return "configure qos profiles {0} {1} {2}".format(cls._profile_path(data), cli_field, data[field])
+            if data[field] is False:
+                return "configure qos profiles {0} no {1}".format(cls._profile_path(data), cli_field)
+            value = " ".join(data[field]) if field == "colors" else data[field]
+            return "configure qos profiles {0} {1} {2}".format(cls._profile_path(data), cli_field, value)
         return render
 
     @classmethod
@@ -150,6 +215,12 @@ class Qos_profilesTemplate(NetworkTemplate):
             dest["queue-type"] = tokens.pop(0)
         idx = 0
         while idx + 1 < len(tokens):
+            if tokens[idx] == "no":
+                key = tokens[idx + 1]
+                if key == "use-dei":
+                    dest[key] = False
+                idx += 2
+                continue
             key = cls._CHILD_KEY_MAP.get(tokens[idx], tokens[idx])
             dest[key] = _to_native(tokens[idx + 1])
             idx += 2
@@ -201,6 +272,11 @@ class Qos_profilesTemplate(NetworkTemplate):
                 continue
 
             if current is None:
+                continue
+            if stripped.startswith("no "):
+                key = stripped.split(None, 1)[1]
+                if key == "use-dei":
+                    current[key] = False
                 continue
             key_value = stripped.split(None, 1)
             if key_value[0] in self._KNOWN_CHILD_KEYS and len(key_value) == 2:

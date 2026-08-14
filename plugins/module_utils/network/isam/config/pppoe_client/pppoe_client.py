@@ -17,13 +17,41 @@ class PppoeClient(ResourceModule):
     def execute_module(self):
         config = self._module.params.get("config") or []
         if self.state == "parsed":
-            pass
+            return self.result
         elif self.state == "rendered":
             self.commands = self.template.render(config)
         else:
-            self.commands = self.template.render(config)
-            self.run_commands()
+            current = {item["name"]: item for item in self.have or []}
+            desired = {item["name"]: item for item in config}
+            self.commands = []
+            if self.state == "deleted":
+                targets = desired or current
+                self.commands = [self._delete_command(name) for name in targets]
+            else:
+                if self.state == "overridden":
+                    self.commands.extend(
+                        self._delete_command(name)
+                        for name in current
+                        if name not in desired
+                    )
+                if self.state in ("replaced", "overridden"):
+                    self.commands.extend(
+                        self._delete_command(name)
+                        for name in desired
+                        if name in current
+                    )
+                if self.state == "merged":
+                    merged = [dict(current.get(item["name"], {}), **item) for item in config]
+                    config = [item for item in merged if item != current.get(item["name"])]
+                elif self.state in ("replaced", "overridden"):
+                    config = [item for item in config if item != current.get(item["name"])]
+                self.commands.extend(self.template.render(config))
+            if self.commands:
+                self.run_commands()
         return self.result
+
+    def _delete_command(self, name):
+        return "configure pppoe-client no %s %s" % (self.kind, name)
 
 
 class _LocalFacts(object):

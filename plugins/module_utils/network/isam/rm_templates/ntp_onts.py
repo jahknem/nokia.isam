@@ -105,3 +105,36 @@ class Ntp_ontsTemplate(NetworkTemplate):
         },
     ]
     # fmt: on
+
+
+def _ntp_field_parser(field, cli_name, value_pattern=r"\S+"):
+    return {
+        "name": "ntp_ont." + field,
+        "compval": field,
+        "getval": re.compile(
+            r"^configure\sntp\sont\s(?P<ont_id>\S+)\s"
+            r"(?:(?P<negate>no\s+)" + cli_name + r"|" + cli_name + r"\s+(?P<value>" + value_pattern + r"))$"
+        ),
+        "setval": "configure ntp ont {{ ont_id }} {{ 'no " + cli_name + "' if " + field + " is none else '" + cli_name + " ' + " + field + "|string }}",
+        "remval": "configure ntp ont {{ ont_id }} no " + cli_name,
+        "result": {"{{ ont_id }}": {"ont_id": "{{ ont_id }}", field: "{{ '' if negate is defined else value }}"}},
+    }
+
+
+Ntp_ontsTemplate.PARSERS = [
+    {
+        "name": "ntp_ont",
+        "getval": re.compile(r"^configure\sntp\sont\s(?P<ont_id>\S+)$"),
+        "setval": "configure ntp ont {{ ont_id }}",
+        "remval": "configure ntp no ont {{ ont_id }}",
+        "result": {"{{ ont_id }}": {"ont_id": "{{ ont_id }}"}},
+    },
+    _ntp_field_parser("client_state", "client-state"),
+    _ntp_field_parser("config_mode", "config-mode"),
+    _ntp_field_parser("server1_ip_addr", "server1-ip-addr"),
+    _ntp_field_parser("server2_ip_addr", "server2-ip-addr"),
+    _ntp_field_parser("server3_ip_addr", "server3-ip-addr"),
+    _ntp_field_parser("oper_mode", "oper-mode"),
+    _ntp_field_parser("key_identifier", "key-identifier", r"\d+"),
+    _ntp_field_parser("key", "key"),
+]

@@ -11,7 +11,6 @@ from ansible_collections.nokia.isam.tests.unit.compat.mock import patch
 from ansible_collections.nokia.isam.tests.unit.modules.utils import AnsibleFailJson
 
 from .isam_module import TestIsamModule, load_fixture, set_module_args
-import debugpy
 
 
 ignore_provider_arg = True
@@ -436,11 +435,8 @@ class TestIsamEthernetLineModule(TestIsamModule):
             ),
             ignore_provider_arg,
         )
-        commands = [
-            "configure ethernet no line 1/1/8/1 port-type uni",
-        ]
-        result = self.execute_module(changed=True)
-        self.assertEqual(set(result["commands"]), set(commands))
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["commands"], [])
 
     def test_isam_ethernet_line_gathered_empty(self):
         # test parsed

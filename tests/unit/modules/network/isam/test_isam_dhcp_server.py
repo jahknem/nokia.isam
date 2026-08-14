@@ -122,6 +122,20 @@ class TestIsamDhcpServerModule(TestIsamModule):
         result = self.execute_module(changed=False)
         self.assertEqual(result["parsed"]["end_addr"], "192.168.1.200")
 
+    def test_isam_dhcp_server_does_not_invent_restart(self):
+        set_module_args(
+            dict(
+                state="parsed",
+                running_config=(
+                    "configure dhcp-server start-addr 192.168.1.100 "
+                    "stop-addr 192.168.1.200"
+                ),
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        self.assertNotIn("restart", result["parsed"])
+
     def test_isam_dhcp_server_gathered(self):
         self.get_config.return_value = dedent(
             """\
@@ -191,6 +205,6 @@ class TestIsamDhcpServerModule(TestIsamModule):
             ignore_provider_arg,
         )
         result = self.execute_module(changed=True)
-        self.assertIn("no configure dhcp-server start-addr", result["commands"])
-        self.assertIn("no configure dhcp-server stop-addr", result["commands"])
-        self.assertIn("no configure dhcp-server restart", result["commands"])
+        self.assertIn("configure dhcp-server no start-addr", result["commands"])
+        self.assertIn("configure dhcp-server no stop-addr", result["commands"])
+        self.assertIn("configure dhcp-server no restart", result["commands"])

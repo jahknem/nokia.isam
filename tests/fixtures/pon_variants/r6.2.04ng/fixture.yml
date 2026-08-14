@@ -1,0 +1,7 @@
+schema_version: 1
+resource: pon_variants
+device_type: Nokia ISAM 7330 FTTN
+software_version: R6.2.04ng
+command: info configure epon interface flat
+captured_at: 2026-08-10
+source: sanitized-live-capture

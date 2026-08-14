@@ -29,11 +29,27 @@ class Isam_system(ResourceModule):
         )
         self.parsers = {
             "id": ["id.name", "id.location", "id.contact"],
-            "security": ["security.ssh", "security.telnet", "security.snmp"],
-            "sntp": ["sntp.server", "sntp.port", "sntp.poll_interval"],
+            "security": ["security.ssh", "security.telnet", "security.snmp", "security.welcome_banner"],
+            "sntp": [
+                "sntp.server", "sntp.port", "sntp.poll_interval",
+                "sntp.server_ip_addr", "sntp.polling_rate", "sntp.enabled",
+                "sntp.timezone_offset",
+            ],
             "syslog": ["syslog.server", "syslog.facility", "syslog.severity"],
             "sync_if_timing": ["sync_if_timing.mode", "sync_if_timing.source"],
+            "loop_id_syntax": [
+                "loop_id_syntax.atm_based_dsl",
+                "loop_id_syntax.efm_based_dsl",
+                "loop_id_syntax.efm_based_pon",
+                "loop_id_syntax.efm_based_epon",
+                "loop_id_syntax.efm_based_ngpon2",
+            ],
+            "relay_id_syntax": [
+                "relay_id_syntax.atm_based_dsl",
+                "relay_id_syntax.efm_based_dsl",
+            ],
             "transaction": ["transaction.timeout"],
+            "max_lt_link_speed": ["max_lt_link_speed"],
         }
         self.want = self._normalize_config(self.want)
         self.have = self._normalize_config(self.have)
@@ -52,8 +68,16 @@ class Isam_system(ResourceModule):
         have = self.have or {}
 
         for section, parsers in self.parsers.items():
-            want_section = want.get(section)
-            have_section = have.get(section)
+            if section == "max_lt_link_speed":
+                want_section = (
+                    {section: want.get(section)} if section in want else None
+                )
+                have_section = (
+                    {section: have.get(section)} if section in have else None
+                )
+            else:
+                want_section = want.get(section)
+                have_section = have.get(section)
 
             if self.state == "merged":
                 if want_section is not None:

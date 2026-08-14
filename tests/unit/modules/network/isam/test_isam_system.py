@@ -48,10 +48,14 @@ class TestIsamSystemModule(TestIsamModule):
                 state="rendered",
                 config=dict(
                     id=dict(name="ISAM-01", location="Datacenter-A", contact="admin@example.com"),
-                    security=dict(ssh=True, telnet=False, snmp=True),
+                    security=dict(ssh=True, telnet=False, snmp=True, welcome_banner="Welcome to ISAM"),
+                    max_lt_link_speed="ten-gb",
                     sntp=dict(server="10.0.0.1", port=123, poll_interval=3600),
+                    # Device-native SNTP fields are covered separately below.
                     syslog=dict(server="10.0.0.2", facility="local0", severity="info"),
                     sync_if_timing=dict(mode="free-run", source="internal"),
+                    loop_id_syntax=dict(atm_based_dsl="atm", efm_based_dsl="dsl"),
+                    relay_id_syntax=dict(atm_based_dsl="relay-atm", efm_based_dsl="relay-dsl"),
                     transaction=dict(timeout=300),
                 ),
             ),
@@ -64,6 +68,8 @@ class TestIsamSystemModule(TestIsamModule):
         self.assertIn("configure system id contact admin@example.com", rendered)
         self.assertIn("configure system security ssh enable", rendered)
         self.assertIn("configure system security snmp enable", rendered)
+        self.assertIn('configure system security welcome-banner "Welcome to ISAM"', rendered)
+        self.assertIn("configure system max-lt-link-speed link-speed ten-gb", rendered)
         self.assertIn("configure system sntp server 10.0.0.1", rendered)
         self.assertIn("configure system sntp port 123", rendered)
         self.assertIn("configure system sntp poll-interval 3600", rendered)
@@ -73,6 +79,8 @@ class TestIsamSystemModule(TestIsamModule):
         self.assertIn("configure system sync-if-timing mode free-run", rendered)
         self.assertIn("configure system sync-if-timing source internal", rendered)
         self.assertIn("configure system transaction timeout 300", rendered)
+        self.assertIn('configure system loop-id-syntax atm-based-dsl "atm"', rendered)
+        self.assertIn('configure system relay-id-syntax efm-based-dsl "relay-dsl"', rendered)
 
     def test_isam_system_parsed(self):
         set_module_args(
@@ -91,6 +99,10 @@ class TestIsamSystemModule(TestIsamModule):
                       ssh enable
                       telnet no enable
                       snmp enable
+                      welcome-banner "Welcome to ISAM"
+                    exit
+                    max-lt-link-speed
+                      link-speed ten-gb
                     exit
                     sntp
                       server 10.0.0.1
@@ -101,6 +113,8 @@ class TestIsamSystemModule(TestIsamModule):
                       mode free-run
                       source internal
                     exit
+                    loop-id-syntax atm-based-dsl "atm" efm-based-dsl "dsl"
+                    relay-id-syntax atm-based-dsl "relay-atm" efm-based-dsl "relay-dsl"
                     syslog
                       server 10.0.0.2
                       facility local0
@@ -123,6 +137,8 @@ class TestIsamSystemModule(TestIsamModule):
         self.assertEqual(parsed["security"]["ssh"], True)
         self.assertEqual(parsed["security"]["telnet"], False)
         self.assertEqual(parsed["security"]["snmp"], True)
+        self.assertEqual(parsed["security"]["welcome_banner"], "Welcome to ISAM")
+        self.assertEqual(parsed["max_lt_link_speed"], "ten-gb")
         self.assertEqual(parsed["sntp"]["server"], "10.0.0.1")
         self.assertEqual(parsed["sntp"]["port"], 123)
         self.assertEqual(parsed["sntp"]["poll_interval"], 3600)
@@ -132,6 +148,25 @@ class TestIsamSystemModule(TestIsamModule):
         self.assertEqual(parsed["syslog"]["facility"], "local0")
         self.assertEqual(parsed["syslog"]["severity"], "info")
         self.assertEqual(parsed["transaction"]["timeout"], 300)
+        self.assertEqual(parsed["loop_id_syntax"]["atm_based_dsl"], "atm")
+        self.assertEqual(parsed["relay_id_syntax"]["efm_based_dsl"], "relay-dsl")
+
+    def test_isam_system_parses_device_native_sntp_fields(self):
+        set_module_args(
+            dict(
+                state="parsed",
+                running_config=(
+                    "configure system sntp server-ip-addr 10.0.0.1 "
+                    "polling-rate 60 enable timezone-offset -60"
+                ),
+            ),
+            ignore_provider_arg,
+        )
+        parsed = self.execute_module(changed=False)["parsed"]["sntp"]
+        self.assertEqual(parsed["server_ip_addr"], "10.0.0.1")
+        self.assertEqual(parsed["polling_rate"], 60)
+        self.assertTrue(parsed["enabled"])
+        self.assertEqual(parsed["timezone_offset"], -60)
 
     def test_isam_system_merged_idempotent(self):
         self.get_config.return_value = dedent(
