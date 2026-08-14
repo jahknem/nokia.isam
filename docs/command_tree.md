@@ -1,6 +1,7 @@
 # Nokia ISAM Command Tree
 
-This tree was derived from `DS-LIN-TEST-01` using the read-only command `info configure flat`.
+This tree was derived from `DS-LIN-TEST-01` using the read-only commands
+`info configure flat` and `info configure <family> detail`.
 
 The counts show how many configured lines were observed for each command family on that device. They are not a complete product command reference. Use the Nokia CLI PDFs in `docs/nokia_docs/` as the source of truth for command syntax and options.
 
@@ -112,6 +113,32 @@ These areas have resource modules today, at least partially:
 | `configure bridge port` | `nokia.isam.isam_bridges` |
 | `configure vlan id` | `nokia.isam.isam_vlans` |
 | `configure ethernet line` | `nokia.isam.isam_ethernet_line` |
+
+## Detail Vocabulary Confirmed
+
+The detail suffix exposed these additional words on the current target. These
+are emitted words observed in configured output, not a complete product-wide
+CLI reference.
+
+| Family | Detail words observed |
+| --- | --- |
+| `ani ont` | `tca-thresh`, `lower-optical-th`, `upper-optical-th`, `rssi-profile` |
+| `voice sip` | `lineid-syn-prof`, `vsp`, `register`, `redundancy`, `system`, `redundancy-cmd`, `statistics`, `cas-nsm-prof`, `session-timer`, `stats-config` |
+| `software-mngt` | `sw-replacement-mode`, `oswp`, `primary-file-server-id`, `second-file-server-id`, `activate`, `auto-verify`, `on-schedule-time`, `database`, `backup`, `backupv6`, `auto-backup-intvl` |
+| `pon interface` | `label`, `fec-dn`, `ponid-interval`, `ponid-identifier`, `tconts-per-frame`, `tc-layer`, `fec-tc-layer`, `xg-tc-layer`, `mcast-tc-layer`, `deact-ont-tca`, `otdr`, `phy-layer`, `oper-state`, `admin-state` |
+| `qos` | `interface`, `profiles`, `queue`, `queue-profile`, `shaper-profile`, `bandwidth-profile`, `cac-profile`, `up-ctrl-pkt`, `dn-ctrl-pkt`, `dscp-map-dot1p`, `tc-map-dot1p`, `pbit-scheduling`, `upstr-prot-dsl` |
+| `system` | `id`, `security`, `sntp`, `sync-if-timing`, `syslog`, `transaction`, `loop-id-syntax`, `relay-id-syntax`, `max-lt-link-speed`, `welcome-banner`, `zero-touch-provision` |
+| `vlan` | `id`, `name`, `mode`, `broadcast-frames`, `priority-regen`, `priority-policy`, `tpid`, `vmac-address-format`, `circuit-id-dhcp`, `remote-id-dhcp`, `circuit-id-pppoe`, `remote-id-pppoe`, `dhcpv6-itf-id`, `dhcpv6-remote-id` |
+| `xdsl` | `board`, `line`, `dpbo-profile`, `service-profile`, `spectrum-profile`, `vce-profile`, `vect-profile`, `vp-board`, `adsl2-plus`, `vdsl`, `vdsl2`, `service-profile-name`, `spectrum-profile-name`, `tca-line-threshold` |
+
+The optional PON modules use the PDF-defined paths `info configure epon
+interface flat`, `info configure channel-group flat`, and `info configure
+channel-pair interface flat`. If a corresponding hardware/software feature is
+not installed, ISAM may return `invalid token`; the collection treats that
+response as an empty gathered resource while still surfacing authentication,
+transport, and other command failures.
+
+The complete sanitized command responses remain available in `/tmp/opencode/detail_*.out` for parser-by-parser comparison. No credentials or mutating commands were used.
 
 ## Live Examples By Family
 
