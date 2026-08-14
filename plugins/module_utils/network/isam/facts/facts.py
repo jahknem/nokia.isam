@@ -219,6 +219,16 @@ class Facts(FactsBase):
                 else:
                     instance.populate_facts(self._connection, self.ansible_facts, resource_data)
             except Exception as exc:
+                # ISAM returns 'invalid token' when a resource command is not
+                # supported on this platform (e.g. PON commands on xDSL-only
+                # MSANs). Warn and continue instead of failing the entire
+                # fact-gathering run.
+                if "invalid token" in str(exc).lower():
+                    self._warnings.append(
+                        "resource '%s' is not supported on this ISAM platform: %s"
+                        % (key, str(exc).splitlines()[0] if str(exc) else "invalid token")
+                    )
+                    continue
                 self._module.fail_json(msg=str(exc))
 
             self._project_logical_resource(
