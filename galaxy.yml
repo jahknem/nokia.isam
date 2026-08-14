@@ -36,7 +36,7 @@ tags: [network_cli, network, nokia, isam, msan]
 # L(specifiers,https://python-semanticversion.readthedocs.io/en/latest/#requirement-specification). Multiple version
 # range specifiers can be set and are separated by ','
 dependencies:
-  "ansible.netcommon": ">=8.6.1,<9.0.0"
+  "ansible.netcommon": ">=8.6.1"
 
 # The URL of the originating SCM repository
 repository: https://github.com/jahknem/nokia.isam
