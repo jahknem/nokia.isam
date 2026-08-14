@@ -47,11 +47,36 @@ The result contains the normal resource structures under
 `ansible_facts.ansible_network_resources`. The bulk result schema is in
 `docs/schemas/isam_facts_resources.json`.
 
-### Legacy Modules
+Operational subsets are gathered separately through `gather_subset` and are
+returned as `ansible_net_*` facts:
+
+```yaml
+- name: Gather DHCP relay operational information
+  nokia.isam.isam_facts:
+    gather_subset:
+      - "!all"
+      - dhcp_relay
+```
+
+Available operational subsets include `active_alarms`, `dhcp_relay`,
+`equipment_status`, `interface_status`, `ont_status`,
+`ont_ranging_status`, `ont_software_status`, `pon_pm_status`, `pon_status`,
+and `software_status`.
+
+### CLI Modules
 | Module | Description |
 | --- | --- |
-| `cli_command` | Run CLI commands on remote devices |
-| `cli_config` | Manage CLI configuration on remote devices |
+| `cli_config` | Apply text configuration |
+
+`nokia.isam.cli_config` supports text configuration only. Replace-file and
+rollback operations are not exposed by the ISAM cliconf plugin.
+
+```yaml
+- name: Apply configuration text
+  nokia.isam.cli_config:
+    config: "configure system id name access-node"
+
+```
 
 ## Roadmap
 
@@ -59,46 +84,43 @@ The detailed live command tree and resource roadmap are documented in:
 
 * `docs/command_tree.md`
 * `docs/resource_module_roadmap.md`
+* `docs/ssh-session-failure-analysis.md`
 
-### Implemented Modules (Merged to main)
+### Current Status
 
-All 10 first-priority resource modules plus 5 legacy modules are implemented and in `main`:
+All resource modules listed in the roadmap are present. Mutating states are
+validated offline and in check mode only unless explicitly listed as live
+validated. The collection is not production-ready for unrestricted mutation;
+review each module's CLI coverage and live evidence before use.
 
 | # | Module | Command Families | States |
 | --- | --- | --- | --- |
-| 1 | `isam_pon_interfaces` | `configure pon interface` | all 7 canonical states |
-| 2 | `isam_ethernet_onts` | `configure ethernet ont` | all 7 canonical states |
-| 3 | `isam_equipment_onts` | `configure equipment ont` | all 7 canonical states |
-| 4 | `isam_qos_interfaces` | `configure qos interface` | all 7 canonical states |
-| 5 | `isam_qos_profiles` | `configure qos profiles` | all 7 canonical states |
-| 6 | `isam_xdsl_lines` | `configure xdsl line` | all 7 canonical states |
-| 7 | `isam_xdsl_profiles` | `configure xdsl profiles` | all 7 canonical states |
-| 8 | `isam_link_agg` | `configure link-agg` | all 7 canonical states |
-| 9 | `isam_xstp` | `configure xstp` | all 7 canonical states |
-| 10 | `isam_equipment` | `configure equipment` (shelf/slot/applique/protection-group) | all 7 canonical states |
-
-### Next Roadmap Modules
-
-| Priority | Module | Command Families | Live Commands |
-| --- | --- | --- | --- |
-| 11 | `isam_alarm` | `configure alarm` (filter, entry, custom-profile, delta-log, log-sev-level) | 66 |
-| 12 | `isam_traps` | `configure trap` (definition, manager) | 34 |
-| 13 | `isam_interface_cages` | `configure interface cage` | 64 |
-| 14 | `isam_ntp_onts` | `configure ntp ont` | 48 |
-| 15 | `isam_qos_maps` | `configure qos tc-map-dot1p`, `dscp-map-dot1p`, `up-ctrl-pkt`, `dn-ctrl-pkt` | 89 |
-| 16 | `isam_system` | `configure system` (security, sntp, sync-if-timing, syslog, id, transaction) | 63 |
-| 17 | `isam_vlan_global` | `configure vlan` (broadcast-frames, priority-regen, tpid, vmac-address-format) | 14 |
-| 18 | `isam_voice_sip` | `configure voice sip` | 5 |
-| 19 | `isam_xdsl_bonding` | `configure xdsl-bonding` | 1 |
-| 20 | `isam_dhcp_server` | `configure dhcp-server` | 1 |
-| 21+ | More | See `docs/resource_module_roadmap.md` | - |
+| 1 | `isam_pon_interfaces` | `configure pon interface` | state coverage documented in the roadmap |
+| 2 | `isam_ethernet_onts` | `configure ethernet ont` | state coverage documented in the roadmap |
+| 3 | `isam_equipment_onts` | `configure equipment ont` | state coverage documented in the roadmap |
+| 4 | `isam_qos_interfaces` | `configure qos interface` | state coverage documented in the roadmap |
+| 5 | `isam_qos_profiles` | `configure qos profiles` | state coverage documented in the roadmap |
+| 6 | `isam_xdsl_lines` | `configure xdsl line` | state coverage documented in the roadmap |
+| 7 | `isam_xdsl_profiles` | `configure xdsl profiles` | state coverage documented in the roadmap |
+| 8 | `isam_link_agg` | `configure link-agg` | state coverage documented in the roadmap |
+| 9 | `isam_xstp` | `configure xstp` | state coverage documented in the roadmap |
+| 10 | `isam_equipment` | `configure equipment` (shelf/slot/applique/protection-group) | state coverage documented in the roadmap |
 
 Status and management data should generally be added as structured `isam_facts` resources before introducing dedicated read-only info modules.
+
+`isam_security_ext_authenticator` is action-only: it requires `config` and
+executes the documented `admin security ext-authenticator` command. It does
+not expose resource states because the command is not persistent configuration.
+
+Operational facts now use `gather_subset` and return `ansible_net_*` names.
+This is a breaking change from the former legacy resource-facts shape; see
+`docs/migration-0.3.md`.
 
 ## Requirements & Installation
 
 ### Requirements
 * Ansible 2.15 or higher
+* `ansible.netcommon` 8.6.1 through 8.x
 * Python 3.10 or higher
 * Nokia ISAM FTTN 7330 device running ISAM Release R6.2.04m or higher
 
@@ -146,6 +168,32 @@ Some modules take a long time to complete due to the slow nature of the device. 
 ansible_command_timeout : 150
 ```
 150 Seconds should be enough to complete a transmission of the complete configuration. As such it should also be enough for most other commands.
+
+ISAM can reject a successfully authenticated SSH connection before presenting
+the CLI prompt with `Max. Sessions Reached.`. Use the optional ISAM connection
+wrapper and configure its bounded exponential backoff:
+
+```yaml
+ansible_connection: nokia.isam.isam_network_cli
+ansible_isam_connect_retries: 3
+```
+
+The default is `0`, so ISAM-specific retries are disabled unless requested.
+Delays are 2, 4, and 8 seconds. Authentication and command failures are never
+replayed. TCP, banner, and key-exchange retries remain controlled separately by
+Ansible's standard `ansible_network_cli_retries` option. If the device is known
+to report transient authentication failures under overload, those can be
+included explicitly with `ansible_isam_retry_authentication: true`; this is off
+by default to avoid retrying bad credentials or increasing account-lockout risk.
+
+The separate `nokia.isam.isam_network_cli` connection is intentional and
+unusual. Most network collections use `ansible.netcommon.network_cli` directly.
+ISAM can accept SSH authentication and then reject `invoke_shell()` with
+`Max. Sessions Reached.`; Paramiko exposes that as an empty `EOFError`, which
+the standard `network_cli` retry loop does not handle. The wrapper resets the
+private failed transport and retries only connection establishment. It does
+not replay commands. This workaround can be removed if a future
+`ansible.netcommon` release handles this lifecycle upstream.
 
 ## Development
 

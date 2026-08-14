@@ -1,6 +1,6 @@
 # Resource Module Roadmap
 
-This roadmap maps live `DS-LIN-TEST-01` command families and Nokia CLI PDF references to Ansible resource modules.
+This roadmap maps `DS-LIN-TEST-01` command families and Nokia CLI PDF references to Ansible resource modules.
 
 The first implementation target for configuration modules is generally:
 
@@ -34,9 +34,14 @@ plugins/module_utils/network/isam/rm_templates/<resource>.py
 tests/unit/modules/network/isam/test_isam_<resource>.py
 ```
 
+Per-resource completion, evidence, and remaining work are tracked in
+[`resource_module_work_packages.md`](resource_module_work_packages.md). The
+roadmap below is prioritization history, not a claim that every emitted
+detail-flat word is modeled.
+
 ## Completed Modules (Merged to main)
 
-All 10 first-priority resource modules are implemented, validated against `DS-LIN-TEST-01`, and merged to `main`.
+The first-priority resource modules are implemented. Read-only live evidence is tracked separately in `docs/live-validation-2026-08-10.md`.
 
 | Priority | Module | Command families | Live Commands | States Validated |
 | --- | --- | --- | --- | --- |
@@ -51,15 +56,20 @@ All 10 first-priority resource modules are implemented, validated against `DS-LI
 | 9 | `isam_xstp` | `configure xstp` | 37 | same |
 | 10 | `isam_equipment` | `configure equipment` (shelf/slot/applique/protection-group) | 16 | same |
 
-Unit tests: **105/105 passed** across all 35 modules.
+Unit tests: **631 passed** in the latest verified collection tree. Canonical
+state contract coverage is enforced for all 52 concrete resource modules;
+resource-specific semantic coverage and live read-only evidence are tracked in
+the per-RM work-package document.
 
 ## All Implemented Modules
 
-All 30 roadmap modules plus 5 legacy modules are implemented and merged to `main`.
+All 52 concrete resource modules are present in the current working tree. The
+older count of 39 refers to grouped roadmap families and is not a concrete
+module count.
 
 | Priority | Module | Command families | States Validated |
 | --- | --- | --- | --- |
-| 1-10 | First 10 | See completed table above | all 7 canonical states |
+| 1-10 | First 10 | See completed table above | canonical state contract plus resource-specific coverage |
 | 11 | `isam_alarm` | `configure alarm` | gathered, rendered, parsed, merged/--check |
 | 12 | `isam_traps` | `configure trap` | gathered, rendered, parsed, merged/--check |
 | 13 | `isam_interface_cages` | `configure interface cage` | gathered, rendered, parsed, merged/--check |
@@ -67,16 +77,16 @@ All 30 roadmap modules plus 5 legacy modules are implemented and merged to `main
 | 15 | `isam_qos_maps` | `configure qos tc-map-dot1p`, `dscp-map-dot1p` | gathered, rendered, parsed, merged/--check |
 | 16 | `isam_system` | `configure system` | gathered, rendered, parsed, merged/--check |
 | 17 | `isam_vlan_global` | `configure vlan` global settings | gathered, rendered, parsed, merged/--check |
-| 18 | `isam_voice_sip` | `configure voice sip` | gathered, rendered, parsed, merged/--check |
+| 18 | `isam_voice_sip` | `configure voice sip` | gathered, rendered, parsed, merged/--check; replacement/override/delete hardening pending |
 | 19 | `isam_xdsl_bonding` | `configure xdsl-bonding` | gathered, rendered, parsed, merged/--check |
 | 20 | `isam_dhcp_server` | `configure dhcp-server` | gathered, rendered, parsed, merged/--check |
-| 21 | `isam_generic_pon` | `configure generic-pon` | gathered, rendered, parsed, merged/--check |
+| 21 | `isam_generic_pon` | `configure generic-pon` | gathered, rendered, parsed, merged/--check; deletion coverage pending |
 | 22 | `isam_iphost` | `configure iphost` | gathered, rendered, parsed, merged/--check |
 | 23 | `isam_li_vlan` | `configure li_vlan` | gathered, rendered, parsed, merged/--check |
 | 24 | `isam_igmp` | `configure igmp` | gathered, rendered, parsed, merged/--check |
 | 25 | `isam_mcast_control` | `configure mcast-control` | gathered, rendered, parsed, merged/--check |
 | 26 | `isam_software_mngt` | `configure software-mngt` | gathered, rendered, parsed, merged/--check |
-| 27 | `isam_ani_onts` | `configure ani ont` | gathered, rendered, parsed, merged/--check |
+| 27 | `isam_ani_onts` | `configure ani ont` | gathered, rendered, parsed, merged/--check; deletion coverage pending |
 | 28 | `isam_mcast_general` | `configure mcast general` | gathered, rendered, parsed, merged/--check |
 | 29 | `isam_xdsl_boards` | `configure xdsl board`, `vp-board` | gathered, rendered, parsed, merged/--check |
 | 30 | `isam_equipment_replan` | `configure equipment replan` | gathered, rendered, parsed, merged/--check |
@@ -87,8 +97,8 @@ All 30 roadmap modules plus 5 legacy modules are implemented and merged to `main
 | 35 | `isam_pppoel2_statistics` | `configure pppoel2 statistics` | parsed, rendered, merged/--check |
 | 36 | `isam_l2cp*` | `configure l2cp` | gathered, rendered, parsed, merged/--check |
 | 37 | `isam_dist_service` | `configure dist-service` | gathered, rendered, parsed, merged/--check |
-| 38 | `isam_linetest` | `configure linetest` | gathered, rendered, parsed |
-| 39 | `isam_security_ext_authenticator` | `admin security ext-authenticator` | rendered, parsed |
+| 38 | `isam_linetest` | `configure linetest` | gathered, rendered, parsed, merged/--check, replaced/--check, overridden/--check, deleted/--check |
+| 39 | `isam_security_ext_authenticator` | `admin security ext-authenticator` | action-only, check-mode |
 
 ## Additional Config Resource Candidates
 
@@ -116,22 +126,22 @@ All 30 roadmap modules plus 5 legacy modules are implemented and merged to `main
 
 Do not create desired-state resource modules for status-only data. Add these as structured `isam_facts` resources first.
 
-Candidate `gather_network_resources` values:
+Operational `gather_subset` values:
 
 ```text
 equipment_status
 ont_status
 pon_status
-xdsl_status
-alarm_status
+interface_status
+active_alarms
 software_status
-link_agg_status
-xstp_status
-qos_status
-system_status
+ont_ranging_status
+ont_software_status
+pon_pm_status
+dhcp_relay
 ```
 
-Initial operational fact subsets are now available through `isam_facts`:
+Operational fact subsets are available through `isam_facts`:
 
 | Resource | Read-only command |
 | --- | --- |
@@ -144,9 +154,7 @@ Initial operational fact subsets are now available through `isam_facts`:
 | `ont_ranging_status` | `show equipment ont ranging-status channel-pair` |
 | `ont_software_status` | `show equipment ont sw-version`, `sw-download` |
 | `pon_pm_status` | `show pon interface tc-layer current-interval` |
-| `dhcp_relay_sessions` | `show dhcp-relay session` |
-| `dhcp_relay_port_stats` | Parameterized `show dhcp-relay port-stats <port>` |
-| `dhcp_relay_v6_port_stats` | Parameterized `show dhcp-relay v6-port-stats <port>` |
+| `dhcp_relay` | `show dhcp-relay session`, parameterized `show dhcp-relay port-stats <port>` and `show dhcp-relay v6-port-stats <port>` |
 
 Dedicated read-only `*_info` modules can be added later only for highly parameterized lookups where `isam_facts` becomes awkward.
 
