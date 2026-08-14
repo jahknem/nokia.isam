@@ -307,6 +307,11 @@ class Bridges(ResourceModule):
             self.compare(parsers=VLAN_PARSERS, want=want_vlan, have=have_vlan)
             vlan_commands = self.commands[vlan_start:]
             vlan_prefix = "configure bridge port %s vlan-id %s" % (port_name, vid)
+            # The vlan_id parser is used by facts, not command generation.
+            # If no VLAN-level attribute matched, emit the base vlan-id command
+            # so that bare VLAN entries (e.g. the default VLAN) are created.
+            if not any(command.startswith(vlan_prefix) for command in vlan_commands):
+                vlan_commands.insert(0, vlan_prefix)
             tag_command = next(
                 (command for command in vlan_commands if command.startswith(vlan_prefix + " tag ")), None
             )
