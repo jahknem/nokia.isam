@@ -51,6 +51,7 @@ class Xdsl_boards(ResourceModule):
     def generate_commands(self):
         want = self.want or {"boards": [], "vp_boards": []}
         have = self.have or {"boards": [], "vp_boards": []}
+        delete_all = self.state == "deleted" and not self.want
 
         self._compare_section(
             want.get("boards") or [],
@@ -58,6 +59,7 @@ class Xdsl_boards(ResourceModule):
             "board_id",
             "board",
             self.BOARD_FIELDS,
+            delete_all or bool(want.get("boards")),
         )
         self._compare_section(
             want.get("vp_boards") or [],
@@ -65,19 +67,22 @@ class Xdsl_boards(ResourceModule):
             "vp_board_id",
             "vp_board",
             self.VP_BOARD_FIELDS,
+            delete_all or bool(want.get("vp_boards")),
         )
 
-    def _compare_section(self, want_list, have_list, key, parser_prefix, fields):
+    def _compare_section(self, want_list, have_list, key, parser_prefix, fields, requested=True):
         wantd = {entry[key]: entry for entry in want_list}
         haved = {entry[key]: entry for entry in have_list}
 
         if self.state == "deleted":
+            if not requested:
+                return
             for item_key, have in iteritems(haved):
                 if not wantd or item_key in wantd:
                     self.addcmd(have, parser_prefix, negate=True)
             return
 
-        if self.state in ["replaced", "overridden"]:
+        if self.state in ["overridden"]:
             for item_key, have in iteritems(haved):
                 if item_key not in wantd:
                     self.addcmd(have, parser_prefix, negate=True)

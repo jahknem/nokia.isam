@@ -2,10 +2,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+import shlex
+
 __metaclass__ = type
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_scoped_config,
     unwrap_response,
     validate_config_safe,
 )
@@ -22,7 +25,26 @@ class Equipment_ontsFacts(object):
         self.argument_spec = Equipment_ontsArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure equipment ont flat")
+        config = self._module.params.get("config") or {}
+        commands = []
+        for item in config.get("interfaces") or []:
+            commands.append(
+                "info configure equipment ont interface %s flat detail" % item["ont_idx"]
+            )
+        for item in config.get("slots") or []:
+            commands.append(
+                "info configure equipment ont slot %s flat detail" % item["ont_slot_idx"]
+            )
+        # Software-control entries are not scoped by an ONT identity.
+        if config.get("sw_ctrls"):
+            commands = []
+        return get_scoped_config(
+            self._module,
+            connection,
+            config,
+            "info configure equipment ont flat",
+            commands,
+        )
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}
@@ -50,11 +72,11 @@ class Equipment_ontsFacts(object):
 
         lines = [line.strip() for line in str(config).splitlines() if line.strip()]
         if any(line.startswith("configure equipment ont ") for line in lines):
-            config = "\n".join(
-                line.replace("configure equipment ont ", "", 1)
-                for line in lines
-                if line.startswith("configure equipment ont ")
-            )
+            expanded = []
+            for line in lines:
+                if line.startswith("configure equipment ont "):
+                    expanded.extend(self._split_interface_line(line.replace("configure equipment ont ", "", 1)))
+            config = "\n".join(expanded)
 
         for raw_line in config.splitlines():
             line = raw_line.strip()
@@ -71,34 +93,116 @@ class Equipment_ontsFacts(object):
 
             parts = line.split()
             if parts[0] == "interface" and len(parts) >= 2:
+                if (
+                    current_type == "interfaces"
+                    and current is not None
+                    and current.get("ont_idx") == parts[1]
+                ):
+                    if parts[2:] and not any(word in self._INTERFACE_WORDS for word in parts[2:]):
+                        continue
+                    self._set_pairs(current, parts[2:])
+                    continue
                 if current is not None:
                     result[current_type].append(current)
                 current_type = "interfaces"
                 current = {"ont_idx": parts[1]}
                 self._set_pairs(current, parts[2:])
             elif parts[0] == "slot" and len(parts) >= 2:
+                if (
+                    current_type == "slots"
+                    and current is not None
+                    and current.get("ont_slot_idx") == parts[1]
+                ):
+                    if parts[2:] and not any(word in self._SLOT_WORDS for word in parts[2:]):
+                        continue
+                    self._set_pairs(current, parts[2:])
+                    continue
                 if current is not None:
                     result[current_type].append(current)
                 current_type = "slots"
                 current = {"ont_slot_idx": parts[1]}
                 self._set_pairs(current, parts[2:])
             elif parts[0] == "sw-ctrl" and len(parts) >= 2:
+                if (
+                    current_type == "sw_ctrls"
+                    and current is not None
+                    and current.get("sw_ctrl_id") == int(parts[1])
+                ):
+                    self._set_pairs(current, parts[2:])
+                    continue
                 if current is not None:
                     result[current_type].append(current)
                 current_type = "sw_ctrls"
                 current = {"sw_ctrl_id": int(parts[1])}
                 self._set_pairs(current, parts[2:])
             elif current is not None:
-                self._set_pairs(current, parts)
+                words = (
+                    self._INTERFACE_WORDS
+                    if current_type == "interfaces"
+                    else self._SLOT_WORDS
+                    if current_type == "slots"
+                    else self._SW_CTRL_WORDS
+                )
+                if any(word in words for word in parts):
+                    self._set_pairs(current, parts)
 
         if current is not None:
             result[current_type].append(current)
 
         return result
 
+    _INTERFACE_WORDS = {
+        "sw-ver-pland", "battery-bkup", "berint", "desc1", "desc2", "provversion",
+        "sernum", "subslocid", "fec-up", "bridge-map-mode", "pwr-shed-prof-id",
+        "ont-enable", "p2p-enable", "optics-hist", "sw-dnload-version", "plnd-var",
+        "rf-filter", "us-police-mode", "enable-aes", "voip-allowed", "iphc-allowed",
+        "log-auth-id", "log-auth-pwd", "cvlantrans-mode", "sn-bundle-ctrl",
+        "pland-cfgfile1", "pland-cfgfile2", "dnload-cfgfile1", "dnload-cfgfile2",
+        "us-tcpolice-mode", "planned-us-rate", "oltdscppbitalign", "ratelimit-us-dhcp",
+        "ratelimit-us-arp", "flush-mac", "template-name", "evtocd", "vtfd",
+        "slid-visibility", "pwr-shed-prof-name", "admin-state",
+    }
+    _SLOT_WORDS = {
+        "planned-card-type", "plndnumdataports", "plndnumvoiceports",
+        "port-type", "transp-mode-rem", "no-mcast-control", "admin-state",
+    }
+    _SW_CTRL_WORDS = {
+        "hw-version", "ont-variant", "plnd-sw-version", "plnd-sw-ver-conf",
+        "sw-dwload-ver",
+    }
+
+    def _split_interface_line(self, line):
+        tokens = shlex.split(line)
+        if len(tokens) < 4 or tokens[0] != "interface":
+            return [line]
+        starts = [
+            index for index, token in enumerate(tokens[2:], 2)
+            if (token in self._INTERFACE_WORDS and (index == 2 or tokens[index - 1] != "no"))
+            or (token == "no" and index + 1 < len(tokens) and tokens[index + 1] in self._INTERFACE_WORDS)
+        ]
+        if not starts:
+            return [line]
+        prefix = " ".join(tokens[:2])
+        segments = [
+            " ".join(tokens[start:end])
+            for start, end in zip(starts, starts[1:] + [len(tokens)])
+        ]
+        return [prefix + " " + segments[0]] + segments[1:]
+
     def _set_pairs(self, item, parts):
+        if len(parts) >= 2 and parts[0] == "no" and (
+            parts[1] in self._INTERFACE_WORDS or parts[1] in self._SLOT_WORDS
+        ):
+            # An absent optional value must remain absent.  Passing None into
+            # Ansible choice validation is invalid for fields such as
+            # bridge-map-mode and admin-state.
+            return
         idx = 0
         while idx < len(parts):
+            words = self._INTERFACE_WORDS | self._SLOT_WORDS | self._SW_CTRL_WORDS
+            if parts[idx] == "no" and idx + 1 < len(parts) and parts[idx + 1] in words:
+                idx += 2
+                continue
             key = parts[idx].replace("-", "_")
             if idx + 1 >= len(parts):
                 item[key] = True

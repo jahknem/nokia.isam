@@ -47,6 +47,7 @@ class InterfaceCages(ResourceModule):
         )
         self.parsers = [
             "cage.id",
+            "cage.operational_mode",
             "cage.description",
             "cage.apply_qos",
         ]
@@ -83,7 +84,7 @@ class InterfaceCages(ResourceModule):
             wantd = {}
 
         # remove superfluous config for overridden and deleted
-        if self.state in ["replaced", "overridden", "deleted"]:
+        if self.state in ["overridden", "deleted"]:
             for k, have in iteritems(haved):
                 if k not in wantd:
                     self._compare(want={}, have=have)

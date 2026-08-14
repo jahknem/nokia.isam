@@ -50,7 +50,7 @@ class Alarm(ResourceModule):
                 haved = {k: v for k, v in iteritems(haved) if k in wantd} if wantd else {}
             wantd = {}
 
-        if self.state in ["overridden", "replaced", "deleted"]:
+        if self.state in ["overridden", "deleted"]:
             for k, have in iteritems(haved):
                 if k not in wantd:
                     self._compare(want={}, have=have)

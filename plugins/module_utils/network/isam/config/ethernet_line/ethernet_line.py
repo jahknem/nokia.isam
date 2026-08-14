@@ -92,6 +92,12 @@ class Ethernet_line(ResourceModule):
 
         # if state is deleted, empty out wantd and set haved to wantd
         if self.state == "deleted":
+            requested = self._module.params.get("config") or []
+            if requested and all(
+                not any(value is not None for key, value in entry.items() if key != "if_index")
+                for entry in requested
+            ):
+                return
             haved = {
                 k: v for k, v in iteritems(haved) if k in wantd or not wantd
             }

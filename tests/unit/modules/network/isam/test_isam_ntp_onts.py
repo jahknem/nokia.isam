@@ -36,10 +36,12 @@ class TestIsamNtpOntsModule(TestIsamModule):
                 config=[
                     dict(
                         ont_id="1/1/1",
-                        server="10.0.0.1",
-                        port=123,
-                        poll_interval=60,
-                        enable=True,
+                        client_state="on",
+                        config_mode="manual",
+                        server1_ip_addr="10.0.0.1",
+                        oper_mode="unicast",
+                        key_identifier=7,
+                        key="secret",
                     )
                 ],
                 state="rendered",
@@ -47,10 +49,12 @@ class TestIsamNtpOntsModule(TestIsamModule):
             ignore_provider_arg,
         )
         result = self.execute_module(changed=False)
-        self.assertIn("configure ntp ont 1/1/1 server 10.0.0.1", result["rendered"])
-        self.assertIn("configure ntp ont 1/1/1 port 123", result["rendered"])
-        self.assertIn("configure ntp ont 1/1/1 poll-interval 60", result["rendered"])
-        self.assertIn("configure ntp ont 1/1/1 enable", result["rendered"])
+        self.assertIn("configure ntp ont 1/1/1 client-state on", result["rendered"])
+        self.assertIn("configure ntp ont 1/1/1 config-mode manual", result["rendered"])
+        self.assertIn("configure ntp ont 1/1/1 server1-ip-addr 10.0.0.1", result["rendered"])
+        self.assertIn("configure ntp ont 1/1/1 oper-mode unicast", result["rendered"])
+        self.assertIn("configure ntp ont 1/1/1 key-identifier 7", result["rendered"])
+        self.assertIn("configure ntp ont 1/1/1 key secret", result["rendered"])
 
     def test_isam_ntp_onts_parsed(self):
         set_module_args(
@@ -59,10 +63,12 @@ class TestIsamNtpOntsModule(TestIsamModule):
                     """\
                     configure ntp
                       ont 1/1/1
-                        server 10.0.0.1
-                        port 123
-                        poll-interval 60
-                        enable
+                        client-state on
+                        config-mode manual
+                        server1-ip-addr 10.0.0.1
+                        oper-mode unicast
+                        key-identifier 7
+                        key secret
                       exit
                     exit
                     """
@@ -73,20 +79,24 @@ class TestIsamNtpOntsModule(TestIsamModule):
         )
         result = self.execute_module(changed=False)
         self.assertEqual(result["parsed"][0]["ont_id"], "1/1/1")
-        self.assertEqual(result["parsed"][0]["server"], "10.0.0.1")
-        self.assertEqual(result["parsed"][0]["port"], 123)
-        self.assertEqual(result["parsed"][0]["poll_interval"], 60)
-        self.assertEqual(result["parsed"][0]["enable"], True)
+        self.assertEqual(result["parsed"][0]["client_state"], "on")
+        self.assertEqual(result["parsed"][0]["config_mode"], "manual")
+        self.assertEqual(result["parsed"][0]["server1_ip_addr"], "10.0.0.1")
+        self.assertEqual(result["parsed"][0]["oper_mode"], "unicast")
+        self.assertEqual(result["parsed"][0]["key_identifier"], 7)
+        self.assertEqual(result["parsed"][0]["key"], "secret")
 
     def test_isam_ntp_onts_gathered(self):
         self.get_config.return_value = dedent(
             """\
             configure ntp
               ont 1/1/1
-                server 10.0.0.1
-                port 123
-                poll-interval 60
-                enable
+                client-state on
+                config-mode manual
+                server1-ip-addr 10.0.0.1
+                oper-mode unicast
+                key-identifier 7
+                key secret
               exit
             exit
             """
@@ -94,7 +104,9 @@ class TestIsamNtpOntsModule(TestIsamModule):
         set_module_args(dict(state="gathered"), ignore_provider_arg)
         result = self.execute_module(changed=False)
         self.assertEqual(result["gathered"][0]["ont_id"], "1/1/1")
-        self.assertEqual(result["gathered"][0]["server"], "10.0.0.1")
-        self.assertEqual(result["gathered"][0]["port"], 123)
-        self.assertEqual(result["gathered"][0]["poll_interval"], 60)
-        self.assertEqual(result["gathered"][0]["enable"], True)
+        self.assertEqual(result["gathered"][0]["client_state"], "on")
+        self.assertEqual(result["gathered"][0]["config_mode"], "manual")
+        self.assertEqual(result["gathered"][0]["server1_ip_addr"], "10.0.0.1")
+        self.assertEqual(result["gathered"][0]["oper_mode"], "unicast")
+        self.assertEqual(result["gathered"][0]["key_identifier"], 7)
+        self.assertEqual(result["gathered"][0]["key"], "secret")

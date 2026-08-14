@@ -29,8 +29,6 @@ class Ani_onts(ResourceModule):
         )
         self.parsers = [
             "tca_thresh",
-            "tca_profile",
-            "admin_state",
         ]
 
     def execute_module(self):
@@ -55,13 +53,13 @@ class Ani_onts(ResourceModule):
         if self.state == "deleted":
             for key, have in iteritems(haved):
                 if key in wantd or not wantd:
-                    self.addcmd(have, "ont_idx", negate=True)
+                    self.commands.append("configure ani ont no tca-thresh %s" % have["ont_idx"])
             return
 
         if self.state in ["overridden", "deleted"]:
             for key, have in iteritems(haved):
                 if key not in wantd:
-                    self.addcmd(have, "ont_idx", negate=True)
+                    self.commands.append("configure ani ont no tca-thresh %s" % have["ont_idx"])
 
         for key, want in iteritems(wantd):
             have = haved.get(key, {})

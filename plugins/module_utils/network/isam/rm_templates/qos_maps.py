@@ -136,7 +136,7 @@ Qos_mapsTemplate.PARSERS = [
     {
         "name": "tc_map_dot1p",
         "getval": re.compile(
-            r"""^tc-map-dot1p\s+(?P<dot1p>\d+)\s+tc\s+(?P<tc>\d+)\s*$""",
+            r"""^tc-map-dot1p\s+(?P<dot1p>\d+)\s+tc\s+(?P<tc>\d+)(?:\s+dpcolor\s+(?P<dpcolor>\S+))?(?:\s+policer-color\s+(?P<policer_color>\S+))?\s*$""",
             re.VERBOSE,
         ),
         "setval": Qos_mapsTemplate._render_tc_map_dot1p,
@@ -146,6 +146,8 @@ Qos_mapsTemplate.PARSERS = [
                 {
                     "dot1p": "{{ dot1p|int }}",
                     "tc": "{{ tc|int }}",
+                    "dpcolor": "{{ dpcolor }}",
+                    "policer_color": "{{ policer_color }}",
                 }
             ],
         },
@@ -154,7 +156,7 @@ Qos_mapsTemplate.PARSERS = [
     {
         "name": "dscp_map_dot1p",
         "getval": re.compile(
-            r"""^dscp-map-dot1p\s+(?P<dscp>\S+)\s+dot1p\s+(?P<dot1p>\d+)\s*$""",
+            r"""^dscp-map-dot1p\s+(?P<dscp>\S+)\s+(?:dot1p|dot1p-value)\s+(?P<dot1p>\d+)\s*$""",
             re.VERBOSE,
         ),
         "setval": Qos_mapsTemplate._render_dscp_map_dot1p,

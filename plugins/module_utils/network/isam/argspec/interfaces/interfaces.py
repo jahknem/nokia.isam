@@ -52,13 +52,11 @@ class InterfacesArgs(object):  # pylint: disable=R0903
                         "default",
                         "no-value",
                     ],
-                    "default": "no-value",
                 },
                 "port_type": {
                     "type": "str",
                     "aliases": ["port-type"],
                     "choices": ["uni", "nni", "hc-uni", "uplink"],
-                    "default": "uni",
                 },
             },
         },

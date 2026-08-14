@@ -83,6 +83,27 @@ class TestIsamEthernetOntsModule(TestIsamModule):
         self.assertEqual(result["gathered"][0]["auto_detect"], "auto")
         self.assertEqual(result["gathered"][0]["admin_state"], "up")
 
+    def test_isam_ethernet_onts_parses_packed_flat_fields(self):
+        set_module_args(
+            dict(
+                running_config=(
+                    'configure ethernet ont 1/1/1/1/1/1/1 cust-info "Customer port 1" '
+                    "auto-detect auto power-control enable pse-class 3 "
+                    "pse-pw-priority high pwr-override disable lpt-mode enabled admin-state up"
+                ),
+                state="parsed",
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        entry = result["parsed"][0]
+        self.assertEqual(entry["cust_info"], "Customer port 1")
+        self.assertEqual(entry["power_control"], "enable")
+        self.assertEqual(entry["pse_class"], "3")
+        self.assertEqual(entry["pse_pw_priority"], "high")
+        self.assertEqual(entry["pwr_override"], "disable")
+        self.assertEqual(entry["lpt_mode"], "enabled")
+
     def test_isam_ethernet_onts_rendered(self):
         set_module_args(
             dict(
@@ -91,6 +112,11 @@ class TestIsamEthernetOntsModule(TestIsamModule):
                         uni_idx="1/1/1/1/1/1/1",
                         cust_info="Customer port 1",
                         auto_detect="auto",
+                        power_control="enable",
+                        pse_class="3",
+                        pse_pw_priority="high",
+                        pwr_override="disable",
+                        lpt_mode="enabled",
                         admin_state="up",
                     )
                 ],
@@ -102,7 +128,36 @@ class TestIsamEthernetOntsModule(TestIsamModule):
         result = self.execute_module(changed=False)
         self.assertIn('configure ethernet ont 1/1/1/1/1/1/1 cust-info "Customer port 1"', result["rendered"])
         self.assertIn("configure ethernet ont 1/1/1/1/1/1/1 auto-detect auto", result["rendered"])
+        self.assertIn("configure ethernet ont 1/1/1/1/1/1/1 power-control enable", result["rendered"])
+        self.assertIn("configure ethernet ont 1/1/1/1/1/1/1 pse-class 3", result["rendered"])
+        self.assertIn("configure ethernet ont 1/1/1/1/1/1/1 pse-pw-priority high", result["rendered"])
+        self.assertIn("configure ethernet ont 1/1/1/1/1/1/1 pwr-override disable", result["rendered"])
+        self.assertIn("configure ethernet ont 1/1/1/1/1/1/1 lpt-mode enabled", result["rendered"])
         self.assertIn("configure ethernet ont 1/1/1/1/1/1/1 admin-state up", result["rendered"])
+
+    def test_isam_ethernet_onts_deleted_preserves_ont_siblings(self):
+        self.get_config.return_value = dedent(
+            """
+            configure ethernet
+              ont 1/1/1/1/1/1/1
+                admin-state up
+              exit
+              ont 1/1/1/1/1/1/2
+                admin-state up
+              exit
+            exit
+            """
+        )
+        set_module_args(
+            dict(
+                config=[{"uni_idx": "1/1/1/1/1/1/1"}],
+                state="deleted",
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["commands"], [])
+        self.assertFalse(any("1/1/1/1/1/1/2" in command for command in result["commands"]))
 
     def test_isam_ethernet_onts_merged_idempotent(self):
         self.get_config.return_value = dedent(

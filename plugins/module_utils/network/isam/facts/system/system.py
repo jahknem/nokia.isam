@@ -63,7 +63,7 @@ class Isam_systemFacts(object):
             if not stripped or stripped.startswith("echo") or stripped.startswith("#"):
                 continue
             if stripped.startswith("configure system "):
-                lines.append(stripped)
+                lines.extend(self._split_packed_syntax(stripped))
                 continue
             if stripped == "configure":
                 continue
@@ -79,7 +79,7 @@ class Isam_systemFacts(object):
                 continue
             if not in_system:
                 continue
-            if stripped in ("id", "security", "sntp", "sync-if-timing", "syslog", "transaction"):
+            if stripped in ("id", "security", "sntp", "sync-if-timing", "syslog", "transaction", "max-lt-link-speed", "loop-id-syntax", "relay-id-syntax"):
                 current_section = stripped
                 continue
             if current_section:
@@ -118,6 +118,18 @@ class Isam_systemFacts(object):
             elif section == "transaction":
                 transaction = objs.setdefault("transaction", {})
                 self._copy_token_value(values, "log-full-action", transaction, "log_full_action")
+            elif section == "max-lt-link-speed":
+                self._copy_token_value(values, "link-speed", objs, "max_lt_link_speed")
+            elif section == "security":
+                if "welcome-banner" in values:
+                    index = values.index("welcome-banner") + 1
+                    objs.setdefault("security", {})["welcome_banner"] = " ".join(values[index:])
+            elif section in ("loop-id-syntax", "relay-id-syntax"):
+                target = objs.setdefault(
+                    "loop_id_syntax" if section == "loop-id-syntax" else "relay_id_syntax", {}
+                )
+                for token, value in zip(values[::2], values[1::2]):
+                    target[token.replace("-", "_")] = value
             elif section == "syslog":
                 self._parse_syslog(values, objs.setdefault("syslog", {}))
 
@@ -163,3 +175,18 @@ class Isam_systemFacts(object):
                 start = values.index("facility") + 2
                 entry["severities"] = values[start:]
             syslog.setdefault("routes", []).append(entry)
+
+    @staticmethod
+    def _split_packed_syntax(line):
+        """Split packed loop/relay syntax lines while preserving quoted values."""
+        try:
+            tokens = shlex.split(line)
+        except ValueError:
+            return [line]
+        if len(tokens) < 5 or tokens[2] not in ("loop-id-syntax", "relay-id-syntax"):
+            return [line]
+        prefix = " ".join(tokens[:3])
+        return [
+            '{} {} "{}"'.format(prefix, token, value)
+            for token, value in zip(tokens[3::2], tokens[4::2])
+        ]

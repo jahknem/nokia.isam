@@ -30,6 +30,36 @@ class Equipment_onts(ResourceModule):
         "log_auth_pwd",
         "cvlantrans_mode",
         "planned_us_rate",
+        "bridge_map_mode",
+        "ont_enable",
+        "p2p_enable",
+        "optics_hist",
+        "voip_allowed",
+        "iphc_allowed",
+        "battery_bkup",
+        "berint",
+        "desc1",
+        "desc2",
+        "provversion",
+        "pwr_shed_prof_id",
+        "rf_filter",
+        "us_police_mode",
+        "slid_visibility",
+        "log_auth_id",
+        "sn_bundle_ctrl",
+        "pland_cfgfile1",
+        "pland_cfgfile2",
+        "dnload_cfgfile1",
+        "dnload_cfgfile2",
+        "us_tcpolice_mode",
+        "oltdscppbitalign",
+        "ratelimit_us_dhcp",
+        "ratelimit_us_arp",
+        "flush_mac",
+        "template_name",
+        "evtocd",
+        "vtfd",
+        "pwr_shed_prof_name",
         "admin_state",
     ]
     SLOT_FIELDS = [
@@ -69,6 +99,7 @@ class Equipment_onts(ResourceModule):
     def generate_commands(self):
         want = self.want or {"interfaces": [], "slots": [], "sw_ctrls": []}
         have = self.have or {"interfaces": [], "slots": [], "sw_ctrls": []}
+        delete_all = self.state == "deleted" and not self.want
 
         self._compare_section(
             want.get("interfaces") or [],
@@ -76,6 +107,7 @@ class Equipment_onts(ResourceModule):
             "ont_idx",
             "interface",
             self.INTERFACE_FIELDS,
+            delete_all or bool(want.get("interfaces")),
         )
         self._compare_section(
             want.get("slots") or [],
@@ -83,6 +115,7 @@ class Equipment_onts(ResourceModule):
             "ont_slot_idx",
             "slot",
             self.SLOT_FIELDS,
+            delete_all or bool(want.get("slots")),
         )
         self._compare_section(
             want.get("sw_ctrls") or [],
@@ -90,15 +123,22 @@ class Equipment_onts(ResourceModule):
             "sw_ctrl_id",
             "sw_ctrl",
             self.SW_CTRL_FIELDS,
+            delete_all or bool(want.get("sw_ctrls")),
         )
 
-    def _compare_section(self, want_list, have_list, key, parser_prefix, fields):
+    def _compare_section(self, want_list, have_list, key, parser_prefix, fields, requested=True):
         wantd = {entry[key]: entry for entry in want_list}
         haved = {entry[key]: entry for entry in have_list}
 
         if self.state == "deleted":
+            if not requested:
+                return
             for item_key, have in iteritems(haved):
                 if not wantd or item_key in wantd:
+                    if parser_prefix == "interface" and have.get("admin_state") != "down":
+                        self.commands.append(
+                            "configure equipment ont interface %s admin-state down" % item_key
+                        )
                     self.addcmd(have, parser_prefix, negate=True)
             return
 
@@ -113,6 +153,21 @@ class Equipment_onts(ResourceModule):
             if self.state == "merged" and have:
                 desired = deepcopy(have)
                 desired.update(want)
+            if parser_prefix == "slot" and not have and self.state in ("merged", "rendered"):
+                command = "configure equipment ont slot %s" % item_key
+                for field, cli_name in (
+                    ("planned_card_type", "planned-card-type"),
+                    ("plndnumdataports", "plndnumdataports"),
+                    ("plndnumvoiceports", "plndnumvoiceports"),
+                    ("port_type", "port-type"),
+                    ("transp_mode_rem", "transp-mode-rem"),
+                    ("no_mcast_control", "no-mcast-control"),
+                    ("admin_state", "admin-state"),
+                ):
+                    if desired.get(field) is not None:
+                        command += " %s %s" % (cli_name, desired[field])
+                self.commands.append(command)
+                continue
             self._compare_entry(desired, have, parser_prefix, fields)
 
     def _compare_entry(self, want, have, parser_prefix, fields):

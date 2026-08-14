@@ -250,7 +250,7 @@ class TestIsamFactsModule(TestIsamModule):
         self.assertIn("dhcp_server", resources)
         self.assertNotIn("isam_dhcp_server", resources)
 
-    def test_isam_facts_operational_resources_use_show_commands(self):
+    def test_isam_facts_operational_subset_uses_show_commands(self):
         class OperationalConn:
             def __init__(self):
                 self.commands = []
@@ -265,14 +265,163 @@ class TestIsamFactsModule(TestIsamModule):
         self.get_resource_connection_facts.return_value = connection
         set_module_args(
             dict(
-                gather_configuration=True,
-                gather_network_resources=["active_alarms"],
+                gather_subset=["!all", "active_alarms"],
             )
         )
 
         result = self.execute_module(changed=False)
         self.assertEqual(connection.commands, ["show alarm current table"])
         self.assertEqual(
-            result["ansible_facts"]["ansible_network_resources"]["active_alarms"]["alarms"][0]["alarm_id"],
+            result["ansible_facts"]["ansible_net_active_alarms"]["alarms"][0]["alarm_id"],
             "1",
         )
+
+    def test_isam_facts_dhcp_relay_gathers_configured_port_stats(self):
+        class DhcpRelayConn:
+            def __init__(self):
+                self.commands = []
+
+            def get(self, command):
+                self.commands.append(command)
+                if command == "info configure dhcp-relay flat":
+                    return "\n".join(
+                        [
+                            "configure dhcp-relay port-stats vlan-port:1/1/1/1",
+                            "configure dhcp-relay v6-port-stats vlan-port:1/1/1/1",
+                        ]
+                    )
+                if command == "show dhcp-relay session":
+                    return "SESSION | STATE\n1 | active"
+                if command == "show dhcp-relay port-stats 1/1/1/1":
+                    return "PORT | RECEIVED | FORWARDED | DROPPED\nvlan-port:1/1/1/1 | 123 | 120 | 3"
+                if command == "show dhcp-relay v6-port-stats 1/1/1/1":
+                    return "\n".join(
+                        [
+                            "dhcp-relay v6-port-stats 1/1/1/1 vlan 10 v6summary",
+                            "  dhcpv6-error-summary : 1",
+                        ]
+                    )
+                return ""
+
+        connection = DhcpRelayConn()
+        self.get_resource_connection_facts.return_value = connection
+        set_module_args(dict(gather_subset=["!all", "dhcp_relay"]))
+
+        result = self.execute_module(changed=False)
+        relay = result["ansible_facts"]["ansible_net_dhcp_relay"]
+        self.assertEqual(
+            connection.commands,
+            [
+                "info configure dhcp-relay flat",
+                "show dhcp-relay session",
+                "show dhcp-relay port-stats 1/1/1/1",
+                "show dhcp-relay v6-port-stats 1/1/1/1",
+            ],
+        )
+        self.assertEqual(relay["port_stats"][0]["received"], "123")
+        self.assertEqual(relay["port_stats"][0]["port"], "1/1/1/1")
+        self.assertEqual(relay["v6_port_stats"][0]["dhcpv6_error_summary"], 1)
+        self.assertEqual(relay["v6_port_stats"][0]["vlan"], "10")
+        self.assertEqual(relay["v6_port_stats"][0]["version"], "v6")
+
+    def test_isam_facts_dhcp_relay_uses_active_session_ports(self):
+        class SessionConn:
+            def __init__(self):
+                self.commands = []
+
+            def get(self, command):
+                self.commands.append(command)
+                if command == "info configure dhcp-relay flat":
+                    return "#-------------------------------------------------------------------------------"
+                if command == "show dhcp-relay session":
+                    return "CLIENT | STATE\nvlanport:1/1/5/1/6/1/1:10 | active"
+                if command == "show dhcp-relay port-stats 1/1/5/1/6/1/1":
+                    return "\n".join(
+                        [
+                            "dhcp-relay port-stats 1/1/5/1/6/1/1 vlan 10 summary",
+                            "  error-summary : 0",
+                            "  total-in : 551",
+                            "  total-out : 549",
+                        ]
+                    )
+                return ""
+
+        connection = SessionConn()
+        self.get_resource_connection_facts.return_value = connection
+        set_module_args(dict(gather_subset=["!all", "dhcp_relay"]))
+
+        result = self.execute_module(changed=False)
+        relay = result["ansible_facts"]["ansible_net_dhcp_relay"]
+        self.assertIn("show dhcp-relay port-stats 1/1/5/1/6/1/1", connection.commands)
+        self.assertNotIn("show dhcp-relay v6-port-stats 1/1/5/1/6/1/1", connection.commands)
+        self.assertEqual(relay["port_stats"], [{
+            "port": "1/1/5/1/6/1/1",
+            "vlan": "10",
+            "error_summary": 0,
+            "total_in": 551,
+            "total_out": 549,
+        }])
+
+    def test_isam_facts_all_operational_subsets_are_legacy_facts(self):
+        class AllOperationalConn:
+            def __init__(self):
+                self.commands = []
+
+            def get(self, command):
+                self.commands.append(command)
+                return ""
+
+        connection = AllOperationalConn()
+        self.get_resource_connection_facts.return_value = connection
+        set_module_args(dict(gather_subset=["all"]))
+        result = self.execute_module(changed=False)
+        facts = result["ansible_facts"]
+
+        for key in (
+            "active_alarms",
+            "dhcp_relay",
+            "equipment_status",
+            "interface_status",
+            "ont_status",
+            "ont_ranging_status",
+            "ont_software_status",
+            "pon_pm_status",
+            "pon_status",
+            "software_status",
+        ):
+            self.assertIn("ansible_net_%s" % key, facts)
+        self.assertEqual(facts["ansible_network_resources"], {})
+        self.assertEqual(
+            set(connection.commands),
+            {
+                "show alarm current table",
+                "info configure dhcp-relay flat",
+                "show dhcp-relay session",
+                "show equipment slot",
+                "show interface port",
+                "show equipment ont status pon",
+                "show equipment ont ranging-status channel-pair",
+                "show equipment ont sw-version",
+                "show equipment ont sw-download",
+                "show pon interface tc-layer current-interval",
+                "show pon interface",
+                "show software-mngt oswp",
+            },
+        )
+
+    def test_isam_facts_default_does_not_gather_operational_data(self):
+        class DefaultConn:
+            def __init__(self):
+                self.commands = []
+
+            def get(self, command):
+                self.commands.append(command)
+                return ""
+
+        connection = DefaultConn()
+        self.get_resource_connection_facts.return_value = connection
+        set_module_args(dict())
+
+        result = self.execute_module(changed=False)
+        self.assertEqual(connection.commands, [])
+        self.assertEqual(result["ansible_facts"]["ansible_net_gather_subset"], [])

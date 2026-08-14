@@ -30,6 +30,7 @@ class Isam_systemArgs(object):  # pylint: disable=R0903
                         "ssh": {"type": "bool"},
                         "telnet": {"type": "bool"},
                         "snmp": {"type": "bool"},
+                        "welcome_banner": {"type": "str"},
                     },
                 },
                 "sntp": {
@@ -85,6 +86,23 @@ class Isam_systemArgs(object):  # pylint: disable=R0903
                         "source": {"type": "str"},
                     },
                 },
+                "loop_id_syntax": {
+                    "type": "dict",
+                    "options": {
+                        "atm_based_dsl": {"type": "str"},
+                        "efm_based_dsl": {"type": "str"},
+                        "efm_based_pon": {"type": "str"},
+                        "efm_based_epon": {"type": "str"},
+                        "efm_based_ngpon2": {"type": "str"},
+                    },
+                },
+                "relay_id_syntax": {
+                    "type": "dict",
+                    "options": {
+                        "atm_based_dsl": {"type": "str"},
+                        "efm_based_dsl": {"type": "str"},
+                    },
+                },
                 "transaction": {
                     "type": "dict",
                     "options": {
@@ -92,6 +110,7 @@ class Isam_systemArgs(object):  # pylint: disable=R0903
                         "log_full_action": {"type": "str"},
                     },
                 },
+                "max_lt_link_speed": {"type": "str"},
             },
         },
         "running_config": {"type": "str"},

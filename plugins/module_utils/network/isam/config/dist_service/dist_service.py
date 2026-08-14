@@ -49,6 +49,8 @@ class Isam_dist_service(ResourceModule):
                     merged.update(want[name])
                     want[name] = merged
         if self.state == "deleted":
+            if want:
+                have = {name: item for name, item in iteritems(have) if name in want}
             want = {}
         if self.state in ["overridden", "deleted"]:
             for name, item in iteritems(have):

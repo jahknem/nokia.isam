@@ -52,6 +52,9 @@ class TestIsamEquipmentOntsModule(TestIsamModule):
                             sw_ver_pland="auto",
                             sernum="ALCL:F9772423",
                             fec_up="disable",
+                            bridge_map_mode="n-mp-bridge-map-filter",
+                            ont_enable="enable",
+                            p2p_enable="enable",
                             admin_state="up",
                         )
                     ],
@@ -79,10 +82,11 @@ class TestIsamEquipmentOntsModule(TestIsamModule):
             "configure equipment ont interface 1/1/5/1/1 sw-ver-pland auto",
             "configure equipment ont interface 1/1/5/1/1 sernum ALCL:F9772423",
             "configure equipment ont interface 1/1/5/1/1 fec-up disable",
+            "configure equipment ont interface 1/1/5/1/1 bridge-map-mode n-mp-bridge-map-filter",
+            "configure equipment ont interface 1/1/5/1/1 ont-enable enable",
+            "configure equipment ont interface 1/1/5/1/1 p2p-enable enable",
             "configure equipment ont interface 1/1/5/1/1 admin-state up",
-            "configure equipment ont slot 1/1/5/1/1/1 planned-card-type ethernet",
-            "configure equipment ont slot 1/1/5/1/1/1 plndnumdataports 1",
-            "configure equipment ont slot 1/1/5/1/1/1 plndnumvoiceports 0",
+            "configure equipment ont slot 1/1/5/1/1/1 planned-card-type ethernet plndnumdataports 1 plndnumvoiceports 0",
             "configure equipment ont sw-ctrl 1 hw-version 3FE47211AB*",
             "configure equipment ont sw-ctrl 1 ont-variant DO",
         ]
@@ -100,6 +104,9 @@ class TestIsamEquipmentOntsModule(TestIsamModule):
                       sernum ALCL:F9772423
                       subslocid WILDCARD
                       fec-up disable
+                      bridge-map-mode n-mp-bridge-map-filter
+                      ont-enable enable
+                      p2p-enable enable
                       sw-dnload-version auto
                       plnd-var DO
                       enable-aes enable
@@ -122,6 +129,9 @@ class TestIsamEquipmentOntsModule(TestIsamModule):
         parsed = result["parsed"]
         self.assertEqual(parsed["interfaces"][0]["ont_idx"], "1/1/5/1/1")
         self.assertEqual(parsed["interfaces"][0]["admin_state"], "up")
+        self.assertEqual(parsed["interfaces"][0]["bridge_map_mode"], "n-mp-bridge-map-filter")
+        self.assertEqual(parsed["interfaces"][0]["ont_enable"], "enable")
+        self.assertEqual(parsed["interfaces"][0]["p2p_enable"], "enable")
         self.assertEqual(parsed["slots"][0]["plndnumdataports"], 1)
         self.assertEqual(parsed["sw_ctrls"][0]["ont_variant"], "DO")
 
@@ -140,6 +150,85 @@ class TestIsamEquipmentOntsModule(TestIsamModule):
         set_module_args(dict(state="gathered"), ignore_provider_arg)
         result = self.execute_module(changed=False)
         self.assertEqual(result["gathered"]["interfaces"][0]["sernum"], "ALCL:F9772423")
+
+    def test_isam_equipment_onts_deleted_preserves_interface_and_slot_siblings(self):
+        self.get_config.return_value = dedent(
+            """
+            configure equipment
+            ont
+            interface 1/1/5/1/1 admin-state up
+            exit
+            interface 1/1/5/1/2 admin-state up
+            exit
+            slot 1/1/5/1/1/1 planned-card-type ethernet
+            exit
+            slot 1/1/5/1/1/2 planned-card-type ethernet
+            exit
+            exit
+            """
+        )
+        set_module_args(
+            dict(
+                config={
+                    "interfaces": [{"ont_idx": "1/1/5/1/1"}],
+                    "slots": [{"ont_slot_idx": "1/1/5/1/1/1"}],
+                    "sw_ctrls": [],
+                },
+                state="deleted",
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=True)
+        self.assertEqual(
+            result["commands"],
+            [
+                "configure equipment ont interface 1/1/5/1/1 admin-state down",
+                "configure equipment ont no interface 1/1/5/1/1",
+                "configure equipment ont no slot 1/1/5/1/1/1",
+            ],
+        )
+        self.assertFalse(any("1/1/5/1/2" in command for command in result["commands"]))
+        self.assertFalse(any("1/1/5/1/1/2" in command for command in result["commands"]))
+
+    def test_isam_equipment_onts_deleted_brings_up_interface_delete_safely(self):
+        self.get_config.return_value = dedent(
+            """
+            configure equipment
+            ont
+            interface 1/1/5/1/100 admin-state up
+            exit
+            exit
+            """
+        )
+        set_module_args(
+            dict(
+                config={"interfaces": [{"ont_idx": "1/1/5/1/100"}]},
+                state="deleted",
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=True)
+        self.assertEqual(
+            result["commands"],
+            [
+                "configure equipment ont interface 1/1/5/1/100 admin-state down",
+                "configure equipment ont no interface 1/1/5/1/100",
+            ],
+        )
+
+    def test_isam_equipment_onts_merges_packed_interface_fields(self):
+        self.get_config.return_value = (
+            "configure equipment ont interface 1/1/5/1/1 battery-bkup enable "
+            "bridge-map-mode n-mp-bridge-map-filter ont-enable enable "
+            "desc1 Customer admin-state up"
+        )
+        set_module_args(dict(state="gathered"), ignore_provider_arg)
+        result = self.execute_module(changed=False)
+        interfaces = result["gathered"]["interfaces"]
+        self.assertEqual(len(interfaces), 1)
+        self.assertEqual(interfaces[0]["battery_bkup"], "enable")
+        self.assertEqual(interfaces[0]["bridge_map_mode"], "n-mp-bridge-map-filter")
+        self.assertEqual(interfaces[0]["ont_enable"], "enable")
 
     def test_isam_equipment_onts_merged(self):
         self.get_config.return_value = dedent(

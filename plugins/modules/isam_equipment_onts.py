@@ -57,6 +57,30 @@ options:
           planned_us_rate:
             description: Planned upstream rate.
             type: str
+          bridge_map_mode:
+            description: ONT bridge mapping mode.
+            type: str
+            choices: [1-mp-bridge-map-filter, n-p-bridge-map-filter, n-mp-bridge-map-filter]
+          ont_enable:
+            description: ONT enable mode.
+            type: str
+            choices: [auto, disable, enable]
+          p2p_enable:
+            description: Point-to-point enable mode.
+            type: str
+            choices: [disable, enable]
+          optics_hist:
+            description: Optical history collection mode.
+            type: str
+            choices: [disable, enable]
+          voip_allowed:
+            description: Voice-over-IP allowance mode.
+            type: str
+            choices: [disable, enable, iphost, veip]
+          iphc_allowed:
+            description: IP host connectivity allowance mode.
+            type: str
+            choices: [disable, enable]
           admin_state:
             description: Administrative state.
             type: str

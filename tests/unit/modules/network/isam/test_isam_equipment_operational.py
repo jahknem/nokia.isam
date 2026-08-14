@@ -1,5 +1,9 @@
 from textwrap import dedent
+from pathlib import Path
 
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.operational import (
+    Equipment_statusFacts,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.isam_equipment.operational import (
     EquipmentOperationalParser,
 )
@@ -59,3 +63,22 @@ class TestEquipmentOperationalParser(object):
 
     def test_empty_output_returns_empty_mapping(self):
         assert self.parser.parse("") == {}
+
+    def test_structured_equipment_status_discovers_fglt_b_from_fixture(self):
+        output = Path(__file__).parents[4].joinpath(
+            "fixtures", "equipment_status", "fglt-b", "output.txt"
+        ).read_text()
+        slots = Equipment_statusFacts(None).parse(output)["slots"]
+        assert any(
+            row["slot"] == "lt:1/1/5"
+            and row["actual_type"] == "fglt-b"
+            and row["enabled"] == "yes"
+            for row in slots
+        )
+
+    def test_structured_equipment_status_discovers_fglt_d_from_fixture(self):
+        output = Path(__file__).parents[4].joinpath(
+            "fixtures", "equipment_status", "fglt-d", "output.txt"
+        ).read_text()
+        slots = Equipment_statusFacts(None).parse(output)["slots"]
+        assert sum(row["actual_type"] == "fglt-d" for row in slots) == 2

@@ -20,17 +20,22 @@ options:
         required: true
         description:
         - The ONT interface index.
-      tca_profile:
+      tca_thresh:
+        type: bool
+        description:
+        - Enable the ANI ONT TCA threshold configuration.
+      lower_optical_th:
         type: str
         description:
-        - TCA profile name.
-      admin_state:
+        - Low optical threshold in dBm.
+      upper_optical_th:
         type: str
-        choices:
-        - up
-        - down
         description:
-        - Administrative state of the ANI ONT entry.
+        - High optical threshold in dBm.
+      rssi_profile:
+        type: int
+        description:
+        - RSSI profile identifier from 0 through 200.
   running_config:
     description:
     - This option is used only with state I(parsed).

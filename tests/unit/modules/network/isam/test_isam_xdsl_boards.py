@@ -1,36 +1,31 @@
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_boards.xdsl_boards import (
-    Xdsl_boardsFacts,
-)
+from ansible_collections.nokia.isam.plugins.modules import isam_xdsl_boards
 from ansible_collections.nokia.isam.tests.unit.compat.mock import patch
 
-
-class FakeConnection:
-    def __init__(self):
-        self.commands = []
-
-    def get(self, command):
-        self.commands.append(command)
-        if command == "info configure xdsl board flat":
-            return "board 1/1/1 annex-a"
-        return "vp-board 1/1/1 profile default"
+from .isam_module import TestIsamModule, set_module_args
 
 
-def test_xdsl_boards_gathers_board_and_vp_board():
-    connection = FakeConnection()
-    facts = Xdsl_boardsFacts(module=None)
-    ansible_facts = {"ansible_network_resources": {}}
+class TestIsamXdslBoardsModule(TestIsamModule):
+    module = isam_xdsl_boards
 
-    with patch(
-        "ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_boards.xdsl_boards.validate_config_safe",
-        side_effect=lambda argument_spec, data: data,
-    ):
-        facts.populate_facts(connection, ansible_facts)
+    def setUp(self):
+        super(TestIsamXdslBoardsModule, self).setUp()
+        self.mock_get_config = patch(
+            "ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_boards.xdsl_boards.Xdsl_boardsFacts.get_config"
+        )
+        self.get_config = self.mock_get_config.start()
 
-    assert connection.commands == [
-        "info configure xdsl board flat",
-        "info configure xdsl vp-board flat",
-    ]
-    assert ansible_facts["ansible_network_resources"]["xdsl_boards"] == {
-        "boards": [{"board_id": "1/1/1", "annex_a": True}],
-        "vp_boards": [{"vp_board_id": "1/1/1", "profile": "default"}],
-    }
+    def tearDown(self):
+        super(TestIsamXdslBoardsModule, self).tearDown()
+        self.get_config.stop()
+
+    def test_deleted_board_preserves_vp_board_with_same_id(self):
+        self.get_config.return_value = "\n".join([
+            "configure xdsl board 1/1/1 vce-profile 10",
+            "configure xdsl vp-board 1/1/1 admin-state up",
+        ])
+        set_module_args(
+            {"state": "deleted", "config": {"boards": [{"board_id": "1/1/1"}]}},
+            True,
+        )
+        result = self.execute_module(changed=True)
+        self.assertEqual(result["commands"], ["configure xdsl no board 1/1/1"])

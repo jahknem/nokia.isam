@@ -16,11 +16,39 @@ class Pppoel2(ResourceModule):
     def execute_module(self):
         config = self._module.params.get("config") or []
         if self.state == "parsed":
-            pass
+            return self.result
         elif self.state == "rendered":
             self.commands = self.template.render(config)
         else:
-            self.commands = self.template.render(config)
+            current = {item["name"]: item for item in self.have or []}
+            desired = {item["name"]: item for item in config}
+            self.commands = []
+            if self.state == "deleted":
+                targets = desired or current
+                self.commands = self.template.render(
+                    [{"name": name, "enabled": False} for name in targets]
+                )
+            else:
+                if self.state == "overridden":
+                    self.commands.extend(
+                        self.template.render([{"name": name, "enabled": False}])
+                        for name in current
+                        if name not in desired
+                    )
+                if self.state in ("replaced", "overridden"):
+                    self.commands.extend(
+                        self.template.render([{"name": name, "enabled": False}])
+                        for name in desired
+                        if name in current
+                    )
+                if self.state == "merged":
+                    config = [dict(current.get(item["name"], {}), **item) for item in config]
+                self.commands.extend(self.template.render(config))
+                self.commands = [
+                    command
+                    for commands in self.commands
+                    for command in (commands if isinstance(commands, list) else [commands])
+                ]
             self.run_commands()
         return self.result
 

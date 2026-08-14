@@ -31,6 +31,7 @@ class Software_mngtArgs(object):
                         "second_file_server_id": {"type": "str"},
                         "activate": {"type": "bool"},
                         "auto_verify": {"type": "bool"},
+                        "on_schedule_time": {"type": "bool"},
                         "admin_state": {"type": "bool"},
                     },
                 },

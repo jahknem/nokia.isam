@@ -105,7 +105,10 @@ class Isam_voice_sipFacts(object):
                 entry.update(Isam_voice_sipFacts._parse_bool_line(parts[2:],
                     ["support-redun", "dns-purge-timer", "dns-ini-retr-int", "dns-max-retr-nbr",
                      "fg-monitor-method", "fg-monitor-int", "bg-monitor-method", "bg-monitor-int",
-                     "stable-obs-period", "fo-hystersis", "del-upd-threshold"]))
+                     "stable-obs-period", "fo-hystersis", "del-upd-threshold",
+                     "auto-server-fo", "auto-server-fb", "auto-sos-fo", "auto-sos-fb",
+                     "rtry-after-thrsh", "options-max-fwd", "dns-redun-mode", "fail-obs-timer",
+                     "fg-intv-503", "time-thrsh-503", "nbr-thrsh-503", "auto-srv-fo-timer"]))
                 result.setdefault("redundancy", {}).setdefault(red, {"name": red}).update(entry)
 
             elif section == "system":
@@ -126,15 +129,17 @@ class Isam_voice_sipFacts(object):
                 entry = {}
                 if len(parts) > 1:
                     if parts[1] in ("stats-5min-config", "cdr-config"):
-                        Isam_voice_sipFacts._parse_bool_line(parts[1:], entry, None,
-                            ["stats-5min-config", "cdr-config"])
+                        entry.update(Isam_voice_sipFacts._parse_bool_line(
+                            parts[1:], ["stats-5min-config", "cdr-config"]
+                        ))
                     elif parts[1] == "stats-config":
                         rest_stats = parts[2:]
-                        for token in rest_stats:
-                            if token == "no":
-                                continue
-                            key = token.replace("-", "_")
-                            entry[key] = True
+                        index = 0
+                        while index < len(rest_stats):
+                            negate = rest_stats[index] == "no"
+                            token = rest_stats[index + 1] if negate and index + 1 < len(rest_stats) else rest_stats[index]
+                            entry[token.replace("-", "_")] = not negate
+                            index += 2 if negate else 1
                 result.setdefault("statistics", {}).update(entry)
 
             elif section == "cas-nsm-prof" and len(parts) >= 2:
@@ -215,7 +220,14 @@ class Isam_voice_sipFacts(object):
     def _parse_vsp_line(tokens, entry):
         bool_known = {"admin-status", "tinfo", "ta4", "ttir1", "t-acm-delta",
                        "access-held-time", "awaiting-time", "digit-send-mode",
-                       "overlap-484-act", "dmpm-intdg"}
+                       "overlap-484-act", "dmpm-intdgt-expid", "dial-start-timer",
+                       "dial-long-timer", "dial-short-timer", "uri-type",
+                       "rfc2833-pl-type", "rfc2833-process", "min-data-jitter",
+                       "init-data-jitter", "max-data-jitter", "release-mode",
+                       "dyn-pt-nego-type", "vbd-g711a-pl-type", "vbd-g711u-pl-type",
+                       "vbd-mode", "warmline-dl-timer", "reg-sub", "dtmf-sip-info",
+                       "sub-period", "sub-head-start", "t38-same-udp", "dhcp-option82",
+                       "sspprofile", "signaling-ipmode", "tls-cafile", "media-ipmode"}
         str_fields = {"domain-name": "str"}
         int_fields = {"timer-b", "timer-f", "timer-t1", "timer-t2"}
         i = 0

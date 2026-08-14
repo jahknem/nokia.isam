@@ -1,0 +1,4 @@
+configure software-mngt sw-replacement-mode upgrade-via-standby
+configure software-mngt oswp 1 primary-file-server-id 10.200.1.11 second-file-server-id 0.0.0.0
+configure software-mngt oswp 2 primary-file-server-id 10.199.200.9 second-file-server-id 0.0.0.0
+configure software-mngt database backup activate:10.199.200.10:backup/ backupv6 activate:::/backup/

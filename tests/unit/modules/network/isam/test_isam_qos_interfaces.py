@@ -40,6 +40,15 @@ QOS_CONFIG = dedent(
     """
 )
 
+QOS_CONFIG_WITH_QUEUE_SIBLING = QOS_CONFIG.replace(
+    "    exit\n    #-------------------------------------------------------------------------------",
+    "    queue 1\n"
+    "      priority 7\n"
+    "      queue-profile name:Sibling\n"
+    "    exit\n"
+    "    #-------------------------------------------------------------------------------",
+)
+
 
 class TestIsamQosInterfacesModule(TestIsamModule):
     module = isam_qos_interfaces
@@ -164,3 +173,35 @@ class TestIsamQosInterfacesModule(TestIsamModule):
             result["commands"],
             ["configure qos interface 1/1/2/1/1/1/1 queue 0 shaper-profile name:qssShaperDN920Mbps"],
         )
+
+    def test_isam_qos_interfaces_deleted_queue_preserves_queue_siblings(self):
+        self.get_config.return_value = QOS_CONFIG_WITH_QUEUE_SIBLING
+        set_module_args(
+            dict(
+                config=[{
+                    "name": "1/1/2/1/1/1/1",
+                    "queue": [{"id": 0}],
+                }],
+                state="deleted",
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=True)
+        self.assertTrue(any("queue 0" in command for command in result["commands"]))
+        self.assertFalse(any("queue 1" in command for command in result["commands"]))
+
+    def test_isam_qos_interfaces_deleted_scheduler_preserves_queues(self):
+        self.get_config.return_value = QOS_CONFIG_WITH_QUEUE_SIBLING
+        set_module_args(
+            dict(
+                config=[{
+                    "name": "1/1/2/1/1/1/1",
+                    "scheduler_node": "name:NGLT_Default",
+                }],
+                state="deleted",
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=True)
+        self.assertTrue(any("no scheduler-node" in command for command in result["commands"]))
+        self.assertFalse(any("queue " in command for command in result["commands"]))

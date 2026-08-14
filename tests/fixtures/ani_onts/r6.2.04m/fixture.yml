@@ -1,0 +1,7 @@
+schema_version: 1
+resource: ani_onts
+device_type: Nokia ISAM 7330 FTTN
+software_version: R6.2.04m
+command: info configure ani ont flat
+captured_at: 2026-08-10
+source: sanitized-live-capture

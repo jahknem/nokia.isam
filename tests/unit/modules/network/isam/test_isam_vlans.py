@@ -85,6 +85,39 @@ class TestIsamVlansModule(TestIsamModule):
         result = self.execute_module(changed=False)
         self.assertEqual(result.get("gathered"), [])
 
+    def test_isam_vlans_flat_fields_and_negative_flags(self):
+        running = dedent(
+            """
+            configure vlan id 100 mode residential-bridge name Home priority 5 new-secure-fwd enable aging-time 60000 in-qos-prof-name name:Default_TC0 sntp-proxy vmac-not-in-opt61
+            configure vlan id 100 dhcp-opt82-ext add-or-forward circuit-id-dhcp physical-id remote-id-dhcp customer-id relay-id-dhcp dhcpv6-itf-id physical-id dhcpv6-remote-id customer-id
+            configure vlan id stacked:552:2 mode cross-connect name Stacked pppoe-relay-tag configurable circuit-id-pppoe physical-id remote-id-pppoe customer-id
+            """
+        )
+        set_module_args(dict(running_config=running, state="parsed"), ignore_provider_arg)
+        result = self.execute_module(changed=False)
+        vlans = {entry["id"]: entry for entry in result["parsed"]}
+
+        self.assertEqual(vlans["100"]["priority"], 5)
+        self.assertEqual(vlans["100"]["aging-time"], 60000)
+        self.assertTrue(vlans["100"]["sntp-proxy"])
+        self.assertTrue(vlans["100"]["vmac-not-in-opt61"])
+        self.assertEqual(vlans["100"]["dhcp-opt82-ext"], "add-or-forward")
+        self.assertTrue(vlans["100"]["relay-id-dhcp"])
+        self.assertEqual(vlans["stacked:552:2"]["pppoe-relay-tag"], "configurable")
+
+        negative = dedent(
+            """
+            id 100
+              no sntp-proxy
+              no relay-id-dhcp
+            """
+        )
+        set_module_args(dict(running_config=negative, state="parsed"), ignore_provider_arg)
+        result = self.execute_module(changed=False)
+        vlan = result["parsed"][0]
+        self.assertFalse(vlan["sntp-proxy"])
+        self.assertFalse(vlan["relay-id-dhcp"])
+
     def test_isam_vlans_rendered_smoke(self):
         set_module_args(
             dict(
@@ -94,6 +127,9 @@ class TestIsamVlansModule(TestIsamModule):
                         "id": "100",
                         "mode": "residential-bridge",
                         "name": "HomeNet",
+                        "priority": 5,
+                        "new-secure-fwd": "enable",
+                        "sntp-proxy": True,
                     }
                 ],
             ),
@@ -102,7 +138,74 @@ class TestIsamVlansModule(TestIsamModule):
         result = self.execute_module(changed=False)
         self.assertIn("rendered", result)
         self.assertIsInstance(result.get("rendered"), list)
+        self.assertIn("configure vlan id 100 priority 5", result["rendered"])
+        self.assertIn("configure vlan id 100 new-secure-fwd enable", result["rendered"])
+        self.assertIn("configure vlan id 100 sntp-proxy", result["rendered"])
 
     def test_isam_vlans_parsed_requires_running_config(self):
         set_module_args(dict(state="parsed"), ignore_provider_arg)
         self.execute_module(failed=True)
+
+    def _set_vlan_have(self):
+        running = dedent(
+            """\
+            configure vlan id 100 mode residential-bridge name Home priority 5 new-secure-fwd enable
+            configure vlan id 200 mode residential-bridge name Other priority 4 new-secure-fwd enable
+            """
+        )
+        self.get_resource_connection_config.return_value.get.return_value = running
+        self.get_resource_connection_facts.return_value.get.return_value = running
+
+    def test_isam_vlans_merged_changes_only_requested_vlan_field(self):
+        self._set_vlan_have()
+        set_module_args(
+            dict(state="merged", config=[{"id": "100", "priority": 6}]),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=True)
+        self.assertIn("configure vlan id 100 priority 6", result["commands"])
+        self.assertFalse(any("id 200" in command for command in result["commands"]))
+
+    def test_isam_vlans_merged_is_idempotent(self):
+        self._set_vlan_have()
+        set_module_args(
+            dict(
+                state="merged",
+                config=[
+                    {"id": "100", "name": "Home", "priority": 5, "new-secure-fwd": "enable"}
+                ],
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["commands"], [])
+
+    def test_isam_vlans_replaced_removes_omitted_fields_but_keeps_siblings(self):
+        self._set_vlan_have()
+        set_module_args(
+            dict(state="replaced", config=[{"id": "100", "name": "Changed"}]),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=True)
+        self.assertIn("configure vlan id 100 name Changed", result["commands"])
+        self.assertTrue(any("no priority" in command for command in result["commands"]))
+        self.assertFalse(any("id 200" in command for command in result["commands"]))
+
+    def test_isam_vlans_overridden_removes_unrequested_vlan_siblings(self):
+        self._set_vlan_have()
+        set_module_args(
+            dict(state="overridden", config=[{"id": "100", "name": "Home"}]),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=True)
+        self.assertTrue(any("id 200" in command for command in result["commands"]))
+
+    def test_isam_vlans_deleted_removes_only_requested_vlan(self):
+        self._set_vlan_have()
+        set_module_args(
+            dict(state="deleted", config=[{"id": "100"}]),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=True)
+        self.assertTrue(any("id 100" in command for command in result["commands"]))
+        self.assertFalse(any("id 200" in command for command in result["commands"]))

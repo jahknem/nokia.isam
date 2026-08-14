@@ -22,7 +22,26 @@ class EfmOam(ResourceModule):
         elif self.state == "rendered":
             return {"rendered": self.template.render(self._module.params.get("config")), "changed": False}
         else:
-            self.commands = self.template.render(self._module.params.get("config"))
+            config = self._module.params.get("config") or []
+            if self.state == "deleted":
+                requested = {item["name"] for item in config}
+                current = self.have or []
+                targets = [
+                    item for item in current
+                    if not requested or item.get("name") in requested
+                ]
+                self.commands = self.template.render([
+                    {
+                        "name": item["name"],
+                        "admin_up": False,
+                        "passive_mode": False,
+                        "keep_alive_intvl": None,
+                        "response_intvl": None,
+                    }
+                    for item in targets
+                ])
+            else:
+                self.commands = self.template.render(config)
             if self.commands:
                 self.run_commands()
         return self.result

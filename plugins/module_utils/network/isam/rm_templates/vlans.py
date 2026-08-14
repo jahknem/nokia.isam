@@ -364,13 +364,13 @@ class VlansTemplate(NetworkTemplate):
         {
             'name': 'cvlan4095passthru',
             'getval': re.compile(
-                r'''
-                $''', re.VERBOSE,
+                r'''^\s+cvlan4095passthru\s+(?P<cvlan4095passthru>passthru|not-applicable)\s*$''', re.VERBOSE,
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
                 '{{ id }}': {
                     'id': '{{ id }}',
+                    'cvlan4095passthru': '{{ cvlan4095passthru }}',
                 },
             },
         },
@@ -405,13 +405,13 @@ class VlansTemplate(NetworkTemplate):
         {
             'name': 'arp-polling-ip',
             'getval': re.compile(
-                r'''
-                $''', re.VERBOSE,
+                r'''^\s+arp-polling-ip\s+(?P<arp_polling_ip>\S+)\s*$''', re.VERBOSE,
             ),
             'setval': 'configure vlan id {{ id }}',
             'result': {
                 '{{ id }}': {
                     'id': '{{ id }}',
+                    'arp-polling-ip': '{{ arp_polling_ip }}',
                 },
             },
         },
@@ -685,4 +685,68 @@ class VlansTemplate(NetworkTemplate):
             },
         },
     ]
+
+    def parse(self):
+        """Retain valueless VLAN flags that the generated results omit."""
+        result = super(VlansTemplate, self).parse()
+        flag_keys = {
+            "sntp-proxy", "vmac-not-in-opt61", "drly-srv-usr-side", "dhcp-opt82-nni",
+            "dhcp-opt82-uplink", "relay-id-dhcp", "dhcp-linerate", "pppoe-linerate",
+            "dhcpv6-linerate", "pppoe-l2-encaps", "dhcp-l2-encaps", "dhcpv6-l2-encaps",
+            "l2-encaps1", "pppoer-vlanaware", "dhcpr-vlanaware", "dhcpv6r-vlanaware",
+            "dhcpv6-relay-id", "dhcpv6-trst-port", "vmac-translation", "vmac-dnstr-filter",
+            "icmpv6-sec-fltr", "l2cp-transparent", "ipv4-mcast-ctrl", "ipv6-mcast-ctrl",
+            "mac-mcast-ctrl", "dis-proto-rip", "proto-ntp", "dis-ip-antispoof",
+            "unknown-unicast", "pt2ptgem-flooding", "mac-movement-ctrl", "arp-snooping",
+            "arp-polling", "mac-unauth",
+        }
+        current_id = None
+        for raw_line in self._lines:
+            stripped = raw_line.strip()
+            id_match = re.match(r"^id\s+(\S+)(?:\s+.*)?$", stripped)
+            candidate = stripped
+            if id_match:
+                current_id = id_match.group(1)
+                if stripped == "id {0}".format(current_id):
+                    continue
+                candidate = stripped[len("id {0}".format(current_id)):].strip()
+            match = re.match(r"(?:(no)\s+)?(\S+)\s*$", candidate)
+            if not match or current_id is None or match.group(2) not in flag_keys:
+                continue
+            negate, key = match.groups()
+            entry = result.get(current_id) or result.get(int(current_id))
+            if entry is None:
+                entry = result.setdefault(current_id, {"id": current_id})
+            entry[key] = negate is None
+        return result
+
+
+_VLAN_BOOLEAN_FIELDS = {
+    "sntp-proxy", "vmac-not-in-opt61", "drly-srv-usr-side", "dhcp-opt82-nni",
+    "dhcp-opt82-uplink", "relay-id-dhcp", "dhcp-linerate", "pppoe-linerate",
+    "dhcpv6-linerate", "pppoe-l2-encaps", "dhcp-l2-encaps", "dhcpv6-l2-encaps",
+    "l2-encaps1", "pppoer-vlanaware", "dhcpr-vlanaware", "dhcpv6r-vlanaware",
+    "dhcpv6-relay-id", "dhcpv6-trst-port", "vmac-translation", "vmac-dnstr-filter",
+    "icmpv6-sec-fltr", "l2cp-transparent", "ipv4-mcast-ctrl", "ipv6-mcast-ctrl",
+    "mac-mcast-ctrl", "dis-proto-rip", "proto-ntp", "dis-ip-antispoof",
+    "unknown-unicast", "pt2ptgem-flooding", "mac-movement-ctrl", "arp-snooping",
+    "arp-polling", "mac-unauth",
+}
+_VLAN_VALUE_FIELDS = {
+    "priority", "pppoe-relay-tag", "new-secure-fwd", "aging-time", "in-qos-prof-name",
+    "dhcp-opt82-ext", "circuit-id-dhcp", "remote-id-dhcp", "circuit-id-pppoe",
+    "remote-id-pppoe", "dhcpv6-itf-id", "dhcpv6-remote-id", "enterprise-number",
+    "arp-polling-ip",
+}
+
+
+for _parser in VlansTemplate.PARSERS:
+    _parser_name = _parser.get("name")
+    if _parser_name in _VLAN_BOOLEAN_FIELDS:
+        _parser["setval"] = "configure vlan id {{ id }} " + _parser_name
+        _parser["remval"] = "configure vlan id {{ id }} no " + _parser_name
+    elif _parser_name in _VLAN_VALUE_FIELDS:
+        _parser["setval"] = "configure vlan id {{ id }} " + _parser_name + " {{ " + _parser_name.replace("-", "_") + " }}"
+        _parser["remval"] = "configure vlan id {{ id }} no " + _parser_name
+
     # fmt: on

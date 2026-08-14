@@ -101,8 +101,15 @@ class Software_mngtFacts(object):
             entry = {"id": parts[1]}
             self._copy_token_value(parts, "primary-file-server-id", entry, "primary_file_server_id")
             self._copy_token_value(parts, "second-file-server-id", entry, "second_file_server_id")
-            entry["activate"] = "activate" in parts and "no" not in parts[max(parts.index("activate") - 1, 0):parts.index("activate")]
-            entry["auto_verify"] = "auto-verify" in parts and "no" not in parts[max(parts.index("auto-verify") - 1, 0):parts.index("auto-verify")]
+            if "activate" in parts:
+                index = parts.index("activate")
+                entry["activate"] = "no" not in parts[max(index - 1, 0):index]
+            if "auto-verify" in parts:
+                index = parts.index("auto-verify")
+                entry["auto_verify"] = "no" not in parts[max(index - 1, 0):index]
+            if "on-schedule-time" in parts:
+                index = parts.index("on-schedule-time")
+                entry["on_schedule_time"] = "no" not in parts[max(index - 1, 0):index]
             software_mngt["oswp"].append(entry)
         elif parts[0] == "database":
             database = software_mngt["database"]

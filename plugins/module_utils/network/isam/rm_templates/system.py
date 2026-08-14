@@ -102,6 +102,21 @@ class Isam_systemTemplate(NetworkTemplate):
             },
         },
         {
+            "name": "security.welcome_banner",
+            "compval": "welcome_banner",
+            "getval": re.compile(
+                r"^configure\ssystem\ssecurity\swelcome-banner\s"
+                r"(?:\"(?P<quoted_banner>[^\"]*)\"|(?P<welcome_banner>\S+))$"
+            ),
+            "setval": "configure system security welcome-banner \"{{ welcome_banner }}\"",
+            "remval": "configure system security no welcome-banner",
+            "result": {
+                "security": {
+                    "welcome_banner": "{{ quoted_banner if quoted_banner is defined else welcome_banner }}",
+                },
+            },
+        },
+        {
             "name": "sntp.server",
             "compval": "server",
             "getval": re.compile(
@@ -227,5 +242,82 @@ class Isam_systemTemplate(NetworkTemplate):
                 },
             },
         },
+        {
+            "name": "max_lt_link_speed",
+            "compval": "max_lt_link_speed",
+            "getval": re.compile(
+                r"^configure\ssystem\smax-lt-link-speed\slink-speed\s(?P<max_lt_link_speed>\S+)$"
+            ),
+            "setval": "configure system max-lt-link-speed link-speed {{ max_lt_link_speed }}",
+            "remval": "configure system max-lt-link-speed no link-speed",
+            "result": {
+                "max_lt_link_speed": "{{ max_lt_link_speed }}",
+            },
+        },
     ]
     # fmt: on
+
+
+def _syntax_parser(section, field, cli_name):
+    return {
+        "name": section.replace("-", "_") + "." + field,
+        "compval": field,
+        "getval": re.compile(
+            r"^configure\ssystem\s" + re.escape(section) + r"\s"
+            + re.escape(cli_name)
+            + r"\s(?:\"(?P<quoted>[^\"]*)\"|(?P<value>\S+))$"
+        ),
+        "setval": "configure system " + section + " " + cli_name + ' "{{ ' + field + ' }}"',
+        "remval": "configure system " + section + " no " + cli_name,
+        "result": {
+            section.replace("-", "_"): {
+                field: "{{ quoted if quoted is defined else value }}",
+            },
+        },
+    }
+
+
+Isam_systemTemplate.PARSERS.extend(
+    [
+        _syntax_parser("loop-id-syntax", "atm_based_dsl", "atm-based-dsl"),
+        _syntax_parser("loop-id-syntax", "efm_based_dsl", "efm-based-dsl"),
+        _syntax_parser("loop-id-syntax", "efm_based_pon", "efm-based-pon"),
+        _syntax_parser("loop-id-syntax", "efm_based_epon", "efm-based-epon"),
+        _syntax_parser("loop-id-syntax", "efm_based_ngpon2", "efm-based-ngpon2"),
+        _syntax_parser("relay-id-syntax", "atm_based_dsl", "atm-based-dsl"),
+        _syntax_parser("relay-id-syntax", "efm_based_dsl", "efm-based-dsl"),
+    ]
+)
+
+
+def _sntp_parser(field, cli_name, value_pattern=r"\S+", value_filter=""):
+    value = "{{ '' if negate is defined else value" + value_filter + " }}"
+    return {
+        "name": "sntp." + field,
+        "compval": field,
+        "getval": re.compile(
+            r"^configure\ssystem\ssntp\s"
+            + re.escape(cli_name)
+            + r"\s(?:(?P<negate>no\s+)|(?P<value>" + value_pattern + r"))$"
+        ),
+        "setval": "configure system sntp {{ 'no " + cli_name + "' if " + field + " is none else '" + cli_name + " ' + " + field + "|string }}",
+        "remval": "configure system sntp no " + cli_name,
+        "result": {"sntp": {field: value}},
+    }
+
+
+Isam_systemTemplate.PARSERS.extend(
+    [
+        {
+            "name": "sntp.enabled",
+            "compval": "enabled",
+            "getval": re.compile(r"^configure\ssystem\ssntp\s(?P<negate>no\s+)?enable$"),
+            "setval": "configure system sntp {{ 'no enable' if not enabled else 'enable' }}",
+            "remval": "configure system sntp no enable",
+            "result": {"sntp": {"enabled": "{{ False if negate is defined else True }}"}},
+        },
+        _sntp_parser("server_ip_addr", "server-ip-addr"),
+        _sntp_parser("polling_rate", "polling-rate", r"\d+", "|int"),
+        _sntp_parser("timezone_offset", "timezone-offset", r"-?\d+", "|int"),
+    ]
+)

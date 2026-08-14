@@ -49,6 +49,24 @@ def test_qos_profiles_template_accepts_compact_flat_line():
     assert parsed["queue:FD_BEQ"]["queue-type"] == "red:24:48:80"
 
 
+def test_qos_profiles_template_parses_queue_unit():
+    parsed = Qos_profilesTemplate(
+        lines=["configure qos profiles queue FD_BEQ red:24:48:80 unit byte"]
+    ).parse()
+
+    assert parsed["queue:FD_BEQ"]["unit"] == "byte"
+
+
+def test_qos_profiles_template_parses_scheduler_and_shaper_extensions():
+    parsed = Qos_profilesTemplate(lines=[
+        "configure qos profiles scheduler-node sn1 priority 1 ext-shaper ext1",
+        "configure qos profiles shaper sh1 committed-info-rate 100 autoshape enable",
+    ]).parse()
+
+    assert parsed["scheduler-node:sn1"]["ext-shaper"] == "ext1"
+    assert parsed["shaper:sh1"]["autoshape"] == "enable"
+
+
 def test_xdsl_profiles_template_accepts_packed_compact_flat_line():
     parsed = Xdsl_profilesTemplate().parse(
         "configure xdsl service-profile 1 name basic version 2 active"
@@ -113,3 +131,26 @@ def test_six_resources_normalize_live_compact_flat_lines():
             "spectrum_profile": 101,
         }
     }
+
+
+def test_qos_interfaces_compact_lines_keep_valueless_booleans():
+    assert Qos_interfacesFacts._compact_lines([
+        "configure qos interface 1/1/8/1 queue-stats-on autoschedule no us-vlanport-queue"
+    ]) == [
+        "configure qos interface 1/1/8/1 queue-stats-on",
+        "configure qos interface 1/1/8/1 autoschedule",
+        "configure qos interface 1/1/8/1 no us-vlanport-queue",
+    ]
+
+
+def test_xdsl_lines_compact_parser_keeps_rtx_and_sos_profiles():
+    flattened = Xdsl_linesFacts(module=None)._flatten_config(
+        "configure xdsl line 1/1/1/1 rtx-profile 7 sos-profile 8"
+    )
+    assert flattened == [
+        "configure xdsl line 1/1/1/1 rtx-profile 7",
+        "configure xdsl line 1/1/1/1 sos-profile 8",
+    ]
+    parsed = Xdsl_linesTemplate(lines=flattened).parse()
+    assert parsed["1/1/1/1"]["rtx_profile"] == 7
+    assert parsed["1/1/1/1"]["sos_profile"] == 8

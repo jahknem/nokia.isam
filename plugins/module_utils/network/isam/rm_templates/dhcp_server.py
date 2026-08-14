@@ -22,7 +22,7 @@ class Isam_dhcp_serverTemplate(NetworkTemplate):
             "compval": "start_addr",
             "getval": re.compile(r"^configure\sdhcp-server\sstart-addr\s(?P<start_addr>\S+)$"),
             "setval": "configure dhcp-server start-addr {{ start_addr }}",
-            "remval": "configure dhcp-server start-addr",
+            "remval": "configure dhcp-server no start-addr",
             "result": {
                 "start_addr": "{{ start_addr }}",
             },
@@ -32,7 +32,7 @@ class Isam_dhcp_serverTemplate(NetworkTemplate):
             "compval": "end_addr",
             "getval": re.compile(r"^configure\sdhcp-server\s(?:stop|end)-addr\s(?P<end_addr>\S+)$"),
             "setval": "configure dhcp-server stop-addr {{ end_addr }}",
-            "remval": "configure dhcp-server stop-addr",
+            "remval": "configure dhcp-server no stop-addr",
             "result": {
                 "end_addr": "{{ end_addr }}",
             },
@@ -42,7 +42,7 @@ class Isam_dhcp_serverTemplate(NetworkTemplate):
             "compval": "subnet_mask",
             "getval": re.compile(r"^configure\sdhcp-server\ssubnet-mask\s(?P<subnet_mask>\S+)$"),
             "setval": "configure dhcp-server subnet-mask {{ subnet_mask }}",
-            "remval": "configure dhcp-server subnet-mask",
+            "remval": "configure dhcp-server no subnet-mask",
             "result": {
                 "subnet_mask": "{{ subnet_mask }}",
             },
@@ -52,7 +52,7 @@ class Isam_dhcp_serverTemplate(NetworkTemplate):
             "compval": "lease_time",
             "getval": re.compile(r"^configure\sdhcp-server\slease-time\s(?P<lease_time>\d+)$"),
             "setval": "configure dhcp-server lease-time {{ lease_time }}",
-            "remval": "configure dhcp-server lease-time",
+            "remval": "configure dhcp-server no lease-time",
             "result": {
                 "lease_time": "{{ lease_time }}",
                 "lease_time_enabled": True,
@@ -63,7 +63,7 @@ class Isam_dhcp_serverTemplate(NetworkTemplate):
             "compval": "lease_time_enabled",
             "getval": re.compile(r"^configure\sdhcp-server\sno\slease-time$"),
             "setval": "configure dhcp-server no lease-time",
-            "remval": "configure dhcp-server lease-time",
+            "remval": "configure dhcp-server no lease-time",
             "result": {
                 "lease_time_enabled": False,
             },
@@ -75,6 +75,7 @@ class Isam_dhcp_serverTemplate(NetworkTemplate):
                 r"^configure\sdhcp-server\s(?P<negate_restart>no\s)?restart$"
             ),
             "setval": "configure dhcp-server {{ 'no ' if restart == false else '' }}restart",
+            "remval": "configure dhcp-server no restart",
             "result": {
                 "restart": "{{ False if negate_restart else True }}",
             },
@@ -87,7 +88,7 @@ class Isam_dhcp_serverTemplate(NetworkTemplate):
                 r"(?:stop-addr|end-addr)\s(?P<end_addr>\S+)"
                 r"(?:\s+subnet-mask\s(?P<subnet_mask>\S+))?"
                 r"(?:\s+(?P<negate_lease_time>no\s+)?lease-time(?:\s(?P<lease_time>\d+))?)?"
-                r"(?:\s+(?P<negate_restart>no\s)?restart)?"
+                r"(?:\s+(?P<negate_restart>no\s+)?(?P<restart_flag>restart))?"
                 r"(?:\s+.*)?$"
             ),
             "result": {
@@ -96,7 +97,7 @@ class Isam_dhcp_serverTemplate(NetworkTemplate):
                 "subnet_mask": "{{ subnet_mask|default('') }}",
                 "lease_time": "{{ lease_time|default('') }}",
                 "lease_time_enabled": "{{ False if negate_lease_time|default('') else True }}",
-                "restart": "{{ False if negate_restart|default('') else True }}",
+                "restart": "{{ False if negate_restart|default('') else (True if restart_flag|default('') else '') }}",
             },
         },
     ]

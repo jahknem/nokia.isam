@@ -28,11 +28,11 @@ class Generic_ponFacts(object):
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}
 
-        if not data:
+        if data is None:
             data = connection.get("info configure generic-pon flat")
         data = unwrap_response(data)
 
-        parser = Generic_ponTemplate(lines=[line.strip() for line in data.splitlines()])
+        parser = Generic_ponTemplate(lines=self._split_packed_lines(data))
         parsed = parser.parse()
 
         ansible_facts["ansible_network_resources"].pop("generic_pon", None)
@@ -40,3 +40,40 @@ class Generic_ponFacts(object):
         ansible_facts["ansible_network_resources"].update(facts)
 
         return ansible_facts
+
+    _PACKED_WORDS = {
+        "pon-pmcollect", "ont-pmcollect", "ontbulk-pmcollect",
+        "slid-mode", "sn-bundle-timer", "sw-ver-mis-block", "sn-autounlock",
+        "ponlos-alarm-ctrl", "threshold", "txmcutilhi", "txmcutilmd",
+        "txmcutillo", "txtotutilhi", "txtotutilmd", "txtotutillo",
+        "rxtotutilhi", "rxtotutilmd", "rxtotutillo", "dbacongperiodhi",
+        "dbacongperiodmd", "dbacongperiodlo", "txucdropfrmhi",
+        "txucdropfrmmd", "txucdropfrmlo", "txmcdropfrmhi", "txmcdropfrmmd",
+        "txmcdropfrmlo", "txbcdropfrmhi", "txbcdropfrmmd", "txbcdropfrmlo",
+        "rxtotdropfrmhi", "rxtotdropfrmmd", "rxtotdropfrmlo", "numtcint",
+        "numtcintdba", "dbacongthresh",
+    }
+
+    def _split_packed_lines(self, data):
+        result = []
+        for raw_line in str(data or "").splitlines():
+            line = raw_line.strip()
+            if not line or not line.startswith("configure generic-pon "):
+                if line:
+                    result.append(line)
+                continue
+            tokens = line.split()
+            starts = [
+                index for index, token in enumerate(tokens[3:], 3)
+                if (token in self._PACKED_WORDS and (index == 3 or tokens[index - 1] != "no"))
+                or (token == "no" and index + 1 < len(tokens) and tokens[index + 1] in self._PACKED_WORDS)
+            ]
+            if not starts:
+                result.append(line)
+                continue
+            prefix = " ".join(tokens[:3])
+            result.extend(
+                prefix + " " + " ".join(tokens[start:end])
+                for start, end in zip(starts, starts[1:] + [len(tokens)])
+            )
+        return result
