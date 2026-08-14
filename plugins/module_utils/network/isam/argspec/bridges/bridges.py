@@ -35,7 +35,7 @@ class BridgesArgs(object):  # pylint: disable=R0903
         "config": {
             "type": "dict",
             "options": {
-                "ageing_time": {"type": "int", "default": 300},
+                "ageing_time": {"type": "int"},
                 "port": {
                     "type": "list",
                     "elements": "dict",
@@ -113,19 +113,18 @@ class BridgesArgs(object):  # pylint: disable=R0903
                                     ],
                                 },
                                 "l2fwder_vlan": {"type": "str"},
+                                "network_vlan": {"type": "int"},
                                 "vlan_scope": {
                                     "type": "str",
                                     "choices": ["local", "l2fwder", "network"],
                                 },
-                                "qos": {"type": "str", "default": "none"},
-                                "qos_profile": {"type": "str", "default": "none"},
+                                "qos": {"type": "str"},
+                                "qos_profile": {"type": "str"},
                                 "prior_best_effort": {
                                     "type": "bool",
-                                    "default": "none",
                                 },
                                 "prior_background": {
                                     "type": "bool",
-                                    "default": "none",
                                 },
                                 "prior_spare": {"type": "bool"},
                                 "prior_exc_effort": {"type": "bool"},

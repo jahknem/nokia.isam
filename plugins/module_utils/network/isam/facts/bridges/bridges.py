@@ -20,6 +20,9 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.bridges.bridges import (
     BridgesArgs,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_scoped_config,
+)
 
 
 class BridgesFacts(object):
@@ -29,6 +32,30 @@ class BridgesFacts(object):
     def __init__(self, module, subspec='config', options='options'):
         self._module = module
         self.argument_spec = BridgesArgs.argument_spec
+
+    def get_config(self, connection):
+        config = self._module.params.get("config") or {}
+        ports = config.get("port", []) if isinstance(config, dict) else config
+        ports = ports or []
+        commands = [
+            "info configure bridge port %s flat detail" % (item.get("port") or item.get("id"))
+            for item in ports
+            if item.get("port") or item.get("id")
+        ]
+        data = get_scoped_config(
+            self._module,
+            connection,
+            config,
+            "info configure bridge flat",
+            commands,
+        )
+        if commands:
+            data = "\n".join(
+                line for line in data.splitlines()
+                if not line.startswith("configure bridge ageing-time ")
+                and not line.startswith("configure bridge no ageing-time")
+            )
+        return data
 
     def populate_facts(self, connection, ansible_facts, data=None):
         """ Populate the facts for Bridges network resource
@@ -43,7 +70,7 @@ class BridgesFacts(object):
         facts = {}
 
         if not data:
-            data = connection.get("info configure bridge flat")
+            data = self.get_config(connection)
 
         bridge_config = self._parse_bridge_config(data)
 
