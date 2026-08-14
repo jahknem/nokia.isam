@@ -53,7 +53,13 @@ options:
     default: false
     vars:
       - name: ansible_isam_retry_authentication
-  ssh_type: {description: SSH implementation., type: string, default: auto}
+  ssh_type:
+    description: SSH implementation.
+    type: string
+    default: auto
+    choices: [auto, paramiko, libssh]
+    vars:
+      - name: ansible_network_cli_ssh_type
   single_user_mode: {description: Enable single-user command caching., type: boolean, default: false}
 """
 
