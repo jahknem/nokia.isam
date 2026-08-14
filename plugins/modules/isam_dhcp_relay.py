@@ -5,9 +5,10 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = """
+MODULE_DESCRIPTION = """
 module: isam_dhcp_relay
 short_description: Manages DHCP relay user port statistics on Nokia ISAM.
+description: Manages DHCP relay user port statistics on Nokia ISAM.
 options:
   config:
     type: list
@@ -51,3 +52,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+DOCUMENTATION = """
+module: isam_dhcp_relay
+short_description: Manage Nokia ISAM DHCP relay
+description: Manage Nokia ISAM DHCP relay.
+"""

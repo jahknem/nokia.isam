@@ -9,14 +9,17 @@ DOCUMENTATION = """
 ---
 module: isam_mcast_control
 short_description: Manage Nokia ISAM multicast control configuration
-description:
+description: |
   - Owns only the C(configure mcast-control) command family.
 options:
   config:
+    description: Multicast-control configuration.
     type: dict
   running_config:
+    description: Device-native configuration to parse.
     type: str
   state:
+    description: Desired state of the configuration.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -39,3 +42,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+MODULE_DESCRIPTION = """
+module: isam_mcast_control
+short_description: Manage Nokia ISAM multicast control
+description: Manage Nokia ISAM multicast control using configure mcast-control.
+"""

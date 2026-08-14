@@ -9,14 +9,10 @@ DOCUMENTATION = """
 ---
 module: isam_ani_onts
 short_description: Resource module to configure ani ont TCA thresholds
-description:
+description: |
   - Manages C(configure ani ont) TCA threshold entries on Nokia ISAM devices.
-version_added: 1.0.0
+version_added: 0.3.0
 author: Jan Kühnemund (@jahknem)
-notes:
-  - Tested against Nokia ISAM 6.2.04ng
-  - This module works with connection C(network_cli)
-  - Implements CLI command: C(configure ani ont ())
 options:
   config:
     description: A list of ani ont TCA threshold configurations.
@@ -27,19 +23,12 @@ options:
         type: str
         required: true
         description: The ONT interface index.
-      tca_profile:
-        type: str
-        description: TCA profile name.
-      admin_state:
-        type: str
-        choices: [up, down]
-        description: Administrative state of the ANI ONT entry.
+      tca_thresh:
+        type: bool
+        default: true
+        description: Enable the ANI ONT TCA threshold entry.
   running_config:
-    description:
-      - This option is used only with state I(parsed).
-      - The value of this option should be the output received from the device
-        by executing the command C(info configure ani ont).
-      - For state I(parsed) active connection to remote host is not required.
+    description: Device-native configuration to parse when state is parsed.
     type: str
   state:
     description: The state the configuration should be left in.
@@ -57,8 +46,7 @@ EXAMPLES = """
   nokia.isam.isam_ani_onts:
     config:
       - ont_idx: 1/1/1/1/1
-        tca_profile: "default"
-        admin_state: up
+        tca_thresh: true
     state: merged
 """
 
@@ -110,3 +98,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+MODULE_DESCRIPTION = """
+module: isam_ani_onts
+short_description: Manage Nokia ISAM ANI ONT thresholds
+description: Manage Nokia ISAM ANI ONT thresholds.
+"""

@@ -3,7 +3,7 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.ngpon2_channel_groups.ngpon2_channel_groups import Ngpon2_channel_groupsArgs
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.pon_variants.pon_variants import Ngpon2_channel_groups
 
-DOCUMENTATION = """
+MODULE_DESCRIPTION = """
 module: isam_ngpon2_channel_groups
 short_description: Manages the documented NG-PON2 channel-group subset.
 options:
@@ -17,3 +17,9 @@ def main():
     module.exit_json(**Ngpon2_channel_groups(module).execute_module())
 
 if __name__ == "__main__": main()
+
+DOCUMENTATION = """
+module: isam_ngpon2_channel_groups
+short_description: Manage Nokia ISAM NG-PON2 channel groups
+description: Manage Nokia ISAM NG-PON2 channel groups.
+"""

@@ -1,4 +1,18 @@
 #!/usr/bin/python
+MODULE_DESCRIPTION = """
+module: isam_l2cp_user_port
+short_description: Manage Nokia ISAM L2CP user ports
+description: Manage Nokia ISAM L2CP user ports.
+options:
+  config:
+    type: list
+  running_config:
+    type: str
+  state:
+    type: str
+    choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
+    default: merged
+"""
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.l2cp_user_port.l2cp_user_port import L2cpUserPortArgs
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.l2cp_user_port.l2cp_user_port import L2cpUserPort
@@ -13,3 +27,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+DOCUMENTATION = """
+module: isam_l2cp_user_port
+short_description: Manage Nokia ISAM L2CP user ports
+description: Manage Nokia ISAM L2CP user ports.
+"""

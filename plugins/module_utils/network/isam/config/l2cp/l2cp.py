@@ -18,7 +18,24 @@ class L2cp(ResourceModule):
             return {"parsed": self.template.parse(self._module.params.get("running_config")), "changed": False}
         if self.state == "rendered":
             return {"rendered": self.template.render(self._module.params.get("config")), "changed": False}
-        self.commands = self.template.render(self._module.params.get("config"))
+        desired = self.want or []
+        current = self.have or []
+        if self.state == "deleted" and any(
+            item.get("partition_type") != "no-partition" for item in current
+        ) and self.before:
+            self.commands = self.template.render([{"partition_type": "no-partition"}])
+        elif self.state == "deleted":
+            self.commands = []
+        elif self.state == "overridden" and not desired and current:
+            self.commands = self.template.render([{"partition_type": "no-partition"}])
+        elif self.state == "merged" and current and desired:
+            merged = dict(current[0])
+            merged.update(desired[0])
+            self.commands = [] if merged == current[0] else self.template.render([merged])
+        elif self.state in ("replaced", "overridden") and desired == current:
+            self.commands = []
+        else:
+            self.commands = self.template.render(desired)
         if self.commands:
             self.run_commands()
         return self.result

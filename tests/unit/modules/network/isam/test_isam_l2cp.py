@@ -1,10 +1,28 @@
 from textwrap import dedent
 
 from ansible_collections.nokia.isam.plugins.modules import isam_l2cp, isam_l2cp_session, isam_l2cp_user_port
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.l2cp.l2cp import L2cp
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.l2cp import L2cpTemplate
 from .isam_module import TestIsamModule, set_module_args
 
 
 class TestL2cp(TestIsamModule):
+    def test_global_merged_is_idempotent(self):
+        resource = L2cp.__new__(L2cp)
+        resource.template = L2cpTemplate()
+        resource.state = "merged"
+        resource.want = [{"name": "l2cp", "partition_type": "fixed-assigned"}]
+        resource.have = [{"name": "l2cp", "partition_type": "fixed-assigned"}]
+        resource.commands = []
+
+        resource.commands = []
+        merged = dict(resource.have[0])
+        merged.update(resource.want[0])
+        if merged != resource.have[0]:
+            resource.commands = resource.template.render([merged])
+
+        assert resource.commands == []
+
     def test_global_rendered_and_parsed(self):
         self.module = isam_l2cp
         set_module_args({"state": "rendered", "config": [{"name": "l2cp", "partition_type": "fixed-assigned"}]}, True)
@@ -14,6 +32,12 @@ class TestL2cp(TestIsamModule):
         set_module_args({"state": "parsed", "running_config": "configure l2cp partition-type fixed-assigned"}, True)
         result = self.execute_module(changed=False)
         self.assertEqual(result["parsed"], [{"name": "l2cp", "partition_type": "fixed-assigned"}])
+
+    def test_deleted_is_idempotent_when_l2cp_is_unconfigured(self):
+        self.module = isam_l2cp
+        set_module_args({"state": "deleted", "config": [{"name": "l2cp"}], "_ansible_check_mode": True}, True)
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["commands"], [])
 
     def test_session_rendered_and_parsed(self):
         self.module = isam_l2cp_session

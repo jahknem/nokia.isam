@@ -1,4 +1,18 @@
 #!/usr/bin/python
+MODULE_DESCRIPTION = """
+module: isam_pppoel2_statistics
+short_description: Manage Nokia ISAM PPPoE-L2 statistics
+description: Manage Nokia ISAM PPPoE-L2 statistics.
+options:
+  config:
+    type: list
+  running_config:
+    type: str
+  state:
+    type: str
+    choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
+    default: merged
+"""
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.pppoel2.pppoel2 import Pppoel2Args
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.pppoel2.pppoel2 import Pppoel2
@@ -18,3 +32,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+DOCUMENTATION = """
+module: isam_pppoel2_statistics
+short_description: Manage Nokia ISAM PPPoE-L2 statistics
+description: Manage Nokia ISAM PPPoE-L2 statistics.
+"""

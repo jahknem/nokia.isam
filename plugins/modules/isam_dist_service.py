@@ -5,9 +5,10 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = """
+MODULE_DESCRIPTION = """
 module: isam_dist_service
 short_description: Manages distributed service configuration on Nokia ISAM.
+description: Manages distributed service configuration on Nokia ISAM.
 options:
   config:
     type: list
@@ -54,3 +55,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+DOCUMENTATION = """
+module: isam_dist_service
+short_description: Manage Nokia ISAM distributed services
+description: Manage Nokia ISAM distributed services.
+"""

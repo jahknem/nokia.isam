@@ -49,7 +49,7 @@ class LinetestArgs(object):
         "running_config": {"type": "str"},
         "state": {
             "type": "str",
-            "choices": ["rendered", "parsed", "gathered"],
-            "default": "rendered",
+            "choices": ["merged", "replaced", "overridden", "deleted", "gathered", "rendered", "parsed"],
+            "default": "merged",
         },
     }

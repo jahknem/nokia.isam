@@ -56,6 +56,9 @@ options:
           snmp:
             description: Enable SNMP access.
             type: bool
+          welcome_banner:
+            description: Quoted welcome banner displayed on management login.
+            type: str
       sntp:
         description: SNTP configuration.
         type: dict
@@ -147,6 +150,24 @@ options:
           source:
             description: Timing source.
             type: str
+      loop_id_syntax:
+        description: Loop identifier syntax strings by access technology.
+        type: dict
+        suboptions:
+          atm_based_dsl: {description: ATM-based DSL loop syntax., type: str}
+          efm_based_dsl: {description: EFM-based DSL loop syntax., type: str}
+          efm_based_pon: {description: EFM-based PON loop syntax., type: str}
+          efm_based_epon: {description: EFM-based EPON loop syntax., type: str}
+          efm_based_ngpon2: {description: EFM-based NG-PON2 loop syntax., type: str}
+      relay_id_syntax:
+        description: Relay identifier syntax strings by access technology.
+        type: dict
+        suboptions:
+          atm_based_dsl: {description: ATM-based DSL relay syntax., type: str}
+          efm_based_dsl: {description: EFM-based DSL relay syntax., type: str}
+      max_lt_link_speed:
+        description: Maximum link speed used by the line termination.
+        type: str
       transaction:
         description: Transaction configuration.
         type: dict

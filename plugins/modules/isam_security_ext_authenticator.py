@@ -3,27 +3,24 @@ from __future__ import absolute_import, division, print_function
 
 DOCUMENTATION = """
 module: isam_security_ext_authenticator
-short_description: Render or parse Nokia ISAM 802.1X port authentication commands.
+short_description: Run Nokia ISAM 802.1X port authentication actions.
 description:
   - Implements the admin security ext-authenticator command documented in PDFs 227 and 228.
-  - This resource is intentionally render/parse only; it never sends commands to a device.
+  - The command is an operational administrative action rather than persistent configuration.
 options:
   config:
+    description: Ports on which to perform the administrative action.
     type: list
     elements: dict
     suboptions:
       port:
+        description: Interface port identifier.
         type: str
         required: true
       clear_statistics:
+        description: Clear the port's authentication statistics.
         type: bool
         default: false
-  running_config:
-    type: str
-  state:
-    type: str
-    choices: [rendered, parsed]
-    default: rendered
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -38,11 +35,6 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.sec
 def main():
     module = AnsibleModule(
         argument_spec=Isam_security_ext_authenticatorArgs.argument_spec,
-        mutually_exclusive=[["config", "running_config"]],
-        required_if=[
-            ["state", "rendered", ["config"]],
-            ["state", "parsed", ["running_config"]],
-        ],
         supports_check_mode=True,
     )
     module.exit_json(**Isam_security_ext_authenticator(module).execute_module())
