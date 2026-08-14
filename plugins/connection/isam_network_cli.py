@@ -88,7 +88,11 @@ class Connection(NetworkCliConnection):
         # ansible_ssh_extra_args are not used by network_cli.
         try:
             import paramiko
+            from paramiko.rsakey import RSAKey
+            from cryptography.hazmat.primitives.hashes import SHA1
 
+            paramiko.Transport._key_info.setdefault("ssh-rsa", RSAKey)
+            RSAKey.HASHES.setdefault("ssh-rsa", SHA1)
             preferred_keys = getattr(paramiko.Transport, "_preferred_keys", ())
             if "ssh-rsa" not in preferred_keys:
                 paramiko.Transport._preferred_keys = preferred_keys + ("ssh-rsa",)
