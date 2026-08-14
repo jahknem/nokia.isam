@@ -33,9 +33,16 @@ options:
   become_method: {description: Privilege escalation method., type: string, default: enable}
   host_key_auto_add: {description: Automatically add host keys., type: boolean, default: false}
   host_key_checking: {description: Verify SSH host keys., type: boolean, default: true}
+  proxy_command: {description: SSH proxy command., type: string, default: ""}
+  look_for_keys: {description: Search for private keys., type: boolean, default: true}
+  record_host_keys: {description: Record host keys., type: boolean, default: true}
+  use_persistent_connections: {description: Use persistent connections., type: boolean, default: false}
+  paramiko_timeout: {description: Paramiko connection timeout., type: float, default: 10}
+  banner_timeout: {description: SSH banner timeout., type: float, default: 30}
   persistent_buffer_read_timeout: {description: Persistent read buffer timeout., type: float, default: 0.1}
   terminal_stdout_re: {description: Terminal prompt patterns., type: list}
   terminal_stderr_re: {description: Terminal error patterns., type: list}
+  terminal_errors: {description: Terminal setup error behavior., type: string, default: fail, choices: [ignore, warn, fail]}
   terminal_initial_prompt: {description: Initial terminal prompts., type: list}
   terminal_initial_answer: {description: Answers to initial prompts., type: list}
   terminal_initial_prompt_checkall: {description: Require all initial prompts., type: boolean, default: false}
@@ -60,6 +67,10 @@ options:
     choices: [auto, paramiko, libssh]
     vars:
       - name: ansible_network_cli_ssh_type
+  use_rsa_sha2_algorithms:
+    description: Enable RSA SHA-2 host-key algorithms.
+    type: boolean
+    default: true
   single_user_mode: {description: Enable single-user command caching., type: boolean, default: false}
 """
 
@@ -81,6 +92,12 @@ class Connection(NetworkCliConnection):
         re.IGNORECASE,
     )
     authentication_re = re.compile(r"Failed to authenticate", re.IGNORECASE)
+
+    def get_option(self, option, hostvars=None):
+        try:
+            return super(Connection, self).get_option(option, hostvars=hostvars)
+        except KeyError as exc:
+            raise KeyError("missing ISAM connection option: %s" % option) from exc
 
     def _connect(self):
         # Legacy ISAM software may offer only the ssh-rsa host-key algorithm.
@@ -104,7 +121,7 @@ class Connection(NetworkCliConnection):
             try:
                 return super(Connection, self)._connect()
             except Exception as exc:
-                message = str(exc)
+                message = str(exc) or repr(exc)
                 self.queue_message(
                     "vv",
                     "isam_connect_retry: attempt=%d exception=%s message=%r"
