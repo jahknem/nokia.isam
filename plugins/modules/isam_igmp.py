@@ -9,14 +9,17 @@ DOCUMENTATION = """
 ---
 module: isam_igmp
 short_description: Manage Nokia ISAM IGMP configuration
-description:
+description: |
   - Owns only the C(configure igmp) command family.
 options:
   config:
+    description: IGMP configuration.
     type: dict
   running_config:
+    description: Device-native configuration to parse.
     type: str
   state:
+    description: Desired state of the configuration.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -39,3 +42,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+MODULE_DESCRIPTION = """
+module: isam_igmp
+short_description: Manage Nokia ISAM IGMP
+description: Manage Nokia ISAM IGMP using the configure igmp command family.
+"""

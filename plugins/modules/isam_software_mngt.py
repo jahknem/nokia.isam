@@ -11,7 +11,7 @@ module: isam_software_mngt
 short_description: Manage Nokia ISAM software management configuration.
 description:
   - Manages C(configure software-mngt database), C(software-mngt oswp), and C(software-mngt sw-replacement-mode) configuration.
-version_added: 1.0.0
+version_added: 0.3.0
 author: Jan Kühnemund (@jahknem)
 options:
   config:
@@ -28,12 +28,41 @@ options:
           url:
             description: Database URL.
             type: str
+          backup:
+            description: IPv4 database backup target.
+            type: str
+          backupv6:
+            description: IPv6 database backup target.
+            type: str
+          auto_backup_interval:
+            description: Automatic database backup interval.
+            type: int
       oswp:
         description: OSWP settings.
-        type: dict
+        type: list
+        elements: dict
         suboptions:
+          id:
+            description: OSWP identifier.
+            type: str
+            required: true
+          primary_file_server_id:
+            description: Primary file-server identifier.
+            type: str
+          second_file_server_id:
+            description: Secondary file-server identifier.
+            type: str
+          activate:
+            description: Activate this OSWP record.
+            type: bool
+          auto_verify:
+            description: Enable automatic OSWP verification.
+            type: bool
+          on_schedule_time:
+            description: Schedule activation at the configured time.
+            type: bool
           admin_state:
-            description: Enable or disable OSWP.
+            description: Enable or disable OSWP administration.
             type: bool
       sw_replacement_mode:
         description: Software replacement mode settings.
@@ -64,7 +93,12 @@ EXAMPLES = """
         version: R6.2.04m
         url: tftp://10.0.0.1/software.bin
       oswp:
-        admin_state: true
+        - id: 1
+          primary_file_server_id: 10.0.0.1
+          second_file_server_id: 0.0.0.0
+          activate: true
+          auto_verify: true
+          admin_state: true
       sw_replacement_mode:
         mode: auto
     state: merged

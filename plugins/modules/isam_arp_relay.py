@@ -5,9 +5,10 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.ar
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.arp_relay.arp_relay import Isam_arp_relay
 
 
-DOCUMENTATION = """
+MODULE_DESCRIPTION = """
 module: isam_arp_relay
 short_description: Manage Nokia ISAM ARP relay statistics configuration
+description: Manage Nokia ISAM ARP relay statistics configuration.
 options:
   config:
     type: list
@@ -43,3 +44,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+DOCUMENTATION = """
+module: isam_arp_relay
+short_description: Manage Nokia ISAM ARP relay
+description: Manage Nokia ISAM ARP relay.
+"""

@@ -1,4 +1,18 @@
 #!/usr/bin/python
+MODULE_DESCRIPTION = """
+module: isam_pppoe_client_interface
+short_description: Manage Nokia ISAM PPPoE client interfaces
+description: Manage Nokia ISAM PPPoE client interfaces.
+options:
+  config:
+    type: list
+  running_config:
+    type: str
+  state:
+    type: str
+    choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
+    default: merged
+"""
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.pppoe_client.pppoe_client import PppoeClientArgs
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.pppoe_client.pppoe_client import PppoeClient
@@ -18,3 +32,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+DOCUMENTATION = """
+module: isam_pppoe_client_interface
+short_description: Manage Nokia ISAM PPPoE client interfaces
+description: Manage Nokia ISAM PPPoE client interfaces.
+"""

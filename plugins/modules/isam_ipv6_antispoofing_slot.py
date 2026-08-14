@@ -5,9 +5,10 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.ip
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.ipv6_antispoofing_slot.ipv6_antispoofing_slot import Isam_ipv6_antispoofing_slot
 
 
-DOCUMENTATION = """
+MODULE_DESCRIPTION = """
 module: isam_ipv6_antispoofing_slot
 short_description: Manage Nokia ISAM IPv6 anti-spoofing slot configuration
+description: Manage Nokia ISAM IPv6 anti-spoofing slot configuration.
 options:
   config:
     type: list
@@ -45,3 +46,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+DOCUMENTATION = """
+module: isam_ipv6_antispoofing_slot
+short_description: Manage Nokia ISAM IPv6 anti-spoofing slots
+description: Manage Nokia ISAM IPv6 anti-spoofing slots.
+"""

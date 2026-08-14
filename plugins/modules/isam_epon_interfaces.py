@@ -3,9 +3,10 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.epon_interfaces.epon_interfaces import Epon_interfacesArgs
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.pon_variants.pon_variants import Epon_interfaces
 
-DOCUMENTATION = """
+MODULE_DESCRIPTION = """
 module: isam_epon_interfaces
 short_description: Manages the documented EPON interface provisioning subset.
+description: Manages the documented EPON interface provisioning subset.
 options:
   config: {type: list, elements: dict}
   running_config: {type: str}
@@ -17,3 +18,9 @@ def main():
     module.exit_json(**Epon_interfaces(module).execute_module())
 
 if __name__ == "__main__": main()
+
+DOCUMENTATION = """
+module: isam_epon_interfaces
+short_description: Manage Nokia ISAM EPON interfaces
+description: Manage Nokia ISAM EPON interfaces.
+"""

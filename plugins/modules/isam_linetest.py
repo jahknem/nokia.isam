@@ -11,10 +11,10 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.lin
 DOCUMENTATION = r'''
 ---
 module: isam_linetest
-short_description: Parse and render safe Nokia ISAM LineTest configuration
+short_description: Manage Nokia ISAM LineTest configuration
 description:
   - Supports declarative single LineTest session and parameter configuration.
-  - Does not execute LineTest actions or send configuration to a device.
+  - Sends only configuration commands; it does not execute LineTest actions.
 options:
   config:
     type: dict
@@ -23,9 +23,10 @@ options:
     type: str
     description: Output from C(info configure linetest) for parsed state.
   state:
+    description: Desired resource state.
     type: str
-    choices: [rendered, parsed, gathered]
-    default: rendered
+    choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
+    default: merged
 '''
 
 
@@ -33,7 +34,10 @@ def main():
     module = AnsibleModule(
         argument_spec=LinetestArgs.argument_spec,
         mutually_exclusive=[["config", "running_config"]],
-        required_if=[["state", "rendered", ["config"]], ["state", "parsed", ["running_config"]]],
+        required_if=[
+            ["state", state, ["config"]]
+            for state in ("merged", "replaced", "overridden", "rendered")
+        ] + [["state", "parsed", ["running_config"]]],
         supports_check_mode=True,
     )
     module.exit_json(**Linetest(module).execute_module())
