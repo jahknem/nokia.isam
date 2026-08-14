@@ -1,5 +1,4 @@
 ---
 collections:
   - name: ansible.netcommon
-  - name: moreati.jq
-  - name: community.general
+    version: 8.6.1

@@ -248,6 +248,38 @@ def unwrap_response(data):
     return data
 
 
+def get_scoped_config(module, connection, config, fallback_command, commands, safe_states=None):
+    """Read only explicitly addressed resource identities when it is safe.
+
+    Resource modules can compare merged/replaced/explicitly deleted entries
+    without discovering unrelated family members.  Overridden and unqualified
+    deletion still require the complete family to identify entries to remove.
+    """
+    state = module.params.get("state", "merged")
+    safe_states = safe_states or ("merged", "replaced", "deleted")
+    if not commands or state not in safe_states:
+        return connection.get(fallback_command)
+    scoped_results = []
+    for command in commands:
+        try:
+            response = connection.get(command)
+        except Exception as exc:  # connection plugins surface device errors here
+            normalized_error = str(exc).lower()
+            if (
+                "instance does not exist" in normalized_error
+                or "specified instance does not exist" in normalized_error
+            ):
+                continue
+            raise
+        normalized_response = response.lower()
+        if (
+            "instance does not exist" not in normalized_response
+            and "specified instance does not exist" not in normalized_response
+        ):
+            scoped_results.append(response)
+    return "\n".join(scoped_results)
+
+
 def count_indent(line):
     """Return the number of leading space characters in a line."""
     return len(line) - len(line.lstrip(" "))
