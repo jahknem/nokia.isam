@@ -171,6 +171,10 @@ options:
                 description:
                 - 'optional parameter with default value: "stacked 0 : 4097"'
                 - 'layer2 forwarder vlan id'
+              network_vlan:
+                type: int
+                description:
+                - 'optional network VLAN mapped from this bridge VLAN'
               vlan_scope:
                 type: str
                 description:
@@ -195,15 +199,15 @@ options:
               prior_best_effort:
                 type: boolean
                 description:
-                - 'optional parameter with default value: "none"'
+                - 'optional parameter with default value: false'
                 - 'enable best effort priority (value: 0)'
-                default: none
+                default: False
               prior_background:
                 type: boolean
                 description:
-                - 'optional parameter with default value: "none"'
+                - 'optional parameter with default value: false'
                 - 'enable background priority (value: 1)'
-                default: none
+                default: False
               prior_spare:
                 type: boolean
                 description:
