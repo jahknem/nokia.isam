@@ -77,6 +77,18 @@ class Connection(NetworkCliConnection):
     authentication_re = re.compile(r"Failed to authenticate", re.IGNORECASE)
 
     def _connect(self):
+        # Legacy ISAM software may offer only the ssh-rsa host-key algorithm.
+        # Paramiko 5 no longer advertises it by default, while OpenSSH-only
+        # ansible_ssh_extra_args are not used by network_cli.
+        try:
+            import paramiko
+
+            preferred_keys = getattr(paramiko.Transport, "_preferred_keys", ())
+            if "ssh-rsa" not in preferred_keys:
+                paramiko.Transport._preferred_keys = preferred_keys + ("ssh-rsa",)
+        except ImportError:
+            pass
+
         retries = self.get_option("isam_connect_retries")
         for attempt in range(retries + 1):
             try:
