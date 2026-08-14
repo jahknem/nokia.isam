@@ -23,6 +23,7 @@ __metaclass__ = type
 
 import re
 
+from ansible.errors import AnsibleConnectionFailure
 from ansible.plugins.terminal import TerminalBase
 
 
@@ -33,6 +34,9 @@ class TerminalModule(TerminalBase):
     terminal_stdout_re = [
         re.compile(rb"[\w-]+>.*#"),
         re.compile(rb"[\w-]+>.*$"),
+        # Treat the pre-prompt session rejection as a terminal response so
+        # network_cli raises it instead of silently returning EOF.
+        re.compile(rb"Max\. Sessions Reached\."),
     ]
 
     # This list is the only way that network_cli has to know that something
@@ -44,6 +48,7 @@ class TerminalModule(TerminalBase):
         re.compile(rb"Error:.*"),
         re.compile(rb"Error :.*"),
         re.compile(rb"command is not complete.*"),
+        re.compile(rb"Max\. Sessions Reached\."),
     ]
 
     # My terminal uses a lot of ANSI codes. You almost certainly don't need all
@@ -67,6 +72,11 @@ class TerminalModule(TerminalBase):
     ]
 
     def on_open_shell(self):
-        self._exec_cli_command("environment mode batch")
-        self._exec_cli_command('environment inhibit-alarms')
-        self._exec_cli_command('exit')
+        # ISAM can close the shell before a prompt when its session pool is
+        # full. The opt-in connection wrapper handles reconnecting; this
+        # plugin only exposes the closed session as a connection error.
+        response = self._exec_cli_command("environment mode batch")
+        if response is None:
+            raise AnsibleConnectionFailure("CLI session closed before prompt")
+        self._exec_cli_command("environment inhibit-alarms")
+        self._exec_cli_command("exit")

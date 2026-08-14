@@ -20,26 +20,23 @@ version_added: "1.0.0"
 description:
   - Collects facts from network devices running the isam operating
     system. This module places the facts gathered in the fact tree keyed by the
-    respective resource name.  The facts module will always collect a
-    base set of facts from the device and can enable or disable
-    collection of additional facts.
+    respective resource name. Operational subsets and configuration resources
+    are opt-in so a default invocation does not contact the device.
 options:
   gather_subset:
     description:
-      - When supplied, this argument will restrict the facts collected
-        to a given subset. Possible values for this argument include
-        all, min, hardware, config, legacy, and interfaces. Can specify a
-        list of values to include a larger subset. Values can also be used
-        with an initial C(M(!)) to specify that a specific subset should
-        not be collected.
+      - Selects read-only operational facts to gather. Use C(!all) followed
+        by one or more operational subsets for a focused query. C(all)
+        gathers every operational subset. Values can be excluded with an
+        initial C(M(!)).
     required: false
-    default: 'all'
+    default: ['!all']
     version_added: "2.2"
   gather_network_resources:
     description:
-      - When supplied, this argument will restrict the facts collected
-        to a given subset. Possible values for this argument include
-        all and the resources like interfaces, vlans etc.
+      - Selects configuration/resource facts such as interfaces and vlans.
+        Operational status, counters, alarms, and sessions belong in
+        C(gather_subset) instead.
         Can specify a list of values to include a larger subset. Values
         can also be used with an initial C(M(!)) to specify that a
         specific subset should not be collected.
@@ -58,16 +55,18 @@ options:
 EXAMPLES = """
 # Gather all facts
 - isam_facts:
-    gather_subset: all
     gather_network_resources: all
 
 # Collect only the interfaces facts
 - isam_facts:
-    gather_subset:
-      - !all
-      - !min
     gather_network_resources:
       - interfaces
+
+# Gather operational DHCP relay information
+- isam_facts:
+    gather_subset:
+      - "!all"
+      - dhcp_relay
 
 # Do not collect interfaces facts
 - isam_facts:
@@ -76,7 +75,6 @@ EXAMPLES = """
 
 # Collect interfaces and minimal default facts
 - isam_facts:
-    gather_subset: min
     gather_network_resources: interfaces
 
 # Read one complete configuration and reuse it for multiple resource parsers

@@ -126,6 +126,10 @@ class Cliconf(CliconfBase):
             for line in to_list(candidate):
                 if not isinstance(line, str):
                     raise ValueError("candidate configuration is not a string")
+                if line.startswith("configure "):
+                    # ISAM retains nested configuration context between
+                    # commands; reset it before each resource-manager command.
+                    self.send_command("exit all")
                 # if not line.endswith('\n'):
                 #     line += '\n'
                 result.append(self.send_command(line))
@@ -299,7 +303,7 @@ class Cliconf(CliconfBase):
             "supports_diff_match": True,
             "supports_diff_ignore_lines": False,
             "supports_generate_diff": True,
-            "supports_replace": True,
+            "supports_replace": False,
         }
 
     def get_option_values(self):

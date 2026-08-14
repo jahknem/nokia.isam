@@ -40,13 +40,16 @@ class ActionModule(ActionNetworkModule):
         persistent_connection = self._play_context.connection.split(".")[-1]
         warnings = []
 
-        if persistent_connection != "network_cli":
+        if persistent_connection not in ("network_cli", "isam_network_cli"):
             return {
                 "failed": True,
                 "msg": "Connection type %s is not valid for this module"
                 % self._play_context.connection,
             }
 
+        # netcommon direct execution bypasses the normal module argument
+        # transport, so propagate check mode explicitly.
+        self._task.args["_ansible_check_mode"] = bool(self._task.check_mode)
         result = super(ActionModule, self).run(task_vars=task_vars)
         if warnings:
             if "warnings" in result:

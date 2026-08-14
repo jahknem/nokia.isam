@@ -61,9 +61,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.mcas
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.multicast.multicast import MulticastFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.operational import (
     Active_alarmsFacts,
-    Dhcp_relay_sessionsFacts,
-    Dhcp_relay_port_statsFacts,
-    Dhcp_relay_v6_port_statsFacts,
+    Dhcp_relayFacts,
     Equipment_statusFacts,
     Interface_statusFacts,
     Ont_statusFacts,
@@ -72,7 +70,6 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.oper
     Pon_statusFacts,
     Pon_pm_statusFacts,
     Software_statusFacts,
-    OPERATIONAL_FACT_RESOURCES,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ntp_onts.ntp_onts import Ntp_ontsFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.qos_maps.qos_maps import Qos_mapsFacts
@@ -85,16 +82,23 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_bonding.xdsl_bonding import Xdsl_bondingFacts
 
 
-FACT_LEGACY_SUBSETS = {}
-FACT_RESOURCE_SUBSETS = dict(
+FACT_LEGACY_SUBSETS = dict(
     active_alarms=Active_alarmsFacts,
+    dhcp_relay=Dhcp_relayFacts,
+    equipment_status=Equipment_statusFacts,
+    interface_status=Interface_statusFacts,
+    ont_status=Ont_statusFacts,
+    ont_ranging_status=Ont_ranging_statusFacts,
+    ont_software_status=Ont_software_statusFacts,
+    pon_pm_status=Pon_pm_statusFacts,
+    pon_status=Pon_statusFacts,
+    software_status=Software_statusFacts,
+)
+FACT_RESOURCE_SUBSETS = dict(
     alarm=AlarmFacts,
     ani_onts=Ani_ontsFacts,
     bridges=BridgesFacts,
     dhcp_server=Isam_dhcp_serverFacts,
-    dhcp_relay_sessions=Dhcp_relay_sessionsFacts,
-    dhcp_relay_port_stats=Dhcp_relay_port_statsFacts,
-    dhcp_relay_v6_port_stats=Dhcp_relay_v6_port_statsFacts,
     isam_dhcp_relay=Isam_dhcp_relayFacts,
     isam_arp_relay=Isam_arp_relayFacts,
     isam_cfm=CfmFacts,
@@ -112,12 +116,10 @@ FACT_RESOURCE_SUBSETS = dict(
     equipment_replan=Equipment_replanFacts,
     ethernet_line=Ethernet_lineFacts,
     ethernet_onts=Ethernet_ontsFacts,
-    equipment_status=Equipment_statusFacts,
     generic_pon=Generic_ponFacts,
     interface_alarms=Interface_alarmsFacts,
     interface_cages=InterfaceCagesFacts,
     interfaces=InterfacesFacts,
-    interface_status=Interface_statusFacts,
     iphost=IphostFacts,
     isam_dhcp_server=Isam_dhcp_serverFacts,
     isam_equipment=Isam_equipmentFacts,
@@ -130,17 +132,11 @@ FACT_RESOURCE_SUBSETS = dict(
     mcast_control=MulticastFacts,
     multicast=MulticastFacts,
     ntp_onts=Ntp_ontsFacts,
-    ont_status=Ont_statusFacts,
-    ont_ranging_status=Ont_ranging_statusFacts,
-    ont_software_status=Ont_software_statusFacts,
     pon_interfaces=Pon_interfacesFacts,
-    pon_status=Pon_statusFacts,
-    pon_pm_status=Pon_pm_statusFacts,
     qos_interfaces=Qos_interfacesFacts,
     qos_maps=Qos_mapsFacts,
     qos_profiles=Qos_profilesFacts,
     software_mngt=Software_mngtFacts,
-    software_status=Software_statusFacts,
     system=Isam_systemFacts,
     vlans=VlansFacts,
     voice_sip=Isam_voice_sipFacts,
@@ -202,8 +198,8 @@ class Facts(FactsBase):
                 )
 
         for key, instance in instances:
-            resource_data = None if key in OPERATIONAL_FACT_RESOURCES else data
-            if self._module.params.get("gather_configuration") and key not in OPERATIONAL_FACT_RESOURCES:
+            resource_data = data
+            if self._module.params.get("gather_configuration"):
                 resource_data = select_resource_config(data, key)
                 # Avoid falling back to another device request when this
                 # resource has no configured lines in the shared snapshot.
@@ -275,10 +271,12 @@ class Facts(FactsBase):
         :return: the facts gathered
         """
         requested_resources = resource_facts_type or self._module.params.get("gather_network_resources")
-        needs_configuration = requested_resources and (
-            "all" in requested_resources
-            or any(resource not in OPERATIONAL_FACT_RESOURCES for resource in requested_resources)
-        )
+        needs_configuration = requested_resources and "all" in requested_resources
+        if requested_resources:
+            needs_configuration = needs_configuration or any(
+                resource in FACT_RESOURCE_SUBSETS and resource not in FACT_LEGACY_SUBSETS
+                for resource in requested_resources
+            )
         if data is None and self._module.params.get("gather_configuration") and needs_configuration:
             data = self._connection.get("info configure flat")
 
@@ -289,3 +287,53 @@ class Facts(FactsBase):
             self.get_network_legacy_facts(FACT_LEGACY_SUBSETS, legacy_facts_type)
 
         return self.ansible_facts, self._warnings
+
+    def get_network_legacy_facts(self, facts_legacy_obj_map, legacy_facts_type=None):
+        """Gather operational facts using the collection's connection-aware parsers."""
+        requested = legacy_facts_type or self._gather_subset
+        valid_subsets = frozenset(facts_legacy_obj_map.keys())
+        has_all_reset = "!all" in requested
+        has_positive = any(
+            not subset.startswith("!") and subset not in ("all", "min")
+            for subset in requested
+        )
+        runnable = set() if has_all_reset or has_positive or "min" in requested else set(valid_subsets)
+        for subset in requested:
+            if subset == "all":
+                runnable.update(valid_subsets)
+                continue
+            if subset == "min":
+                continue
+            if subset == "!all":
+                runnable.clear()
+                continue
+            if subset == "!min":
+                continue
+            excluded = subset.startswith("!")
+            name = subset[1:] if excluded else subset
+            if name not in valid_subsets:
+                self._module.fail_json(
+                    msg="Subset must be one of [%s], got %s"
+                    % (", ".join(sorted(valid_subsets)), name)
+                )
+            if excluded:
+                runnable.discard(name)
+            else:
+                runnable.add(name)
+
+        if not runnable:
+            return
+        if "default" not in runnable:
+            runnable.add("default")
+
+        self.ansible_facts["ansible_net_gather_subset"] = sorted(runnable)
+        for key in sorted(runnable):
+            if key == "default":
+                continue
+            try:
+                values = facts_legacy_obj_map[key](self._module).populate_facts(self._connection)
+            except Exception as exc:
+                self._warnings.append("Unable to gather optional subset %s: %s" % (key, exc))
+                continue
+            for fact_key, value in values.items():
+                self.ansible_facts["ansible_net_%s" % fact_key] = value

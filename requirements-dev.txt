@@ -1,10 +1,10 @@
+ansible-core>=2.15
 ansible-pylibssh
-debugpy
+ansible-lint
 anytree
+flake8
+mypy
+paramiko
 pytest
 pytest-cov
-flake8
-ansible-lint
-pylint
-mypy
-types-python-slugify
+textfsm

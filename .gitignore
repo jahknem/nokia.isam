@@ -3,6 +3,7 @@
 
 # In case a collection directory is present, ignore it
 /collections/
+/.venv/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
