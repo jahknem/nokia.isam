@@ -27,6 +27,9 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    normalize_resource_keys,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.interfaces import (
     InterfacesTemplate,
 )
@@ -105,15 +108,7 @@ class Interfaces(ResourceModule):
     def _index_by_id(self, data):
         indexed = {}
         for entry in data or []:
-            normalized = dict(entry)
-            if "id" in normalized and "name" not in normalized:
-                normalized["name"] = normalized["id"]
-            if "admin-up" in normalized and "admin_up" not in normalized:
-                normalized["admin_up"] = normalized["admin-up"]
-            if "link-updown-trap" in normalized and "link_updown_trap" not in normalized:
-                normalized["link_updown_trap"] = normalized["link-updown-trap"]
-            if "port-type" in normalized and "port_type" not in normalized:
-                normalized["port_type"] = normalized["port-type"]
+            normalized = normalize_resource_keys(entry, aliases=(("id", "name"),))
 
             key = normalized.get("name") or normalized.get("id")
             if key:

@@ -128,6 +128,28 @@ class TestIsamInterfacesModule(TestIsamModule):
         self.assertTrue(any("admin-up" in cmd for cmd in cmds))
         self.assertTrue(any("port-type uni" in cmd for cmd in cmds))
 
+    def test_isam_interfaces_rendered_alias_keys(self):
+        set_module_args(
+            dict(
+                config=[
+                    {
+                        "id": "vlan-port:1/1/8/1",
+                        "admin-up": True,
+                        "link-updown-trap": True,
+                        "port-type": "uni",
+                    }
+                ],
+                state="rendered",
+            ),
+            ignore_provider_arg,
+        )
+
+        result = self.execute_module(changed=False)
+        cmds = result.get("rendered", [])
+        self.assertTrue(any("admin-up" in cmd for cmd in cmds))
+        self.assertTrue(any("link-updown-trap" in cmd for cmd in cmds))
+        self.assertTrue(any("port-type uni" in cmd for cmd in cmds))
+
     def test_isam_interfaces_parsed_requires_running_config(self):
         set_module_args(dict(state="parsed"), ignore_provider_arg)
         self.execute_module(failed=True)
