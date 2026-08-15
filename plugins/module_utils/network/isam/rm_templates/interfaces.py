@@ -44,7 +44,7 @@ class InterfacesTemplate(NetworkTemplate):
             'getval': re.compile(
                 r'''^port\s+(?P<id>\S+)\s+(?:(?P<negate>no)\s+)?(?P<adminup>admin-up)$''', re.VERBOSE,
             ),
-            'setval': 'configure interface port {{ name }} {{ "no" if admin_up == false }} admin-up',
+            'setval': 'configure interface port {{ name }} {{ "no " if admin_up == false else "" }}admin-up',
             'result': {
                 '{{ id }}': {
                     'name': '{{ id }}',
@@ -57,7 +57,7 @@ class InterfacesTemplate(NetworkTemplate):
             'getval': re.compile(
                 r'''^port\s+(?P<id>\S+)\s+(?:(?P<negate>no)\s+)?(?P<linkupdowntrap>link-updown-trap)$''', re.VERBOSE,
             ),
-            'setval': 'configure interface port {{ name }} {{ "no" if link_updown_trap == false }} link-updown-trap',
+            'setval': 'configure interface port {{ name }} {{ "no " if link_updown_trap == false else "" }}link-updown-trap',
             'result': {
                 '{{ id }}': {
                     'name': '{{ id }}',

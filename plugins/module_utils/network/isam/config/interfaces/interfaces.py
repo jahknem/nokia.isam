@@ -49,7 +49,6 @@ class Interfaces(ResourceModule):
             tmplt=InterfacesTemplate(),
         )
         self.parsers = [
-            "name",
             "admin_up",
             "link_updown_trap",
             "user",
