@@ -20,9 +20,28 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.bridges.bridges import (
     BridgesArgs,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    canonical_key,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
     get_scoped_config,
 )
+
+
+PORT_BOOL_KEYS = {
+    "mac_learn_off",
+}
+
+VLAN_BOOL_KEYS = {
+    "prior_best_effort",
+    "prior_background",
+    "prior_spare",
+    "prior_exc_effort",
+    "prior_ctrl_load",
+    "prior_less_100ms",
+    "prior_less_10ms",
+    "prior_nw_ctrl",
+}
 
 
 class BridgesFacts(object):
@@ -131,73 +150,39 @@ class BridgesFacts(object):
         return entry
 
     def _apply_port_rest(self, port_entry, rest):
-        if not rest:
-            return
-        tokens = rest.split()
-        i = 0
-        while i < len(tokens):
-            token = tokens[i]
-            if token == "no" and i + 1 < len(tokens):
-                key = tokens[i + 1].replace("-", "_")
-                if key in {"mac_learn_off"}:
-                    port_entry[key] = False
-                i += 2
-                continue
-
-            key = token.replace("-", "_")
-            if key == "mac_learn_off":
-                port_entry[key] = True
-                i += 1
-                continue
-
-            if i + 1 < len(tokens):
-                port_entry[key] = self._normalize_value([tokens[i + 1]])
-                i += 2
-            else:
-                i += 1
+        self._apply_rest(port_entry, rest, PORT_BOOL_KEYS)
 
     def _apply_vlan_rest(self, vlan_entry, rest):
+        self._apply_rest(vlan_entry, rest, VLAN_BOOL_KEYS)
+
+    def _apply_rest(self, entry, rest, bool_keys):
         if not rest:
             return
         tokens = rest.split()
-        bool_keys = {
-            "prior_best_effort",
-            "prior_background",
-            "prior_spare",
-            "prior_exc_effort",
-            "prior_ctrl_load",
-            "prior_less_100ms",
-            "prior_less_10ms",
-            "prior_nw_ctrl",
-        }
         i = 0
         while i < len(tokens):
             token = tokens[i]
             if token == "no" and i + 1 < len(tokens):
-                key = tokens[i + 1].replace("-", "_")
+                key = canonical_key(tokens[i + 1])
                 if key in bool_keys:
-                    vlan_entry[key] = False
+                    entry[key] = False
                 i += 2
                 continue
 
-            key = token.replace("-", "_")
+            key = canonical_key(token)
             if key in bool_keys:
-                vlan_entry[key] = True
+                entry[key] = True
                 i += 1
                 continue
 
             if i + 1 < len(tokens):
-                vlan_entry[key] = self._normalize_value([tokens[i + 1]])
+                entry[key] = self._normalize_value(tokens[i + 1])
                 i += 2
             else:
                 i += 1
 
-    def _normalize_value(self, parts):
-        if not parts:
-            return None
-        if len(parts) >= 2 and parts[0] == "name" and parts[1] == ":":
-            return "name:" + " ".join(parts[2:])
-        value = " ".join(parts)
+    @staticmethod
+    def _normalize_value(value):
         if value.isdigit():
             return int(value)
         return value
