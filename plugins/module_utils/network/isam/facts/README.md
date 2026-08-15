@@ -1,3 +1,16 @@
+Facts modules collect CLI output, parse it into canonical resource data, and populate `ansible_network_resources`.
+
+Use shared helpers from `plugins/module_utils/network/isam/common.py` for ordinary CLI spelling and token parsing:
+
+- `canonical_key()` for CLI field names such as `admin-up` -> `admin_up`.
+- `parse_cli_fields()` for known boolean/value token sequences.
+- `parse_cli_key_values()` for generic key/value parser output.
+- `iter_cli_fields()` when flattening packed CLI lines into individual parser lines.
+
+Keep explicit resource maps when the mapping is semantic rather than simple hyphen-to-underscore normalization. Add parser characterization tests before changing multi-line, packed-line, or context-sensitive parsing.
+
+More guidance: `docs/resource_parser_helpers.md`.
+
 To create a new facts.py file for a resource module, follow these steps:
 
 1. Create a new python file named facts.py in the facts folder of the resource module.
@@ -13,7 +26,6 @@ To create a new facts.py file for a resource module, follow these steps:
 6. Define a populate_facts method that takes a connection, ansible_facts, and data arguments. This method should parse the configuration for route maps using the Route_mapsTemplate class, and populate the ansible_facts dictionary with the parsed data.
 
 7. After implementing these steps, the Route_mapsFacts class should be able to collect and parse the configuration data for route maps, and populate the ansible_facts dictionary with the parsed data.
-
 
 
 
