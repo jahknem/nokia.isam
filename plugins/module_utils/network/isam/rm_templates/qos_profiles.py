@@ -9,6 +9,9 @@ import re
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (
     NetworkTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    iter_cli_fields,
+)
 
 
 def _to_native(value):
@@ -213,17 +216,18 @@ class Qos_profilesTemplate(NetworkTemplate):
         tokens = rest.split()
         if inline_order and inline_order[:1] == ("queue-type",) and tokens:
             dest["queue-type"] = tokens.pop(0)
-        idx = 0
-        while idx + 1 < len(tokens):
-            if tokens[idx] == "no":
-                key = tokens[idx + 1]
-                if key == "use-dei":
-                    dest[key] = False
-                idx += 2
+        for negate, key, value in iter_cli_fields(
+            tokens,
+            bool_fields=("use-dei",),
+            value_fields=tokens,
+        ):
+            key = cls._CHILD_KEY_MAP.get(key, key)
+            if negate and key == "use-dei":
+                dest[key] = False
                 continue
-            key = cls._CHILD_KEY_MAP.get(tokens[idx], tokens[idx])
-            dest[key] = _to_native(tokens[idx + 1])
-            idx += 2
+            if negate or value is None:
+                continue
+            dest[key] = _to_native(value)
 
     def parse(self):
         result = {}
