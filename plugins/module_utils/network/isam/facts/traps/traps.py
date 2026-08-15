@@ -10,6 +10,9 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.traps.traps import (
     Isam_trapsArgs,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    canonical_key,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.traps import (
     Isam_trapsTemplate,
     TRAP_TYPE_NAMES,
@@ -65,7 +68,7 @@ class Isam_trapsFacts(object):
             pass
         for entry in objs["managers"]:
             for cli_name in TRAP_TYPE_NAMES:
-                field = cli_name.replace("-", "_")
+                field = canonical_key(cli_name)
                 if field in entry and entry[field] == "":
                     del entry[field]
             for field, _ in SHAPING_FIELDS:
@@ -73,7 +76,7 @@ class Isam_trapsFacts(object):
                     del entry[field]
         for entry in objs["v6managers"]:
             for cli_name in TRAP_TYPE_NAMES:
-                field = cli_name.replace("-", "_")
+                field = canonical_key(cli_name)
                 if field in entry and entry[field] == "":
                     del entry[field]
             for field, _ in SHAPING_FIELDS:

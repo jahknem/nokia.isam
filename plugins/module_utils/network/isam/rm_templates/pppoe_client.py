@@ -3,6 +3,8 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import canonical_key
+
 
 class PppoeClientTemplate(object):
     """Parser and renderer for the two PPPoE client resource nodes."""
@@ -29,7 +31,7 @@ class PppoeClientTemplate(object):
             item = {"name": tokens[1]}
             index = 2
             while index < len(tokens):
-                key = tokens[index].replace("-", "_")
+                key = canonical_key(tokens[index])
                 if key in fields and index + 1 < len(tokens):
                     value = tokens[index + 1]
                     item[key] = int(value) if key in ("client_id", "mru", "pbit") and value.isdigit() else value

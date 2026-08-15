@@ -9,6 +9,9 @@ import re
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (
     NetworkTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    canonical_key,
+)
 
 TRAP_TYPE_NAMES = [
     "cold-start-trap", "link-down-trap", "link-up-trap",
@@ -179,7 +182,7 @@ class Isam_trapsTemplate(NetworkTemplate):
             },
         ]
         for cli_name in TRAP_TYPE_NAMES:
-            field = cli_name.replace("-", "_")
+            field = canonical_key(cli_name)
             for prefix, key_field, key_group in [
                 ("manager", "address", "managers"),
                 ("v6manager", "ipv6address", "v6managers"),

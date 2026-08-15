@@ -10,6 +10,9 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
     unwrap_response,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    canonical_key,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.system.system import (
     Isam_systemArgs,
 )
@@ -129,7 +132,7 @@ class Isam_systemFacts(object):
                     "loop_id_syntax" if section == "loop-id-syntax" else "relay_id_syntax", {}
                 )
                 for token, value in zip(values[::2], values[1::2]):
-                    target[token.replace("-", "_")] = value
+                    target[canonical_key(token)] = value
             elif section == "syslog":
                 self._parse_syslog(values, objs.setdefault("syslog", {}))
 

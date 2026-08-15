@@ -18,6 +18,9 @@ import re
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (
     NetworkTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    canonical_key,
+)
 
 
 class VlansTemplate(NetworkTemplate):
@@ -746,7 +749,7 @@ for _parser in VlansTemplate.PARSERS:
         _parser["setval"] = "configure vlan id {{ id }} " + _parser_name
         _parser["remval"] = "configure vlan id {{ id }} no " + _parser_name
     elif _parser_name in _VLAN_VALUE_FIELDS:
-        _parser["setval"] = "configure vlan id {{ id }} " + _parser_name + " {{ " + _parser_name.replace("-", "_") + " }}"
+        _parser["setval"] = "configure vlan id {{ id }} " + _parser_name + " {{ " + canonical_key(_parser_name) + " }}"
         _parser["remval"] = "configure vlan id {{ id }} no " + _parser_name
 
     # fmt: on

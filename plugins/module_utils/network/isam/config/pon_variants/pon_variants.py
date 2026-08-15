@@ -3,6 +3,7 @@ import re
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base import get_resource_connection
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import canonical_key
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.pon_variants import Ngpon2_channel_groupsTemplate, Epon_interfacesTemplate, Channel_pair_pmTemplate
 
 
@@ -44,11 +45,11 @@ class _VariantFacts(object):
             if self.resource == "epon_interfaces" and len(tokens) >= 6:
                 name = tokens[3]
                 item = records.setdefault(name, {"name": name})
-                item[tokens[4].replace("-", "_")] = tokens[5]
+                item[canonical_key(tokens[4])] = tokens[5]
             elif self.resource == "channel_pair_pm" and len(tokens) >= 7:
                 name = tokens[3]
                 item = records.setdefault(name, {"name": name})
-                item[tokens[4].replace("-", "_")] = tokens[6]
+                item[canonical_key(tokens[4])] = tokens[6]
             elif self.resource == "ngpon2_channel_groups" and len(tokens) >= 6:
                 group_id = int(tokens[3])
                 item = records.setdefault(group_id, {"id": group_id})
@@ -67,9 +68,9 @@ class _VariantFacts(object):
                     if tokens[7] == "channel-pair":
                         sub.setdefault("channel_pairs", []).append(tokens[8])
                     elif len(tokens) > 8:
-                        sub[tokens[7].replace("-", "_")] = tokens[8]
+                        sub[canonical_key(tokens[7])] = tokens[8]
                 else:
-                    item[tokens[4].replace("-", "_")] = tokens[5]
+                    item[canonical_key(tokens[4])] = tokens[5]
         return list(records.values())
 
 class _Base(ResourceModule):

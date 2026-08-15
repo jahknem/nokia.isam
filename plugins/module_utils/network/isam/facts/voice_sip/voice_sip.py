@@ -8,6 +8,9 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
     unwrap_response,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    canonical_key,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.voice_sip.voice_sip import (
     Isam_voice_sipArgs,
 )
@@ -138,7 +141,7 @@ class Isam_voice_sipFacts(object):
                         while index < len(rest_stats):
                             negate = rest_stats[index] == "no"
                             token = rest_stats[index + 1] if negate and index + 1 < len(rest_stats) else rest_stats[index]
-                            entry[token.replace("-", "_")] = not negate
+                            entry[canonical_key(token)] = not negate
                             index += 2 if negate else 1
                 result.setdefault("statistics", {}).update(entry)
 
@@ -172,16 +175,17 @@ class Isam_voice_sipFacts(object):
                 negate = True
                 i += 1
             if token in bool_field_set:
-                entry[token.replace("-", "_")] = False if negate else True
+                entry[canonical_key(token)] = False if negate else True
             elif token in typed_map:
                 if i + 1 < len(tokens):
                     val = tokens[i + 1]
                     if isinstance(val, str):
                         val = val.strip('"')
-                    entry[token.replace("-", "_")] = val
+                    key = canonical_key(token)
+                    entry[key] = val
                     if typed_map[token] == "int":
                         try:
-                            entry[token.replace("-", "_")] = int(val)
+                            entry[key] = int(val)
                         except ValueError:
                             pass
                     i += 1
@@ -204,7 +208,7 @@ class Isam_voice_sipFacts(object):
                     val = tokens[i + 1]
                     if isinstance(val, str):
                         val = val.strip('"')
-                    key = token.replace("-", "_")
+                    key = canonical_key(token)
                     entry[key] = val
                     if str_fields[token] == "int":
                         try:
@@ -213,7 +217,7 @@ class Isam_voice_sipFacts(object):
                             pass
                     i += 1
             elif token in bool_field_set:
-                entry[token.replace("-", "_")] = False if negate else True
+                entry[canonical_key(token)] = False if negate else True
             i += 1
 
     @staticmethod
@@ -239,18 +243,18 @@ class Isam_voice_sipFacts(object):
                 negate = True
                 i += 1
             if token in bool_known:
-                entry[token.replace("-", "_")] = False if negate else True
+                entry[canonical_key(token)] = False if negate else True
             elif token in str_fields:
                 if i + 1 < len(tokens):
                     val = tokens[i + 1]
                     if isinstance(val, str):
                         val = val.strip('"')
-                    entry[token.replace("-", "_")] = val
+                    entry[canonical_key(token)] = val
                     i += 1
             elif token in int_fields:
                 if i + 1 < len(tokens):
                     try:
-                        entry[token.replace("-", "_")] = int(tokens[i + 1])
+                        entry[canonical_key(token)] = int(tokens[i + 1])
                     except ValueError:
                         pass
                     i += 1
