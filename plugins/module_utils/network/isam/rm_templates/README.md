@@ -1,5 +1,7 @@
 The rm_templates folder is used to define the NetworkTemplate classes which are used to parse the configuration of network resources. These classes consist of a list of parser definitions and associated functions that facilitate both facts gathering and native command generation for the given network resource.
 
+For helper parsing code inside templates, prefer `canonical_key()`, `parse_cli_fields()`, `parse_cli_key_values()`, and `iter_cli_fields()` from `plugins/module_utils/network/isam/common.py`. Avoid local hyphen-to-underscore conversions and duplicated token walkers for ordinary CLI field parsing. See `docs/resource_parser_helpers.md`.
+
 To create a new resource module template:
 
 1. Create a new file in the rm_templates folder for the new resource module. For example, new_resource.py for a resource module named new_resource.
