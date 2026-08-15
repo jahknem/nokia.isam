@@ -103,6 +103,26 @@ class TestIsamLinkAggModule(TestIsamModule):
         self.assertEqual(result["parsed"]["groups"][0]["id"], "1/1/8/10")
         self.assertEqual(result["parsed"]["groups"][0]["ports"], ["1/1/8/1"])
 
+    def test_isam_link_agg_parsed_packed_flat(self):
+        set_module_args(
+            dict(
+                running_config=dedent(
+                    """
+                    configure link-agg port 1/1/8/1 passive-lacp short-timeout actor-port-prio 32768
+                    configure link-agg group 1/1/8/10 load-sharing-policy mac-src-dst mode dynamic port 1/1/8/1
+                    """
+                ),
+                state="parsed",
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["parsed"]["ports"][0]["lacp_mode"], "passive")
+        self.assertEqual(result["parsed"]["ports"][0]["timeout"], "short")
+        self.assertEqual(result["parsed"]["ports"][0]["actor_port_prio"], "32768")
+        self.assertEqual(result["parsed"]["groups"][0]["mode"], "dynamic")
+        self.assertEqual(result["parsed"]["groups"][0]["ports"], ["1/1/8/1"])
+
     def test_isam_link_agg_merged_idempotent(self):
         self.get_config.return_value = dedent(
             """

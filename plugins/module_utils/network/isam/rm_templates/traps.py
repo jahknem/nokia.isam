@@ -11,6 +11,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
     canonical_key,
+    iter_cli_fields,
 )
 
 TRAP_TYPE_NAMES = [
@@ -56,32 +57,15 @@ def _split_multi_field(lines):
                 continue
             prefix = " ".join(tokens[:4])
             result.append(prefix)
-            i = 4
-            while i < len(tokens):
-                token = tokens[i]
-                if token == "no":
-                    if i + 1 < len(tokens):
-                        result.append("%s no %s" % (prefix, tokens[i + 1]))
-                        i += 2
-                    else:
-                        i += 1
-                elif token in _BOOL_TRAP_NAMES or token == "priority":
-                    if token == "priority" and i + 1 < len(tokens):
-                        result.append("%s priority %s" % (prefix, tokens[i + 1]))
-                        i += 2
-                    elif token in _BOOL_TRAP_NAMES:
-                        result.append("%s %s" % (prefix, token))
-                        i += 1
-                    else:
-                        i += 1
-                elif token in _SHAPING_NAME_SET:
-                    if i + 1 < len(tokens):
-                        result.append("%s %s %s" % (prefix, token, tokens[i + 1]))
-                        i += 2
-                    else:
-                        i += 1
+            for negate, key, value in iter_cli_fields(
+                tokens[4:],
+                bool_fields=_BOOL_TRAP_NAMES,
+                value_fields=set(["priority"]) | _SHAPING_NAME_SET,
+            ):
+                if value is None:
+                    result.append("%s %s%s" % (prefix, "no " if negate else "", key))
                 else:
-                    i += 1
+                    result.append("%s %s %s" % (prefix, key, value))
         else:
             result.append(stripped)
     return result

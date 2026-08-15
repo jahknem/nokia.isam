@@ -128,3 +128,31 @@ def parse_cli_key_values(
             index = key_index + 1
 
     return parsed
+
+
+def iter_cli_fields(tokens, bool_fields=(), value_fields=(), negated_value_fields=()):
+    """Yield ``(negate, key, value)`` triples from compact CLI field tokens."""
+    bool_field_set = set(bool_fields or ())
+    value_field_set = set(value_fields or ())
+    negated_value_field_set = set(negated_value_fields or ())
+    index = 0
+
+    while index < len(tokens):
+        token = tokens[index]
+        negate = token == "no"
+        key_index = index + 1 if negate else index
+        if key_index >= len(tokens):
+            break
+
+        key = tokens[key_index]
+        if negate and key in negated_value_field_set and key_index + 1 < len(tokens):
+            yield True, key, tokens[key_index + 1]
+            index = key_index + 2
+        elif key in bool_field_set:
+            yield negate, key, None
+            index = key_index + 1
+        elif key in value_field_set and key_index + 1 < len(tokens):
+            yield negate, key, tokens[key_index + 1] if not negate else None
+            index = key_index + (1 if negate else 2)
+        else:
+            index = key_index + 1

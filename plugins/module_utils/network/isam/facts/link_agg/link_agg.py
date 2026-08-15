@@ -13,6 +13,9 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.link_agg.link_agg import (
     Link_aggArgs,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    iter_cli_fields,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.link_agg import (
     Link_aggTemplate,
 )
@@ -143,29 +146,20 @@ class Link_aggFacts(object):
     def _split_port_line(self, parts):
         port_id = parts[3]
         lines = []
-        index = 4
-        while index < len(parts):
-            token = parts[index]
-            if token == "no" and index + 1 < len(parts):
-                field = parts[index + 1]
-                if field in ["passive-lacp", "short-timeout", "actor-port-prio"]:
-                    lines.append("configure link-agg port {0} no {1}".format(port_id, field))
-                    index += 2
-                    continue
-            if token in ["passive-lacp", "short-timeout"]:
-                lines.append("configure link-agg port {0} {1}".format(port_id, token))
-                index += 1
-            elif token == "actor-port-prio" and index + 1 < len(parts):
-                lines.append("configure link-agg port {0} actor-port-prio {1}".format(port_id, parts[index + 1]))
-                index += 2
+        for negate, key, value in iter_cli_fields(
+            parts[4:],
+            bool_fields=("passive-lacp", "short-timeout"),
+            value_fields=("actor-port-prio",),
+        ):
+            if value is None:
+                lines.append("configure link-agg port {0} {1}{2}".format(port_id, "no " if negate else "", key))
             else:
-                index += 1
+                lines.append("configure link-agg port {0} {1} {2}".format(port_id, key, value))
         return lines
 
     def _split_group_line(self, parts):
         group_id = parts[3]
         lines = []
-        index = 4
         value_fields = [
             "load-sharing-policy",
             "max-active-port",
@@ -176,21 +170,13 @@ class Link_aggFacts(object):
             "master-iwf",
             "port",
         ]
-        while index < len(parts):
-            token = parts[index]
-            if token == "no" and index + 1 < len(parts):
-                field = parts[index + 1]
-                if field == "port" and index + 2 < len(parts):
-                    lines.append("configure link-agg group {0} no port {1}".format(group_id, parts[index + 2]))
-                    index += 3
-                    continue
-                if field in ["max-active-port", "swo-threshold", "priority"]:
-                    lines.append("configure link-agg group {0} no {1}".format(group_id, field))
-                    index += 2
-                    continue
-            if token in value_fields and index + 1 < len(parts):
-                lines.append("configure link-agg group {0} {1} {2}".format(group_id, token, parts[index + 1]))
-                index += 2
+        for negate, key, value in iter_cli_fields(
+            parts[4:],
+            value_fields=value_fields,
+            negated_value_fields=("port",),
+        ):
+            if value is None:
+                lines.append("configure link-agg group {0} no {1}".format(group_id, key))
             else:
-                index += 1
+                lines.append("configure link-agg group {0} {1}{2} {3}".format(group_id, "no " if negate else "", key, value))
         return lines

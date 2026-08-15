@@ -73,6 +73,19 @@ class TestIsamTrapsModule(TestIsamModule):
         parsed = result.get("parsed", {})
         self.assertIn("definitions", parsed)
 
+    def test_isam_traps_parsed_packed_manager_fields(self):
+        running = dedent("""\
+            configure trap manager 10.0.0.1:162 priority high cold-start-trap no link-down-trap max-per-window 5
+        """)
+        set_module_args(dict(running_config=running, state="parsed"), ignore_provider_arg)
+        result = self.execute_module(changed=False)
+        manager = result["parsed"]["managers"][0]
+        self.assertEqual(manager["address"], "10.0.0.1:162")
+        self.assertEqual(manager["priority"], "high")
+        self.assertTrue(manager["cold_start_trap"])
+        self.assertFalse(manager["link_down_trap"])
+        self.assertEqual(manager["max_per_window"], 5)
+
     def test_isam_traps_replaced_resets_omitted_trap_type(self):
         self.get_config.return_value = dedent("""\
             configure trap manager 10.0.0.1:162 priority high
