@@ -9,6 +9,9 @@ import re
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (
     NetworkTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    canonical_key,
+)
 
 
 class Isam_systemTemplate(NetworkTemplate):
@@ -259,8 +262,9 @@ class Isam_systemTemplate(NetworkTemplate):
 
 
 def _syntax_parser(section, field, cli_name):
+    section_key = canonical_key(section)
     return {
-        "name": section.replace("-", "_") + "." + field,
+        "name": section_key + "." + field,
         "compval": field,
         "getval": re.compile(
             r"^configure\ssystem\s" + re.escape(section) + r"\s"
@@ -270,7 +274,7 @@ def _syntax_parser(section, field, cli_name):
         "setval": "configure system " + section + " " + cli_name + ' "{{ ' + field + ' }}"',
         "remval": "configure system " + section + " no " + cli_name,
         "result": {
-            section.replace("-", "_"): {
+            section_key: {
                 field: "{{ quoted if quoted is defined else value }}",
             },
         },

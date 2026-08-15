@@ -4,6 +4,10 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    canonical_key,
+)
+
 
 class EquipmentOperationalParser(object):
     """Parse operational equipment records returned by the ISAM CLI."""
@@ -38,7 +42,7 @@ class EquipmentOperationalParser(object):
 
             field_match = self._FIELD_RE.match(line)
             if field_match:
-                key = field_match.group("key").replace("-", "_")
+                key = canonical_key(field_match.group("key"))
                 current[key] = self._convert(field_match.group("value"))
 
         return {key: value for key, value in records.items() if value}

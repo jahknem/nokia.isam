@@ -2,6 +2,8 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import canonical_key
+
 
 class EfmOamTemplate(object):
     fields = ("admin_up", "passive_mode", "keep_alive_intvl", "response_intvl")
@@ -20,16 +22,16 @@ class EfmOamTemplate(object):
             while index < len(tokens):
                 token = tokens[index]
                 if token in ("admin-up", "passive-mode"):
-                    item[token.replace("-", "_")] = True
+                    item[canonical_key(token)] = True
                     index += 1
                 elif token == "no" and index + 1 < len(tokens) and tokens[index + 1] in ("admin-up", "passive-mode"):
-                    item[tokens[index + 1].replace("-", "_")] = False
+                    item[canonical_key(tokens[index + 1])] = False
                     index += 2
                 elif token in ("keep-alive-intvl", "response-intvl") and index + 1 < len(tokens):
-                    item[token.replace("-", "_")] = tokens[index + 1]
+                    item[canonical_key(token)] = tokens[index + 1]
                     index += 2
                 elif token == "no" and index + 1 < len(tokens) and tokens[index + 1] in ("keep-alive-intvl", "response-intvl"):
-                    item[tokens[index + 1].replace("-", "_")] = None
+                    item[canonical_key(tokens[index + 1])] = None
                     index += 2
                 else:
                     index += 1

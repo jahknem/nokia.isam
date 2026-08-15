@@ -4,6 +4,10 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    canonical_key,
+)
+
 PRIORITY_CHOICES = ["urgent", "high", "medium", "low"]
 SEVERITY_CHOICES = ["indeterminate", "warning", "minor", "major", "critical"]
 
@@ -42,7 +46,7 @@ TRAP_TYPE_NAMES = [
 
 
 def _trap_field(name):
-    return name.replace("-", "_")
+    return canonical_key(name)
 
 
 TRAP_TYPE_OPTS = {_trap_field(n): {"type": "bool"} for n in TRAP_TYPE_NAMES}

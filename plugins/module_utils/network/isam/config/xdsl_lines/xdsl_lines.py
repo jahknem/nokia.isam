@@ -18,6 +18,9 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    normalize_resource_keys,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_lines import (
     Xdsl_linesTemplate,
 )
@@ -118,18 +121,7 @@ class Xdsl_lines(ResourceModule):
     def _index_by_id(data):
         indexed = {}
         for entry in data or []:
-            normalized = dict(entry)
-            if "if_index" in normalized and "name" not in normalized:
-                normalized["name"] = normalized["if_index"]
-            for dashed, underscored in (
-                ("service-profile", "service_profile"),
-                ("spectrum-profile", "spectrum_profile"),
-                ("dpbo-profile", "dpbo_profile"),
-                ("vect-profile", "vect_profile"),
-                ("admin-up", "admin_up"),
-            ):
-                if dashed in normalized and underscored not in normalized:
-                    normalized[underscored] = normalized[dashed]
+            normalized = normalize_resource_keys(entry, aliases=(("if_index", "name"),))
 
             key = normalized.get("name") or normalized.get("if_index")
             if key:

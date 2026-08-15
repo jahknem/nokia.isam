@@ -10,6 +10,9 @@ from typing import Any, Dict
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (
     NetworkTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    canonical_key,
+)
 
 
 class Generic_ponTemplate(NetworkTemplate):
@@ -45,7 +48,7 @@ class Generic_ponTemplate(NetworkTemplate):
             key = tokens[index + 1] if negate and index + 1 < len(tokens) else tokens[index]
             offset = 2 if negate else 1
             if key:
-                target[key.replace("-", "_")] = "" if negate else (tokens[index + offset] if index + offset < len(tokens) else "")
+                target[canonical_key(key)] = "" if negate else (tokens[index + offset] if index + offset < len(tokens) else "")
             index += offset + (0 if negate else 1)
 
     @classmethod
@@ -53,7 +56,7 @@ class Generic_ponTemplate(NetworkTemplate):
         for token in tokens:
             if token == "no":
                 continue
-            key = token.replace("-", "_")
+            key = canonical_key(token)
             if key in ("pon_pmcollect", "ont_pmcollect", "ontbulk_pmcollect", "slid_mode", "sn_bundle_timer", "sw_ver_mis_block", "sn_autounlock", "ponlos_alarm_ctrl"):
                 target[key] = "no" not in tokens[max(0, tokens.index(token) - 1):tokens.index(token)]
 

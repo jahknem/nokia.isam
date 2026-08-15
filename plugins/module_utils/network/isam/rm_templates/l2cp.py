@@ -2,6 +2,8 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import canonical_key
+
 
 class L2cpTemplate(object):
     def parse(self, config):
@@ -51,7 +53,7 @@ class L2cpSessionTemplate(object):
             item = {"name": match.group(2)}
             index = 0
             while index < len(tokens):
-                key = tokens[index].replace("-", "_")
+                key = canonical_key(tokens[index])
                 if key == "bras_ip_address" and index + 1 < len(tokens):
                     item[key] = tokens[index + 1]
                     index += 2
@@ -59,7 +61,7 @@ class L2cpSessionTemplate(object):
                     item[key] = True
                     index += 1
                 elif tokens[index] == "no" and index + 1 < len(tokens):
-                    no_key = tokens[index + 1].replace("-", "_")
+                    no_key = canonical_key(tokens[index + 1])
                     if no_key == "sig_partition_id":
                         item[no_key] = False
                     elif no_key in self.fields:

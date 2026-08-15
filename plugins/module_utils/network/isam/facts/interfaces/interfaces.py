@@ -23,6 +23,9 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.interfaces.interfaces import (
     InterfacesArgs,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    normalize_resource_keys,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
     get_scoped_config,
     unwrap_response,
@@ -39,15 +42,7 @@ class InterfacesFacts(object):
 
     @staticmethod
     def _canonicalize_entry(item):
-        entry = dict(item)
-        if "id" in entry and "name" not in entry:
-            entry["name"] = entry["id"]
-        if "admin-up" in entry and "admin_up" not in entry:
-            entry["admin_up"] = entry["admin-up"]
-        if "link-updown-trap" in entry and "link_updown_trap" not in entry:
-            entry["link_updown_trap"] = entry["link-updown-trap"]
-        if "port-type" in entry and "port_type" not in entry:
-            entry["port_type"] = entry["port-type"]
+        entry = normalize_resource_keys(item, aliases=(("id", "name"),))
 
         entry.pop("id", None)
         entry.pop("admin-up", None)

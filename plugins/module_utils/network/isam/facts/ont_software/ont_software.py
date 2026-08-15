@@ -2,6 +2,10 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    canonical_key,
+)
+
 
 _VERSION_FIELDS = ("sw-ver", "sw-ver-size")
 _DOWNLOAD_FIELDS = (
@@ -35,7 +39,7 @@ def _key(value):
 def _table_rows(output, fields):
     """Read pipe-delimited or whitespace-delimited Nokia display tables."""
     lines = [line.rstrip() for line in (output or "").splitlines()]
-    normalized = {_key(field): field.replace("-", "_") for field in fields}
+    normalized = {_key(field): canonical_key(field) for field in fields}
     headers = None
     rows = []
 
@@ -62,7 +66,7 @@ def _table_rows(output, fields):
 
 def _labeled_record(output, fields):
     """Read the detail form, where each display parameter is labeled."""
-    allowed = {_key(field): field.replace("-", "_") for field in fields}
+    allowed = {_key(field): canonical_key(field) for field in fields}
     records = []
     current = {}
     key_value = re.compile(r"^(?P<key>[A-Za-z][A-Za-z0-9 _-]*?)\s*(?::|=)\s*(?P<value>.+?)\s*$")

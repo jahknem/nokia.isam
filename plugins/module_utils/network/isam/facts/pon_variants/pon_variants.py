@@ -6,6 +6,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.channel_pair_pm.channel_pair_pm import Channel_pair_pmArgs
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.epon_interfaces.epon_interfaces import Epon_interfacesArgs
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.ngpon2_channel_groups.ngpon2_channel_groups import Ngpon2_channel_groupsArgs
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import canonical_key
 
 
 _OPTIONAL_COMMAND_ERROR = re.compile(
@@ -33,13 +34,13 @@ def _parse_lines(data, resource):
         if resource == "epon_interfaces" and len(tokens) >= 6:
             name = tokens[3]
             item = records.setdefault(name, {"name": name})
-            field = tokens[4].replace("-", "_")
+            field = canonical_key(tokens[4])
             value = tokens[5]
             item[field] = int(value) if field.startswith(("polling_period", "dba_polling")) else value
         elif resource == "channel_pair_pm" and len(tokens) >= 7:
             name = tokens[3]
             item = records.setdefault(name, {"name": name})
-            item[tokens[4].replace("-", "_")] = tokens[6]
+            item[canonical_key(tokens[4])] = tokens[6]
         elif resource == "ngpon2_channel_groups" and len(tokens) >= 6:
             group_id = int(tokens[3])
             item = records.setdefault(group_id, {"id": group_id})
@@ -54,11 +55,11 @@ def _parse_lines(data, resource):
                 if tokens[7] == "channel-pair":
                     sub.setdefault("channel_pairs", []).append(tokens[8])
                 elif len(tokens) > 8:
-                    key = tokens[7].replace("-", "_")
+                    key = canonical_key(tokens[7])
                     value = tokens[8]
                     sub[key] = int(value) if key in ("closest_ont", "diff_reach") else value
             else:
-                key = tokens[4].replace("-", "_")
+                key = canonical_key(tokens[4])
                 value = tokens[5]
                 item[key] = int(value) if key == "polling_period" else value
     return utils.remove_empties(list(records.values()))

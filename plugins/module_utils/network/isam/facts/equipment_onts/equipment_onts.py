@@ -15,6 +15,9 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.equipment_onts.equipment_onts import (
     Equipment_ontsArgs,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    canonical_key,
+)
 
 
 class Equipment_ontsFacts(object):
@@ -203,7 +206,7 @@ class Equipment_ontsFacts(object):
             if parts[idx] == "no" and idx + 1 < len(parts) and parts[idx + 1] in words:
                 idx += 2
                 continue
-            key = parts[idx].replace("-", "_")
+            key = canonical_key(parts[idx])
             if idx + 1 >= len(parts):
                 item[key] = True
                 idx += 1

@@ -2,6 +2,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import canonical_key
+
 
 SESSION_FIELDS = [
     "ownerid", "timeout-period", "line-num", "type-high", "type-low",
@@ -62,7 +64,7 @@ class LinetestTemplate(object):
         values = [str(item.get(identifier)) for identifier in identifiers]
         commands = []
         for field in fields:
-            key = field.replace("-", "_")
+            key = canonical_key(field)
             if key in item and item.get(key) is None and field in ("group-opt", "busy-overwrite", "force-measure"):
                 commands.append("%s %s %s no" % (prefix, " ".join(values), field))
             elif item.get(key) is not None:
@@ -82,9 +84,9 @@ class LinetestTemplate(object):
                     parts.pop(0)
                 continue
             if parts and not unset:
-                item[field.replace("-", "_")] = parts.pop(0)
+                item[canonical_key(field)] = parts.pop(0)
             elif unset:
-                item[field.replace("-", "_")] = None
+                item[canonical_key(field)] = None
 
     def _add(self, items, item, *keys):
         existing = next((entry for entry in items if all(entry.get(key) == item.get(key) for key in keys)), None)

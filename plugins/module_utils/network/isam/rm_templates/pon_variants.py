@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import NetworkTemplate
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import canonical_key
 
 class Ngpon2_channel_groupsTemplate(NetworkTemplate):
     def __init__(self, lines=None, module=None):
@@ -25,9 +26,9 @@ class Ngpon2_channel_groupsTemplate(NetworkTemplate):
                 if tokens[7] == "channel-pair":
                     sub.setdefault("channel_pairs", []).append(tokens[8])
                 else:
-                    sub[tokens[7].replace("-", "_")] = tokens[8]
+                    sub[canonical_key(tokens[7])] = tokens[8]
             elif len(tokens) >= 6:
-                item[tokens[4].replace("-", "_")] = tokens[5]
+                item[canonical_key(tokens[4])] = tokens[5]
         return result
     PARSERS = [
         {"name": "channel_group.name", "getval": re.compile(r"^configure channel-group id (?P<id>\S+) name (?P<name>\S+)$"), "setval": "configure channel-group id {{ id }} name {{ name }}", "result": {"{{ id }}": {"id": "{{ id }}", "name": "{{ name }}"}}},
@@ -52,7 +53,7 @@ class Epon_interfacesTemplate(NetworkTemplate):
                 continue
             name = tokens[3]
             item = result.setdefault(name, {"name": name})
-            field = tokens[4].replace("-", "_")
+            field = canonical_key(tokens[4])
             value = tokens[5]
             item[field] = int(value) if field.startswith(("polling_period", "dba_polling")) else value
         return result
@@ -74,7 +75,7 @@ class Channel_pair_pmTemplate(NetworkTemplate):
             if len(tokens) < 7 or tokens[:4] != ["configure", "channel-pair", "interface", tokens[3]]:
                 continue
             item = result.setdefault(tokens[3], {"name": tokens[3]})
-            item[tokens[4].replace("-", "_")] = tokens[6]
+            item[canonical_key(tokens[4])] = tokens[6]
         return result
     PARSERS = [
         {"name": "interface", "compval": "name", "getval": re.compile(r"^configure channel-pair interface (?P<name>\S+) (?P<layer>fec-tc-layer|xg-tc-layer) pm-collect (?P<pm_collect>\S+)$"), "setval": "configure channel-pair interface {{ name }} {{ layer }} pm-collect {{ pm_collect }}", "result": {"{{ name }}": {"name": "{{ name }}"}}},

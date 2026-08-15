@@ -16,6 +16,9 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    canonical_key,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.traps import (
     Isam_trapsTemplate,
     TRAP_TYPE_NAMES,
@@ -68,7 +71,7 @@ class Isam_traps(ResourceModule):
         if "priority" in entry and entry["priority"]:
             parts.append("priority %s" % entry["priority"])
         for cli_name in TRAP_TYPE_NAMES:
-            field = cli_name.replace("-", "_")
+            field = canonical_key(cli_name)
             val = entry.get(field)
             if val is True:
                 parts.append(cli_name)
@@ -88,7 +91,7 @@ class Isam_traps(ResourceModule):
         if "priority" in entry and entry["priority"]:
             parts.append("priority %s" % entry["priority"])
         for cli_name in TRAP_TYPE_NAMES:
-            field = cli_name.replace("-", "_")
+            field = canonical_key(cli_name)
             val = entry.get(field)
             if val is True:
                 parts.append(cli_name)
@@ -164,7 +167,7 @@ class Isam_traps(ResourceModule):
         if section not in ("managers", "v6managers"):
             return
         for cli_name in TRAP_TYPE_NAMES:
-            field = cli_name.replace("-", "_")
+            field = canonical_key(cli_name)
             if field not in want and have.get(field) is True:
                 want[field] = False
 
@@ -215,7 +218,7 @@ class Isam_traps(ResourceModule):
                 )
 
         for cli_name in TRAP_TYPE_NAMES:
-            field = cli_name.replace("-", "_")
+            field = canonical_key(cli_name)
             w_val = want.get(field)
             h_val = have.get(field)
             if w_val is True and h_val is not True:

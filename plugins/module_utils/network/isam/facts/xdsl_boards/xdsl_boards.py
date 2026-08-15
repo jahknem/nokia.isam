@@ -14,6 +14,9 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.xdsl_boards.xdsl_boards import (
     Xdsl_boardsArgs,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    canonical_key,
+)
 
 
 class Xdsl_boardsFacts(object):
@@ -103,7 +106,7 @@ class Xdsl_boardsFacts(object):
             parts = parts[2:]
         idx = 0
         while idx < len(parts):
-            key = parts[idx].replace("-", "_")
+            key = canonical_key(parts[idx])
             if idx + 1 >= len(parts):
                 item[key] = True
                 idx += 1
