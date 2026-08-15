@@ -263,11 +263,15 @@ class Bridges(ResourceModule):
         # Targeted deletion runs before this so defaults cannot reset unrelated settings.
         port_start = len(self.commands)
         self.compare(parsers=PORT_PARSERS, want=want, have=have)
-        port_commands = self.commands[port_start:]
-        self.commands[port_start:] = [
-            command for command in port_commands if " pvid " not in command
+        return self._defer_pvid_commands(port_start)
+
+    def _defer_pvid_commands(self, start):
+        port_commands = self.commands[start:]
+        deferred = [command for command in port_commands if " pvid " in command]
+        self.commands[start:] = [
+            command for command in port_commands if command not in deferred
         ]
-        return [command for command in port_commands if " pvid " in command]
+        return deferred
 
     def _validate_vlan_dependencies(self, port_name, want, want_vlans, have_vlans):
         service_vlans = [
@@ -324,15 +328,11 @@ class Bridges(ResourceModule):
         if not any(command.startswith(vlan_prefix) for command in vlan_commands):
             vlan_commands.insert(0, vlan_prefix)
 
-        tag_command = next(
-            (command for command in vlan_commands if command.startswith(vlan_prefix + " tag ")), None
+        tag_command = Bridges._first_command_with_prefix(
+            vlan_commands, vlan_prefix + " tag "
         )
-        l2fwder_command = next(
-            (
-                command for command in vlan_commands
-                if command.startswith(vlan_prefix + " l2fwder-vlan ")
-            ),
-            None,
+        l2fwder_command = Bridges._first_command_with_prefix(
+            vlan_commands, vlan_prefix + " l2fwder-vlan "
         )
         if not tag_command or not l2fwder_command:
             return vlan_commands
@@ -350,6 +350,13 @@ class Bridges(ResourceModule):
             ),
         )
         return ordered
+
+    @staticmethod
+    def _first_command_with_prefix(commands, prefix):
+        return next(
+            (command for command in commands if command.startswith(prefix)),
+            None,
+        )
 
     def _index_by_port(self, data):
         if not data:
