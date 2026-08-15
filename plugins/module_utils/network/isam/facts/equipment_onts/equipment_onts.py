@@ -16,7 +16,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.eq
     Equipment_ontsArgs,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
-    canonical_key,
+    parse_cli_key_values,
 )
 
 
@@ -200,19 +200,10 @@ class Equipment_ontsFacts(object):
             # Ansible choice validation is invalid for fields such as
             # bridge-map-mode and admin-state.
             return
-        idx = 0
-        while idx < len(parts):
-            words = self._INTERFACE_WORDS | self._SLOT_WORDS | self._SW_CTRL_WORDS
-            if parts[idx] == "no" and idx + 1 < len(parts) and parts[idx + 1] in words:
-                idx += 2
-                continue
-            key = canonical_key(parts[idx])
-            if idx + 1 >= len(parts):
-                item[key] = True
-                idx += 1
-                continue
-            value = parts[idx + 1]
-            if key in ("plndnumdataports", "plndnumvoiceports"):
-                value = int(value)
-            item[key] = value
-            idx += 2
+        item.update(
+            parse_cli_key_values(
+                parts,
+                int_fields=("plndnumdataports", "plndnumvoiceports"),
+                bare_keys_as_true=True,
+            )
+        )

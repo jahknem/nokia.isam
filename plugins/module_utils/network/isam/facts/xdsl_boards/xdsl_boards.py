@@ -15,7 +15,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.xd
     Xdsl_boardsArgs,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
-    canonical_key,
+    parse_cli_key_values,
 )
 
 
@@ -104,13 +104,4 @@ class Xdsl_boardsFacts(object):
         if len(parts) >= 2 and parts[0] == "no" and parts[1] == "admin-state":
             item["admin_state"] = False
             parts = parts[2:]
-        idx = 0
-        while idx < len(parts):
-            key = canonical_key(parts[idx])
-            if idx + 1 >= len(parts):
-                item[key] = True
-                idx += 1
-                continue
-            value = parts[idx + 1]
-            item[key] = value
-            idx += 2
+        item.update(parse_cli_key_values(parts, bare_keys_as_true=True))

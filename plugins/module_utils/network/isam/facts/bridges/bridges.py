@@ -21,7 +21,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.br
     BridgesArgs,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
-    canonical_key,
+    parse_cli_key_values,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
     get_scoped_config,
@@ -158,31 +158,10 @@ class BridgesFacts(object):
     def _apply_rest(self, entry, rest, bool_keys):
         if not rest:
             return
-        tokens = rest.split()
-        i = 0
-        while i < len(tokens):
-            token = tokens[i]
-            if token == "no" and i + 1 < len(tokens):
-                key = canonical_key(tokens[i + 1])
-                if key in bool_keys:
-                    entry[key] = False
-                i += 2
-                continue
-
-            key = canonical_key(token)
-            if key in bool_keys:
-                entry[key] = True
-                i += 1
-                continue
-
-            if i + 1 < len(tokens):
-                entry[key] = self._normalize_value(tokens[i + 1])
-                i += 2
-            else:
-                i += 1
-
-    @staticmethod
-    def _normalize_value(value):
-        if value.isdigit():
-            return int(value)
-        return value
+        entry.update(
+            parse_cli_key_values(
+                rest.split(),
+                bool_fields=bool_keys,
+                infer_numeric=True,
+            )
+        )

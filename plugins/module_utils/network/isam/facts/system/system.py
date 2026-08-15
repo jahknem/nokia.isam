@@ -11,7 +11,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
-    canonical_key,
+    parse_cli_key_values,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.system.system import (
     Isam_systemArgs,
@@ -131,8 +131,7 @@ class Isam_systemFacts(object):
                 target = objs.setdefault(
                     "loop_id_syntax" if section == "loop-id-syntax" else "relay_id_syntax", {}
                 )
-                for token, value in zip(values[::2], values[1::2]):
-                    target[canonical_key(token)] = value
+                target.update(parse_cli_key_values(values))
             elif section == "syslog":
                 self._parse_syslog(values, objs.setdefault("syslog", {}))
 
