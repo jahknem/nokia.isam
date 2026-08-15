@@ -8,3 +8,4 @@ paramiko
 pytest
 pytest-cov
 textfsm
+tox
