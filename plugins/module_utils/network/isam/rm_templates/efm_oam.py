@@ -2,7 +2,7 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import canonical_key
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import parse_cli_fields
 
 
 class EfmOamTemplate(object):
@@ -18,23 +18,14 @@ class EfmOamTemplate(object):
                 continue
             item = {"name": match.group(1)}
             tokens = match.group(2).split()
-            index = 0
-            while index < len(tokens):
-                token = tokens[index]
-                if token in ("admin-up", "passive-mode"):
-                    item[canonical_key(token)] = True
-                    index += 1
-                elif token == "no" and index + 1 < len(tokens) and tokens[index + 1] in ("admin-up", "passive-mode"):
-                    item[canonical_key(tokens[index + 1])] = False
-                    index += 2
-                elif token in ("keep-alive-intvl", "response-intvl") and index + 1 < len(tokens):
-                    item[canonical_key(token)] = tokens[index + 1]
-                    index += 2
-                elif token == "no" and index + 1 < len(tokens) and tokens[index + 1] in ("keep-alive-intvl", "response-intvl"):
-                    item[canonical_key(tokens[index + 1])] = None
-                    index += 2
-                else:
-                    index += 1
+            item.update(
+                parse_cli_fields(
+                    tokens,
+                    bool_fields=("admin-up", "passive-mode"),
+                    value_fields={"keep-alive-intvl": "str", "response-intvl": "str"},
+                    none_for_negated_values=True,
+                )
+            )
             resources.append(item)
         return resources
 

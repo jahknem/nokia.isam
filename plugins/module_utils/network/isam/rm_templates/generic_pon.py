@@ -12,6 +12,19 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
     canonical_key,
+    parse_cli_fields,
+)
+
+
+GENERIC_PON_FLAG_FIELDS = (
+    "pon-pmcollect",
+    "ont-pmcollect",
+    "ontbulk-pmcollect",
+    "slid-mode",
+    "sn-bundle-timer",
+    "sw-ver-mis-block",
+    "sn-autounlock",
+    "ponlos-alarm-ctrl",
 )
 
 
@@ -53,12 +66,7 @@ class Generic_ponTemplate(NetworkTemplate):
 
     @classmethod
     def _parse_flags(cls, tokens, target):
-        for token in tokens:
-            if token == "no":
-                continue
-            key = canonical_key(token)
-            if key in ("pon_pmcollect", "ont_pmcollect", "ontbulk_pmcollect", "slid_mode", "sn_bundle_timer", "sw_ver_mis_block", "sn_autounlock", "ponlos_alarm_ctrl"):
-                target[key] = "no" not in tokens[max(0, tokens.index(token) - 1):tokens.index(token)]
+        target.update(parse_cli_fields(tokens, bool_fields=GENERIC_PON_FLAG_FIELDS))
 
     # fmt: off
     PARSERS = [

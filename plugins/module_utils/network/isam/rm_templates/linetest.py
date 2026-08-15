@@ -2,7 +2,10 @@
 
 from __future__ import absolute_import, division, print_function
 
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import canonical_key
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    canonical_key,
+    parse_cli_fields,
+)
 
 
 SESSION_FIELDS = [
@@ -72,21 +75,13 @@ class LinetestTemplate(object):
         return commands
 
     def _fields(self, item, parts, fields):
-        field_set = set(fields)
-        while parts:
-            field = parts.pop(0)
-            unset = field == "no"
-            if unset and parts:
-                field = parts.pop(0)
-            if field not in field_set:
-                # Operational commands and unknown output are intentionally ignored.
-                if parts and parts[0] not in field_set:
-                    parts.pop(0)
-                continue
-            if parts and not unset:
-                item[canonical_key(field)] = parts.pop(0)
-            elif unset:
-                item[canonical_key(field)] = None
+        item.update(
+            parse_cli_fields(
+                parts,
+                value_fields={field: "str" for field in fields},
+                none_for_negated_values=True,
+            )
+        )
 
     def _add(self, items, item, *keys):
         existing = next((entry for entry in items if all(entry.get(key) == item.get(key) for key in keys)), None)
