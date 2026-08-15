@@ -26,6 +26,9 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.vlans.vlans import (
     VlansArgs,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    iter_cli_fields,
+)
 
 
 class VlansFacts(object):
@@ -99,25 +102,15 @@ class VlansFacts(object):
                 vlan_id, body = match.groups()
                 tokens = shlex.split(body)
                 result.append("id {0}".format(vlan_id))
-                index = 0
-                while index < len(tokens):
-                    negate = tokens[index] == "no"
-                    key_index = index + 1 if negate else index
-                    if key_index >= len(tokens):
-                        break
-                    key = tokens[key_index]
-                    if key in flag_keys:
+                for negate, key, value in iter_cli_fields(
+                    tokens,
+                    bool_fields=flag_keys,
+                    value_fields=value_keys,
+                ):
+                    if value is None:
                         result.append("  {0}{1}".format("no " if negate else "", key))
-                        index = key_index + 1
-                    elif key in value_keys and key_index + 1 < len(tokens):
-                        result.append(
-                            "  {0}{1} {2}".format(
-                                "no " if negate else "", key, tokens[key_index + 1]
-                            )
-                        )
-                        index = key_index + 2
                     else:
-                        index += 1
+                        result.append("  {0}{1} {2}".format("no " if negate else "", key, value))
             return result
         lines = []
         current_id = None
