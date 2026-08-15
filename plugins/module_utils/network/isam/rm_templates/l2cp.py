@@ -2,7 +2,7 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import canonical_key
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import parse_cli_fields
 
 
 class L2cpTemplate(object):
@@ -51,27 +51,16 @@ class L2cpSessionTemplate(object):
                 continue
             tokens = match.group(3).split()
             item = {"name": match.group(2)}
-            index = 0
-            while index < len(tokens):
-                key = canonical_key(tokens[index])
-                if key == "bras_ip_address" and index + 1 < len(tokens):
-                    item[key] = tokens[index + 1]
-                    index += 2
-                elif key == "sig_partition_id":
-                    item[key] = True
-                    index += 1
-                elif tokens[index] == "no" and index + 1 < len(tokens):
-                    no_key = canonical_key(tokens[index + 1])
-                    if no_key == "sig_partition_id":
-                        item[no_key] = False
-                    elif no_key in self.fields:
-                        item[no_key] = None
-                    index += 2
-                elif key in self.fields and index + 1 < len(tokens):
-                    item[key] = tokens[index + 1]
-                    index += 2
-                else:
-                    index += 1
+            value_fields = {field.replace("_", "-"): "str" for field in self.fields}
+            value_fields["bras-ip-address"] = "str"
+            item.update(
+                parse_cli_fields(
+                    tokens,
+                    bool_fields=("sig-partition-id",),
+                    value_fields=value_fields,
+                    none_for_negated_values=True,
+                )
+            )
             result.append(item)
         return result
 

@@ -9,7 +9,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
-    canonical_key,
+    parse_cli_fields,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.voice_sip.voice_sip import (
     Isam_voice_sipArgs,
@@ -137,12 +137,7 @@ class Isam_voice_sipFacts(object):
                         ))
                     elif parts[1] == "stats-config":
                         rest_stats = parts[2:]
-                        index = 0
-                        while index < len(rest_stats):
-                            negate = rest_stats[index] == "no"
-                            token = rest_stats[index + 1] if negate and index + 1 < len(rest_stats) else rest_stats[index]
-                            entry[canonical_key(token)] = not negate
-                            index += 2 if negate else 1
+                        entry.update(parse_cli_fields(rest_stats, bool_fields=rest_stats))
                 result.setdefault("statistics", {}).update(entry)
 
             elif section == "cas-nsm-prof" and len(parts) >= 2:
@@ -163,62 +158,17 @@ class Isam_voice_sipFacts(object):
 
     @staticmethod
     def _parse_bool_line(tokens, bool_fields, typed_fields=None):
-        entry = {}
-        i = 0
-        bool_field_set = set(bool_fields)
-        typed_map = typed_fields or {}
-        while i < len(tokens):
-            token = tokens[i]
-            negate = False
-            if token == "no" and i + 1 < len(tokens):
-                token = tokens[i + 1]
-                negate = True
-                i += 1
-            if token in bool_field_set:
-                entry[canonical_key(token)] = False if negate else True
-            elif token in typed_map:
-                if i + 1 < len(tokens):
-                    val = tokens[i + 1]
-                    if isinstance(val, str):
-                        val = val.strip('"')
-                    key = canonical_key(token)
-                    entry[key] = val
-                    if typed_map[token] == "int":
-                        try:
-                            entry[key] = int(val)
-                        except ValueError:
-                            pass
-                    i += 1
-            i += 1
-        return entry
+        return parse_cli_fields(tokens, bool_fields=bool_fields, value_fields=typed_fields)
 
     @staticmethod
     def _parse_flat_value_line(tokens, entry, str_fields, bool_fields=None):
-        bool_field_set = set(bool_fields or [])
-        i = 0
-        while i < len(tokens):
-            token = tokens[i]
-            negate = False
-            if token == "no" and i + 1 < len(tokens):
-                token = tokens[i + 1]
-                negate = True
-                i += 1
-            if token in str_fields:
-                if i + 1 < len(tokens):
-                    val = tokens[i + 1]
-                    if isinstance(val, str):
-                        val = val.strip('"')
-                    key = canonical_key(token)
-                    entry[key] = val
-                    if str_fields[token] == "int":
-                        try:
-                            entry[key] = int(val)
-                        except ValueError:
-                            pass
-                    i += 1
-            elif token in bool_field_set:
-                entry[canonical_key(token)] = False if negate else True
-            i += 1
+        entry.update(
+            parse_cli_fields(
+                tokens,
+                bool_fields=bool_fields,
+                value_fields=str_fields,
+            )
+        )
 
     @staticmethod
     def _parse_vsp_line(tokens, entry):
@@ -234,28 +184,12 @@ class Isam_voice_sipFacts(object):
                        "sspprofile", "signaling-ipmode", "tls-cafile", "media-ipmode"}
         str_fields = {"domain-name": "str"}
         int_fields = {"timer-b", "timer-f", "timer-t1", "timer-t2"}
-        i = 0
-        while i < len(tokens):
-            token = tokens[i]
-            negate = False
-            if token == "no" and i + 1 < len(tokens):
-                token = tokens[i + 1]
-                negate = True
-                i += 1
-            if token in bool_known:
-                entry[canonical_key(token)] = False if negate else True
-            elif token in str_fields:
-                if i + 1 < len(tokens):
-                    val = tokens[i + 1]
-                    if isinstance(val, str):
-                        val = val.strip('"')
-                    entry[canonical_key(token)] = val
-                    i += 1
-            elif token in int_fields:
-                if i + 1 < len(tokens):
-                    try:
-                        entry[canonical_key(token)] = int(tokens[i + 1])
-                    except ValueError:
-                        pass
-                    i += 1
-            i += 1
+        value_fields = dict(str_fields)
+        value_fields.update({field: "int" for field in int_fields})
+        entry.update(
+            parse_cli_fields(
+                tokens,
+                bool_fields=bool_known,
+                value_fields=value_fields,
+            )
+        )

@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import canonical_key
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import parse_cli_fields
 
 
 class PppoeClientTemplate(object):
@@ -29,15 +29,11 @@ class PppoeClientTemplate(object):
             if len(tokens) < 2:
                 continue
             item = {"name": tokens[1]}
-            index = 2
-            while index < len(tokens):
-                key = canonical_key(tokens[index])
-                if key in fields and index + 1 < len(tokens):
-                    value = tokens[index + 1]
-                    item[key] = int(value) if key in ("client_id", "mru", "pbit") and value.isdigit() else value
-                    index += 2
-                else:
-                    index += 1
+            value_fields = {
+                field.replace("_", "-"): "int" if field in ("client_id", "mru", "pbit") else "str"
+                for field in fields
+            }
+            item.update(parse_cli_fields(tokens[2:], value_fields=value_fields))
             result.append(item)
         return result
 
