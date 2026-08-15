@@ -83,3 +83,48 @@ def _coerce_cli_value(value, value_type):
         return int(value)
     except (TypeError, ValueError):
         return value
+
+
+def parse_cli_key_values(
+    tokens,
+    bool_fields=(),
+    int_fields=(),
+    infer_numeric=False,
+    bare_keys_as_true=False,
+    negated_value=None,
+):
+    """Parse arbitrary CLI key/value tokens into canonical resource keys."""
+    parsed = {}
+    bool_field_set = set(bool_fields or ())
+    int_field_set = {canonical_key(field) for field in int_fields or ()}
+    index = 0
+
+    while index < len(tokens):
+        negate = tokens[index] == "no"
+        key_index = index + 1 if negate else index
+        if key_index >= len(tokens):
+            break
+
+        token = tokens[key_index]
+        key = canonical_key(token)
+        if key in bool_field_set:
+            parsed[key] = not negate
+            index = key_index + 1
+        elif negate and negated_value is not None:
+            parsed[key] = negated_value
+            index = key_index + 1
+        elif negate:
+            index = key_index + 1
+        elif key_index + 1 < len(tokens):
+            value = _clean_cli_value(tokens[key_index + 1])
+            if key in int_field_set or (infer_numeric and isinstance(value, str) and value.isdigit()):
+                value = _coerce_cli_value(value, "int")
+            parsed[key] = value
+            index = key_index + 2
+        elif bare_keys_as_true:
+            parsed[key] = True
+            index = key_index + 1
+        else:
+            index = key_index + 1
+
+    return parsed

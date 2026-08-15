@@ -11,8 +11,8 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
     NetworkTemplate,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
-    canonical_key,
     parse_cli_fields,
+    parse_cli_key_values,
 )
 
 
@@ -55,14 +55,7 @@ class Generic_ponTemplate(NetworkTemplate):
 
     @staticmethod
     def _parse_pairs(tokens, target):
-        index = 0
-        while index < len(tokens):
-            negate = tokens[index] == "no"
-            key = tokens[index + 1] if negate and index + 1 < len(tokens) else tokens[index]
-            offset = 2 if negate else 1
-            if key:
-                target[canonical_key(key)] = "" if negate else (tokens[index + offset] if index + offset < len(tokens) else "")
-            index += offset + (0 if negate else 1)
+        target.update(parse_cli_key_values(tokens, negated_value=""))
 
     @classmethod
     def _parse_flags(cls, tokens, target):
