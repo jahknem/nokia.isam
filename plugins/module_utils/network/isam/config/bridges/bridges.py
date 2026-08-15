@@ -27,6 +27,9 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    normalize_resource_keys,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.bridges import (
     BridgesTemplate,
 )
@@ -115,19 +118,6 @@ class Bridges(ResourceModule):
             self._module.fail_json(msg=str(exc))
         return self.result
 
-    @staticmethod
-    def _normalize_keys(data):
-        """Add underscored versions of hyphenated keys for template matching.
-        Returns a new dict; does not modify the original.
-        """
-        if not isinstance(data, dict):
-            return data
-        result = dict(data)
-        for key in list(data.keys()):
-            if "-" in key:
-                result[key.replace("-", "_")] = data[key]
-        return result
-
     def generate_commands(self):
         """ Generate configuration commands to send based on
             want, have and desired state.
@@ -172,182 +162,194 @@ class Bridges(ResourceModule):
         """Compare want vs have for a single bridge port,
         including per-vlan entries.
         """
-        # Normalize hyphenated keys in both want and have so that
-        # template parsers with underscored names (e.g. default_priority)
-        # can find values stored under hyphenated argspec keys.
-        want = self._normalize_keys(want)
-        have = self._normalize_keys(have)
-
-        # Add 'id' (port name) for template setvals that reference {{ id }}
-        if isinstance(want, dict) and "port" in want and "id" not in want:
-            want["id"] = want["port"]
-        if isinstance(have, dict) and "port" in have and "id" not in have:
-            have["id"] = have["port"]
-
-        # Compare VLAN-level fields.
-        port_name = None
-        if isinstance(want, dict):
-            port_name = want.get("port") or want.get("id")
-        if port_name is None and isinstance(have, dict):
-            port_name = have.get("port") or have.get("id")
-
-        # want vlans come from the argspec 'vlan_id' list
-        want_vlans = {}
-        if isinstance(want, dict):
-            vlan_list = want.get("vlan_id", [])
-            if isinstance(vlan_list, list):
-                for entry in vlan_list:
-                    if isinstance(entry, dict) and "id" in entry:
-                        want_vlans[entry["id"]] = entry
-
-        # have vlans: support both 'vlan_id' list (facts module) and
-        # 'vlan' dict (template parser result)
-        have_vlans = {}
-        if isinstance(have, dict):
-            vlan_list = have.get("vlan_id", [])
-            if isinstance(vlan_list, list):
-                for entry in vlan_list:
-                    if isinstance(entry, dict) and "id" in entry:
-                        have_vlans[entry["id"]] = entry
-            vlan_dict = have.get("vlan", {})
-            if isinstance(vlan_dict, dict):
-                for vid, entry in vlan_dict.items():
-                    if vid not in have_vlans:
-                        have_vlans[vid] = entry
+        want = self._normalize_port(want)
+        have = self._normalize_port(have)
+        port_name = self._port_name(want, have)
+        want_vlans = self._index_vlans(want, include_template_vlan=False)
+        have_vlans = self._index_vlans(have)
 
         if self.state == "deleted":
-            requested_vlans = set(want_vlans)
-            requested_port_fields = {
-                key for key in want
-                if key not in {"port", "id", "vlan_id"}
-            }
-            if requested_vlans:
-                for vid in requested_vlans:
-                    if vid in have_vlans:
-                        self.commands.append(
-                            "configure bridge port %s no vlan-id %s" % (port_name, vid)
-                        )
-                return
-            if requested_port_fields:
-                selected = {
-                    key: value for key, value in have.items()
-                    if key in requested_port_fields
-                }
-                for field, value in iteritems(selected):
-                    if field in PORT_PARSERS:
-                        if field == "pvid":
-                            self.commands.append(
-                                "configure bridge port %s no pvid" % port_name
-                            )
-                        else:
-                            self.addcmd(
-                                {"id": port_name, field: value}, field, negate=True
-                            )
-                return
-            if have.get("pvid") is not None:
-                self.commands.append(
-                    "configure bridge port %s no pvid" % port_name
-                )
-            for vid in have_vlans:
-                self.commands.append(
-                    "configure bridge port %s no vlan-id %s" % (port_name, vid)
-                )
+            self._delete_bridge_port(port_name, want, have, want_vlans, have_vlans)
             return
 
-        # Compare port-level fields after the deletion branch so a targeted
-        # deletion cannot reset unrelated port settings through defaults.
+        deferred_pvid_commands = self._compare_port_fields(want, have)
+        self._validate_vlan_dependencies(port_name, want, want_vlans, have_vlans)
+
+        for vid in want_vlans:
+            self._compare_vlan(port_name, vid, want_vlans[vid], have_vlans.pop(vid, {}))
+
+        # remaining vlans in have (present in running but not in want)
+        for vid, have_vlan in iteritems(have_vlans):
+            self._compare_stale_vlan(port_name, vid, have_vlan)
+
+        self.commands.extend(deferred_pvid_commands)
+
+    def _normalize_port(self, data):
+        data = normalize_resource_keys(data)
+        if isinstance(data, dict) and "port" in data and "id" not in data:
+            data["id"] = data["port"]
+        return data
+
+    @staticmethod
+    def _port_name(want, have):
+        if isinstance(want, dict):
+            port_name = want.get("port") or want.get("id")
+            if port_name is not None:
+                return port_name
+        if isinstance(have, dict):
+            return have.get("port") or have.get("id")
+        return None
+
+    @staticmethod
+    def _index_vlans(data, include_template_vlan=True):
+        indexed = {}
+        if not isinstance(data, dict):
+            return indexed
+
+        vlan_list = data.get("vlan_id", [])
+        if isinstance(vlan_list, list):
+            for entry in vlan_list:
+                if isinstance(entry, dict) and "id" in entry:
+                    indexed[entry["id"]] = entry
+
+        if not include_template_vlan:
+            return indexed
+
+        # Facts use vlan_id; raw template parser output may still contain vlan.
+        vlan_dict = data.get("vlan", {})
+        if isinstance(vlan_dict, dict):
+            for vid, entry in vlan_dict.items():
+                if vid not in indexed:
+                    indexed[vid] = entry
+        return indexed
+
+    def _delete_bridge_port(self, port_name, want, have, want_vlans, have_vlans):
+        requested_vlans = set(want_vlans)
+        requested_port_fields = {
+            key for key in want
+            if key not in {"port", "id", "vlan_id"}
+        }
+        if requested_vlans:
+            for vid in requested_vlans:
+                if vid in have_vlans:
+                    self.commands.append(
+                        "configure bridge port %s no vlan-id %s" % (port_name, vid)
+                    )
+            return
+
+        if requested_port_fields:
+            selected = {
+                key: value for key, value in have.items()
+                if key in requested_port_fields
+            }
+            for field, value in iteritems(selected):
+                if field in PORT_PARSERS:
+                    if field == "pvid":
+                        self.commands.append(
+                            "configure bridge port %s no pvid" % port_name
+                        )
+                    else:
+                        self.addcmd({"id": port_name, field: value}, field, negate=True)
+            return
+
+        if have.get("pvid") is not None:
+            self.commands.append("configure bridge port %s no pvid" % port_name)
+        for vid in have_vlans:
+            self.commands.append(
+                "configure bridge port %s no vlan-id %s" % (port_name, vid)
+            )
+
+    def _compare_port_fields(self, want, have):
+        # Targeted deletion runs before this so defaults cannot reset unrelated settings.
         port_start = len(self.commands)
         self.compare(parsers=PORT_PARSERS, want=want, have=have)
         port_commands = self.commands[port_start:]
         self.commands[port_start:] = [
             command for command in port_commands if " pvid " not in command
         ]
-        deferred_pvid_commands = [
-            command for command in port_commands if " pvid " in command
-        ]
+        return [command for command in port_commands if " pvid " in command]
 
+    def _validate_vlan_dependencies(self, port_name, want, want_vlans, have_vlans):
         service_vlans = [
             vid for vid, entry in want_vlans.items()
             if isinstance(entry, dict) and entry.get("l2fwder_vlan") is not None
         ]
-        if service_vlans and want.get("pvid") is not None and self.state != "rendered":
-            pvid_vid = str(want["pvid"])
-            pvid_present = any(str(key) == pvid_vid for key in have_vlans)
-            if not pvid_present:
-                raise ValueError(
-                    "bridge port %s requires VLAN %s/PVID to be configured "
-                    "before service VLANs %s; apply the bridge bootstrap "
-                    "state first" % (port_name, pvid_vid, ", ".join(map(str, service_vlans)))
-                )
+        if not service_vlans or want.get("pvid") is None or self.state == "rendered":
+            return
 
-        for vid in want_vlans:
-            want_vlan = want_vlans[vid]
-            have_vlan = have_vlans.pop(vid, {})
-            want_vlan = dict(want_vlan) if isinstance(want_vlan, dict) else {}
-            have_vlan = dict(have_vlan) if isinstance(have_vlan, dict) else {}
-            want_vlan = self._normalize_keys(want_vlan)
-            have_vlan = self._normalize_keys(have_vlan)
-            if want_vlan.get("l2fwder_vlan") is not None:
-                want_vlan["l2fwder_vlan"] = str(want_vlan["l2fwder_vlan"])
-            if have_vlan.get("l2fwder_vlan") is not None:
-                have_vlan["l2fwder_vlan"] = str(have_vlan["l2fwder_vlan"])
-            if want_vlan.get("network_vlan") is not None and want_vlan.get("l2fwder_vlan") is None:
-                raise ValueError(
-                    "bridge VLAN %s on %s requires l2fwder_vlan before network_vlan" %
-                    (vid, port_name)
-                )
-            # Strip "none" string values — these come from argspec defaults
-            # (qos, qos_profile) and represent "not set" in the Nokia CLI.
-            want_vlan = {k: v for k, v in want_vlan.items() if v != "none"}
-            have_vlan = {k: v for k, v in have_vlan.items() if v != "none"}
-            # Inject template variables needed by VLAN-level setvals
-            want_vlan["vlan_id"] = vid
-            want_vlan["id"] = port_name
-            vlan_start = len(self.commands)
-            self.compare(parsers=VLAN_PARSERS, want=want_vlan, have=have_vlan)
-            vlan_commands = self.commands[vlan_start:]
-            vlan_prefix = "configure bridge port %s vlan-id %s" % (port_name, vid)
-            # The vlan_id parser is used by facts, not command generation.
-            # If no VLAN-level attribute matched, emit the base vlan-id command
-            # so that bare VLAN entries (e.g. the default VLAN) are created.
-            if not any(command.startswith(vlan_prefix) for command in vlan_commands):
-                vlan_commands.insert(0, vlan_prefix)
-            tag_command = next(
-                (command for command in vlan_commands if command.startswith(vlan_prefix + " tag ")), None
+        pvid_vid = str(want["pvid"])
+        pvid_present = any(str(key) == pvid_vid for key in have_vlans)
+        if not pvid_present:
+            raise ValueError(
+                "bridge port %s requires VLAN %s/PVID to be configured "
+                "before service VLANs %s; apply the bridge bootstrap "
+                "state first" % (port_name, pvid_vid, ", ".join(map(str, service_vlans)))
             )
-            l2fwder_command = next(
-                (
-                    command for command in vlan_commands
-                    if command.startswith(vlan_prefix + " l2fwder-vlan ")
-                ),
-                None,
+
+    def _normalize_vlan(self, port_name, vid, data):
+        data = dict(data) if isinstance(data, dict) else {}
+        data = normalize_resource_keys(data)
+        if data.get("l2fwder_vlan") is not None:
+            data["l2fwder_vlan"] = str(data["l2fwder_vlan"])
+        # Argspec defaults such as qos=none represent an unset value in CLI.
+        data = {k: v for k, v in data.items() if v != "none"}
+        data["vlan_id"] = vid
+        data["id"] = port_name
+        return data
+
+    def _compare_vlan(self, port_name, vid, want_vlan, have_vlan):
+        want_vlan = self._normalize_vlan(port_name, vid, want_vlan)
+        have_vlan = self._normalize_vlan(port_name, vid, have_vlan)
+        if want_vlan.get("network_vlan") is not None and want_vlan.get("l2fwder_vlan") is None:
+            raise ValueError(
+                "bridge VLAN %s on %s requires l2fwder_vlan before network_vlan" %
+                (vid, port_name)
             )
-            if tag_command and l2fwder_command:
-                vlan_commands = [
-                    command for command in vlan_commands
-                    if command != tag_command and command != l2fwder_command
-                ]
-                vlan_commands.insert(
-                    0,
-                    "%s %s %s" % (
-                        vlan_prefix,
-                        tag_command[len(vlan_prefix) + 1:],
-                        l2fwder_command[len(vlan_prefix) + 1:],
-                    ),
-                )
-            self.commands[vlan_start:] = vlan_commands
 
-        # remaining vlans in have (present in running but not in want)
-        for vid, have_vlan in iteritems(have_vlans):
-            have_vlan = dict(have_vlan) if isinstance(have_vlan, dict) else {}
-            have_vlan = self._normalize_keys(have_vlan)
-            # Strip "none" string values
-            have_vlan = {k: v for k, v in have_vlan.items() if v != "none"}
-            have_vlan["vlan_id"] = vid
-            have_vlan["id"] = port_name
-            self.compare(parsers=VLAN_PARSERS, want={}, have=have_vlan)
+        vlan_start = len(self.commands)
+        self.compare(parsers=VLAN_PARSERS, want=want_vlan, have=have_vlan)
+        self.commands[vlan_start:] = self._order_vlan_commands(
+            port_name, vid, self.commands[vlan_start:]
+        )
 
-        self.commands.extend(deferred_pvid_commands)
+    def _compare_stale_vlan(self, port_name, vid, have_vlan):
+        have_vlan = self._normalize_vlan(port_name, vid, have_vlan)
+        self.compare(parsers=VLAN_PARSERS, want={}, have=have_vlan)
+
+    @staticmethod
+    def _order_vlan_commands(port_name, vid, vlan_commands):
+        vlan_prefix = "configure bridge port %s vlan-id %s" % (port_name, vid)
+        # The vlan_id parser is used by facts, not command generation. If no
+        # attribute matched, emit the base command so bare VLANs are created.
+        if not any(command.startswith(vlan_prefix) for command in vlan_commands):
+            vlan_commands.insert(0, vlan_prefix)
+
+        tag_command = next(
+            (command for command in vlan_commands if command.startswith(vlan_prefix + " tag ")), None
+        )
+        l2fwder_command = next(
+            (
+                command for command in vlan_commands
+                if command.startswith(vlan_prefix + " l2fwder-vlan ")
+            ),
+            None,
+        )
+        if not tag_command or not l2fwder_command:
+            return vlan_commands
+
+        ordered = [
+            command for command in vlan_commands
+            if command != tag_command and command != l2fwder_command
+        ]
+        ordered.insert(
+            0,
+            "%s %s %s" % (
+                vlan_prefix,
+                tag_command[len(vlan_prefix) + 1:],
+                l2fwder_command[len(vlan_prefix) + 1:],
+            ),
+        )
+        return ordered
 
     def _index_by_port(self, data):
         if not data:
