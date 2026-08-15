@@ -31,18 +31,18 @@ options:
         type: str
         choices: [enable, disable]
         description: Downstream FEC setting.
-       ber_calc_period: {type: int, description: BER calculation period (1-864000 deciseconds).}
-       polling_period: {type: int, description: PON polling period (1-864000 deciseconds).}
-       sig_degrade_th: {type: int, description: Signal degradation threshold (4-10).}
-       sig_fail_th: {type: int, description: Signal failure threshold (3-8).}
+      ber_calc_period: {type: int, description: BER calculation period (1-864000 deciseconds).}
+      polling_period: {type: int, description: PON polling period (1-864000 deciseconds).}
+      sig_degrade_th: {type: int, description: Signal degradation threshold (4-10).}
+      sig_fail_th: {type: int, description: Signal failure threshold (3-8).}
       raman_reduct:
         type: str
         choices: [enable, disable]
         description: Raman reduction setting.
-       closest_ont: {type: int, description: Closest ONT distance in km (0-40; XGS 0-20).}
-       diff_reach: {type: int, choices: [20, 34, 40], description: Differential reach in km.}
-       pon_tag: {type: str, description: Up to 16 hexadecimal characters.}
-       pon_id: {type: str, description: Up to 8 hexadecimal characters.}
+      closest_ont: {type: int, description: Closest ONT distance in km (0-40; XGS 0-20).}
+      diff_reach: {type: int, choices: [20, 34, 40], description: Differential reach in km.}
+      pon_tag: {type: str, description: Up to 16 hexadecimal characters.}
+      pon_id: {type: str, description: Up to 8 hexadecimal characters.}
       mcast_encrypt:
         type: str
         choices: [enable, disable]
@@ -55,13 +55,13 @@ options:
         type: str
         choices: [a, b, bplus, c, cplus, auto]
         description: ODN profile used for PON-ID handling.
-       ponid_identifier:
-         type: str
-         description: Exactly 14 hexadecimal characters.
-       tconts_per_frame:
-         type: int
-         description: Maximum number of TCONT containers per upstream frame (0-64).
-       max_ranging_onts: {type: int, description: Maximum number of ranging ONTs (0-128).}
+      ponid_identifier:
+        type: str
+        description: Exactly 14 hexadecimal characters.
+      tconts_per_frame:
+        type: int
+        description: Maximum number of TCONT containers per upstream frame (0-64).
+      max_ranging_onts: {type: int, description: Maximum number of ranging ONTs (0-128).}
       pon_speed: {type: str, description: PON speed mode.}
       burst_overhead: {type: str, description: Burst overhead mode.}
       onu_prov_mode: {type: str, description: ONU provisioning mode.}
@@ -77,39 +77,45 @@ options:
             type: str
             choices: [none, pm-enable, tca-enable]
             description: OLT-side aggregate TC layer PM mode.
-           tca_enable:
-             type: bool
-             description: Convenience flag mapping to tc-layer pm-collect tca-enable when true.
-       tc_layer_threshold:
-         type: dict
-         suboptions:
-           error_frags_up: {type: str, description: Errored-fragments threshold or disabled.}
-       mcast_tc_layer:
-         type: dict
-         suboptions:
-           pm_collect: {type: str, choices: [enable, disable]}
-       phy_layer:
-         type: dict
-         suboptions:
-           pm_collect: {type: str, choices: [enable, disable]}
-       fec_tc_layer:
-         type: dict
-         suboptions:
-           pm_collect: {type: str, choices: [enable, disable]}
-       xg_tc_layer:
-         type: dict
-         suboptions:
-           pm_collect: {type: str, choices: [enable, disable]}
-       otdr:
-         type: dict
-         suboptions:
-           mode: {type: str, choices: [enable, disable, test]}
-       utilization:
-         type: dict
-         description: PON and ONT utilization performance monitoring.
-       deact_ont_tca:
-         type: dict
-         description: Deactivated-ONT detection thresholds.
+          tca_enable:
+            type: bool
+            description: Convenience flag mapping to tc-layer pm-collect tca-enable when true.
+      tc_layer_threshold:
+        type: dict
+        description: TC-layer threshold settings.
+        suboptions:
+          error_frags_up: {type: str, description: Errored-fragments threshold or disabled.}
+      mcast_tc_layer:
+        type: dict
+        description: Multicast TC-layer PM collection settings.
+        suboptions:
+          pm_collect: {type: str, choices: [enable, disable], description: Enable or disable multicast TC-layer PM collection.}
+      phy_layer:
+        type: dict
+        description: Physical-layer PM collection settings.
+        suboptions:
+          pm_collect: {type: str, choices: [enable, disable], description: Enable or disable physical-layer PM collection.}
+      fec_tc_layer:
+        type: dict
+        description: FEC TC-layer PM collection settings.
+        suboptions:
+          pm_collect: {type: str, choices: [enable, disable], description: Enable or disable FEC TC-layer PM collection.}
+      xg_tc_layer:
+        type: dict
+        description: XG TC-layer PM collection settings.
+        suboptions:
+          pm_collect: {type: str, choices: [enable, disable], description: Enable or disable XG TC-layer PM collection.}
+      otdr:
+        type: dict
+        description: OTDR mode settings.
+        suboptions:
+          mode: {type: str, choices: [enable, disable, test], description: OTDR operating mode.}
+      utilization:
+        type: dict
+        description: PON and ONT utilization performance monitoring.
+      deact_ont_tca:
+        type: dict
+        description: Deactivated-ONT detection thresholds.
   running_config:
     type: str
     description: Native running configuration for parsed state.
