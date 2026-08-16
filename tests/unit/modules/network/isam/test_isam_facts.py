@@ -425,3 +425,87 @@ class TestIsamFactsModule(TestIsamModule):
         result = self.execute_module(changed=False)
         self.assertEqual(connection.commands, [])
         self.assertEqual(result["ansible_facts"]["ansible_net_gather_subset"], [])
+
+    def test_isam_facts_with_alarm_status_fixture(self):
+        """Integration test using alarm_status fixture file."""
+        from pathlib import Path
+        fixture_path = Path(__file__).parent.parent.parent.parent.parent / "fixtures" / "alarm_status" / "r6.2.04m" / "output.txt"
+        fixture_content = fixture_path.read_text()
+
+        class AlarmConn:
+            def get(self, cmd):
+                if cmd == "show alarm current table":
+                    return fixture_content
+                return ""
+
+        self.get_resource_connection_facts.return_value = AlarmConn()
+        set_module_args(dict(gather_subset=["active_alarms"]))
+
+        result = self.execute_module(changed=False)
+        alarms = result["ansible_facts"]["ansible_net_active_alarms"]["alarms"]
+        self.assertEqual(len(alarms), 40)
+        self.assertEqual(alarms[0]["index"], "1")
+        self.assertEqual(alarms[0]["type"], "olt-gen")
+
+    def test_isam_facts_with_ont_status_fixture(self):
+        """Integration test using ont_status fixture file."""
+        from pathlib import Path
+        fixture_path = Path(__file__).parent.parent.parent.parent.parent / "fixtures" / "ont_status" / "r6.2.04m" / "output.txt"
+        fixture_content = fixture_path.read_text()
+
+        class OntStatusConn:
+            def get(self, cmd):
+                if cmd == "show equipment ont status pon":
+                    return fixture_content
+                return ""
+
+        self.get_resource_connection_facts.return_value = OntStatusConn()
+        set_module_args(dict(gather_subset=["ont_status"]))
+
+        result = self.execute_module(changed=False)
+        ont_status = result["ansible_facts"]["ansible_net_ont_status"]
+        self.assertEqual(len(ont_status), 74)
+        self.assertEqual(ont_status[0]["pon"], "1/1/2/1")
+        self.assertEqual(ont_status[0]["sernum"], "XXXX:SANIT")
+
+    def test_isam_facts_with_software_status_fixture(self):
+        """Integration test using software_status fixture file."""
+        from pathlib import Path
+        fixture_path = Path(__file__).parent.parent.parent.parent.parent / "fixtures" / "software_status" / "r6.2.04m" / "output.txt"
+        fixture_content = fixture_path.read_text()
+
+        class SoftwareStatusConn:
+            def get(self, cmd):
+                if cmd == "show software-mngt oswp":
+                    return fixture_content
+                return ""
+
+        self.get_resource_connection_facts.return_value = SoftwareStatusConn()
+        set_module_args(dict(gather_subset=["software_status"]))
+
+        result = self.execute_module(changed=False)
+        software_status = result["ansible_facts"]["ansible_net_software_status"]
+        self.assertEqual(len(software_status), 2)
+        self.assertEqual(software_status[0]["name"], "L6GPAA62.652")
+        self.assertEqual(software_status[0]["act_status"], "not-active")
+
+    def test_isam_facts_with_pon_pm_status_fixture(self):
+        """Integration test using pon_pm_status fixture file."""
+        from pathlib import Path
+        fixture_path = Path(__file__).parent.parent.parent.parent.parent / "fixtures" / "pon_pm_status" / "r6.2.04m" / "output.txt"
+        fixture_content = fixture_path.read_text()
+
+        class PonPmConn:
+            def get(self, cmd):
+                if cmd == "show pon interface tc-layer current-interval":
+                    return fixture_content
+                return ""
+
+        self.get_resource_connection_facts.return_value = PonPmConn()
+        set_module_args(dict(gather_subset=["pon_pm_status"]))
+
+        result = self.execute_module(changed=False)
+        pon_pm = result["ansible_facts"]["ansible_net_pon_pm_status"]
+        self.assertEqual(len(pon_pm), 16)
+        self.assertEqual(pon_pm[0]["pon_idx"], "1/1/5/1")
+        self.assertEqual(pon_pm[0]["err_frags_up"], 0)
