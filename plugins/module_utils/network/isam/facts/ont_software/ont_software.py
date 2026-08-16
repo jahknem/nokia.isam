@@ -7,9 +7,10 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common imp
 )
 
 
-_VERSION_FIELDS = ("sw-ver", "sw-ver-size")
+_VERSION_FIELDS = ("sw-ver-id", "sw-ver", "sw-ver-size")
 _DOWNLOAD_FIELDS = (
     "ont",
+    "ont-idx",
     "planned",
     "inactive",
     "planned-notok",
@@ -39,21 +40,39 @@ def _key(value):
 def _table_rows(output, fields):
     """Read pipe-delimited or whitespace-delimited Nokia display tables."""
     lines = [line.rstrip() for line in (output or "").splitlines()]
-    normalized = {_key(field): canonical_key(field) for field in fields}
+    aliases = {"ont-idx": "ont"}
+    normalized = {_key(field): aliases.get(field, canonical_key(field)) for field in fields}
     headers = None
+    pending_header = None
     rows = []
+    count_line = re.compile(r"^[\w\-]+\s+count\s*:\s*\d+\s*$")
 
     for line in lines:
         stripped = line.strip()
         if not stripped or stripped.startswith(("#", "=")) or set(stripped) <= set("-+=| "):
             continue
+        if count_line.match(stripped):
+            continue
 
         parts = [part.strip() for part in line.split("|")] if "|" in line else stripped.split()
         names = [_key(part) for part in parts]
-        if len(parts) > 1 and all(name in normalized for name in names) and len(set(names)) == len(names):
-            headers = [normalized[name] for name in names]
-            continue
-        if not headers:
+        if headers is None:
+            if all(parts) and len(parts) > 1 and all(name in normalized for name in names) and len(set(names)) == len(names):
+                headers = [normalized[name] for name in names]
+                pending_header = None
+                continue
+            if not all(parts) and len(parts) > 1 and any(parts):
+                pending_header = parts
+                continue
+            if pending_header and len(pending_header) == len(parts) and all(parts):
+                names = [
+                    _key("_".join(part for part in (top, bottom) if part))
+                    for top, bottom in zip(pending_header, parts)
+                ]
+                pending_header = None
+                if all(name in normalized for name in names) and len(set(names)) == len(names):
+                    headers = [normalized[name] for name in names]
+                    continue
             continue
 
         values = [part.strip() for part in line.split("|")] if "|" in line else stripped.split()

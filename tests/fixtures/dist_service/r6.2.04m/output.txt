@@ -1,0 +1,2 @@
+configure dist-service ds1 service-type apipe
+configure dist-service ds1 qos-profile qp1

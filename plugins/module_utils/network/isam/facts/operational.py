@@ -85,6 +85,9 @@ class Software_statusFacts(_OperationalFacts):
     command = "show software-mngt oswp"
     key = "software_status"
 
+    def parse(self, output):
+        return parse_status_table(output)
+
 
 class Ont_ranging_statusFacts(_OperationalFacts):
     command = "show equipment ont ranging-status channel-pair"

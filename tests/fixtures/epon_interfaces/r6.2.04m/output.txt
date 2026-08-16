@@ -1,0 +1,1 @@
+configure epon interface 1/1/1/1 name epon1

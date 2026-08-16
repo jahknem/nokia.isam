@@ -15,6 +15,9 @@ class AlarmStatusParser(object):
         "alarm-id": "alarm_id",
         "alarm_id": "alarm_id",
         "id": "alarm_id",
+        "index": "index",
+        "type": "type",
+        "last-updated-on": "last_updated_on",
         "severity": "severity",
         "state": "state",
         "status": "state",
@@ -36,7 +39,7 @@ class AlarmStatusParser(object):
 
             fields = self._split(line)
             normalized = [self._normalize_header(field) for field in fields]
-            if "alarm_id" in normalized and "severity" in normalized:
+            if any(normalized) and all(field is not None for field in normalized) and len(normalized) >= 2:
                 headers = normalized
                 continue
             if headers is None or not fields:
@@ -53,6 +56,8 @@ class AlarmStatusParser(object):
 
     @staticmethod
     def _split(line):
+        if "|" in line:
+            return [field.strip() for field in line.split("|") if field.strip()]
         return [field.strip() for field in re.split(r"\s{2,}", line.strip()) if field.strip()]
 
     @classmethod

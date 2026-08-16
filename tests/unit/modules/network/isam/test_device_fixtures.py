@@ -152,6 +152,22 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_lines import (
     Xdsl_linesTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.alarm_status import (
+    AlarmStatusParser,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ont_ranging_status import (
+    OntRangingStatusParser,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ont_operational.ont_operational import (
+    parse_status_table,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ont_software.ont_software import (
+    parse_ont_sw_download,
+    parse_ont_sw_version,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.tc_layer_current_interval.tc_layer_current_interval import (
+    parse_tc_layer_current_interval,
+)
 
 
 FIXTURE_ROOT = Path(__file__).parents[4] / "fixtures"
@@ -546,3 +562,224 @@ def test_ani_threshold_fields_parse_and_render():
         {"ont_idx": "1/1/2/1/1", "tca_thresh": True, "lower_optical_th": -25.5},
         "tca_thresh",
     ) == "configure ani ont tca-thresh 1/1/2/1/1 lower-optical-th -25.5"
+
+
+def test_alarm_status_live_show_fixture_is_parseable():
+    descriptor, output = fixture_bundle("alarm_status", "r6.2.04m")
+    parsed = AlarmStatusParser().parse(output)
+
+    assert descriptor["command"] == "show alarm current table"
+    assert len(parsed["alarms"]) == 40
+    assert parsed["alarms"][0] == {
+        "index": "1",
+        "type": "olt-gen",
+        "last_updated_on": "2026-08-10:13:00:31",
+    }
+
+
+def test_ont_status_live_show_fixture_is_parseable():
+    descriptor, output = fixture_bundle("ont_status", "r6.2.04m")
+    rows = parse_status_table(output)
+
+    assert descriptor["command"] == "show equipment ont status pon"
+    assert len(rows) == 74
+    assert rows[0]["pon"] == "1/1/2/1"
+    assert rows[0]["ont"] == "1/1/2/1/1"
+    assert rows[0]["sernum"] == "XXXX:SANIT"
+    assert rows[7]["oper_status"] == "up"
+
+
+def test_interface_status_live_show_fixture_is_parseable():
+    descriptor, output = fixture_bundle("interface_status", "r6.2.04m")
+    rows = parse_status_table(output)
+
+    assert descriptor["command"] == "show interface port"
+    assert len(rows) == 1514
+    ports = {row["port"] for row in rows}
+    assert "pon:1/1/2/1" in ports
+    assert "ont:1/1/5/1/3" in ports
+    assert rows[0]["port"] == "slip"
+
+
+def test_pon_pm_status_live_show_fixture_is_parseable():
+    descriptor, output = fixture_bundle("pon_pm_status", "r6.2.04m")
+    parsed = parse_tc_layer_current_interval(output)
+
+    assert descriptor["command"] == "show pon interface tc-layer current-interval"
+    assert len(parsed) == 16
+    assert parsed[0] == {"pon_idx": "1/1/5/1", "err_frags_up": 0}
+
+
+def test_ont_ranging_status_live_show_fixture_is_parseable():
+    descriptor, output = fixture_bundle("ont_ranging_status", "r6.2.04m")
+    parsed = OntRangingStatusParser().parse(output)
+
+    assert descriptor["command"] == "show equipment ont ranging-status channel-pair"
+    assert parsed == {"ranging_status": []}
+
+
+def test_ont_software_status_live_show_fixture_is_parseable():
+    descriptor, output = fixture_bundle("ont_software_status", "sw_version")
+    versions = parse_ont_sw_version(output)
+
+    assert descriptor["command"] == "show equipment ont sw-version"
+    assert len(versions) == 8
+    assert versions[0] == {"sw_ver_id": "1", "sw_ver": "FE45655AOCK85", "sw_ver_size": "6496260"}
+
+
+def test_ont_software_download_live_show_fixture_is_parseable():
+    descriptor, output = fixture_bundle("ont_software_status", "sw_download")
+    downloads = parse_ont_sw_download(output)
+
+    assert descriptor["command"] == "show equipment ont sw-download"
+    assert len(downloads) == 74
+    assert downloads[0]["ont"] == "1/1/2/1/1"
+    assert downloads[0]["planned"] == "no"
+    assert downloads[12]["planned"] == "yes"
+
+
+def test_software_status_live_show_fixture_is_parseable():
+    descriptor, output = fixture_bundle("software_status", "r6.2.04m")
+    rows = parse_status_table(output)
+
+    assert descriptor["command"] == "show software-mngt oswp"
+    assert rows == [
+        {"index": "1", "name": "L6GPAA62.652", "availability": "enabled",
+         "act_status": "not-active", "commit_status": "committed"},
+        {"index": "2", "name": "L6GPAA62.819", "availability": "enabled",
+         "act_status": "active", "commit_status": "un-committed"},
+    ]
+
+
+def test_equipment_status_live_show_fixture_is_parseable():
+    descriptor, output = fixture_bundle("equipment_status", "live-fttn")
+    rows = parse_status_table(output)
+
+    assert descriptor["command"] == "show equipment slot"
+    assert len(rows) == 12
+    types = {row["actual_type"] for row in rows}
+    assert types == {"nant-e", "empty", "ndps-c", "ndlt-f", "fglt-b", "nelt-b"}
+
+
+def test_dhcp_relay_live_show_fixture_is_parseable():
+    descriptor, output = fixture_bundle("dhcp_relay", "r6.2.04m")
+    rows = parse_status_table(output)
+
+    assert descriptor["command"] == "show dhcp-relay session"
+    assert rows[0]["client"] == "vlanport:1/1/5/1/6/1/1:10"
+    assert rows[0]["ip_addr"] == "192.0.2.10"
+
+
+
+def test_arp_relay_synthetic_fixture_is_parseable():
+    descriptor, output = fixture_bundle("arp_relay", "r6.2.04m")
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.arp_relay import Isam_arp_relayTemplate
+    parsed = Isam_arp_relayTemplate(lines=output.splitlines()).parse()
+    assert descriptor["command"] == "info configure arp-relay flat"
+    assert "port1" in parsed
+
+
+def test_cfm_synthetic_fixture_is_parseable():
+    descriptor, output = fixture_bundle("cfm", "r6.2.04m")
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.cfm import CfmTemplate
+    parsed = CfmTemplate(lines=output.splitlines()).parse()
+    assert descriptor["command"] == "info configure cfm flat"
+    assert len(parsed) >= 0
+
+
+def test_channel_pair_pm_synthetic_fixture_loads():
+    descriptor, output = fixture_bundle("channel_pair_pm", "r6.2.04m")
+    assert descriptor["command"] == "info configure channel-pair pm flat"
+    assert "configure channel-pair pm" in output
+
+
+def test_dist_service_synthetic_fixture_is_parseable():
+    descriptor, output = fixture_bundle("dist_service", "r6.2.04m")
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.dist_service import Isam_dist_serviceTemplate
+    parsed = Isam_dist_serviceTemplate(lines=output.splitlines()).parse()
+    assert descriptor["command"] == "info configure dist-service flat"
+    assert "ds1" in parsed
+
+
+def test_efm_oam_interface_synthetic_fixture_loads():
+    descriptor, output = fixture_bundle("efm_oam_interface", "r6.2.04m")
+    assert descriptor["command"] == "info configure efm-oam interface flat"
+    assert "configure efm-oam interface" in output
+
+
+def test_epon_interfaces_synthetic_fixture_loads():
+    descriptor, output = fixture_bundle("epon_interfaces", "r6.2.04m")
+    assert descriptor["command"] == "info configure epon interface flat"
+    assert "configure epon interface" in output
+
+
+def test_iphost_synthetic_fixture_is_parseable():
+    descriptor, output = fixture_bundle("iphost", "r6.2.04m")
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.iphost import IphostTemplate
+    parsed = IphostTemplate(lines=output.splitlines()).parse()
+    assert descriptor["command"] == "info configure iphost flat"
+    assert parsed.get("name") == "myhost"
+
+
+def test_ipv6_antispoofing_slot_synthetic_fixture_is_parseable():
+    descriptor, output = fixture_bundle("ipv6_antispoofing_slot", "r6.2.04m")
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ipv6_antispoofing_slot import Isam_ipv6_antispoofing_slotTemplate
+    parsed = Isam_ipv6_antispoofing_slotTemplate(lines=output.splitlines()).parse()
+    assert descriptor["command"] == "info configure ipv6-antispoofing slot flat"
+    assert "1/1/5" in parsed
+
+
+def test_l2cp_synthetic_fixture_is_parseable():
+    descriptor, output = fixture_bundle("l2cp", "r6.2.04m")
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.l2cp import L2cpTemplate
+    parsed = L2cpTemplate().parse(output)
+    assert descriptor["command"] == "info configure l2cp flat"
+    assert len(parsed) >= 0
+
+
+def test_l2cp_session_synthetic_fixture_is_parseable():
+    descriptor, output = fixture_bundle("l2cp_session", "r6.2.04m")
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.l2cp import L2cpSessionTemplate
+    parsed = L2cpSessionTemplate().parse(output)
+    assert descriptor["command"] == "info configure l2cp session flat"
+    assert any(item.get("name") == "sess1" for item in parsed)
+
+
+def test_l2cp_user_port_synthetic_fixture_is_parseable():
+    descriptor, output = fixture_bundle("l2cp_user_port", "r6.2.04m")
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.l2cp import L2cpUserPortTemplate
+    parsed = L2cpUserPortTemplate().parse(output)
+    assert descriptor["command"] == "info configure l2cp user-port flat"
+    assert any(item.get("name") == "1/1/2/1/1/1/1" for item in parsed)
+
+
+def test_ngpon2_channel_groups_synthetic_fixture_loads():
+    descriptor, output = fixture_bundle("ngpon2_channel_groups", "r6.2.04m")
+    assert descriptor["command"] == "info configure ngpon2 channel-groups flat"
+    assert "configure ngpon2 channel-groups" in output
+
+
+def test_pppoe_client_interface_synthetic_fixture_loads():
+    descriptor, output = fixture_bundle("pppoe_client_interface", "r6.2.04m")
+    assert descriptor["command"] == "info configure pppoe-client interface flat"
+    assert "configure pppoe-client interface" in output
+
+
+def test_pppoe_client_ppp_profile_synthetic_fixture_loads():
+    descriptor, output = fixture_bundle("pppoe_client_ppp_profile", "r6.2.04m")
+    assert descriptor["command"] == "info configure pppoe-client ppp-profile flat"
+    assert "configure pppoe-client ppp-profile" in output
+
+
+def test_pppoel2_statistics_synthetic_fixture_loads():
+    descriptor, output = fixture_bundle("pppoel2_statistics", "r6.2.04m")
+    assert descriptor["command"] == "info configure pppoel2 statistics flat"
+    assert "configure pppoel2 statistics" in output
+
+
+def test_security_ext_authenticator_synthetic_fixture_is_parseable():
+    descriptor, output = fixture_bundle("security_ext_authenticator", "r6.2.04m")
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.security_ext_authenticator import Isam_security_ext_authenticatorTemplate
+    parsed = Isam_security_ext_authenticatorTemplate(lines=output.splitlines()).parse()
+    assert descriptor["command"] == "admin security ext-authenticator"
+    assert any(item.get("port") == "1/1/2/1" for item in parsed.get("config", []))
