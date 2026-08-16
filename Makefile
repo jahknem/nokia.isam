@@ -2,6 +2,7 @@
 
 COLLECTIONS_PATH ?= /tmp/opencode
 COLLECTION_LINK := $(COLLECTIONS_PATH)/ansible_collections/nokia/isam
+ANSIBLE ?= $(shell if [ -x .venv/bin/ansible ]; then printf '%s' .venv/bin/ansible; else command -v ansible; fi)
 INVENTORY ?= /home/jahknem/Projects/BlueNetworks/yplay-provisioning/inventory/production.yaml
 VAULT_PASS ?= /home/jahknem/Projects/BlueNetworks/yplay-provisioning/.vault_pass
 TARGET ?= DS-LIN-TEST-01
@@ -47,7 +48,7 @@ doc:
 gather-all:
 	@failed=0; for m in $(RESOURCE_MODULES); do \
 		o=/tmp/opencode/live_$${m}_gathered.out; \
-		ANSIBLE_COLLECTIONS_PATH=$(COLLECTIONS_PATH) ansible -i $(INVENTORY) $(TARGET) \
+		ANSIBLE_COLLECTIONS_PATH=$(COLLECTIONS_PATH) $(ANSIBLE) -i $(INVENTORY) $(TARGET) \
 			--vault-password-file $(VAULT_PASS) -m nokia.isam.$$m -a 'state=gathered' \
 			> $$o 2>&1; \
 		rc=$$?; \
