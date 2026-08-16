@@ -5,8 +5,17 @@ import yaml
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.pon_variants import (
     Epon_interfacesTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.equipment_onts.equipment_onts import (
+    Equipment_ontsFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.pon_interfaces.pon_interfaces import (
+    Pon_interfacesFacts,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ani_onts import (
     Ani_ontsTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.pon_interfaces import (
+    Pon_interfacesTemplate,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.software_mngt import (
     Software_mngtTemplate,
@@ -69,6 +78,34 @@ def test_pon_variant_fixture_is_parseable():
     parsed = Epon_interfacesTemplate(lines=output.splitlines()).parse()
     assert descriptor["command"] == "info configure epon interface flat"
     assert parsed["1/1/1/1"]["name"] == "1/1/1/1"
+
+
+def test_pon_interface_live_detail_fixture_is_parseable():
+    descriptor, output = fixture_bundle("pon_interfaces", "r6.2.04m")
+    facts = Pon_interfacesFacts(module=None)
+    flattened = facts._flatten_config(output)
+    parsed = Pon_interfacesTemplate(lines=flattened).parse()
+    entry = parsed["1/1/2/1"]
+
+    assert descriptor["command"] == "info configure pon interface flat detail"
+    assert entry["admin_state"] == "up"
+    assert entry["fec_dn"] == "disable"
+    assert entry["tconts_per_frame"] == 64
+    assert entry["tc_layer"]["pm_collect"] == "pm-enable"
+    assert "pon_pmcollect" not in entry["utilization"]
+
+
+def test_equipment_onts_live_detail_fixture_is_parseable():
+    descriptor, output = fixture_bundle("equipment_onts", "r6.2.04m")
+    parsed = Equipment_ontsFacts(module=None)._parse_config(output)
+
+    assert descriptor["command"] == "info configure equipment ont flat detail"
+    assert parsed["interfaces"][0]["ont_idx"] == "1/1/2/1/1"
+    assert parsed["interfaces"][0]["sernum"] == "ALCL:SANITIZED"
+    assert parsed["interfaces"][0]["enable_aes"] == "enable"
+    assert parsed["slots"][0]["planned_card_type"] == "ethernet"
+    assert parsed["slots"][0]["plndnumdataports"] == 1
+    assert parsed["sw_ctrls"][0]["ont_variant"] == "DO"
 
 
 def test_ani_fixture_is_parseable():
