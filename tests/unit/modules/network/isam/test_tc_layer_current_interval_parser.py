@@ -72,3 +72,50 @@ def test_keeps_multiple_labeled_resources_and_ignores_unrelated_fields():
 
 def test_empty_or_noise_only_output_returns_empty_list():
     assert parse_tc_layer_current_interval("# no data\n----------------\n") == []
+
+
+def test_parses_pon_idx_and_err_frags_up_table():
+    output = dedent(
+        """\
+        pon-idx          |err-frags-up
+        -----------------+------------
+        1/1/5/1           0
+        1/1/5/2           5
+        1/1/5/3           10
+        """
+    )
+
+    result = TcLayerCurrentIntervalParser().parse(output)
+    assert len(result) == 3
+    assert result[0] == {"pon_idx": "1/1/5/1", "err_frags_up": 0}
+    assert result[1] == {"pon_idx": "1/1/5/2", "err_frags_up": 5}
+    assert result[2] == {"pon_idx": "1/1/5/3", "err_frags_up": 10}
+
+
+def test_parses_pon_idx_labeled_format():
+    output = dedent(
+        """\
+        pon-idx: 1/1/5/1
+        err-frags-up: 3
+        """
+    )
+
+    result = TcLayerCurrentIntervalParser().parse(output)
+    assert len(result) == 1
+    assert result[0] == {"pon_idx": "1/1/5/1", "err_frags_up": 3}
+
+
+def test_mixed_resource_identifier_and_pon_idx():
+    output = dedent(
+        """\
+        Resource Identifier: uni:1/1/1/1/1/1
+        tx-gem-frames: 100
+        pon-idx: 1/1/5/1
+        err-frags-up: 5
+        """
+    )
+
+    result = TcLayerCurrentIntervalParser().parse(output)
+    assert len(result) == 2
+    assert result[0] == {"resource_identifier": "uni:1/1/1/1/1/1", "tx_gem_frames": 100}
+    assert result[1] == {"pon_idx": "1/1/5/1", "err_frags_up": 5}

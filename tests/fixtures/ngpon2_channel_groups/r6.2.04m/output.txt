@@ -1,1 +1,1 @@
-configure ngpon2 channel-groups cg1 channel 1
+configure ngpon2 channel-groups 1 channel 1
