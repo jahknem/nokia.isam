@@ -196,7 +196,8 @@ class Xdsl_profilesTemplate(object):
         index = 0
         while index < len(rest):
             key = rest[index]
-            if key in BOOL_KEYS or key == "active":
+            mapped_key = CLI_TO_KEY.get(key, key)
+            if mapped_key in BOOL_KEYS or key == "active":
                 self._parse_profile_leaf(profile, key)
                 index += 1
             elif index + 1 < len(rest):
