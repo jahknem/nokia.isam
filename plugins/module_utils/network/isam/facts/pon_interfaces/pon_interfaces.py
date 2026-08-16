@@ -202,6 +202,7 @@ class Pon_interfacesFacts(object):
             return [line]
 
         nested_sections = {
+            "tc-layer",
             "tc-layer-threshold",
             "mcast-tc-layer",
             "phy-layer",

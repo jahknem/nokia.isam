@@ -1,0 +1,14 @@
+configure pon interface 1/1/2/1 no label no ber-calc-period no polling-period no sig-degrade-th no sig-fail-th fec-dn disable no raman-reduct no closest-ont no diff-reach no pon-tag no pon-id no mcast-encrypt no auth-method no ponid-interval no ponid-odn no ponid-identifier no max-ranging-onts tconts-per-frame 64 no pon-speed no burst-overhead no onu-prov-mode
+configure pon interface 1/1/2/1 tc-layer no pm-collect
+configure pon interface 1/1/2/1 tc-layer-threshold no error-frags-up
+configure pon interface 1/1/2/1 mcast-tc-layer no pm-collect
+configure pon interface 1/1/2/1 phy-layer no pm-collect
+configure pon interface 1/1/2/1 fec-tc-layer no pm-collect
+configure pon interface 1/1/2/1 xg-tc-layer no pm-collect
+configure pon interface 1/1/2/1 otdr no mode
+configure pon interface 1/1/2/1 utilization no pon-pmcollect no ont-pmcollect no ontbulk-pmcollect
+configure pon interface 1/1/2/1 utilization threshold no txmcutilhi no txmcutilmd no txmcutillo no txtotutilhi no txtotutilmd no txtotutillo no rxtotutilhi no rxtotutilmd no rxtotutillo no dbacongperiodhi no dbacongperiodmd no dbacongperiodlo no txucdropfrmhi no txucdropfrmmd no txucdropfrmlo no txmcdropfrmhi no txmcdropfrmmd no txmcdropfrmlo no txbcdropfrmhi no txbcdropfrmmd no txbcdropfrmlo no rxtotdropfrmhi no rxtotdropfrmmd no rxtotdropfrmlo no numtcint no numtcintdba no dbacongthresh
+configure pon interface 1/1/2/1 deact-ont-tca no mode no monitor-interval
+configure pon interface 1/1/2/1 deact-ont-tca threshold-percent no high no high-clr no low no low-clr
+configure pon interface 1/1/2/1 deact-ont-tca threshold-number no high no high-clr no low no low-clr
+configure pon interface 1/1/2/1 admin-state up
