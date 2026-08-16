@@ -800,3 +800,19 @@ def test_security_ext_authenticator_synthetic_fixture_is_parseable():
     parsed = Isam_security_ext_authenticatorTemplate(lines=output.splitlines()).parse()
     assert descriptor["command"] == "admin security ext-authenticator"
     assert any(item.get("port") == "1/1/2/1" for item in parsed.get("config", []))
+
+
+def test_linetest_fixture_is_parseable():
+    descriptor, output = fixture_bundle("linetest", "r6.2.04m")
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.linetest import LinetestTemplate
+    parsed = LinetestTemplate().parse(output)
+    
+    assert descriptor["command"] == "info configure linetest flat"
+    assert len(parsed["sessions"]) == 1
+    assert parsed["sessions"][0]["session_id"] == "1/1/1/1"
+    assert parsed["sessions"][0]["ownerid"] == "admin"
+    assert parsed["sessions"][0]["timeout_period"] == "30"
+    assert len(parsed["parameters"]) == 1
+    assert parsed["parameters"][0]["session_id"] == "1/1/1/1"
+    assert parsed["parameters"][0]["test_name"] == "resistance"
+    assert parsed["parameters"][0]["value1"] == "1000"

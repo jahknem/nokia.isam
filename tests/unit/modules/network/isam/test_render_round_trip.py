@@ -174,3 +174,29 @@ configure pppoel2 no statistics stats2
     # Parse again
     reparsed = template.parse("\n".join(rendered))
     assert reparsed == parsed
+
+
+
+
+def test_linetest_round_trip():
+    """Test linetest parse → render → parse round trip."""
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.linetest import LinetestTemplate
+    
+    config = """
+configure linetest single ltsession 1/1/1/1 ownerid admin timeout-period 30
+configure linetest single ltparm 1/1/1/1 resistance value1 1000
+"""
+    template = LinetestTemplate()
+    
+    # Parse
+    parsed = template.parse(config)
+    assert len(parsed["sessions"]) == 1
+    assert len(parsed["parameters"]) == 1
+    
+    # Render
+    rendered = template.render(parsed)
+    assert len(rendered) >= 2
+    
+    # Parse again
+    reparsed = template.parse("\n".join(rendered))
+    assert reparsed == parsed
