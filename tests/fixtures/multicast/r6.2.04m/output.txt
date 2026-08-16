@@ -1,0 +1,2 @@
+configure igmp mcast-svc-context Default
+configure mcast-control mcast-svc-context Default

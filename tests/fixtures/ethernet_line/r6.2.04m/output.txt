@@ -1,0 +1,72 @@
+configure ethernet line 1/1/8/1 port-type uni admin-up
+configure ethernet line 1/1/8/1 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/2 port-type uni admin-up
+configure ethernet line 1/1/8/2 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/3 port-type uni admin-up
+configure ethernet line 1/1/8/3 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/4 port-type uni admin-up
+configure ethernet line 1/1/8/4 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/5 port-type uni admin-up
+configure ethernet line 1/1/8/5 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/6 port-type uni admin-up
+configure ethernet line 1/1/8/6 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/7 port-type uni admin-up
+configure ethernet line 1/1/8/7 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/8 port-type uni admin-up
+configure ethernet line 1/1/8/8 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/9 port-type uni admin-up
+configure ethernet line 1/1/8/9 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/10 port-type uni admin-up
+configure ethernet line 1/1/8/10 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/11 port-type uni admin-up
+configure ethernet line 1/1/8/11 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/12 port-type uni admin-up
+configure ethernet line 1/1/8/12 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/13 port-type uni admin-up
+configure ethernet line 1/1/8/13 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/14 port-type uni admin-up
+configure ethernet line 1/1/8/14 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/15 port-type uni admin-up
+configure ethernet line 1/1/8/15 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/16 port-type uni admin-up
+configure ethernet line 1/1/8/16 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/17 port-type uni admin-up
+configure ethernet line 1/1/8/17 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/18 port-type uni admin-up
+configure ethernet line 1/1/8/18 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/19 port-type uni admin-up
+configure ethernet line 1/1/8/19 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/20 port-type uni admin-up
+configure ethernet line 1/1/8/20 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/21 port-type uni admin-up
+configure ethernet line 1/1/8/21 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/22 port-type uni admin-up
+configure ethernet line 1/1/8/22 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/23 port-type uni admin-up
+configure ethernet line 1/1/8/23 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/24 port-type uni admin-up
+configure ethernet line 1/1/8/24 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/25 port-type uni admin-up
+configure ethernet line 1/1/8/25 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/26 port-type uni admin-up
+configure ethernet line 1/1/8/26 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/27 port-type uni admin-up
+configure ethernet line 1/1/8/27 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/28 port-type uni admin-up
+configure ethernet line 1/1/8/28 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/29 port-type uni admin-up
+configure ethernet line 1/1/8/29 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/30 port-type uni admin-up
+configure ethernet line 1/1/8/30 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/31 port-type uni admin-up
+configure ethernet line 1/1/8/31 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/32 port-type uni admin-up
+configure ethernet line 1/1/8/32 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/33 port-type uni admin-up
+configure ethernet line 1/1/8/33 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/34 port-type uni admin-up
+configure ethernet line 1/1/8/34 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/35 port-type uni admin-up
+configure ethernet line 1/1/8/35 mau 1 type 1000basebx10d power up
+configure ethernet line 1/1/8/36 port-type uni admin-up
+configure ethernet line 1/1/8/36 mau 1 type 1000basebx10d power up

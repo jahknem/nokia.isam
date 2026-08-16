@@ -1,0 +1,3 @@
+configure interface alarm epon default-severity indeterminate
+configure interface alarm eont default-severity indeterminate
+configure interface alarm ont default-severity indeterminate

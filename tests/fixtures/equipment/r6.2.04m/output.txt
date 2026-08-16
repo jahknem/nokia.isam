@@ -1,0 +1,16 @@
+configure equipment shelf 1/1 planned-type nfxs-b
+configure equipment slot nt-a planned-type nant-e unlock
+configure equipment slot nt-b planned-type nant-e unlock
+configure equipment slot lt:1/1/1 planned-type ndps-c unlock
+configure equipment slot lt:1/1/2 planned-type fglt-b unlock capab-profile fttu_lt operational-mode gpon
+configure equipment slot lt:1/1/3 planned-type ndlt-f unlock capab-profile 8vc_default
+configure equipment slot lt:1/1/4 planned-type ndlt-f unlock capab-profile 8vc_default
+configure equipment slot lt:1/1/5 planned-type fglt-b unlock capab-profile fttu_lt operational-mode gpon
+configure equipment slot lt:1/1/6 planned-type fglt-b unlock capab-profile fttu_lt operational-mode gpon
+configure equipment slot lt:1/1/7 planned-type fglt-b unlock capab-profile fttu_lt operational-mode gpon
+configure equipment slot lt:1/1/8 planned-type nelt-b unlock capab-profile 8vc_default
+configure equipment slot vlt:1/1/63 unlock
+configure equipment slot vlt:1/1/64 unlock
+configure equipment applique ntio-1 planned-type ncnc-d
+configure equipment protection-group 1 admin-status lock
+configure equipment protection-group 33 admin-status lock eps-quenchfactor 0
