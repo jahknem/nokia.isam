@@ -8,8 +8,26 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.equipment_onts.equipment_onts import (
     Equipment_ontsFacts,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.bridges.bridges import (
+    BridgesFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.link_agg.link_agg import (
+    Link_aggFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.interfaces.interfaces import (
+    InterfacesFacts,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.pon_interfaces.pon_interfaces import (
     Pon_interfacesFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.vlans.vlans import (
+    VlansFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.interfaces import (
+    InterfacesTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.link_agg import (
+    Link_aggTemplate,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ani_onts import (
     Ani_ontsTemplate,
@@ -20,8 +38,17 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.software_mngt import (
     Software_mngtTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.qos_profiles import (
+    Qos_profilesTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.vlans import (
+    VlansTemplate,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.voice_sip import (
     Isam_voice_sipTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_profiles import (
+    Xdsl_profilesTemplate,
 )
 
 
@@ -78,6 +105,77 @@ def test_pon_variant_fixture_is_parseable():
     parsed = Epon_interfacesTemplate(lines=output.splitlines()).parse()
     assert descriptor["command"] == "info configure epon interface flat"
     assert parsed["1/1/1/1"]["name"] == "1/1/1/1"
+
+
+def test_bridge_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("bridges", "r6.2.04m")
+    parsed = BridgesFacts(module=None)._parse_bridge_config(output)
+    port = parsed["port"][0]
+    vlans = {entry["id"]: entry for entry in port["vlan_id"]}
+
+    assert descriptor["command"] == "info configure bridge flat"
+    assert port["port"] == "1/1/2/1/1/1/1"
+    assert port["pvid"] == 99
+    assert vlans["20"]["l2fwder_vlan"] == 720
+    assert vlans["20"]["qos"] == "priority:5"
+
+
+def test_vlan_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("vlans", "r6.2.04m")
+    facts = VlansFacts(module=None)
+    parsed = VlansTemplate(lines=facts._flatten_config(output)).parse()
+
+    assert descriptor["command"] == "info configure vlan id flat"
+    assert parsed[99]["mode"] == "residential-bridge"
+    assert parsed[99]["dhcp-opt82-ext"] == "add-or-forward"
+    assert parsed[120]["priority"] == 5
+
+
+def test_qos_profiles_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("qos_profiles", "r6.2.04m")
+    parsed = Qos_profilesTemplate(lines=output.splitlines()).parse()
+
+    assert descriptor["command"] == "info configure qos profiles flat"
+    assert parsed["queue:FD_BEQ"]["queue-type"] == "red:24:48:80"
+    assert parsed["scheduler-node:NGLT_Default"]["priority"] == 2
+    assert parsed["policer:qpp5Mbps"]["committed-info-rate"] == 5120
+    assert parsed["session:FD_Voice"]["up-policer"] == "name:FD_Pol_Voice"
+
+
+def test_interfaces_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("interfaces", "r6.2.04m")
+    raw_lines = [line.replace("configure interface ", "", 1) for line in output.splitlines()]
+    parsed = InterfacesTemplate(lines=raw_lines).parse()
+    parsed = {key: InterfacesFacts._canonicalize_entry(value) for key, value in parsed.items()}
+
+    assert descriptor["command"] == "info configure interface port flat"
+    assert parsed["uni:1/1/2/1/100/1/1"]["admin_up"] is True
+
+
+def test_link_agg_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("link_agg", "r6.2.04m")
+    facts = Link_aggFacts(module=None)
+    parsed = list(Link_aggTemplate(lines=facts._flatten_config(output)).parse().values())
+    ports = [item for item in parsed if item.get("type") == "port"]
+    groups = [item for item in parsed if item.get("type") == "group"]
+
+    assert descriptor["command"] == "info configure link-agg flat"
+    assert ports[0]["passive_lacp"] is True
+    assert groups[0]["load_sharing_policy"] == "mac-src"
+    assert groups[0]["ports"]["1/1/8/1"] == "1/1/8/1"
+
+
+def test_xdsl_profiles_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("xdsl_profiles", "r6.2.04m")
+    template = Xdsl_profilesTemplate()
+    parsed = template.normalize(template.parse(output))
+
+    assert descriptor["command"] == "info configure xdsl *-profile flat"
+    assert parsed["service_profiles"][0]["max_bitrate_down"] == 33000
+    assert parsed["spectrum_profiles"][0]["dis_ansi_t1413"] is True
+    assert parsed["dpbo_profiles"][0]["es_elect_length"] == 249
+    assert parsed["vect_profiles"][0]["band_control_dn"] == "59:512"
+    assert parsed["vce_profiles"][0]["vce_join_timeout"] == "auto"
 
 
 def test_pon_interface_live_detail_fixture_is_parseable():

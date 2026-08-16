@@ -1,0 +1,4 @@
+configure vlan id 99 mode residential-bridge name TR69-1 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 99 dhcp-opt82-ext add-or-forward circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 120 mode residential-bridge name Voice priority 5 new-secure-fwd enable aging-time 60000 in-qos-prof-name name:Default_TC5
+configure vlan id 120 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id

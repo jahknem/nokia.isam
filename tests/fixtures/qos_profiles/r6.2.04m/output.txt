@@ -1,0 +1,4 @@
+configure qos profiles queue FD_BEQ red:24:48:80
+configure qos profiles scheduler-node NGLT_Default priority 2 weight 50 shaper-profile none mcast-inc-shape no-mcast-shap
+configure qos profiles policer qpp5Mbps committed-info-rate 5120 committed-burst-size 256000
+configure qos profiles session FD_Voice logical-flow-type pvc up-policer name:FD_Pol_Voice down-policer name:FD_Pol_Voice up-marker name:FD_Marker_Voice

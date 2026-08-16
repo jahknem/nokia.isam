@@ -5,7 +5,9 @@ anytree
 flake8
 mypy
 paramiko
+pynetbox
 pytest
 pytest-cov
+pytz
 textfsm
 tox

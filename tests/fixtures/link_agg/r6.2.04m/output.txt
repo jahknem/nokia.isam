@@ -1,0 +1,3 @@
+configure link-agg port 1/1/8/1 passive-lacp short-timeout
+configure link-agg group 1/1/8/1 load-sharing-policy mac-src swo-revert enable mode static master-iwf unset
+configure link-agg group 1/1/8/1 port 1/1/8/1

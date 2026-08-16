@@ -1,0 +1,7 @@
+configure xdsl service-profile 11 name YPLAY-30-Privat version 1 max-bitrate-down 33000 max-bitrate-up 5500 max-delay-down 10 max-delay-up 10
+configure xdsl service-profile 11 active
+configure xdsl spectrum-profile 1 name ADSL-AnxBJ-SNR6dB version 1 dis-ansi-t1413 dis-etsi-dts dis-g992-1-a dis-g992-2-a dis-g992-3-a g992-5-b dis-etsi-ts g992-5-aj rf-band-list not-used
+configure xdsl spectrum-profile 1 vdsl pbo 1 param-a 4000 param-b 0
+configure xdsl dpbo-profile 1 name DPBO-ESEL-0249 es-elect-length 249 es-cable-model-a 14 es-cable-model-b 234 es-cable-model-c 8 min-usable-signal -1120 min-frequency 254 max-frequency 1850 rs-elect-length 665 active
+configure xdsl vect-profile 10 name vect-default version 1 band-control-up 0:0 band-control-dn 59:512 active
+configure xdsl vce-profile 10 name vce-default version 1 vce-join-timeout auto active
