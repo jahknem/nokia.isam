@@ -1,0 +1,1 @@
+configure pppoel2 statistics port1 collect enable

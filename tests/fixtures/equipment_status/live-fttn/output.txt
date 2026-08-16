@@ -1,0 +1,20 @@
+================================================================================
+slot table
+================================================================================
+slot      |actual-type|enabled|error-status          |availability |restrt-cnt
+----------+-----------+-------+----------------------+-------------+------------
+nt-a       nant-e      yes     no-error               available     0         
+nt-b       empty       no      board-missing          not-installed 0         
+lt:1/1/1   ndps-c      yes     no-error               available     0         
+lt:1/1/2   empty       no      no-installation        not-installed 0         
+lt:1/1/3   ndlt-f      yes     no-error               available     0         
+lt:1/1/4   empty       no      board-missing          not-installed 0         
+lt:1/1/5   fglt-b      yes     no-error               available     0         
+lt:1/1/6   empty       no      board-missing          not-installed 0         
+lt:1/1/7   empty       no      board-missing          not-installed 0         
+lt:1/1/8   nelt-b      yes     no-error               available     0         
+vlt:1/1/63 empty       no      no-error               not-installed 0         
+vlt:1/1/64 empty       no      no-error               not-installed 0         
+--------------------------------------------------------------------------------
+slot count : 12
+================================================================================

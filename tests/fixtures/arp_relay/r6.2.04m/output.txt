@@ -1,0 +1,2 @@
+configure arp-relay statistics port1
+configure arp-relay no statistics port2

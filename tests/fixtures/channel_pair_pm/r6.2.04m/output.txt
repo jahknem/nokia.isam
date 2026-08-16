@@ -1,0 +1,1 @@
+configure channel-pair pm 1/1/5/1 pm-collect enable

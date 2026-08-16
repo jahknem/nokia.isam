@@ -1,0 +1,7 @@
+schema_version: 1
+device_type: Nokia ISAM 7330 FTTN
+software_version: R6.2.04m
+captured_at: '2026-08-16'
+source: synthetic-regression
+resource: pppoe_client_ppp_profile
+command: info configure pppoe-client ppp-profile flat

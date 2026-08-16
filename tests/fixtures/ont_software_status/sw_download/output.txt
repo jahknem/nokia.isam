@@ -1,0 +1,83 @@
+====================================================================================================================
+sw-download table
+====================================================================================================================
+             |       |download  |ntlt      |omci      |ontswact  |download     |sw-version|sw-download|sw           
+ont-idx      |planned|inprogress|inprogress|inprogress|inprogress|file-notfound|mismatch  |failure    |delayactivate
+-------------+-------+----------+----------+----------+----------+-------------+----------+-----------+-------------
+1/1/2/1/1     no      no         no         no         no         no            no         no          no           
+1/1/2/1/100   no      no         no         no         no         no            no         no          no           
+1/1/2/2/100   no      no         no         no         no         no            no         no          no           
+1/1/2/3/100   no      no         no         no         no         no            no         no          no           
+1/1/2/4/100   no      no         no         no         no         no            no         no          no           
+1/1/2/5/100   no      no         no         no         no         no            no         no          no           
+1/1/5/1/1     yes     no         no         no         no         no            no         no          no           
+1/1/5/1/3     yes     no         no         no         no         no            no         no          no           
+1/1/5/1/4     yes     no         no         no         no         no            no         no          no           
+1/1/5/1/5     yes     no         no         no         no         no            no         no          no           
+1/1/5/1/6     yes     no         no         no         no         no            no         no          no           
+1/1/5/1/8     yes     no         no         no         no         no            no         no          no           
+1/1/5/1/9     yes     no         no         no         no         no            no         no          no           
+1/1/5/1/10    yes     no         no         no         no         no            no         no          no           
+1/1/5/1/11    yes     no         no         no         no         no            no         no          no           
+1/1/5/1/12    yes     no         no         no         no         no            no         no          no           
+1/1/5/1/13    yes     no         no         no         no         no            no         no          no           
+1/1/5/1/14    yes     no         no         no         no         no            no         no          no           
+1/1/5/1/15    yes     no         no         no         no         no            no         no          no           
+1/1/5/1/16    yes     no         no         no         no         no            no         no          no           
+1/1/5/1/17    yes     no         no         no         no         no            no         no          no           
+1/1/5/1/18    yes     no         no         no         no         no            no         no          no           
+1/1/5/1/100   yes     no         no         no         no         no            no         no          no           
+1/1/5/2/1     yes     no         no         no         no         no            no         no          no           
+1/1/5/2/100   yes     no         no         no         no         no            no         no          no           
+1/1/5/3/1     yes     no         no         no         no         no            no         no          no           
+1/1/5/3/100   yes     no         no         no         no         no            no         no          no           
+1/1/5/4/100   yes     no         no         no         no         no            no         no          no           
+1/1/5/5/1     yes     no         no         no         no         no            no         no          no           
+1/1/5/5/2     yes     no         no         no         no         no            no         no          no           
+1/1/5/5/3     yes     no         no         no         no         no            no         no          no           
+1/1/5/5/4     yes     no         no         no         no         no            no         no          no           
+1/1/5/5/5     yes     no         no         no         no         no            no         no          no           
+1/1/5/5/6     yes     no         no         no         no         no            no         no          no           
+1/1/5/5/7     yes     no         no         no         no         no            no         no          no           
+1/1/5/5/8     yes     no         no         no         no         no            no         no          no           
+1/1/5/5/9     yes     no         no         no         no         no            no         no          no           
+1/1/5/5/10    yes     no         no         no         no         no            no         no          no           
+1/1/5/5/11    yes     no         no         no         no         no            no         no          no           
+1/1/5/5/12    yes     no         no         no         no         no            no         no          no           
+1/1/5/5/13    yes     no         no         no         no         no            no         no          no           
+1/1/5/5/14    yes     no         no         no         no         no            no         no          no           
+1/1/5/5/15    yes     no         no         no         no         no            no         no          no           
+1/1/5/5/16    yes     no         no         no         no         no            no         no          no           
+1/1/5/5/17    yes     no         no         no         no         no            no         no          no           
+1/1/5/5/100   yes     no         no         no         no         no            no         no          no           
+1/1/5/6/7     yes     no         no         no         no         no            no         no          no           
+1/1/5/6/100   yes     no         no         no         no         no            no         no          no           
+1/1/5/7/100   yes     no         no         no         no         no            no         no          no           
+1/1/5/8/100   yes     no         no         no         no         no            no         no          no           
+1/1/5/9/100   yes     no         no         no         no         no            no         no          no           
+1/1/5/10/100  yes     no         no         no         no         no            no         no          no           
+1/1/5/11/100  yes     no         no         no         no         no            no         no          no           
+1/1/5/12/100  yes     no         no         no         no         no            no         no          no           
+1/1/5/13/100  yes     no         no         no         no         no            no         no          no           
+1/1/5/14/100  yes     no         no         no         no         no            no         no          no           
+1/1/5/15/100  yes     no         no         no         no         no            no         no          no           
+1/1/5/16/1    yes     no         no         no         no         no            no         no          no           
+1/1/5/16/100  yes     no         no         no         no         no            no         no          no           
+1/1/6/1/1     no      no         no         no         no         no            no         no          no           
+1/1/6/2/1     no      no         no         no         no         no            no         no          no           
+1/1/6/3/1     no      no         no         no         no         no            no         no          no           
+1/1/6/4/1     no      no         no         no         no         no            no         no          no           
+1/1/6/5/1     no      no         no         no         no         no            no         no          no           
+1/1/6/6/1     no      no         no         no         no         no            no         no          no           
+1/1/6/8/1     no      no         no         no         no         no            no         no          no           
+1/1/6/9/1     no      no         no         no         no         no            no         no          no           
+1/1/6/10/1    no      no         no         no         no         no            no         no          no           
+1/1/6/11/1    no      no         no         no         no         no            no         no          no           
+1/1/6/12/1    no      no         no         no         no         no            no         no          no           
+1/1/6/13/1    no      no         no         no         no         no            no         no          no           
+1/1/6/14/1    no      no         no         no         no         no            no         no          no           
+1/1/6/15/1    no      no         no         no         no         no            no         no          no           
+1/1/6/16/1    no      no         no         no         no         no            no         no          no           
+--------------------------------------------------------------------------------------------------------------------
+sw-download count : 74
+====================================================================================================================

@@ -1,0 +1,1 @@
+configure l2cp protocol stp admin-state enable

@@ -13,8 +13,10 @@ class TcLayerCurrentIntervalParser(object):
             "tx_payload_bytes",
             "rx_payload_bytes",
             "encrypkey_errors",
+            "err_frags_up",
         )
     )
+    _IDENTIFIERS = frozenset(("resource_identifier", "pon_idx"))
     _FIELD_RE = re.compile(
         r"^(?P<key>[A-Za-z][A-Za-z0-9 _-]*?)\s*(?::|=|\s{2,})\s*(?P<value>.+?)\s*$"
     )
@@ -47,18 +49,29 @@ class TcLayerCurrentIntervalParser(object):
                         continue
 
             match = self._FIELD_RE.match(line)
-            if not match:
+            if match:
+                key = self._key(match.group("key"))
+                value = self._value(match.group("value"))
+                if key in self._IDENTIFIERS:
+                    if current:
+                        records.append(current)
+                    current = {key: value}
+                elif key in self._FIELDS:
+                    if current is None:
+                        current = {}
+                    current[key] = value
                 continue
-            key = self._key(match.group("key"))
-            value = self._value(match.group("value"))
-            if key == "resource_identifier":
-                if current:
-                    records.append(current)
-                current = {key: value}
-            elif key in self._FIELDS:
-                if current is None:
-                    current = {}
-                current[key] = value
+
+            if headers:
+                values = line.split()
+                if len(values) == len(headers):
+                    records.append(
+                        {
+                            key: self._value(value)
+                            for key, value in zip(headers, values)
+                            if key
+                        }
+                    )
 
         if current:
             records.append(current)
@@ -66,7 +79,9 @@ class TcLayerCurrentIntervalParser(object):
 
     @classmethod
     def _is_table_header(cls, parts):
-        return bool(parts) and any(part in cls._FIELDS or part == "resource_identifier" for part in parts)
+        return bool(parts) and any(part in cls._IDENTIFIERS for part in parts) and any(
+            part in cls._FIELDS for part in parts
+        )
 
     @staticmethod
     def _key(value):
