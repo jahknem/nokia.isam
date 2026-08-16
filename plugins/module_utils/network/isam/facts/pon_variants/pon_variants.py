@@ -62,7 +62,7 @@ def _parse_lines(data, resource):
                 key = canonical_key(tokens[4])
                 value = tokens[5]
                 item[key] = int(value) if key == "polling_period" else value
-    return utils.remove_empties(list(records.values()))
+    return list(records.values())
 
 class Ngpon2_channel_groupsFacts(object):
     def __init__(self, module, subspec="config", options="options"): self.argument_spec = Ngpon2_channel_groupsArgs.argument_spec

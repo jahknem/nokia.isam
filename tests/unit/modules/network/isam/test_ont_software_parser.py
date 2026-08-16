@@ -72,3 +72,60 @@ def test_parse_ont_sw_download_labeled_detail_and_empty_output():
     ]
     assert parse_ont_sw_download("") == []
     assert parse_ont_sw_version("") == []
+
+
+def test_parse_ont_sw_version_with_sw_ver_id_column():
+    output = """
+    sw-ver-id | sw-ver | sw-ver-size
+    ----------+--------+------------
+    1         | R6.2.1 | 12345678
+    2         | R6.2.2 | 23456789
+    """
+
+    assert parse_ont_sw_version(output) == [
+        {"sw_ver_id": "1", "sw_ver": "R6.2.1", "sw_ver_size": "12345678"},
+        {"sw_ver_id": "2", "sw_ver": "R6.2.2", "sw_ver_size": "23456789"},
+    ]
+
+
+def test_parse_ont_sw_download_with_ont_idx_and_two_line_header():
+    output = """
+              |       |download  |ntlt
+    ont-idx   |planned|inprogress|inprogress
+    ----------+-------+----------+----------
+    1/1/1/1/1  no      no         no
+    1/1/1/1/2  yes     no         no
+    """
+
+    result = parse_ont_sw_download(output)
+    assert len(result) == 2
+    assert result[0]["ont"] == "1/1/1/1/1"
+    assert result[0]["planned"] == "no"
+    assert result[1]["ont"] == "1/1/1/1/2"
+    assert result[1]["planned"] == "yes"
+
+
+def test_parse_ont_sw_version_ignores_count_line():
+    output = """
+    sw-ver-id | sw-ver | sw-ver-size
+    ----------+--------+------------
+    1         | R6.2.1 | 12345678
+    sw-version count : 1
+    """
+
+    result = parse_ont_sw_version(output)
+    assert len(result) == 1
+    assert result[0]["sw_ver"] == "R6.2.1"
+
+
+def test_parse_ont_sw_download_ignores_count_line():
+    output = """
+    ont-idx | planned
+    --------+--------
+    1/1/1/1  no
+    sw-download count : 1
+    """
+
+    result = parse_ont_sw_download(output)
+    assert len(result) == 1
+    assert result[0]["ont"] == "1/1/1/1"
