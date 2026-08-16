@@ -1,4 +1,5 @@
 /tests/output/
+/local_captures/
 /changelogs/.plugin-cache.yaml
 
 # In case a collection directory is present, ignore it
