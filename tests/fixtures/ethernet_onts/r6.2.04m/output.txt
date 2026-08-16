@@ -1,0 +1,143 @@
+configure ethernet ont 1/1/2/1/1/1/1 cust-info YTest-Proxy auto-detect auto
+configure ethernet ont 1/1/2/1/1/1/1 admin-state up
+configure ethernet ont 1/1/2/1/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/2/1/100/1/1 admin-state up
+configure ethernet ont 1/1/2/2/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/2/2/100/1/1 admin-state up
+configure ethernet ont 1/1/2/3/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/2/3/100/1/1 admin-state up
+configure ethernet ont 1/1/2/4/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/2/4/100/1/1 admin-state up
+configure ethernet ont 1/1/2/5/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/2/5/100/1/1 admin-state up
+configure ethernet ont 1/1/5/1/1/1/1 cust-info Y654321 auto-detect auto
+configure ethernet ont 1/1/5/1/1/1/1 admin-state up
+configure ethernet ont 1/1/5/1/3/1/1 cust-info Y123456 auto-detect auto
+configure ethernet ont 1/1/5/1/3/1/1 admin-state up
+configure ethernet ont 1/1/5/1/4/1/1 cust-info "Kunden Nummer" auto-detect auto
+configure ethernet ont 1/1/5/1/4/1/1 admin-state up
+configure ethernet ont 1/1/5/1/5/1/1 cust-info HK-GPON-TEST auto-detect auto
+configure ethernet ont 1/1/5/1/5/1/1 admin-state up
+configure ethernet ont 1/1/5/1/6/1/1 cust-info Y1110111 auto-detect auto
+configure ethernet ont 1/1/5/1/6/1/1 admin-state up
+configure ethernet ont 1/1/5/1/8/1/1 cust-info "Kunden Nummer" auto-detect auto
+configure ethernet ont 1/1/5/1/8/1/1 admin-state up
+configure ethernet ont 1/1/5/1/9/1/1 cust-info Y654321 auto-detect auto
+configure ethernet ont 1/1/5/1/9/1/1 admin-state up
+configure ethernet ont 1/1/5/1/11/1/1 cust-info YTest auto-detect auto
+configure ethernet ont 1/1/5/1/11/1/1 admin-state up
+configure ethernet ont 1/1/5/1/12/1/1 cust-info Y234567 auto-detect auto
+configure ethernet ont 1/1/5/1/12/1/1 admin-state up
+configure ethernet ont 1/1/5/1/13/1/1 cust-info Y234567 auto-detect auto
+configure ethernet ont 1/1/5/1/13/1/1 admin-state up
+configure ethernet ont 1/1/5/1/14/1/1 cust-info DEU.VFDE.Y123456789 auto-detect auto
+configure ethernet ont 1/1/5/1/14/1/1 admin-state up
+configure ethernet ont 1/1/5/1/15/1/1 cust-info Y123456 auto-detect auto
+configure ethernet ont 1/1/5/1/15/1/1 admin-state up
+configure ethernet ont 1/1/5/1/16/1/1 cust-info YTest auto-detect auto
+configure ethernet ont 1/1/5/1/16/1/1 admin-state up
+configure ethernet ont 1/1/5/1/17/1/1 cust-info GVG.OA.Y123456 auto-detect auto
+configure ethernet ont 1/1/5/1/17/1/1 admin-state up
+configure ethernet ont 1/1/5/1/18/1/1 cust-info Y319169 auto-detect auto
+configure ethernet ont 1/1/5/1/18/1/1 admin-state up
+configure ethernet ont 1/1/5/1/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/5/1/100/1/1 admin-state up
+configure ethernet ont 1/1/5/2/1/1/1 cust-info Y123456 auto-detect auto
+configure ethernet ont 1/1/5/2/1/1/1 admin-state up
+configure ethernet ont 1/1/5/2/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/5/2/100/1/1 admin-state up
+configure ethernet ont 1/1/5/3/1/1/1 cust-info Y123456 auto-detect auto
+configure ethernet ont 1/1/5/3/1/1/1 admin-state up
+configure ethernet ont 1/1/5/3/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/5/3/100/1/1 admin-state up
+configure ethernet ont 1/1/5/4/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/5/4/100/1/1 admin-state up
+configure ethernet ont 1/1/5/5/1/1/1 cust-info Y111111 auto-detect auto
+configure ethernet ont 1/1/5/5/1/1/1 admin-state up
+configure ethernet ont 1/1/5/5/2/1/1 cust-info YFrei auto-detect auto
+configure ethernet ont 1/1/5/5/2/1/1 admin-state up
+configure ethernet ont 1/1/5/5/3/1/1 cust-info Y333333 auto-detect auto
+configure ethernet ont 1/1/5/5/3/1/1 admin-state up
+configure ethernet ont 1/1/5/5/4/1/1 cust-info Y444444 auto-detect auto
+configure ethernet ont 1/1/5/5/4/1/1 admin-state up
+configure ethernet ont 1/1/5/5/5/1/1 cust-info Y555555 auto-detect auto
+configure ethernet ont 1/1/5/5/6/1/1 cust-info Y666666 auto-detect auto
+configure ethernet ont 1/1/5/5/6/1/1 admin-state up
+configure ethernet ont 1/1/5/5/7/1/1 cust-info Y777777 auto-detect auto
+configure ethernet ont 1/1/5/5/7/1/1 admin-state up
+configure ethernet ont 1/1/5/5/8/1/1 cust-info Y888888 auto-detect auto
+configure ethernet ont 1/1/5/5/8/1/1 admin-state up
+configure ethernet ont 1/1/5/5/9/1/1 cust-info YFrei auto-detect auto
+configure ethernet ont 1/1/5/5/9/1/1 admin-state up
+configure ethernet ont 1/1/5/5/10/1/1 cust-info YFrei auto-detect auto
+configure ethernet ont 1/1/5/5/10/1/1 admin-state up
+configure ethernet ont 1/1/5/5/11/1/1 cust-info YFrei auto-detect auto
+configure ethernet ont 1/1/5/5/11/1/1 admin-state up
+configure ethernet ont 1/1/5/5/12/1/1 cust-info YFrei auto-detect auto
+configure ethernet ont 1/1/5/5/12/1/1 admin-state up
+configure ethernet ont 1/1/5/5/13/1/1 cust-info YFrei auto-detect auto
+configure ethernet ont 1/1/5/5/13/1/1 admin-state up
+configure ethernet ont 1/1/5/5/14/1/1 cust-info YFrei auto-detect auto
+configure ethernet ont 1/1/5/5/14/1/1 admin-state up
+configure ethernet ont 1/1/5/5/15/1/1 cust-info YFrei auto-detect auto
+configure ethernet ont 1/1/5/5/15/1/1 admin-state up
+configure ethernet ont 1/1/5/5/16/1/1 cust-info YFrei auto-detect auto
+configure ethernet ont 1/1/5/5/16/1/1 admin-state up
+configure ethernet ont 1/1/5/5/17/1/1 cust-info "Kunden Nummer" auto-detect auto
+configure ethernet ont 1/1/5/5/17/1/1 admin-state up
+configure ethernet ont 1/1/5/5/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/5/5/100/1/1 admin-state up
+configure ethernet ont 1/1/5/6/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/5/6/100/1/1 admin-state up
+configure ethernet ont 1/1/5/7/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/5/7/100/1/1 admin-state up
+configure ethernet ont 1/1/5/8/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/5/8/100/1/1 admin-state up
+configure ethernet ont 1/1/5/9/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/5/9/100/1/1 admin-state up
+configure ethernet ont 1/1/5/10/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/5/10/100/1/1 admin-state up
+configure ethernet ont 1/1/5/11/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/5/11/100/1/1 admin-state up
+configure ethernet ont 1/1/5/12/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/5/12/100/1/1 admin-state up
+configure ethernet ont 1/1/5/13/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/5/13/100/1/1 admin-state up
+configure ethernet ont 1/1/5/14/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/5/14/100/1/1 admin-state up
+configure ethernet ont 1/1/5/15/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/5/15/100/1/1 admin-state up
+configure ethernet ont 1/1/5/16/1/1/1 cust-info Y999999 auto-detect auto
+configure ethernet ont 1/1/5/16/1/1/1 admin-state up
+configure ethernet ont 1/1/5/16/100/1/1 cust-info EX1-TEST auto-detect auto
+configure ethernet ont 1/1/5/16/100/1/1 admin-state up
+configure ethernet ont 1/1/6/1/1/1/1 cust-info Y44556677 auto-detect auto
+configure ethernet ont 1/1/6/1/1/1/1 admin-state up
+configure ethernet ont 1/1/6/2/1/1/1 cust-info Y44556677 auto-detect auto
+configure ethernet ont 1/1/6/2/1/1/1 admin-state up
+configure ethernet ont 1/1/6/3/1/1/1 cust-info Y44556677 auto-detect auto
+configure ethernet ont 1/1/6/3/1/1/1 admin-state up
+configure ethernet ont 1/1/6/4/1/1/1 cust-info Y44556677 auto-detect auto
+configure ethernet ont 1/1/6/4/1/1/1 admin-state up
+configure ethernet ont 1/1/6/5/1/1/1 cust-info Y44556677 auto-detect auto
+configure ethernet ont 1/1/6/5/1/1/1 admin-state up
+configure ethernet ont 1/1/6/6/1/1/1 cust-info Y44556677 auto-detect auto
+configure ethernet ont 1/1/6/6/1/1/1 admin-state up
+configure ethernet ont 1/1/6/8/1/1/1 cust-info Y44556677 auto-detect auto
+configure ethernet ont 1/1/6/8/1/1/1 admin-state up
+configure ethernet ont 1/1/6/9/1/1/1 cust-info Y44556677 auto-detect auto
+configure ethernet ont 1/1/6/9/1/1/1 admin-state up
+configure ethernet ont 1/1/6/10/1/1/1 cust-info Y44556677 auto-detect auto
+configure ethernet ont 1/1/6/10/1/1/1 admin-state up
+configure ethernet ont 1/1/6/11/1/1/1 cust-info Y44556677 auto-detect auto
+configure ethernet ont 1/1/6/11/1/1/1 admin-state up
+configure ethernet ont 1/1/6/12/1/1/1 cust-info Y44556677 auto-detect auto
+configure ethernet ont 1/1/6/12/1/1/1 admin-state up
+configure ethernet ont 1/1/6/13/1/1/1 cust-info Y44556677 auto-detect auto
+configure ethernet ont 1/1/6/13/1/1/1 admin-state up
+configure ethernet ont 1/1/6/14/1/1/1 cust-info Y44556677 auto-detect auto
+configure ethernet ont 1/1/6/14/1/1/1 admin-state up
+configure ethernet ont 1/1/6/15/1/1/1 cust-info Y44556677 auto-detect auto
+configure ethernet ont 1/1/6/15/1/1/1 admin-state up
+configure ethernet ont 1/1/6/16/1/1/1 cust-info Y44556677 auto-detect auto
+configure ethernet ont 1/1/6/16/1/1/1 admin-state up

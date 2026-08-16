@@ -1,0 +1,7 @@
+schema_version: 1
+resource: interface_alarms
+device_type: Nokia ISAM 7330 FTTN
+software_version: R6.2.04m
+command: info configure interface alarm
+captured_at: 2026-08-16
+source: sanitized-live-capture

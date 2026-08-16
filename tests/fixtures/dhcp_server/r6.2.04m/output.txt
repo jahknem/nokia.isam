@@ -1,0 +1,1 @@
+configure dhcp-server start-addr 0.0.0.0 stop-addr 0.0.0.0 restart

@@ -1,0 +1,1 @@
+configure equipment replan boardautoreplan disable

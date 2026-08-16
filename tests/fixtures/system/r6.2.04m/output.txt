@@ -1,0 +1,63 @@
+configure system id SANITIZED-ISAM name SANITIZED-ISAM location "Nokia - Antwerpen" contact-person Nokia en-snmp-auth-trap nt-intercon-vlan 4092 internal-nw-vlan 4089 system-mac 00:00:00:00:00:00 port-num-in-proto type-based voiceoswp sip bsnap-state disable bsnap-server-ip 169.254.1.1 bsnap-server-port 0
+configure system sntp server-ip-addr 192.0.2.1 polling-rate 60 enable timezone-offset 60
+configure system sntp server-table ip-address 192.0.2.1 priority 1
+configure system sntp server-table ip-address 192.0.2.1 priority 2
+configure system sntp server-table ip-address 192.0.2.1 priority 3
+configure system loop-id-syntax atm-based-dsl "Access_Node_ID atm Rack/Frame/Slot/Port:VPI.VCI" efm-based-dsl "Access_Node_ID eth Rack/Frame/Slot/Port" efm-based-pon "Access_Node_ID eth Rack/Frame/Slot/Port/ONU/OnuSlt/UNI" efm-based-epon "Bras Access_Node_ID/Rack/Frame/Slot/Subslot/Port/ONT Oft" efm-based-ngpon2 "Access_Node_ID eth ng2:Channelgroup/Subchannelgroup/ONU/OnuSlt/UNI"
+configure system max-lt-link-speed link-speed ten-gb
+configure system security welcome-banner "Slot\tKVz\tLine\tdpbo-profile\n1/1/1\t\t\t\n1/1/2\tA1\t1-48\ttest\n1/1/3\tA1\t49-96\t1\n1/1/4\tA1\t97-144\t1\n1/1/5\tA2\t1-48\t2\n1/1/6\tA2\t49-96\t2\n1/1/7\tA2\t97-144\t2\n1/1/8\t\t\t"
+configure system security operator isadmin password encrypted:SANITIZED no bgn-time no end-time prompt "%i:%n%d%c " description "default administrator" no more no confirm-prompt
+configure system security operator ypmonitor profile ypmonprofil password encrypted:SANITIZED prompt SANITIZED-ISAM%d%c description "Yplay Monitor"
+configure system security operator tftp profile tftp password encrypted:SANITIZED
+configure system security operator ypadmin profile ypwrite password encrypted:SANITIZED prompt %i%d%c
+configure system security profile admin no prompt no password-timeout no terminal-timeout slot-numbering type-based description "default administrator group" aaa write atm write alarm write dhcp write equipment write igmp write ip write pppoe write qos write software-mngt write transport write vlan write xdsl write sip write megaco write lacp write mstp write security write service write debug write debug-mirror write filter write link write log write oam write no liadmin no liuser drouter write ai write no livoice lldpmed write
+configure system security profile ypmonprofil slot-numbering type-based description read aaa read alarm read dhcp read equipment read igmp read ip read pppoe read qos read software-mngt read transport read vlan read xdsl read sip read lacp read security read service read debug read debug-mirror read filter read link read log read oam read liadmin read liuser read drouter read
+configure system security profile tftp software-mngt write
+configure system security profile ypwrite equipment write qos write vlan write xdsl write oam write
+configure system security default-profile liadmin none liuser none ai read livoice none
+configure system security snmp community SANITIZED host-address 0.0.0.0/0
+configure system security snmp community SANITIZED host-address 192.0.2.1 context ihub
+configure system security snmp community SANITIZED host-address 192.0.2.1
+configure system security snmp community SANITIZED host-address 192.0.2.1
+configure system security snmp community SANITIZED host-address 192.0.2.1 context ihub
+configure system security snmp notify-profile SANITIZED snmp-version v1:public
+configure system security snmp manager tl1 destination 192.0.2.127 notify-profile SANITIZED nt
+configure system security radius auth-super-user operator-policy name:RADPol
+configure system security radius auth-server RADAuthServ1 router-instance base ip-address 192.0.2.1 secret encrypted:SANITIZED timeout-limit 5 dead-interval 1
+configure system security radius auth-server RADAuthServ2 router-instance base ip-address 192.0.2.1 secret encrypted:SANITIZED timeout-limit 5 dead-interval 1
+configure system security radius dyn-auth-client DynAuth1 router-instance base ip-address 192.0.2.1 secret encrypted:SANITIZED
+configure system security radius dyn-auth-client DynAuth2 router-instance base ip-address 192.0.2.1 secret encrypted:SANITIZED
+configure system security radius policy RADPol nas-id iSAM7330FD nas-ip-address 192.0.2.1 disable-accnt-msg disable-eap
+configure system security radius policy RADPol servers 1 auth-server name:RADAuthServ1 auth-router-inst base priority 128
+configure system security radius policy RADPol servers 2 auth-server name:RADAuthServ2 auth-router-inst base priority 162
+configure system security domain SecDomain1 authenticator radius:RADPol
+configure system security password min-length 6 min-num-numeric-char 0 min-num-special-char 1
+configure system security ssh server-profile server-host-key rsa
+configure system security ssh access protocol ftp cli ssh tl1 none
+configure system security ssh sftp-user amssftp password encrypted:SANITIZED
+configure system security filetransfer protocol ftp
+configure system security filetransfer server 192.0.2.1 user-name ftpalu password encrypted:SANITIZED
+configure system security filetransfer server 192.0.2.1 user-name ftpalu password encrypted:SANITIZED
+configure system transaction log-full-action wrap
+configure system syslog destination ams type udp:192.0.2.1:514:unlimited
+configure system syslog destination ntb type udp:192.0.2.1:514:unlimited
+configure system syslog destination diagnostic type file:diagnostic:2000
+configure system syslog destination authDefault type file:auth_def.log:20000
+configure system syslog route ams msg-type all facility local4 emergency alert critical error warning notice information
+configure system syslog route ntb msg-type all facility local4 emergency alert critical error warning notice information
+configure system syslog route diagnostic msg-type eqpt facility local0 notice
+configure system syslog route authDefault msg-type authentication facility local0 emergency alert critical error warning notice information debug
+configure system sync-if-timing revert output-ql-thresh clk-ql-dnu ssmout-ceiling clk-ql-prc
+configure system sync-if-timing bits autoselect
+configure system sync-if-timing ref-order prio1 none
+configure system sync-if-timing ref-order prio2 none
+configure system sync-if-timing ssm bits-a default-ql clk-ql-prc target-ql clk-ql-dnu
+configure system sync-if-timing ssm bits-b default-ql clk-ql-prc target-ql clk-ql-dnu
+configure system sync-if-timing ssm synce-1 default-ql clk-ql-prc target-ql clk-ql-dnu
+configure system sync-if-timing ssm synce-2 default-ql clk-ql-prc target-ql clk-ql-dnu
+configure system sync-if-timing ssm ieee1588-a default-ql clk-ql-prc target-ql clk-ql-dnu
+configure system sync-if-timing ssm ieee1588-b default-ql clk-ql-prc target-ql clk-ql-dnu
+configure system sync-if-timing synce synce-1 none
+configure system sync-if-timing synce synce-2 none
+configure system sync-if-timing force-reference none
+configure system relay-id-syntax atm-based-dsl "S-MAC Rack/Frame/Slot/Port:VPI.VCI" efm-based-dsl "S-MAC Rack/Frame/Slot/Port"

@@ -1,0 +1,7 @@
+schema_version: 1
+resource: li_vlan
+device_type: Nokia ISAM 7330 FTTN
+software_version: R6.2.04m
+command: info configure li_vlan flat
+captured_at: 2026-08-16
+source: sanitized-live-capture

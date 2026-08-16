@@ -1,0 +1,2 @@
+configure mcast general fast-change
+configure mcast general package-member [1...1024]

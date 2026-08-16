@@ -8,11 +8,38 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.equipment_onts.equipment_onts import (
     Equipment_ontsFacts,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.isam_equipment.isam_equipment import (
+    Isam_equipmentFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.dhcp_server.dhcp_server import (
+    Isam_dhcp_serverFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.equipment_replan.equipment_replan import (
+    Equipment_replanFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ethernet_onts.ethernet_onts import (
+    Ethernet_ontsFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ethernet_line.ethernet_line import (
+    Ethernet_lineFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.generic_pon.generic_pon import (
+    Generic_ponFacts,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.bridges.bridges import (
     BridgesFacts,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.link_agg.link_agg import (
     Link_aggFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.mcast_general.mcast_general import (
+    Mcast_generalFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.multicast.multicast import (
+    MulticastFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ntp_onts.ntp_onts import (
+    Ntp_ontsFacts,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.interfaces.interfaces import (
     InterfacesFacts,
@@ -20,11 +47,65 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.inte
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.pon_interfaces.pon_interfaces import (
     Pon_interfacesFacts,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.qos_interfaces.qos_interfaces import (
+    Qos_interfacesFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.system.system import (
+    Isam_systemFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.traps.traps import (
+    Isam_trapsFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.vlan_global.vlan_global import (
+    Isam_vlan_globalFacts,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.vlans.vlans import (
     VlansFacts,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_boards.xdsl_boards import (
+    Xdsl_boardsFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_bonding.xdsl_bonding import (
+    Xdsl_bondingFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_lines.xdsl_lines import (
+    Xdsl_linesFacts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xstp.xstp import (
+    XstpFacts,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.interfaces import (
     InterfacesTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.alarm import (
+    AlarmTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.dhcp_server import (
+    Isam_dhcp_serverTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ethernet_onts import (
+    Ethernet_ontsTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ethernet_line import (
+    Ethernet_lineTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.generic_pon import (
+    Generic_ponTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.isam_equipment import (
+    Isam_equipmentTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.interface_alarms import (
+    Interface_alarmsTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.interface_cages import (
+    InterfaceCagesTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.li_vlan import (
+    Li_vlanTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.multicast import (
+    MulticastTemplate,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.link_agg import (
     Link_aggTemplate,
@@ -32,14 +113,29 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ani_onts import (
     Ani_ontsTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ntp_onts import (
+    Ntp_ontsTemplate,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.pon_interfaces import (
     Pon_interfacesTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.qos_interfaces import (
+    Qos_interfacesTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.qos_maps import (
+    Qos_mapsTemplate,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.software_mngt import (
     Software_mngtTemplate,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.qos_profiles import (
     Qos_profilesTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.traps import (
+    Isam_trapsTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.vlan_global import (
+    Isam_vlan_globalTemplate,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.vlans import (
     VlansTemplate,
@@ -49,6 +145,12 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_profiles import (
     Xdsl_profilesTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_bonding import (
+    Xdsl_bondingTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_lines import (
+    Xdsl_linesTemplate,
 )
 
 
@@ -176,6 +278,216 @@ def test_xdsl_profiles_live_flat_fixture_is_parseable():
     assert parsed["dpbo_profiles"][0]["es_elect_length"] == 249
     assert parsed["vect_profiles"][0]["band_control_dn"] == "59:512"
     assert parsed["vce_profiles"][0]["vce_join_timeout"] == "auto"
+
+
+def test_system_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("system", "r6.2.04m")
+    facts = Isam_systemFacts(module=None)
+    lines = facts._flatten_config(output)
+    parsed = facts._parse_flat_config(lines)
+
+    assert descriptor["command"] == "info configure system flat"
+    assert parsed["id"]["node_id"] == "SANITIZED-ISAM"
+    assert parsed["sntp"]["enabled"] is True
+    assert parsed["sntp"]["server_ip_addr"] == "192.0.2.1"
+    assert parsed["transaction"]["log_full_action"] == "wrap"
+    assert parsed["syslog"]["destinations"][0]["name"] == "ams"
+
+
+def test_traps_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("traps", "r6.2.04m")
+    facts = Isam_trapsFacts(module=None)
+    parsed = Isam_trapsTemplate(lines=facts._flatten_config(output)).parse()
+
+    assert descriptor["command"] == "info configure trap"
+    assert parsed["definitions"]["cold-start"]["priority"] == "medium"
+    assert parsed["managers"]["192.0.2.127"]["priority"] == "low"
+
+
+def test_vlan_global_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("vlan_global", "r6.2.04m")
+    facts = Isam_vlan_globalFacts(module=None)
+    parsed = Isam_vlan_globalTemplate(lines=facts._flatten_config(output)).parse()
+
+    assert descriptor["command"] == "info configure vlan flat"
+    assert parsed["tpid"]["value"] == 8100
+    assert parsed["vmac_address_format"]["host_id"] == 0
+    assert parsed["priority_regen"][1]["profile_name"] == "TrustedPort"
+
+
+def test_alarm_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("alarm", "r6.2.04m")
+    parsed = AlarmTemplate(lines=output.splitlines()).parse()
+
+    assert descriptor["command"] == "info configure alarm flat"
+    assert parsed["filters"]["temporal/1"]["alarmid"] == "all"
+    assert parsed["log"]["log_sev_level"] == "critical"
+
+
+def test_interface_alarm_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("interface_alarms", "r6.2.04m")
+    parsed = Interface_alarmsTemplate(lines=output.splitlines()).parse()
+
+    assert descriptor["command"] == "info configure interface alarm"
+    assert sorted(parsed) == ["eont", "epon", "ont"]
+
+
+def test_interface_cage_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("interface_cages", "r6.2.04m")
+    parsed = InterfaceCagesTemplate(lines=output.splitlines()).parse()
+
+    assert descriptor["command"] == "info configure interface cage flat"
+    assert parsed["lt:1/1/2:cage:1"]["operational_mode"] == "gpon"
+
+
+def test_ntp_onts_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("ntp_onts", "r6.2.04m")
+    lines = Ntp_ontsFacts(module=None)._flatten_config(output)
+    parsed = Ntp_ontsTemplate(lines=lines).parse()
+
+    assert descriptor["command"] == "info configure ntp flat"
+    assert len(parsed) == 74
+    assert parsed["1/1/2/1/1"]["ont_id"] == "1/1/2/1/1"
+
+
+def test_qos_maps_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("qos_maps", "r6.2.04m")
+    parsed = Qos_mapsTemplate(lines=output.splitlines()).parse()
+
+    assert descriptor["command"] == "info configure qos *-map/*-ctrl-pkt flat"
+    assert len(parsed["tc_map_dot1p"]) == 8
+    assert len(parsed["dscp_map_dot1p"]) == 64
+    assert parsed["tc_map_dot1p"][0]["dpcolor"] == "green"
+    assert parsed["dscp_map_dot1p"][8]["dot1p"] == 1
+
+
+def test_xdsl_boards_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("xdsl_boards", "r6.2.04m")
+    parsed = Xdsl_boardsFacts(module=None)._parse_config(output)
+
+    assert descriptor["command"] == "info configure xdsl board/vp-board flat"
+    assert parsed["boards"][0]["board_id"] == "1/1/1"
+    assert parsed["boards"][0]["vce_profile"] == "10"
+    assert parsed["vp_boards"][0]["vp_link"] == "2"
+
+
+def test_xdsl_bonding_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("xdsl_bonding", "r6.2.04m")
+    facts = Xdsl_bondingFacts(module=None)
+    parsed = Xdsl_bondingTemplate(lines=facts._flatten_config(output)).parse()
+
+    assert descriptor["command"] == "info configure xdsl-bonding"
+    assert parsed["group_assembly_time"] == 0
+
+
+def test_xdsl_lines_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("xdsl_lines", "r6.2.04m")
+    facts = Xdsl_linesFacts(module=None)
+    parsed = Xdsl_linesTemplate(lines=facts._flatten_config(output)).parse()
+
+    assert descriptor["command"] == "info configure xdsl line flat"
+    assert len(parsed) == 96
+    assert parsed["1/1/3/1"]["service_profile"] == 13
+    assert parsed["1/1/3/1"]["admin_up"] is True
+
+
+def test_xstp_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("xstp", "r6.2.04m")
+    parsed = XstpFacts(module=None)._parse_xstp_config(output)
+
+    assert descriptor["command"] == "info configure xstp flat"
+    assert len(parsed["ports"]) == 36
+    assert parsed["ports"][0]["path_cost"] == 200000
+
+
+def test_small_global_live_flat_fixtures_are_parseable():
+    descriptor, output = fixture_bundle("li_vlan", "r6.2.04m")
+    parsed = Li_vlanTemplate(lines=output.splitlines()).parse()
+    assert descriptor["command"] == "info configure li_vlan flat"
+    assert parsed["vlan_id"] == 0
+
+    descriptor, output = fixture_bundle("mcast_general", "r6.2.04m")
+    parsed = Mcast_generalFacts(module=None)._parse_mcast_general_config(output)
+    assert descriptor["command"] == "info configure mcast general flat"
+    assert parsed["fast_change"] is True
+
+    descriptor, output = fixture_bundle("equipment_replan", "r6.2.04m")
+    parsed = Equipment_replanFacts(module=None)._parse_config(output)
+    assert descriptor["command"] == "info configure equipment replan flat"
+    assert parsed["board_auto_replan"] == "disable"
+
+
+def test_multicast_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("multicast", "r6.2.04m")
+    lines = MulticastFacts._flatten_config(output)
+    parsed = MulticastTemplate(lines=lines).parse()
+
+    assert descriptor["command"] == "info configure igmp/mcast-control flat"
+    assert parsed["igmp"]["mcast_svc_context"] == "Default"
+    assert parsed["mcast_control"]["mcast_svc_context"] == "Default"
+
+
+def test_dhcp_server_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("dhcp_server", "r6.2.04m")
+    facts = Isam_dhcp_serverFacts(module=None)
+    parsed = Isam_dhcp_serverTemplate(lines=facts._flatten_config(output)).parse()
+
+    assert descriptor["command"] == "info configure dhcp-server flat"
+    assert parsed["start_addr"] == "0.0.0.0"
+    assert parsed["restart"] is True
+
+
+def test_generic_pon_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("generic_pon", "r6.2.04m")
+    facts = Generic_ponFacts(module=None)
+    parsed = Generic_ponTemplate(lines=facts._split_packed_lines(output)).parse()
+
+    assert descriptor["command"] == "info configure generic-pon flat"
+    assert parsed["dpinteg_threshold"] == 0
+
+
+def test_ethernet_line_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("ethernet_line", "r6.2.04m")
+    lines = Ethernet_lineFacts._compact_lines(
+        output.splitlines(), "configure ethernet line "
+    )
+    parsed = Ethernet_lineTemplate(lines=lines).parse()
+
+    assert descriptor["command"] == "info configure ethernet line flat"
+    assert parsed["1/1/8/1"]["port_type"] == "uni"
+    assert parsed["1/1/8/1"]["mau"][1]["mau_type"] == "1000basebx10d"
+
+
+def test_equipment_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("equipment", "r6.2.04m")
+    facts = Isam_equipmentFacts(module=None)
+    parsed = Isam_equipmentTemplate(lines=facts._flatten_config(output)).parse()
+
+    assert descriptor["command"] == "info configure equipment flat"
+    assert parsed["shelves"]["1/1"]["planned_type"] == "nfxs-b"
+    assert parsed["slots"]["vlt:1/1/63"]["unlock"] is True
+    assert parsed["protection_groups"][1]["admin_status"] == "lock"
+
+
+def test_ethernet_onts_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("ethernet_onts", "r6.2.04m")
+    facts = Ethernet_ontsFacts(module=None)
+    parsed = Ethernet_ontsTemplate(lines=facts._flatten_config(output)).parse()
+
+    assert descriptor["command"] == "info configure ethernet ont flat"
+    assert parsed["1/1/2/1/1/1/1"]["cust_info"] == "YTest-Proxy"
+    assert parsed["1/1/2/1/1/1/1"]["admin_state"] == "up"
+
+
+def test_qos_interfaces_live_flat_fixture_is_parseable():
+    descriptor, output = fixture_bundle("qos_interfaces", "r6.2.04m")
+    facts = Qos_interfacesFacts(module=None)
+    parsed = Qos_interfacesTemplate(lines=facts._flatten_config(output)).parse()
+
+    assert descriptor["command"] == "info configure qos interface flat"
+    assert len(parsed) == 592
+    assert parsed["1/1/2/1/1/1/1"]["scheduler_node"] == "name:NGLT_Default"
+    assert parsed["1/1/2/1/1/1/1"]["queue"][0]["priority"] == 6
 
 
 def test_pon_interface_live_detail_fixture_is_parseable():
