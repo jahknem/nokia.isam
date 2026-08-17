@@ -67,6 +67,36 @@ options:
     choices: [auto, paramiko, libssh]
     vars:
       - name: ansible_network_cli_ssh_type
+  hostkeys:
+    description: Preferred libssh server host key types as a comma-separated list.
+    type: string
+    default: ''
+    env:
+      - name: ANSIBLE_LIBSSH_HOSTKEYS
+    ini:
+      - {key: hostkeys, section: libssh_connection}
+    vars:
+      - name: ansible_libssh_hostkeys
+  publickey_accepted_algorithms:
+    description: Preferred libssh public key algorithms as a comma-separated list.
+    type: string
+    default: ''
+    env:
+      - name: ANSIBLE_LIBSSH_PUBLICKEY_ALGORITHMS
+    ini:
+      - {key: publickey_algorithms, section: libssh_connection}
+    vars:
+      - name: ansible_libssh_publickey_algorithms
+  key_exchange_algorithms:
+    description: Preferred libssh key exchange algorithms as a comma-separated list.
+    type: string
+    default: ''
+    env:
+      - name: ANSIBLE_LIBSSH_KEY_EXCHANGE_ALGORITHMS
+    ini:
+      - {key: key_exchange_algorithms, section: libssh_connection}
+    vars:
+      - name: ansible_libssh_key_exchange_algorithms
   use_rsa_sha2_algorithms:
     description: Enable RSA SHA-2 host-key algorithms.
     type: boolean
