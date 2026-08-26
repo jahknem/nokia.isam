@@ -49,6 +49,14 @@ QOS_CONFIG_WITH_QUEUE_SIBLING = QOS_CONFIG.replace(
     "    #-------------------------------------------------------------------------------",
 )
 
+QOS_SCOPED_CONFIG = dedent(
+    """
+    configure qos interface 1/1/5/1/1/1/1 scheduler-node name:NGLT_Default cac-profile name:FD_ONTUniVideo ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 50 oper-rate 0 mc-scheduler-node none bc-scheduler-node none
+    configure qos interface 1/1/5/1/1/1/1 upstream-queue 0 bandwidth-profile name:GPONqpp600Mbps bandwidth-sharing uni-sharing
+    #-------------------------------------------------------------------------------
+    """
+)
+
 
 class TestIsamQosInterfacesModule(TestIsamModule):
     module = isam_qos_interfaces
@@ -104,6 +112,21 @@ class TestIsamQosInterfacesModule(TestIsamModule):
         self.assertEqual(gathered["name"], "1/1/2/1/1/1/1")
         self.assertEqual(gathered["oper_weight"], 50)
         self.assertEqual(gathered["upstream_queue"][0]["bandwidth_sharing"], "uni-sharing")
+
+    def test_isam_qos_interfaces_gathered_scoped_compact_config(self):
+        self.get_config.return_value = QOS_SCOPED_CONFIG
+        set_module_args(
+            dict(config=[dict(name="1/1/5/1/1/1/1")], state="gathered"),
+            ignore_provider_arg,
+        )
+
+        result = self.execute_module(changed=False)
+
+        self.assertEqual(result["gathered"][0]["name"], "1/1/5/1/1/1/1")
+        self.assertEqual(
+            result["gathered"][0]["upstream_queue"][0]["bandwidth_profile"],
+            "name:GPONqpp600Mbps",
+        )
 
     def test_isam_qos_interfaces_rendered(self):
         set_module_args(
