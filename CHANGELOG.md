@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+- Fixed scoped QoS interface fact parsing when compact device output includes trailing separator or echo lines.
+
 ## 0.3.0
 
 - Made operational facts use explicit `gather_subset` values and `ansible_net_*` output names.

@@ -101,7 +101,11 @@ class Qos_interfacesFacts(object):
     def _flatten_config(self, config):
         if not config:
             return []
-        lines = [line.strip() for line in config.splitlines() if line.strip()]
+        lines = [
+            line.strip()
+            for line in config.splitlines()
+            if line.strip() and not line.strip().startswith("#") and not line.strip().startswith("echo")
+        ]
         if lines and all(line.startswith("configure qos interface") for line in lines):
             return self._compact_lines(lines)
         root = self._parse_config_to_tree(config)
