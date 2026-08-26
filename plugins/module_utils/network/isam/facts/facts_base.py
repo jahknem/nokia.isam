@@ -268,6 +268,7 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
             if (
                 "instance does not exist" in normalized_error
                 or "specified instance does not exist" in normalized_error
+                or "lower-interface does not exist" in normalized_error
             ):
                 continue
             raise
@@ -275,6 +276,7 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
         if (
             "instance does not exist" not in normalized_response
             and "specified instance does not exist" not in normalized_response
+            and "lower-interface does not exist" not in normalized_response
         ):
             scoped_results.append(response)
     return "\n".join(scoped_results)
