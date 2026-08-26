@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2
+
+- Treat missing lower interfaces as absent during scoped resource reads.
+
 ## 0.3.1
 
 - Fixed scoped QoS interface fact parsing when compact device output includes trailing separator or echo lines.

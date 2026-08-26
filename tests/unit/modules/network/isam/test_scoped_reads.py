@@ -137,6 +137,24 @@ def test_scoped_facts_ignore_specified_missing_requested_instances():
     assert result == ""
 
 
+def test_scoped_facts_ignore_missing_bridge_lower_interface():
+    class MissingConnection(RecordingConnection):
+        def get(self, command):
+            self.commands.append(command)
+            raise RuntimeError("specified lower-interface does not exist")
+
+    connection = MissingConnection()
+    result = get_scoped_config(
+        module({"port": [{"port": "1/1/5/1/2/1/1"}]}),
+        connection,
+        {"port": [{"port": "1/1/5/1/2/1/1"}]},
+        "info configure bridge flat",
+        ["info configure bridge port 1/1/5/1/2/1/1 flat detail"],
+    )
+
+    assert result == ""
+
+
 @pytest.mark.parametrize("state", ["overridden", "deleted"])
 def test_scoped_facts_fall_back_for_unbounded_destructive_states(state):
     connection = RecordingConnection()
