@@ -502,8 +502,34 @@ def test_qos_interfaces_live_flat_fixture_is_parseable():
 
     assert descriptor["command"] == "info configure qos interface flat"
     assert len(parsed) == 592
-    assert parsed["1/1/2/1/1/1/1"]["scheduler_node"] == "name:NGLT_Default"
-    assert parsed["1/1/2/1/1/1/1"]["queue"][0]["priority"] == 6
+    entry = parsed["1/1/2/1/1/1/1"]
+    assert entry["scheduler_node"] == "name:NGLT_Default"
+    assert entry["cac_profile"] == "name:FD_ONTUniVideo"
+    # us-num-queue previously had no clause pattern at all and was silently
+    # dropped by the compact-line splitter.
+    assert entry["us_num_queue"] == "not-applicable"
+    # Every field after the first in a "queue <id> ..."/"upstream-queue
+    # <id> ..." clause was previously misattributed to the top-level
+    # interface (losing its queue-id scoping) or dropped outright if no
+    # top-level parser matched the field name.
+    assert entry["queue"][0]["priority"] == 6
+    assert entry["queue"][0]["weight"] == 34
+    assert entry["queue"][0]["oper_weight"] == 34
+    assert entry["queue"][0]["queue_profile"] == "name:NGLT_Default"
+    assert entry["queue"][0]["shaper_profile"] == "none"
+    assert entry["upstream_queue"][0]["bandwidth_profile"] == "name:GPONqpp1000Mbps"
+    assert entry["upstream_queue"][0]["bandwidth_sharing"] == "uni-sharing"
+    assert entry["upstream_queue"][4]["weight"] == 5
+    assert entry["upstream_queue"][4]["bandwidth_profile"] == "name:GPONqpp1000Mbps"
+    assert entry["upstream_queue"][4]["bandwidth_sharing"] == "uni-sharing"
+    # The top-level interface itself must not pick up queue-scoped values
+    # such as "weight"/"oper-weight" that only ever appear inside a
+    # "queue <id> ..." clause on this device.
+    assert "weight" not in entry
+    ont_entry = parsed["ont:1/1/2/1/1"]
+    assert ont_entry["scheduler_node"] == "name:GPONShaperDN1000Mbps"
+    assert ont_entry["oper_rate"] == 1024000
+    assert ont_entry["gem_sharing"] == "not-applicable"
 
 
 def test_pon_interface_live_detail_fixture_is_parseable():

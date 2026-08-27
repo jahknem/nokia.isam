@@ -8,11 +8,13 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 """
-The isam interfaces fact class
-It is in this file the configuration is collected from the device
-for a given resource, parsed, and the facts tree is populated
-based on the configuration.
+ The isam interfaces fact class
+ It is in this file the configuration is collected from the device
+ for a given resource, parsed, and the facts tree is populated
+ based on the configuration.
 """
+
+import re
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
@@ -36,9 +38,44 @@ class InterfacesFacts(object):
     """ The isam interfaces facts class
     """
 
+    # Attributes the device may compact onto a single "port <id> ..." line,
+    # e.g. "port uni:1/1/5/1/19/1/1 admin-up user Y654321". admin-up and
+    # link-updown-trap are bare flags; user/severity/port-type take a value.
+    _PACKED_WORDS = {"admin-up", "link-updown-trap", "user", "severity", "port-type"}
+    # Matches a double-quoted span (kept intact, quotes included) or a
+    # single non-whitespace run, so quoted values (including an explicit
+    # empty value like `user ""`) survive re-splitting unchanged.
+    _TOKEN_RE = re.compile(r'"[^"]*"|\S+')
+
     def __init__(self, module, subspec='config', options='options'):
         self._module = module
         self.argument_spec = InterfacesArgs.argument_spec
+
+    @classmethod
+    def _split_packed_line(cls, line):
+        """Split a compacted "port <id> attr1 [val1] attr2 [val2] ..." line
+        into one "port <id> attr [val]" line per attribute so the existing
+        per-attribute regex parsers in rm_templates/interfaces.py can match
+        each one. Live devices always compact simultaneously-set interface
+        attributes onto one line; without this the generic regex parsers
+        (which each expect exactly one attribute per line) silently match
+        nothing and facts gathering returns empty/incomplete data.
+        """
+        tokens = cls._TOKEN_RE.findall(line)
+        if len(tokens) < 3 or tokens[0] != "port":
+            return [line]
+        starts = [
+            index for index, token in enumerate(tokens[2:], 2)
+            if (token in cls._PACKED_WORDS and (index == 2 or tokens[index - 1] != "no"))
+            or (token == "no" and index + 1 < len(tokens) and tokens[index + 1] in cls._PACKED_WORDS)
+        ]
+        if not starts:
+            return [line]
+        prefix = " ".join(tokens[:2])
+        return [
+            prefix + " " + " ".join(tokens[start:end])
+            for start, end in zip(starts, starts[1:] + [len(tokens)])
+        ]
 
     @staticmethod
     def _canonicalize_entry(item):
@@ -91,7 +128,8 @@ class InterfacesFacts(object):
             if not line or line.startswith('#'):
                 continue
             if line.startswith('configure interface port '):
-                raw_lines.append(line.replace('configure interface ', '', 1))
+                stripped = line.replace('configure interface ', '', 1)
+                raw_lines.extend(self._split_packed_line(stripped))
 
         interfaces_parser = InterfacesTemplate(lines=raw_lines, module=self._module)
         parsed = interfaces_parser.parse()
