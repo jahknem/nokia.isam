@@ -50,16 +50,7 @@ def main():
     commands = [line for line in module.params["config"].splitlines() if line.strip()]
     if module.params["commit"] and commands and not module.check_mode:
         connection = get_resource_connection(module)
-        # ISAM accepts each complete configure command reliably, but can
-        # silently lose later commands when a large batch is submitted as one
-        # candidate block. Reconciliation renders complete commands, so send
-        # those individually. Preserve block submission for generic nested
-        # configuration input.
-        if all(line.lstrip().startswith("configure ") for line in commands):
-            for command in commands:
-                connection.edit_config(candidate=[command])
-        else:
-            connection.edit_config(candidate=commands)
+        connection.edit_config(candidate=commands)
     module.exit_json(changed=bool(commands and module.params["commit"]), commands=commands)
 
 
