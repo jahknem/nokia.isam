@@ -103,6 +103,50 @@ class TestIsamInterfacesModule(TestIsamModule):
         for k, v in gathered[0].items():
             self.assertEqual(result["gathered"][0].get(k), v)
 
+    def test_isam_interfaces_gathered_compacts_packed_uni_line(self):
+        # Live devices compact admin-up and user onto one line for a UNI
+        # port, e.g. "configure interface port uni:<id> admin-up user
+        # <value>", instead of one command per attribute. Confirmed against
+        # a live device.
+        sample = "configure interface port uni:1/1/5/1/1/1/1 admin-up user Y654321"
+
+        class FakeConn:
+            def get(self, cmd):
+                return sample
+
+        self.get_resource_connection_facts.return_value = FakeConn()
+
+        set_module_args(dict(state="gathered"), ignore_provider_arg)
+
+        result = self.execute_module(changed=False)
+        self.assertEqual(
+            result["gathered"][0],
+            {
+                "name": "uni:1/1/5/1/1/1/1",
+                "admin_up": True,
+                "user": "Y654321",
+            },
+        )
+
+    def test_isam_interfaces_gathered_compacts_packed_pon_line_with_empty_user(self):
+        # Live devices render an unset user as an explicit empty-quoted
+        # value on the same compacted line, e.g. for a PON port.
+        sample = 'configure interface port pon:1/1/5/1 admin-up user ""'
+
+        class FakeConn:
+            def get(self, cmd):
+                return sample
+
+        self.get_resource_connection_facts.return_value = FakeConn()
+
+        set_module_args(dict(state="gathered"), ignore_provider_arg)
+
+        result = self.execute_module(changed=False)
+        self.assertEqual(
+            result["gathered"][0],
+            {"name": "pon:1/1/5/1", "admin_up": True},
+        )
+
     def test_isam_interfaces_rendered(self):
         # test rendered
         set_module_args(

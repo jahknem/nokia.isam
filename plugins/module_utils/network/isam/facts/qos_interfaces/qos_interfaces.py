@@ -119,23 +119,123 @@ class Qos_interfacesFacts(object):
             flat_config.append(" ".join(line))
         return flat_config
 
-    @staticmethod
-    def _compact_lines(lines):
-        clauses = re.compile(
-            r"(?:scheduler-node|ingress-profile|cac-profile|ext-cac|ds-queue-sharing|"
-            r"us-queue-sharing|ds-num-queue|ds-num-rem-queue|"
-            r"oper-weight|oper-rate|dsfld-shaper-prof|"
-            r"bandwidth-profile|bandwidth-sharing|aggr-usq-profile|aggr-dsq-profile|"
-            r"gem-sharing|scheduler-mode|mc-scheduler-node|bc-scheduler-node|ds-schedule-tag)\s+\S+|"
-            r"(?:no\s+)?(?:queue-stats-on|autoschedule|us-vlanport-queue)(?=\s|$)|"
-            r"(?:queue|upstream-queue|ds-rem-queue)\s+\d+\s+(?:priority|weight|oper-weight|"
-            r"queue-profile|shaper-profile|bandwidth-profile|ext-bw|bandwidth-sharing)\s+\S+"
-        )
+    # Fields accepted directly on "configure qos interface <name> ..." with a
+    # single value token (ground truth: _top_parser() calls in
+    # rm_templates/qos_interfaces.py).
+    _TOP_VALUE_FIELDS = frozenset((
+        "scheduler-node", "ingress-profile", "cac-profile", "ext-cac",
+        "ds-num-queue", "ds-num-rem-queue", "us-num-queue",
+        "oper-weight", "oper-rate", "dsfld-shaper-prof",
+        "bandwidth-profile", "bandwidth-sharing",
+        "aggr-usq-profile", "aggr-dsq-profile", "gem-sharing",
+        "scheduler-mode", "mc-scheduler-node", "bc-scheduler-node",
+        "ds-schedule-tag",
+    ))
+    # Bare boolean flags with no value (ground truth: _top_bool_parser()
+    # calls in rm_templates/qos_interfaces.py).
+    _TOP_FLAG_FIELDS = frozenset((
+        "ds-queue-sharing", "us-queue-sharing", "queue-stats-on",
+        "autoschedule", "us-vlanport-queue",
+    ))
+    # Fields accepted on "... <container> <id> ..." with a single value
+    # token (ground truth: _queue_parser() calls in
+    # rm_templates/qos_interfaces.py).
+    _CONTAINER_FIELDS = {
+        "queue": frozenset((
+            "priority", "weight", "oper-weight", "queue-profile", "shaper-profile",
+        )),
+        "upstream-queue": frozenset((
+            "priority", "weight", "bandwidth-profile", "ext-bw",
+            "bandwidth-sharing", "queue-profile", "shaper-profile",
+        )),
+        "ds-rem-queue": frozenset(("priority", "weight")),
+    }
+
+    @classmethod
+    def _compact_lines(cls, lines):
         result = []
         for line in lines:
-            match = re.match(r"(configure qos interface\s+\S+\s+)(.*)", line)
+            match = re.match(r"(configure\s+qos\s+interface\s+\S+)\s+(.*)", line)
             if not match:
                 result.append(line)
                 continue
-            result.extend(match.group(1) + clause.group(0) for clause in clauses.finditer(match.group(2)))
+            prefix, rest = match.groups()
+            result.extend(cls._split_qos_tokens(prefix, rest.split()))
         return result
+
+    @classmethod
+    def _split_qos_tokens(cls, prefix, tokens):
+        # Live devices compact every simultaneously-set attribute for a QoS
+        # interface (and each queue/upstream-queue/ds-rem-queue id) onto one
+        # line, e.g. "scheduler-node X cac-profile Y us-num-queue Z ..." or
+        # "queue 0 priority 6 weight 34 oper-weight 34 queue-profile P
+        # shaper-profile S". This walks the token stream, tracking which
+        # container (if any) is currently in scope, and re-emits one
+        # "configure qos interface <name> [<container> <id>] <field>
+        # [<value>]" line per attribute so the existing per-field regex
+        # parsers in rm_templates/qos_interfaces.py can match each one.
+        segments = []
+        container = None
+        n = len(tokens)
+        i = 0
+        while i < n:
+            negate = tokens[i] == "no"
+            field_idx = i + 1 if negate else i
+            if field_idx >= n:
+                break
+            field = tokens[field_idx]
+            value_idx = field_idx + 1
+
+            if (
+                not negate
+                and field in cls._CONTAINER_FIELDS
+                and value_idx < n
+                and tokens[value_idx].isdigit()
+            ):
+                container = (field, tokens[value_idx])
+                i = value_idx + 1
+                continue
+
+            if container and field in cls._CONTAINER_FIELDS[container[0]]:
+                if negate:
+                    segments.append(
+                        "%s %s %s no %s" % (prefix, container[0], container[1], field)
+                    )
+                    i = field_idx + 1
+                    continue
+                value = tokens[value_idx] if value_idx < n else None
+                if value is None:
+                    i = field_idx + 1
+                    continue
+                segments.append(
+                    "%s %s %s %s %s" % (prefix, container[0], container[1], field, value)
+                )
+                i = value_idx + 1
+                continue
+
+            if field in cls._TOP_FLAG_FIELDS:
+                segments.append("%s %s%s" % (prefix, "no " if negate else "", field))
+                container = None
+                i = field_idx + 1
+                continue
+
+            if field in cls._TOP_VALUE_FIELDS:
+                if negate:
+                    segments.append("%s no %s" % (prefix, field))
+                    container = None
+                    i = field_idx + 1
+                    continue
+                value = tokens[value_idx] if value_idx < n else None
+                if value is None:
+                    i = field_idx + 1
+                    continue
+                segments.append("%s %s %s" % (prefix, field, value))
+                container = None
+                i = value_idx + 1
+                continue
+
+            # Unrecognized token (e.g. an attribute this collection does not
+            # yet model). Skip it defensively rather than looping forever or
+            # misattributing it to the wrong field/container.
+            i = field_idx + 1
+        return segments
