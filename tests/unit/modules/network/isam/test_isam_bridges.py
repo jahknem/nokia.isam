@@ -147,15 +147,20 @@ class TestIsamBridgesModule(TestIsamModule):
             ignore_provider_arg,
         )
         result = self.execute_module(changed=False)
+        # The device requires tag, l2fwder-vlan, vlan-scope, and qos to be
+        # issued together on a single "vlan-id <id> ..." command (confirmed
+        # against a live device); issuing vlan-scope/qos as separate
+        # trailing commands is rejected with "VLAN MGT error 149".
+        # network-vlan is legacy/read-compat only and stays a separate
+        # command, matching current live device usage (no network-vlan is
+        # ever written by this collection's callers).
         self.assertEqual(result.get("rendered"), [
             "configure bridge port 1/1/8/1",
-            "configure bridge port 1/1/8/1 vlan-id 20 tag single-tagged l2fwder-vlan 720",
+            "configure bridge port 1/1/8/1 vlan-id 20 tag single-tagged l2fwder-vlan 720 vlan-scope local qos priority:5",
             "configure bridge port 1/1/8/1 vlan-id 20 network-vlan 720",
-            "configure bridge port 1/1/8/1 vlan-id 20 vlan-scope local",
-            "configure bridge port 1/1/8/1 vlan-id 20 qos priority:5",
         ])
 
-    def test_isam_bridges_rejects_network_vlan_without_l2fwder_vlan(self):
+    def test_isam_bridges_renders_network_vlan_without_l2fwder_vlan(self):
         set_module_args(
             dict(
                 config={"port": [{"port": "1/1/8/1", "vlan_id": [{"id": "100", "network_vlan": 200}]}]},
@@ -163,7 +168,11 @@ class TestIsamBridgesModule(TestIsamModule):
             ),
             ignore_provider_arg,
         )
-        self.execute_module(failed=True)
+        result = self.execute_module(changed=False)
+        self.assertEqual(result.get("rendered"), [
+            "configure bridge port 1/1/8/1",
+            "configure bridge port 1/1/8/1 vlan-id 100 network-vlan 200",
+        ])
 
     def test_isam_bridges_merged_keeps_matching_l2fwder_vlan(self):
         class FakeConn:
