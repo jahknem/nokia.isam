@@ -174,6 +174,23 @@ class Connection(NetworkCliConnection):
                 self._reset_transport()
                 time.sleep(2 ** (attempt + 1))
 
+    def edit_config(self, *args, **kwargs):
+        """Apply configuration, then discard the session used for it.
+
+        ISAM can leave a persistent CLI shell semantically stale after a
+        successful configuration transaction: the SSH channel and prompt are
+        still healthy, but the next read may return incomplete configuration.
+        Delegate to the loaded cliconf plugin, then force the next operation
+        to establish a fresh shell.
+        """
+        plugin = self._sub_plugin.get("obj")
+        if plugin is None:
+            raise AnsibleConnectionFailure("ISAM cliconf plugin is not loaded")
+        try:
+            return plugin.edit_config(*args, **kwargs)
+        finally:
+            self._reset_transport()
+
     def _reset_transport(self):
         """Discard the failed shell and SSH transport before reconnecting.
 
