@@ -304,12 +304,6 @@ class Bridges(ResourceModule):
     def _compare_vlan(self, port_name, vid, want_vlan, have_vlan):
         want_vlan = self._normalize_vlan(port_name, vid, want_vlan)
         have_vlan = self._normalize_vlan(port_name, vid, have_vlan)
-        if want_vlan.get("network_vlan") is not None and want_vlan.get("l2fwder_vlan") is None:
-            raise ValueError(
-                "bridge VLAN %s on %s requires l2fwder_vlan before network_vlan" %
-                (vid, port_name)
-            )
-
         vlan_start = len(self.commands)
         self.compare(parsers=VLAN_PARSERS, want=want_vlan, have=have_vlan)
         self.commands[vlan_start:] = self._order_vlan_commands(
@@ -319,6 +313,16 @@ class Bridges(ResourceModule):
     def _compare_stale_vlan(self, port_name, vid, have_vlan):
         have_vlan = self._normalize_vlan(port_name, vid, have_vlan)
         self.compare(parsers=VLAN_PARSERS, want={}, have=have_vlan)
+
+    # Attributes that the device requires to be issued together with
+    # "tag"/"l2fwder-vlan" on a single "vlan-id <id> ..." command. Live
+    # device captures show the full working syntax as one line, e.g.
+    # "vlan-id 10 tag single-tagged l2fwder-vlan 710 vlan-scope local
+    # qos priority:5". Issuing vlan-scope or qos as separate trailing
+    # commands after tag+l2fwder-vlan has already been applied is
+    # rejected by the device with "VLAN MGT error 149: Such
+    # configuration mode of VLAN port is not permitted".
+    _MERGE_WITH_TAG_AND_L2FWDER = ("vlan-scope ", "qos ")
 
     @staticmethod
     def _order_vlan_commands(port_name, vid, vlan_commands):
@@ -337,18 +341,21 @@ class Bridges(ResourceModule):
         if not tag_command or not l2fwder_command:
             return vlan_commands
 
+        mergeable = [tag_command, l2fwder_command]
+        for suffix in Bridges._MERGE_WITH_TAG_AND_L2FWDER:
+            command = Bridges._first_command_with_prefix(
+                vlan_commands, vlan_prefix + " " + suffix
+            )
+            if command:
+                mergeable.append(command)
+
         ordered = [
-            command for command in vlan_commands
-            if command != tag_command and command != l2fwder_command
+            command for command in vlan_commands if command not in mergeable
         ]
-        ordered.insert(
-            0,
-            "%s %s %s" % (
-                vlan_prefix,
-                tag_command[len(vlan_prefix) + 1:],
-                l2fwder_command[len(vlan_prefix) + 1:],
-            ),
+        merged = " ".join(
+            command[len(vlan_prefix) + 1:] for command in mergeable
         )
+        ordered.insert(0, "%s %s" % (vlan_prefix, merged))
         return ordered
 
     @staticmethod
