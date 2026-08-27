@@ -18,8 +18,11 @@ class TestCliConfigModule(TestIsamModule):
 
     def test_config_is_sent_when_not_in_check_mode(self):
         class FakeConnection:
+            def __init__(self):
+                self.calls = []
+
             def edit_config(self, candidate):
-                self.commands = candidate
+                self.calls.append(candidate)
 
         connection = FakeConnection()
         with patch(
@@ -29,4 +32,27 @@ class TestCliConfigModule(TestIsamModule):
             set_module_args({"config": "configure system"}, False)
             result = self.execute_module(changed=True)
         self.assertEqual(result["commands"], ["configure system"])
-        self.assertEqual(connection.commands, ["configure system"])
+        self.assertEqual(connection.calls, [["configure system"]])
+
+    def test_complete_configure_commands_are_sent_individually(self):
+        class FakeConnection:
+            def __init__(self):
+                self.calls = []
+
+            def edit_config(self, candidate):
+                self.calls.append(candidate)
+
+        connection = FakeConnection()
+        with patch(
+            "ansible_collections.nokia.isam.plugins.modules.cli_config.get_resource_connection",
+            return_value=connection,
+        ):
+            set_module_args(
+                {"config": "configure system\nconfigure qos interface ont:1 scheduler-node name:X"},
+                False,
+            )
+            self.execute_module(changed=True)
+        self.assertEqual(
+            connection.calls,
+            [["configure system"], ["configure qos interface ont:1 scheduler-node name:X"]],
+        )
