@@ -287,6 +287,16 @@ options:
                 description:
                 - 'optional parameter with default value: "8100"'
                 - 'This object configures vlan port tpid in hex values'
+              static_user:
+                type: list
+                elements: dict
+                description:
+                - Static subscriber IP addresses associated with this VLAN membership.
+                suboptions:
+                  ip_address:
+                    type: str
+                    description:
+                    - Static subscriber IP address in CIDR notation.
 
   state:
     description:
