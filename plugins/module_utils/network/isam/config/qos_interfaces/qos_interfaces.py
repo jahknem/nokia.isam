@@ -76,7 +76,10 @@ class Qos_interfaces(ResourceModule):
             self.generate_commands()
         elif self.state not in ["parsed", "gathered"]:
             self.generate_commands()
-            self.run_commands()
+            if self._module.check_mode:
+                self.changed = bool(self.commands)
+            else:
+                self.run_commands()
         return self.result
 
     def generate_commands(self):

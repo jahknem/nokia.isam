@@ -276,7 +276,7 @@ class TestIsamBridgesModule(TestIsamModule):
             candidate=result["commands"]
         )
 
-    def test_isam_bridges_rejects_service_vlans_without_pvid_context(self):
+    def test_isam_bridges_bootstraps_pvid_before_service_vlans(self):
         class FakeFactsConn:
             def get(self, command):
                 return ""
@@ -298,7 +298,13 @@ class TestIsamBridgesModule(TestIsamModule):
             ),
             ignore_provider_arg,
         )
-        self.execute_module(failed=True)
+        result = self.execute_module(changed=True)
+        self.assertEqual(result["commands"], [
+            "configure bridge port 1/1/8/1",
+            "configure bridge port 1/1/8/1 vlan-id 99",
+            "configure bridge port 1/1/8/1 pvid 99",
+            "configure bridge port 1/1/8/1 vlan-id 10 tag single-tagged l2fwder-vlan 710 vlan-scope local",
+        ])
 
     def test_isam_bridges_parsed_network_vlan(self):
         set_module_args(
