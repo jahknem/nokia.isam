@@ -110,10 +110,10 @@ class Bridges(ResourceModule):
                 self.generate_commands()
             elif self.state not in ["parsed", "gathered"]:
                 self.generate_commands()
-                if not self._module.check_mode:
-                    self.run_commands()
-                else:
+                if self._module.check_mode:
                     self.changed = bool(self.commands)
+                else:
+                    self.run_commands()
         except ValueError as exc:
             self._module.fail_json(msg=str(exc))
         return self.result
@@ -306,9 +306,31 @@ class Bridges(ResourceModule):
         have_vlan = self._normalize_vlan(port_name, vid, have_vlan)
         vlan_start = len(self.commands)
         self.compare(parsers=VLAN_PARSERS, want=want_vlan, have=have_vlan)
+        self._compare_static_users(port_name, vid, want_vlan, have_vlan)
         self.commands[vlan_start:] = self._order_vlan_commands(
             port_name, vid, self.commands[vlan_start:]
         )
+
+    @staticmethod
+    def _static_user_addresses(vlan):
+        entries = vlan.get("static_user", []) if isinstance(vlan, dict) else []
+        if not isinstance(entries, list):
+            return set()
+        return {
+            entry.get("ip_address")
+            for entry in entries
+            if isinstance(entry, dict) and entry.get("ip_address")
+        }
+
+    def _compare_static_users(self, port_name, vid, want_vlan, have_vlan):
+        """Render requested static-user addresses missing from gathered state."""
+        want_addresses = self._static_user_addresses(want_vlan)
+        have_addresses = self._static_user_addresses(have_vlan)
+        for ip_address in sorted(want_addresses - have_addresses):
+            self.commands.append(
+                "configure bridge port %s vlan-id %s static-user ip-address %s"
+                % (port_name, vid, ip_address)
+            )
 
     def _compare_stale_vlan(self, port_name, vid, have_vlan):
         have_vlan = self._normalize_vlan(port_name, vid, have_vlan)
