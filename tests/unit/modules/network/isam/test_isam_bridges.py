@@ -110,6 +110,49 @@ class TestIsamBridgesModule(TestIsamModule):
             "configure bridge port 1/1/8/1 vlan-id 100 tag untagged",
         ])
 
+    def test_isam_bridges_rendered_static_users(self):
+        set_module_args(
+            dict(
+                config={
+                    "port": [{
+                        "port": "1/1/8/1",
+                        "vlan_id": [{
+                            "id": "199",
+                            "static_user": [
+                                {"ip_address": "10.9.40.7/32"},
+                                {"ip_address": "10.9.40.8/32"},
+                            ],
+                        }],
+                    }],
+                },
+                state="rendered",
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        self.assertEqual(result.get("rendered"), [
+            "configure bridge port 1/1/8/1",
+            "configure bridge port 1/1/8/1 vlan-id 199 static-user ip-address 10.9.40.7/32",
+            "configure bridge port 1/1/8/1 vlan-id 199 static-user ip-address 10.9.40.8/32",
+        ])
+
+    def test_isam_bridges_parsed_static_users(self):
+        set_module_args(
+            dict(
+                running_config="\n".join([
+                    "configure bridge port 1/1/8/1 vlan-id 199 static-user ip-address 10.9.40.7/32",
+                    "configure bridge port 1/1/8/1 vlan-id 199 static-user ip-address 10.9.40.8/32",
+                ]),
+                state="parsed",
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["parsed"]["port"][0]["vlan_id"][0]["static_user"], [
+            {"ip_address": "10.9.40.7/32"},
+            {"ip_address": "10.9.40.8/32"},
+        ])
+
     def test_isam_bridges_parsed_requires_running_config(self):
         set_module_args(dict(state="parsed"), ignore_provider_arg)
         self.execute_module(failed=True)
