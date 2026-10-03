@@ -175,7 +175,23 @@ class Bridges(ResourceModule):
         deferred_pvid_commands = self._compare_port_fields(want, have)
         self._validate_vlan_dependencies(port_name, want, want_vlans, have_vlans)
 
+        pvid_vid = str(want.get("pvid")) if want.get("pvid") is not None else None
+        service_vlans = self._service_vlans(want_vlans)
+        bootstrap_vid = None
+        if service_vlans and pvid_vid and pvid_vid not in {str(vid) for vid in have_vlans}:
+            # A new subscriber bridge needs its PVID VLAN before its service
+            # VLANs; the ISAM rejects the latter otherwise.
+            pvid_key = next(vid for vid in want_vlans if str(vid) == pvid_vid)
+            bootstrap_vid = pvid_key
+            self._compare_vlan(
+                port_name, pvid_key, want_vlans[pvid_key], have_vlans.pop(pvid_key, {})
+            )
+            self.commands.extend(deferred_pvid_commands)
+            deferred_pvid_commands = []
+
         for vid in want_vlans:
+            if vid == bootstrap_vid:
+                continue
             self._compare_vlan(port_name, vid, want_vlans[vid], have_vlans.pop(vid, {}))
 
         # remaining vlans in have (present in running but not in want)
@@ -274,21 +290,24 @@ class Bridges(ResourceModule):
         return deferred
 
     def _validate_vlan_dependencies(self, port_name, want, want_vlans, have_vlans):
-        service_vlans = [
-            vid for vid, entry in want_vlans.items()
-            if isinstance(entry, dict) and entry.get("l2fwder_vlan") is not None
-        ]
-        if not service_vlans or want.get("pvid") is None or self.state == "rendered":
+        service_vlans = self._service_vlans(want_vlans)
+        if not service_vlans or want.get("pvid") is None:
             return
 
         pvid_vid = str(want["pvid"])
-        pvid_present = any(str(key) == pvid_vid for key in have_vlans)
-        if not pvid_present:
+        pvid_requested = any(str(key) == pvid_vid for key in want_vlans)
+        if not pvid_requested:
             raise ValueError(
-                "bridge port %s requires VLAN %s/PVID to be configured "
-                "before service VLANs %s; apply the bridge bootstrap "
-                "state first" % (port_name, pvid_vid, ", ".join(map(str, service_vlans)))
+                "bridge port %s requires VLAN %s for service VLANs %s"
+                % (port_name, pvid_vid, ", ".join(map(str, service_vlans)))
             )
+
+    @staticmethod
+    def _service_vlans(vlans):
+        return [
+            vid for vid, entry in vlans.items()
+            if isinstance(entry, dict) and entry.get("l2fwder_vlan") is not None
+        ]
 
     def _normalize_vlan(self, port_name, vid, data):
         data = dict(data) if isinstance(data, dict) else {}
