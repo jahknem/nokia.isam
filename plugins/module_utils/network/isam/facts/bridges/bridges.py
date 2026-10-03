@@ -153,6 +153,15 @@ class BridgesFacts(object):
         self._apply_rest(port_entry, rest, PORT_BOOL_KEYS)
 
     def _apply_vlan_rest(self, vlan_entry, rest):
+        static_user_match = re.match(
+            r"^static-user\s+ip-address\s+(?P<ip_address>\S+)$", rest
+        )
+        if static_user_match:
+            static_user = vlan_entry.setdefault("static_user", [])
+            ip_address = static_user_match.group("ip_address")
+            if not any(entry.get("ip_address") == ip_address for entry in static_user):
+                static_user.append({"ip_address": ip_address})
+            return
         self._apply_rest(vlan_entry, rest, VLAN_BOOL_KEYS)
 
     def _apply_rest(self, entry, rest, bool_keys):
