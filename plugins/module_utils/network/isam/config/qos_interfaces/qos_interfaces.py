@@ -14,6 +14,11 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 class Qos_interfaces(ResourceModule):
     """The isam_qos_interfaces config class."""
 
+    COMPACT_COMMAND_SCOPES = (
+        r"^(?P<scope>configure qos interface \S+ (?:queue|upstream-queue|ds-rem-queue) \d+) (?P<suffix>(?!no(?:\s|$)).+)$",
+        r"^(?P<scope>configure qos interface \S+) (?P<suffix>(?!(?:no|queue|upstream-queue|ds-rem-queue)(?:\s|$)).+)$",
+    )
+
     def __init__(self, module):
         super(Qos_interfaces, self).__init__(
             empty_fact_val=[],

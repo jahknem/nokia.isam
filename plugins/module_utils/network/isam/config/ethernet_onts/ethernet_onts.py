@@ -33,6 +33,10 @@ class Ethernet_onts(ResourceModule):
     The isam_ethernet_onts config class
     """
 
+    COMPACT_COMMAND_SCOPES = (
+        r"^(?P<scope>configure ethernet ont \S+) (?P<suffix>.+)$",
+    )
+
     def __init__(self, module):
         super(Ethernet_onts, self).__init__(
             empty_fact_val={},

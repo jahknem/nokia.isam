@@ -6,6 +6,8 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+import re
+
 
 def canonical_key(key):
     return key.replace("-", "_")
@@ -156,3 +158,49 @@ def iter_cli_fields(tokens, bool_fields=(), value_fields=(), negated_value_field
             index = key_index + (1 if negate else 2)
         else:
             index = key_index + 1
+
+
+def compact_cli_commands(commands, scopes):
+    """Combine adjacent commands that match an explicitly supported CLI scope.
+
+    Each scope is a regular expression with named ``scope`` and ``suffix``
+    groups. Resource modules define whether negated attributes are valid in
+    that scope; this helper deliberately does not infer a scope from a shared
+    text prefix.
+    """
+    compiled_scopes = []
+    for rule in scopes:
+        if isinstance(rule, tuple):
+            scope, label = rule
+        else:
+            scope, label = rule, None
+        compiled_scopes.append(
+            (re.compile(scope) if isinstance(scope, str) else scope, label)
+        )
+    compacted = []
+    previous_scope = None
+
+    for command in commands:
+        matched = next(
+            (
+                (scope.match(command), label)
+                for scope, label in compiled_scopes
+                if scope.match(command)
+            ),
+            None,
+        )
+        if not matched:
+            compacted.append(command)
+            previous_scope = None
+            continue
+
+        match, label = matched
+        scope = (label, match.group("scope"))
+        suffix = match.group("suffix")
+        if scope == previous_scope:
+            compacted[-1] += " " + suffix
+        else:
+            compacted.append(command)
+            previous_scope = scope
+
+    return compacted

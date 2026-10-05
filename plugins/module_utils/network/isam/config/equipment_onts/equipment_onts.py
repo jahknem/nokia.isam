@@ -19,6 +19,14 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 class Equipment_onts(ResourceModule):
     """The isam_equipment_onts config class."""
 
+    COMPACT_COMMAND_SCOPES = (
+        r"^(?P<scope>configure equipment ont interface \S+) (?P<suffix>(?!tc-layer(?:\s|$)|tc-layer-threshold(?:\s|$)|mcast-tc-layer(?:\s|$)|fec-tc-layer(?:\s|$)|ethernet(?:\s|$)|xg-tc-layer(?:\s|$)|phy-layer(?:\s|$)|delay-act(?:\s|$)|cpu-load(?:\s|$)|memory-usage(?:\s|$)).+)$",
+        r"^(?P<scope>configure equipment ont interface \S+ (?:tc-layer|tc-layer-threshold|mcast-tc-layer|fec-tc-layer|ethernet|xg-tc-layer|phy-layer|delay-act|cpu-load|memory-usage)) (?P<suffix>.+)$",
+        r"^(?P<scope>configure equipment ont slot \S+) (?P<suffix>.+)$",
+        r"^(?P<scope>configure equipment ont sw-ctrl \S+) (?P<suffix>(?!delay-act(?:\s|$)).+)$",
+        r"^(?P<scope>configure equipment ont sw-ctrl \S+ delay-act) (?P<suffix>.+)$",
+    )
+
     INTERFACE_FIELDS = [
         "sw_ver_pland",
         "sernum",

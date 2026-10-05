@@ -38,6 +38,21 @@ class Vlans(ResourceModule):
     The isam_vlans config class
     """
 
+    COMPACT_COMMAND_SCOPES = (
+        (
+            r"^(?P<scope>configure vlan id \S+) (?P<suffix>(?!dhcp-opt82-ext(?:\s|$)|dhcp-opt82-nni(?:\s|$)|dhcp-opt82-uplink(?:\s|$)|circuit-id-dhcp(?:\s|$)|remote-id-dhcp(?:\s|$)|relay-id-dhcp(?:\s|$)|dhcpv6-(?:itf-id|remote-id|relay-id|trst-port)(?:\s|$)|circuit-id-pppoe(?:\s|$)|remote-id-pppoe(?:\s|$)|enterprise-number(?:\s|$)|.*-linerate(?:\s|$)|.*-l2-encaps(?:\s|$)|.*-vlanaware(?:\s|$)).+)$",
+            "vlan-core",
+        ),
+        (
+            r"^(?P<scope>configure vlan id \S+) (?P<suffix>(?:dhcp-opt82-ext|dhcp-opt82-nni|dhcp-opt82-uplink|circuit-id-dhcp|remote-id-dhcp|relay-id-dhcp|dhcpv6-(?:itf-id|remote-id|relay-id|trst-port)|enterprise-number|(?:dhcp|pppoe|dhcpv6)-linerate|(?:pppoe|dhcp|dhcpv6)-l2-encaps|(?:pppoer|dhcpr|dhcpv6r)-vlanaware)\b.+)$",
+            "vlan-dhcp",
+        ),
+        (
+            r"^(?P<scope>configure vlan id \S+) (?P<suffix>(?:circuit-id-pppoe|remote-id-pppoe)\b.+)$",
+            "vlan-pppoe",
+        ),
+    )
+
     def __init__(self, module):
         super(Vlans, self).__init__(
             empty_fact_val=[],

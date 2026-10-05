@@ -156,6 +156,37 @@ class TestIsamQosInterfacesModule(TestIsamModule):
             ),
         )
 
+    def test_isam_qos_interfaces_renders_compact_queue_commands(self):
+        set_module_args(
+            dict(
+                config=[{
+                    "name": "1/1/8/28",
+                    "queue": [{
+                        "id": 0,
+                        "priority": 6,
+                        "weight": 34,
+                        "oper_weight": 34,
+                        "queue_profile": "name:NGLT_Default",
+                        "shaper_profile": "none",
+                    }],
+                    "upstream_queue": [{
+                        "id": 4,
+                        "weight": 5,
+                        "bandwidth_profile": "name:GPONqpp600Mbps",
+                        "bandwidth_sharing": "uni-sharing",
+                    }],
+                }],
+                state="rendered",
+            ),
+            ignore_provider_arg,
+        )
+
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["rendered"], [
+            "configure qos interface 1/1/8/28 queue 0 priority 6 weight 34 oper-weight 34 queue-profile name:NGLT_Default shaper-profile none",
+            "configure qos interface 1/1/8/28 upstream-queue 4 weight 5 bandwidth-profile name:GPONqpp600Mbps bandwidth-sharing uni-sharing",
+        ])
+
     def test_isam_qos_interfaces_merged_idempotent(self):
         self.get_config.return_value = QOS_CONFIG
         set_module_args(

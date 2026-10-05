@@ -22,6 +22,12 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 class Generic_pon(ResourceModule):
     """The isam_generic_pon config class."""
 
+    COMPACT_COMMAND_SCOPES = (
+        r"^(?P<scope>configure generic-pon utilization threshold) (?P<suffix>.+)$",
+        r"^(?P<scope>configure generic-pon utilization) (?P<suffix>(?!threshold(?:\s|$)).+)$",
+        r"^(?P<scope>configure generic-pon (?:ont|alarmflag)) (?P<suffix>.+)$",
+    )
+
     def __init__(self, module):
         super(Generic_pon, self).__init__(
             empty_fact_val={},

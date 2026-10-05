@@ -21,6 +21,11 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 class Xdsl_boards(ResourceModule):
     """The isam_xdsl_boards config class."""
 
+    COMPACT_COMMAND_SCOPES = (
+        r"^(?P<scope>configure xdsl board \S+) (?P<suffix>.+)$",
+        r"^(?P<scope>configure xdsl vp-board \S+) (?P<suffix>.+)$",
+    )
+
     BOARD_FIELDS = [
         "admin_state",
         "card_type",

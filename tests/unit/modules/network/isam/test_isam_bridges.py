@@ -82,8 +82,7 @@ class TestIsamBridgesModule(TestIsamModule):
         self.assertEqual(result.get("rendered"), [
             "configure bridge ageing-time 300",
             "configure bridge port 1/1/8/1",
-            "configure bridge port 1/1/8/1 default-priority 0",
-            "configure bridge port 1/1/8/1 mac-learn-off",
+            "configure bridge port 1/1/8/1 default-priority 0 mac-learn-off",
             "configure bridge port 1/1/8/1 pvid 99",
         ])
 

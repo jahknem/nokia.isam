@@ -40,6 +40,10 @@ class Interfaces(ResourceModule):
     The isam_interfaces config class
     """
 
+    COMPACT_COMMAND_SCOPES = (
+        r"^(?P<scope>configure interface port \S+) (?P<suffix>.+)$",
+    )
+
     def __init__(self, module):
         super(Interfaces, self).__init__(
             empty_fact_val=[],

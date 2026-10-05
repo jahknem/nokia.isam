@@ -34,8 +34,10 @@ class TestPonVariantModules(TestIsamModule):
         self.module = isam_epon_interfaces
         set_module_args(dict(config=[dict(name="1/1/1/1", polling_period=10, dba_polling0=5, admin_state="up")], state="rendered"), ignore_provider_arg)
         result = self.execute_module(changed=False)
-        self.assertIn("configure epon interface 1/1/1/1 polling-period 10", result["rendered"])
-        self.assertIn("configure epon interface 1/1/1/1 admin-state up", result["rendered"])
+        self.assertEqual(
+            result["rendered"],
+            ["configure epon interface 1/1/1/1 polling-period 10 dba-polling0 5 admin-state up"],
+        )
 
     def test_channel_pair_template_parsed(self):
         parsed = Channel_pair_pmTemplate(lines=[

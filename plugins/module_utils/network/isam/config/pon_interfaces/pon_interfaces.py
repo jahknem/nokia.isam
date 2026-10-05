@@ -14,6 +14,19 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 class Pon_interfaces(ResourceModule):
     """The isam_pon_interfaces config class."""
 
+    COMPACT_COMMAND_SCOPES = (
+        r"^(?P<scope>configure pon interface \S+) (?P<suffix>(?!tc-layer(?:\s|$)|tc-layer-threshold(?:\s|$)|mcast-tc-layer(?:\s|$)|phy-layer(?:\s|$)|fec-tc-layer(?:\s|$)|xg-tc-layer(?:\s|$)|otdr(?:\s|$)|utilization(?:\s|$)|deact-ont-tca(?:\s|$)|admin-state(?:\s|$)).+)$",
+        r"^(?P<scope>configure pon interface \S+ tc-layer) (?P<suffix>.+)$",
+        r"^(?P<scope>configure pon interface \S+ tc-layer-threshold) (?P<suffix>.+)$",
+        r"^(?P<scope>configure pon interface \S+ mcast-tc-layer) (?P<suffix>.+)$",
+        r"^(?P<scope>configure pon interface \S+ phy-layer) (?P<suffix>.+)$",
+        r"^(?P<scope>configure pon interface \S+ fec-tc-layer) (?P<suffix>.+)$",
+        r"^(?P<scope>configure pon interface \S+ xg-tc-layer) (?P<suffix>.+)$",
+        r"^(?P<scope>configure pon interface \S+ otdr) (?P<suffix>.+)$",
+        r"^(?P<scope>configure pon interface \S+ utilization(?: threshold)?) (?P<suffix>.+)$",
+        r"^(?P<scope>configure pon interface \S+ deact-ont-tca(?: threshold-(?:percent|number))?) (?P<suffix>.+)$",
+    )
+
     def __init__(self, module):
         super(Pon_interfaces, self).__init__(
             empty_fact_val=[],

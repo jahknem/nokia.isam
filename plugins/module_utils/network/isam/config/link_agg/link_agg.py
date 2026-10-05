@@ -19,6 +19,11 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 class Link_agg(ResourceModule):
     """The isam_link_agg config class."""
 
+    COMPACT_COMMAND_SCOPES = (
+        r"^(?P<scope>configure link-agg port \S+) (?P<suffix>.+)$",
+        r"^(?P<scope>configure link-agg group \S+) (?P<suffix>(?!port(?:\s|$)).+)$",
+    )
+
     GROUP_FIELDS = [
         "load_sharing_policy",
         "max_active_port",

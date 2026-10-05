@@ -94,8 +94,7 @@ class TestIsamEthernetLineModule(TestIsamModule):
         )
         commands = [
             "configure ethernet line 1/1/8/2 port-type uni",
-            "configure ethernet line 1/1/8/2 mau 1 type 1000basebx10d",
-            "configure ethernet line 1/1/8/2 mau 1 power up",
+            "configure ethernet line 1/1/8/2 mau 1 type 1000basebx10d power up",
         ]
         result = self.execute_module(changed=True)
         self.assertEqual(set(result["commands"]), set(commands))
@@ -287,11 +286,9 @@ class TestIsamEthernetLineModule(TestIsamModule):
         )
         commands = [
             "configure ethernet line 1/1/8/1 port-type uni",
-            "configure ethernet line 1/1/8/1 mau 1 type 1000basebx10d",
-            "configure ethernet line 1/1/8/1 mau 1 power up",
+            "configure ethernet line 1/1/8/1 mau 1 type 1000basebx10d power up",
             "configure ethernet line 1/1/8/2 port-type uni",
-            "configure ethernet line 1/1/8/2 mau 1 type 1000basebx10d",
-            "configure ethernet line 1/1/8/2 mau 1 power up",
+            "configure ethernet line 1/1/8/2 mau 1 type 1000basebx10d power up",
         ]
         result = self.execute_module(changed=False)
         self.assertEqual(set(result["rendered"]), set(commands))
@@ -341,8 +338,7 @@ class TestIsamEthernetLineModule(TestIsamModule):
         )
         commands = [
             "configure ethernet line 1/1/8/2 port-type uni",
-            "configure ethernet line 1/1/8/2 mau 1 type 1000basebx10d",
-            "configure ethernet line 1/1/8/2 mau 1 power up",
+            "configure ethernet line 1/1/8/2 mau 1 type 1000basebx10d power up",
         ]
         result = self.execute_module(changed=True)
         self.assertEqual(set(result["commands"]), set(commands))

@@ -46,7 +46,6 @@ class TestIsamInterfaceCagesModule(TestIsamModule):
         )
         result = self.execute_module(changed=False)
         self.assertIn("configure interface cage 1 description Main cage", result["rendered"])
-        self.assertIn("configure interface cage 1 description Main cage", result["rendered"])
         self.assertIn("configure interface cage 1 apply-qos", result["rendered"])
 
     def test_isam_interface_cages_rendered_no_qos(self):

@@ -170,11 +170,7 @@ class TestIsamTrapsModule(TestIsamModule):
         result = self.execute_module(changed=True)
         commands = result["commands"]
         self.assertIn(
-            "configure trap manager 10.0.0.1:162 no max-per-window",
-            commands,
-        )
-        self.assertIn(
-            "configure trap manager 10.0.0.1:162 no window-size",
+            "configure trap manager 10.0.0.1:162 no max-per-window no window-size",
             commands,
         )
 

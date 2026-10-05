@@ -126,14 +126,12 @@ class TestIsamEthernetOntsModule(TestIsamModule):
         )
 
         result = self.execute_module(changed=False)
-        self.assertIn('configure ethernet ont 1/1/1/1/1/1/1 cust-info "Customer port 1"', result["rendered"])
-        self.assertIn("configure ethernet ont 1/1/1/1/1/1/1 auto-detect auto", result["rendered"])
-        self.assertIn("configure ethernet ont 1/1/1/1/1/1/1 power-control enable", result["rendered"])
-        self.assertIn("configure ethernet ont 1/1/1/1/1/1/1 pse-class 3", result["rendered"])
-        self.assertIn("configure ethernet ont 1/1/1/1/1/1/1 pse-pw-priority high", result["rendered"])
-        self.assertIn("configure ethernet ont 1/1/1/1/1/1/1 pwr-override disable", result["rendered"])
-        self.assertIn("configure ethernet ont 1/1/1/1/1/1/1 lpt-mode enabled", result["rendered"])
-        self.assertIn("configure ethernet ont 1/1/1/1/1/1/1 admin-state up", result["rendered"])
+        self.assertEqual(
+            result["rendered"],
+            [
+                'configure ethernet ont 1/1/1/1/1/1/1 cust-info "Customer port 1" auto-detect auto power-control enable pse-class 3 pse-pw-priority high pwr-override disable lpt-mode enabled admin-state up'
+            ],
+        )
 
     def test_isam_ethernet_onts_deleted_preserves_ont_siblings(self):
         self.get_config.return_value = dedent(

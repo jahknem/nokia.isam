@@ -67,12 +67,8 @@ class TestIsamLinkAggModule(TestIsamModule):
             set(result["rendered"]),
             set(
                 [
-                    "configure link-agg port 1/1/8/1 passive-lacp",
-                    "configure link-agg port 1/1/8/1 short-timeout",
-                    "configure link-agg group 1/1/8/10 load-sharing-policy mac-src-dst",
-                    "configure link-agg group 1/1/8/10 swo-revert enable",
-                    "configure link-agg group 1/1/8/10 mode dynamic",
-                    "configure link-agg group 1/1/8/10 master-iwf auto",
+                    "configure link-agg port 1/1/8/1 passive-lacp short-timeout",
+                    "configure link-agg group 1/1/8/10 load-sharing-policy mac-src-dst swo-revert enable mode dynamic master-iwf auto",
                     "configure link-agg group 1/1/8/10 port 1/1/8/1",
                 ]
             ),
@@ -178,7 +174,6 @@ class TestIsamLinkAggModule(TestIsamModule):
         self.assertEqual(
             set(result["commands"]),
             set([
-                "configure link-agg port 1/1/8/1 no short-timeout",
-                "configure link-agg port 1/1/8/1 no actor-port-prio",
+                "configure link-agg port 1/1/8/1 no short-timeout no actor-port-prio",
             ]),
         )

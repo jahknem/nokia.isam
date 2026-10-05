@@ -50,7 +50,7 @@ class TestIsamPonInterfacesModule(TestIsamModule):
             ignore_provider_arg,
         )
         result = self.execute_module(changed=False)
-        self.assertIn("configure pon interface 1/1/1/1 label access-pon-1", result["rendered"])
+        self.assertIn("configure pon interface 1/1/1/1 label access-pon-1 fec-dn enable ponid-interval 10 ponid-identifier 00000000000001 tconts-per-frame 44", result["rendered"])
         self.assertIn("configure pon interface 1/1/1/1 tc-layer pm-collect tca-enable", result["rendered"])
 
     def test_isam_pon_interfaces_parsed(self):
@@ -136,10 +136,7 @@ class TestIsamPonInterfacesModule(TestIsamModule):
         )
         result = self.execute_module(changed=False)
         rendered = result["rendered"]
-        self.assertIn("configure pon interface 1/1/5/1 ponid-odn auto", rendered)
-        self.assertIn("configure pon interface 1/1/5/1 pon-speed 10g-10g", rendered)
-        self.assertIn("configure pon interface 1/1/5/1 burst-overhead robust", rendered)
-        self.assertIn("configure pon interface 1/1/5/1 onu-prov-mode auto", rendered)
+        self.assertIn("configure pon interface 1/1/5/1 ponid-odn auto pon-speed 10g-10g burst-overhead robust onu-prov-mode auto", rendered)
 
     def test_isam_pon_interfaces_renders_documented_nested_subtrees(self):
         set_module_args(
@@ -172,8 +169,7 @@ class TestIsamPonInterfacesModule(TestIsamModule):
             "otdr mode disable",
             "utilization pon-pmcollect inherit",
             "utilization threshold txmcutilhi 90",
-            "deact-ont-tca mode percent",
-            "deact-ont-tca monitor-interval 30",
+            "deact-ont-tca mode percent monitor-interval 30",
             "deact-ont-tca threshold-percent high 90",
         ):
             self.assertIn("configure pon interface x-pon:1/1/1/1 " + command, rendered)
@@ -244,7 +240,14 @@ class TestIsamPonInterfacesModule(TestIsamModule):
             ignore_provider_arg,
         )
         result = self.execute_module(changed=True)
-        self.assertIn("configure pon interface 1/1/1/1 label new-label", result["commands"])
+        self.assertEqual(
+            result["commands"],
+            [
+                "configure pon interface 1/1/1/1 admin-state down",
+                "configure pon interface 1/1/1/1 label new-label no fec-dn no ponid-interval",
+                "configure pon interface 1/1/1/1 admin-state up",
+            ],
+        )
         self.assertTrue(any("no fec-dn" in command for command in result["commands"]))
         self.assertFalse(any("1/1/1/2" in command for command in result["commands"]))
 

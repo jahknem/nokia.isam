@@ -63,6 +63,20 @@ for negate, key, value in iter_cli_fields(tokens, bool_fields=flags, value_field
         lines.append("  {0}{1} {2}".format("no " if negate else "", key, value))
 ```
 
+## Command Compaction
+
+`compact_cli_commands()` combines adjacent rendered commands only when the RM
+declares a grammar-specific `COMPACT_COMMAND_SCOPES` rule. A rule captures the
+full command scope (object identity and nested CLI context) separately from
+the attribute suffix. Do not use a broad shared-prefix pattern: repeated list
+operations, PON admin-state sequencing, and bridge VLAN dependencies must stay
+distinct.
+
+The collection applies declared scopes after RM `addcmd()` rendering. RMs that
+build commands directly compact after their resource-specific ordering steps,
+as the bridge RM does. Keep commands separate when live output or a fixture
+shows distinct scopes, or when a packed parser is not available.
+
 ## When Not To Use Them
 
 Do not use these helpers for command rendering where the CLI spelling must remain hyphenated. Rendering code should usually translate internal names back to CLI names explicitly.
