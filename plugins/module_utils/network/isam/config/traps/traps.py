@@ -27,6 +27,11 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 
 
 class Isam_traps(ResourceModule):
+    COMPACT_COMMAND_SCOPES = (
+        r"^(?P<scope>configure trap manager \S+) (?P<suffix>.+)$",
+        r"^(?P<scope>configure trap v6manager \S+) (?P<suffix>.+)$",
+    )
+
     def __init__(self, module):
         super(Isam_traps, self).__init__(
             empty_fact_val={},

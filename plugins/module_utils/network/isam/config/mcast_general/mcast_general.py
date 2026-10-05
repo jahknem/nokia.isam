@@ -21,6 +21,10 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 class Mcast_general(ResourceModule):
     """The isam_mcast_general config class."""
 
+    COMPACT_COMMAND_SCOPES = (
+        r"^(?P<scope>configure mcast general) (?P<suffix>.+)$",
+    )
+
     def __init__(self, module):
         super(Mcast_general, self).__init__(
             empty_fact_val={},

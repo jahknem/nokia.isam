@@ -194,6 +194,29 @@ class TestIsamInterfacesModule(TestIsamModule):
         self.assertTrue(any("link-updown-trap" in cmd for cmd in cmds))
         self.assertTrue(any("port-type uni" in cmd for cmd in cmds))
 
+    def test_isam_interfaces_renders_compact_commands(self):
+        set_module_args(
+            dict(
+                config=[
+                    dict(
+                        name="uni:1/1/5/1/6/1/1",
+                        admin_up=True,
+                        user="Y1110111",
+                    )
+                ],
+                state="rendered",
+            ),
+            ignore_provider_arg,
+        )
+
+        result = self.execute_module(changed=False)
+        self.assertEqual(
+            result["rendered"],
+            [
+                "configure interface port uni:1/1/5/1/6/1/1 admin-up user Y1110111"
+            ],
+        )
+
     def test_isam_interfaces_parsed_requires_running_config(self):
         set_module_args(dict(state="parsed"), ignore_provider_arg)
         self.execute_module(failed=True)

@@ -29,6 +29,11 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 class Xdsl_lines(ResourceModule):
     """The isam_xdsl_lines config class."""
 
+    COMPACT_COMMAND_SCOPES = (
+        r"^(?P<scope>configure xdsl line \S+) (?P<suffix>(?!tca-line-threshold(?:\s|$)).+)$",
+        r"^(?P<scope>configure xdsl line \S+ tca-line-threshold) (?P<suffix>.+)$",
+    )
+
     def __init__(self, module):
         super(Xdsl_lines, self).__init__(
             empty_fact_val=[],

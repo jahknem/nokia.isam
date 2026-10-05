@@ -58,11 +58,7 @@ class TestIsamXdslLinesModule(TestIsamModule):
             ignore_provider_arg,
         )
         commands = [
-            "configure xdsl line 1/1/3/1 service-profile 13",
-            "configure xdsl line 1/1/3/1 spectrum-profile 2",
-            "configure xdsl line 1/1/3/1 dpbo-profile 1",
-            "configure xdsl line 1/1/3/1 vect-profile 10",
-            "configure xdsl line 1/1/3/1 admin-up",
+            "configure xdsl line 1/1/3/1 service-profile 13 spectrum-profile 2 dpbo-profile 1 vect-profile 10 admin-up",
         ]
         result = self.execute_module(changed=False)
         self.assertEqual(set(result["rendered"]), set(commands))
@@ -225,11 +221,7 @@ class TestIsamXdslLinesModule(TestIsamModule):
             ignore_provider_arg,
         )
         rendered = self.execute_module(changed=False)["rendered"]
-        self.assertIn("configure xdsl line 1/1/3/1 carrier-data-mode on", rendered)
-        self.assertIn("configure xdsl line 1/1/3/1 transfer-mode ptm", rendered)
-        self.assertIn("configure xdsl line 1/1/3/1 vect-qln-mode with-cancel", rendered)
-        self.assertIn("configure xdsl line 1/1/3/1 vect-fallback forced", rendered)
-        self.assertIn("configure xdsl line 1/1/3/1 ansi-t1413", rendered)
+        self.assertIn("configure xdsl line 1/1/3/1 carrier-data-mode on transfer-mode ptm vect-qln-mode with-cancel vect-fallback forced ansi-t1413", rendered)
 
     def _set_xdsl_have(self):
         self.get_config.return_value = dedent(
@@ -246,7 +238,7 @@ class TestIsamXdslLinesModule(TestIsamModule):
             ignore_provider_arg,
         )
         result = self.execute_module(changed=True)
-        self.assertIn("configure xdsl line 1/1/3/1 service-profile 14", result["commands"])
+        self.assertEqual(result["commands"], ["configure xdsl line 1/1/3/1 service-profile 14"])
         self.assertFalse(any("1/1/3/2" in command for command in result["commands"]))
 
         set_module_args(
@@ -261,7 +253,7 @@ class TestIsamXdslLinesModule(TestIsamModule):
             ignore_provider_arg,
         )
         result = self.execute_module(changed=True)
-        self.assertIn("configure xdsl line 1/1/3/1 service-profile 14", result["commands"])
+        self.assertTrue(any(command.startswith("configure xdsl line 1/1/3/1 service-profile 14") for command in result["commands"]))
         self.assertTrue(any("no spectrum-profile" in command for command in result["commands"]))
         self.assertFalse(any("1/1/3/2" in command for command in result["commands"]))
 

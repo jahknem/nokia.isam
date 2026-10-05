@@ -103,6 +103,8 @@ class TestIsamVlansModule(TestIsamModule):
         self.assertTrue(vlans["100"]["vmac-not-in-opt61"])
         self.assertEqual(vlans["100"]["dhcp-opt82-ext"], "add-or-forward")
         self.assertTrue(vlans["100"]["relay-id-dhcp"])
+        self.assertEqual(vlans["100"]["dhcpv6-itf-id"], "physical-id")
+        self.assertEqual(vlans["100"]["dhcpv6-remote-id"], "customer-id")
         self.assertEqual(vlans["stacked:552:2"]["pppoe-relay-tag"], "configurable")
 
         negative = dedent(
@@ -138,9 +140,48 @@ class TestIsamVlansModule(TestIsamModule):
         result = self.execute_module(changed=False)
         self.assertIn("rendered", result)
         self.assertIsInstance(result.get("rendered"), list)
-        self.assertIn("configure vlan id 100 priority 5", result["rendered"])
-        self.assertIn("configure vlan id 100 new-secure-fwd enable", result["rendered"])
-        self.assertIn("configure vlan id 100 sntp-proxy", result["rendered"])
+        self.assertIn(
+            "configure vlan id 100 name HomeNet mode residential-bridge sntp-proxy priority 5 new-broadcast inherit protocol-filter pass-all no drly-srv-usr-side new-secure-fwd enable",
+            result["rendered"],
+        )
+
+    def test_isam_vlans_compacts_each_native_vlan_scope_and_round_trips(self):
+        set_module_args(
+            dict(
+                state="rendered",
+                config=[
+                    {
+                        "id": "410",
+                        "mode": "residential-bridge",
+                        "name": "HSI-410",
+                        "new-secure-fwd": "enable",
+                        "in-qos-prof-name": "name:Default_TC0",
+                        "dhcp-opt82-ext": "enable",
+                        "circuit-id-dhcp": "physical-id",
+                        "remote-id-dhcp": "customer-id",
+                    }
+                ],
+            ),
+            ignore_provider_arg,
+        )
+        rendered = self.execute_module(changed=False)["rendered"]
+        self.assertEqual(
+            rendered,
+            [
+                "configure vlan id 410 name HSI-410 mode residential-bridge new-broadcast inherit protocol-filter pass-all no drly-srv-usr-side new-secure-fwd enable in-qos-prof-name name:Default_TC0",
+                "configure vlan id 410 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id",
+            ],
+        )
+
+        set_module_args(
+            dict(running_config="\n".join(rendered), state="parsed"),
+            ignore_provider_arg,
+        )
+        parsed = self.execute_module(changed=False)["parsed"][0]
+        self.assertEqual(parsed["mode"], "residential-bridge")
+        self.assertEqual(parsed["name"], "HSI-410")
+        self.assertEqual(parsed["dhcp-opt82-ext"], "enable")
+        self.assertEqual(parsed["circuit-id-dhcp"], "physical-id")
 
     def test_isam_vlans_parsed_requires_running_config(self):
         set_module_args(dict(state="parsed"), ignore_provider_arg)
@@ -187,7 +228,10 @@ class TestIsamVlansModule(TestIsamModule):
             ignore_provider_arg,
         )
         result = self.execute_module(changed=True)
-        self.assertIn("configure vlan id 100 name Changed", result["commands"])
+        self.assertIn(
+            "configure vlan id 100 no mode no priority no new-secure-fwd name Changed",
+            result["commands"],
+        )
         self.assertTrue(any("no priority" in command for command in result["commands"]))
         self.assertFalse(any("id 200" in command for command in result["commands"]))
 

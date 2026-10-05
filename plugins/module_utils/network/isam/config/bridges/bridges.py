@@ -86,6 +86,12 @@ class Bridges(ResourceModule):
     The isam_bridges config class
     """
 
+    COMPACT_COMMAND_SCOPES = (
+        r"^(?P<scope>configure bridge port \S+) (?P<suffix>(?!vlan-id(?:\s|$)|pvid(?:\s|$)|vlan-tpid\d+(?:\s|$)).+)$",
+        r"^(?P<scope>configure bridge port \S+ vlan-id \S+) (?P<suffix>(?!network-vlan(?:\s|$)|static-user(?:\s|$)).+)$",
+        r"^(?P<scope>configure bridge port \S+ vlan-tpid\d+) (?P<suffix>.+)$",
+    )
+
     def __init__(self, module):
         super(Bridges, self).__init__(
             empty_fact_val=[],

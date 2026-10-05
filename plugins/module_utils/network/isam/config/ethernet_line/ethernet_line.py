@@ -37,6 +37,12 @@ class Ethernet_line(ResourceModule):
     The isam_ethernet_line config class
     """
 
+    COMPACT_COMMAND_SCOPES = (
+        r"^(?P<scope>configure ethernet line \S+) (?P<suffix>(?!tca-line-threshold(?:\s|$)|mau(?:\s|$)).+)$",
+        r"^(?P<scope>configure ethernet line \S+ tca-line-threshold(?: \S+)?) (?P<suffix>.+)$",
+        r"^(?P<scope>configure ethernet line \S+ mau \S+) (?P<suffix>.+)$",
+    )
+
     def __init__(self, module):
         super(Ethernet_line, self).__init__(
             empty_fact_val={},

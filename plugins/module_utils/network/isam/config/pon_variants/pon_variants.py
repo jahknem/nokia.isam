@@ -118,6 +118,10 @@ class _Base(ResourceModule):
         return "configure channel-pair no interface %s" % key
 
 class Ngpon2_channel_groups(_Base):
+    COMPACT_COMMAND_SCOPES = (
+        r"^(?P<scope>configure channel-group id \S+) (?P<suffix>(?!subchannel-group(?:\s|$)|channel-pair(?:\s|$)).+)$",
+        r"^(?P<scope>configure channel-group id \S+ subchannel-group id \S+) (?P<suffix>(?!channel-pair(?:\s|$)).+)$",
+    )
     fields = ("name", "polling_period", "raman_reduct", "ng2sys_id", "admin_state")
     def __init__(self, module): super(Ngpon2_channel_groups, self).__init__(empty_fact_val=[], facts_module=_VariantFacts("ngpon2_channel_groups", module), module=module, resource="ngpon2_channel_groups", tmplt=Ngpon2_channel_groupsTemplate())
     def generate_commands(self):
@@ -133,6 +137,9 @@ class Ngpon2_channel_groups(_Base):
                 for pair in sub.get("channel_pairs", []): self.addcmd(dict(channel_group_id=group["id"], id=sub["id"], channel_pair=pair), "subchannel_group.channel_pair")
 
 class Epon_interfaces(_Base):
+    COMPACT_COMMAND_SCOPES = (
+        r"^(?P<scope>configure epon interface \S+) (?P<suffix>.+)$",
+    )
     fields = ("polling_period", "dba_polling0", "dba_polling1", "dba_polling2", "dba_polling3", "dba_polling4", "admin_state")
     def __init__(self, module): super(Epon_interfaces, self).__init__(empty_fact_val=[], facts_module=_VariantFacts("epon_interfaces", module), module=module, resource="epon_interfaces", tmplt=Epon_interfacesTemplate())
     def generate_commands(self):
@@ -144,6 +151,10 @@ class Epon_interfaces(_Base):
                     self.addcmd(dict(name=item["name"], field=field.replace("_", "-"), value=item[field]), "interface")
 
 class Channel_pair_pm(_Base):
+    COMPACT_COMMAND_SCOPES = (
+        r"^(?P<scope>configure channel-pair interface \S+ fec-tc-layer) (?P<suffix>.+)$",
+        r"^(?P<scope>configure channel-pair interface \S+ xg-tc-layer) (?P<suffix>.+)$",
+    )
     def __init__(self, module): super(Channel_pair_pm, self).__init__(empty_fact_val=[], facts_module=_VariantFacts("channel_pair_pm", module), module=module, resource="channel_pair_pm", tmplt=Channel_pair_pmTemplate())
     def generate_commands(self):
         if self._prepare_state_commands():

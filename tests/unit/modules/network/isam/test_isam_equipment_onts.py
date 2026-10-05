@@ -79,19 +79,13 @@ class TestIsamEquipmentOntsModule(TestIsamModule):
             ignore_provider_arg,
         )
         commands = [
-            "configure equipment ont interface 1/1/5/1/1 sw-ver-pland auto",
-            "configure equipment ont interface 1/1/5/1/1 sernum ALCL:F9772423",
-            "configure equipment ont interface 1/1/5/1/1 fec-up disable",
-            "configure equipment ont interface 1/1/5/1/1 bridge-map-mode n-mp-bridge-map-filter",
-            "configure equipment ont interface 1/1/5/1/1 ont-enable enable",
-            "configure equipment ont interface 1/1/5/1/1 p2p-enable enable",
-            "configure equipment ont interface 1/1/5/1/1 admin-state up",
+            "configure equipment ont interface 1/1/5/1/1 sw-ver-pland auto sernum ALCL:F9772423 fec-up disable bridge-map-mode n-mp-bridge-map-filter ont-enable enable p2p-enable enable admin-state up",
             "configure equipment ont slot 1/1/5/1/1/1 planned-card-type ethernet plndnumdataports 1 plndnumvoiceports 0",
-            "configure equipment ont sw-ctrl 1 hw-version 3FE47211AB*",
-            "configure equipment ont sw-ctrl 1 ont-variant DO",
+            "configure equipment ont sw-ctrl 1 hw-version 3FE47211AB* ont-variant DO",
         ]
         result = self.execute_module(changed=False)
         self.assertEqual(set(result["rendered"]), set(commands))
+        self.assertFalse(any("log-auth-pwd" in command for command in result["rendered"]))
 
     def test_isam_equipment_onts_parsed(self):
         set_module_args(
