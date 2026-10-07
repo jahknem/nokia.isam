@@ -158,6 +158,9 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ont_ranging_status import (
     OntRangingStatusParser,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.operational import (
+    Ont_serialsFacts,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ont_operational.ont_operational import (
     parse_status_table,
 )
@@ -685,6 +688,26 @@ def test_equipment_status_live_show_fixture_is_parseable():
     assert len(rows) == 12
     types = {row["actual_type"] for row in rows}
     assert types == {"nant-e", "empty", "ndps-c", "ndlt-f", "fglt-b", "nelt-b"}
+
+
+def test_ont_serials_live_show_fixture_yields_ont_idx_sernum_pairs():
+    descriptor, output = fixture_bundle("ont_serials", "live-nant-e")
+
+    assert descriptor["command"] == "show equipment ont interface"
+
+    parsed = Ont_serialsFacts(None).parse(output)
+    serials = parsed["serials"]
+
+    assert len(serials) == 75
+    assert {entry["ont_idx"] for entry in serials} == {row["ont_idx"] for row in parse_status_table(output)}
+    assert all(entry["ont_idx"] for entry in serials)
+    assert all(":" in entry["sernum"] for entry in serials)
+
+    # A serial must resolve back to the interface the device reports it on, which
+    # is the property the reconciler's serial-reuse guard depends on.
+    by_serial = {entry["sernum"]: entry["ont_idx"] for entry in serials}
+    assert len(by_serial) == len(set(by_serial.values()))
+    assert "1/1/2/1/1" in {entry["ont_idx"] for entry in serials}
 
 
 def test_dhcp_relay_live_show_fixture_is_parseable():

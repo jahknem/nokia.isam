@@ -385,6 +385,7 @@ class TestIsamFactsModule(TestIsamModule):
             "interface_status",
             "ont_status",
             "ont_ranging_status",
+            "ont_serials",
             "ont_software_status",
             "pon_pm_status",
             "pon_status",
@@ -401,6 +402,7 @@ class TestIsamFactsModule(TestIsamModule):
                 "show equipment slot",
                 "show interface port",
                 "show equipment ont status pon",
+                "show equipment ont interface",
                 "show equipment ont ranging-status channel-pair",
                 "show equipment ont sw-version",
                 "show equipment ont sw-download",
@@ -468,6 +470,53 @@ class TestIsamFactsModule(TestIsamModule):
         self.assertEqual(len(ont_status), 74)
         self.assertEqual(ont_status[0]["pon"], "1/1/2/1")
         self.assertEqual(ont_status[0]["sernum"], "XXXX:SANIT")
+
+    def test_isam_facts_with_ont_serials_fixture(self):
+        """Integration test using the ont_serials fixture file."""
+        from pathlib import Path
+        fixture_path = Path(__file__).parent.parent.parent.parent.parent / "fixtures" / "ont_serials" / "live-nant-e" / "output.txt"
+        fixture_content = fixture_path.read_text()
+
+        class OntSerialsConn:
+            def get(self, cmd):
+                if cmd == "show equipment ont interface":
+                    return fixture_content
+                return ""
+
+        self.get_resource_connection_facts.return_value = OntSerialsConn()
+        set_module_args(dict(gather_subset=["ont_serials"]))
+
+        result = self.execute_module(changed=False)
+        facts = result["ansible_facts"]
+        serials = facts["ansible_net_ont_serials"]["serials"]
+
+        self.assertEqual(facts["ansible_network_resources"], {})
+        self.assertEqual(len(serials), 75)
+        self.assertTrue(all(set(entry) == {"ont_idx", "sernum"} for entry in serials))
+        self.assertEqual(serials[0]["ont_idx"], "1/1/2/1/1")
+
+    def test_isam_facts_ont_serials_absent_when_device_rejects_command(self):
+        """An unsupported command must omit the key, not return an empty index.
+
+        A caller that guards ONT-serial reuse must be able to tell "this device
+        cannot report serials" apart from "this MSAN has no ONTs configured";
+        only an absent key makes that distinction possible.
+        """
+        class UnsupportedConn:
+            def get(self, cmd):
+                raise RuntimeError("invalid token: 'show' not accepted")
+
+        self.get_resource_connection_facts.return_value = UnsupportedConn()
+        set_module_args(dict(gather_subset=["ont_serials"]))
+
+        result = self.execute_module(changed=False)
+        facts = result["ansible_facts"]
+
+        self.assertNotIn("ansible_net_ont_serials", facts)
+        self.assertTrue(
+            any("ont_serials" in warning for warning in result.get("warnings", [])),
+            result.get("warnings"),
+        )
 
     def test_isam_facts_with_software_status_fixture(self):
         """Integration test using software_status fixture file."""

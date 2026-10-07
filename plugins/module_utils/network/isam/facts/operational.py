@@ -4,6 +4,8 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
+from ansible.module_utils.common.text.converters import to_text
+
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.isam_equipment.operational import (
     EquipmentOperationalParser,
 )
@@ -55,6 +57,40 @@ class Ont_statusFacts(_OperationalFacts):
 
     def parse(self, output):
         return parse_status_table(output)
+
+
+class Ont_serialsFacts(_OperationalFacts):
+    """MSAN-wide ONT serial index.
+
+    ``show equipment ont interface`` returns one compact row per configured ONT
+    carrying ``ont-idx`` and ``sernum``. That is the only MSAN-wide fact a
+    reconciler needs to reject an ONT serial that is already in use and to count
+    ONTs per PON.
+
+    It is deliberately not derived from ``info configure equipment ont flat``:
+    expanding the whole configuration tree is markedly slower on a populated
+    MSAN, and the tree carries far more than these two columns. Callers that also
+    need per-ONT configuration detail (slot shape, admin state) should keep
+    reading the scoped ``info configure equipment ont interface <idx>`` form for
+    the identities they actually care about.
+
+    A device that does not implement the command answers ``invalid token``; that
+    is surfaced as a warning by the caller rather than treated as an empty
+    index, so a missing command can never be mistaken for "no serials in use".
+    """
+
+    command = "show equipment ont interface"
+    key = "ont_serials"
+
+    def parse(self, output):
+        table = parse_status_table(output)
+        return {
+            "serials": [
+                {"ont_idx": to_text(row.get("ont_idx")), "sernum": to_text(row.get("sernum"))}
+                for row in table
+                if to_text(row.get("ont_idx"))
+            ]
+        }
 
 
 class Pon_statusFacts(_OperationalFacts):
