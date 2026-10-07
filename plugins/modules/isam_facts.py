@@ -29,6 +29,14 @@ options:
         by one or more operational subsets for a focused query. C(all)
         gathers every operational subset. Values can be excluded with an
         initial C(M(!)).
+      - C(ont_serials) returns an MSAN-wide ONT serial index under
+        C(ansible_net_ont_serials). It issues C(show equipment ont interface),
+        which is markedly cheaper than expanding the whole
+        C(info configure equipment ont flat) tree, so prefer it when only
+        C(ont-idx) to C(sernum) bindings are needed. A device that does not
+        implement the command reports a warning; callers that depend on the
+        index for a safety decision must treat a missing index as a failure
+        rather than as "no ONTs configured".
     required: false
     default: ['!all']
     version_added: "2.2"

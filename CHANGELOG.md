@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.4
+
+- Added the `ont_serials` `isam_facts` operational subset, which reads
+  `show equipment ont interface` and returns an MSAN-wide `ont-idx` to `sernum`
+  index under `ansible_net_ont_serials`. This is substantially cheaper than
+  expanding the whole `info configure equipment ont flat` tree and is
+  sufficient for ONT-serial reuse detection and per-PON population counting.
+  A device that rejects the command omits the key rather than reporting an
+  empty index, so callers can distinguish "unsupported" from "no ONTs".
+
 ## 0.3.3
 
 - Allow bridge network VLANs without an l2fwder VLAN.
