@@ -310,6 +310,14 @@ class Bridges(ResourceModule):
     def _compare_vlan(self, port_name, vid, want_vlan, have_vlan):
         want_vlan = self._normalize_vlan(port_name, vid, want_vlan)
         have_vlan = self._normalize_vlan(port_name, vid, have_vlan)
+        # A requested network_vlan without l2fwder_vlan cannot be expressed on
+        # this platform. Reject it rather than silently dropping the mapping.
+        if want_vlan.get("network_vlan") is not None and want_vlan.get("l2fwder_vlan") is None:
+            raise ValueError(
+                "bridge VLAN %s on %s requires l2fwder_vlan before network_vlan" %
+                (vid, port_name)
+            )
+
         vlan_start = len(self.commands)
         self.compare(parsers=VLAN_PARSERS, want=want_vlan, have=have_vlan)
         self._compare_static_users(port_name, vid, want_vlan, have_vlan)

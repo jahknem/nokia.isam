@@ -202,7 +202,7 @@ class TestIsamBridgesModule(TestIsamModule):
             "configure bridge port 1/1/8/1 vlan-id 20 network-vlan 720",
         ])
 
-    def test_isam_bridges_renders_network_vlan_without_l2fwder_vlan(self):
+    def test_isam_bridges_rejects_network_vlan_without_l2fwder_vlan(self):
         set_module_args(
             dict(
                 config={"port": [{"port": "1/1/8/1", "vlan_id": [{"id": "100", "network_vlan": 200}]}]},
@@ -210,11 +210,10 @@ class TestIsamBridgesModule(TestIsamModule):
             ),
             ignore_provider_arg,
         )
-        result = self.execute_module(changed=False)
-        self.assertEqual(result.get("rendered"), [
-            "configure bridge port 1/1/8/1",
-            "configure bridge port 1/1/8/1 vlan-id 100 network-vlan 200",
-        ])
+        # Live ISAM configuration is represented with l2fwder_vlan. A
+        # network_vlan-only request is not a supported write shape and must
+        # fail rather than render a command not seen on the device.
+        self.execute_module(failed=True)
 
     def test_isam_bridges_merged_keeps_matching_l2fwder_vlan(self):
         class FakeConn:
