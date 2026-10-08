@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.7
+
+- Fix creation of bare bridge VLANs. A requested VLAN without attributes, such
+  as a PVID VLAN, must still emit its `configure bridge port <port> vlan-id
+  <id>` bootstrap command. The 0.3.6 emptiness check ran after normalization,
+  which always stamps addressing keys, so the command was silently dropped.
+
 ## 0.3.6
 
 - Consolidate bridge VLAN mapping onto the single canonical `l2fwder_vlan`

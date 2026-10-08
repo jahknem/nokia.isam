@@ -265,6 +265,61 @@ class TestIsamBridgesModule(TestIsamModule):
         )
         self.get_resource_connection.return_value.edit_config.assert_not_called()
 
+    def test_isam_bridges_rendered_creates_bare_vlan(self):
+        set_module_args(
+            dict(
+                config={
+                    "port": [{
+                        "port": "1/1/8/1",
+                        "vlan_id": [{"id": "99"}],
+                    }]
+                },
+                state="rendered",
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        self.assertEqual(
+            result.get("rendered"),
+            [
+                "configure bridge port 1/1/8/1",
+                "configure bridge port 1/1/8/1 vlan-id 99",
+            ],
+        )
+
+    def test_isam_bridges_merged_keeps_existing_bare_vlan(self):
+        class FakeFactsConn:
+            def get(self, command):
+                return (
+                    "configure bridge port 1/1/8/1\n"
+                    "configure bridge port 1/1/8/1 vlan-id 99\n"
+                )
+
+        class FakeConn:
+            def get(self, command):
+                return ""
+
+            def edit_config(self, **kwargs):
+                raise AssertionError("edit_config must not be called")
+
+        self.get_resource_connection_facts.return_value = FakeFactsConn()
+        self.get_resource_connection.return_value = FakeConn()
+        set_module_args(
+            dict(
+                config={
+                    "port": [{
+                        "port": "1/1/8/1",
+                        "vlan_id": [{"id": "99"}],
+                    }]
+                },
+                state="merged",
+                _ansible_check_mode=True,
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["commands"], [])
+
     def test_isam_bridges_merged_sends_commands_through_edit_config(self):
         self.get_resource_connection_facts.return_value.get.return_value = ""
         set_module_args(
