@@ -316,13 +316,19 @@ class Bridges(ResourceModule):
         return data
 
     def _compare_vlan(self, port_name, vid, want_vlan, have_vlan):
+        # Decide on the raw gathered entry: _normalize_vlan stamps addressing
+        # keys, so the normalized dict is never empty.
+        vlan_exists = bool(have_vlan)
         want_vlan = self._normalize_vlan(port_name, vid, want_vlan)
         have_vlan = self._normalize_vlan(port_name, vid, have_vlan)
         vlan_start = len(self.commands)
         self.compare(parsers=VLAN_PARSERS, want=want_vlan, have=have_vlan)
         self._compare_static_users(port_name, vid, want_vlan, have_vlan)
         vlan_commands = self.commands[vlan_start:]
-        if not vlan_commands and not have_vlan:
+        # The vlan_id parser is used by facts, not command generation. A VLAN
+        # requested without any attribute still needs its base command, but an
+        # already configured VLAN must not be re-created.
+        if not vlan_commands and not vlan_exists:
             vlan_commands = [
                 "configure bridge port %s vlan-id %s" % (port_name, vid)
             ]
