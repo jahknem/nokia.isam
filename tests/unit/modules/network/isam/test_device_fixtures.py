@@ -237,7 +237,7 @@ def test_bridge_live_flat_fixture_is_parseable():
     assert descriptor["command"] == "info configure bridge flat"
     assert port["port"] == "1/1/2/1/1/1/1"
     assert port["pvid"] == 99
-    assert vlans["20"]["l2fwder_vlan"] == 720
+    assert vlans["20"]["l2fwder_vlan"] == "720"
     assert vlans["20"]["qos"] == "priority:5"
 
 

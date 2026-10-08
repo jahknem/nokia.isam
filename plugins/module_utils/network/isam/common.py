@@ -35,6 +35,35 @@ def normalize_resource_keys(data, aliases=None):
     return result
 
 
+def normalize_bridge_vlan_alias(data, strict=False):
+    """Map obsolete ``network_vlan`` to the canonical ``l2fwder_vlan`` key.
+
+    The ISAM CLI keeps ``network-vlan`` as a backwards-compatible alias for
+    ``l2fwder-vlan``. Resource inputs and parsed legacy config therefore share
+    one internal field, typed as ``str`` to match the resource argspec. When
+    ``strict`` is true, conflicting values supplied under both names are
+    rejected instead of silently choosing one.
+    """
+    result = normalize_resource_keys(data)
+    if not isinstance(result, dict):
+        return result
+
+    legacy_value = result.pop("network_vlan", None)
+    canonical_value = result.get("l2fwder_vlan")
+    if canonical_value is None:
+        if legacy_value is None:
+            return result
+        canonical_value = legacy_value
+    elif legacy_value is not None and strict:
+        if str(canonical_value) != str(legacy_value):
+            raise ValueError(
+                "network_vlan is an alias of l2fwder_vlan; conflicting values "
+                "were provided"
+            )
+    result["l2fwder_vlan"] = str(canonical_value)
+    return result
+
+
 def normalize_resource_list(data, aliases=None):
     return [normalize_resource_keys(entry, aliases=aliases) for entry in data or []]
 

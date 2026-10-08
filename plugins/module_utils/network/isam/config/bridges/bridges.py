@@ -28,6 +28,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
     Facts,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    normalize_bridge_vlan_alias,
     normalize_resource_keys,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.bridges import (
@@ -56,7 +57,6 @@ PORT_PARSERS = [
 VLAN_PARSERS = [
     "tag",
     "l2fwder_vlan",
-    "network_vlan",
     "vlan_scope",
     "qos",
     "vlan_qos_profile",
@@ -88,7 +88,7 @@ class Bridges(ResourceModule):
 
     COMPACT_COMMAND_SCOPES = (
         r"^(?P<scope>configure bridge port \S+) (?P<suffix>(?!vlan-id(?:\s|$)|pvid(?:\s|$)|vlan-tpid\d+(?:\s|$)).+)$",
-        r"^(?P<scope>configure bridge port \S+ vlan-id \S+) (?P<suffix>(?!network-vlan(?:\s|$)|static-user(?:\s|$)).+)$",
+        r"^(?P<scope>configure bridge port \S+ vlan-id \S+) (?P<suffix>(?!static-user(?:\s|$)).+)$",
         r"^(?P<scope>configure bridge port \S+ vlan-tpid\d+) (?P<suffix>.+)$",
     )
 
@@ -182,7 +182,8 @@ class Bridges(ResourceModule):
         self._validate_vlan_dependencies(port_name, want, want_vlans, have_vlans)
 
         for vid in want_vlans:
-            self._compare_vlan(port_name, vid, want_vlans[vid], have_vlans.pop(vid, {}))
+            have_vlan = have_vlans.pop(vid, {})
+            self._compare_vlan(port_name, vid, want_vlans[vid], have_vlan)
 
         # remaining vlans in have (present in running but not in want)
         for vid, have_vlan in iteritems(have_vlans):
@@ -208,6 +209,13 @@ class Bridges(ResourceModule):
 
     @staticmethod
     def _index_vlans(data, include_template_vlan=True):
+        """Index per-vlan entries by VLAN id using the canonical alias mapping.
+
+        This is the single entry point for both requested and gathered VLAN
+        data, so the obsolete ``network_vlan`` alias is resolved before any
+        validation, comparison or rendering. Contradictory values under both
+        names are rejected here.
+        """
         indexed = {}
         if not isinstance(data, dict):
             return indexed
@@ -216,7 +224,9 @@ class Bridges(ResourceModule):
         if isinstance(vlan_list, list):
             for entry in vlan_list:
                 if isinstance(entry, dict) and "id" in entry:
-                    indexed[entry["id"]] = entry
+                    indexed[entry["id"]] = normalize_bridge_vlan_alias(
+                        entry, strict=True
+                    )
 
         if not include_template_vlan:
             return indexed
@@ -226,7 +236,7 @@ class Bridges(ResourceModule):
         if isinstance(vlan_dict, dict):
             for vid, entry in vlan_dict.items():
                 if vid not in indexed:
-                    indexed[vid] = entry
+                    indexed[vid] = normalize_bridge_vlan_alias(entry)
         return indexed
 
     def _delete_bridge_port(self, port_name, want, have, want_vlans, have_vlans):
@@ -298,10 +308,8 @@ class Bridges(ResourceModule):
 
     def _normalize_vlan(self, port_name, vid, data):
         data = dict(data) if isinstance(data, dict) else {}
-        data = normalize_resource_keys(data)
-        if data.get("l2fwder_vlan") is not None:
-            data["l2fwder_vlan"] = str(data["l2fwder_vlan"])
-        # Argspec defaults such as qos=none represent an unset value in CLI.
+        # Aliases are already resolved by _index_vlans; this only stamps the
+        # addressing keys the parsers and templates expect.
         data = {k: v for k, v in data.items() if v != "none"}
         data["vlan_id"] = vid
         data["id"] = port_name
@@ -313,8 +321,13 @@ class Bridges(ResourceModule):
         vlan_start = len(self.commands)
         self.compare(parsers=VLAN_PARSERS, want=want_vlan, have=have_vlan)
         self._compare_static_users(port_name, vid, want_vlan, have_vlan)
+        vlan_commands = self.commands[vlan_start:]
+        if not vlan_commands and not have_vlan:
+            vlan_commands = [
+                "configure bridge port %s vlan-id %s" % (port_name, vid)
+            ]
         self.commands[vlan_start:] = self._order_vlan_commands(
-            port_name, vid, self.commands[vlan_start:]
+            port_name, vid, vlan_commands
         )
 
     @staticmethod
@@ -355,11 +368,6 @@ class Bridges(ResourceModule):
     @staticmethod
     def _order_vlan_commands(port_name, vid, vlan_commands):
         vlan_prefix = "configure bridge port %s vlan-id %s" % (port_name, vid)
-        # The vlan_id parser is used by facts, not command generation. If no
-        # attribute matched, emit the base command so bare VLANs are created.
-        if not any(command.startswith(vlan_prefix) for command in vlan_commands):
-            vlan_commands.insert(0, vlan_prefix)
-
         tag_command = Bridges._first_command_with_prefix(
             vlan_commands, vlan_prefix + " tag "
         )

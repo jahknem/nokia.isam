@@ -171,10 +171,19 @@ options:
                 description:
                 - 'optional parameter with default value: "stacked 0 : 4097"'
                 - 'layer2 forwarder vlan id'
+                - 'this is the canonical VLAN mapping attribute; it is always
+                   rendered as the C(l2fwder-vlan) command and is also the key
+                   reported when the device is configured with the obsolete
+                   C(network-vlan) spelling'
               network_vlan:
                 type: int
                 description:
-                - 'optional network VLAN mapped from this bridge VLAN'
+                - 'obsolete CLI alias of l2fwder_vlan, kept for backwards
+                   compatibility'
+                - 'the value is normalized to l2fwder_vlan and rendered as the
+                   C(l2fwder-vlan) command; supplying both names with
+                   different values fails'
+                - 'prefer l2fwder_vlan in new configuration'
               vlan_scope:
                 type: str
                 description:

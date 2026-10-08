@@ -288,7 +288,7 @@ class BridgesTemplate(NetworkTemplate):
             "name": "l2fwder_vlan",
             "getval": re.compile(
                 r"""
-                configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<vlan_id>(\S+))(?P<negate_l2fwder_vlan>nol2fwder-vlan)|(l2fwder-vlan\s(?P<l2fwder_vlan>\d+))
+                configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<vlan_id>(\S+))\s(?:(?P<negate_l2fwder_vlan>no\s(?:l2fwder-vlan|network-vlan))|(?:l2fwder-vlan|network-vlan)\s(?P<l2fwder_vlan>\d+))
                 $""", re.VERBOSE),
             "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} l2fwder-vlan {{ l2fwder_vlan }}",
             "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no l2fwder-vlan",
@@ -318,26 +318,6 @@ class BridgesTemplate(NetworkTemplate):
                         "vlan": {
                             "{{ vlan_id}}": {
                                 "vlan_scope": "{{ none if negate_vlan_scope is defined else vlan_scope|string }}",
-                            },
-                        },
-                    },
-                },
-            },
-        },
-        {
-            "name": "network_vlan",
-            "getval": re.compile(
-                r"""
-                ^configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<vlan_id>\S+)\s(?:(?P<negate_network_vlan>no\snetwork-vlan)|(network-vlan\s(?P<network_vlan>\d+)))$
-                """, re.VERBOSE),
-            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} network-vlan {{ network_vlan }}",
-            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no network-vlan",
-            "result": {
-                "port": {
-                    "{{ id }}": {
-                        "vlan": {
-                            "{{ vlan_id }}": {
-                                "network_vlan": "{{ none if negate_network_vlan is defined else network_vlan|int }}",
                             },
                         },
                     },
