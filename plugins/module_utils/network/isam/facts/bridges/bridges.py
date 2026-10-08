@@ -21,6 +21,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.br
     BridgesArgs,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    normalize_bridge_vlan_alias,
     parse_cli_key_values,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
@@ -162,15 +163,19 @@ class BridgesFacts(object):
             if not any(entry.get("ip_address") == ip_address for entry in static_user):
                 static_user.append({"ip_address": ip_address})
             return
-        self._apply_rest(vlan_entry, rest, VLAN_BOOL_KEYS)
+        # Legacy "network-vlan" is reported as the canonical l2fwder_vlan key.
+        self._apply_rest(
+            vlan_entry, rest, VLAN_BOOL_KEYS, normalize_bridge_vlan_alias
+        )
 
-    def _apply_rest(self, entry, rest, bool_keys):
+    def _apply_rest(self, entry, rest, bool_keys, canonicalize=None):
         if not rest:
             return
-        entry.update(
-            parse_cli_key_values(
-                rest.split(),
-                bool_fields=bool_keys,
-                infer_numeric=True,
-            )
+        parsed = parse_cli_key_values(
+            rest.split(),
+            bool_fields=bool_keys,
+            infer_numeric=True,
         )
+        if canonicalize is not None:
+            parsed = canonicalize(parsed)
+        entry.update(parsed)

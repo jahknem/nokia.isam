@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.3.6
+
+- Consolidate bridge VLAN mapping onto the single canonical `l2fwder_vlan`
+  attribute. `network_vlan` is accepted as the obsolete CLI alias and is
+  normalized at one entry point, so alias input, legacy device output,
+  validation, comparison and rendering all share the same field.
+  - Rendered commands always use `l2fwder-vlan`; the module never emits the
+    obsolete `network-vlan` form.
+  - Supplying both names with different values now fails instead of writing
+    two conflicting mappings.
+  - The VLAN/PVID ordering guard applies to alias input as well, so
+    `network_vlan` cannot bypass the bootstrap requirement.
+  - Gathered and parsed `l2fwder_vlan` values are strings, matching the
+    resource argspec.
+  - Bridge VLAN removal against a device configured with `network-vlan` is
+    rendered as `no l2fwder-vlan`, which clears the same setting.
+
 ## 0.3.5
 
 - Preserve `network_vlan` as the backwards-compatible alias for
