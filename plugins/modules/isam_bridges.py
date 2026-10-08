@@ -189,6 +189,9 @@ options:
                 description:
                 - 'optional parameter with default value: "l2fwder"'
                 - 'the vlan scope'
+                - 'the C(network) value is an obsolete alternative replaced by
+                   C(l2fwder) and is normalized to C(l2fwder); C(local) is passed
+                   through unchanged'
                 choices:
                 - 'local'
                 - 'l2fwder'

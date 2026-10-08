@@ -8,6 +8,10 @@ __metaclass__ = type
 
 import re
 
+# Bridge VLAN sub-tree aliases. Both entries are confirmed by the device's own
+# help listing for "configure bridge port <port> vlan-id <id>".
+BRIDGE_VLAN_SCOPE_ALIASES = {"network": "l2fwder"}
+
 
 def canonical_key(key):
     return key.replace("-", "_")
@@ -36,13 +40,22 @@ def normalize_resource_keys(data, aliases=None):
 
 
 def normalize_bridge_vlan_alias(data, strict=False):
-    """Map obsolete ``network_vlan`` to the canonical ``l2fwder_vlan`` key.
+    """Resolve obsolete bridge VLAN spellings onto their canonical form.
 
-    The ISAM CLI keeps ``network-vlan`` as a backwards-compatible alias for
-    ``l2fwder-vlan``. Resource inputs and parsed legacy config therefore share
-    one internal field, typed as ``str`` to match the resource argspec. When
-    ``strict`` is true, conflicting values supplied under both names are
-    rejected instead of silently choosing one.
+    The ISAM CLI keeps two backwards-compatible aliases in the bridge VLAN
+    sub-tree, confirmed by the device's own ``help configure bridge port
+    <port> vlan-id <id>`` listing:
+
+    * ``network-vlan`` is documented as an "obsolete parameter replaced by
+      parameter l2fwder-vlan" and shares its ``<Network::StackedVlan>`` type.
+    * the ``vlan-scope`` value ``network`` is documented as an "obsolete
+      alternative replaced by l2fwder".
+
+    Resource inputs, parsed legacy config and rendered commands therefore
+    share one internal representation: ``l2fwder_vlan`` as ``str`` and
+    ``vlan_scope`` as the canonical scope. When ``strict`` is true,
+    conflicting ``network_vlan``/``l2fwder_vlan`` values are rejected instead
+    of silently choosing one.
     """
     result = normalize_resource_keys(data)
     if not isinstance(result, dict):
@@ -51,16 +64,20 @@ def normalize_bridge_vlan_alias(data, strict=False):
     legacy_value = result.pop("network_vlan", None)
     canonical_value = result.get("l2fwder_vlan")
     if canonical_value is None:
-        if legacy_value is None:
-            return result
-        canonical_value = legacy_value
+        if legacy_value is not None:
+            result["l2fwder_vlan"] = str(legacy_value)
     elif legacy_value is not None and strict:
         if str(canonical_value) != str(legacy_value):
             raise ValueError(
                 "network_vlan is an alias of l2fwder_vlan; conflicting values "
                 "were provided"
             )
-    result["l2fwder_vlan"] = str(canonical_value)
+    else:
+        result["l2fwder_vlan"] = str(canonical_value)
+
+    vlan_scope = result.get("vlan_scope")
+    if vlan_scope in BRIDGE_VLAN_SCOPE_ALIASES:
+        result["vlan_scope"] = BRIDGE_VLAN_SCOPE_ALIASES[vlan_scope]
     return result
 
 

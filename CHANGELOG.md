@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.8
+
+- Canonicalize the second bridge VLAN alias documented by the device. The
+  `vlan-scope` value `network` is described in the device help as an "obsolete
+  alternative replaced by l2fwder", so it is normalized to `l2fwder` for module
+  input, parsed configuration and rendered commands. `local` is passed through
+  unchanged and no caller has to migrate.
+  - Rendered commands only ever contain `vlan-scope l2fwder`.
+  - A device already configured with `vlan-scope network` compares as
+    unchanged instead of triggering a rewrite.
+
 ## 0.3.7
 
 - Fix creation of bare bridge VLANs. A requested VLAN without attributes, such
