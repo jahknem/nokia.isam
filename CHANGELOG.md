@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.5
+
+- Preserve `network_vlan` as the backwards-compatible alias for
+  `l2fwder_vlan`. The CLI guide marks `network-vlan` obsolete-and-replaced,
+  and specifies that obsolete-and-replaced parameters remain executable even
+  though `info` reports the replacement. Do not reject an alias-only request.
+
 ## 0.3.4
 
 - Added the `ont_serials` `isam_facts` operational subset, which reads
