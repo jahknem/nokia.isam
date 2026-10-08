@@ -49,44 +49,42 @@ All fixtures must have corresponding tests in `tests/unit/modules/network/isam/t
 
 ### Testing Commands
 
-Run everything through tox. It builds the collection layout the tests need
-(`<workdir>/collections/ansible_collections/nokia/isam` symlinked to the
-repository) and installs the pinned dependencies from `requirements.yml`, so
-no local collections path or overlay directory is required:
+Everything runs through tox from the repository root. Each environment creates
+its own layout under `.tox/` (git-ignored): the collection is symlinked to
+`<env>/collections/ansible_collections/nokia/isam` and the pinned dependencies
+from `requirements.yml` are installed into the same tree. Nothing outside this
+checkout is needed or referenced.
 
 ```bash
-# Run the unit tests (add -- tests/unit/plugins to include the connection
-# plugin tests that the default target leaves out)
-.venv/bin/tox --workdir /tmp/opencode/nokia-isam-tox -e py312
+# Run the unit tests
+.venv/bin/tox -e py312
+
+# Narrow the run. Positional arguments after -- are appended to the pytest
+# command and therefore widen it, so use TESTPATH to replace the target
+# directory and -k to filter within it:
+TESTPATH=tests/unit/modules/network/isam/test_isam_bridges.py .venv/bin/tox -e py312
+.venv/bin/tox -e py312 -- -k bridges
 
 # Run fixture tests only
-.venv/bin/tox --workdir /tmp/opencode/nokia-isam-tox -e py312 -- \
-    tests/unit/modules/network/isam/test_device_fixtures.py -v
+TESTPATH=tests/unit/modules/network/isam/test_device_fixtures.py .venv/bin/tox -e py312
 
 # Run integration tests
-.venv/bin/tox --workdir /tmp/opencode/nokia-isam-tox -e py312 -- \
-    tests/unit/modules/network/isam/test_isam_facts.py -v
+TESTPATH=tests/unit/modules/network/isam/test_isam_facts.py .venv/bin/tox -e py312
 
 # Run round-trip render tests
-.venv/bin/tox --workdir /tmp/opencode/nokia-isam-tox -e py312 -- \
-    tests/unit/modules/network/isam/test_render_round_trip.py -v
+TESTPATH=tests/unit/modules/network/isam/test_render_round_trip.py .venv/bin/tox -e py312
 
 # Run lint, typecheck and docs validation
-.venv/bin/tox --workdir /tmp/opencode/nokia-isam-tox -e lint,typecheck,docs
+.venv/bin/tox -e lint,typecheck,docs
 ```
 
-To run pytest directly, first run a tox environment once and then reuse the
-layout it created, so the pinned `ansible.netcommon` version is used:
+The default test target is `tests/unit/modules/network/isam`. The connection
+plugin tests in `tests/unit/plugins` are not part of it, so run
+`TESTPATH=tests/unit .venv/bin/tox -e py312` for the whole `tests/unit` tree.
 
-```bash
-PYTHONPATH=/tmp/opencode/nokia-isam-tox/collections \
-ANSIBLE_COLLECTIONS_PATH=/tmp/opencode/nokia-isam-tox/collections \
-    /tmp/opencode/nokia-isam-tox/py312/bin/python -m pytest tests/unit -q
-```
-
-Never create a collections overlay inside the repository to satisfy imports;
-anything under `/.collections-overlay/` is ignored, but the supported layout is
-the one tox builds in its work directory.
+Never create a collections overlay inside the repository to satisfy imports.
+`/.collections-overlay/` is ignored as a safeguard, but the supported layout is
+the one tox builds under `.tox/`.
 
 ### Adding New Fixtures
 1. Create fixture directory: `tests/fixtures/<resource>/<variant>/`
