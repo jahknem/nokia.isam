@@ -4,6 +4,7 @@
 
 # In case a collection directory is present, ignore it
 /collections/
+/.collections-overlay/
 /.venv/
 
 # Byte-compiled / optimized / DLL files

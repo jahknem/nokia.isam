@@ -48,22 +48,45 @@ All fixtures must have corresponding tests in `tests/unit/modules/network/isam/t
 - Length preservation: Critical for fixed-width table sanitization
 
 ### Testing Commands
+
+Run everything through tox. It builds the collection layout the tests need
+(`<workdir>/collections/ansible_collections/nokia/isam` symlinked to the
+repository) and installs the pinned dependencies from `requirements.yml`, so
+no local collections path or overlay directory is required:
+
 ```bash
-# Run all tests
-python -m pytest tests/unit/modules/network/isam/ -q
+# Run the unit tests (add -- tests/unit/plugins to include the connection
+# plugin tests that the default target leaves out)
+.venv/bin/tox --workdir /tmp/opencode/nokia-isam-tox -e py312
 
 # Run fixture tests only
-python -m pytest tests/unit/modules/network/isam/test_device_fixtures.py -v
+.venv/bin/tox --workdir /tmp/opencode/nokia-isam-tox -e py312 -- \
+    tests/unit/modules/network/isam/test_device_fixtures.py -v
 
 # Run integration tests
-python -m pytest tests/unit/modules/network/isam/test_isam_facts.py -v
+.venv/bin/tox --workdir /tmp/opencode/nokia-isam-tox -e py312 -- \
+    tests/unit/modules/network/isam/test_isam_facts.py -v
 
 # Run round-trip render tests
-python -m pytest tests/unit/modules/network/isam/test_render_round_trip.py -v
+.venv/bin/tox --workdir /tmp/opencode/nokia-isam-tox -e py312 -- \
+    tests/unit/modules/network/isam/test_render_round_trip.py -v
 
-# Run lint
-.venv/bin/tox --workdir /tmp/opencode/nokia-isam-tox -e lint
+# Run lint, typecheck and docs validation
+.venv/bin/tox --workdir /tmp/opencode/nokia-isam-tox -e lint,typecheck,docs
 ```
+
+To run pytest directly, first run a tox environment once and then reuse the
+layout it created, so the pinned `ansible.netcommon` version is used:
+
+```bash
+PYTHONPATH=/tmp/opencode/nokia-isam-tox/collections \
+ANSIBLE_COLLECTIONS_PATH=/tmp/opencode/nokia-isam-tox/collections \
+    /tmp/opencode/nokia-isam-tox/py312/bin/python -m pytest tests/unit -q
+```
+
+Never create a collections overlay inside the repository to satisfy imports;
+anything under `/.collections-overlay/` is ignored, but the supported layout is
+the one tox builds in its work directory.
 
 ### Adding New Fixtures
 1. Create fixture directory: `tests/fixtures/<resource>/<variant>/`

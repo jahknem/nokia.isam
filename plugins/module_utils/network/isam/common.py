@@ -227,20 +227,19 @@ def compact_cli_commands(commands, scopes):
     previous_scope = None
 
     for command in commands:
-        matched = next(
-            (
-                (scope.match(command), label)
-                for scope, label in compiled_scopes
-                if scope.match(command)
-            ),
-            None,
-        )
-        if not matched:
+        match = None
+        label = None
+        for compiled_scope, scope_label in compiled_scopes:
+            candidate = compiled_scope.match(command)
+            if candidate is not None:
+                match = candidate
+                label = scope_label
+                break
+        if match is None:
             compacted.append(command)
             previous_scope = None
             continue
 
-        match, label = matched
         scope = (label, match.group("scope"))
         suffix = match.group("suffix")
         if scope == previous_scope:
