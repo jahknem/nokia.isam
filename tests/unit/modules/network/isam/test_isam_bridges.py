@@ -214,6 +214,32 @@ class TestIsamBridgesModule(TestIsamModule):
             "configure bridge port 1/1/8/1 vlan-id 20 tag single-tagged l2fwder-vlan 720 vlan-scope local qos priority:5",
         ])
 
+    def test_isam_bridges_renders_obsolete_vlan_scope_as_l2fwder(self):
+        set_module_args(
+            dict(
+                config={
+                    "port": [{
+                        "port": "1/1/8/1",
+                        "vlan_id": [{
+                            "id": "20",
+                            "tag": "single-tagged",
+                            "l2fwder_vlan": "720",
+                            "vlan_scope": "network",
+                        }],
+                    }]
+                },
+                state="rendered",
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        # The device help for "vlan-scope" lists "network" as an obsolete
+        # alternative replaced by l2fwder, so only l2fwder is rendered.
+        self.assertEqual(result.get("rendered"), [
+            "configure bridge port 1/1/8/1",
+            "configure bridge port 1/1/8/1 vlan-id 20 tag single-tagged l2fwder-vlan 720 vlan-scope l2fwder",
+        ])
+
     def test_isam_bridges_renders_network_vlan_alias_without_l2fwder_vlan(self):
         set_module_args(
             dict(
@@ -320,6 +346,37 @@ class TestIsamBridgesModule(TestIsamModule):
         result = self.execute_module(changed=False)
         self.assertEqual(result["commands"], [])
 
+    def test_isam_bridges_merged_matches_legacy_vlan_scope(self):
+        class FakeConn:
+            def get(self, cmd):
+                return (
+                    "configure bridge port 1/1/8/1 vlan-id 20 "
+                    "tag single-tagged l2fwder-vlan 720 vlan-scope network"
+                )
+
+        self.get_resource_connection_facts.return_value = FakeConn()
+        set_module_args(
+            dict(
+                config={
+                    "port": [{
+                        "port": "1/1/8/1",
+                        "vlan_id": [{
+                            "id": "20",
+                            "tag": "single-tagged",
+                            "l2fwder_vlan": "720",
+                            "vlan_scope": "l2fwder",
+                        }],
+                    }]
+                },
+                state="merged",
+                _ansible_check_mode=True,
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["commands"], [])
+        self.get_resource_connection.return_value.edit_config.assert_not_called()
+
     def test_isam_bridges_merged_sends_commands_through_edit_config(self):
         self.get_resource_connection_facts.return_value.get.return_value = ""
         set_module_args(
@@ -389,6 +446,24 @@ class TestIsamBridgesModule(TestIsamModule):
             result["parsed"]["port"][0]["vlan_id"][0]["l2fwder_vlan"], "410"
         )
         self.assertNotIn("network_vlan", result["parsed"]["port"][0]["vlan_id"][0])
+
+    def test_isam_bridges_parsed_legacy_vlan_scope(self):
+        set_module_args(
+            dict(
+                running_config=(
+                    "configure bridge port 1/1/8/1 vlan-id 10 tag single-tagged "
+                    "l2fwder-vlan 410 vlan-scope network"
+                ),
+                state="parsed",
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        vlan = result["parsed"]["port"][0]["vlan_id"][0]
+        self.assertEqual(vlan["id"], "10")
+        self.assertEqual(vlan["l2fwder_vlan"], "410")
+        # "network" is an obsolete alternative replaced by "l2fwder".
+        self.assertEqual(vlan["vlan_scope"], "l2fwder")
 
     def test_isam_bridges_deleted_vlan_preserves_vlan_siblings(self):
         class FakeConn:
