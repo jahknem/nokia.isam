@@ -1,0 +1,7 @@
+schema_version: 1
+resource: xdsl_operational_lines
+device_type: ISAM
+software_version: synthetic-r6
+command: show xdsl operational-data line
+captured_at: 2026-10-20
+source: synthetic-regression

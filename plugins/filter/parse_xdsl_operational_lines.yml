@@ -1,0 +1,20 @@
+DOCUMENTATION:
+  name: parse_xdsl_operational_lines
+  short_description: Parse xDSL operational line statistics
+  description:
+    - Parses C(show xdsl operational-data line), not xDSL configuration facts.
+    - Handles ISAM's stacked state/rate column and missing down-line rates.
+    - Verifies the row count; unknown rates are null rather than invented as zero.
+  positional: _input
+  options:
+    _input:
+      description: Complete CLI output text.
+      type: string
+      required: true
+EXAMPLES: |
+  rows: "{{ cli_result.stdout | nokia.isam.parse_xdsl_operational_lines }}"
+RETURN:
+  _value:
+    description: Line identity, admin/operational state, mode and upstream/downstream rates.
+    type: list
+    elements: dictionary

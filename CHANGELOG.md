@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.9
+
+- Add lightweight, strict monitoring table filters for unprovisioned ONTs and
+  xDSL operational line data. Preserve blank
+  fixed-width cells and verify row counts before callers replace metrics.
+- Share the status-table parser through a dependency-light utility while retaining
+  existing facts import paths. Monitoring filter imports no longer need the ISAM
+  resource-module initialization path.
+- Document bounded-batch monitoring, explicit connection cleanup and local-only
+  publication validation in `docs/monitoring-memory.md`.
+
 ## 0.3.8
 
 - Canonicalize the second bridge VLAN alias documented by the device. The
