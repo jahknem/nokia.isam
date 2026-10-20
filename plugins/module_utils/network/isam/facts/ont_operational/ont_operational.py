@@ -6,6 +6,10 @@ __metaclass__ = type
 
 import re
 
+# Preserve the public import location without forcing lightweight filters to
+# import the ISAM ResourceModule compatibility hooks and resource framework.
+from ansible_collections.nokia.isam.plugins.module_utils.tables import parse_status_table
+
 
 _SECTION_RE = re.compile(r"^(?P<kind>ont|pon)(?:\s+interface)?\s+(?P<id>\S+?)(?:\s*:)?$", re.I)
 _KEY_VALUE_RE = re.compile(r"^(?P<key>[A-Za-z][A-Za-z0-9 _./-]*?)\s*(?::|=)\s*(?P<value>.+?)\s*$")
@@ -67,53 +71,3 @@ def parse_ont_operational(output):
 def parse_pon_operational(output):
     """Parse operational data returned for PON interfaces."""
     return [record for record in parse_operational_facts(output) if record.get("type") in (None, "pon")]
-
-
-def parse_status_table(output):
-    """Parse Nokia fixed-width tables with a pipe-delimited header."""
-    rows = []
-    lines = (output or "").splitlines()
-    headers = None
-    widths = None
-    pending_header = None
-
-    for index, raw_line in enumerate(lines):
-        line = raw_line.rstrip()
-        if headers and "|" in line and not line.lstrip().startswith(("#", "=")):
-            candidate = [part.strip() for part in line.split("|")]
-            if len(candidate) == len(headers) and all(candidate):
-                rows.append(dict(zip(headers, candidate)))
-                continue
-        if "|" in line and not line.lstrip().startswith(("#", "=")):
-            candidate = [part.strip() for part in line.split("|")]
-            if len(candidate) > 1 and any(candidate):
-                if not all(candidate):
-                    pending_header = candidate
-                    continue
-                if pending_header and len(pending_header) == len(candidate):
-                    candidate = [
-                        "_".join(part for part in (top, bottom) if part)
-                        for top, bottom in zip(pending_header, candidate)
-                    ]
-                    pending_header = None
-                headers = [_key(part) for part in candidate]
-                if index + 1 < len(lines) and "+" in lines[index + 1]:
-                    widths = [len(part) for part in lines[index + 1].split("+")]
-                continue
-        if not headers or not line.strip() or line.strip().startswith(("-", "=", "#")):
-            continue
-        if line.lower().startswith(("port count", "slot count", "pon count")) or " count :" in line.lower():
-            continue
-        if widths:
-            fields = []
-            offset = 0
-            for width in widths:
-                fields.append(line[offset : offset + width].strip())
-                offset += width + 1
-        else:
-            fields = [field.strip() for field in line.split()]
-        if len(fields) < len(headers):
-            continue
-        rows.append(dict(zip(headers, fields[:len(headers)])))
-
-    return rows

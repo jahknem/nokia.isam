@@ -8,7 +8,7 @@ namespace: nokia
 name: isam
 
 # The version of the collection. Must be compatible with semantic versioning
-version: 0.3.8
+version: 0.3.9
 
 # The path to the Markdown (.md) readme file. This path is relative to the root of the collection
 readme: README.md
@@ -42,6 +42,9 @@ dependencies:
 repository: https://github.com/jahknem/nokia.isam
 issues: https://github.com/jahknem/nokia.isam/issues
 build_ignore:
+  - .venv
+  - .tox
+  - .coverage
   - .devcontainer
   - .github
   - .pytest_cache

@@ -1,0 +1,20 @@
+DOCUMENTATION:
+  name: parse_unprovisioned_onts
+  short_description: Parse a complete unprovisioned ONT operational table
+  description:
+    - Parses output of C(show pon unprovision-onu) without contacting a device.
+    - Preserves empty fixed-width fields and checks the reported row count.
+    - Malformed or incomplete output raises an error, not a successful empty list.
+  positional: _input
+  options:
+    _input:
+      description: Complete CLI output text.
+      type: string
+      required: true
+EXAMPLES: |
+  rows: "{{ cli_result.stdout | nokia.isam.parse_unprovisioned_onts }}"
+RETURN:
+  _value:
+    description: Rows with normalized snake-case column names.
+    type: list
+    elements: dictionary

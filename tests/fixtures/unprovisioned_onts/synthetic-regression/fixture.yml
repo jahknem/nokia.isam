@@ -1,0 +1,7 @@
+schema_version: 1
+resource: unprovisioned_onts
+device_type: ISAM
+software_version: synthetic-r6
+command: show pon unprovision-onu
+captured_at: 2026-10-20
+source: synthetic-regression

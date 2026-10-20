@@ -690,6 +690,33 @@ def test_equipment_status_live_show_fixture_is_parseable():
     assert types == {"nant-e", "empty", "ndps-c", "ndlt-f", "fglt-b", "nelt-b"}
 
 
+def test_unprovisioned_onts_monitoring_fixture():
+    from ansible_collections.nokia.isam.plugins.module_utils.monitoring import parse_unprovisioned_onts
+    descriptor, output = fixture_bundle("unprovisioned_onts", "synthetic-regression")
+    assert descriptor["command"] == "show pon unprovision-onu"
+    rows = parse_unprovisioned_onts(output)
+    assert len(rows) == 2 and rows[0]["gpon_index"] == "1/1/1/1"
+    assert rows[0]["sernum"] == "XXXX:SANIT"
+
+
+def test_xdsl_operational_monitoring_fixture():
+    from ansible_collections.nokia.isam.plugins.module_utils.monitoring import parse_xdsl_operational_lines
+    descriptor, output = fixture_bundle("xdsl_operational_lines", "synthetic-regression")
+    assert descriptor["command"] == "show xdsl operational-data line"
+    rows = parse_xdsl_operational_lines(output)
+    assert len(rows) == 2 and rows[0]["ds_rate"] == "32995"
+    assert rows[1]["us_rate"] is None
+
+
+def test_xdsl_native_monitoring_header_and_optional_rate():
+    from ansible_collections.nokia.isam.plugins.module_utils.monitoring import parse_xdsl_operational_lines
+    descriptor, output = fixture_bundle("xdsl_operational_lines", "native-layout")
+    assert descriptor["command"] == "show xdsl operational-data line"
+    rows = parse_xdsl_operational_lines(output)
+    assert rows[0]["us_rate"] == "5493" and rows[0]["ds_rate"] == "32995"
+    assert rows[1]["opr_state"] == "down" and rows[1]["us_rate"] is None
+
+
 def test_ont_serials_live_show_fixture_yields_ont_idx_sernum_pairs():
     descriptor, output = fixture_bundle("ont_serials", "live-nant-e")
 
