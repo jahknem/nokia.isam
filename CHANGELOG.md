@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.3.10
 
 - Fix `isam_equipment` parsing of compact multi-property equipment lines, including
   scoped linecard `flat detail` output. Preserve the existing native resource
