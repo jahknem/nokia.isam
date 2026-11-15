@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- Fix `isam_equipment` parsing of compact multi-property equipment lines, including
+  scoped linecard `flat detail` output. Preserve the existing native resource
+  schema, negated `unlock` values, and rendering behavior.
+- Accept scoped hierarchical dumps headed by `configure equipment` or a complete
+  equipment object path. Both `state: parsed` and `isam_facts` use the corrected
+  input normalization. Add sanitized live fixtures and parser, module,
+  idempotency and round-trip regressions.
+
 ## 0.3.9
 
 - Add lightweight, strict monitoring table filters for unprovisioned ONTs and
