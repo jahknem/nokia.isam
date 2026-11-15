@@ -1,0 +1,2 @@
+configure equipment slot lt:1/1/5 planned-type fglt-b no power-down unlock no alarm-profile capab-profile fttu_lt no board-40gkr4 operational-mode gpon no dual-host-ip no dual-host-loc
+#-------------------------------------------------------------------------------
