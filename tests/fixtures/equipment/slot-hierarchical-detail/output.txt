@@ -1,0 +1,12 @@
+configure equipment
+slot lt:1/1/5
+  planned-type fglt-b
+  no power-down
+  unlock
+  no alarm-profile # value=none
+  capab-profile fttu_lt
+  no board-40gkr4 # value=inherited
+  operational-mode gpon
+  no dual-host-ip # value=0.0.0.0
+  no dual-host-loc # value=none
+exit

@@ -1,0 +1,8 @@
+schema_version: 1
+resource: equipment
+device_type: Nokia ISAM (FGLT-B lab linecard)
+software_version: not captured
+command: info configure equipment slot lt:1/1/5 flat detail
+captured_at: 2026-11-15
+source: sanitized-live-capture
+notes: Scoped lab response; command echo omitted. No hostnames or credentials included.
