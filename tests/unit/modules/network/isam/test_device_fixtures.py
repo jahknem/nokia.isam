@@ -488,6 +488,24 @@ def test_equipment_live_flat_fixture_is_parseable():
     assert parsed["protection_groups"][1]["admin_status"] == "lock"
 
 
+def test_equipment_live_scoped_compact_slot_fixture_is_parseable():
+    descriptor, output = fixture_bundle("equipment", "slot-flat-detail")
+    facts = Isam_equipmentFacts(module=None)
+    parsed = Isam_equipmentTemplate(lines=facts._flatten_config(output)).parse()
+
+    assert descriptor["command"] == "info configure equipment slot lt:1/1/5 flat detail"
+    assert parsed == {"slots": {"lt:1/1/5": {"id": "lt:1/1/5", "planned_type": "fglt-b", "unlock": True}}}
+
+
+def test_equipment_live_scoped_hierarchical_slot_fixture_is_parseable():
+    descriptor, output = fixture_bundle("equipment", "slot-hierarchical-detail")
+    facts = Isam_equipmentFacts(module=None)
+    parsed = Isam_equipmentTemplate(lines=facts._flatten_config(output)).parse()
+
+    assert descriptor["command"] == "info configure equipment slot lt:1/1/5 detail"
+    assert parsed == {"slots": {"lt:1/1/5": {"id": "lt:1/1/5", "planned_type": "fglt-b", "unlock": True}}}
+
+
 def test_ethernet_onts_live_flat_fixture_is_parseable():
     descriptor, output = fixture_bundle("ethernet_onts", "r6.2.04m")
     facts = Ethernet_ontsFacts(module=None)

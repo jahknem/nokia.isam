@@ -26,7 +26,7 @@ class TestIsamFactsModule(TestIsamModule):
 
     def tearDown(self):
         super(TestIsamFactsModule, self).tearDown()
-        self.get_resource_connection_facts.stop()
+        self.mock_get_resource_connection_facts.stop()
 
     def test_isam_facts_minimal_interfaces(self):
         # Gather only interfaces to keep scope small and deterministic
@@ -45,6 +45,26 @@ class TestIsamFactsModule(TestIsamModule):
         self.assertIn("interfaces", anr)
         self.assertIsInstance(anr["interfaces"], list)
         self.assertEqual(anr["interfaces"], [])
+
+    def test_isam_facts_equipment_compact_slot_fixture(self):
+        output = (Path(__file__).parents[4] / "fixtures/equipment/slot-flat-detail/output.txt").read_text()
+
+        class EquipmentConn:
+            def __init__(self):
+                self.commands = []
+
+            def get(self, command):
+                self.commands.append(command)
+                return output
+
+        connection = EquipmentConn()
+        self.get_resource_connection_facts.return_value = connection
+        set_module_args(dict(gather_subset=["!all"], gather_network_resources=["isam_equipment"], gather_configuration=False))
+        result = self.execute_module(changed=False)
+        self.assertEqual(connection.commands, ["info configure equipment flat"])
+        self.assertEqual(result["ansible_facts"]["ansible_network_resources"]["isam_equipment"], {
+            "slots": [dict(id="lt:1/1/5", planned_type="fglt-b", unlock=True)],
+        })
 
     def test_isam_facts_bridges_port_vlan(self):
         class BridgeConn:
