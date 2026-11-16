@@ -249,3 +249,24 @@ def compact_cli_commands(commands, scopes):
             previous_scope = scope
 
     return compacted
+
+
+_MASKED_SECRET = re.compile(r"^(?:plain:|encrypted:)?\*+$")
+
+
+def is_masked_secret(value):
+    """A secret as the device displays it (e.g. ``plain:******``), not a usable value."""
+    return isinstance(value, str) and bool(_MASKED_SECRET.match(value))
+
+
+def covers_entry(want, have, keys):
+    """Whether a deletion request names a whole entry rather than single attributes.
+
+    True when the request carries only the entry's identity, or names every
+    attribute the device currently has (a full entry, e.g. as gathered). Removable
+    objects are then removed as a whole; otherwise only the named attributes go.
+    """
+    keys = set(keys)
+    named = {key for key, value in (want or {}).items() if key not in keys and value is not None}
+    present = {key for key, value in (have or {}).items() if key not in keys and value not in (None, [], {})}
+    return not named or present <= named

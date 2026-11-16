@@ -1,0 +1,2 @@
+configure ntp ont 1/1/5/1/3 client-state on config-mode manual server1-ip-addr 192.0.2.1 oper-mode unicast key-identifier 7
+configure ntp ont 1/1/5/1/30

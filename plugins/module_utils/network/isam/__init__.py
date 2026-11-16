@@ -19,15 +19,31 @@ def _compact_resource_commands(resource):
 
 
 def _isam_addcmd(self, data, tmplt, negate=False):
-    """Render ISAM removal templates without netcommon's command prefix."""
+    """Render ISAM removal templates without netcommon's command prefix.
+
+    netcommon negates a parser without ``remval`` by prefixing the whole command
+    with ``no``. ``no configure ...`` is never valid ISAM CLI, so:
+
+    * ``remval`` renders the removal form as is;
+    * ``no_remval: True`` marks an attribute without a removal form in the CLI
+      (e.g. ``oper-weight``): removing it renders nothing, the value goes away
+      with its parent object;
+    Other resources retain netcommon's existing rendering behavior.
+    """
     if negate and self.__class__.__module__.startswith(
         "ansible_collections.nokia.isam."
     ):
-        remval = self._tmplt.get_parser(tmplt).get("remval")
+        parser = self._tmplt.get_parser(tmplt)
+        remval = parser.get("remval")
         if remval:
             command = self._tmplt._render(remval, data, False)
             if command:
                 self.commands.extend(command if isinstance(command, list) else [command])
+            return
+        if parser.get("no_remval"):
+            self._module.warn(
+                "%s has no standalone removal form in ISAM CLI; it is retained until its parent object is removed" % tmplt
+            )
             return
     _resource_module_addcmd(self, data, tmplt, negate)
 

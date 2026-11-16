@@ -240,8 +240,10 @@ class TestIsamQosInterfacesModule(TestIsamModule):
             ),
             ignore_provider_arg,
         )
-        result = self.execute_module(changed=True)
-        self.assertTrue(any("queue 0" in command for command in result["commands"]))
+        # The documented downstream queue grammar has no removal form. Do not
+        # invent "no priority"/"no queue-profile"; these disappear with the UNI.
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["commands"], [])
         self.assertFalse(any("queue 1" in command for command in result["commands"]))
 
     def test_isam_qos_interfaces_deleted_scheduler_preserves_queues(self):

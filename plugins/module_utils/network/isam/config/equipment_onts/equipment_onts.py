@@ -10,6 +10,7 @@ from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
     ResourceModule,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import is_masked_secret
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.equipment_onts import (
     Equipment_ontsTemplate,
@@ -27,6 +28,7 @@ class Equipment_onts(ResourceModule):
         r"^(?P<scope>configure equipment ont sw-ctrl \S+ delay-act) (?P<suffix>.+)$",
     )
 
+    SECRET_FIELDS = ("log_auth_pwd",)
     INTERFACE_FIELDS = [
         "sw_ver_pland",
         "sernum",
@@ -109,22 +111,29 @@ class Equipment_onts(ResourceModule):
         have = self.have or {"interfaces": [], "slots": [], "sw_ctrls": []}
         delete_all = self.state == "deleted" and not self.want
 
-        self._compare_section(
-            want.get("interfaces") or [],
-            have.get("interfaces") or [],
-            "ont_idx",
-            "interface",
-            self.INTERFACE_FIELDS,
-            delete_all or bool(want.get("interfaces")),
-        )
-        self._compare_section(
-            want.get("slots") or [],
-            have.get("slots") or [],
-            "ont_slot_idx",
-            "slot",
-            self.SLOT_FIELDS,
-            delete_all or bool(want.get("slots")),
-        )
+        sections = [
+            ("interfaces", "ont_idx", "interface", self.INTERFACE_FIELDS),
+            ("slots", "ont_slot_idx", "slot", self.SLOT_FIELDS),
+        ]
+        # An ONT is built interface first, then its slots; it is removed the other way
+        # round (the device refuses to delete an ONT that still has slots).
+        if self.state == "deleted":
+            requested = {item["ont_idx"] for item in want.get("interfaces") or []}
+            for interface in have.get("interfaces") or []:
+                if (delete_all or interface["ont_idx"] in requested) and interface.get("admin_state") != "down":
+                    self.commands.append(
+                        "configure equipment ont interface %s admin-state down" % interface["ont_idx"]
+                    )
+            sections.reverse()
+        for section, key, parser_prefix, fields in sections:
+            self._compare_section(
+                want.get(section) or [],
+                have.get(section) or [],
+                key,
+                parser_prefix,
+                fields,
+                delete_all or bool(want.get(section)),
+            )
         self._compare_section(
             want.get("sw_ctrls") or [],
             have.get("sw_ctrls") or [],
@@ -143,10 +152,6 @@ class Equipment_onts(ResourceModule):
                 return
             for item_key, have in iteritems(haved):
                 if not wantd or item_key in wantd:
-                    if parser_prefix == "interface" and have.get("admin_state") != "down":
-                        self.commands.append(
-                            "configure equipment ont interface %s admin-state down" % item_key
-                        )
                     self.addcmd(have, parser_prefix, negate=True)
             return
 
@@ -182,6 +187,10 @@ class Equipment_onts(ResourceModule):
         for field in fields:
             inw = want.get(field)
             inh = have.get(field)
+            if field in self.SECRET_FIELDS and is_masked_secret(inw):
+                # The device only ever shows passwords masked; a masked value read
+                # back (e.g. copied from another ONT) is not the password.
+                continue
             if inw is not None and inw != inh:
                 self.addcmd(want, "%s.%s" % (parser_prefix, field))
             elif self.state in ("replaced", "overridden") and inw is None and inh is not None:

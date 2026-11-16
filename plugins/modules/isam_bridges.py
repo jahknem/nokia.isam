@@ -46,26 +46,31 @@ options:
             description:
             - 'optional parameter with default value: "stacked : 0 : 4097" The parameter is not visible during creation.default vlan id for untagged frames'
           default-priority:
+            aliases: [default_priority]
             type: int
             description:
             - 'optional parameter with default value: 0'
             - priority to be set in upstream frames
           mac-learn-off:
+            aliases: [mac_learn_off]
             type: bool
             description:
             - 'optional parameter'
             - 'disable mac learning on this port'
           max-unicast-mac:
+            aliases: [max_unicast_mac]
             type: int
             description:
             - 'optional parameter with default value: 1'
             - 'maximum number of uncommited unicast macs on this port'
           qos-profile:
+            aliases: [qos_profile]
             type: str
             description:
             - 'optional parameter with default value: "none"'
             - 'qos profile to be used on this port'
           prio-regen-prof:
+            aliases: [prio_regen_prof]
             type: str
             description:
             - 'optional parameter with default value: "none"'
@@ -105,16 +110,19 @@ options:
             - '31'
             - '32'
           prio-regen-name:
+            aliases: [prio_regen_name]
             type: str
             description:
             - 'optional parameter with default value: "none"'
             - 'priority regen profile name to be used on this port'
-          max-commited-mac:
+          max-committed-mac:
+            aliases: [max-commited-mac, max_commited_mac, max_comitted_mac, max_committed_mac]
             type: int
             description:
             - 'optional parameter with default value: 65535'
             - 'maximum number of commited unicast macs on this port. 65535 means the committed value is the same as max-unicast-mac'
           mirror-mode:
+            aliases: [mirror_mode]
             type: str
             description:
             - 'optional parameter with default value: "disable"'
@@ -123,11 +131,13 @@ options:
             - 'disable'
             - 'overwrite-outer-vlan'
           mirror-vlan:
+            aliases: [mirror_vlan]
             type: int
             description:
             - 'optional parameter with default value: 0. Range: [0...4093]'
             - vlan-id to be inserted into mirrored packets. This configuration value has no effect in case mirroring mode of the bridgeport is disabled (mirror-mode).
           pvid-tagging-flag:
+            aliases: [pvid_tagging_flag]
             type: str
             description:
             - 'optional parameter with default value: "onu"'
@@ -136,6 +146,7 @@ options:
             - 'onu'
             - 'olt'
           ds-pbit-mode:
+            aliases: [ds_pbit_mode]
             type: str
             description:
             - 'optional parameter with default value: "auto"'
@@ -265,7 +276,8 @@ options:
                 description:
                 - 'optional parameter with default value: "65335"'
                 - 'the maximum number of ip address number in IP antispoofing and/or ARP relay'
-              max_unicaast_mac:
+              max_unicast_mac:
+                aliases: [max_unicaast_mac]
                 type: int
                 description:
                 - 'optional parameter with default value: "65535"'
@@ -291,6 +303,7 @@ options:
                 - 'optional parameter with default value: "4095"'
                 - This object configures the upper boundary of CVLAN range for protocol awareness for S-VLAN cross-connect(Tunnel)
               ds-dedicated-q:
+                aliases: [ds_dedicated_q]
                 type: bool
                 description:
                 - 'optional parameter with default value: "disable"'

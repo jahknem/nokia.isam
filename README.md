@@ -6,6 +6,9 @@ This Ansible Collection contains modules to manage Nokia ISAM FTTN 7330 devices.
 
 ## Available Modules
 
+For copying ONT configurations, full-entry deletion and check-mode limitations,
+see [ONT configuration change sets](docs/ont-change-sets.md).
+
 ### Config Resource Modules
 | Module | Command Families | States |
 | --- | --- | --- |
