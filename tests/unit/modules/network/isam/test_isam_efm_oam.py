@@ -1,3 +1,4 @@
+from ansible_collections.nokia.isam.tests.unit.compat.mock import MagicMock, patch
 from textwrap import dedent
 
 from ansible_collections.nokia.isam.plugins.modules import isam_efm_oam_interface
@@ -33,6 +34,15 @@ class TestEfmOam(TestIsamModule):
 
     def test_deleted_is_idempotent_for_unknown_interface(self):
         self.module = isam_efm_oam_interface
+        # The module reads the device: an empty EFM OAM configuration.
+        device = MagicMock()
+        device.get.return_value = ""
+        patcher = patch(
+            "ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.efm_oam.efm_oam.get_resource_connection",
+            return_value=device,
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
         set_module_args({
             "state": "deleted",
             "config": [{"name": "1/1/1/1"}],

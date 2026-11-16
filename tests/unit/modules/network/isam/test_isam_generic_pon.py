@@ -33,9 +33,9 @@ class TestIsamGenericPonModule(TestIsamModule):
 
     def tearDown(self):
         super(TestIsamGenericPonModule, self).tearDown()
-        self.get_resource_connection.stop()
-        self.get_resource_connection_config.stop()
-        self.get_resource_connection_facts.stop()
+        self.mock_get_resource_connection.stop()
+        self.mock_get_resource_connection_config.stop()
+        self.mock_get_resource_connection_facts.stop()
 
     def test_isam_generic_pon_parsed(self):
         running = dedent(

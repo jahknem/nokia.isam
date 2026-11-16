@@ -255,8 +255,11 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
     without discovering unrelated family members.  Overridden and unqualified
     deletion still require the complete family to identify entries to remove.
     """
+    if module is None:
+        return connection.get(fallback_command)
     state = module.params.get("state", "merged")
-    safe_states = safe_states or ("merged", "replaced", "deleted")
+    # gathered: config selects the instances to read (targeted gathering, targeted.py).
+    safe_states = safe_states or ("merged", "replaced", "deleted", "gathered")
     if not commands or state not in safe_states:
         return connection.get(fallback_command)
     scoped_results = []
@@ -280,6 +283,23 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
         ):
             scoped_results.append(response)
     return "\n".join(scoped_results)
+
+
+def requested_identities(module, resource, section="config"):
+    """Identity values named in the module's config for one list of a resource.
+
+    Follows TARGETED_GATHER (targeted.py). Empty when there is no module (isam_facts,
+    parsing) or no config: then the whole resource is read.
+    """
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.targeted import TARGETED_GATHER
+
+    field = (TARGETED_GATHER.get(resource) or {}).get(section)
+    params = getattr(module, "params", None) or {}
+    config = params.get("config")
+    if not field or not config:
+        return []
+    items = config if section == "config" else (config.get(section) if isinstance(config, dict) else None)
+    return [item[field] for item in items or [] if isinstance(item, dict) and item.get(field)]
 
 
 def count_indent(line):

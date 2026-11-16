@@ -37,10 +37,10 @@ class TestIsamVlanGlobalModule(TestIsamModule):
 
     def tearDown(self):
         super(TestIsamVlanGlobalModule, self).tearDown()
-        self.get_resource_connection.stop()
-        self.get_config.stop()
-        self.get_resource_connection_config.stop()
-        self.get_resource_connection_facts.stop()
+        self.mock_get_resource_connection.stop()
+        self.mock_get_config.stop()
+        self.mock_get_resource_connection_config.stop()
+        self.mock_get_resource_connection_facts.stop()
 
     def test_isam_vlan_global_rendered(self):
         set_module_args(
