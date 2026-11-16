@@ -6,6 +6,7 @@ __metaclass__ = type
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_targeted_config,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
@@ -24,7 +25,15 @@ class Isam_voice_sipFacts(object):
         self.argument_spec = Isam_voice_sipArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure voice sip flat")
+        """The whole resource, or only the instances named in config (targeted gathering)."""
+        return get_targeted_config(self._module, connection, "voice_sip", "info configure voice sip flat", {
+            "cas_nsm_prof": "info configure voice sip cas-nsm-prof %s flat",
+            "lineid_syn_prof": "info configure voice sip lineid-syn-prof %s flat",
+            "redundancy": "info configure voice sip redundancy %s flat",
+            "redundancy_cmd": "info configure voice sip redundancy-cmd %s flat",
+            "register": "info configure voice sip register %s flat",
+            "vsp": "info configure voice sip vsp %s flat",
+        })
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}

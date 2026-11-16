@@ -135,11 +135,123 @@ options:
             description: Profile name.
             type: str
             required: true
+          mnemonic1:
+            description: Mnemonic of external alarm 1.
+            type: str
+          description1:
+            description: Description of external alarm 1.
+            type: str
+          visible1:
+            description: Whether external alarm 1 triggers a visible alarm output.
+            type: bool
+          audible1:
+            description: Whether external alarm 1 triggers an audible alarm output.
+            type: bool
+          polarity1:
+            description: Polarity of external alarm 1 (C(normal) or C(inverse)).
+            type: str
+          severity1:
+            description: Severity of external alarm 1.
+            type: str
+            choices: [indeterminate, warning, minor, major, critical]
+          mnemonic2:
+            description: Mnemonic of external alarm 2.
+            type: str
+          description2:
+            description: Description of external alarm 2.
+            type: str
+          visible2:
+            description: Whether external alarm 2 triggers a visible alarm output.
+            type: bool
+          audible2:
+            description: Whether external alarm 2 triggers an audible alarm output.
+            type: bool
+          polarity2:
+            description: Polarity of external alarm 2 (C(normal) or C(inverse)).
+            type: str
+          severity2:
+            description: Severity of external alarm 2.
+            type: str
+            choices: [indeterminate, warning, minor, major, critical]
+          mnemonic3:
+            description: Mnemonic of external alarm 3.
+            type: str
+          description3:
+            description: Description of external alarm 3.
+            type: str
+          visible3:
+            description: Whether external alarm 3 triggers a visible alarm output.
+            type: bool
+          audible3:
+            description: Whether external alarm 3 triggers an audible alarm output.
+            type: bool
+          polarity3:
+            description: Polarity of external alarm 3 (C(normal) or C(inverse)).
+            type: str
+          severity3:
+            description: Severity of external alarm 3.
+            type: str
+            choices: [indeterminate, warning, minor, major, critical]
+          mnemonic4:
+            description: Mnemonic of external alarm 4.
+            type: str
+          description4:
+            description: Description of external alarm 4.
+            type: str
+          visible4:
+            description: Whether external alarm 4 triggers a visible alarm output.
+            type: bool
+          audible4:
+            description: Whether external alarm 4 triggers an audible alarm output.
+            type: bool
+          polarity4:
+            description: Polarity of external alarm 4 (C(normal) or C(inverse)).
+            type: str
+          severity4:
+            description: Severity of external alarm 4.
+            type: str
+            choices: [indeterminate, warning, minor, major, critical]
+          mnemonic5:
+            description: Mnemonic of external alarm 5.
+            type: str
+          description5:
+            description: Description of external alarm 5.
+            type: str
+          visible5:
+            description: Whether external alarm 5 triggers a visible alarm output.
+            type: bool
+          audible5:
+            description: Whether external alarm 5 triggers an audible alarm output.
+            type: bool
+          polarity5:
+            description: Polarity of external alarm 5 (C(normal) or C(inverse)).
+            type: str
+          severity5:
+            description: Severity of external alarm 5.
+            type: str
+            choices: [indeterminate, warning, minor, major, critical]
+      hgutr069_custs:
+        description: HGU TR069 customizable alarms.
+        type: list
+        elements: dict
+        suboptions:
+          alarm_id:
+            description: HGU TR069 customizable alarm ID (for example C(cust-alm1)).
+            type: str
+            required: true
+          description:
+            description: Alarm description.
+            type: str
   running_config:
     description: Device-native running configuration for parsed state.
     type: str
   state:
-    description: The state the configuration should be left in.
+    description:
+      - The state the configuration should be left in.
+      - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by
+        C(entries[].index) and C(filters[].fltr_type) and C(filters[].filterid) and C(custom_profiles[].name) and
+        C(hgutr069_custs[].alarm_id) (targeted gathering). Other fields are ignored and absent instances are not returned.
+        Without I(config) the whole resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -148,6 +260,18 @@ options:
 EXAMPLES = """
 - name: Gather alarm configuration
   nokia.isam.isam_alarm:
+    state: gathered
+
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_alarm:
+    config:
+      entries:
+        - index: xdsl-ne-los
+      filters:
+        - fltr_type: temporal
+          filterid: 3
+      custom_profiles:
+        - name: cabinet1
     state: gathered
 
 - name: Configure alarm log severity

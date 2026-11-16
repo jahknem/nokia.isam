@@ -293,6 +293,7 @@ options:
   state:
     description:
     - The state the configuration should be left in.
+    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(id) (targeted gathering). Other fields are ignored and absent instances are not returned. Without I(config) the whole resource is read.
     type: str
     choices:
     - merged
@@ -309,6 +310,13 @@ EXAMPLES = """
 - name: Gather VLAN facts from the device
   nokia.isam.isam_vlans:
     state: gathered
+
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_vlans:
+    state: gathered
+    config:
+      - id: "100"
+      - id: "stacked:200:10"
 
 - name: Create or update a residential bridge VLAN
   nokia.isam.isam_vlans:

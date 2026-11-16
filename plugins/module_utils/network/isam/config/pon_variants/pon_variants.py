@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
-import re
-
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base import get_resource_connection
+from ansible.module_utils.common.text.converters import to_text
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import canonical_key
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.pon_variants.pon_variants import get_variant_config
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.pon_variants import Ngpon2_channel_groupsTemplate, Epon_interfacesTemplate, Channel_pair_pmTemplate
-
-
-_OPTIONAL_COMMAND_ERROR = re.compile(
-    r"invalid token",
-    re.IGNORECASE,
-)
 
 
 class _VariantFacts(object):
@@ -21,18 +15,14 @@ class _VariantFacts(object):
 
     def get_facts(self, legacy_facts_type=None, resource_facts_type=None, data=None):
         if data is None:
-            commands = {
-                "ngpon2_channel_groups": "info configure channel-group flat",
-                "epon_interfaces": "info configure epon interface flat",
-                "channel_pair_pm": "info configure channel-pair interface flat",
-            }
+            # Optional PON families are absent from some ISAM shelves ("invalid token": empty);
+            # with state gathered and config only the named instances are read.
             try:
-                data = get_resource_connection(self.module).get(commands[self.resource])
-            except Exception as exc:
-                # Optional PON families are absent from some ISAM shelves.
-                if not _OPTIONAL_COMMAND_ERROR.search(str(exc)):
+                data = get_variant_config(self.module, get_resource_connection(self.module), self.resource)
+            except Exception as exc:  # like netcommon's facts: a clear failure, no traceback
+                if not hasattr(self.module, "fail_json"):
                     raise
-                data = ""
+                self.module.fail_json(msg=to_text(exc))
         return {"ansible_network_resources": {self.resource: self._parse(data)}}, []
 
     def _parse(self, data):

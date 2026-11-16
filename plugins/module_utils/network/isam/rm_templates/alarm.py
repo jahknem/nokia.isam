@@ -10,6 +10,31 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 )
 
 
+def _custom_profile_getval():
+    """'configure alarm custom-profile <name> [mnemonicN ..] [descriptionN ..] ...' in CLI syntax order."""
+    fields = []
+    for i in range(1, 6):
+        fields.append(r"(?:\smnemonic%d\s(?P<mnemonic%d>\S+))?" % (i, i))
+        fields.append(r'(?:\sdescription%d\s(?:"(?P<qdescription%d>[^"]*)"|(?P<description%d>\S+)))?' % (i, i, i))
+        fields.append(r"(?:\svisible%d\s(?P<visible%d>enable|disable))?" % (i, i))
+        fields.append(r"(?:\saudible%d\s(?P<audible%d>enable|disable))?" % (i, i))
+        fields.append(r"(?:\spolarity%d\s(?P<polarity%d>\S+))?" % (i, i))
+        fields.append(r"(?:\sseverity%d\s(?P<severity%d>\S+))?" % (i, i))
+    return re.compile(r"configure\salarm\scustom-profile\s(?P<name>\S+)" + "".join(fields) + r"\s*$")
+
+
+def _custom_profile_result():
+    profile = {"name": "{{ name }}"}
+    for i in range(1, 6):
+        profile["mnemonic%d" % i] = "{{ mnemonic%d }}" % i
+        profile["description%d" % i] = "{{ description%d if description%d is defined else qdescription%d | default(None) }}" % (i, i, i)
+        profile["visible%d" % i] = "{{ (visible%d == 'enable') if visible%d is defined else None }}" % (i, i)
+        profile["audible%d" % i] = "{{ (audible%d == 'enable') if audible%d is defined else None }}" % (i, i)
+        profile["polarity%d" % i] = "{{ polarity%d }}" % i
+        profile["severity%d" % i] = "{{ severity%d }}" % i
+    return {"custom_profiles": {"{{ name }}": profile}}
+
+
 class AlarmTemplate(NetworkTemplate):
     def __init__(self, lines=None, module=None):
         super(AlarmTemplate, self).__init__(lines=lines, tmplt=self, module=module)
@@ -276,6 +301,27 @@ class AlarmTemplate(NetworkTemplate):
                     "minor_log_full_action": "{{ minor_log_full_action }}",
                     "major_log_full_action": "{{ major_log_full_action }}",
                     "crit_log_full_act": "{{ crit_log_full_act }}",
+                }
+            },
+        },
+        {
+            "name": "custom_profile",
+            "getval": _custom_profile_getval(),
+            "setval": "configure alarm custom-profile {{ name }}",
+            "result": _custom_profile_result(),
+        },
+        {
+            "name": "hgutr069_cust",
+            "getval": re.compile(
+                r'configure\salarm\shgutr069-cust\s(?P<alarm_id>\S+)(?:\sdescription\s(?:"(?P<qdescription>[^"]*)"|(?P<description>\S+)))?\s*$',
+            ),
+            "setval": "configure alarm hgutr069-cust {{ alarm_id }} description {{ description }}",
+            "result": {
+                "hgutr069_custs": {
+                    "{{ alarm_id }}": {
+                        "alarm_id": "{{ alarm_id }}",
+                        "description": "{{ description if description is defined else qdescription | default(None) }}",
+                    }
                 }
             },
         },

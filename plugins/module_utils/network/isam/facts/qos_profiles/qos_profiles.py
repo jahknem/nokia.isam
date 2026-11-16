@@ -5,6 +5,9 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_targeted_config,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.qos_profiles.qos_profiles import (
     Qos_profilesArgs,
 )
@@ -20,11 +23,23 @@ class Qos_profilesFacts(object):
         self._module = module
         self.argument_spec = Qos_profilesArgs.argument_spec
 
+    @staticmethod
+    def _profile_command(identity):
+        profile_type, name = identity
+        path = Qos_profilesTemplate._profile_path({"profile_type": profile_type, "name": name})
+        return ["info configure qos profiles %s flat" % path]
+
+    def get_config(self, connection):
+        """The whole resource, or only the profiles named in config (targeted gathering)."""
+        return get_targeted_config(self._module, connection, "qos_profiles", "info configure qos profiles flat", {
+            "config": self._profile_command,
+        })
+
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}
 
         if not data:
-            data = connection.get("info configure qos profiles flat")
+            data = self.get_config(connection)
 
         if isinstance(data, tuple):
             data = data[0]

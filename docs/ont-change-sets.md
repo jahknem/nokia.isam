@@ -95,8 +95,14 @@ Instances that do not exist are simply not returned ("instance does not exist" f
 device); other device errors fail the task. Without `config`, the whole resource is read,
 as before. `isam_facts` is unchanged and always reads whole resources.
 
-The resources that support it, and their identity fields, are listed in
-`plugins/module_utils/network/isam/targeted.py` (`TARGETED_GATHER`). The file has no
-imports, so tools outside Ansible can use it to decide which families to read per
-instance. Resources not listed (global settings such as `system` or `traps`) always read
-completely.
+Every instance list of every resource supports it; the lists and their identity
+fields are in `plugins/module_utils/network/isam/targeted.py` (`TARGETED_GATHER`): a
+field name, or a list of fields for a composite identity (`qos_profiles`:
+`profile_type` and `name`); nested lists are dotted (`system`: `syslog.destinations`).
+The file has no imports, so tools outside Ansible can use it to decide which families
+to read per instance. Resources without instance lists (`dhcp_server`, `generic_pon`,
+`l2cp`, ...) are single settings blocks and always read completely.
+
+Only resources made of instance lists (`TARGETED_WRITES`) also compare
+`merged`/`replaced`/`deleted` against just the named instances; all others read the
+whole resource for writes.

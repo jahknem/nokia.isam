@@ -2,22 +2,47 @@
 
 ## 0.3.13
 
-- Targeted gathering: with `state: gathered` and `config`, resource modules read only
-  the instances named in `config` (by their identity fields) instead of the whole
-  resource; absent instances are not returned, other device errors fail. Without
-  `config` nothing changes. `merged`/`replaced`/`deleted` already compared this way.
-  Supported resources and identity fields are listed in
-  `plugins/module_utils/network/isam/targeted.py` (`TARGETED_GATHER`, dependency-free):
-  new for `ntp_onts`, `ani_onts`, `isam_dhcp_relay`, `isam_arp_relay`,
-  `efm_oam_interface` and `isam_equipment` slots, besides the existing six.
-- `isam_efm_oam_interface` now reads the device for `gathered`, `merged` and `deleted`
-  (its facts adapter parsed nothing). `isam_efm_oam_interface`, `isam_arp_relay` and
-  `isam_dhcp_relay` report device errors with `fail_json` like netcommon modules, and
-  have complete option documentation, examples and return values.
-- Module docs describe targeted gathering in `state` and show an example.
-- Tests: unit tests for every targetable resource (only the named instances, absence,
-  errors, whole resource without config); test classes now stop their patchers (25
-  files stopped the mock instead, leaking patches into later tests).
+- Targeted gathering for every resource with instance lists: with `state: gathered`
+  and `config`, a resource module reads only the instances named in `config` (one or
+  several, by their identity fields) instead of the whole resource; absent instances
+  are not returned, other device errors fail. Without `config` nothing changes.
+  `TARGETED_GATHER` in `plugins/module_utils/network/isam/targeted.py`
+  (dependency-free) lists every instance list and its identity, including nested lists
+  (`system` `syslog.destinations`) and composite identities (`qos_profiles` by
+  `profile_type` and `name`). Resources without instance lists (`dhcp_server`,
+  `generic_pon`, `l2cp`, ...) are single settings blocks and read completely;
+  `isam_security_ext_authenticator` only runs an action and gathers nothing.
+- Writes: `merged`/`replaced`/`deleted` compare against only the named instances for
+  the resources made of instance lists (`TARGETED_WRITES`: as before, plus `ntp_onts`,
+  `ani_onts`, `isam_dhcp_relay`, `isam_arp_relay`, `efm_oam_interface`). All other
+  resources keep reading the whole resource for writes.
+- Modules that never read the device in the module path now do for `gathered`:
+  `isam_efm_oam_interface` (also `merged`/`deleted`), `isam_l2cp`, `isam_l2cp_session`,
+  `isam_l2cp_user_port`, `isam_pppoe_client_interface`, `isam_pppoe_client_ppp_profile`,
+  `isam_pppoel2_statistics` (their `gathered` always returned nothing).
+- Device errors fail with `fail_json` instead of a traceback in the module path of
+  EFM OAM, ARP/DHCP relay, CFM, PON variants, linetest, xDSL profiles, dist-service,
+  IPv6 anti-spoofing, L2CP and PPPoE modules.
+- Parsing fixes (lines that were silently dropped or misread):
+  - `isam_interface_alarms`: the unindented one-line-per-alarm output was nested into
+    one line; each alarm is now parsed on its own.
+  - `isam_alarm`: `custom_profiles` and `hgutr069_custs` are parsed (`visibleN`/
+    `audibleN` enable/disable map to bool).
+  - `isam_traps`: a `configure trap` header with indented children is parsed;
+    attributes are found by indentation relative to their resource line.
+  - `isam_linetest`: attributes indented under `ltsession`/`ltparm` lines.
+  - `isam_qos_profiles`: flat `configure qos profiles marker d1p` lines.
+  - `isam_dist_service`: flat lines with several attributes.
+  - `isam_ipv6_antispoofing_slot`: a single-slot block.
+- Documentation: `state` describes targeted gathering with an example in every
+  targetable module; full option docs, examples and return values for the modules that
+  only had stubs (EFM OAM, ARP/DHCP relay, CFM, PON variants, L2CP, PPPoE, linetest,
+  dist-service, IPv6 anti-spoofing).
+- Tests: a shared harness (`targeted_harness.py`, cases in `targeted_cases_*.py`)
+  checks every instance list: only the named instances, several at once, absence,
+  device errors, whole resource without config; a coverage test fails when an
+  instance list has no case. Test classes now stop their patchers (25 files stopped
+  the mock instead, leaking patches into later tests).
 
 ## 0.3.12
 

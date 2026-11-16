@@ -263,9 +263,14 @@ class Qos_profilesTemplate(NetworkTemplate):
                     in_marker = False
                 continue
 
-            match = marker_re.match(stripped) if in_marker else top_re.match(stripped)
+            # Flat output puts the marker level on the profile line: "marker d1p <name> ...".
+            flat_marker = not in_marker and stripped.startswith("marker d1p ")
+            if flat_marker:
+                match = marker_re.match(stripped[len("marker "):])
+            else:
+                match = marker_re.match(stripped) if in_marker else top_re.match(stripped)
             if match:
-                if in_marker:
+                if in_marker or flat_marker:
                     profile_type = "marker-d1p"
                     name, rest = match.group(1), match.group(2) or ""
                 else:

@@ -93,7 +93,9 @@ options:
     - The value should be the output of C(info configure link-agg) or C(info configure link-agg flat).
     type: str
   state:
-    description: The state the configuration should be left in.
+    description:
+    - The state the configuration should be left in.
+    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(groups[].id) and C(ports[].id) (targeted gathering). Other fields are ignored and absent instances are not returned. Without I(config) the whole resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -103,6 +105,15 @@ EXAMPLES = """
 - name: Gather link aggregation facts
   nokia.isam.isam_link_agg:
     state: gathered
+
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_link_agg:
+    state: gathered
+    config:
+      groups:
+        - id: 1/1/8/10
+      ports:
+        - id: 1/1/8/1
 
 - name: Configure a LACP port and group
   nokia.isam.isam_link_agg:

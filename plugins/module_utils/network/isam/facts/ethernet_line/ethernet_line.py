@@ -21,6 +21,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
     flatten_indented_tree,
+    get_targeted_config,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ethernet_line import (
@@ -40,10 +41,13 @@ class Ethernet_lineFacts(object):
         self.argument_spec = Ethernet_lineArgs.argument_spec
 
     def get_config(self, connection):
-        """Wrapper method for `connection.get()`
-        This method exists solely to allow the unit test framework to mock device connection calls.
+        """The whole resource, or only the lines named in config (targeted gathering).
+
+        Their MAUs are read with them.
         """
-        return connection.get("info configure ethernet line flat")
+        return get_targeted_config(self._module, connection, "ethernet_line", "info configure ethernet line flat", {
+            "config": "info configure ethernet line %s flat",
+        })
 
     def populate_facts(self, connection, ansible_facts, data=None):
         """ Populate the facts for Ethernet_line network resource

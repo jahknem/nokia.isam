@@ -6,7 +6,10 @@ __metaclass__ = type
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.dist_service.dist_service import Isam_dist_serviceArgs
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import unwrap_response
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_targeted_config,
+    unwrap_response,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.dist_service import Isam_dist_serviceTemplate
 
 
@@ -16,7 +19,10 @@ class Isam_dist_serviceFacts(object):
         self.argument_spec = Isam_dist_serviceArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure dist-service flat")
+        """The whole resource, or only the services named in config (targeted gathering)."""
+        return get_targeted_config(self._module, connection, "isam_dist_service", "info configure dist-service flat", {
+            "config": "info configure dist-service %s flat",
+        })
 
     def populate_facts(self, connection, ansible_facts, data=None):
         data = unwrap_response(data if data else self.get_config(connection))
@@ -38,7 +44,7 @@ class Isam_dist_serviceFacts(object):
             if not stripped or stripped.startswith("echo"):
                 continue
             if line.startswith("configure dist-service ") and len(stripped.split()) > 3:
-                lines.append(stripped)
+                lines.extend(Isam_dist_serviceFacts._split_flat_line(stripped))
             elif stripped.startswith("configure dist-service "):
                 lines.append(stripped)
                 in_service = True
@@ -49,3 +55,22 @@ class Isam_dist_serviceFacts(object):
             elif in_service and stripped.startswith(("service-type", "no service-type", "qos-profile", "no qos-profile")):
                 lines.append("configure dist-service %s %s" % (service_name, stripped))
         return lines
+
+    @staticmethod
+    def _split_flat_line(line):
+        """One line per attribute: flat output can carry service-type and qos-profile together."""
+        tokens = line.split()
+        prefix, rest = " ".join(tokens[:3]), tokens[3:]
+        split, index = [], 0
+        while index < len(rest):
+            negate = rest[index] == "no"
+            key_index = index + 1 if negate else index
+            if key_index >= len(rest) or rest[key_index] not in ("service-type", "qos-profile"):
+                return [line]
+            if negate or key_index + 1 >= len(rest):
+                split.append("%s %s%s" % (prefix, "no " if negate else "", rest[key_index]))
+                index = key_index + 1
+            else:
+                split.append("%s %s %s" % (prefix, rest[key_index], rest[key_index + 1]))
+                index = key_index + 2
+        return split or [line]

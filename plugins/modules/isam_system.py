@@ -182,13 +182,31 @@ options:
     description: Device-native running configuration for parsed state.
     type: str
   state:
-    description: Desired resource state.
+    description:
+      - Desired resource state.
+      - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by
+        C(sntp.servers[].ip_address) and C(syslog.destinations[].name) and C(syslog.routes[].destination) (targeted
+        gathering). Other fields are ignored and absent instances are not returned. Without I(config) the whole
+        resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
 """
 
 EXAMPLES = """
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_system:
+    config:
+      sntp:
+        servers:
+          - ip_address: 192.0.2.1
+      syslog:
+        destinations:
+          - name: ams
+        routes:
+          - destination: ams
+    state: gathered
+
 - name: Gather system config
   nokia.isam.isam_system:
     state: gathered

@@ -2,7 +2,10 @@
 import re
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import unwrap_response
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_targeted_config,
+    unwrap_response,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.channel_pair_pm.channel_pair_pm import Channel_pair_pmArgs
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.epon_interfaces.epon_interfaces import Epon_interfacesArgs
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.ngpon2_channel_groups.ngpon2_channel_groups import Ngpon2_channel_groupsArgs
@@ -22,6 +25,31 @@ def _get_optional_config(connection, command):
         if not _OPTIONAL_COMMAND_ERROR.search(str(exc)):
             raise
         return ""
+
+
+# Whole-resource read and single-instance read (targeted gathering) per resource.
+VARIANT_COMMANDS = {
+    "ngpon2_channel_groups": ("info configure channel-group flat", "info configure channel-group id %s flat"),
+    "epon_interfaces": ("info configure epon interface flat", "info configure epon interface %s flat"),
+    "channel_pair_pm": ("info configure channel-pair interface flat", "info configure channel-pair interface %s flat"),
+}
+
+
+class _OptionalConnection(object):
+    """A platform without the feature ("invalid token") has no instances, also for single reads."""
+
+    def __init__(self, connection):
+        self._connection = connection
+
+    def get(self, command, *args, **kwargs):
+        return _get_optional_config(self._connection, command)
+
+
+def get_variant_config(module, connection, resource):
+    """The whole resource, or only the instances named in config with state gathered."""
+    full, single = VARIANT_COMMANDS[resource]
+    module = module if getattr(module, "params", None) is not None else None
+    return get_targeted_config(module, _OptionalConnection(connection), resource, full, {"config": single})
 
 
 def _parse_lines(data, resource):
@@ -65,22 +93,34 @@ def _parse_lines(data, resource):
     return list(records.values())
 
 class Ngpon2_channel_groupsFacts(object):
-    def __init__(self, module, subspec="config", options="options"): self.argument_spec = Ngpon2_channel_groupsArgs.argument_spec
+    def __init__(self, module, subspec="config", options="options"):
+        self._module = module
+        self.argument_spec = Ngpon2_channel_groupsArgs.argument_spec
+
     def populate_facts(self, connection, ansible_facts, data=None):
-        if data is None: data = _get_optional_config(connection, "info configure channel-group flat")
+        if data is None:
+            data = get_variant_config(self._module, connection, "ngpon2_channel_groups")
         ansible_facts["ansible_network_resources"]["ngpon2_channel_groups"] = _parse_lines(data, "ngpon2_channel_groups")
         return ansible_facts
 
 class Epon_interfacesFacts(object):
-    def __init__(self, module, subspec="config", options="options"): self.argument_spec = Epon_interfacesArgs.argument_spec
+    def __init__(self, module, subspec="config", options="options"):
+        self._module = module
+        self.argument_spec = Epon_interfacesArgs.argument_spec
+
     def populate_facts(self, connection, ansible_facts, data=None):
-        if data is None: data = _get_optional_config(connection, "info configure epon interface flat")
+        if data is None:
+            data = get_variant_config(self._module, connection, "epon_interfaces")
         ansible_facts["ansible_network_resources"]["epon_interfaces"] = _parse_lines(data, "epon_interfaces")
         return ansible_facts
 
 class Channel_pair_pmFacts(object):
-    def __init__(self, module, subspec="config", options="options"): self.argument_spec = Channel_pair_pmArgs.argument_spec
+    def __init__(self, module, subspec="config", options="options"):
+        self._module = module
+        self.argument_spec = Channel_pair_pmArgs.argument_spec
+
     def populate_facts(self, connection, ansible_facts, data=None):
-        if data is None: data = _get_optional_config(connection, "info configure channel-pair interface flat")
+        if data is None:
+            data = get_variant_config(self._module, connection, "channel_pair_pm")
         ansible_facts["ansible_network_resources"]["channel_pair_pm"] = _parse_lines(data, "channel_pair_pm")
         return ansible_facts

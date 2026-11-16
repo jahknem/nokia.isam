@@ -79,7 +79,9 @@ options:
     type: str
     description: Output from C(info configure qos), used with state C(parsed).
   state:
-    description: Desired resource state.
+    description:
+    - Desired resource state.
+    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(tc_map_dot1p[].dot1p) and C(dscp_map_dot1p[].dscp) and C(up_ctrl_pkt[].protocol) and C(dn_ctrl_pkt[].protocol) (targeted gathering). Other fields are ignored and absent instances are not returned. Without I(config) the whole resource is read.
     type: str
     default: merged
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
@@ -89,6 +91,15 @@ EXAMPLES = """
 - name: Gather QoS maps
   nokia.isam.isam_qos_maps:
     state: gathered
+
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_qos_maps:
+    state: gathered
+    config:
+      tc_map_dot1p:
+        - dot1p: 5
+      up_ctrl_pkt:
+        - protocol: dhcp
 
 - name: Render tc-map-dot1p entries
   nokia.isam.isam_qos_maps:
