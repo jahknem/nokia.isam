@@ -46,7 +46,10 @@ class Qos_interfacesFacts(object):
         data = self._flatten_config(data)
 
         parser = Qos_interfacesTemplate(lines=data, module=self._module)
-        objs = list(parser.parse().values())
+        # Same result as parser.parse(), without one regex/Jinja pass per field and
+        # line: the template parse took minutes on a full MSAN (tens of thousands of
+        # lines after splitting compact flat output).
+        objs = list(self._parse_lines(data).values())
 
         for item in objs:
             for key in ["queue", "upstream_queue", "ds_rem_queue"]:
@@ -60,6 +63,75 @@ class Qos_interfacesFacts(object):
         facts["qos_interfaces"] = params.get("config", [])
         ansible_facts["ansible_network_resources"].update(facts)
         return ansible_facts
+
+    _SEGMENT = re.compile(
+        r"^configure\s+qos\s+interface\s+(?P<name>\S+)\s+"
+        r"(?:(?P<container>queue|upstream-queue|ds-rem-queue)\s+(?P<id>\d+)\s+)?"
+        r"(?P<negate>no\s+)?(?P<field>\S+)(?:\s+(?P<value>\S+))?$"
+    )
+
+    @classmethod
+    def _template_fields(cls):
+        """Fields the template parses, per container (None: interface level), with
+        whether the "no" form is part of the grammar."""
+        if not hasattr(cls, "_fields_cache"):
+            fields = {}
+            for parser in Qos_interfacesTemplate.PARSERS:
+                parts = parser["name"].split(".")[1:]
+                container = parts[0] if len(parts) == 2 else None
+                negatable = "(?P<negate>" in parser["getval"].pattern
+                fields.setdefault(container, {})[parts[-1]] = negatable
+            cls._fields_cache = fields
+        return cls._fields_cache
+
+    def _parse_lines(self, lines):
+        """Flat, one-attribute-per-line QoS interface config -> {name: entry}.
+
+        Exactly the template's result: only template fields, types from the argspec
+        (int values must be digits), negated values None, flags True/False.
+        """
+        options = self.argument_spec["config"]["options"]
+        known = self._template_fields()
+        result = {}
+        for line in lines or []:
+            match = self._SEGMENT.match(line)
+            if not match:
+                continue
+            container = match.group("container")
+            container = container.replace("-", "_") if container else None
+            field = match.group("field").replace("-", "_")
+            negatable = known.get(container, {}).get(field)
+            if negatable is None:
+                continue
+            spec = (options[container]["options"] if container else options)[field]
+            negate, value = bool(match.group("negate")), match.group("value")
+            if spec.get("type") == "bool":
+                if container or value is not None:
+                    continue
+                parsed = not negate
+            elif negate:
+                if not negatable or value is not None:
+                    continue
+                parsed = None
+            elif value is None:
+                continue
+            elif spec.get("type") == "int":
+                if not value.isdigit():
+                    continue
+                parsed = int(value)
+            else:
+                parsed = value
+            name = match.group("name")
+            entry = result.setdefault(name, {"name": name})
+            if container:
+                number = int(match.group("id"))
+                entry = entry.setdefault(container, {}).setdefault(number, {"id": number})
+            # Like the template's merge: a negated (None) value never replaces a set one.
+            if parsed is None:
+                entry.setdefault(field, None)
+            else:
+                entry[field] = parsed
+        return result
 
     def _count_spaces(self, line):
         return len(line) - len(line.lstrip(" "))
