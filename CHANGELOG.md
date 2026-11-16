@@ -23,6 +23,10 @@
   the port removes the port, even when a `detail` read reports extra defaults.
 - Do not copy masked equipment ONT passwords or NTP keys. Quote interface customer
   labels when needed, and parse compact multi-attribute NTP ONT replies.
+- Safety net for every resource: a parser without a removal form now fails the
+  module with a clear message instead of rendering netcommon's `no configure ...`,
+  which the ISAM never accepts. `xdsl_lines` `admin-up` gets its documented
+  `no admin-up` form (it rendered `no configure xdsl line X admin-up` before).
 - Add offline full-entry gather/merge/delete, command round-trip, sibling isolation,
   absent-target and check-mode regressions, plus a synthetic compact NTP fixture.
 

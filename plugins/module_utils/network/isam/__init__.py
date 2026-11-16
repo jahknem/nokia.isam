@@ -52,6 +52,16 @@ def _isam_addcmd(self, data, tmplt, negate=False):
                 "%s has no standalone removal form in ISAM CLI; it is retained until its parent object is removed" % tmplt
             )
             return
+        before = len(self.commands)
+        _resource_module_addcmd(self, data, tmplt, negate)
+        invalid = [command for command in self.commands[before:] if command.startswith("no configure ")]
+        if invalid:
+            # netcommon's fallback: never valid ISAM CLI. Fail instead of sending it.
+            del self.commands[before:]
+            self._module.fail_json(
+                msg="%s: parser %s has no removal form; refusing to render %r" % (self.__class__.__name__, tmplt, invalid[0])
+            )
+        return
     _resource_module_addcmd(self, data, tmplt, negate)
 
 

@@ -98,6 +98,7 @@ class Xdsl_linesTemplate(NetworkTemplate):
                 configure\sxdsl\sline\s(?P<name>\S+)\s((?P<negate_admin_up>no\sadmin-up)|(?P<admin_up>admin-up))
                 $""", re.VERBOSE),
             "setval": "configure xdsl line {{ name }} {{ 'no ' if admin_up == false else '' }}admin-up",
+            "remval": "configure xdsl line {{ name }} no admin-up",
             "result": {
                 "{{ name }}": {
                     "name": "{{ name }}",
