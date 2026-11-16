@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.12
+
+- QoS interface facts: parse the flat configuration directly instead of one
+  template regex/Jinja pass per field and line. Same facts (verified field by field
+  against the template on the full DS-LIN-TEST-01 capture and the fixtures); a full
+  family read on a 452-ONT MSAN no longer spends many minutes in the parser
+  (lab capture: 48 s -> 0.04 s for 9,982 lines).
+
 ## 0.3.11
 
 - Accept full gathered ONT entries as deletion input. Fix interface-port negation,
