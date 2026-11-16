@@ -85,7 +85,10 @@ class BridgesArgs(object):  # pylint: disable=R0903
                             ],
                         },
                         "prio-regen-name": {"type": "str"},
-                        "max-commited-mac": {"type": "int"},
+                        "max-committed-mac": {
+                            "type": "int",
+                            "aliases": ["max-commited-mac", "max_commited_mac", "max_comitted_mac"],
+                        },
                         "mirror-mode": {
                             "type": "str",
                             "choices": ["disable", "overwrite-outer-vlan", "insert-mirror-vlan"],
@@ -135,7 +138,7 @@ class BridgesArgs(object):  # pylint: disable=R0903
                                 "in_qos_prof_name": {"type": "str"},
                                 "max_up_qos_policy": {"type": "int"},
                                 "max_ip_antispoof": {"type": "int"},
-                                "max_unicaast_mac": {"type": "int"},
+                                "max_unicast_mac": {"type": "int", "aliases": ["max_unicaast_mac"]},
                                 "max_ipv6_antispf": {"type": "int"},
                                 "mac_learn_ctrl": {"type": "int"},
                                 "min_cvlan_id": {"type": "int"},
@@ -170,3 +173,13 @@ class BridgesArgs(object):  # pylint: disable=R0903
             "default": "merged",
         },
     }  # pylint: disable=C0301
+
+
+# Facts use Python identifiers; accept them directly without dropping support for
+# the historical CLI-spelled input keys. Keep one option per value, with aliases.
+_port_options = BridgesArgs.argument_spec["config"]["options"]["port"]["options"]
+for _name, _option in _port_options.items():
+    if "-" in _name:
+        _option.setdefault("aliases", []).append(_name.replace("-", "_"))
+_vlan_options = _port_options["vlan_id"]["options"]
+_vlan_options["ds-dedicated-q"]["aliases"] = ["ds_dedicated_q"]

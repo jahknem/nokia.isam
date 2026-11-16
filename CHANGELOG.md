@@ -1,5 +1,35 @@
 # Changelog
 
+## 0.3.11
+
+- Accept full gathered ONT entries as deletion input. Fix interface-port negation,
+  QoS nested deletion (never reapply requested queue values), bare NTP ONT creation
+  and object deletion, and equipment ONT slot-before-interface removal ordering.
+- Create a complete bridge port in one call: bootstrap the requested PVID VLAN,
+  assign the PVID, then create service VLANs. Full-entry deletion removes the bridge
+  port; partial deletion preserves other ports/VLANs and handles both named port
+  attributes and VLANs. Keep structural VLAN/PVID removals out of CLI compaction.
+- Accept underscore bridge fact keys as input aliases, correct committed-MAC and
+  VLAN max-unicast-MAC spelling mismatches, and normalize keys before merging.
+- Never invent `no auto-detect` or downstream queue reset syntax: these fields have
+  no standalone removal form in the Nokia reference. Warn and retain them until the
+  parent object is removed.
+- QoS `oper-weight`, `oper-rate` and queue `oper-weight` are derived by the device
+  (live: "instance can not be modified"; `oper-rate` follows the scheduler-node
+  profile). They are still parsed, but never rendered (`read_only` parser flag).
+- Parse scoped QoS replies that carry non-configuration lines (they produced no
+  entries, so deletion rendered nothing on a live device).
+- Bridge full-entry deletion is decided by the VLANs: a request naming every VLAN of
+  the port removes the port, even when a `detail` read reports extra defaults.
+- Do not copy masked equipment ONT passwords or NTP keys. Quote interface customer
+  labels when needed, and parse compact multi-attribute NTP ONT replies.
+- Safety net for every resource: a parser without a removal form now fails the
+  module with a clear message instead of rendering netcommon's `no configure ...`,
+  which the ISAM never accepts. `xdsl_lines` `admin-up` gets its documented
+  `no admin-up` form (it rendered `no configure xdsl line X admin-up` before).
+- Add offline full-entry gather/merge/delete, command round-trip, sibling isolation,
+  absent-target and check-mode regressions, plus a synthetic compact NTP fixture.
+
 ## 0.3.10
 
 - Fix `isam_equipment` parsing of compact multi-property equipment lines, including

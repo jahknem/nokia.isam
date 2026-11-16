@@ -177,8 +177,8 @@ class TestIsamEquipmentOntsModule(TestIsamModule):
             result["commands"],
             [
                 "configure equipment ont interface 1/1/5/1/1 admin-state down",
-                "configure equipment ont no interface 1/1/5/1/1",
                 "configure equipment ont no slot 1/1/5/1/1/1",
+                "configure equipment ont no interface 1/1/5/1/1",
             ],
         )
         self.assertFalse(any("1/1/5/1/2" in command for command in result["commands"]))
