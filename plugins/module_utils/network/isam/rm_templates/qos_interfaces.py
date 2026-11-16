@@ -8,9 +8,9 @@ import re
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import NetworkTemplate
 
 
-def _top_parser(field, cli_name, value_re=r"\S+", value_type="string"):
+def _top_parser(field, cli_name, value_re=r"\S+", value_type="string", negatable=True):
     result_filter = "|int" if value_type == "int" else "|string"
-    return {
+    parser = {
         "name": "interface.%s" % field,
         "compval": field,
         "getval": re.compile(
@@ -28,6 +28,16 @@ def _top_parser(field, cli_name, value_re=r"\S+", value_type="string"):
             }
         },
     }
+    return _removal(parser, negatable)
+
+
+def _removal(parser, negatable):
+    """Attributes without a "no" form in the CLI are not removed on their own;
+    they go away with the QoS interface's parent (ONT, UNI, VLAN port)."""
+    if not negatable:
+        del parser["remval"]
+        parser["no_remval"] = True
+    return parser
 
 
 def _top_bool_parser(field, cli_name):
@@ -54,7 +64,7 @@ def _top_bool_parser(field, cli_name):
 def _queue_parser(list_name, field, cli_name, value_re=r"\S+", value_type="string", negatable=False):
     result_filter = "|int" if value_type == "int" else "|string"
     no_part = r"(?P<negate>no\s%s)|" % re.escape(cli_name) if negatable else ""
-    return {
+    parser = {
         "name": "interface.%s.%s" % (list_name, field),
         "compval": field,
         "getval": re.compile(
@@ -77,6 +87,7 @@ def _queue_parser(list_name, field, cli_name, value_re=r"\S+", value_type="strin
             }
         },
     }
+    return _removal(parser, negatable)
 
 
 class Qos_interfacesTemplate(NetworkTemplate):
@@ -98,8 +109,8 @@ class Qos_interfacesTemplate(NetworkTemplate):
         _top_parser("us_num_queue", "us-num-queue"),
         _top_bool_parser("queue_stats_on", "queue-stats-on"),
         _top_bool_parser("autoschedule", "autoschedule"),
-        _top_parser("oper_weight", "oper-weight", value_re=r"\d+", value_type="int"),
-        _top_parser("oper_rate", "oper-rate", value_re=r"\d+", value_type="int"),
+        _top_parser("oper_weight", "oper-weight", value_re=r"\d+", value_type="int", negatable=False),
+        _top_parser("oper_rate", "oper-rate", value_re=r"\d+", value_type="int", negatable=False),
         _top_bool_parser("us_vlanport_queue", "us-vlanport-queue"),
         _top_parser("dsfld_shaper_prof", "dsfld-shaper-prof"),
         _top_parser("bandwidth_profile", "bandwidth-profile"),

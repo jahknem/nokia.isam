@@ -14,10 +14,18 @@ facilitates both facts gathering and native command generation for
 the given network resource.
 """
 
+import json
 import re
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (
     NetworkTemplate,
 )
+
+
+def _user_command(data):
+    value = str(data["user"])
+    if not value or re.search(r'[\s"\\]', value):
+        value = json.dumps(value, ensure_ascii=False)
+    return "configure interface port %s user %s" % (data["name"], value)
 
 
 class InterfacesTemplate(NetworkTemplate):
@@ -45,6 +53,7 @@ class InterfacesTemplate(NetworkTemplate):
                 r'''^port\s+(?P<id>\S+)\s+(?:(?P<negate>no)\s+)?(?P<adminup>admin-up)$''', re.VERBOSE,
             ),
             'setval': 'configure interface port {{ name }} {{ "no " if admin_up == false else "" }}admin-up',
+            'remval': 'configure interface port {{ name }} no admin-up',
             'result': {
                 '{{ id }}': {
                     'name': '{{ id }}',
@@ -58,6 +67,7 @@ class InterfacesTemplate(NetworkTemplate):
                 r'''^port\s+(?P<id>\S+)\s+(?:(?P<negate>no)\s+)?(?P<linkupdowntrap>link-updown-trap)$''', re.VERBOSE,
             ),
             'setval': 'configure interface port {{ name }} {{ "no " if link_updown_trap == false else "" }}link-updown-trap',
+            'remval': 'configure interface port {{ name }} no link-updown-trap',
             'result': {
                 '{{ id }}': {
                     'name': '{{ id }}',
@@ -68,7 +78,8 @@ class InterfacesTemplate(NetworkTemplate):
         {
             'name': 'user',
             'getval': re.compile(r'''^port\s+(?P<id>\S+)\s+(?:(?P<negate>no)\s+)?user\s(?:"(?P<user_quoted>[^"]*)"|(?P<user>[^\s]+))$''', re.VERBOSE,),
-            'setval': 'configure interface port {{ name }} user {{ user }}',
+            'setval': _user_command,
+            'remval': 'configure interface port {{ name }} no user',
             'result': {
                 '{{ id }}': {
                     'name': '{{ id }}',
@@ -82,6 +93,7 @@ class InterfacesTemplate(NetworkTemplate):
                 r'''^port\s+(?P<id>\S+)\s+(?:(?P<negate>no)\s+)?severity\s+(?P<severity>(indeterminate|warning|minor|major|critical|no-alarms|default|no-value|))$''', re.VERBOSE,
             ),
             'setval': 'configure interface port {{ name }} severity {{ severity }}',
+            'remval': 'configure interface port {{ name }} no severity',
             'result': {
                 '{{ id }}': {
                     'name': '{{ id }}',
@@ -95,6 +107,7 @@ class InterfacesTemplate(NetworkTemplate):
                 r'''^port\s+(?P<id>\S+)\s+(?:(?P<negate>no)\s+)?port-type\s(?P<port_type>uni|nni|hc-uni|uplink|)?$''', re.VERBOSE,
             ),
             'setval': 'configure interface port {{ name }} port-type {{ port_type }}',
+            'remval': 'configure interface port {{ name }} no port-type',
             'result': {
                 '{{ id }}': {
                     'name': '{{ id }}',

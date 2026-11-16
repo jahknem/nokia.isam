@@ -207,6 +207,20 @@ def test_every_fixture_has_a_device_descriptor():
         assert path.with_name("output.txt").is_file()
 
 
+def test_compact_ntp_ont_full_entry_fixture_is_parseable():
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ntp_onts import Ntp_ontsTemplate
+
+    descriptor, output = fixture_bundle("ntp_onts", "compact-full-entry")
+    assert descriptor["source"] == "synthetic-regression"
+    lines = Ntp_ontsFacts(module=None)._flatten_config(output)
+    parsed = Ntp_ontsTemplate(lines=lines).parse()
+    assert parsed["1/1/5/1/3"]["client_state"] == "on"
+    assert parsed["1/1/5/1/3"]["config_mode"] == "manual"
+    assert parsed["1/1/5/1/3"]["server1_ip_addr"] == "192.0.2.1"
+    assert str(parsed["1/1/5/1/3"]["key_identifier"]) == "7"
+    assert parsed["1/1/5/1/30"] == {"ont_id": "1/1/5/1/30"}
+
+
 def test_voice_fixture_is_parseable():
     descriptor, output = fixture_bundle("voice_sip", "r6.2.04m")
     parsed = Isam_voice_sipTemplate(lines=output.splitlines()).parse()

@@ -23,6 +23,10 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    covers_entry,
+    is_masked_secret,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ntp_onts import (
     Ntp_ontsTemplate,
 )
@@ -70,20 +74,35 @@ class Ntp_onts(ResourceModule):
             wantd = dict_merge(haved, wantd)
 
         if self.state == "deleted":
-            haved = {
-                k: v for k, v in iteritems(haved) if k in wantd or not wantd
-            }
-            wantd = {}
+            # A whole entry (identity only, or every configured attribute) removes the
+            # NTP ONT object; otherwise only the named attributes are removed.
+            for k, have in iteritems(haved):
+                if wantd and k not in wantd:
+                    continue
+                want = wantd.get(k, {})
+                if covers_entry(want, have, ("ont_id",)):
+                    self.addcmd(have, "ntp_ont", negate=True)
+                else:
+                    named = {key: value for key, value in iteritems(have) if key == "ont_id" or want.get(key) is not None}
+                    self._compare(want={}, have=named)
+            return
 
-        if self.state in ["overridden", "deleted"]:
+        if self.state == "overridden":
             for k, have in iteritems(haved):
                 if k not in wantd:
-                    self._compare(want={}, have=have)
+                    self.addcmd(have, "ntp_ont", negate=True)
 
         for k, want in iteritems(wantd):
-            self._compare(want=want, have=haved.pop(k, {}))
+            have = haved.pop(k, {})
+            if not have:
+                # The object exists on its own: create it even without attributes.
+                self.addcmd(want, "ntp_ont")
+            self._compare(want=want, have=have)
 
     def _compare(self, want, have):
+        if is_masked_secret(want.get("key")):
+            # Shown masked by the device; a masked value is not the key.
+            want = dict(want, key=have.get("key"))
         self.compare(parsers=self.parsers, want=want, have=have)
 
     def _index_by_ont_id(self, data):

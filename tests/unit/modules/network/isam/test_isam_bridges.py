@@ -401,14 +401,13 @@ class TestIsamBridgesModule(TestIsamModule):
             candidate=result["commands"]
         )
 
-    def test_isam_bridges_rejects_service_vlans_without_pvid_context(self):
+    def test_isam_bridges_bootstraps_service_vlans_with_requested_pvid(self):
         class FakeFactsConn:
             def get(self, command):
                 return ""
 
         self.get_resource_connection_facts.return_value = FakeFactsConn()
-        # network_vlan is the obsolete alias of l2fwder_vlan, so both
-        # spellings must trigger the same PVID ordering guard.
+        # Both aliases must bootstrap VLAN 99 and the PVID in the same request.
         for mapping_field in ("l2fwder_vlan", "network_vlan"):
             with self.subTest(mapping_field=mapping_field):
                 set_module_args(
@@ -427,7 +426,13 @@ class TestIsamBridgesModule(TestIsamModule):
                     ),
                     ignore_provider_arg,
                 )
-                self.execute_module(failed=True)
+                commands = self.execute_module(changed=True)["commands"]
+                prefix = "configure bridge port 1/1/8/1"
+                self.assertLess(commands.index(prefix + " vlan-id 99"), commands.index(prefix + " pvid 99"))
+                self.assertLess(
+                    commands.index(prefix + " pvid 99"),
+                    commands.index(prefix + " vlan-id 10 tag single-tagged l2fwder-vlan 710 vlan-scope local"),
+                )
 
     def test_isam_bridges_parsed_network_vlan(self):
         set_module_args(

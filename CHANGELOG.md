@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.3.11
+
+- Accept full gathered ONT entries as deletion input. Fix interface-port negation,
+  QoS nested deletion (never reapply requested queue values), bare NTP ONT creation
+  and object deletion, and equipment ONT slot-before-interface removal ordering.
+- Create a complete bridge port in one call: bootstrap the requested PVID VLAN,
+  assign the PVID, then create service VLANs. Full-entry deletion removes the bridge
+  port; partial deletion preserves other ports/VLANs and handles both named port
+  attributes and VLANs. Keep structural VLAN/PVID removals out of CLI compaction.
+- Accept underscore bridge fact keys as input aliases, correct committed-MAC and
+  VLAN max-unicast-MAC spelling mismatches, and normalize keys before merging.
+- Never invent `no auto-detect`, `no oper-weight`, `no oper-rate` or downstream
+  queue reset syntax: these fields have no standalone removal form in the Nokia
+  reference. Warn and retain them until the parent object is removed. Their valid
+  set commands remain supported.
+- Do not copy masked equipment ONT passwords or NTP keys. Quote interface customer
+  labels when needed, and parse compact multi-attribute NTP ONT replies.
+- Add offline full-entry gather/merge/delete, command round-trip, sibling isolation,
+  absent-target and check-mode regressions, plus a synthetic compact NTP fixture.
+
 ## 0.3.10
 
 - Fix `isam_equipment` parsing of compact multi-property equipment lines, including
