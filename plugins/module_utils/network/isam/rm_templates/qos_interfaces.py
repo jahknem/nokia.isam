@@ -40,6 +40,15 @@ def _removal(parser, negatable):
     return parser
 
 
+def _read_only(parser):
+    """Derived by the device (live: "instance can not be modified"; oper-rate follows
+    the scheduler-node profile). Parsed for facts, never rendered."""
+    parser.pop("remval", None)
+    parser.pop("no_remval", None)
+    parser["read_only"] = True
+    return parser
+
+
 def _top_bool_parser(field, cli_name):
     return {
         "name": "interface.%s" % field,
@@ -109,8 +118,8 @@ class Qos_interfacesTemplate(NetworkTemplate):
         _top_parser("us_num_queue", "us-num-queue"),
         _top_bool_parser("queue_stats_on", "queue-stats-on"),
         _top_bool_parser("autoschedule", "autoschedule"),
-        _top_parser("oper_weight", "oper-weight", value_re=r"\d+", value_type="int", negatable=False),
-        _top_parser("oper_rate", "oper-rate", value_re=r"\d+", value_type="int", negatable=False),
+        _read_only(_top_parser("oper_weight", "oper-weight", value_re=r"\d+", value_type="int")),
+        _read_only(_top_parser("oper_rate", "oper-rate", value_re=r"\d+", value_type="int")),
         _top_bool_parser("us_vlanport_queue", "us-vlanport-queue"),
         _top_parser("dsfld_shaper_prof", "dsfld-shaper-prof"),
         _top_parser("bandwidth_profile", "bandwidth-profile"),
@@ -124,7 +133,7 @@ class Qos_interfacesTemplate(NetworkTemplate):
         _top_parser("ds_schedule_tag", "ds-schedule-tag"),
         _queue_parser("queue", "priority", "priority", value_re=r"\d+", value_type="int"),
         _queue_parser("queue", "weight", "weight", value_re=r"\d+", value_type="int"),
-        _queue_parser("queue", "oper_weight", "oper-weight", value_re=r"\d+", value_type="int"),
+        _read_only(_queue_parser("queue", "oper_weight", "oper-weight", value_re=r"\d+", value_type="int")),
         _queue_parser("queue", "queue_profile", "queue-profile"),
         _queue_parser("queue", "shaper_profile", "shaper-profile"),
         _queue_parser("upstream_queue", "priority", "priority", value_re=r"\d+", value_type="int", negatable=True),

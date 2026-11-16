@@ -183,7 +183,8 @@ class TestIsamQosInterfacesModule(TestIsamModule):
 
         result = self.execute_module(changed=False)
         self.assertEqual(result["rendered"], [
-            "configure qos interface 1/1/8/28 queue 0 priority 6 weight 34 oper-weight 34 queue-profile name:NGLT_Default shaper-profile none",
+            # oper-weight is derived by the device and never rendered.
+            "configure qos interface 1/1/8/28 queue 0 priority 6 weight 34 queue-profile name:NGLT_Default shaper-profile none",
             "configure qos interface 1/1/8/28 upstream-queue 4 weight 5 bandwidth-profile name:GPONqpp600Mbps bandwidth-sharing uni-sharing",
         ])
 

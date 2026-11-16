@@ -30,10 +30,17 @@ def _isam_addcmd(self, data, tmplt, negate=False):
       with its parent object;
     Other resources retain netcommon's existing rendering behavior.
     """
+    if self.__class__.__module__.startswith("ansible_collections.nokia.isam.") and not negate:
+        parser = self._tmplt.get_parser(tmplt) if hasattr(self._tmplt, "get_parser") else {}
+        if parser.get("read_only"):
+            # Derived by the device; never set (``read_only: True`` in the template).
+            return
     if negate and self.__class__.__module__.startswith(
         "ansible_collections.nokia.isam."
     ):
         parser = self._tmplt.get_parser(tmplt)
+        if parser.get("read_only"):
+            return
         remval = parser.get("remval")
         if remval:
             command = self._tmplt._render(remval, data, False)
