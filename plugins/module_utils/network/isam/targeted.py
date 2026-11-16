@@ -25,6 +25,7 @@ TARGETED_GATHER = {
     "interfaces": {"config": "name"},
     "isam_arp_relay": {"config": "name"},
     "isam_dhcp_relay": {"config": "name"},
+    "isam_equipment": {"slots": "id"},
     "ntp_onts": {"config": "ont_id"},
     "pon_interfaces": {"config": "name"},
     "qos_interfaces": {"config": "name"},

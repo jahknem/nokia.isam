@@ -31,6 +31,8 @@ CASES = {
     "ethernet_onts": ("isam_ethernet_onts", ["configure ethernet ont %s auto-detect auto admin-state up" % UNI], [{"uni_idx": UNI}], UNI),
     "interfaces": ("isam_interfaces", ["configure interface port uni:%s admin-up" % UNI], [{"name": "uni:" + UNI}], "uni:" + UNI),
     "isam_arp_relay": ("isam_arp_relay", ["configure arp-relay statistics vlan-port:%s:10" % UNI], [{"name": "vlan-port:%s:10" % UNI}], UNI),
+    "isam_equipment": ("isam_equipment", ["configure equipment slot lt:1/1/5 planned-type fglt-b unlock"],
+                       {"slots": [{"id": "lt:1/1/5"}]}, "lt:1/1/5"),
     "isam_dhcp_relay": ("isam_dhcp_relay", ["configure dhcp-relay port-stats vlan-port:%s:10" % UNI], [{"name": "vlan-port:%s:10" % UNI}], UNI),
     "ntp_onts": ("isam_ntp_onts", ["configure ntp ont %s client-state on" % ONT], [{"ont_id": ONT}], ONT),
     "pon_interfaces": ("isam_pon_interfaces", ["configure pon interface 1/1/5/3 admin-state up"], [{"name": "1/1/5/3"}], "1/1/5/3"),
@@ -40,7 +42,7 @@ CASES = {
 
 def device_lines(resource):
     lines = CASES[resource][1]
-    sibling = [line.replace(ONT, SIBLING).replace("1/1/5/3", "1/1/5/30") for line in lines]
+    sibling = [line.replace(ONT, SIBLING).replace("1/1/5/3", "1/1/5/30").replace("lt:1/1/5 ", "lt:1/1/30 ") for line in lines]
     return lines + sibling
 
 
@@ -110,7 +112,7 @@ def test_gathered_with_config_reads_only_the_named_instances(monkeypatch, resour
     found = instances(result["gathered"])
     assert found, result
     text = repr(found)
-    assert SIBLING not in text and "1/1/5/30" not in text
+    assert SIBLING not in text and "1/1/5/30" not in text and "lt:1/1/30" not in text
 
 
 @pytest.mark.parametrize("resource", sorted(CASES))
@@ -134,4 +136,4 @@ def test_without_config_the_whole_resource_is_read(monkeypatch, resource):
     assert not result.get("failed"), result
     assert not any(CASES[resource][3] in command for command in device.commands), device.commands
     text = repr(instances(result["gathered"]))
-    assert (SIBLING in text or "1/1/5/30" in text) and (ONT in text or "1/1/5/3'" in text)
+    assert (SIBLING in text or "1/1/5/30" in text or "lt:1/1/30" in text) and (ONT in text or "1/1/5/3'" in text or "lt:1/1/5'" in text)
