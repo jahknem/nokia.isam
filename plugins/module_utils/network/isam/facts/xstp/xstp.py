@@ -7,6 +7,9 @@ __metaclass__ = type
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_targeted_config,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.xstp.xstp import (
     XstpArgs,
 )
@@ -19,11 +22,17 @@ class XstpFacts(object):
         self._module = module
         self.argument_spec = XstpArgs.argument_spec
 
+    def get_config(self, connection):
+        """The whole resource, or only the ports named in config (targeted gathering)."""
+        return get_targeted_config(self._module, connection, "xstp", "info configure xstp flat", {
+            "ports": "info configure xstp port %s flat",
+        })
+
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}
 
         if not data:
-            data = connection.get("info configure xstp flat")
+            data = self.get_config(connection)
 
         xstp_config = self._parse_xstp_config(data)
 

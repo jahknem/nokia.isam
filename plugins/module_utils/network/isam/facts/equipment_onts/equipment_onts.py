@@ -9,6 +9,7 @@ __metaclass__ = type
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
     get_scoped_config,
+    get_targeted_config,
     unwrap_response,
     validate_config_safe,
 )
@@ -28,6 +29,13 @@ class Equipment_ontsFacts(object):
         self.argument_spec = Equipment_ontsArgs.argument_spec
 
     def get_config(self, connection):
+        if self._module.params.get("state") == "gathered":
+            # Targeted gathering, software controls included.
+            return get_targeted_config(self._module, connection, "equipment_onts", "info configure equipment ont flat", {
+                "interfaces": "info configure equipment ont interface %s flat detail",
+                "slots": "info configure equipment ont slot %s flat detail",
+                "sw_ctrls": "info configure equipment ont sw-ctrl %s flat",
+            })
         config = self._module.params.get("config") or {}
         commands = []
         for item in config.get("interfaces") or []:

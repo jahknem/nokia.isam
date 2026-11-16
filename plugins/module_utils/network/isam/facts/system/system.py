@@ -8,6 +8,7 @@ import shlex
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_targeted_config,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
@@ -29,7 +30,12 @@ class Isam_systemFacts(object):
         self.argument_spec = Isam_systemArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure system flat")
+        """The whole resource, or only the instances named in config (targeted gathering)."""
+        return get_targeted_config(self._module, connection, "system", "info configure system flat", {
+            "sntp.servers": "info configure system sntp server-table ip-address %s flat",
+            "syslog.destinations": "info configure system syslog destination %s flat",
+            "syslog.routes": "info configure system syslog route %s flat",
+        })
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}

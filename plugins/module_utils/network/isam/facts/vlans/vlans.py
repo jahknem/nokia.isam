@@ -20,6 +20,9 @@ based on the configuration.
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_targeted_config,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.vlans import (
     VlansTemplate,
 )
@@ -39,6 +42,12 @@ class VlansFacts(object):
         self._module = module
         self.argument_spec = VlansArgs.argument_spec
 
+    def get_config(self, connection):
+        """The whole resource, or only the VLANs named in config (targeted gathering)."""
+        return get_targeted_config(self._module, connection, "vlans", "info configure vlan id flat", {
+            "config": "info configure vlan id %s flat",
+        })
+
     def populate_facts(self, connection, ansible_facts, data=None):
         """ Populate the facts for Vlans network resource
 
@@ -53,7 +62,7 @@ class VlansFacts(object):
         objs = []
 
         if not data:
-            data = connection.get("info configure vlan id flat")
+            data = self.get_config(connection)
 
         # parse native config using the Vlans template
         vlans_parser = VlansTemplate(lines=self._flatten_config(data), module=self._module)

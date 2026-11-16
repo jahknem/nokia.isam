@@ -285,11 +285,22 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
     return "\n".join(scoped_results)
 
 
+def _section_items(config, section):
+    """Entries of one instance list in config ("config": config itself, "a.b": nested)."""
+    if section == "config":
+        return config if isinstance(config, list) else []
+    value = config
+    for key in section.split("."):
+        value = value.get(key) if isinstance(value, dict) else None
+    return value if isinstance(value, list) else []
+
+
 def requested_identities(module, resource, section="config"):
     """Identity values named in the module's config for one list of a resource.
 
-    Follows TARGETED_GATHER (targeted.py). Empty when there is no module (isam_facts,
-    parsing) or no config: then the whole resource is read.
+    Follows TARGETED_GATHER (targeted.py): one value per entry, or a tuple of values
+    for a composite identity. Empty when there is no module (isam_facts, parsing) or
+    no config: then the whole resource is read.
     """
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.targeted import TARGETED_GATHER
 
@@ -298,8 +309,47 @@ def requested_identities(module, resource, section="config"):
     config = params.get("config")
     if not field or not config:
         return []
-    items = config if section == "config" else (config.get(section) if isinstance(config, dict) else None)
-    return [item[field] for item in items or [] if isinstance(item, dict) and item.get(field)]
+    fields = [field] if isinstance(field, str) else list(field)
+    found = []
+    for item in _section_items(config, section):
+        if not isinstance(item, dict):
+            continue
+        values = tuple(item.get(name) for name in fields)
+        if all(value not in (None, "") for value in values):
+            found.append(values[0] if isinstance(field, str) else values)
+    return found
+
+
+def targeted_commands(module, resource, formats):
+    """Read commands for the instances named in config (targeted gathering).
+
+    formats: instance list -> command format with one %s per identity field, or a
+    callable returning the commands for one identity. Empty when config names no
+    instance: then the caller reads the whole resource.
+    """
+    commands = []
+    for section, form in formats.items():
+        for identity in requested_identities(module, resource, section):
+            if callable(form):
+                commands.extend(form(identity))
+            else:
+                commands.append(form % (identity if isinstance(identity, tuple) else (identity,)))
+    return commands
+
+
+def get_targeted_config(module, connection, resource, fallback, formats, write_states=False):
+    """The whole resource, or only the instances named in config with state gathered.
+
+    fallback: command for the whole resource, or a callable(connection) reading it.
+    write_states: also compare merged/replaced/deleted against only the named
+    instances (only for resources made of instance lists, where that is exact).
+    """
+    states = ("merged", "replaced", "deleted", "gathered") if write_states else ("gathered",)
+    commands = targeted_commands(module, resource, formats) if module is not None else []
+    state = module.params.get("state", "merged") if module is not None else None
+    if commands and state in states:
+        return get_scoped_config(module, connection, None, None, commands, safe_states=states)
+    return fallback(connection) if callable(fallback) else connection.get(fallback)
 
 
 def count_indent(line):

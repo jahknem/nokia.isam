@@ -51,7 +51,9 @@ options:
       - Native C(info configure xdsl line) output to parse.
     type: str
   state:
-    description: The state of the configuration after module completion.
+    description:
+      - The state of the configuration after module completion.
+      - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(name) (targeted gathering). Other fields are ignored and absent instances are not returned. Without I(config) the whole resource is read.
     type: str
     choices:
       - merged
@@ -78,6 +80,12 @@ EXAMPLES = """
 
 - name: Gather XDSL line facts
   nokia.isam.isam_xdsl_lines:
+    state: gathered
+
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_xdsl_lines:
+    config:
+      - name: 1/1/3/1
     state: gathered
 """
 

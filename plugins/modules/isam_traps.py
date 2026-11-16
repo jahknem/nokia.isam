@@ -190,13 +190,26 @@ options:
     description: Device-native running configuration for parsed state.
     type: str
   state:
-    description: The state the configuration should be left in.
+    description:
+      - The state the configuration should be left in.
+      - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by
+        C(definitions[].name) and C(managers[].address) and C(v6managers[].ipv6address) (targeted gathering). Other
+        fields are ignored and absent instances are not returned. Without I(config) the whole resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
 """
 
 EXAMPLES = """
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_traps:
+    config:
+      definitions:
+        - name: cold-start
+      managers:
+        - address: 10.0.0.1:162
+    state: gathered
+
 - name: Gather trap configuration
   nokia.isam.isam_traps:
     state: gathered

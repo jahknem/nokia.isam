@@ -7,6 +7,9 @@ __metaclass__ = type
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_targeted_config,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.interface_alarms.interface_alarms import (
     Interface_alarmsArgs,
 )
@@ -23,7 +26,13 @@ class Interface_alarmsFacts(object):
         self.argument_spec = Interface_alarmsArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure interface alarm")
+        """The whole resource, or only the alarms named in config (targeted gathering).
+
+        Same output format (not flat) as the whole-resource read.
+        """
+        return get_targeted_config(self._module, connection, "interface_alarms", "info configure interface alarm", {
+            "config": "info configure interface alarm %s",
+        })
 
     @staticmethod
     def _canonicalize_entry(item):
@@ -93,11 +102,28 @@ class Interface_alarmsFacts(object):
         if not config:
             return []
 
-        root = self._parse_config_to_tree(config)
-        if root is None:
-            return []
-
         flat_config = []
-        for leaf in root.leaves:
-            flat_config.append(" ".join(node.name for node in leaf.path))
+        for block in self._top_level_blocks(config):
+            root = self._parse_config_to_tree(block)
+            if root is None:
+                continue
+            for leaf in root.leaves:
+                flat_config.append(" ".join(node.name for node in leaf.path))
         return flat_config
+
+    @staticmethod
+    def _top_level_blocks(config):
+        """Split output into its top-level blocks.
+
+        Each unindented line (e.g. one per alarm, or one per targeted read)
+        starts its own tree, so blocks are not nested into each other.
+        """
+        blocks = []
+        for line in config.splitlines():
+            if line.startswith("echo") or line.startswith("#") or not line.strip():
+                continue
+            if not line[:1].isspace() and line.split("#", 1)[0].strip() != "exit":
+                blocks.append([])
+            if blocks:
+                blocks[-1].append(line)
+        return ["\n".join(block) for block in blocks]

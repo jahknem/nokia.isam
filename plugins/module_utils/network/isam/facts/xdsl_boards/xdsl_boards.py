@@ -8,6 +8,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
     utils,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_targeted_config,
     unwrap_response,
     validate_config_safe,
 )
@@ -27,6 +28,14 @@ class Xdsl_boardsFacts(object):
         self.argument_spec = Xdsl_boardsArgs.argument_spec
 
     def get_config(self, connection):
+        """The whole resource, or only the boards named in config (targeted gathering)."""
+        return get_targeted_config(self._module, connection, "xdsl_boards", self._get_full_config, {
+            "boards": "info configure xdsl board %s flat",
+            "vp_boards": "info configure xdsl vp-board %s flat",
+        })
+
+    @staticmethod
+    def _get_full_config(connection):
         return "\n".join(
             [
                 unwrap_response(connection.get("info configure xdsl board flat")),

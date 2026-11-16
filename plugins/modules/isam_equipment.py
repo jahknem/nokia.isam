@@ -83,8 +83,7 @@ options:
   state:
     description:
     - The state the configuration should be left in.
-    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(slots[].id) (targeted gathering). Other fields are ignored and absent instances are not returned. Without I(config) the whole resource is read.
-    - With C(merged), C(replaced) or C(deleted) and I(config), the current configuration is likewise read only for the named instances.
+    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(shelves[].id), C(slots[].id), C(appliques[].id) and C(protection_groups[].id) (targeted gathering). Other fields are ignored and absent instances are not returned. Without I(config) the whole resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged

@@ -215,7 +215,9 @@ options:
     description: Device-native C(info configure xdsl ...) output for parsed state.
   state:
     type: str
-    description: Desired resource state.
+    description:
+      - Desired resource state.
+      - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(dpbo_profiles[].id) and C(service_profiles[].id) and C(spectrum_profiles[].id) and C(vce_profiles[].id) and C(vect_profiles[].id) (targeted gathering). Other fields are ignored and absent instances are not returned. Without I(config) the whole resource is read.
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
 """
@@ -231,6 +233,15 @@ EXAMPLES = """
           max_bitrate_up: 5500
           active: true
     state: merged
+
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_xdsl_profiles:
+    config:
+      service_profiles:
+        - id: 11
+      spectrum_profiles:
+        - id: 2
+    state: gathered
 """
 
 RETURN = """
@@ -253,6 +264,7 @@ parsed:
 """
 
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.common.text.converters import to_text
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base import (
     get_resource_connection,
 )
@@ -292,7 +304,10 @@ def main():
         }
     elif module.params["state"] == "gathered":
         ansible_facts = {"ansible_network_resources": {}}
-        facts = Xdsl_profilesFacts(module).populate_facts(get_resource_connection(module), ansible_facts)
+        try:
+            facts = Xdsl_profilesFacts(module).populate_facts(get_resource_connection(module), ansible_facts)
+        except Exception as exc:  # like netcommon's facts: a clear failure, no traceback
+            module.fail_json(msg=to_text(exc))
         result = {
             "changed": False,
             "gathered": facts.get("ansible_network_resources", {}).get("xdsl_profiles", {}),

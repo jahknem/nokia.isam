@@ -43,7 +43,9 @@ options:
     description: Device native configuration to parse.
     type: str
   state:
-    description: The state of the configuration after module completion.
+    description:
+    - The state of the configuration after module completion.
+    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(ports[].port) (targeted gathering). Other fields are ignored and absent instances are not returned. Without I(config) the whole resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -53,6 +55,13 @@ EXAMPLES = """
 - name: Gather XSTP configuration
   nokia.isam.isam_xstp:
     state: gathered
+
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_xstp:
+    state: gathered
+    config:
+      ports:
+        - port: vlan-port:1/1/8/1
 
 - name: Configure XSTP general and port path cost
   nokia.isam.isam_xstp:
