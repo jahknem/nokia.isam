@@ -8,8 +8,8 @@
   `config` nothing changes. `merged`/`replaced`/`deleted` already compared this way.
   Supported resources and identity fields are listed in
   `plugins/module_utils/network/isam/targeted.py` (`TARGETED_GATHER`, dependency-free):
-  new for `ntp_onts`, `ani_onts`, `isam_dhcp_relay`, `isam_arp_relay` and
-  `efm_oam_interface`, besides the existing six.
+  new for `ntp_onts`, `ani_onts`, `isam_dhcp_relay`, `isam_arp_relay`,
+  `efm_oam_interface` and `isam_equipment` slots, besides the existing six.
 - `isam_efm_oam_interface` now reads the device for `gathered`, `merged` and `deleted`
   (its facts adapter parsed nothing). `isam_efm_oam_interface`, `isam_arp_relay` and
   `isam_dhcp_relay` report device errors with `fail_json` like netcommon modules, and
