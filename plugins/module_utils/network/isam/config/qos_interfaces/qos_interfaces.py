@@ -108,10 +108,14 @@ class Qos_interfaces(ResourceModule):
     def _compare(self, want, have):
         if self.state == "deleted" and want:
             requested = {
-                key for key in want
-                if key not in {"name", "id", "queue", "upstream_queue", "ds_rem_queue"}
+                key for key, value in want.items()
+                if key not in {"name", "id", "queue", "upstream_queue", "ds_rem_queue"} and value is not None
             }
-            for field in requested:
+            # Identity-only deletion resets every removable setting on this
+            # interface. A full gathered entry takes the same path field by field.
+            if not any(value is not None for key, value in want.items() if key not in {"name", "id"}):
+                requested = {self._tmplt.get_parser(parser)["compval"] for parser in self.top_parsers}
+            for field in sorted(requested):
                 value = have.get(field)
                 if value is not None:
                     self.addcmd(
@@ -140,6 +144,9 @@ class Qos_interfaces(ResourceModule):
             self._compare_list_entry(parsers, want_entry, haved.get(key, {}), want.get("name"))
 
     def _compare_list_entry(self, parsers, want, have, name):
+        # deleted removes what was requested and never sets a value: the named fields
+        # of the entry, or every field when only its id is given.
+        whole_entry = not any(value is not None for key, value in want.items() if key != "id")
         for parser in parsers:
             field = self._tmplt.get_parser(parser).get("compval")
             inw = want.get(field)
@@ -149,6 +156,11 @@ class Qos_interfaces(ResourceModule):
                 continue
 
             data = {"name": name, "id": want.get("id", have.get("id"))}
+            if self.state == "deleted":
+                if inh is not None and (whole_entry or inw is not None):
+                    data[field] = inh
+                    self.addcmd(data, parser, True)
+                continue
             if inw is not None and inw != inh:
                 data[field] = inw
                 self.addcmd(data, parser, False)

@@ -63,7 +63,8 @@ class Ethernet_ontsTemplate(NetworkTemplate):
                 configure\sethernet\sont\s(?P<uni_idx>\S+)\sauto-detect\s(?P<auto_detect>\S+)
                 $""", re.VERBOSE),
             "setval": "configure ethernet ont {{ uni_idx }} auto-detect {{ auto_detect }}",
-            "remval": "configure ethernet ont {{ uni_idx }} no auto-detect",
+            # The CLI has no "no auto-detect": the value stays until the UNI goes away.
+            "no_remval": True,
             "result": {
                 "{{ uni_idx }}": {
                     "uni_idx": "{{ uni_idx }}",

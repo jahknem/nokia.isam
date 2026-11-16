@@ -167,17 +167,17 @@ class BridgesTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "max_comitted_mac",
+            "name": "max_committed_mac",
             "getval": re.compile(
                 r"""
-                configure\sbridge\sport\s(?P<id>\S+)\s(?P<negate_max_comitted_mac>no\smax-committed-mac)|(max-committed-mac\s(?P<max_comitted_mac>(\d+)))
+                configure\sbridge\sport\s(?P<id>\S+)\s(?:(?P<negate_max_committed_mac>no\smax-committed-mac)|max-committed-mac\s(?P<max_committed_mac>\d+))
                 $""", re.VERBOSE),
-            "setval": "configure bridge port {{ id }} max-committed-mac {{ max_comitted_mac }}",
+            "setval": "configure bridge port {{ id }} max-committed-mac {{ max_committed_mac }}",
             "remval": "configure bridge port {{ id }} no max-committed-mac",
             "result": {
                 "port": {
                     "{{ id }}": {
-                        "max_comitted_mac": "{{ none if negate_max_comitted_mac is defined else max_comitted_mac|int }}",
+                        "max_committed_mac": "{{ none if negate_max_committed_mac is defined else max_committed_mac|int }}",
                     },
                 },
             },

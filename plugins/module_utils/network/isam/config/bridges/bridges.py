@@ -46,7 +46,7 @@ PORT_PARSERS = [
     "qos_profile",
     "prio_regen_prof",
     "prio_regen_name",
-    "max_comitted_mac",
+    "max_committed_mac",
     "mirror_mode",
     "mirror_vlan",
     "pvid_tagging_flag",
@@ -87,7 +87,7 @@ class Bridges(ResourceModule):
     """
 
     COMPACT_COMMAND_SCOPES = (
-        r"^(?P<scope>configure bridge port \S+) (?P<suffix>(?!vlan-id(?:\s|$)|pvid(?:\s|$)|vlan-tpid\d+(?:\s|$)).+)$",
+        r"^(?P<scope>configure bridge port \S+) (?P<suffix>(?!(?:no\s+)?(?:vlan-id(?:\s|$)|pvid(?:\s|$)|vlan-tpid\d+(?:\s|$))).+)$",
         r"^(?P<scope>configure bridge port \S+ vlan-id \S+) (?P<suffix>(?!static-user(?:\s|$)).+)$",
         r"^(?P<scope>configure bridge port \S+ vlan-tpid\d+) (?P<suffix>.+)$",
     )
@@ -181,9 +181,17 @@ class Bridges(ResourceModule):
         deferred_pvid_commands = self._compare_port_fields(want, have)
         self._validate_vlan_dependencies(port_name, want, want_vlans, have_vlans)
 
-        for vid in want_vlans:
+        # A new port is built PVID VLAN first, then the PVID, then the service VLANs:
+        # the device rejects service VLANs on a port without its PVID VLAN.
+        pvid = str(want["pvid"]) if want.get("pvid") is not None else None
+        pvid_vlan_new = pvid is not None and not any(str(vid) == pvid for vid in have_vlans)
+        order = sorted(want_vlans, key=lambda vid: 0 if pvid_vlan_new and str(vid) == pvid else 1)
+        for vid in order:
             have_vlan = have_vlans.pop(vid, {})
             self._compare_vlan(port_name, vid, want_vlans[vid], have_vlan)
+            if pvid_vlan_new and str(vid) == pvid:
+                self.commands.extend(deferred_pvid_commands)
+                deferred_pvid_commands = []
 
         # remaining vlans in have (present in running but not in want)
         for vid, have_vlan in iteritems(have_vlans):
@@ -240,19 +248,22 @@ class Bridges(ResourceModule):
         return indexed
 
     def _delete_bridge_port(self, port_name, want, have, want_vlans, have_vlans):
+        if not have:
+            return
+        # A whole entry removes the port with everything on it: the identity alone,
+        # or a request naming every VLAN the port has (e.g. as gathered). Port
+        # settings do not decide it: a "detail" read reports defaults the request
+        # never names.
+        port_fields = {"port", "id", "vlan_id", "vlan"}
+        named = {key for key, value in want.items() if key not in port_fields and value is not None}
+        if (not named and not want_vlans) or (want_vlans and set(map(str, have_vlans)) <= set(map(str, want_vlans))):
+            self.commands.append("configure bridge no port %s" % port_name)
+            return
         requested_vlans = set(want_vlans)
         requested_port_fields = {
-            key for key in want
-            if key not in {"port", "id", "vlan_id"}
+            key for key, value in want.items()
+            if key not in {"port", "id", "vlan_id"} and value is not None
         }
-        if requested_vlans:
-            for vid in requested_vlans:
-                if vid in have_vlans:
-                    self.commands.append(
-                        "configure bridge port %s no vlan-id %s" % (port_name, vid)
-                    )
-            return
-
         if requested_port_fields:
             selected = {
                 key: value for key, value in have.items()
@@ -266,14 +277,11 @@ class Bridges(ResourceModule):
                         )
                     else:
                         self.addcmd({"id": port_name, field: value}, field, negate=True)
-            return
-
-        if have.get("pvid") is not None:
-            self.commands.append("configure bridge port %s no pvid" % port_name)
-        for vid in have_vlans:
-            self.commands.append(
-                "configure bridge port %s no vlan-id %s" % (port_name, vid)
-            )
+        for vid in sorted(requested_vlans, key=str):
+            if vid in have_vlans:
+                self.commands.append(
+                    "configure bridge port %s no vlan-id %s" % (port_name, vid)
+                )
 
     def _compare_port_fields(self, want, have):
         # Targeted deletion runs before this so defaults cannot reset unrelated settings.
@@ -298,7 +306,8 @@ class Bridges(ResourceModule):
             return
 
         pvid_vid = str(want["pvid"])
-        pvid_present = any(str(key) == pvid_vid for key in have_vlans)
+        # Present on the device, or created first in this same request.
+        pvid_present = any(str(key) == pvid_vid for key in list(have_vlans) + list(want_vlans))
         if not pvid_present:
             raise ValueError(
                 "bridge port %s requires VLAN %s/PVID to be configured "
@@ -414,6 +423,9 @@ class Bridges(ResourceModule):
             data = data.get("port", [])
         indexed = {}
         for entry in data:
+            # Normalize before merged combines facts (underscore keys) with
+            # historical CLI-spelled input keys, or the old fact value can win.
+            entry = self._normalize_port(entry)
             port = entry.get("port") or entry.get("id")
             if port:
                 indexed[port] = entry

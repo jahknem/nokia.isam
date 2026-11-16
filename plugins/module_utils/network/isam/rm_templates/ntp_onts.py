@@ -117,7 +117,7 @@ def _ntp_field_parser(field, cli_name, value_pattern=r"\S+"):
         ),
         "setval": "configure ntp ont {{ ont_id }} {{ 'no " + cli_name + "' if " + field + " is none else '" + cli_name + " ' + " + field + "|string }}",
         "remval": "configure ntp ont {{ ont_id }} no " + cli_name,
-        "result": {"{{ ont_id }}": {"ont_id": "{{ ont_id }}", field: "{{ '' if negate is defined else value }}"}},
+        "result": {"{{ ont_id }}": {"ont_id": "{{ ont_id }}", field: "{{ none if negate is defined else value }}"}},
     }
 
 

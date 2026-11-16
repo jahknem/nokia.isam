@@ -7,6 +7,8 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+import shlex
+
 """
 The isam ntp_onts fact class.
 """
@@ -98,7 +100,7 @@ class Ntp_ontsFacts(object):
             if line.startswith("configure ntp ont "):
                 flat_lines.append(line)
         if flat_lines:
-            return flat_lines
+            return self._expand_compact_lines(flat_lines)
 
         root = self._parse_config_to_tree(config)
         if not root:
@@ -114,4 +116,33 @@ class Ntp_ontsFacts(object):
                 flat_config.append(line)
             else:
                 flat_config.append("configure ntp " + line)
-        return flat_config
+        return self._expand_compact_lines(flat_config)
+
+    @staticmethod
+    def _expand_compact_lines(lines):
+        """The device can put every NTP ONT attribute on one flat line."""
+        expanded = []
+        fields = {key.replace("_", "-") for key in Ntp_ontsArgs.argument_spec["config"]["options"] if key != "ont_id"}
+        for line in lines:
+            tokens = shlex.split(line, posix=False)
+            if len(tokens) < 4 or tokens[:3] != ["configure", "ntp", "ont"]:
+                continue
+            prefix = " ".join(tokens[:4])
+            expanded.append(prefix)
+            index = 4
+            while index < len(tokens):
+                negate = tokens[index] == "no"
+                key_index = index + 1 if negate else index
+                if key_index >= len(tokens):
+                    break
+                if tokens[key_index] not in fields:
+                    index = key_index + 1
+                elif negate:
+                    expanded.append(prefix + " no " + tokens[key_index])
+                    index = key_index + 1
+                elif key_index + 1 < len(tokens):
+                    expanded.append(prefix + " " + " ".join(tokens[key_index:key_index + 2]))
+                    index = key_index + 2
+                else:
+                    break
+        return expanded
