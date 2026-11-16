@@ -11,10 +11,16 @@
   attributes and VLANs. Keep structural VLAN/PVID removals out of CLI compaction.
 - Accept underscore bridge fact keys as input aliases, correct committed-MAC and
   VLAN max-unicast-MAC spelling mismatches, and normalize keys before merging.
-- Never invent `no auto-detect`, `no oper-weight`, `no oper-rate` or downstream
-  queue reset syntax: these fields have no standalone removal form in the Nokia
-  reference. Warn and retain them until the parent object is removed. Their valid
-  set commands remain supported.
+- Never invent `no auto-detect` or downstream queue reset syntax: these fields have
+  no standalone removal form in the Nokia reference. Warn and retain them until the
+  parent object is removed.
+- QoS `oper-weight`, `oper-rate` and queue `oper-weight` are derived by the device
+  (live: "instance can not be modified"; `oper-rate` follows the scheduler-node
+  profile). They are still parsed, but never rendered (`read_only` parser flag).
+- Parse scoped QoS replies that carry non-configuration lines (they produced no
+  entries, so deletion rendered nothing on a live device).
+- Bridge full-entry deletion is decided by the VLANs: a request naming every VLAN of
+  the port removes the port, even when a `detail` read reports extra defaults.
 - Do not copy masked equipment ONT passwords or NTP keys. Quote interface customer
   labels when needed, and parse compact multi-attribute NTP ONT replies.
 - Add offline full-entry gather/merge/delete, command round-trip, sibling isolation,

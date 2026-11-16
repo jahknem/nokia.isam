@@ -106,8 +106,12 @@ class Qos_interfacesFacts(object):
             for line in config.splitlines()
             if line.strip() and not line.strip().startswith("#") and not line.strip().startswith("echo")
         ]
-        if lines and all(line.startswith("configure qos interface") for line in lines):
-            return self._compact_lines(lines)
+        # Flat replies: use only the configuration lines. A scoped reply can carry
+        # other lines (echo, prompt remnants); requiring every line to match sent
+        # such replies to the tree parser, which produced nothing.
+        flat = [line for line in lines if line.startswith("configure qos interface ")]
+        if flat:
+            return self._compact_lines(flat)
         root = self._parse_config_to_tree(config)
         if root is None:
             return []

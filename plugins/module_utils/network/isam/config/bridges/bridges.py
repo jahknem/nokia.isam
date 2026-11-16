@@ -250,12 +250,13 @@ class Bridges(ResourceModule):
     def _delete_bridge_port(self, port_name, want, have, want_vlans, have_vlans):
         if not have:
             return
-        # A whole entry (identity only, or every port setting and every VLAN the
-        # device has, e.g. as gathered) removes the port with everything on it.
+        # A whole entry removes the port with everything on it: the identity alone,
+        # or a request naming every VLAN the port has (e.g. as gathered). Port
+        # settings do not decide it: a "detail" read reports defaults the request
+        # never names.
         port_fields = {"port", "id", "vlan_id", "vlan"}
         named = {key for key, value in want.items() if key not in port_fields and value is not None}
-        present = {key for key, value in have.items() if key not in port_fields and value not in (None, [], {})}
-        if (not named and not want_vlans) or (present <= named and set(map(str, have_vlans)) <= set(map(str, want_vlans))):
+        if (not named and not want_vlans) or (want_vlans and set(map(str, have_vlans)) <= set(map(str, want_vlans))):
             self.commands.append("configure bridge no port %s" % port_name)
             return
         requested_vlans = set(want_vlans)

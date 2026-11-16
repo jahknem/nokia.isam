@@ -90,6 +90,8 @@ def call_module(monkeypatch, family, config=None, state="gathered", running=None
         patch.setattr(basic.AnsibleModule, "fail_json", fail_json)
         patch.setattr(basic.AnsibleModule, "warn", lambda self, message: warnings.append(message))
         args = {"state": state, "_ansible_check_mode": True}
+        if state == "parsed":
+            args["running_config"] = text
         if config is not None:
             args["config"] = config
         set_module_args(args, True)
@@ -258,3 +260,35 @@ def test_bridge_committed_mac_aliases_round_trip(monkeypatch, alias):
     assert call_module(monkeypatch, "bridges", data, "merged", running)["commands"] == []
     result = call_module(monkeypatch, "bridges", {"port": [{"port": UNI, alias: 10}]}, "merged", running)
     assert result["commands"] == ["configure bridge port %s max-committed-mac 10" % UNI]
+
+
+def test_qos_derived_oper_values_are_parsed_but_never_rendered(monkeypatch):
+    # Live DS-LIN-TEST-01: "Error: field oper-weight_ : instance can not be modified".
+    data = selected(call_module(monkeypatch, "qos_interfaces")["gathered"])
+    assert data[0]["oper_weight"] == 50 and data[0]["queue"][0]["oper_weight"] == 34
+    copied = json.loads(json.dumps(data).replace(ONT, TARGET))
+    commands = call_module(monkeypatch, "qos_interfaces", copied, "merged", running="")["commands"]
+    assert commands and not any("oper-" in command for command in commands)
+    deleted = call_module(monkeypatch, "qos_interfaces", data, "deleted")
+    assert not any("oper-" in command for command in deleted["commands"])
+    assert not any("oper_weight" in warning or "oper_rate" in warning for warning in deleted["warnings"])
+
+
+def test_qos_scoped_reply_with_foreign_lines_is_parsed(monkeypatch):
+    running = "\n".join([
+        "info configure qos interface %s flat" % UNI,
+        CONFIGS["qos_interfaces"],
+        "DS-SANITIZED-ISAM:user>#",
+    ])
+    data = call_module(monkeypatch, "qos_interfaces", state="parsed", config=None, running=running)
+    assert data["parsed"]
+
+
+def test_bridge_detail_defaults_do_not_prevent_removing_a_full_port(monkeypatch):
+    # A scoped "flat detail" read reports defaults (prior_* false, ...) a gathered
+    # full-family read does not contain; naming every VLAN still means the whole port.
+    detail = CONFIGS["bridges"] + "\n" + "configure bridge port %s mac-learn-off no prior-best-effort" % UNI
+    gathered = selected(call_module(monkeypatch, "bridges")["gathered"])
+    assert call_module(monkeypatch, "bridges", gathered, "deleted", running=detail)["commands"] == [
+        "configure bridge no port %s" % UNI,
+    ]
