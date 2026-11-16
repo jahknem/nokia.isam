@@ -32,9 +32,9 @@ class TestIsamIphostModule(TestIsamModule):
 
     def tearDown(self):
         super(TestIsamIphostModule, self).tearDown()
-        self.get_resource_connection.stop()
-        self.get_resource_connection_config.stop()
-        self.get_resource_connection_facts.stop()
+        self.mock_get_resource_connection.stop()
+        self.mock_get_resource_connection_config.stop()
+        self.mock_get_resource_connection_facts.stop()
 
     def test_isam_iphost_parsed(self):
         running = dedent(

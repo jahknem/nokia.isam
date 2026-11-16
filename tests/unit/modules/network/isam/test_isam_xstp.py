@@ -32,9 +32,9 @@ class TestIsamXstpModule(TestIsamModule):
 
     def tearDown(self):
         super(TestIsamXstpModule, self).tearDown()
-        self.get_resource_connection.stop()
-        self.get_resource_connection_config.stop()
-        self.get_resource_connection_facts.stop()
+        self.mock_get_resource_connection.stop()
+        self.mock_get_resource_connection_config.stop()
+        self.mock_get_resource_connection_facts.stop()
 
     def test_isam_xstp_parsed_flat(self):
         running = dedent(

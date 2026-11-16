@@ -86,8 +86,8 @@ class TestIsamQosInterfacesModule(TestIsamModule):
 
     def tearDown(self):
         super(TestIsamQosInterfacesModule, self).tearDown()
-        self.get_resource_connection.stop()
-        self.get_config.stop()
+        self.mock_get_resource_connection.stop()
+        self.mock_get_config.stop()
 
     def test_isam_qos_interfaces_parsed(self):
         set_module_args(dict(running_config=QOS_CONFIG, state="parsed"), ignore_provider_arg)

@@ -75,3 +75,28 @@ modules against synthetic replies. It checks gathered input, full and partial
 deletion, sibling isolation, absent targets, create-command parse/merge idempotency,
 PVID command ordering and check-mode non-execution. These tests require no device
 credentials or NOC code.
+
+## Targeted gathering
+
+Reading a whole resource family is slow on a large MSAN. With `state: gathered` and
+`config`, a resource module reads only the instances named in `config`, by their identity
+fields; everything else in the entries is ignored:
+
+```yaml
+- name: Read only two NTP ONTs
+  nokia.isam.isam_ntp_onts:
+    config:
+      - ont_id: 1/1/5/1/3
+      - ont_id: 1/1/5/1/4
+    state: gathered
+```
+
+Instances that do not exist are simply not returned ("instance does not exist" from the
+device); other device errors fail the task. Without `config`, the whole resource is read,
+as before. `isam_facts` is unchanged and always reads whole resources.
+
+The resources that support it, and their identity fields, are listed in
+`plugins/module_utils/network/isam/targeted.py` (`TARGETED_GATHER`). The file has no
+imports, so tools outside Ansible can use it to decide which families to read per
+instance. Resources not listed (global settings such as `system` or `traps`) always read
+completely.

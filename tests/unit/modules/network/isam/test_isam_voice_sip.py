@@ -38,10 +38,10 @@ class TestIsamVoiceSipModule(TestIsamModule):
 
     def tearDown(self):
         super(TestIsamVoiceSipModule, self).tearDown()
-        self.get_resource_connection.stop()
-        self.get_config.stop()
-        self.get_resource_connection_config.stop()
-        self.get_resource_connection_facts.stop()
+        self.mock_get_resource_connection.stop()
+        self.mock_get_config.stop()
+        self.mock_get_resource_connection_config.stop()
+        self.mock_get_resource_connection_facts.stop()
 
     def test_isam_voice_sip_gathered(self):
         self.get_config.return_value = dedent(

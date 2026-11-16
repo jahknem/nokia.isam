@@ -6,6 +6,7 @@ __metaclass__ = type
 
 from copy import deepcopy
 
+from ansible.module_utils.common.text.converters import to_text
 from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.dhcp_relay.dhcp_relay import Isam_dhcp_relayFacts
@@ -22,9 +23,12 @@ class _DhcpRelayFactsProvider(object):
 
     def get_facts(self, legacy_facts_type=None, resource_facts_type=None, data=None):
         ansible_facts = {"ansible_network_resources": {}}
-        self._resource_facts.populate_facts(
-            self._facts._connection, ansible_facts, data=data
-        )
+        try:
+            self._resource_facts.populate_facts(
+                self._facts._connection, ansible_facts, data=data
+            )
+        except Exception as exc:  # like netcommon's facts: a clear failure, no traceback
+            self._facts._module.fail_json(msg=to_text(exc))
         return ansible_facts, []
 
 

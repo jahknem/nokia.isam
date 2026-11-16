@@ -18,6 +18,8 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
     utils,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_scoped_config,
+    requested_identities,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.ntp_onts.ntp_onts import (
@@ -36,8 +38,9 @@ class Ntp_ontsFacts(object):
         self.argument_spec = Ntp_ontsArgs.argument_spec
 
     def get_config(self, connection):
-        """Wrapper method for `connection.get()`."""
-        return connection.get("info configure ntp flat")
+        """The whole resource, or only the NTP ONTs named in config (targeted gathering)."""
+        commands = ["info configure ntp ont %s flat" % ont for ont in requested_identities(self._module, "ntp_onts")]
+        return get_scoped_config(self._module, connection, None, "info configure ntp flat", commands)
 
     def populate_facts(self, connection, ansible_facts, data=None):
         """Populate the facts for Ntp_onts network resource."""

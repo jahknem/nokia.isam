@@ -27,8 +27,8 @@ class TestIsamPonInterfacesModule(TestIsamModule):
 
     def tearDown(self):
         super(TestIsamPonInterfacesModule, self).tearDown()
-        self.get_resource_connection.stop()
-        self.get_config.stop()
+        self.mock_get_resource_connection.stop()
+        self.mock_get_config.stop()
 
     def test_isam_pon_interfaces_rendered(self):
         set_module_args(

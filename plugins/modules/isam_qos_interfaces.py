@@ -171,7 +171,10 @@ options:
     description: Device-native running configuration for parsed state.
     type: str
   state:
-    description: Desired resource state.
+    description:
+    - The state the configuration should be left in.
+    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(name) (targeted gathering). Other fields are ignored and absent instances are not returned. Without I(config) the whole resource is read.
+    - With C(merged), C(replaced) or C(deleted) and I(config), the current configuration is likewise read only for the named instances.
     type: str
     default: merged
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
@@ -186,6 +189,12 @@ EXAMPLES = """
           - id: 0
             shaper_profile: name:qssShaperDN920Mbps
     state: merged
+
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_qos_interfaces:
+    config:
+      - name: 1/1/5/1/3/1/1
+    state: gathered
 """
 
 RETURN = """

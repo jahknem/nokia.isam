@@ -325,7 +325,9 @@ options:
 
   state:
     description:
-    - The state the configuration should be left in
+    - The state the configuration should be left in.
+    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(port[].port) (targeted gathering). Other fields are ignored and absent instances are not returned. Without I(config) the whole resource is read.
+    - With C(merged), C(replaced) or C(deleted) and I(config), the current configuration is likewise read only for the named instances.
     type: str
     choices:
     - gathered
@@ -393,6 +395,13 @@ EXAMPLES = """
       port:
         - port: "1/1/x1"
     state: deleted
+
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_bridges:
+    config:
+      port:
+        - port: 1/1/5/1/3/1/1
+    state: gathered
 """
 
 RETURN = """
