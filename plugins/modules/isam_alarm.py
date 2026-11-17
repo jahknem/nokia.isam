@@ -278,7 +278,7 @@ options:
       - The state the configuration should be left in.
       - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by
         C(entries[].index) and C(filters[].fltr_type) and C(filters[].filterid) and C(custom_profiles[].name) and
-        C(hgutr069_custs[].alarm_id) (targeted gathering). Other fields are ignored and absent instances are not returned.
+        C(hgutr069_custs[].alarm_id) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either.
         Without I(config) the whole resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]

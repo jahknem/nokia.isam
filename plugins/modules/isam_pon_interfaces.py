@@ -122,7 +122,7 @@ options:
   state:
     description:
     - The state the configuration should be left in.
-    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(name) (targeted gathering). Other fields are ignored and absent instances are not returned. Without I(config) the whole resource is read.
+    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(name) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
     - With C(merged), C(replaced) or C(deleted) and I(config), the current configuration is likewise read only for the named instances.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]

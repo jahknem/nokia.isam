@@ -287,12 +287,11 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
 
 
 def _targeted_reply(command, response):
-    """Clean a single-instance reply; a bare header means the instance exists, unset.
+    """Clean a single-instance reply: drop echoed command text and header noise.
 
-    The device answers an instance without configured attributes with only the
-    header ('#---', 'echo ...'), so parsers would see nothing and treat it as
-    absent. For flat reads the bare configuration line is added instead. Echoed
-    command text (the terminal wraps it) is dropped.
+    An instance without configured attributes answers with only the header
+    ('#---', 'echo ...'), exactly like a non-existing one; neither is returned.
+    Echoed command text (the terminal wraps it mid-word) must not reach parsers.
     """
     if not command.startswith("info configure ") or " flat" not in command:
         return response
@@ -311,9 +310,9 @@ def _targeted_reply(command, response):
         else:
             kept.append(line)
     if not kept:
-        # Only a real header ('#---', 'echo ...') proves the instance exists; an empty
-        # reply stays empty (absent).
-        return path + "\n" if ("#" in response or "echo" in response) else response
+        # The device answers an unset instance and a non-existing one alike with only
+        # the header; they cannot be told apart, so neither is returned.
+        return ""
     cleaned = "\n".join(kept)
     # Unchanged replies keep their exact form (parsers and tests rely on it).
     return response if cleaned == response.strip("\n") else cleaned + "\n"
