@@ -1,17 +1,105 @@
 #!/usr/bin/python
-MODULE_DESCRIPTION = """
+# -*- coding: utf-8 -*-
+# GNU General Public License v3.0+
+# (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
+"""
+The module file for isam_cfm
+"""
+
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
+DOCUMENTATION = """
 module: isam_cfm
-short_description: Manage Nokia ISAM CFM configuration
-description: Manage Nokia ISAM CFM configuration.
+short_description: Manages Nokia ISAM CFM configuration.
+description:
+  - Manages C(configure cfm) domains, associations, MEPs, SLM settings and Y.1731 PM sessions on Nokia ISAM.
+version_added: 1.0.0
+author: Jan Kühnemund (@jahknem)
 options:
   config:
-    type: list
+    description: The CFM configuration.
+    type: dict
+    suboptions:
+      domains:
+        description:
+          - Maintenance domains, keyed by C(domain_index), with C(name), C(level) and C(associations)
+            (each keyed by C(association_index), with C(meps) and C(remote_meps)).
+        type: list
+        elements: dict
+      slm:
+        description: SLM settings (C(inactivity_time)); a settings block, not an instance list.
+        type: dict
+      y1731pm:
+        description:
+          - Y.1731 PM sessions, keyed by C(domain_index), C(association), C(mep) and C(session_id),
+            with C(type), C(target_mac), C(priority), C(admin_up), C(interval), C(size) and C(measurement_intvl).
+        type: list
+        elements: dict
   running_config:
+    description: Native C(info configure ... flat) output to parse with I(state=parsed).
     type: str
   state:
+    description:
+      - The state the configuration should be left in.
+      - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(domains[].domain_index) and C(y1731pm[].domain_index), C(y1731pm[].association), C(y1731pm[].mep) and C(y1731pm[].session_id) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
     type: str
-    choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
+    choices:
+      - merged
+      - replaced
+      - overridden
+      - deleted
+      - gathered
+      - rendered
+      - parsed
     default: merged
+"""
+
+EXAMPLES = """
+- name: Gather the whole resource
+  nokia.isam.isam_cfm:
+    state: gathered
+
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_cfm:
+    config:
+      domains:
+        - domain_index: 1
+      y1731pm:
+        - domain_index: 1
+          association: 2
+          mep: 7
+          session_id: 1
+    state: gathered
+"""
+
+RETURN = """
+before:
+  description: The configuration prior to module execution.
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
+  type: dict
+after:
+  description: The resulting configuration after module execution.
+  returned: when changed
+  type: dict
+commands:
+  description: The set of commands pushed to the remote device.
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
+  type: list
+rendered:
+  description: The provided configuration in device-native format.
+  returned: when I(state) is C(rendered)
+  type: list
+gathered:
+  description: Facts gathered from the remote device as structured data.
+  returned: when I(state) is C(gathered)
+  type: dict
+parsed:
+  description: Native config parsed into structured data.
+  returned: when I(state) is C(parsed)
+  type: dict
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -28,9 +116,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-DOCUMENTATION = """
-module: isam_cfm
-short_description: Manage Nokia ISAM CFM
-description: Manage Nokia ISAM CFM.
-"""

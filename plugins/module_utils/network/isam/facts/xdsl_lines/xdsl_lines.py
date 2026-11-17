@@ -14,6 +14,9 @@ from anytree import Node
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_targeted_config,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.xdsl_lines.xdsl_lines import (
     Xdsl_linesArgs,
 )
@@ -30,8 +33,10 @@ class Xdsl_linesFacts(object):
         self.argument_spec = Xdsl_linesArgs.argument_spec
 
     def get_config(self, connection):
-        """Wrapper method for `connection.get()` used by unit tests."""
-        return connection.get("info configure xdsl line flat")
+        """The whole resource, or only the lines named in config (targeted gathering)."""
+        return get_targeted_config(self._module, connection, "xdsl_lines", "info configure xdsl line flat", {
+            "config": "info configure xdsl line %s flat",
+        })
 
     @staticmethod
     def _canonicalize_entry(item):

@@ -32,18 +32,32 @@ class Isam_vlan_globalTemplate(NetworkTemplate):
             },
         },
         {
-            "name": "priority_regen.dot1p",
-            "compval": "priority_regen",
+            "name": "priority_regen",
             "getval": re.compile(
-                r"^configure\s+vlan\s+priority-regen\s+dot1p\s+(?P<dot1p>\d+)\s+regen-dot1p\s+(?P<regen_dot1p>\d+)$|^configure\s+vlan\s+priority-regen\s+(?P<profile_id>\d+)\s+profile-name\s+(?P<profile_name>\S+)\s+pbit0\s+(?P<pbit0>\d+)\s+pbit1\s+(?P<pbit1>\d+)\s+pbit2\s+(?P<pbit2>\d+)\s+pbit3\s+(?P<pbit3>\d+)\s+pbit4\s+(?P<pbit4>\d+)\s+pbit5\s+(?P<pbit5>\d+)\s+pbit6\s+(?P<pbit6>\d+)\s+pbit7\s+(?P<pbit7>\d+)$"
+                r"""
+                ^configure\svlan\spriority-regen\s(?P<id>\d+)
+                (?:\sprofile-name\s(?P<profile_name>\S+))?
+                (?:\spbit0\s(?P<pbit0>\d+))?
+                (?:\spbit1\s(?P<pbit1>\d+))?
+                (?:\spbit2\s(?P<pbit2>\d+))?
+                (?:\spbit3\s(?P<pbit3>\d+))?
+                (?:\spbit4\s(?P<pbit4>\d+))?
+                (?:\spbit5\s(?P<pbit5>\d+))?
+                (?:\spbit6\s(?P<pbit6>\d+))?
+                (?:\spbit7\s(?P<pbit7>\d+))?
+                \s*$""",
+                re.VERBOSE,
             ),
-            "setval": "configure vlan priority-regen dot1p {{ priority_regen.dot1p }} regen-dot1p {{ priority_regen.regen_dot1p }}",
-            "remval": "configure vlan priority-regen dot1p {{ priority_regen.dot1p }} no regen-dot1p",
+            "setval": "configure vlan priority-regen {{ priority_regen.id }}"
+                      "{% if priority_regen.profile_name is defined and priority_regen.profile_name is not none %} profile-name {{ priority_regen.profile_name }}{% endif %}"
+                      "{% for bit in range(8) %}{% set key = 'pbit' ~ bit %}"
+                      "{% if priority_regen[key] is defined and priority_regen[key] is not none %} {{ key }} {{ priority_regen[key] }}{% endif %}"
+                      "{% endfor %}",
+            "remval": "configure vlan no priority-regen {{ priority_regen.id }}",
             "result": {
                 "priority_regen": {
-                    "{{ dot1p|default(profile_id) }}": {
-                        "dot1p": "{{ dot1p|default(profile_id) }}",
-                        "regen_dot1p": "{{ regen_dot1p }}",
+                    "{{ id }}": {
+                        "id": "{{ id }}",
                         "profile_name": "{{ profile_name }}",
                         "pbit0": "{{ pbit0 }}",
                         "pbit1": "{{ pbit1 }}",
@@ -53,22 +67,6 @@ class Isam_vlan_globalTemplate(NetworkTemplate):
                         "pbit5": "{{ pbit5 }}",
                         "pbit6": "{{ pbit6 }}",
                         "pbit7": "{{ pbit7 }}",
-                    },
-                },
-            },
-        },
-        {
-            "name": "priority_regen.dot1p_no_regen",
-            "compval": "priority_regen",
-            "getval": re.compile(
-                r"^configure\s+vlan\s+priority-regen\s+dot1p\s+(?P<dot1p>\d+)\s+no\s+regen-dot1p$"
-            ),
-            "setval": "configure vlan priority-regen dot1p {{ priority_regen.dot1p }} regen-dot1p {{ priority_regen.regen_dot1p }}",
-            "remval": "configure vlan priority-regen dot1p {{ priority_regen.dot1p }} no regen-dot1p",
-            "result": {
-                "priority_regen": {
-                    "{{ dot1p }}": {
-                        "dot1p": "{{ dot1p }}",
                     },
                 },
             },

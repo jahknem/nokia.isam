@@ -31,7 +31,10 @@ options:
     description: Device-native configuration to parse when state is parsed.
     type: str
   state:
-    description: The state the configuration should be left in.
+    description:
+    - The state the configuration should be left in.
+    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(ont_idx) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
+    - With C(merged), C(replaced) or C(deleted) and I(config), the current configuration is likewise read only for the named instances.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -48,6 +51,12 @@ EXAMPLES = """
       - ont_idx: 1/1/1/1/1
         tca_thresh: true
     state: merged
+
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_ani_onts:
+    config:
+      - ont_idx: 1/1/5/1/3
+    state: gathered
 """
 
 RETURN = """

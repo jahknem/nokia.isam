@@ -272,6 +272,7 @@ options:
   state:
     description:
     - The state of the configuration after module completion.
+    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(if_index) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
     type: str
     choices:
     - merged
@@ -285,7 +286,23 @@ options:
 """
 
 EXAMPLES = """
+- name: Configure an ethernet line
+  nokia.isam.isam_ethernet_line:
+    config:
+      - if_index: 1/1/4/1
+        port_type: uni
+        admin_up: true
+    state: merged
 
+- name: Gather ethernet line facts
+  nokia.isam.isam_ethernet_line:
+    state: gathered
+
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_ethernet_line:
+    config:
+      - if_index: 1/1/4/1
+    state: gathered
 """
 
 RETURN = """

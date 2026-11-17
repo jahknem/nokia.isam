@@ -40,7 +40,9 @@ options:
     type: str
     description: Output from C(info configure qos profiles), used with state C(parsed).
   state:
-    description: Desired resource state.
+    description:
+    - Desired resource state.
+    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(profile_type) and C(name) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
     type: str
     default: merged
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
@@ -50,6 +52,15 @@ EXAMPLES = """
 - name: Gather QoS profiles
   nokia.isam.isam_qos_profiles:
     state: gathered
+
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_qos_profiles:
+    state: gathered
+    config:
+      - profile_type: queue
+        name: Q_BE
+      - profile_type: marker-d1p
+        name: FD_Marker_BE
 
 - name: Render a queue profile
   nokia.isam.isam_qos_profiles:

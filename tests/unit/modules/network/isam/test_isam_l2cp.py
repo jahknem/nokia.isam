@@ -1,5 +1,7 @@
 from textwrap import dedent
 
+from ansible_collections.nokia.isam.tests.unit.compat.mock import MagicMock, patch
+
 from ansible_collections.nokia.isam.plugins.modules import isam_l2cp, isam_l2cp_session, isam_l2cp_user_port
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.l2cp.l2cp import L2cp
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.l2cp import L2cpTemplate
@@ -35,6 +37,15 @@ class TestL2cp(TestIsamModule):
 
     def test_deleted_is_idempotent_when_l2cp_is_unconfigured(self):
         self.module = isam_l2cp
+        # The module reads the device: an unconfigured (empty) L2CP block.
+        device = MagicMock()
+        device.get.return_value = ""
+        patcher = patch(
+            "ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.l2cp.l2cp.get_resource_connection",
+            return_value=device,
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
         set_module_args({"state": "deleted", "config": [{"name": "l2cp"}], "_ansible_check_mode": True}, True)
         result = self.execute_module(changed=False)
         self.assertEqual(result["commands"], [])

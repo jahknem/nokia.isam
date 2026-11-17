@@ -30,9 +30,9 @@ class TestIsamBridgesModule(TestIsamModule):
 
     def tearDown(self):
         super(TestIsamBridgesModule, self).tearDown()
-        self.get_resource_connection.stop()
-        self.get_resource_connection_config.stop()
-        self.get_resource_connection_facts.stop()
+        self.mock_get_resource_connection.stop()
+        self.mock_get_resource_connection_config.stop()
+        self.mock_get_resource_connection_facts.stop()
 
     def test_isam_bridges_gathered_empty(self):
         # With empty output, gathered should be an empty list

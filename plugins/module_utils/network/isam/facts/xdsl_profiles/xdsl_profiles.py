@@ -5,6 +5,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_targeted_config,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.xdsl_profiles.xdsl_profiles import (
@@ -24,6 +25,13 @@ class Xdsl_profilesFacts(object):
         self.template = Xdsl_profilesTemplate()
 
     def get_config(self, connection):
+        """The whole resource, or only the profiles named in config (targeted gathering)."""
+        return get_targeted_config(self._module, connection, "xdsl_profiles", self._get_full_config, dict(
+            (key, "info configure xdsl %s %%s flat" % cli_type) for key, cli_type in self.template.profile_types.items()
+        ))
+
+    @staticmethod
+    def _get_full_config(connection):
         commands = [
             "info configure xdsl service-profile flat",
             "info configure xdsl spectrum-profile flat",

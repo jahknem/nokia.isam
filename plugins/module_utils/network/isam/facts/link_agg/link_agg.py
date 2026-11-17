@@ -8,6 +8,7 @@ from anytree import Node
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_targeted_config,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.link_agg.link_agg import (
@@ -29,7 +30,11 @@ class Link_aggFacts(object):
         self.argument_spec = Link_aggArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure link-agg flat")
+        """The whole resource, or only the groups and ports named in config (targeted gathering)."""
+        return get_targeted_config(self._module, connection, "link_agg", "info configure link-agg flat", {
+            "groups": "info configure link-agg group %s flat",
+            "ports": "info configure link-agg port %s flat",
+        })
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}

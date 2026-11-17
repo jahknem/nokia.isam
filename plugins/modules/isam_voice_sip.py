@@ -311,12 +311,25 @@ options:
       - C(rendered) produces device-native commands from the provided config
         without connecting to the device.
       - C(parsed) takes a raw running-config string and returns structured data.
+      - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by
+        C(vsp[].name) and C(register[].name) and C(redundancy[].name) and C(redundancy_cmd[].name) and
+        C(lineid_syn_prof[].name) and C(cas_nsm_prof[].name) (targeted gathering). Other fields are ignored and
+        absent instances are not returned. Without I(config) the whole resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
 """
 
 EXAMPLES = """
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_voice_sip:
+    config:
+      vsp:
+        - name: vsp1
+      redundancy_cmd:
+        - name: vsp1
+    state: gathered
+
 - name: Gather voice SIP configuration from device
   nokia.isam.isam_voice_sip:
     state: gathered

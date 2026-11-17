@@ -211,6 +211,8 @@ def test_every_resource_renders_a_minimal_configuration(module_name, monkeypatch
         config = {"domains": [{"domain_index": 1, "name": "fixture", "level": 0}]}
     elif module_name == "isam_qos_maps":
         config = {"tc_map_dot1p": [{"dot1p": 1, "tc": 1}]}
+    elif module_name == "isam_ipv6_antispoofing_slot":
+        config = [dict(item, bit_len=64) for item in config]  # the device accepts 64-128
     set_module_args({"state": "rendered", "config": config}, True)
 
     with pytest.raises(AnsibleExitJson) as raised:
@@ -260,6 +262,8 @@ def test_every_resource_handles_mutating_state_in_check_mode(module_name, state,
         config = {"domains": [{"domain_index": 1, "name": "fixture", "level": 0}]}
     elif module_name == "isam_qos_maps":
         config = {"tc_map_dot1p": [{"dot1p": 1, "tc": 1}]}
+    elif module_name == "isam_ipv6_antispoofing_slot":
+        config = [dict(item, bit_len=64) for item in config]  # the device accepts 64-128
     set_module_args(
         {"state": state, "config": config, "_ansible_check_mode": True},
         True,

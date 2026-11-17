@@ -144,7 +144,10 @@ options:
     description: Device-native running configuration to parse.
     type: str
   state:
-    description: Module state.
+    description:
+    - The state the configuration should be left in.
+    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(interfaces[].ont_idx), C(slots[].ont_slot_idx) and C(sw_ctrls[].sw_ctrl_id) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
+    - With C(merged), C(replaced) or C(deleted) and I(config) naming only C(interfaces) and C(slots), the current configuration is likewise read only for the named instances.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -164,6 +167,15 @@ EXAMPLES = """
           sw_ver_pland: auto
           sernum: ALCL:F9772423
           admin_state: up
+
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_equipment_onts:
+    config:
+      interfaces:
+        - ont_idx: 1/1/5/1/3
+      slots:
+        - ont_slot_idx: 1/1/5/1/3/1
+    state: gathered
 """
 
 RETURN = """

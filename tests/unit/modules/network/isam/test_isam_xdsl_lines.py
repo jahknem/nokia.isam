@@ -37,8 +37,8 @@ class TestIsamXdslLinesModule(TestIsamModule):
 
     def tearDown(self):
         super(TestIsamXdslLinesModule, self).tearDown()
-        self.get_resource_connection.stop()
-        self.get_config.stop()
+        self.mock_get_resource_connection.stop()
+        self.mock_get_config.stop()
 
     def test_isam_xdsl_lines_rendered(self):
         set_module_args(

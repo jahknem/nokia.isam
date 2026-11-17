@@ -25,16 +25,45 @@ options:
             description: Drop unknown multicast frames.
             type: bool
       priority_regen:
-        description: Priority regeneration table entries.
+        description:
+          - Priority regeneration profiles, device form
+            C(configure vlan priority-regen <id> profile-name <name> pbit0 <v> ... pbit7 <v>).
+          - Only the attributes given are rendered; with I(state=replaced) attributes omitted from an entry are not
+            reset on the device.
+          - Removal (I(state=deleted)/I(state=overridden)) renders C(configure vlan no priority-regen <id>).
         type: list
         elements: dict
         suboptions:
-          dot1p:
-            description: Incoming 802.1p priority value.
+          id:
+            description: Priority regeneration profile index.
             type: int
             required: true
-          regen_dot1p:
-            description: Regenerated 802.1p priority value.
+          profile_name:
+            description: Profile name.
+            type: str
+          pbit0:
+            description: Regenerated priority for incoming p-bit 0.
+            type: int
+          pbit1:
+            description: Regenerated priority for incoming p-bit 1.
+            type: int
+          pbit2:
+            description: Regenerated priority for incoming p-bit 2.
+            type: int
+          pbit3:
+            description: Regenerated priority for incoming p-bit 3.
+            type: int
+          pbit4:
+            description: Regenerated priority for incoming p-bit 4.
+            type: int
+          pbit5:
+            description: Regenerated priority for incoming p-bit 5.
+            type: int
+          pbit6:
+            description: Regenerated priority for incoming p-bit 6.
+            type: int
+          pbit7:
+            description: Regenerated priority for incoming p-bit 7.
             type: int
       tpid:
         description: TPID configuration.
@@ -51,12 +80,18 @@ options:
           format:
             description: VMAC address format.
             type: str
-            choices: ["canonical", "non-canonical"]
+            choices: ["canonical", "non-canonical", "host-id"]
+          host_id:
+            description: Host ID used with I(format=host-id).
+            type: int
   running_config:
     description: Device-native running configuration for parsed state.
     type: str
   state:
-    description: Desired resource state.
+    description:
+      - Desired resource state.
+      - C(gathered) always reads the whole resource; the device has no single-instance read for the
+        priority-regen profiles (targeted gathering is not available here).
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -74,10 +109,16 @@ EXAMPLES = """
       broadcast_frames:
         drop_unknown_multicast: true
       priority_regen:
-        - dot1p: 0
-          regen_dot1p: 0
-        - dot1p: 1
-          regen_dot1p: 1
+        - id: 11
+          profile_name: Custom
+          pbit0: 0
+          pbit1: 0
+          pbit2: 2
+          pbit3: 2
+          pbit4: 4
+          pbit5: 4
+          pbit6: 6
+          pbit7: 6
       tpid:
         value: "8100"
       vmac_address_format:

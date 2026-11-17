@@ -22,8 +22,7 @@ class Isam_vlan_globalArgs(object):  # pylint: disable=R0903
                     "type": "list",
                     "elements": "dict",
                     "options": {
-                        "dot1p": {"type": "int", "required": True},
-                        "regen_dot1p": {"type": "int"},
+                        "id": {"type": "int", "required": True},
                         "profile_name": {"type": "str"},
                         "pbit0": {"type": "int"},
                         "pbit1": {"type": "int"},

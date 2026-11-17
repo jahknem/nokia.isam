@@ -255,8 +255,11 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
     without discovering unrelated family members.  Overridden and unqualified
     deletion still require the complete family to identify entries to remove.
     """
+    if module is None:
+        return connection.get(fallback_command)
     state = module.params.get("state", "merged")
-    safe_states = safe_states or ("merged", "replaced", "deleted")
+    # gathered: config selects the instances to read (targeted gathering, targeted.py).
+    safe_states = safe_states or ("merged", "replaced", "deleted", "gathered")
     if not commands or state not in safe_states:
         return connection.get(fallback_command)
     scoped_results = []
@@ -274,12 +277,112 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
             raise
         normalized_response = response.lower()
         if (
-            "instance does not exist" not in normalized_response
-            and "specified instance does not exist" not in normalized_response
-            and "lower-interface does not exist" not in normalized_response
+            "instance does not exist" in normalized_response
+            or "specified instance does not exist" in normalized_response
+            or "lower-interface does not exist" in normalized_response
         ):
-            scoped_results.append(response)
+            continue
+        scoped_results.append(_targeted_reply(command, response))
     return "\n".join(scoped_results)
+
+
+def _targeted_reply(command, response):
+    """Clean a single-instance reply: drop echoed command text and header noise.
+
+    An instance without configured attributes answers with only the header
+    ('#---', 'echo ...'), exactly like a non-existing one; neither is returned.
+    Echoed command text (the terminal wraps it mid-word) must not reach parsers.
+    """
+    if not command.startswith("info configure ") or " flat" not in command:
+        return response
+    path = command[len("info "):]
+    path = re.sub(r"( detail)? flat( detail)?$", "", path)
+    words = set(path.split())
+    kept = []
+    for line in response.splitlines():
+        stripped = line.split("#", 1)[0].strip()
+        if not stripped or stripped.startswith("echo"):
+            continue
+        if line.startswith("configure ") or line[:1].isspace():
+            kept.append(line)
+        elif not set(stripped.split()) - words:
+            continue  # echoed command text, possibly wrapped by the terminal
+        else:
+            kept.append(line)
+    if not kept:
+        # The device answers an unset instance and a non-existing one alike with only
+        # the header; they cannot be told apart, so neither is returned.
+        return ""
+    cleaned = "\n".join(kept)
+    # Unchanged replies keep their exact form (parsers and tests rely on it).
+    return response if cleaned == response.strip("\n") else cleaned + "\n"
+
+
+def _section_items(config, section):
+    """Entries of one instance list in config ("config": config itself, "a.b": nested)."""
+    if section == "config":
+        return config if isinstance(config, list) else []
+    value = config
+    for key in section.split("."):
+        value = value.get(key) if isinstance(value, dict) else None
+    return value if isinstance(value, list) else []
+
+
+def requested_identities(module, resource, section="config"):
+    """Identity values named in the module's config for one list of a resource.
+
+    Follows TARGETED_GATHER (targeted.py): one value per entry, or a tuple of values
+    for a composite identity. Empty when there is no module (isam_facts, parsing) or
+    no config: then the whole resource is read.
+    """
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.targeted import TARGETED_GATHER
+
+    field = (TARGETED_GATHER.get(resource) or {}).get(section)
+    params = getattr(module, "params", None) or {}
+    config = params.get("config")
+    if not field or not config:
+        return []
+    fields = [field] if isinstance(field, str) else list(field)
+    found = []
+    for item in _section_items(config, section):
+        if not isinstance(item, dict):
+            continue
+        values = tuple(item.get(name) for name in fields)
+        if all(value not in (None, "") for value in values):
+            found.append(values[0] if isinstance(field, str) else values)
+    return found
+
+
+def targeted_commands(module, resource, formats):
+    """Read commands for the instances named in config (targeted gathering).
+
+    formats: instance list -> command format with one %s per identity field, or a
+    callable returning the commands for one identity. Empty when config names no
+    instance: then the caller reads the whole resource.
+    """
+    commands = []
+    for section, form in formats.items():
+        for identity in requested_identities(module, resource, section):
+            if callable(form):
+                commands.extend(form(identity))
+            else:
+                commands.append(form % (identity if isinstance(identity, tuple) else (identity,)))
+    return commands
+
+
+def get_targeted_config(module, connection, resource, fallback, formats, write_states=False):
+    """The whole resource, or only the instances named in config with state gathered.
+
+    fallback: command for the whole resource, or a callable(connection) reading it.
+    write_states: also compare merged/replaced/deleted against only the named
+    instances (only for resources made of instance lists, where that is exact).
+    """
+    states = ("merged", "replaced", "deleted", "gathered") if write_states else ("gathered",)
+    commands = targeted_commands(module, resource, formats) if module is not None else []
+    state = module.params.get("state", "merged") if module is not None else None
+    if commands and state in states:
+        return get_scoped_config(module, connection, None, None, commands, safe_states=states)
+    return fallback(connection) if callable(fallback) else connection.get(fallback)
 
 
 def count_indent(line):

@@ -75,3 +75,36 @@ modules against synthetic replies. It checks gathered input, full and partial
 deletion, sibling isolation, absent targets, create-command parse/merge idempotency,
 PVID command ordering and check-mode non-execution. These tests require no device
 credentials or NOC code.
+
+## Targeted gathering
+
+Reading a whole resource family is slow on a large MSAN. With `state: gathered` and
+`config`, a resource module reads only the instances named in `config`, by their identity
+fields; everything else in the entries is ignored:
+
+```yaml
+- name: Read only two NTP ONTs
+  nokia.isam.isam_ntp_onts:
+    config:
+      - ont_id: 1/1/5/1/3
+      - ont_id: 1/1/5/1/4
+    state: gathered
+```
+
+Instances that do not exist are simply not returned ("instance does not exist" from the
+device); other device errors fail the task. The device answers an instance with nothing
+configured exactly like a non-existing one (only a header), so such instances are not
+returned either; they cannot be told apart from a single read. Without `config`, the whole resource is read,
+as before. `isam_facts` is unchanged and always reads whole resources.
+
+Every instance list of every resource supports it; the lists and their identity
+fields are in `plugins/module_utils/network/isam/targeted.py` (`TARGETED_GATHER`): a
+field name, or a list of fields for a composite identity (`qos_profiles`:
+`profile_type` and `name`); nested lists are dotted (`system`: `syslog.destinations`).
+The file has no imports, so tools outside Ansible can use it to decide which families
+to read per instance. Resources without instance lists (`dhcp_server`, `generic_pon`,
+`l2cp`, ...) are single settings blocks and always read completely.
+
+Only resources made of instance lists (`TARGETED_WRITES`) also compare
+`merged`/`replaced`/`deleted` against just the named instances; all others read the
+whole resource for writes.

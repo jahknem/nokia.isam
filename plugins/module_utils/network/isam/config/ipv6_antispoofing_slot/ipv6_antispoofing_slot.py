@@ -9,8 +9,22 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ipv6
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ipv6_antispoofing_slot import Isam_ipv6_antispoofing_slotTemplate
 
 
+BIT_LEN_MIN = 64
+BIT_LEN_MAX = 128
+
+
+def validate_bit_len(module):
+    """Fail when a configured bit_len is outside 64..128 (AnsibleModule has no range check)."""
+    for item in module.params.get("config") or []:
+        bit_len = (item or {}).get("bit_len")
+        if bit_len is not None and not BIT_LEN_MIN <= bit_len <= BIT_LEN_MAX:
+            module.fail_json(msg="bit_len of slot {0} must be between {1} and {2}, got {3}".format(
+                item.get("name"), BIT_LEN_MIN, BIT_LEN_MAX, bit_len))
+
+
 class Isam_ipv6_antispoofing_slot(ResourceModule):
     def __init__(self, module):
+        validate_bit_len(module)
         super(Isam_ipv6_antispoofing_slot, self).__init__(
             empty_fact_val=[], facts_module=Isam_ipv6_antispoofing_slotFacts(module),
             module=module, resource="isam_ipv6_antispoofing_slot", tmplt=Isam_ipv6_antispoofing_slotTemplate(),

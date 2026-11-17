@@ -8,6 +8,8 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
     utils,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_scoped_config,
+    requested_identities,
     strip_noise_lines,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.ani_onts.ani_onts import (
@@ -26,7 +28,9 @@ class Ani_ontsFacts(object):
         self.argument_spec = Ani_ontsArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure ani ont flat")
+        """The whole resource, or only the ONT thresholds named in config (targeted gathering)."""
+        commands = ["info configure ani ont tca-thresh %s flat" % ont for ont in requested_identities(self._module, "ani_onts")]
+        return get_scoped_config(self._module, connection, None, "info configure ani ont flat", commands)
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}

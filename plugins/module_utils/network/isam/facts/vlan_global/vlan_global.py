@@ -24,6 +24,12 @@ class Isam_vlan_globalFacts(object):
         self.argument_spec = Isam_vlan_globalArgs.argument_spec
 
     def get_config(self, connection):
+        """The whole resource, or only the priority-regen profiles named in config (targeted gathering).
+
+        The device lists them as 'configure vlan priority-regen <id> profile-name ...';
+        the parser takes <id> as priority_regen[].id.
+        """
+        # The device has no single-instance read for priority-regen profiles ("invalid token").
         return connection.get("info configure vlan flat")
 
     def populate_facts(self, connection, ansible_facts, data=None):
@@ -49,11 +55,7 @@ class Isam_vlan_globalFacts(object):
                 for key in list(entry.keys()):
                     if entry[key] == "":
                         entry.pop(key)
-                if "dot1p" in entry and entry["dot1p"] != "":
-                    entry["dot1p"] = int(entry["dot1p"])
-                if "regen_dot1p" in entry and entry["regen_dot1p"] != "":
-                    entry["regen_dot1p"] = int(entry["regen_dot1p"])
-                for pbit in ("pbit0", "pbit1", "pbit2", "pbit3", "pbit4", "pbit5", "pbit6", "pbit7"):
+                for pbit in ("id", "pbit0", "pbit1", "pbit2", "pbit3", "pbit4", "pbit5", "pbit6", "pbit7"):
                     if pbit in entry and entry[pbit] != "":
                         entry[pbit] = int(entry[pbit])
             objs["priority_regen"] = priority_regen

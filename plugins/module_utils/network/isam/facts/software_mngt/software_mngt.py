@@ -8,6 +8,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
     utils,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_targeted_config,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.software_mngt.software_mngt import (
@@ -22,11 +23,17 @@ class Software_mngtFacts(object):
         self._module = module
         self.argument_spec = Software_mngtArgs.argument_spec
 
+    def get_config(self, connection):
+        """The whole resource, or only the OSWPs named in config (targeted gathering)."""
+        return get_targeted_config(self._module, connection, "software_mngt", "info configure software-mngt flat", {
+            "oswp": "info configure software-mngt oswp %s flat",
+        })
+
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}
 
         if not data:
-            data = connection.get("info configure software-mngt flat")
+            data = self.get_config(connection)
         data = unwrap_response(data)
 
         software_mngt_config = self._parse_software_mngt_config(data)

@@ -81,7 +81,9 @@ options:
     description: Device-native running configuration for parsed state.
     type: str
   state:
-    description: Desired resource state.
+    description:
+    - The state the configuration should be left in.
+    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(shelves[].id), C(slots[].id), C(appliques[].id) and C(protection_groups[].id) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -110,6 +112,13 @@ EXAMPLES = """
         - id: 33
           admin_status: lock
           eps_quenchfactor: 0
+
+- name: Read only the named slots (targeted gathering)
+  nokia.isam.isam_equipment:
+    config:
+      slots:
+        - id: lt:1/1/5
+    state: gathered
 """
 
 RETURN = """

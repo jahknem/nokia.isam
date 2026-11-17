@@ -45,7 +45,10 @@ options:
     description: The state-parsed running config.
     type: str
   state:
-    description: The state the configuration should be left in.
+    description:
+    - The state the configuration should be left in.
+    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(ont_id) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
+    - With C(merged), C(replaced) or C(deleted) and I(config), the current configuration is likewise read only for the named instances.
     type: str
     choices:
       - merged
@@ -68,6 +71,12 @@ EXAMPLES = """
         poll_interval: 60
         enable: true
     state: rendered
+
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_ntp_onts:
+    config:
+      - ont_id: 1/1/5/1/3
+    state: gathered
 """
 
 RETURN = """

@@ -24,9 +24,23 @@ class LinetestTemplate(object):
 
     def parse(self, config):
         result = {"sessions": [], "parameters": []}
+        # Instance block: attribute lines indented below "ltsession <id>" or
+        # "ltparm <id> <test>" (hierarchical or scoped "info configure linetest ...").
+        block = None
         for raw in (config or "").splitlines():
             line = raw.strip()
             if not line or line.startswith("#") or line.startswith("echo"):
+                continue
+            indent = len(raw) - len(raw.lstrip(" "))
+            if block is not None and indent <= block[0]:
+                block = None
+            if block is not None:
+                parts = line.split()
+                if parts[0] != "exit":
+                    indent_, items, fields, identity = block
+                    item = dict(identity)
+                    self._fields(item, parts, fields)
+                    self._add(items, item, *identity.keys())
                 continue
             if line.startswith("configure "):
                 line = line[len("configure "):]
@@ -40,12 +54,16 @@ class LinetestTemplate(object):
             kind = parts.pop(0)
             if kind == "ltsession" and parts:
                 item = {"session_id": parts.pop(0)}
+                identity = dict(item)
                 self._fields(item, parts, SESSION_FIELDS)
                 self._add(result["sessions"], item, "session_id")
+                block = (indent, result["sessions"], SESSION_FIELDS, identity)
             elif kind == "ltparm" and len(parts) >= 2:
                 item = {"session_id": parts.pop(0), "test_name": parts.pop(0)}
+                identity = dict(item)
                 self._fields(item, parts, PARAMETER_FIELDS)
                 self._add(result["parameters"], item, "session_id", "test_name")
+                block = (indent, result["parameters"], PARAMETER_FIELDS, identity)
         return self.normalize(result)
 
     def render(self, config):

@@ -1,5 +1,87 @@
 # Changelog
 
+## 0.3.13
+
+- Targeted gathering for every resource with instance lists: with `state: gathered`
+  and `config`, a resource module reads only the instances named in `config` (one or
+  several, by their identity fields) instead of the whole resource; absent instances
+  are not returned, other device errors fail. An instance with nothing configured
+  answers like an absent one (only a header) and is not returned either. Echoed
+  command text is stripped from single-instance replies. Without `config` nothing
+  changes.
+  `TARGETED_GATHER` in `plugins/module_utils/network/isam/targeted.py`
+  (dependency-free) lists every instance list and its identity, including nested lists
+  (`system` `syslog.destinations`) and composite identities (`qos_profiles` by
+  `profile_type` and `name`). Resources without instance lists (`dhcp_server`,
+  `generic_pon`, `l2cp`, ...) are single settings blocks and read completely;
+  `isam_security_ext_authenticator` only runs an action and gathers nothing.
+- Writes: `merged`/`replaced`/`deleted` compare against only the named instances for
+  the resources made of instance lists (`TARGETED_WRITES`: as before, plus `ntp_onts`,
+  `ani_onts`, `isam_dhcp_relay`, `isam_arp_relay`, `efm_oam_interface`). All other
+  resources keep reading the whole resource for writes.
+- Modules that never read the device in the module path now do for `gathered`:
+  `isam_efm_oam_interface` (also `merged`/`deleted`), `isam_l2cp`, `isam_l2cp_session`,
+  `isam_l2cp_user_port`, `isam_pppoe_client_interface`, `isam_pppoe_client_ppp_profile`,
+  `isam_pppoel2_statistics` (their `gathered` always returned nothing).
+- Device errors fail with `fail_json` instead of a traceback in the module path of
+  EFM OAM, ARP/DHCP relay, CFM, PON variants, linetest, xDSL profiles, dist-service,
+  IPv6 anti-spoofing, L2CP and PPPoE modules.
+- Parsing fixes (lines that were silently dropped or misread):
+  - `isam_interface_alarms`: the unindented one-line-per-alarm output was nested into
+    one line; each alarm is now parsed on its own.
+  - `isam_alarm`: `custom_profiles` and `hgutr069_custs` are parsed (`visibleN`/
+    `audibleN` enable/disable map to bool).
+  - `isam_traps`: a `configure trap` header with indented children is parsed;
+    attributes are found by indentation relative to their resource line.
+  - `isam_linetest`: attributes indented under `ltsession`/`ltparm` lines.
+  - `isam_qos_profiles`: flat `configure qos profiles marker d1p` lines.
+  - `isam_dist_service`: flat lines with several attributes.
+  - `isam_ipv6_antispoofing_slot`: a single-slot block.
+- Bug fixes (writes; check the command differences before upgrading playbooks):
+  - `isam_alarm`: merged/replaced/overridden/deleted/rendered crashed for every list
+    section; rewritten per section with the removal forms of the CLI help. Entries,
+    filters and suppressions cannot be removed on the device: their resettable
+    attributes are reset (`no severity`, `no status no threshold no window`), the rest
+    is left with a warning. Custom profiles and hgutr069 entries are removed
+    (`configure alarm no custom-profile|hgutr069-cust <id>`). Log/delta-log send only
+    known or changed values.
+  - `isam_alarm` parsing: the device's one-line entry form (`entry door severity
+    critical service-affecting reporting logging`) was dropped; `no severity` means
+    the default (unset), not `indeterminate`; filter/suppression `status` is
+    `used`/`not-used` (string, was int); `no threshold`/`no window` read as the CLI
+    defaults; suppressions without their temporal filter line keep their identity.
+    `entries[].index` and `filters[].alarmid` no longer restrict `choices` (open sets
+    that change per release; the device validates); entry `severity` gains `ignore`.
+  - `isam_vlan_global` `priority_regen` used a form the device does not know
+    (`priority-regen dot1p N regen-dot1p M`). It now models the device form
+    `priority-regen <id> profile-name <name> pbit0..pbit7` (identity `id`; argspec
+    `dot1p`/`regen_dot1p` replaced by `id`, `profile_name`, `pbit0`-`pbit7`); removal
+    `configure vlan no priority-regen <id>`.
+  - `isam_l2cp`, `isam_l2cp_session`, `isam_l2cp_user_port`,
+    `isam_pppoe_client_interface`, `isam_pppoe_client_ppp_profile`,
+    `isam_pppoel2_statistics` never read the device for writes (deleted/overridden did
+    nothing, merged always resent). All states read the device now; invalid removal
+    forms fixed (`no ppp-profile`, `no interface <port> client-id <id>`,
+    `no user-port <port> partition-id <id>`); replaced/overridden change in place
+    instead of delete and recreate. PPPoE client interfaces are keyed by port and
+    client id. The PPPoE password is never compared (the device hides it).
+  - `isam_ipv6_antispoofing_slot`: `bit_len` 64-128 is enforced (argspec `min`/`max`
+    are not supported by AnsibleModule).
+- Bug fixes (parsing): `isam_xstp` (all options of a line, option-less ports,
+  validation), `isam_interface_alarms` (`default_severity` was never parsed), PON
+  variants (module path and `isam_facts` share one typed parser),
+  `isam_interface_cages` (tuple replies), `isam_cfm` (short y1731pm lines raised).
+  `isam_xdsl_profiles` gathers through the normal facts path.
+- Documentation: `state` describes targeted gathering with an example in every
+  targetable module; full option docs, examples and return values for the modules that
+  only had stubs (EFM OAM, ARP/DHCP relay, CFM, PON variants, L2CP, PPPoE, linetest,
+  dist-service, IPv6 anti-spoofing).
+- Tests: a shared harness (`targeted_harness.py`, cases in `targeted_cases_*.py`)
+  checks every instance list: only the named instances, several at once, absence,
+  device errors, whole resource without config; a coverage test fails when an
+  instance list has no case. Test classes now stop their patchers (25 files stopped
+  the mock instead, leaking patches into later tests).
+
 ## 0.3.12
 
 - QoS interface facts: parse the flat configuration directly instead of one

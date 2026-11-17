@@ -9,7 +9,7 @@ DOCUMENTATION = """
 ---
 module: isam_interface_alarms
 short_description: Resource module to configure interface alarm default severity
-description: |
+description:
   - Manages C(configure interface alarm) default severity settings on Nokia ISAM devices.
 version_added: 0.3.0
 author: Jan Kühnemund (@jahknem)
@@ -34,7 +34,9 @@ options:
     description: Device-native configuration to parse when state is parsed.
     type: str
   state:
-    description: The state the configuration should be left in.
+    description:
+      - The state the configuration should be left in.
+      - C(gathered) always reads the whole resource; the device has no single-instance read for interface alarms.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -44,6 +46,7 @@ EXAMPLES = """
 - name: Gather interface alarms
   nokia.isam.isam_interface_alarms:
     state: gathered
+
 
 - name: Set default severity for Ethernet interface alarm
   nokia.isam.isam_interface_alarms:
@@ -101,9 +104,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-MODULE_DESCRIPTION = """
-module: isam_interface_alarms
-short_description: Manage Nokia ISAM interface alarms
-description: Manage Nokia ISAM interface alarms.
-"""

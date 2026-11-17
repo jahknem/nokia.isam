@@ -35,9 +35,9 @@ class TestIsamQosProfilesModule(TestIsamModule):
 
     def tearDown(self):
         super(TestIsamQosProfilesModule, self).tearDown()
-        self.get_resource_connection.stop()
-        self.get_resource_connection_config.stop()
-        self.get_resource_connection_facts.stop()
+        self.mock_get_resource_connection.stop()
+        self.mock_get_resource_connection_config.stop()
+        self.mock_get_resource_connection_facts.stop()
 
     def test_isam_qos_profiles_parsed(self):
         running = dedent(
