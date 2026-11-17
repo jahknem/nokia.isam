@@ -18,9 +18,18 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.sy
     Isam_systemArgs,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.system import (
+    SETTINGS,
+    SETTINGS_LISTS,
+    SETTINGS_NODES,
+    SYSLOG_SEVERITIES,
     Isam_systemTemplate,
+    parse_settings,
     parse_sync_if_timing,
 )
+
+# 'configure system security ...' belongs to isam_system_security (the shared-snapshot
+# read excludes it from 'system' too); isam_system's own read ignores it as well.
+SECURITY_PREFIX = "configure system security"
 
 
 class Isam_systemFacts(object):
@@ -52,7 +61,7 @@ class Isam_systemFacts(object):
         parser = Isam_systemTemplate(lines=lines, module=self._module)
         parsed = parser.parse()
         objs = self._parse_flat_config(lines)
-        for section in ("id", "security", "sntp", "syslog", "sync_if_timing", "transaction"):
+        for section in ("id", "sntp", "syslog", "sync_if_timing", "transaction"):
             if parsed.get(section):
                 objs.setdefault(section, {}).update(parsed[section])
 
@@ -76,6 +85,8 @@ class Isam_systemFacts(object):
             if not stripped or stripped.startswith("echo") or stripped.startswith("#"):
                 continue
             if stripped.startswith("configure system "):
+                if stripped == SECURITY_PREFIX or stripped.startswith(SECURITY_PREFIX + " "):
+                    continue
                 lines.extend(self._split_packed_syntax(stripped))
                 continue
             if stripped == "configure":
@@ -92,8 +103,11 @@ class Isam_systemFacts(object):
                 continue
             if not in_system:
                 continue
-            if stripped in ("id", "security", "sntp", "sync-if-timing", "syslog", "transaction", "max-lt-link-speed", "loop-id-syntax", "relay-id-syntax"):
+            if stripped in ("id", "security", "sntp", "sync-if-timing", "syslog", "transaction", "max-lt-link-speed",
+                            "loop-id-syntax", "relay-id-syntax") + tuple(SETTINGS_NODES):
                 current_section = stripped
+                continue
+            if current_section == "security" or (not current_section and stripped.split()[:1] == ["security"]):
                 continue
             if current_section:
                 lines.append("configure system {0} {1}".format(current_section, stripped))
@@ -119,24 +133,29 @@ class Isam_systemFacts(object):
 
             if section == "id" and values:
                 id_section = objs.setdefault("id", {})
-                id_section["node_id"] = values[0]
+                # 'configure system id <node-id> name ...'; the legacy block form
+                # ('id' / 'name X') has no node id
+                if values[0] not in ("name", "location", "contact", "no") + SETTINGS["id"][2] + tuple(
+                        cli for _o, cli, _k in SETTINGS["id"][1]):
+                    id_section["node_id"] = values[0]
                 self._copy_token_value(values, "name", id_section, "name")
                 self._copy_token_value(values, "location", id_section, "location")
                 self._copy_token_value(values, "contact-person", id_section, "contact")
                 self._copy_token_value(values, "nt-intercon-vlan", id_section, "nt_intercon_vlan", int)
                 self._copy_token_value(values, "internal-nw-vlan", id_section, "internal_nw_vlan", int)
                 self._copy_token_value(values, "system-mac", id_section, "system_mac")
+                parse_settings(values[1:], SETTINGS["id"][1], id_section, SETTINGS["id"][2])
             elif section == "sntp":
                 self._parse_sntp(values, objs.setdefault("sntp", {}))
             elif section == "transaction":
                 transaction = objs.setdefault("transaction", {})
                 self._copy_token_value(values, "log-full-action", transaction, "log_full_action")
+                parse_settings(values, SETTINGS["transaction"][1], transaction, SETTINGS["transaction"][2])
+            elif section in SETTINGS_NODES:
+                key = SETTINGS_NODES[section]
+                parse_settings(values, SETTINGS[key][1], objs.setdefault(key, {}), SETTINGS[key][2])
             elif section == "max-lt-link-speed":
                 self._copy_token_value(values, "link-speed", objs, "max_lt_link_speed")
-            elif section == "security":
-                if "welcome-banner" in values:
-                    index = values.index("welcome-banner") + 1
-                    objs.setdefault("security", {})["welcome_banner"] = " ".join(values[index:])
             elif section in ("loop-id-syntax", "relay-id-syntax"):
                 target = objs.setdefault(
                     "loop_id_syntax" if section == "loop-id-syntax" else "relay_id_syntax", {}
@@ -167,8 +186,10 @@ class Isam_systemFacts(object):
         self._copy_token_value(values, "server-ip-addr", sntp, "server_ip_addr")
         self._copy_token_value(values, "polling-rate", sntp, "polling_rate", int)
         self._copy_token_value(values, "timezone-offset", sntp, "timezone_offset", int)
-        if "enable" in values:
+        if "enable" in values and values[values.index("enable") - 1:values.index("enable")] != ["no"]:
             sntp["enabled"] = True
+        if values[:1] != ["server-table"]:
+            parse_settings(values, SETTINGS["sntp"][1], sntp, SETTINGS["sntp"][2])
         if values[:1] == ["server-table"]:
             entry = {}
             self._copy_token_value(values, "ip-address", entry, "ip_address")
@@ -180,15 +201,25 @@ class Isam_systemFacts(object):
         if values[:1] == ["destination"] and len(values) >= 2:
             entry = {"name": values[1]}
             self._copy_token_value(values, "type", entry, "type")
+            _node, _ident, attrs, other = SETTINGS_LISTS[("syslog", "destinations")]
+            parse_settings(values[2:], attrs, entry, other)
             syslog.setdefault("destinations", []).append(entry)
         elif values[:1] == ["route"] and len(values) >= 2:
             entry = {"destination": values[1]}
             self._copy_token_value(values, "msg-type", entry, "msg_type")
             self._copy_token_value(values, "facility", entry, "facility")
             if "facility" in values:
-                start = values.index("facility") + 2
-                entry["severities"] = values[start:]
+                # enabled severities only ('no <severity>' is not enabled)
+                rest = values[values.index("facility") + 2:]
+                entry["severities"] = [
+                    token for index, token in enumerate(rest)
+                    if token in SYSLOG_SEVERITIES and (index == 0 or rest[index - 1] != "no")
+                ]
+            _node, _ident, attrs, other = SETTINGS_LISTS[("syslog", "routes")]
+            parse_settings(values[2:], attrs, entry, other)
             syslog.setdefault("routes", []).append(entry)
+        else:
+            parse_settings(values, SETTINGS["syslog"][1], syslog, SETTINGS["syslog"][2])
 
     @staticmethod
     def _split_packed_syntax(line):

@@ -18,6 +18,24 @@ class Isam_vlan_globalTemplate(NetworkTemplate):
     # fmt: off
     PARSERS = [
         {
+            # configure vlan broadcast-frames [ no priority-policy | priority-policy <value> ]
+            # (real 'info configure detail flat': 'priority-policy vlan-specific'; the
+            # 'no priority-policy' reset form is unverified on a device)
+            "name": "broadcast_frames.priority_policy",
+            "compval": "priority_policy",
+            "getval": re.compile(
+                r"^configure\s+vlan\s+broadcast-frames\s+"
+                r"(?:no\s+priority-policy|priority-policy\s+(?P<priority_policy>\S+))(?:\s.*)?$"
+            ),
+            "setval": "configure vlan broadcast-frames priority-policy {{ priority_policy }}",
+            "remval": "configure vlan broadcast-frames no priority-policy",
+            "result": {
+                "broadcast_frames": {
+                    "priority_policy": "{{ priority_policy }}",
+                },
+            },
+        },
+        {
             "name": "broadcast_frames.drop_unknown_multicast",
             "compval": "drop_unknown_multicast",
             "getval": re.compile(

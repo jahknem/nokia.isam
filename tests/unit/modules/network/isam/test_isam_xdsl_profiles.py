@@ -37,7 +37,9 @@ def test_xdsl_profiles_parse_live_observed_fields():
     assert parsed["service_profiles"][0]["max_bitrate_down"] == 33000
     assert parsed["service_profiles"][0]["active"] is True
     assert parsed["spectrum_profiles"][0]["g993_2_17a"] is True
-    assert parsed["spectrum_profiles"][0]["commands"] == ["vdsl pbo 1 param-a 4000"]
+    # The vdsl pbo sub-node is modelled now (it used to land in commands).
+    assert parsed["spectrum_profiles"][0]["vdsl"] == {"pbo": [{"index": 1, "param_a": 4000}]}
+    assert "commands" not in parsed["spectrum_profiles"][0]
 
 
 def test_xdsl_profiles_render_commands():

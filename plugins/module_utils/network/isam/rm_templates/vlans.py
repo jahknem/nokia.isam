@@ -137,7 +137,8 @@ class VlansTemplate(NetworkTemplate):
             'result': {
                 '{{ id }}': {
                     'id': '{{ id }}',
-                    'new-broadcast': '{{ "disable" if negate is defined else new_broadcast|default("inherit") }}',
+                    # "no new-broadcast" is how "flat detail" prints the default (inherit).
+                    'new-broadcast': '{{ "inherit" if negate is defined else new_broadcast|default("inherit") }}',
                 },
             },
         },

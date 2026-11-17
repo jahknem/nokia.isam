@@ -30,6 +30,7 @@ class Isam_vlan_global(ResourceModule):
         )
         self.dict_parsers = {
             "broadcast_frames": [
+                "broadcast_frames.priority_policy",
                 "broadcast_frames.drop_unknown_multicast",
             ],
             "tpid": [

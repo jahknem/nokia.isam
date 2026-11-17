@@ -24,6 +24,15 @@ options:
           drop_unknown_multicast:
             description: Drop unknown multicast frames.
             type: bool
+          priority_policy:
+            description:
+              - Node-level priority policy for broadcast frames,
+                C(configure vlan broadcast-frames priority-policy <value>) (for example C(vlan-specific) or
+                C(port-default)).
+              - C(no priority-policy) on the device is not reported. I(state=replaced), I(state=overridden) and
+                I(state=deleted) reset it with C(configure vlan broadcast-frames no priority-policy)
+                (reset form from the CLI syntax, not yet verified on a device).
+            type: str
       priority_regen:
         description:
           - Priority regeneration profiles, device form

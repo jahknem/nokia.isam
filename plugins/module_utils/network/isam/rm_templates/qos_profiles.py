@@ -73,6 +73,15 @@ class Qos_profilesTemplate(NetworkTemplate):
         "shaper": ("committed-info-rate", "committed-burst-size", "autoshape"),
         "bandwidth": ("committed-info-rate", "assured-info-rate", "excessive-info-rate"),
     }
+    # Mandatory profile parameters (help: no "[no]" form). They can be changed but
+    # not removed; they go away with the profile.
+    _MANDATORY = frozenset((
+        "queue-type", "priority", "weight", "shaper-profile",
+        "res-voice-bandwidth", "max-mcast-bandwidth", "res-data-bandwidth",
+        "default-dot1p", "committed-info-rate", "committed-burst-size",
+        "logical-flow-type", "assured-info-rate", "excessive-info-rate",
+    ))
+    _BOOL_FIELDS = frozenset(("use-dei",))
     _CHILD_KEY_MAP = {"type": "shaper-type"}
     _KNOWN_CHILD_KEYS = set((
         "mcast-inc-shape",
@@ -193,6 +202,8 @@ class Qos_profilesTemplate(NetworkTemplate):
             cli_field = "type" if field == "shaper-type" else field
             if data[field] is False:
                 return "configure qos profiles {0} no {1}".format(cls._profile_path(data), cli_field)
+            if data[field] is True:
+                return "configure qos profiles {0} {1}".format(cls._profile_path(data), cli_field)
             value = " ".join(data[field]) if field == "colors" else data[field]
             return "configure qos profiles {0} {1} {2}".format(cls._profile_path(data), cli_field, value)
         return render
@@ -218,12 +229,12 @@ class Qos_profilesTemplate(NetworkTemplate):
             dest["queue-type"] = tokens.pop(0)
         for negate, key, value in iter_cli_fields(
             tokens,
-            bool_fields=("use-dei",),
+            bool_fields=tuple(cls._BOOL_FIELDS),
             value_fields=tokens,
         ):
             key = cls._CHILD_KEY_MAP.get(key, key)
-            if negate and key == "use-dei":
-                dest[key] = False
+            if key in cls._BOOL_FIELDS:
+                dest[key] = not negate
                 continue
             if negate or value is None:
                 continue
@@ -288,6 +299,9 @@ class Qos_profilesTemplate(NetworkTemplate):
                     current[key] = False
                 continue
             key_value = stripped.split(None, 1)
+            if stripped in self._BOOL_FIELDS:
+                current[stripped] = True
+                continue
             if key_value[0] in self._KNOWN_CHILD_KEYS and len(key_value) == 2:
                 key = self._CHILD_KEY_MAP.get(key_value[0], key_value[0])
                 current[key] = _to_native(key_value[1])
@@ -322,8 +336,9 @@ for _field in Qos_profilesTemplate._FIELDS:
             if _field in _inline_fields
             else Qos_profilesTemplate._render_field(_field),
             "remval": None
-            if _field == "attributes"
+            if _field == "attributes" or _field in Qos_profilesTemplate._MANDATORY
             else Qos_profilesTemplate._render_no_field(_field),
+            "no_remval": _field in Qos_profilesTemplate._MANDATORY,
             "result": {},
         }
     )

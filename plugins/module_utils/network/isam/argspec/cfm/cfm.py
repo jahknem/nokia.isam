@@ -6,7 +6,12 @@ class CfmArgs(object):
             "type": "dict",
             "options": {
                 "domains": {"type": "list", "elements": "dict"},
-                "slm": {"type": "dict"},
+                "slm": {
+                    "type": "dict",
+                    "options": {
+                        "inactivity_time": {"type": "int"},
+                    },
+                },
                 "y1731pm": {"type": "list", "elements": "dict"},
             },
         },

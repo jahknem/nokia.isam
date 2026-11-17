@@ -44,6 +44,12 @@ VLAN_BOOL_KEYS = {
     "prior_nw_ctrl",
 }
 
+# str-typed options whose device values may be all digits (e.g. TPID 8100).
+PORT_STR_KEYS = ("default_tpid",)
+VLAN_STR_KEYS = ("tpid", "inner_pbit_remark", "groupid", "usacceptframetype", "oltregenprofile")
+
+VLAN_TPID_RE = re.compile(r"^vlan-tpid(?P<index>\d+)\s+\S+(?:\s+(?P<rest>.*))?$")
+
 
 class BridgesFacts(object):
     """ The isam bridges facts class
@@ -151,7 +157,24 @@ class BridgesFacts(object):
         return entry
 
     def _apply_port_rest(self, port_entry, rest):
+        # "vlan-tpid<n> <n> [no] tpid <hex>": a per-port sub-node, not a key/value pair.
+        tpid_match = VLAN_TPID_RE.match(rest)
+        if tpid_match:
+            sub = parse_cli_key_values((tpid_match.group("rest") or "").split())
+            self._stringify(sub, ("tpid",))
+            if sub:
+                key = "vlan_tpid%s" % tpid_match.group("index")
+                port_entry.setdefault(key, {}).update(sub)
+            return
         self._apply_rest(port_entry, rest, PORT_BOOL_KEYS)
+        self._stringify(port_entry, PORT_STR_KEYS)
+
+    @staticmethod
+    def _stringify(entry, keys):
+        # Hex TPIDs such as 8100 and free-form values must not be read back as int.
+        for key in keys:
+            if entry.get(key) is not None and not isinstance(entry[key], str):
+                entry[key] = str(entry[key])
 
     def _apply_vlan_rest(self, vlan_entry, rest):
         static_user_match = re.match(
@@ -167,6 +190,7 @@ class BridgesFacts(object):
         self._apply_rest(
             vlan_entry, rest, VLAN_BOOL_KEYS, normalize_bridge_vlan_alias
         )
+        self._stringify(vlan_entry, VLAN_STR_KEYS)
 
     def _apply_rest(self, entry, rest, bool_keys, canonicalize=None):
         if not rest:

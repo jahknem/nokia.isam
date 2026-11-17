@@ -22,6 +22,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common imp
     normalize_resource_keys,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_lines import (
+    XDSL_TCA_FIELDS,
     Xdsl_linesTemplate,
 )
 
@@ -89,6 +90,8 @@ class Xdsl_lines(ResourceModule):
                 "auto_switch",
             ]
         )
+        self.parsers.append("tca_line_threshold.enable")
+        self.parsers.extend("tca_line_threshold." + field for field in XDSL_TCA_FIELDS)
 
     def execute_module(self):
         """Execute the module."""
@@ -120,7 +123,20 @@ class Xdsl_lines(ResourceModule):
             self._compare(want=want, have=haved.pop(k, {}))
 
     def _compare(self, want, have):
-        self.compare(parsers=self.parsers, want=want, have=have)
+        self.compare(parsers=self.parsers, want=self._strip_tca_defaults(want), have=self._strip_tca_defaults(have))
+
+    @staticmethod
+    def _strip_tca_defaults(entry):
+        """TCA thresholds at their default (0 = disabled, enable false) equal an absent value."""
+        tca = (entry or {}).get("tca_line_threshold")
+        if not tca:
+            return entry
+        entry = dict(entry)
+        entry["tca_line_threshold"] = {
+            key: value for key, value in tca.items()
+            if value is not None and not (key in XDSL_TCA_FIELDS and value == 0)
+        }
+        return entry
 
     @staticmethod
     def _index_by_id(data):

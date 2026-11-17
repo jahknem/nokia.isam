@@ -56,12 +56,91 @@ options:
           - 100baset-auto
           - auto
           - 1000baset-auto
+      power_control:
+        type: str
+        description: PoE power control (C(power-control)); C(no power-control) is not reported.
+        choices: [enable, disable]
+      pse_class:
+        type: str
+        description: PSE class (C(pse-class)); C(no pse-class) is not reported.
+        choices: ['0', '1', '2', '3', '4', '5']
+      pse_pw_priority:
+        type: str
+        description: PSE power priority (C(pse-pw-priority)); C(no pse-pw-priority) is not reported.
+        choices: [critical, high, low]
+      pwr_override:
+        type: str
+        description: Power override (C(pwr-override)); C(no pwr-override) is not reported.
+        choices: [enable, disable]
+      lpt_mode:
+        type: str
+        description: Link pass-through mode (C(lpt-mode)); C(no lpt-mode) is not reported.
+        choices: [not-supported, enabled, disabled]
       admin_state:
         type: str
         description: Administrative state of the interface.
         choices:
           - up
           - down
+      phy:
+        type: dict
+        description:
+          - Physical layer settings (C(configure ethernet ont <uni-idx> phy)).
+          - Set with C(phy <attr> <value>), reset with C(phy no <attr>); sent as its own command, never joined
+            with the UNI attributes. Syntax from the CLI reference, not verified on a device.
+          - Defaults (C(no <attr>) or the default value) are not reported and a requested default equals an absent value.
+        suboptions:
+          pm:
+            type: str
+            description: Physical layer PM collection (C(pm)); device default C(disable).
+            choices: [enable, disable]
+      l2:
+        type: dict
+        description:
+          - Layer 2 PM and threshold crossing alerts (C(configure ethernet ont <uni-idx> l2)).
+          - Set with C(l2 <attr> <value>), reset with C(l2 no <attr>); sent as its own command. Syntax from the
+            CLI reference, not verified on a device.
+          - Defaults are not reported and a requested default equals an absent value.
+        suboptions:
+          pm:
+            type: str
+            description: Layer 2 PM collection (C(pm)); device default C(disable).
+            choices: [enable, disable]
+          tca:
+            type: str
+            description: Layer 2 threshold crossing alerts (C(tca)); device default C(disable).
+            choices: [enable, disable]
+          dropped_frames_up:
+            type: str
+            description: Upstream dropped frames threshold, C(disable) or 0-4294967295 (C(dropped-frames-up)); device default C(disable).
+          dropped_frames_dn:
+            type: str
+            description: Downstream dropped frames threshold, C(disable) or 0-4294967295 (C(dropped-frames-dn)); device default C(disable).
+          pm_collect_ext:
+            type: dict
+            description:
+              - Extended 32 bit PM (C(configure ethernet ont <uni-idx> l2 pm-collect-ext)), set with
+                C(l2 pm-collect-ext <attr> <value>) and reset with C(l2 pm-collect-ext no <attr>).
+            suboptions:
+              pm_collect:
+                type: str
+                description: Extended PM collection (C(pm-collect)); device default C(disable).
+                choices: [enable, disable]
+              p_bits:
+                type: int
+                description: P-bit filter of the collected PM data, 0-7, or 255 for not used (C(p-bits)); device default C(255) (0xFF).
+              vlan_id:
+                type: int
+                description: VLAN filter of the collected PM data, 0 for not used (C(vlan-id)); device default C(0).
+      cfm:
+        type: dict
+        description:
+          - CFM settings of the UNI (C(configure ethernet ont <uni-idx> cfm)), set with C(cfm portshut-ais) and
+            reset with C(cfm no portshut-ais). Syntax from the CLI reference, not verified on a device.
+        suboptions:
+          portshut_ais:
+            type: bool
+            description: Shut the UNI down on a downstream AIS PDU (C(portshut-ais)); C(no portshut-ais) is the default and not reported.
   running_config:
     description: The state-parsed running config.
     type: str

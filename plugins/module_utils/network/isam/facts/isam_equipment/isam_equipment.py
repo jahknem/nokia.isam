@@ -4,6 +4,8 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+import shlex
+
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
     iter_cli_fields,
 )
@@ -16,6 +18,8 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.is
     Isam_equipmentArgs,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.isam_equipment import (
+    EQUIPMENT_SECTIONS,
+    EQUIPMENT_VALUE_FIELDS,
     Isam_equipmentTemplate,
 )
 
@@ -23,15 +27,18 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 class Isam_equipmentFacts(object):
     """The isam equipment facts class."""
 
-    # Include known detail-only attributes when tokenizing, even though this
-    # resource does not model them. Their values must not be mistaken for a
-    # supported flag (e.g. a capability profile named "unlock"). The existing
-    # NetworkTemplate remains responsible for selecting/validating public fields.
-    _BOOL_FIELDS = {"slot": ("unlock", "power-down", "board-40gkr4")}
+    # Every attribute of the shelf/slot/applique commands is tokenized, so a value is
+    # never mistaken for a flag (e.g. a capability profile named "unlock"). The
+    # NetworkTemplate selects the modelled fields; 'no <attr>' (the default) produces
+    # no value. board-40gkr4 takes a value (help: no board-40gkr4 | board-40gkr4 <x>).
+    _BOOL_FIELDS = {"slot": ("unlock", "power-down"), "shelf": ("lock", "extended-lt-slots")}
     _VALUE_FIELDS = {
-        "shelf": ("planned-type",),
-        "slot": ("planned-type", "alarm-profile", "capab-profile", "operational-mode", "dual-host-ip", "dual-host-loc"),
-        "applique": ("planned-type",),
+        "shelf": ("planned-type", "class", "mode", "description"),
+        "slot": (
+            "planned-type", "alarm-profile", "capab-profile", "board-40gkr4", "operational-mode", "dual-host-ip",
+            "dual-host-loc",
+        ),
+        "applique": ("planned-type", "applique-profile"),
         "protection-group": ("admin-status", "eps-quenchfactor"),
     }
 
@@ -78,6 +85,12 @@ class Isam_equipmentFacts(object):
             "isam": parsed.get("isam", {}),
         }
 
+        # Attributes at their device default are not reported, also when printed as a value.
+        for section, field, _cli, default in EQUIPMENT_VALUE_FIELDS:
+            for entry in objs[EQUIPMENT_SECTIONS[section]]:
+                if entry.get(field) == default:
+                    entry.pop(field)
+
         for group in objs["protection_groups"]:
             group["id"] = int(group["id"])
             if "eps_quenchfactor" in group:
@@ -103,7 +116,10 @@ class Isam_equipmentFacts(object):
         current = None
         in_equipment = False
         resources = ("shelf ", "slot ", "applique ", "protection-group ")
-        fields = ("planned-type ", "unlock", "no unlock", "admin-status ", "eps-quenchfactor ")
+        fields = ("planned-type ", "unlock", "no unlock", "admin-status ", "eps-quenchfactor ", "no ")
+        fields += tuple(
+            name + " " for names in self._VALUE_FIELDS.values() for name in names
+        ) + tuple(name for names in self._BOOL_FIELDS.values() for name in names)
 
         for raw_line in config.splitlines():
             line = raw_line.split("#", 1)[0].rstrip()
@@ -161,6 +177,11 @@ class Isam_equipmentFacts(object):
     def _split_packed_line(self, line):
         """Expand compact equipment properties into existing template commands."""
         tokens = line.split()
+        if '"' in line:
+            try:
+                tokens = shlex.split(line)
+            except ValueError:
+                pass
         if len(tokens) < 5:
             return []
         resource = tokens[2]

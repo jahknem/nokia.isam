@@ -134,10 +134,8 @@ class TestIsamSystemModule(TestIsamModule):
         self.assertEqual(parsed["id"]["name"], "ISAM-01")
         self.assertEqual(parsed["id"]["location"], "Datacenter-A")
         self.assertEqual(parsed["id"]["contact"], "admin@example.com")
-        self.assertEqual(parsed["security"]["ssh"], True)
-        self.assertEqual(parsed["security"]["telnet"], False)
-        self.assertEqual(parsed["security"]["snmp"], True)
-        self.assertEqual(parsed["security"]["welcome_banner"], "Welcome to ISAM")
+        # 'configure system security' belongs to isam_system_security: not read here
+        self.assertNotIn("security", parsed)
         self.assertEqual(parsed["max_lt_link_speed"], "ten-gb")
         self.assertEqual(parsed["sntp"]["server"], "10.0.0.1")
         self.assertEqual(parsed["sntp"]["port"], 123)
@@ -208,7 +206,6 @@ class TestIsamSystemModule(TestIsamModule):
                 state="merged",
                 config=dict(
                     id=dict(name="ISAM-01", location="Datacenter-A", contact="admin@example.com"),
-                    security=dict(ssh=True, telnet=False, snmp=True),
                     sntp=dict(server="10.0.0.1", port=123, poll_interval=3600),
                     syslog=dict(server="10.0.0.2", facility="local0", severity="info"),
                     sync_if_timing=dict(mode="free-run", source="internal"),
@@ -219,3 +216,21 @@ class TestIsamSystemModule(TestIsamModule):
         )
         result = self.execute_module(changed=False)
         self.assertEqual(result["commands"], [])
+
+    def test_isam_system_deprecated_security_is_write_only(self):
+        """security (deprecated, owned by isam_system_security) is not read back: merged sends it,
+        replaced/overridden never reset it."""
+        self.get_config.return_value = dedent(
+            """\
+            configure system security ssh enable
+            configure system security welcome-banner "Hello"
+            configure system id ISAM-01 name ISAM-01
+            """
+        )
+        set_module_args(dict(state="gathered"), ignore_provider_arg)
+        self.assertNotIn("security", self.execute_module(changed=False)["gathered"])
+        set_module_args(dict(state="merged", config=dict(security=dict(ssh=True))), ignore_provider_arg)
+        self.assertEqual(self.execute_module(changed=True)["commands"], ["configure system security ssh enable"])
+        set_module_args(dict(state="overridden", config=dict(id=dict(name="ISAM-01"))), ignore_provider_arg)
+        commands = self.execute_module(changed=False)["commands"]
+        self.assertFalse([c for c in commands if "security" in c])

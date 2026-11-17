@@ -65,4 +65,9 @@ class Qos_profiles(ResourceModule):
         self.commands = list(dict.fromkeys(self.commands))
 
     def _compare(self, want, have):
+        if not want:
+            # "configure qos profiles no <type> <name>" removes the profile with all
+            # its parameters; per-parameter removals after it would be invalid.
+            self.compare(parsers=["profile_type"], want=want, have=have)
+            return
         self.compare(parsers=self.parsers, want=want, have=have)

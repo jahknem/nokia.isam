@@ -18,6 +18,10 @@ class Isam_equipmentArgs(object):  # pylint: disable=R0903
                     "options": {
                         "id": {"type": "str", "required": True},
                         "planned_type": {"type": "str"},
+                        "class": {"type": "str", "choices": ["main-ethernet", "ext-ethernet"]},
+                        "lock": {"type": "bool"},
+                        "mode": {"type": "str"},
+                        "description": {"type": "str"},
                     },
                 },
                 "slots": {
@@ -31,6 +35,13 @@ class Isam_equipmentArgs(object):  # pylint: disable=R0903
                             "type": "str",
                             "choices": ["locked", "unlocked"],
                         },
+                        "power_down": {"type": "bool"},
+                        "alarm_profile": {"type": "str"},
+                        "capab_profile": {"type": "str"},
+                        "board_40gkr4": {"type": "str", "choices": ["inherited", "disable", "enable"]},
+                        "operational_mode": {"type": "str"},
+                        "dual_host_ip": {"type": "str"},
+                        "dual_host_loc": {"type": "str"},
                     },
                 },
                 "appliques": {
@@ -39,6 +50,7 @@ class Isam_equipmentArgs(object):  # pylint: disable=R0903
                     "options": {
                         "id": {"type": "str", "required": True},
                         "planned_type": {"type": "str"},
+                        "applique_profile": {"type": "str"},
                     },
                 },
                 "protection_groups": {

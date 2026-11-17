@@ -47,7 +47,16 @@ class Cfm(ResourceModule):
         return (kind, item.get("domain_index"), item.get("association_index"), item.get("mepid"), item.get("session_id"), item.get("rmepid"), item.get("active_remote_mepid"), item.get("name"))
 
     def _delete_missing(self, have, want):
-        # CFM has explicit no forms only for indexed objects; omitted options are left alone.
+        # CFM has explicit no forms for indexed objects; of the settings only
+        # 'configure cfm slm inactivity-time' is reset (help: 'no inactivity-time').
+        # Omitted domain/MEP options are left alone.
+        have_slm = (have.get("slm") or {}).get("inactivity_time")
+        if have_slm is not None:
+            reset = (want.get("slm") or {}).get("inactivity_time") is None
+            if self.state == "deleted":
+                reset = not want or "slm" in want
+            if reset:
+                self.commands.append("configure cfm slm no inactivity-time")
         if self.state == "deleted":
             requested = {x.get("domain_index") for x in want.get("domains", [])}
             for domain in have.get("domains", []):
@@ -73,7 +82,9 @@ class Cfm(ResourceModule):
                     if mep.get("y1731ais") is not None: self._command(mp + " y1731ais", mep["y1731ais"], tuple(CfmTemplate.OPTIONS.values()), current_mep.get("y1731ais", {}))
                     for remote in mep.get("active_remote_meps", []): self.commands.append(mp + " active-remote-mep " + str(remote))
                 for remote in association.get("remote_meps", []): self.commands.append(prefix + " remote-mep " + str(remote))
-        if config.get("slm", {}).get("inactivity_time") is not None: self.commands.append("configure cfm slm inactivity-time " + str(config["slm"]["inactivity_time"]))
+        wanted_slm = (config.get("slm") or {}).get("inactivity_time")
+        if wanted_slm is not None and wanted_slm != (have.get("slm") or {}).get("inactivity_time"):
+            self.commands.append("configure cfm slm inactivity-time " + str(wanted_slm))
         for pm in config.get("y1731pm", []):
             prefix = "configure cfm y1731pm domain {0} association {1} mep {2} session-id {3}".format(pm["domain_index"], pm["association"], pm["mep"], pm["session_id"])
             self._command(prefix, pm, ("type", "target_mac", "priority", "admin_up", "interval", "size", "measurement_intvl"), {})

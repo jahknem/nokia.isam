@@ -102,6 +102,20 @@ class BridgesArgs(object):  # pylint: disable=R0903
                             "type": "str",
                             "choices": ["auto", "translated", "transparency", "filtervlanandpbit"],
                         },
+                        "outervlancapture": {"type": "int"},
+                        "direction": {
+                            "type": "str",
+                            "choices": ["ingress", "egress", "bidirection"],
+                        },
+                        "default_tpid": {"type": "str"},
+                        "vlan_tpid0": {
+                            "type": "dict",
+                            "options": {"tpid": {"type": "str"}},
+                        },
+                        "vlan_tpid1": {
+                            "type": "dict",
+                            "options": {"tpid": {"type": "str"}},
+                        },
                         "vlan_id": {
                             "type": "list",
                             "elements": "dict",
@@ -145,6 +159,10 @@ class BridgesArgs(object):  # pylint: disable=R0903
                                 "max_cvlan_id": {"type": "int"},
                                 "ds-dedicated-q": {"type": "bool"},
                                 "tpid": {"type": "str"},
+                                "inner_pbit_remark": {"type": "str"},
+                                "groupid": {"type": "str"},
+                                "usacceptframetype": {"type": "str"},
+                                "oltregenprofile": {"type": "str"},
                                 "static_user": {
                                     "type": "list",
                                     "elements": "dict",

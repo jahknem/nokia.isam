@@ -12,6 +12,9 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.system import (
+    SETTINGS,
+    SETTINGS_LISTS,
+    render_settings_commands,
     SYNC_LEGACY_FIELDS,
     SYNC_LISTS,
     Isam_systemTemplate,
@@ -77,6 +80,55 @@ def _sync_lists(values):
         if key in out:
             out[key] = [dict(entry, **{ident: name}) for name, entry in out[key].items()]
     return out
+
+
+def _settings_kinds(section):
+    return dict((option, kind) for option, _cli, kind in SETTINGS[section][1])
+
+
+def _settings_lists(section):
+    return dict((key, (ident, dict((o, k) for o, _c, k in attrs)))
+                for (sec, key), (_node, ident, attrs, _other) in SETTINGS_LISTS.items() if sec == section)
+
+
+def _settings_values(config):
+    """{section: {option: value, list: {identity: {option: value}}}} of the SETTINGS attributes.
+
+    Sections absent from config are absent; a False flag is the device default and
+    counts as absent on the have side (facts never report it).
+    """
+    out = {}
+    for section in SETTINGS:
+        if not isinstance((config or {}).get(section), dict):
+            continue
+        source = config[section]
+        kinds = _settings_kinds(section)
+        values = dict((o, source[o]) for o in kinds if source.get(o) is not None)
+        for key, (ident, list_kinds) in _settings_lists(section).items():
+            entries = {}
+            for entry in source.get(key) or []:
+                if entry.get(ident) is None:
+                    continue
+                entries[entry[ident]] = dict((o, entry[o]) for o in list_kinds if entry.get(o) is not None)
+            values[key] = entries
+        out[section] = values
+    return out
+
+
+def _settings_same(kind, want, have):
+    if kind == "bool":
+        return bool(want) == bool(have)
+    return want == have
+
+
+def _settings_changed(kinds, want, have):
+    return dict((o, v) for o, v in want.items() if o in kinds and not _settings_same(kinds[o], v, have.get(o)))
+
+
+def _settings_absent(kinds, want, have):
+    # have holds non-defaults only; a False flag needs no reset
+    return dict((o, v) for o, v in have.items() if o in kinds and want.get(o) is None
+                and not (kinds[o] == "bool" and not v))
 
 
 class Isam_system(ResourceModule):
@@ -162,6 +214,69 @@ class Isam_system(ResourceModule):
 
             if want_section is not None:
                 self._compare_section(want_section, have_section or {}, parsers)
+
+        self._settings_commands(want, have)
+
+    def _settings_commands(self, want, have):
+        """Settings attributes of id/sntp/syslog/transaction and the settings-only nodes
+        (external-leds, auto-laser-shutdown, auto-switch, zero-touch-provision, pon-ont,
+        nt-sftp), plus the attributes of existing syslog destinations/routes.
+
+        merged sets what differs; replaced/overridden also reset ('no <kw>') what a given
+        section (or listed entry) omits, overridden also omitted sections and entries;
+        deleted resets the given sections. Syslog destinations/routes are never created
+        or removed here, only their attributes are set/reset.
+        """
+        wantv = _settings_values(want)
+        havev = _settings_values(have)
+        changed = {}
+        reset = {}
+        for section in SETTINGS:
+            kinds = _settings_kinds(section)
+            lists = _settings_lists(section)
+            w = wantv.get(section)
+            h = havev.get(section) or {}
+            if w is None and self.state != "overridden":
+                continue
+            if self.state == "deleted":
+                set_values, reset_values = {}, _settings_absent(kinds, {}, h)
+            else:
+                w = w or {}
+                set_values = _settings_changed(kinds, w, h)
+                reset_values = {}
+                if self.state in ("replaced", "overridden"):
+                    reset_values = _settings_absent(kinds, w, h)
+            for key, (ident, list_kinds) in lists.items():
+                w_entries = (w or {}).get(key) or {}
+                h_entries = h.get(key) or {}
+                set_list, reset_list = [], []
+                if self.state == "deleted":
+                    reset_list = [dict(_settings_absent(list_kinds, {}, e), **{ident: n}) for n, e in h_entries.items()]
+                else:
+                    for name, entry in w_entries.items():
+                        diff = _settings_changed(list_kinds, entry, h_entries.get(name) or {})
+                        if diff:
+                            set_list.append(dict(diff, **{ident: name}))
+                    if self.state in ("replaced", "overridden"):
+                        for name, entry in h_entries.items():
+                            if name not in w_entries and self.state != "overridden":
+                                continue
+                            absent = _settings_absent(list_kinds, w_entries.get(name) or {}, entry)
+                            if absent:
+                                reset_list.append(dict(absent, **{ident: name}))
+                set_values.pop(key, None)
+                reset_values.pop(key, None)
+                if set_list:
+                    set_values[key] = set_list
+                if reset_list:
+                    reset_values[key] = reset_list
+            if set_values:
+                changed[section] = set_values
+            if reset_values:
+                reset[section] = reset_values
+        node_id = ((want or {}).get("id") or {}).get("node_id") or ((have or {}).get("id") or {}).get("node_id")
+        self.commands.extend(render_settings_commands(changed, node_id=node_id))
+        self.commands.extend(render_settings_commands(reset, reset=True, node_id=node_id))
 
     def _sync_commands(self, want_section, have_section):
         """sync-if-timing references, SSM, SyncE and BITS settings (not PARSERS based).

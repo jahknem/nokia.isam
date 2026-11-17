@@ -246,6 +246,64 @@ class BridgesTemplate(NetworkTemplate):
                 },
             },
         },
+        # Syntax from "help configure bridge port": [ no outervlancapture | outervlancapture
+        # <Vlan::OuterVlan> ] [ no direction | direction <...> ] [ no default-tpid |
+        # default-tpid <Vlan::Tpid> ]. Facts are read by facts/bridges, not by getval.
+        {
+            "name": "outervlancapture",
+            "getval": re.compile(
+                r"""
+                configure\sbridge\sport\s(?P<id>\S+)\s(?:no\soutervlancapture|outervlancapture\s(?P<outervlancapture>\d+))
+                $""", re.VERBOSE),
+            "setval": "configure bridge port {{ id }} outervlancapture {{ outervlancapture }}",
+            "remval": "configure bridge port {{ id }} no outervlancapture",
+            "result": {"port": {"{{ id }}": {"outervlancapture": "{{ outervlancapture }}"}}},
+        },
+        {
+            "name": "direction",
+            "getval": re.compile(
+                r"""
+                configure\sbridge\sport\s(?P<id>\S+)\s(?:no\sdirection|direction\s(?P<direction>\S+))
+                $""", re.VERBOSE),
+            "setval": "configure bridge port {{ id }} direction {{ direction }}",
+            "remval": "configure bridge port {{ id }} no direction",
+            "result": {"port": {"{{ id }}": {"direction": "{{ direction }}"}}},
+        },
+        {
+            "name": "default_tpid",
+            "getval": re.compile(
+                r"""
+                configure\sbridge\sport\s(?P<id>\S+)\s(?:no\sdefault-tpid|default-tpid\s(?P<default_tpid>\S+))
+                $""", re.VERBOSE),
+            "setval": "configure bridge port {{ id }} default-tpid {{ default_tpid }}",
+            "remval": "configure bridge port {{ id }} no default-tpid",
+            "result": {"port": {"{{ id }}": {"default_tpid": "{{ default_tpid }}"}}},
+        },
+        # "configure bridge port <port> vlan-tpid<n> <n> [no] tpid <hex>" as printed by
+        # "info configure bridge port <port> flat detail". The set/removal forms repeat
+        # the read form (unverified on a device beyond the read).
+        {
+            "name": "vlan_tpid0",
+            "compval": "vlan_tpid0.tpid",
+            "getval": re.compile(
+                r"""
+                configure\sbridge\sport\s(?P<id>\S+)\svlan-tpid0\s0\s(?:no\stpid|tpid\s(?P<tpid>\S+))
+                $""", re.VERBOSE),
+            "setval": "configure bridge port {{ id }} vlan-tpid0 0 tpid {{ vlan_tpid0.tpid }}",
+            "remval": "configure bridge port {{ id }} vlan-tpid0 0 no tpid",
+            "result": {"port": {"{{ id }}": {"vlan_tpid0": {"tpid": "{{ tpid }}"}}}},
+        },
+        {
+            "name": "vlan_tpid1",
+            "compval": "vlan_tpid1.tpid",
+            "getval": re.compile(
+                r"""
+                configure\sbridge\sport\s(?P<id>\S+)\svlan-tpid1\s1\s(?:no\stpid|tpid\s(?P<tpid>\S+))
+                $""", re.VERBOSE),
+            "setval": "configure bridge port {{ id }} vlan-tpid1 1 tpid {{ vlan_tpid1.tpid }}",
+            "remval": "configure bridge port {{ id }} vlan-tpid1 1 no tpid",
+            "result": {"port": {"{{ id }}": {"vlan_tpid1": {"tpid": "{{ tpid }}"}}}},
+        },
         {
             "name": "vlan_id",
             "getval": re.compile(
@@ -371,7 +429,7 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_best_effort>no\sprior-best-effort)|(prior-best-effort\s(?P<prior_best_effort>\S+))
                 $""", re.VERBOSE),
-            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-best-effort {{ prior_best_effort }}",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} {{ '' if prior_best_effort else 'no ' }}prior-best-effort",
             "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-best-effort",
             "result": {
                 "port": {
@@ -391,7 +449,7 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_background>no\sprior-background)|(prior-background\s(?P<prior_background>\S+))
                 $""", re.VERBOSE),
-            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-background {{ prior_background }}",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} {{ '' if prior_background else 'no ' }}prior-background",
             "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-background",
             "result": {
                 "port": {
@@ -411,7 +469,7 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_spare>no\sprior-spar)|(prior-spare\s(?P<prior_spare>\S+))
                 $""", re.VERBOSE),
-            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-spare {{ prior_spare }}",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} {{ '' if prior_spare else 'no ' }}prior-spare",
             "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-spare",
             "result": {
                 "port": {
@@ -431,7 +489,7 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_exc_effort>no\sprior-exc-effort)|(prior-exc-effort\s(?P<prior_exc_effort>\S+))
                 $""", re.VERBOSE),
-            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-exc-effort {{ prior_exc_effort }}",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} {{ '' if prior_exc_effort else 'no ' }}prior-exc-effort",
             "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-exc-effort",
             "result": {
                 "port": {
@@ -451,7 +509,7 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_ctrl_load>no\sprior-ctrl-load)|(prior-ctrl-load\s(?P<prior_ctrl_load>\S+))
                 $""", re.VERBOSE),
-            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-ctrl-load {{ prior_ctrl_load }}",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} {{ '' if prior_ctrl_load else 'no ' }}prior-ctrl-load",
             "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-ctrl-load",
             "result": {
                 "port": {
@@ -471,7 +529,7 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_less_100ms>no\sprior-less-100ms)|(prior-less-100ms\s(?P<prior_less_100ms>\S+))
                 $""", re.VERBOSE),
-            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-less-100ms {{ prior_less_100ms }}",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} {{ '' if prior_less_100ms else 'no ' }}prior-less-100ms",
             "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-less-100ms",
             "result": {
                 "port": {
@@ -491,7 +549,7 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_less_10ms>no\sprior-less-10ms)|(prior-less-10ms\s(?P<prior_less_10ms>\S+))
                 $""", re.VERBOSE),
-            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-less-10ms {{ prior_less_10ms }}",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} {{ '' if prior_less_10ms else 'no ' }}prior-less-10ms",
             "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-less-10ms",
             "result": {
                 "port": {
@@ -511,7 +569,7 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_nw_ctrl>no\sprior-nw-ctrl)|(prior-nw-ctrl\s(?P<prior_nw_ctrl>\S+))
                 $""", re.VERBOSE),
-            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-nw-ctrl {{ prior_nw_ctrl }}",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} {{ '' if prior_nw_ctrl else 'no ' }}prior-nw-ctrl",
             "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-nw-ctrl",
             "result": {
                 "port": {
@@ -714,6 +772,8 @@ class BridgesTemplate(NetworkTemplate):
                 \s+tpid\s(?P<tpid>[a-zA-Z0-9_]*)
                 $""", re.VERBOSE),
             "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} tpid {{ tpid }}",
+            # "no tpid" is the form "flat detail" prints for the default (8100).
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no tpid",
             "result": {
                 "port": {
                     "{{ id }}": {
@@ -727,3 +787,26 @@ class BridgesTemplate(NetworkTemplate):
         },
     ]
     # fmt: on
+
+
+# VLAN-port attributes printed by "info configure bridge port <port> flat detail"
+# ("no inner-pbit-remark no groupid no usacceptframetype no oltregenprofile" when at
+# their defaults). No local help text: the "[no] <name> <value>" set/removal forms
+# follow the sibling attributes and are unverified on a device.
+_VLAN_VALUE_ATTRIBUTES = (
+    ("inner_pbit_remark", "inner-pbit-remark"),
+    ("groupid", "groupid"),
+    ("usacceptframetype", "usacceptframetype"),
+    ("oltregenprofile", "oltregenprofile"),
+)
+
+for _key, _cli in _VLAN_VALUE_ATTRIBUTES:
+    BridgesTemplate.PARSERS.append({
+        "name": _key,
+        "getval": re.compile(
+            r"configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<vlan_id>\S+)\s(?:no\s%s|%s\s(?P<value>\S+))$"
+            % (re.escape(_cli), re.escape(_cli))),
+        "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} %s {{ %s }}" % (_cli, _key),
+        "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no %s" % _cli,
+        "result": {"port": {"{{ id }}": {"vlan": {"{{ vlan_id }}": {_key: "{{ value }}"}}}}},
+    })

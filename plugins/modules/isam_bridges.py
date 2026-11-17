@@ -130,6 +130,7 @@ options:
             choices:
             - 'disable'
             - 'overwrite-outer-vlan'
+            - 'insert-mirror-vlan'
           mirror-vlan:
             aliases: [mirror_vlan]
             type: int
@@ -158,6 +159,53 @@ options:
             - 'auto'
             - 'translated'
             - 'transparency'
+            - 'filtervlanandpbit'
+          outervlancapture:
+            type: int
+            description:
+            - 'optional parameter with default value: 0. Range: [0...4093]'
+            - Outer VLAN to be matched for mirroring the packets received on the bridge port.
+            - Rendered as C(outervlancapture <vlan>); removal renders C(no outervlancapture).
+          direction:
+            type: str
+            description:
+            - 'optional parameter with default value: "bidirection"'
+            - Direction in which packets are captured and mirrored.
+            - Rendered as C(direction <value>); removal renders C(no direction).
+            choices:
+            - 'ingress'
+            - 'egress'
+            - 'bidirection'
+          default_tpid:
+            type: str
+            description:
+            - 'optional parameter with default value: "8100"'
+            - Default outer TPID as a hex string (600-ffff), for example C(88a8).
+            - Rendered as C(default-tpid <hex>); removal renders C(no default-tpid).
+          vlan_tpid0:
+            type: dict
+            description:
+            - The port's C(vlan-tpid0 0) sub-node (outer TPID entry 0).
+            - Only reported when its TPID is not at the default (C(no tpid)).
+            - Rendered as C(vlan-tpid0 0 tpid <hex>); removal renders C(vlan-tpid0 0 no tpid). The write forms repeat the device's read form and are not verified
+              on a device.
+            suboptions:
+              tpid:
+                type: str
+                description:
+                - TPID as a hex string.
+          vlan_tpid1:
+            type: dict
+            description:
+            - The port's C(vlan-tpid1 1) sub-node (outer TPID entry 1).
+            - Only reported when its TPID is not at the default (C(no tpid)).
+            - Rendered as C(vlan-tpid1 1 tpid <hex>); removal renders C(vlan-tpid1 1 no tpid). The write forms repeat the device's read form and are not verified
+              on a device.
+            suboptions:
+              tpid:
+                type: str
+                description:
+                - TPID as a hex string.
           vlan_id:
             type: list
             elements: dict
@@ -312,6 +360,31 @@ options:
                 description:
                 - 'optional parameter with default value: "8100"'
                 - 'This object configures vlan port tpid in hex values'
+                - Always reported as a string (for example C("8100")).
+              inner_pbit_remark:
+                type: str
+                description:
+                - VLAN port C(inner-pbit-remark) value, passed through verbatim.
+                - Rendered as C(vlan-id <id> inner-pbit-remark <value>); removal renders C(vlan-id <id> no inner-pbit-remark).
+                - No CLI help is available for this attribute; the write forms are not verified on a device.
+              groupid:
+                type: str
+                description:
+                - VLAN port C(groupid) value, passed through verbatim (reported as a string).
+                - Rendered as C(vlan-id <id> groupid <value>); removal renders C(vlan-id <id> no groupid).
+                - No CLI help is available for this attribute; the write forms are not verified on a device.
+              usacceptframetype:
+                type: str
+                description:
+                - VLAN port upstream acceptable frame type (C(usacceptframetype)), passed through verbatim.
+                - Rendered as C(vlan-id <id> usacceptframetype <value>); removal renders C(vlan-id <id> no usacceptframetype).
+                - No CLI help is available for this attribute; the write forms are not verified on a device.
+              oltregenprofile:
+                type: str
+                description:
+                - VLAN port OLT priority regeneration profile (C(oltregenprofile)), passed through verbatim.
+                - Rendered as C(vlan-id <id> oltregenprofile <value>); removal renders C(vlan-id <id> no oltregenprofile).
+                - No CLI help is available for this attribute; the write forms are not verified on a device.
               static_user:
                 type: list
                 elements: dict

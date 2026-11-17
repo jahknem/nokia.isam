@@ -19,7 +19,11 @@ options:
     type: dict
     suboptions:
       shelves:
-        description: Equipment shelf entries.
+        description:
+          - Equipment shelf entries.
+          - Shelf, slot and applique attributes are set with C(<shelf|slot|applique> <id> <attr> [<value>]) and reset with
+            C(<shelf|slot|applique> <id> no <attr>); a requested device default equals an absent value. Help syntax;
+            the reset forms of the attributes added for detail output are not verified on a device.
         type: list
         elements: dict
         suboptions:
@@ -29,6 +33,23 @@ options:
             required: true
           planned_type:
             description: Planned shelf type.
+            type: str
+          class:
+            description: Shelf class (C(class)); device default C(main-ethernet), not reported.
+            type: str
+            choices: [main-ethernet, ext-ethernet]
+          lock:
+            description: Lock the shelf (C(lock)); C(no lock) is the default and not reported.
+            type: bool
+          mode:
+            description:
+              - Shelf mode (C(mode)), for example C(no-extended-lt-slots), C(extended-lt-slots), C(no-ntb-slot),
+                C(no-extended-slots), C(no-ntio-slots), C(ngpon), C(gpon), C(ngpon-port-reduced), C(gpon-mng-ngpon),
+                C(gpon-mng-reduced); device default C(no-extended-lt-slots), not reported.
+              - Changing the mode reboots the NE.
+            type: str
+          description:
+            description: Shelf location description (C(description)), at most 127 characters; quoted when it contains spaces.
             type: str
       slots:
         description: Equipment slot entries.
@@ -49,6 +70,32 @@ options:
             description: Administrative slot state.
             type: str
             choices: [locked, unlocked]
+          power_down:
+            description: Power down the board, LSM only (C(power-down)); C(no power-down) is the default and not reported.
+            type: bool
+          alarm_profile:
+            description: Customized alarm profile, C(none) or C(name:<name>) (C(alarm-profile)); device default C(none), not reported.
+            type: str
+          capab_profile:
+            description:
+              - Capability profile of a line board (C(capab-profile)), for example C(fttu_lt) or C(8vc_default);
+                device default C(not_applicable), not reported.
+            type: str
+          board_40gkr4:
+            description: 40G KR4 operation of the board (C(board-40gkr4)); device default C(inherited), not reported.
+            type: str
+            choices: [inherited, disable, enable]
+          operational_mode:
+            description:
+              - Operational mode of the cage (C(operational-mode)), for example C(gpon), C(xgs), C(mpm-gpon-xgs),
+                C(dual-gpon), C(u-ngpon), C(twenty-five-g), C(ng-pon2), C(mpm-gpon-xgpon); device default C(not-set), not reported.
+            type: str
+          dual_host_ip:
+            description: Dual host IPv4 address (C(dual-host-ip)); device default C(0.0.0.0), not reported.
+            type: str
+          dual_host_loc:
+            description: Dual host LSM location C(<rack>/<shelf>) or C(none) (C(dual-host-loc)); device default C(none), not reported.
+            type: str
       appliques:
         description: Equipment applique entries.
         type: list
@@ -60,6 +107,9 @@ options:
             required: true
           planned_type:
             description: Planned applique type.
+            type: str
+          applique_profile:
+            description: Capability profile of the applique board (C(applique-profile)); device default C(not_applicable), not reported.
             type: str
       protection_groups:
         description: Equipment protection group entries.

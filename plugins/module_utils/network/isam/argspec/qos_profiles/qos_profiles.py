@@ -114,6 +114,12 @@ class Qos_profilesArgs(object):  # pylint: disable=R0903
             "dot1-p{0}-pol-tc".format(_pbit_index): {"type": "int"},
         })
 
+    # Options keep their historical CLI spelling (facts use it); the snake_case
+    # spelling of every CLI-named option is accepted as an alias.
+    for _option_name, _option in _profile_options.items():
+        if "-" in _option_name:
+            _option["aliases"] = [_option_name.replace("-", "_")]
+
     argument_spec = {
         "config": {
             "type": "list",

@@ -235,7 +235,10 @@ options:
       radius_policies:
         type: list
         elements: dict
-        description: Radius policies.
+        description:
+          - Radius policies (C(radius policy <name>)).
+          - The authentication/accounting servers of a policy are the C(radius policy <name> servers <index>) sub-entries, see I(servers).
+          - A policy is removed with C(configure system security radius no policy <name>).
         suboptions:
           name:
             type: str
@@ -261,19 +264,50 @@ options:
             description: Acc interval.
           auth_server:
             type: str
-            description: Auth server.
+            description:
+              - Legacy flat form of C(servers[index=1].auth_server); the device keeps this per C(servers <index>) entry.
+              - When set, it is applied to the I(servers) entry with I(index) C(1) (an explicit value there wins). Facts never return it.
           auth_router_inst:
             type: str
-            description: Auth router inst.
+            description: Legacy flat form of C(servers[index=1].auth_router_inst), see I(auth_server).
           acc_server:
             type: str
-            description: Acc server.
+            description: Legacy flat form of C(servers[index=1].acc_server), see I(auth_server).
           acc_router_inst:
             type: str
-            description: Acc router inst.
+            description: Legacy flat form of C(servers[index=1].acc_router_inst), see I(auth_server).
           priority:
             type: int
-            description: Priority.
+            description: Legacy flat form of C(servers[index=1].priority), see I(auth_server).
+          servers:
+            type: list
+            elements: dict
+            description:
+              - Servers of the policy (C(radius policy <name> servers <index> auth-server ... priority ...)).
+              - With I(state=merged) only the given entries are added or changed; with I(state=replaced) or I(state=overridden)
+                entries missing from the list are removed and attributes not given are reset with C(no <attr>).
+              - Removal uses C(configure system security radius policy <name> no servers <index>) (derived from the CLI
+                syntax, not verified on a device).
+            suboptions:
+              index:
+                type: int
+                required: true
+                description: Server entry index (C(servers <index>)).
+              auth_server:
+                type: str
+                description: Authentication server, e.g. C(name:RADAuthServ1) (C(auth-server)).
+              auth_router_inst:
+                type: str
+                description: Router instance of the authentication server, e.g. C(base) (C(auth-router-inst)).
+              acc_server:
+                type: str
+                description: Accounting server (C(acc-server)).
+              acc_router_inst:
+                type: str
+                description: Router instance of the accounting server (C(acc-router-inst)).
+              priority:
+                type: int
+                description: Priority of the server entry (C(priority)).
       radius_auth_super_user:
         type: dict
         description: Radius auth super user.
@@ -303,6 +337,9 @@ options:
           router_instance:
             type: str
             description: Router instance.
+          admin_down:
+            type: bool
+            description: Administratively disable the dynamic authorization client (C(admin-down) / C(no admin-down)).
       snmp_notify_views:
         type: list
         elements: dict

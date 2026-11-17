@@ -15,6 +15,9 @@ class Mcast_generalArgs(object):
                 "admin_state": {"type": "bool"},
                 "forward_method": {"type": "str"},
                 "fast_change": {"type": "bool"},
+                "pkg_memb_bitmap": {"type": "str"},
+                "max_bitrate": {"type": "int"},
+                "mean_bit_rate": {"type": "int"},
                 "package_member": {"type": "str"},
                 "capacity": {
                     "type": "dict",

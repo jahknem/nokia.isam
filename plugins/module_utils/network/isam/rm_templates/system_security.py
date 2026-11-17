@@ -87,6 +87,36 @@ SECRET_FIELDS = {
 
 _PROFILE_SCALARS = ("description", "slot_numbering", "prompt", "password_timeout", "terminal_timeout")
 
+# nested instance lists of a list entry, filled by '<node> <id> <keyword> <index> <attrs>'
+# lines: section -> {CLI keyword: identity field of the nested entry}
+NESTED = {
+    "radius_policies": {"servers": "index"},
+}
+
+# radius policy fields that the device keeps per 'servers <index>' entry; older
+# playbooks set them flat on the policy, they are applied to 'servers 1'
+LEGACY_POLICY_SERVER_FIELDS = ("auth_server", "auth_router_inst", "acc_server", "acc_router_inst", "priority")
+
+
+def normalize_policy(entry):
+    """Move legacy flat radius-policy server fields into servers[index=1] (want side)."""
+    if not isinstance(entry, dict):
+        return entry
+    legacy = dict((k, entry[k]) for k in LEGACY_POLICY_SERVER_FIELDS if entry.get(k) is not None)
+    if not legacy:
+        return entry
+    entry = dict((k, v) for k, v in entry.items() if k not in LEGACY_POLICY_SERVER_FIELDS)
+    servers = [dict(s) for s in entry.get("servers") or []]
+    first = [s for s in servers if s.get("index") == 1]
+    if first:
+        for key, value in legacy.items():
+            if first[0].get(key) is None:
+                first[0][key] = value
+    else:
+        servers.insert(0, dict(legacy, index=1))
+    entry["servers"] = servers
+    return entry
+
 
 def _snake(key):
     return key.replace("-", "_")
@@ -162,10 +192,14 @@ class Isam_system_securityTemplate(NetworkTemplate):
     def __init__(self, lines=None, module=None):
         super(Isam_system_securityTemplate, self).__init__(lines=lines, tmplt=self, module=module)
         self.unparsed = []
+        # section -> number of skipped (unknown) attribute tokens; counts only, the
+        # tokens themselves may be values (secrets)
+        self.skipped = {}
 
     def parse(self):
         store = {}
         self.unparsed = []
+        self.skipped = {}
         for raw in self._lines:
             line = raw.strip()
             if line != PREFIX and not line.startswith(PREFIX + " "):
@@ -184,6 +218,11 @@ class Isam_system_securityTemplate(NetworkTemplate):
                 self.unparsed.append(line)
                 continue
             first_type = scalar_fields(section).get(ident[0])
+            nested = NESTED.get(section, {})
+            if not sub and len(tokens) > 2 and tokens[1] in nested:
+                self._parse_nested(store, section, ident, tokens, nested[tokens[1]],
+                                   _cast(_unquote(tokens[0]), first_type))
+                continue
             entry = {ident[0]: _cast(_unquote(tokens[0]), first_type)}
             target = entry.setdefault(sub, {}) if sub else entry
             self._parse_attrs(section, sub, tokens[1:], target)
@@ -197,6 +236,20 @@ class Isam_system_securityTemplate(NetworkTemplate):
             else:
                 existing.update(entry)
         return self._nest(store)
+
+    def _parse_nested(self, store, section, ident, tokens, id_field, parent_id):
+        """'<node> <id> <keyword> <index> <attrs>' -> parent[<keyword>] list entry."""
+        kw = _snake(tokens[1])
+        child = {id_field: _cast(_unquote(tokens[2]), scalar_fields(section, kw).get(id_field))}
+        self._parse_attrs(section, kw, tokens[3:], child)
+        entries = store.setdefault(section, {})
+        parent = entries.setdefault((parent_id,) + (None,) * (len(ident) - 1), {ident[0]: parent_id})
+        children = parent.setdefault(kw, [])
+        for existing in children:
+            if existing.get(id_field) == child[id_field]:
+                existing.update(child)
+                return
+        children.append(child)
 
     @staticmethod
     def _nest(store):
@@ -226,6 +279,8 @@ class Isam_system_securityTemplate(NetworkTemplate):
             negate = token == "no" and i + 1 < len(tokens)
             key = tokens[i + 1] if negate else token
             if key not in fmap:
+                label = section + ("." + sub if sub else "")
+                self.skipped[label] = self.skipped.get(label, 0) + 1
                 i += 2 if negate else 1
                 continue
             snake, ftype = fmap[key]
@@ -343,7 +398,32 @@ class Isam_system_securityTemplate(NetworkTemplate):
             sub_parts = cls._attr_parts(section, sub, entry.get(sub) or {})
             if sub_parts:
                 commands.append(cls._base(section, entry, sub) + " " + " ".join(sub_parts))
+        for kw, id_field in NESTED.get(section, {}).items():
+            for child in entry.get(_snake(kw)) or []:
+                if child.get(id_field) is None:
+                    continue
+                parts = cls._attr_parts(section, _snake(kw), child, skip=(id_field,))
+                commands.append(cls._nested_base(section, entry, kw, child[id_field])
+                                + ((" " + " ".join(parts)) if parts else ""))
         return commands
+
+    @classmethod
+    def _nested_base(cls, section, entry, kw, index):
+        return "{0} {1} {2}".format(cls._base(section, entry), kw, _quote(index))
+
+    @classmethod
+    def render_nested_reset(cls, section, entry, kw, child):
+        """Reset attributes of one nested entry: '<node> <id> <kw> <index> no <attr> ...'."""
+        id_field = NESTED[section][kw]
+        parts = cls._reset_parts(section, _snake(kw), child, (id_field,))
+        if not parts:
+            return []
+        return [cls._nested_base(section, entry, kw, child[id_field]) + " " + " ".join(parts)]
+
+    @classmethod
+    def render_nested_remove(cls, section, entry, kw, index):
+        """Remove one nested entry: '<node> <id> no <kw> <index>' (not verified on a device)."""
+        return "{0} no {1} {2}".format(cls._base(section, entry), kw, _quote(index))
 
     @classmethod
     def render_reset(cls, section, entry):

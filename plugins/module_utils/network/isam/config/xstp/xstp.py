@@ -15,8 +15,16 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
     Facts,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xstp import (
+    XSTP_GENERAL_FIELDS,
+    XSTP_PORT_FIELDS,
+    XSTP_PORT_FLAGS,
     XstpTemplate,
 )
+
+
+def _without_default(value, default):
+    """A value at its device default equals an absent one (detail mode prints it as 'no <attr>')."""
+    return None if value is None or value == default else value
 
 
 class Xstp(ResourceModule):
@@ -35,6 +43,9 @@ class Xstp(ResourceModule):
             "general.region_name",
             "ports.path_cost",
         ]
+        self.parsers.extend("general." + field for field in XSTP_GENERAL_FIELDS)
+        self.parsers.extend("ports." + field for field in XSTP_PORT_FIELDS)
+        self.parsers.extend("ports." + field for field in XSTP_PORT_FLAGS)
 
     def execute_module(self):
         if self.state == "rendered":
@@ -68,6 +79,18 @@ class Xstp(ResourceModule):
         if "region_name" in want and want.get("region_name") != have.get("region_name"):
             self.addcmd({"general": {"region_name": want.get("region_name")}}, "general.region_name")
 
+        # Attributes with a 'no <attr>' reset: merged keeps unmentioned values (want is merged
+        # with have), replaced/overridden/deleted reset them to the device default.
+        for field, spec in XSTP_GENERAL_FIELDS.items():
+            wanted = _without_default(want.get(field), spec[1])
+            current = _without_default(have.get(field), spec[1])
+            if wanted == current:
+                continue
+            if wanted is None:
+                self.addcmd({"general": {field: current}}, "general." + field, True)
+            else:
+                self.addcmd({"general": {field: wanted}}, "general." + field)
+
     def _compare_ports(self, want, have):
         wantd = self._index_ports(want)
         haved = self._index_ports(have)
@@ -80,13 +103,32 @@ class Xstp(ResourceModule):
             wantd = {}
 
         if self.state in ["overridden", "deleted"]:
-            # The observed port field has no documented no-form; leave unmentioned ports unchanged.
+            # path-cost has no documented no-form and stays unchanged on unmentioned ports;
+            # the attributes with a 'no <attr>' form are reset there.
+            for port, have_entry in iteritems(haved):
+                if port not in wantd:
+                    self._compare_port_resettable({"port": port}, have_entry)
             haved = {k: v for k, v in iteritems(haved) if k in wantd}
 
         for port, want_entry in iteritems(wantd):
             have_entry = haved.get(port, {})
             if "path_cost" in want_entry and want_entry.get("path_cost") != have_entry.get("path_cost"):
                 self.addcmd(want_entry, "ports.path_cost")
+            self._compare_port_resettable(want_entry, have_entry)
+
+    def _compare_port_resettable(self, want, have):
+        port = want.get("port") or have.get("port")
+        defaults = dict((field, spec[1]) for field, spec in XSTP_PORT_FIELDS.items())
+        defaults.update((field, False) for field in XSTP_PORT_FLAGS)
+        for field, default in defaults.items():
+            wanted = _without_default(want.get(field), default)
+            current = _without_default(have.get(field), default)
+            if wanted == current:
+                continue
+            if wanted is None:
+                self.addcmd({"port": port, field: current}, "ports." + field, True)
+            else:
+                self.addcmd({"port": port, field: wanted}, "ports." + field)
 
     def _normalize(self, data):
         if not data:

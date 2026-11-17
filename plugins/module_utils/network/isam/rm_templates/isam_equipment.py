@@ -201,3 +201,68 @@ class Isam_equipmentTemplate(NetworkTemplate):
         },
     ]
     # fmt: on
+
+
+# Attributes read from 'info configure equipment ... detail' (help: configure equipment shelf/slot/applique).
+# (section, field, CLI name, device default); a value at its default is printed as 'no <attr>' and not reported.
+EQUIPMENT_VALUE_FIELDS = (
+    ("shelf", "class", "class", "main-ethernet"),
+    ("shelf", "mode", "mode", "no-extended-lt-slots"),
+    ("slot", "alarm_profile", "alarm-profile", "none"),
+    ("slot", "capab_profile", "capab-profile", "not_applicable"),
+    ("slot", "board_40gkr4", "board-40gkr4", "inherited"),
+    ("slot", "operational_mode", "operational-mode", "not-set"),
+    ("slot", "dual_host_ip", "dual-host-ip", "0.0.0.0"),
+    ("slot", "dual_host_loc", "dual-host-loc", "none"),
+    ("applique", "applique_profile", "applique-profile", "not_applicable"),
+)
+# (section, field, CLI name); default False ('no <attr>').
+EQUIPMENT_FLAG_FIELDS = (
+    ("shelf", "lock", "lock"),
+    ("slot", "power_down", "power-down"),
+)
+EQUIPMENT_SECTIONS = {"shelf": "shelves", "slot": "slots", "applique": "appliques"}
+
+
+def _equipment_value_parser(section, field, cli_name):
+    return {
+        "name": section + "." + field,
+        "compval": field,
+        "getval": re.compile(
+            r"^configure\sequipment\s" + section + r"\s(?P<id>\S+)\s" + re.escape(cli_name) + r"\s(?P<value>\S+)$"
+        ),
+        "setval": "configure equipment " + section + " {{ id }} " + cli_name + " {{ " + field + " }}",
+        "remval": "configure equipment " + section + " {{ id }} no " + cli_name,
+        "result": {
+            EQUIPMENT_SECTIONS[section]: {"{{ id }}": {"id": "{{ id }}", field: "{{ value }}"}},
+        },
+    }
+
+
+def _equipment_flag_parser(section, field, cli_name):
+    return {
+        "name": section + "." + field,
+        "compval": field,
+        "getval": re.compile(r"^configure\sequipment\s" + section + r"\s(?P<id>\S+)\s" + re.escape(cli_name) + r"$"),
+        "setval": "configure equipment " + section + " {{ id }} " + cli_name,
+        "remval": "configure equipment " + section + " {{ id }} no " + cli_name,
+        "result": {
+            EQUIPMENT_SECTIONS[section]: {"{{ id }}": {"id": "{{ id }}", field: True}},
+        },
+    }
+
+
+Isam_equipmentTemplate.PARSERS.extend(_equipment_value_parser(s, f, c) for s, f, c, _d in EQUIPMENT_VALUE_FIELDS)
+Isam_equipmentTemplate.PARSERS.extend(_equipment_flag_parser(s, f, c) for s, f, c in EQUIPMENT_FLAG_FIELDS)
+# configure equipment shelf (index) [ no description | description <Description-127> ]; quoted when it has spaces.
+Isam_equipmentTemplate.PARSERS.append(
+    {
+        "name": "shelf.description",
+        "compval": "description",
+        "getval": re.compile(r"^configure\sequipment\sshelf\s(?P<id>\S+)\sdescription\s(?P<description>.+)$"),
+        "setval": "configure equipment shelf {{ id }} description "
+                  "{{ '\"' + description + '\"' if ' ' in description or description == '' else description }}",
+        "remval": "configure equipment shelf {{ id }} no description",
+        "result": {"shelves": {"{{ id }}": {"id": "{{ id }}", "description": "{{ description }}"}}},
+    }
+)

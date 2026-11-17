@@ -117,7 +117,7 @@ class Isam_vlan_globalFacts(object):
                 in_subsection = True
                 continue
 
-            if in_subsection and stripped.startswith(("drop-unknown-multicast", "no drop-unknown-multicast")):
+            if in_subsection and stripped.startswith(("drop-unknown-multicast", "no drop-unknown-multicast", "priority-policy", "no priority-policy")):
                 flat_config.append("configure vlan broadcast-frames " + stripped)
             elif stripped.startswith(("priority-regen", "no tpid", "no vmac-address-format")):
                 flat_config.append("configure vlan " + stripped)

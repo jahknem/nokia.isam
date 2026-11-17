@@ -8,14 +8,38 @@
   line is kept, including parts no resource family models yet. `config_tree_detail:
   true` reads `info configure detail flat` instead (also unset defaults; several times
   larger) to survey the full configurable surface. Secret attribute values (SNMP
-  community, passwords) are redacted by name; device-masked (`plain:`) and hashed
-  (`encrypted:`) values are kept.
+  community, passwords) are redacted by name. Hashed (`encrypted:`) credentials are
+  stripped before structuring, including at unknown paths and in stored CLI lines;
+  only actual device-masked placeholders (`plain:******`) are kept.
 - The path/attribute split uses a compiled CLI grammar
   (`plugins/module_utils/network/isam/config_grammar.py`, generated from the rm_models
   syntaxes by `tools/compile_config_grammar.py`; rm_models itself is not shipped).
-  Nodes without a grammar entry are kept losslessly at branch granularity and flagged.
+  Nodes without a grammar entry use heuristic nesting and learned sub-nodes.
 - `config_tree.gap_report` shows what the root contains that the families do not model:
-  unclaimed nodes (no family), nodes without a grammar, and unmodelled attributes.
+  unclaimed nodes (no family) and unmodelled attributes per family. CLI-spelled option
+  names and aliases count as modelled; value-like tokens are counted, not printed.
+- Attribute cleanup: `xdsl_profiles` models service/spectrum/DPBO/vectoring/VCE
+  attributes and indexed PSD/PBO sub-nodes; detail defaults no longer land in
+  `commands`, and false flags are idempotent. Existing raw `commands` remain accepted.
+- `qos_profiles` accepts snake_case aliases without changing existing fact keys;
+  mandatory parameters are not reset with invalid `no` commands, profile deletion
+  emits no trailing field resets, and `use-dei` renders as a bare flag. Full option
+  documentation added.
+- `isam_system_security`: RADIUS policies preserve multiple servers in `servers[]`
+  (indexed by `index`); legacy flat server fields map to server 1. Dynamic authorization
+  clients expose `admin_down`.
+- `bridges`: partial `merged` VLAN entries merge by VLAN identity instead of resetting
+  omitted fields. Correct default-off flags, bare `prior-*` rendering, TPID string
+  parsing/reset, port TPID sub-nodes, and additional port/VLAN-port attributes.
+  `vlans` reads detail `no new-broadcast` as the inherited default.
+- `system`: additional ID, syslog, SNTP and global settings; fixed syslog severity and
+  SNTP enable parsing. Security reads belong exclusively to `isam_system_security`;
+  the legacy `system.security` option remains write-only and is deprecated.
+- Attribute coverage extended for equipment shelf/slot/applique, Ethernet ONT PM/CFM
+  sub-nodes, xDSL line TCA thresholds, bonding boards/groups and xSTP settings.
+  Bonding groups/boards support targeted gathering; deleting a named group preserves
+  unrelated settings and boards. Equipment ONT interface docs now include previously
+  undocumented options. CFM SLM, VLAN broadcast priority and multicast settings extended.
 - Detail output: every family reads `info configure detail flat` without failing (unknown
   keywords are dropped, never fail the read); a test runs all families over a real
   configured and detail capture. Fixed: `isam_equipment_onts` (sw-ctrl cfgfiles and

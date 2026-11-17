@@ -64,6 +64,10 @@ options:
         C(info configure flat). Detail also prints unset defaults, so the tree is
         complete but several times larger. Use it to survey the full configurable
         surface; the default (non-detail) is the configured content.
+      - The root tree masks secret values and strips C(encrypted:) credentials from
+        paths, attributes and stored CLI lines. Only device-masked placeholders such
+        as C(plain:******) are retained. Leaves contain C(attrs), C(lines), C(node)
+        and C(source); this view is lossless except for credential redaction.
     required: false
     default: false
     type: bool
