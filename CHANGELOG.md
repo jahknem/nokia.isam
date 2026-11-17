@@ -16,6 +16,10 @@
   Nodes without a grammar entry are kept losslessly at branch granularity and flagged.
 - `config_tree.gap_report` shows what the root contains that the families do not model:
   unclaimed nodes (no family), nodes without a grammar, and unmodelled attributes.
+- Bug fixes: `isam_ethernet_line` no longer crashes on a port-type line without a `mau`
+  block, and a `mau` block keeps all its attributes (`type` and `power`). `isam_qos_maps`
+  models `up-ctrl-pkt`/`dn-ctrl-pkt` in the real device form (`<protocol> [dscp] [pbit]
+  [tc]`, was queue/profile) and renders `dscp-map-dot1p ... dot1p-value` (was `dot1p`).
 
 ## 0.3.13
 

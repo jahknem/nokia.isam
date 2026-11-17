@@ -64,12 +64,15 @@ options:
             type: str
             description: Protocol name (e.g. C(arp), C(dhcp), C(pppoe)).
             required: true
-          queue:
+          dscp:
             type: int
-            description: Queue index.
-          profile:
-            type: str
-            description: Profile name.
+            description: DSCP value.
+          pbit:
+            type: int
+            description: Priority bit (802.1p).
+          tc:
+            type: int
+            description: Traffic class.
       dn_ctrl_pkt:
         type: list
         elements: dict
@@ -79,12 +82,15 @@ options:
             type: str
             description: Protocol name.
             required: true
-          queue:
+          dscp:
             type: int
-            description: Queue index.
-          profile:
-            type: str
-            description: Profile name.
+            description: DSCP value.
+          pbit:
+            type: int
+            description: Priority bit (802.1p).
+          tc:
+            type: int
+            description: Traffic class.
   running_config:
     type: str
     description: Output from C(info configure qos), used with state C(parsed).
@@ -137,12 +143,11 @@ EXAMPLES = """
     config:
       up_ctrl_pkt:
         - protocol: dhcp
-          queue: 0
-          profile: default
+          dscp: 46
+          tc: 7
       dn_ctrl_pkt:
         - protocol: dhcp
-          queue: 0
-          profile: default
+          tc: 3
 """
 
 RETURN = """

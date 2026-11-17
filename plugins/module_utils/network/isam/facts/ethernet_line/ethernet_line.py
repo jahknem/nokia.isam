@@ -77,7 +77,8 @@ class Ethernet_lineFacts(object):
         objs = list(ethernet_line_parser.parse().values())
 
         for item in objs:
-            item["mau"] = list(item["mau"].values())
+            if "mau" in item:
+                item["mau"] = list(item["mau"].values())
 
         ansible_facts['ansible_network_resources'].pop('ethernet_line', None)
 
@@ -94,15 +95,24 @@ class Ethernet_lineFacts(object):
     def _compact_lines(lines, prefix):
         clauses = re.compile(
             r"(?:port-type\s+\S+|(?:no\s+)?admin-up|"
-            r"mau\s+\d+\s+(?:type|power)\s+\S+|"
+            r"mau\s+\d+(?:\s+(?:type|power)\s+\S+)+|"
             r"tca-line-threshold\s+(?:no\s+)?(?:enable|los|fcs|rx-octets|tx-octets|los-day|fcs-day|rx-octets-day|tx-octets-day)(?:\s+\S+)?)"
         )
+        mau_attr = re.compile(r"(type|power)\s+(\S+)")
         result = []
         for raw in lines:
             line = raw.strip()
             if not line.startswith(prefix):
                 continue
             identifier, body = line[len(prefix):].split(None, 1)
-            matches = list(clauses.finditer(body))
-            result.extend(prefix + identifier + " " + match.group(0) for match in matches)
+            for match in clauses.finditer(body):
+                clause = match.group(0)
+                if clause.startswith("mau "):
+                    # one line per mau attribute, repeating the index, so the
+                    # per-attribute template parsers each match (type AND power).
+                    index = clause.split()[1]
+                    for attr, value in mau_attr.findall(clause):
+                        result.append("%s%s mau %s %s %s" % (prefix, identifier, index, attr, value))
+                else:
+                    result.append(prefix + identifier + " " + clause)
         return result
