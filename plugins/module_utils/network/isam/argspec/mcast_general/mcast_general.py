@@ -16,6 +16,15 @@ class Mcast_generalArgs(object):
                 "forward_method": {"type": "str"},
                 "fast_change": {"type": "bool"},
                 "package_member": {"type": "str"},
+                "capacity": {
+                    "type": "dict",
+                    "options": {
+                        "max_num_group": {"type": "int"},
+                        "max_num_uncfg": {"type": "int"},
+                        "cfg_res_time": {"type": "int"},
+                        "uncfg_res_time": {"type": "int"},
+                    },
+                },
             },
         },
         "running_config": {"type": "str"},

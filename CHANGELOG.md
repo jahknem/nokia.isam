@@ -16,6 +16,27 @@
   Nodes without a grammar entry are kept losslessly at branch granularity and flagged.
 - `config_tree.gap_report` shows what the root contains that the families do not model:
   unclaimed nodes (no family), nodes without a grammar, and unmodelled attributes.
+- Detail output: every family reads `info configure detail flat` without failing (unknown
+  keywords are dropped, never fail the read); a test runs all families over a real
+  configured and detail capture. Fixed: `isam_equipment_onts` (sw-ctrl cfgfiles and
+  `delay_act`, ten interface sub-nodes such as `tc_layer`, `ethernet`, `cpu_load`; new
+  `loops` and `pm_collects` lists), `isam_xdsl_boards` (vplt/vce/vect-class fields,
+  `vect_fallback`, `auto_port_reset`).
+- Breaking: `isam_xdsl_boards` `vp_boards[].vp_link`/`lt_expect` (only the last link
+  survived) became `vp_boards[].vp_links[]` with `link_id` and `lt_expect`.
+- New resource `isam_qos_global`: the global QoS line, per line card `qos global <lt>`
+  (`line_cards`, targeted by name), DSL/NNI/protocol ctrl-pkt policers, pbit scheduling,
+  upstream DSL protection. Reading `general` needs `info configure qos flat` (no own node);
+  it is only read when requested.
+- New resources for small global settings: `isam_nat`, `isam_error`, `isam_cwmp_plt`,
+  `isam_pon_global`, `isam_pppox_relay_global`, `isam_trouble_shooting_pon` (statistics
+  interfaces and thresholds, targeted by name). `isam_mcast_general` gains `capacity`.
+- Root config tree: the grammar compiler reads the help text and repairs terminal line
+  wraps (160 nodes, all with a usable syntax; broken names such as `xg-pm-collec` fixed),
+  handles create/delete alternations; nodes without a grammar nest by learned sub-nodes
+  instead of staying at branch level; secrets are masked before any structuring. Leaves are
+  `{attrs, lines, node, source}` (`raw_tokens` removed). `gap_report` is content-based per
+  family argspec; `tools/gap_report.py <capture>` prints names and counts only.
 - `isam_system_security` slice 2: SNMP notify-views, domains, SSH (server profile,
   access, SFTP users), file transfer (servers), TACACS, LI, password policy, default
   profile, slots, peripheral-management MAC filters, PAE (802.1X) port access and per-port

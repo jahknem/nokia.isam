@@ -13,6 +13,9 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.mcast_general.mcast_general import (
     Mcast_generalArgs,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.mcast_general import (
+    parse_capacity,
+)
 
 
 class Mcast_generalFacts(object):
@@ -26,7 +29,10 @@ class Mcast_generalFacts(object):
         facts = {}
 
         if not data:
-            data = connection.get("info configure mcast general flat")
+            data = "\n".join(
+                str(unwrap_response(connection.get(command)) or "")
+                for command in ("info configure mcast general flat", "info configure mcast capacity flat")
+            )
         data = unwrap_response(data)
 
         mcast_general_config = self._parse_mcast_general_config(data)
@@ -42,11 +48,15 @@ class Mcast_generalFacts(object):
 
     def _parse_mcast_general_config(self, config):
         mcast_general = {}
+        capacity = {}
         section = None
 
         for raw_line in config.splitlines():
             line = raw_line.strip()
             if not line or line.startswith("#") or line.startswith("echo "):
+                continue
+
+            if line.startswith("configure mcast capacity") and parse_capacity(line, capacity):
                 continue
 
             if line.startswith("configure mcast general "):
@@ -63,6 +73,8 @@ class Mcast_generalFacts(object):
             if section == "general":
                 self._parse_general_option(line, mcast_general)
 
+        if capacity:
+            mcast_general["capacity"] = capacity
         return mcast_general
 
     def _parse_general_option(self, line, config):

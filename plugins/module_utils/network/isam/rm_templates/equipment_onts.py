@@ -106,3 +106,80 @@ Equipment_ontsTemplate.PARSERS.extend(
         _interface_value_parser("pwr_shed_prof_name", "pwr-shed-prof-name"),
     ]
 )
+
+
+# Software control attributes beyond the ones above (help: ``[ no pland-cfgfile1 |
+# pland-cfgfile1 <Gpon::CfgFile> ] ...``); ``no <attr>`` resets to "DISABLED".
+SW_CTRL_EXTRA_FIELDS = (
+    ("pland_cfgfile1", "pland-cfgfile1"),
+    ("pland_cfgfile2", "pland-cfgfile2"),
+    ("dnload_cfgfile1", "dnload-cfgfile1"),
+    ("dnload_cfgfile2", "dnload-cfgfile2"),
+)
+
+# Sub-nodes of a node: (key, CLI token, ((field, CLI attribute), ...)).
+# The device prints them as ``<node> <id> <sub> [no] <attr> [<value>] ...``.
+INTERFACE_SUBNODES = (
+    ("tc_layer", "tc-layer", (("olt_pm_collect", "olt-pm-collect"), ("od_pm_collect", "od-pm-collect"), ("ont_pm_collect", "ont-pm-collect"))),
+    ("tc_layer_threshold", "tc-layer-threshold", (("lost_frags_down", "lost-frags-down"), ("lost_frags_up", "lost-frags-up"), ("bad_headers_down", "bad-headers-down"))),
+    ("mcast_tc_layer", "mcast-tc-layer", (("ont_pm_collect", "ont-pm-collect"),)),
+    ("fec_tc_layer", "fec-tc-layer", (("olt_pm_collect", "olt-pm-collect"), ("ont_pm_collect", "ont-pm-collect"))),
+    ("ethernet", "ethernet", (("ont_pm_collect", "ont-pm-collect"),)),
+    ("xg_tc_layer", "xg-tc-layer", (("olt_pm_collect", "olt-pm-collect"), ("ont_pm_collect", "ont-pm-collect"))),
+    ("phy_layer", "phy-layer", (("olt_pm_collect", "olt-pm-collect"),)),
+    ("delay_act", "delay-act", (("at", "at"),)),
+    ("cpu_load", "cpu-load", (("ont_pm_collect", "ont-pm-collect"),)),
+    ("memory_usage", "memory-usage", (("ont_pm_collect", "ont-pm-collect"),)),
+)
+SW_CTRL_SUBNODES = (
+    ("delay_act", "delay-act", (("at", "at"),)),
+)
+
+# ONT-keyed nodes that exist with their ONT (no create/delete form):
+# (field, CLI attribute, CLI default). ``no <attr>`` resets to the default.
+LOOP_FIELDS = (
+    ("loop_detect", "loop-detect", "no-control"),
+    ("loop_portautoshut", "loop-portautoshut", "enable"),
+)
+PM_COLLECT_FIELDS = (
+    ("xg_pm_collect", "xg-pm-collect", "disable"),
+)
+
+
+def _sub_parsers(prefix, cli_node, ident, subnodes):
+    parsers = []
+    for key, cli_sub, fields in subnodes:
+        for field, cli in fields:
+            parsers.append({
+                "name": "%s.%s.%s" % (prefix, key, field),
+                "setval": "configure equipment ont %s {{ %s }} %s %s {{ %s.%s }}" % (cli_node, ident, cli_sub, cli, key, field),
+                "remval": "configure equipment ont %s {{ %s }} %s no %s" % (cli_node, ident, cli_sub, cli),
+            })
+    return parsers
+
+
+def _node_parsers(prefix, cli_node, fields):
+    return [
+        {
+            "name": "%s.%s" % (prefix, field),
+            "setval": "configure equipment ont %s {{ ont_idx }} %s {{ %s }}" % (cli_node, cli, field),
+            "remval": "configure equipment ont %s {{ ont_idx }} no %s" % (cli_node, cli),
+        }
+        for field, cli, _default in fields
+    ]
+
+
+Equipment_ontsTemplate.PARSERS.extend(
+    [
+        {
+            "name": "sw_ctrl." + field,
+            "setval": "configure equipment ont sw-ctrl {{ sw_ctrl_id }} %s {{ %s }}" % (cli, field),
+            "remval": "configure equipment ont sw-ctrl {{ sw_ctrl_id }} no %s" % cli,
+        }
+        for field, cli in SW_CTRL_EXTRA_FIELDS
+    ]
+    + _sub_parsers("interface", "interface", "ont_idx", INTERFACE_SUBNODES)
+    + _sub_parsers("sw_ctrl", "sw-ctrl", "sw_ctrl_id", SW_CTRL_SUBNODES)
+    + _node_parsers("loop", "loop", LOOP_FIELDS)
+    + _node_parsers("pm_collect", "pm-collect", PM_COLLECT_FIELDS)
+)

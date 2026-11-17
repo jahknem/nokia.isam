@@ -4,8 +4,6 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-from copy import deepcopy
-
 from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
     ResourceModule,
@@ -14,6 +12,10 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
     Facts,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_boards import (
+    BOARD_ATTRS,
+    BOARD_SUBNODES,
+    VP_BOARD_ATTRS,
+    VP_LINK_ATTRS,
     Xdsl_boardsTemplate,
 )
 
@@ -21,20 +23,19 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 class Xdsl_boards(ResourceModule):
     """The isam_xdsl_boards config class."""
 
+    # First match wins: the sub-node and vp-link scopes must precede the
+    # board/vp-board scope, otherwise e.g. a board-level ``dpbo-profile`` would
+    # be appended to a ``vect-fallback`` command and land in the sub-node.
     COMPACT_COMMAND_SCOPES = (
-        r"^(?P<scope>configure xdsl board \S+) (?P<suffix>.+)$",
-        r"^(?P<scope>configure xdsl vp-board \S+) (?P<suffix>.+)$",
+        (r"^(?P<scope>configure xdsl board \S+ vect-fallback) (?P<suffix>.+)$", "vect_fallback"),
+        (r"^(?P<scope>configure xdsl board \S+ auto-port-reset) (?P<suffix>.+)$", "auto_port_reset"),
+        (r"^(?P<scope>configure xdsl vp-board \S+ vp-link \S+) (?P<suffix>.+)$", "vp_link"),
+        (r"^(?P<scope>configure xdsl board \S+) (?P<suffix>.+)$", "board"),
+        (r"^(?P<scope>configure xdsl vp-board \S+) (?P<suffix>.+)$", "vp_board"),
     )
 
-    BOARD_FIELDS = [
-        "admin_state",
-        "card_type",
-        "dpbo_profile",
-        "vce_profile",
-    ]
-    VP_BOARD_FIELDS = [
-        "admin_state",
-    ]
+    BOARD_FIELDS = [field for field, _keyword, _kind in BOARD_ATTRS]
+    VP_BOARD_FIELDS = [field for field, _keyword, _kind in VP_BOARD_ATTRS]
 
     def __init__(self, module):
         super(Xdsl_boards, self).__init__(
@@ -63,7 +64,7 @@ class Xdsl_boards(ResourceModule):
             have.get("boards") or [],
             "board_id",
             "board",
-            self.BOARD_FIELDS,
+            self._compare_board,
             delete_all or bool(want.get("boards")),
         )
         self._compare_section(
@@ -71,13 +72,13 @@ class Xdsl_boards(ResourceModule):
             have.get("vp_boards") or [],
             "vp_board_id",
             "vp_board",
-            self.VP_BOARD_FIELDS,
+            self._compare_vp_board,
             delete_all or bool(want.get("vp_boards")),
         )
 
-    def _compare_section(self, want_list, have_list, key, parser_prefix, fields, requested=True):
-        wantd = {entry[key]: entry for entry in want_list}
-        haved = {entry[key]: entry for entry in have_list}
+    def _compare_section(self, want_list, have_list, key, parser_prefix, compare, requested=True):
+        wantd = dict((entry[key], entry) for entry in want_list)
+        haved = dict((entry[key], entry) for entry in have_list)
 
         if self.state == "deleted":
             if not requested:
@@ -93,18 +94,56 @@ class Xdsl_boards(ResourceModule):
                     self.addcmd(have, parser_prefix, negate=True)
 
         for item_key, want in iteritems(wantd):
-            have = haved.get(item_key, {})
-            desired = deepcopy(want)
-            if self.state == "merged" and have:
-                desired = deepcopy(have)
-                desired.update(want)
-            self._compare_entry(desired, have, parser_prefix, fields)
+            compare(want, haved.get(item_key, {}))
 
-    def _compare_entry(self, want, have, parser_prefix, fields):
-        for field in fields:
+    @property
+    def _replacing(self):
+        return self.state in ("replaced", "overridden")
+
+    def _compare_fields(self, want, have, attrs, parser_prefix, render_want, render_have):
+        """Set changed attributes; on replaced/overridden remove the unwanted ones.
+
+        Flags compare ``False`` equal to absent: their default (``no <flag>``)
+        is not reported by the facts. ``rendered`` has no device state to compare
+        with and renders an explicit ``False`` as ``no <flag>``.
+        """
+        for field, _keyword, kind in attrs:
             inw = want.get(field)
             inh = have.get(field)
+            if kind == "flag":
+                inw = None if inw is None else bool(inw)
+                inh = bool(inh) if self.state != "rendered" else inh
+                if inw is not None and inw != inh:
+                    self.addcmd(render_want, "%s.%s" % (parser_prefix, field))
+                elif inw is None and inh and self._replacing:
+                    self.addcmd(render_have, "%s.%s" % (parser_prefix, field), negate=True)
+                continue
             if inw is not None and inw != inh:
-                self.addcmd(want, "%s.%s" % (parser_prefix, field))
-            elif self.state in ("replaced", "overridden") and inw is None and inh is not None:
-                self.addcmd(have, "%s.%s" % (parser_prefix, field), negate=True)
+                self.addcmd(render_want, "%s.%s" % (parser_prefix, field))
+            elif inw is None and inh is not None and self._replacing:
+                self.addcmd(render_have, "%s.%s" % (parser_prefix, field), negate=True)
+
+    def _compare_board(self, want, have):
+        self._compare_fields(want, have, BOARD_ATTRS, "board", want, have)
+        for node, _keyword, attrs in BOARD_SUBNODES:
+            wnode = want.get(node) or {}
+            hnode = have.get(node) or {}
+            self._compare_fields(
+                wnode, hnode, attrs, "board.%s" % node,
+                {"board_id": want["board_id"], node: wnode},
+                {"board_id": want["board_id"], node: hnode},
+            )
+
+    def _compare_vp_board(self, want, have):
+        self._compare_fields(want, have, VP_BOARD_ATTRS, "vp_board", want, have)
+        wlinks = dict((link["link_id"], link) for link in want.get("vp_links") or [])
+        hlinks = dict((link["link_id"], link) for link in have.get("vp_links") or [])
+        for link_id in list(wlinks) + [k for k in hlinks if k not in wlinks]:
+            wlink = wlinks.get(link_id, {})
+            hlink = hlinks.get(link_id, {})
+            if link_id not in wlinks and not self._replacing:
+                continue
+            render = {"vp_board_id": want["vp_board_id"], "link_id": link_id}
+            wdata = dict(render, **wlink)
+            hdata = dict(render, **hlink)
+            self._compare_fields(wlink, hlink, VP_LINK_ATTRS, "vp_board.vp_links", wdata, hdata)

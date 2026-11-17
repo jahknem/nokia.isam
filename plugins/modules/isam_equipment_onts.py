@@ -10,7 +10,8 @@ DOCUMENTATION = """
 module: isam_equipment_onts
 short_description: Manages equipment ONT configuration on Nokia ISAM.
 description:
-  - Manages C(configure equipment ont) interface, slot, and software control entries.
+  - Manages C(configure equipment ont) interface, slot, software control, loop detection and PM collection entries.
+  - Keywords in device output that are not modelled are ignored; they never make a read fail.
 version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:
@@ -85,6 +86,124 @@ options:
             description: Administrative state.
             type: str
             choices: [up, down]
+          tc_layer:
+            description:
+              - TC-layer performance monitor collection (C(configure equipment ont interface <ont-idx> tc-layer)).
+              - A field is set with C(tc-layer <attr> <value>) and reset with C(tc-layer no <attr>); a field at its default (C(no <attr>)) is not reported.
+              - No CLI help is available for this sub-node; values are passed to the device as given.
+            type: dict
+            suboptions:
+              olt_pm_collect:
+                description: Value of C(olt-pm-collect).
+                type: str
+              od_pm_collect:
+                description: Value of C(od-pm-collect).
+                type: str
+              ont_pm_collect:
+                description: Value of C(ont-pm-collect).
+                type: str
+          tc_layer_threshold:
+            description:
+              - TC-layer threshold crossing alert thresholds (C(configure equipment ont interface <ont-idx> tc-layer-threshold)).
+              - A field is set with C(tc-layer-threshold <attr> <value>) and reset with C(tc-layer-threshold no <attr>); a field at its default (C(no <attr>)) is not reported.
+              - No CLI help is available for this sub-node; values are passed to the device as given.
+            type: dict
+            suboptions:
+              lost_frags_down:
+                description: Value of C(lost-frags-down).
+                type: str
+              lost_frags_up:
+                description: Value of C(lost-frags-up).
+                type: str
+              bad_headers_down:
+                description: Value of C(bad-headers-down).
+                type: str
+          mcast_tc_layer:
+            description:
+              - Multicast TC-layer performance monitor collection (C(configure equipment ont interface <ont-idx> mcast-tc-layer)).
+              - A field is set with C(mcast-tc-layer <attr> <value>) and reset with C(mcast-tc-layer no <attr>); a field at its default (C(no <attr>)) is not reported.
+              - No CLI help is available for this sub-node; values are passed to the device as given.
+            type: dict
+            suboptions:
+              ont_pm_collect:
+                description: Value of C(ont-pm-collect).
+                type: str
+          fec_tc_layer:
+            description:
+              - FEC TC-layer performance monitor collection (C(configure equipment ont interface <ont-idx> fec-tc-layer)).
+              - A field is set with C(fec-tc-layer <attr> <value>) and reset with C(fec-tc-layer no <attr>); a field at its default (C(no <attr>)) is not reported.
+              - No CLI help is available for this sub-node; values are passed to the device as given.
+            type: dict
+            suboptions:
+              olt_pm_collect:
+                description: Value of C(olt-pm-collect).
+                type: str
+              ont_pm_collect:
+                description: Value of C(ont-pm-collect).
+                type: str
+          ethernet:
+            description:
+              - Ethernet performance monitor collection (C(configure equipment ont interface <ont-idx> ethernet)).
+              - A field is set with C(ethernet <attr> <value>) and reset with C(ethernet no <attr>); a field at its default (C(no <attr>)) is not reported.
+              - No CLI help is available for this sub-node; values are passed to the device as given.
+            type: dict
+            suboptions:
+              ont_pm_collect:
+                description: Value of C(ont-pm-collect).
+                type: str
+          xg_tc_layer:
+            description:
+              - XG TC-layer performance monitor collection (C(configure equipment ont interface <ont-idx> xg-tc-layer)).
+              - A field is set with C(xg-tc-layer <attr> <value>) and reset with C(xg-tc-layer no <attr>); a field at its default (C(no <attr>)) is not reported.
+              - No CLI help is available for this sub-node; values are passed to the device as given.
+            type: dict
+            suboptions:
+              olt_pm_collect:
+                description: Value of C(olt-pm-collect).
+                type: str
+              ont_pm_collect:
+                description: Value of C(ont-pm-collect).
+                type: str
+          phy_layer:
+            description:
+              - Physical layer performance monitor collection (C(configure equipment ont interface <ont-idx> phy-layer)).
+              - A field is set with C(phy-layer <attr> <value>) and reset with C(phy-layer no <attr>); a field at its default (C(no <attr>)) is not reported.
+              - No CLI help is available for this sub-node; values are passed to the device as given.
+            type: dict
+            suboptions:
+              olt_pm_collect:
+                description: Value of C(olt-pm-collect).
+                type: str
+          delay_act:
+            description:
+              - Delayed software activation (C(configure equipment ont interface <ont-idx> delay-act)).
+              - A field is set with C(delay-act <attr> <value>) and reset with C(delay-act no <attr>); a field at its default (C(no <attr>)) is not reported.
+              - No CLI help is available for this sub-node; values are passed to the device as given.
+            type: dict
+            suboptions:
+              at:
+                description: Value of C(at).
+                type: str
+          cpu_load:
+            description:
+              - ONT CPU load performance monitor collection (C(configure equipment ont interface <ont-idx> cpu-load)).
+              - A field is set with C(cpu-load <attr> <value>) and reset with C(cpu-load no <attr>); a field at its default (C(no <attr>)) is not reported.
+              - No CLI help is available for this sub-node; values are passed to the device as given.
+            type: dict
+            suboptions:
+              ont_pm_collect:
+                description: Value of C(ont-pm-collect).
+                type: str
+          memory_usage:
+            description:
+              - ONT memory usage performance monitor collection (C(configure equipment ont interface <ont-idx> memory-usage)).
+              - A field is set with C(memory-usage <attr> <value>) and reset with C(memory-usage no <attr>); a field at its default (C(no <attr>)) is not reported.
+              - No CLI help is available for this sub-node; values are passed to the device as given.
+            type: dict
+            suboptions:
+              ont_pm_collect:
+                description: Value of C(ont-pm-collect).
+                type: str
       slots:
         description: ONT slot entries.
         type: list
@@ -140,14 +259,73 @@ options:
           sw_dwload_ver:
             description: Software download version.
             type: str
+          pland_cfgfile1:
+            description: Planned configuration file 1 version (C(pland-cfgfile1)); C(no pland-cfgfile1) resets it to C(DISABLED).
+            type: str
+          pland_cfgfile2:
+            description: Planned configuration file 2 version (C(pland-cfgfile2)); C(no pland-cfgfile2) resets it to C(DISABLED).
+            type: str
+          dnload_cfgfile1:
+            description: Download configuration file 1 version (C(dnload-cfgfile1)); C(no dnload-cfgfile1) resets it to C(DISABLED).
+            type: str
+          dnload_cfgfile2:
+            description: Download configuration file 2 version (C(dnload-cfgfile2)); C(no dnload-cfgfile2) resets it to C(DISABLED).
+            type: str
+          delay_act:
+            description:
+              - Delayed software activation (C(configure equipment ont sw-ctrl <id> delay-act)).
+              - Set with C(delay-act at <value>), reset with C(delay-act no at); unset is not reported.
+            type: dict
+            suboptions:
+              at:
+                description: Activation time (C(at)), passed to the device as given.
+                type: str
+      loops:
+        description:
+          - ONT loop detection (C(configure equipment ont loop <ont-idx>)).
+          - The node exists with its ONT and is not created or removed; C(deleted), C(replaced) and C(overridden)
+            reset fields to the CLI default with C(no loop-detect) / C(no loop-portautoshut).
+          - A field at its CLI default is not reported, and is the same as an unset field; an ONT with only defaults is not returned.
+        type: list
+        elements: dict
+        suboptions:
+          ont_idx:
+            description: ONT index.
+            type: str
+            required: true
+          loop_detect:
+            description: Loop detection admin state (C(loop-detect)); CLI default C(no-control).
+            type: str
+            choices: [no-control, disable, enable]
+          loop_portautoshut:
+            description: Automatic port shutdown on a detected loop (C(loop-portautoshut)); CLI default C(enable).
+            type: str
+            choices: [disable, enable]
+      pm_collects:
+        description:
+          - ONT XGS-PON performance monitor collection (C(configure equipment ont pm-collect <ont-idx>)).
+          - The node exists with its ONT and is not created or removed; removal resets it with C(no xg-pm-collect).
+          - The CLI default is not reported, and is the same as an unset field; an ONT with only the default is not returned.
+        type: list
+        elements: dict
+        suboptions:
+          ont_idx:
+            description: ONT index.
+            type: str
+            required: true
+          xg_pm_collect:
+            description: Performance monitor collection (C(xg-pm-collect)); CLI default C(disable).
+            type: str
+            choices: [enable, disable]
   running_config:
     description: Device-native running configuration to parse.
     type: str
   state:
     description:
     - The state the configuration should be left in.
-    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(interfaces[].ont_idx), C(slots[].ont_slot_idx) and C(sw_ctrls[].sw_ctrl_id) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
+    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(interfaces[].ont_idx), C(slots[].ont_slot_idx), C(sw_ctrls[].sw_ctrl_id), C(loops[].ont_idx) and C(pm_collects[].ont_idx) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
     - With C(merged), C(replaced) or C(deleted) and I(config) naming only C(interfaces) and C(slots), the current configuration is likewise read only for the named instances.
+    - Deleting an ONT (C(interfaces)) removes its C(loops) and C(pm_collects) settings with it; no reset is sent for them.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -176,6 +354,20 @@ EXAMPLES = """
       slots:
         - ont_slot_idx: 1/1/5/1/3/1
     state: gathered
+
+- name: Enable loop detection and XGS-PON PM collection of an ONT
+  nokia.isam.isam_equipment_onts:
+    config:
+      loops:
+        - ont_idx: 1/1/5/1/3
+          loop_detect: enable
+          loop_portautoshut: disable
+      pm_collects:
+        - ont_idx: 1/1/5/1/3
+          xg_pm_collect: enable
+    state: merged
+# - configure equipment ont loop 1/1/5/1/3 loop-detect enable loop-portautoshut disable
+# - configure equipment ont pm-collect 1/1/5/1/3 xg-pm-collect enable
 """
 
 RETURN = """
