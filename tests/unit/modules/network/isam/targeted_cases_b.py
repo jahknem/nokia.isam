@@ -37,19 +37,6 @@ def _linetest_answer(command, lines):
     return "\n".join(blocks) + "\n"
 
 
-def _interface_alarm_answer(command, lines):
-    """Whole read as captured live (one line per alarm), a single alarm as an indented block."""
-    hits = _scoped(command, lines, "info configure interface alarm")
-    if hits is None:
-        return None
-    if command == "info configure interface alarm":
-        return "\n".join(hits) + "\n"
-    blocks = []
-    for line in hits:
-        tokens = line.split()
-        blocks.append("%s\n  %s\nexit" % (" ".join(tokens[:4]), " ".join(tokens[4:])))
-    return "\n".join(blocks) + "\n"
-
 
 def _profile_case(key, cli_type, target, sibling, target_name, sibling_name, attrs):
     return case("isam_xdsl_profiles", {key: [{"id": target}]},
@@ -108,9 +95,4 @@ CASES = {
                             [{"id": "lt:1/1/2:cage:10"}],
                             ["configure interface cage lt:1/1/2:cage:10 operational-mode xgspon"],
                             "lt:1/1/2:cage:1'", "lt:1/1/2:cage:10'"),
-    "interface_alarms": case("isam_interface_alarms", [{"name": "epon"}],
-                             ["configure interface alarm epon default-severity minor"],
-                             [{"name": "eont"}],
-                             ["configure interface alarm eont default-severity critical"],
-                             "'epon'", "'eont'", _interface_alarm_answer),
 }

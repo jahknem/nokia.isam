@@ -49,3 +49,26 @@ def test_isam_interface_alarms_capture_lines_are_parsed():
     expected = [{"name": line.split()[3], "default_severity": line.split()[5]} for line in lines]
     key = lambda item: item["name"]  # noqa: E731
     assert sorted(facts["ansible_network_resources"]["interface_alarms"], key=key) == sorted(expected, key=key)
+
+
+def test_device_header_form_is_parsed():
+    """Real reply of 'info configure interface alarm': header + 'alarm <name>' blocks."""
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.interface_alarms.interface_alarms import Interface_alarmsFacts
+
+    text = (
+        "configure interface\n"
+        "#-------------------------------------------------------------------------------\n"
+        'echo "interface"\n'
+        "#-------------------------------------------------------------------------------\n"
+        "alarm epon\n"
+        "  default-severity indeterminate\n"
+        "exit\n"
+        "alarm eont\n"
+        "  default-severity critical\n"
+        "exit\n"
+    )
+    facts = Interface_alarmsFacts.__new__(Interface_alarmsFacts)
+    assert facts._flatten_config(text) == [
+        "configure interface alarm epon default-severity indeterminate",
+        "configure interface alarm eont default-severity critical",
+    ]
