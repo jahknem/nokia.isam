@@ -58,6 +58,16 @@ options:
     default: false
     type: bool
     version_added: "1.1.0"
+  config_tree_detail:
+    description:
+      - With the C(config_tree) subset, read C(info configure detail flat) instead of
+        C(info configure flat). Detail also prints unset defaults, so the tree is
+        complete but several times larger. Use it to survey the full configurable
+        surface; the default (non-detail) is the configured content.
+    required: false
+    default: false
+    type: bool
+    version_added: "0.3.14"
 """
 
 EXAMPLES = """
@@ -88,6 +98,20 @@ EXAMPLES = """
 # Read one complete configuration and reuse it for multiple resource parsers
 - isam_facts:
     gather_configuration: true
+
+# Read the whole configuration as a nested, lossless tree (ansible_net_config_tree).
+# Schema-less: every line is kept, including parts no resource family models yet.
+- isam_facts:
+    gather_subset:
+      - "!all"
+      - config_tree
+
+# The same, including unset defaults (full configurable surface; much larger)
+- isam_facts:
+    gather_subset:
+      - "!all"
+      - config_tree
+    config_tree_detail: true
     gather_network_resources:
       - interfaces
       - pon_interfaces

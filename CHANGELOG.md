@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.3.14
+
+- Root config tree: `isam_facts` subset `config_tree` reads `info configure flat` once
+  and parses the whole configuration into a nested, lossless tree
+  (`ansible_net_config_tree`), keyed by CLI path with attributes at the leaves. Every
+  line is kept, including parts no resource family models yet. `config_tree_detail:
+  true` reads `info configure detail flat` instead (also unset defaults; several times
+  larger) to survey the full configurable surface. Secret attribute values (SNMP
+  community, passwords) are redacted by name; device-masked (`plain:`) and hashed
+  (`encrypted:`) values are kept.
+- The path/attribute split uses a compiled CLI grammar
+  (`plugins/module_utils/network/isam/config_grammar.py`, generated from the rm_models
+  syntaxes by `tools/compile_config_grammar.py`; rm_models itself is not shipped).
+  Nodes without a grammar entry are kept losslessly at branch granularity and flagged.
+- `config_tree.gap_report` shows what the root contains that the families do not model:
+  unclaimed nodes (no family), nodes without a grammar, and unmodelled attributes.
+
 ## 0.3.13
 
 - Targeted gathering for every resource with instance lists: with `state: gathered`
