@@ -5,7 +5,10 @@
 - Targeted gathering for every resource with instance lists: with `state: gathered`
   and `config`, a resource module reads only the instances named in `config` (one or
   several, by their identity fields) instead of the whole resource; absent instances
-  are not returned, other device errors fail. Without `config` nothing changes.
+  are not returned, other device errors fail. An instance with nothing configured
+  answers like an absent one (only a header) and is not returned either. Echoed
+  command text is stripped from single-instance replies. Without `config` nothing
+  changes.
   `TARGETED_GATHER` in `plugins/module_utils/network/isam/targeted.py`
   (dependency-free) lists every instance list and its identity, including nested lists
   (`system` `syslog.destinations`) and composite identities (`qos_profiles` by
