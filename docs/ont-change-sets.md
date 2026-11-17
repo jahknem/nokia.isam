@@ -92,7 +92,9 @@ fields; everything else in the entries is ignored:
 ```
 
 Instances that do not exist are simply not returned ("instance does not exist" from the
-device); other device errors fail the task. Without `config`, the whole resource is read,
+device); other device errors fail the task. The device answers an instance with nothing
+configured exactly like a non-existing one (only a header), so such instances are not
+returned either; they cannot be told apart from a single read. Without `config`, the whole resource is read,
 as before. `isam_facts` is unchanged and always reads whole resources.
 
 Every instance list of every resource supports it; the lists and their identity

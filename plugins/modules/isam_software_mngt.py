@@ -78,7 +78,7 @@ options:
     description:
       - The state of the configuration after module completion.
       - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by
-        C(oswp[].id) (targeted gathering). Other fields are ignored and absent instances are not returned. Without
+        C(oswp[].id) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without
         I(config) the whole resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]

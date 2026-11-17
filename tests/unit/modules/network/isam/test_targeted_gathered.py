@@ -49,8 +49,11 @@ def test_without_config_the_whole_resource_is_read(monkeypatch, name):
 
 
 @pytest.mark.parametrize("name", ["ani_onts", "ntp_onts", "alarm:custom_profiles", "qos_profiles"])
-def test_a_bare_header_reply_is_an_instance_without_attributes(monkeypatch, name):
-    """Real device form: an instance with nothing configured answers only '#---'/'echo'."""
+def test_a_bare_header_reply_is_not_returned(monkeypatch, name):
+    """Real device form: unset and non-existing instances both answer only '#---'/'echo'.
+
+    They cannot be told apart from a single read, so neither is returned.
+    """
     case = CASES[name]
     entry = case["config"][0] if isinstance(case["config"], list) else case["config"]["custom_profiles"][0]
     parts = [str(value) for value in entry.values()]
@@ -62,8 +65,8 @@ def test_a_bare_header_reply_is_an_instance_without_attributes(monkeypatch, name
                 return "#-------------------------------------------------------------------------------\n"
             return super().get(command, *args, **kwargs)
 
-    device = BareHeader(case["lines"] + case["sibling"], full=harness.full_commands(monkeypatch, case))
+    device = BareHeader(case["sibling"], full=harness.full_commands(monkeypatch, case))
     result = harness.gathered(monkeypatch, case, case["config"], device)
     assert not result.get("failed"), result
-    assert case["marker"] in harness.text(result), result
+    assert case["marker"] not in harness.text(result), result
     assert case["sibling_marker"] not in harness.text(result), result
