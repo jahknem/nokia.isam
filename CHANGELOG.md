@@ -16,6 +16,12 @@
   Nodes without a grammar entry are kept losslessly at branch granularity and flagged.
 - `config_tree.gap_report` shows what the root contains that the families do not model:
   unclaimed nodes (no family), nodes without a grammar, and unmodelled attributes.
+- New resource `isam_system_security` (slice 1): operators, profiles (permissions as a
+  dict), SNMP communities/views/managers/notify-profiles, RADIUS auth-servers/policies/
+  auth-super-user/dyn-auth-clients. Targeted gathering by name; secret values (operator
+  passwords, RADIUS secrets, SNMP community strings) registered for redaction. Derived
+  from real device output (this tree is not in rm_models). Remaining: pae, peripheral-mgnt
+  and the small settings blocks.
 - `isam_equipment` models more sub-regions: `diagnostics_sfp`, `protection_elements`,
   `racks`, `external_link_assigns`, `external_link_hosts` (lists, targeted by id) and the
   `envbox`/`isam` settings blocks. Previously dropped (detail-only on the lab device).
