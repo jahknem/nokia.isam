@@ -44,10 +44,10 @@ class TestIsamQosMapsModule(TestIsamModule):
             tc-map-dot1p 7 tc 7
             dscp-map-dot1p CS0 dot1p 0
             dscp-map-dot1p EF dot1p 5
-            up-ctrl-pkt dhcp queue 0 profile default
-            up-ctrl-pkt arp queue 0
-            dn-ctrl-pkt dhcp queue 0 profile default
-            dn-ctrl-pkt arp queue 0
+            up-ctrl-pkt dhcp dscp 46 pbit 5 tc 7
+            up-ctrl-pkt arp
+            dn-ctrl-pkt dhcp tc 3
+            dn-ctrl-pkt arp
             exit
             """
         )
@@ -73,19 +73,16 @@ class TestIsamQosMapsModule(TestIsamModule):
         up_ctrl = parsed.get("up_ctrl_pkt", [])
         self.assertEqual(len(up_ctrl), 2)
         self.assertEqual(up_ctrl[0]["protocol"], "dhcp")
-        self.assertEqual(up_ctrl[0]["queue"], 0)
-        self.assertEqual(up_ctrl[0]["profile"], "default")
-        self.assertEqual(up_ctrl[1]["protocol"], "arp")
-        self.assertEqual(up_ctrl[1]["queue"], 0)
-        self.assertNotIn("profile", up_ctrl[1])
+        self.assertEqual(up_ctrl[0]["dscp"], 46)
+        self.assertEqual(up_ctrl[0]["pbit"], 5)
+        self.assertEqual(up_ctrl[0]["tc"], 7)
+        self.assertEqual(up_ctrl[1], {"protocol": "arp"})
 
         dn_ctrl = parsed.get("dn_ctrl_pkt", [])
         self.assertEqual(len(dn_ctrl), 2)
         self.assertEqual(dn_ctrl[0]["protocol"], "dhcp")
-        self.assertEqual(dn_ctrl[0]["queue"], 0)
-        self.assertEqual(dn_ctrl[0]["profile"], "default")
-        self.assertEqual(dn_ctrl[1]["protocol"], "arp")
-        self.assertEqual(dn_ctrl[1]["queue"], 0)
+        self.assertEqual(dn_ctrl[0]["tc"], 3)
+        self.assertEqual(dn_ctrl[1], {"protocol": "arp"})
 
     def test_isam_qos_maps_rendered(self):
         set_module_args(
@@ -101,10 +98,10 @@ class TestIsamQosMapsModule(TestIsamModule):
                         {"dscp": "EF", "dot1p": 5},
                     ],
                     "up_ctrl_pkt": [
-                        {"protocol": "dhcp", "queue": 0, "profile": "default"},
+                        {"protocol": "dhcp", "dscp": 46, "tc": 7},
                     ],
                     "dn_ctrl_pkt": [
-                        {"protocol": "dhcp", "queue": 0, "profile": "default"},
+                        {"protocol": "dhcp", "tc": 3},
                     ],
                 },
             ),
@@ -114,10 +111,10 @@ class TestIsamQosMapsModule(TestIsamModule):
         rendered = result.get("rendered", [])
         self.assertIn("configure qos tc-map-dot1p 0 tc 0", rendered)
         self.assertIn("configure qos tc-map-dot1p 7 tc 7", rendered)
-        self.assertIn("configure qos dscp-map-dot1p CS0 dot1p 0", rendered)
-        self.assertIn("configure qos dscp-map-dot1p EF dot1p 5", rendered)
-        self.assertIn("configure qos up-ctrl-pkt dhcp queue 0 profile default", rendered)
-        self.assertIn("configure qos dn-ctrl-pkt dhcp queue 0 profile default", rendered)
+        self.assertIn("configure qos dscp-map-dot1p CS0 dot1p-value 0", rendered)
+        self.assertIn("configure qos dscp-map-dot1p EF dot1p-value 5", rendered)
+        self.assertIn("configure qos up-ctrl-pkt dhcp dscp 46 tc 7", rendered)
+        self.assertIn("configure qos dn-ctrl-pkt dhcp tc 3", rendered)
 
     def test_isam_qos_maps_replaced(self):
         class FakeConn:
@@ -129,12 +126,12 @@ class TestIsamQosMapsModule(TestIsamModule):
                     "dscp-map-dot1p CS0 dot1p 0\ndscp-map-dot1p EF dot1p 5\n"
                 ),
                 "info configure qos up-ctrl-pkt flat": (
-                    "up-ctrl-pkt dhcp queue 0 profile default\n"
-                    "up-ctrl-pkt arp queue 0\n"
+                    "up-ctrl-pkt dhcp dscp 46 pbit 5 tc 7\n"
+                    "up-ctrl-pkt arp\n"
                 ),
                 "info configure qos dn-ctrl-pkt flat": (
-                    "dn-ctrl-pkt dhcp queue 0 profile default\n"
-                    "dn-ctrl-pkt arp queue 0\n"
+                    "dn-ctrl-pkt dhcp tc 3\n"
+                    "dn-ctrl-pkt arp\n"
                 ),
             }
 
@@ -164,8 +161,8 @@ class TestIsamQosMapsModule(TestIsamModule):
 
         expected_commands = sorted([
             "configure qos no tc-map-dot1p 7",
-            "configure qos dscp-map-dot1p CS0 dot1p 3",
-            "configure qos dscp-map-dot1p AF11 dot1p 1",
+            "configure qos dscp-map-dot1p CS0 dot1p-value 3",
+            "configure qos dscp-map-dot1p AF11 dot1p-value 1",
         ])
         result = self.execute_module(changed=True, commands=expected_commands)
         commands = result.get("commands", [])
