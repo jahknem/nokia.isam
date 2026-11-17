@@ -406,6 +406,18 @@ def _owner(line, prefixes, excludes):
     return best[0] if best else None
 
 
+_KEYWORD = re.compile(r"^[a-z][a-z0-9_-]*$")
+
+
+def _safe_name(name):
+    """Only CLI-keyword-shaped strings may leave the report; values never do."""
+    return isinstance(name, str) and bool(_KEYWORD.match(name)) and len(name) <= 64
+
+
+def _safe_node(node_name):
+    return " ".join(part if _safe_name(part) else "<value>" for part in str(node_name).split())
+
+
 def gap_report(tree, argspec_names=None, prefixes=None, excludes=None):
     """What the root tree contains that the resource families do not model.
 
@@ -418,6 +430,9 @@ def gap_report(tree, argspec_names=None, prefixes=None, excludes=None):
 
     'node' is the leaf's keyword path (e.g. 'qos interface queue'); an attribute is
     unmodelled when its snake_case name is not an option anywhere in the family argspec.
+    Safe to share: only keyword-shaped names leave the report. A token that is not
+    (a value the tree parsed into a name position) is counted per family under
+    "value_like" and never shown; path parts of that kind become "<value>".
     """
     if prefixes is None or excludes is None:
         from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
@@ -441,15 +456,17 @@ def gap_report(tree, argspec_names=None, prefixes=None, excludes=None):
             lines = value.get("lines") or []
             if not lines:
                 continue
-            node_name = value.get("node", "")
+            node_name = _safe_node(value.get("node", ""))
             owner = _owner(lines[0] + " ", prefixes, excludes)
             if owner is None:
                 unclaimed[node_name] = unclaimed.get(node_name, 0) + len(lines)
                 continue
             known = argspec_names.get(owner)
-            entry = families.setdefault(owner, {"argspec": known is not None, "lines": 0, "unmodelled": {}})
+            entry = families.setdefault(owner, {"argspec": known is not None, "lines": 0, "unmodelled": {}, "value_like": 0})
             entry["lines"] += len(lines)
-            missing = sorted(a for a in value.get("attrs", {}) if known is None or _snake(a) not in known)
+            names = list(value.get("attrs", {}))
+            entry["value_like"] += sum(1 for a in names if not _safe_name(a))
+            missing = sorted(a for a in names if _safe_name(a) and (known is None or _snake(a) not in known))
             if missing:
                 bucket = entry["unmodelled"].setdefault(node_name, [])
                 entry["unmodelled"][node_name] = sorted(set(bucket) | set(missing))
