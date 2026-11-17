@@ -37,7 +37,6 @@ TARGETED_GATHER = {
     "equipment_onts": {"interfaces": "ont_idx", "slots": "ont_slot_idx", "sw_ctrls": "sw_ctrl_id"},
     "ethernet_line": {"config": "if_index"},
     "ethernet_onts": {"config": "uni_idx"},
-    "interface_alarms": {"config": "name"},
     "interface_cages": {"config": "id"},
     "interfaces": {"config": "name"},
     "isam_arp_relay": {"config": "name"},

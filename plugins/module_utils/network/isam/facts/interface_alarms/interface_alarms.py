@@ -7,9 +7,6 @@ __metaclass__ = type
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
-    get_targeted_config,
-)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.interface_alarms.interface_alarms import (
     Interface_alarmsArgs,
 )
@@ -30,9 +27,9 @@ class Interface_alarmsFacts(object):
 
         Same output format (not flat) as the whole-resource read.
         """
-        return get_targeted_config(self._module, connection, "interface_alarms", "info configure interface alarm", {
-            "config": "info configure interface alarm %s",
-        })
+        # The device has no single-instance read here: it always answers the whole
+        # node, with a 'configure interface' header and 'alarm <name>' blocks.
+        return connection.get("info configure interface alarm")
 
     @staticmethod
     def _canonicalize_entry(item):
@@ -102,6 +99,7 @@ class Interface_alarmsFacts(object):
         if not config:
             return []
 
+        config = self._join_header(config)
         flat_config = []
         for block in self._top_level_blocks(config):
             root = self._parse_config_to_tree(block)
@@ -110,6 +108,30 @@ class Interface_alarmsFacts(object):
             for leaf in root.leaves:
                 flat_config.append(" ".join(node.name for node in leaf.path))
         return flat_config
+
+    @staticmethod
+    def _join_header(config):
+        """The device answers 'configure interface' + 'alarm <name>' blocks; join them.
+
+        Flat lines ('configure interface alarm <name> ...') pass through unchanged.
+        """
+        lines = []
+        header = None
+        for line in config.splitlines():
+            stripped = line.split("#", 1)[0].strip()
+            if not stripped or stripped.startswith("echo") or stripped == "exit":
+                continue
+            if stripped == "configure interface":
+                header = stripped
+                continue
+            if header and stripped.startswith("alarm "):
+                lines.append(header + " " + stripped)
+                continue
+            if header and line[:1].isspace() and lines:
+                lines[-1] += " " + stripped
+                continue
+            lines.append(line)
+        return "\n".join(lines)
 
     @staticmethod
     def _top_level_blocks(config):
