@@ -29,6 +29,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.qos_
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.isam_equipment.isam_equipment import Isam_equipmentFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.vlans.vlans import VlansFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.qos_profiles.qos_profiles import Qos_profilesFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.qos_tca.qos_tca import Qos_tcaFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_lines.xdsl_lines import Xdsl_linesFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_profiles.xdsl_profiles import Xdsl_profilesFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.link_agg.link_agg import Link_aggFacts
@@ -140,6 +141,7 @@ FACT_RESOURCE_SUBSETS = dict(
     qos_interfaces=Qos_interfacesFacts,
     qos_maps=Qos_mapsFacts,
     qos_profiles=Qos_profilesFacts,
+    qos_tca=Qos_tcaFacts,
     software_mngt=Software_mngtFacts,
     system=Isam_systemFacts,
     vlans=VlansFacts,

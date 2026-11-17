@@ -59,6 +59,7 @@ TARGETED_GATHER = {
     "qos_interfaces": {"config": "name"},
     "qos_maps": {"dn_ctrl_pkt": "protocol", "dscp_map_dot1p": "dscp", "tc_map_dot1p": "dot1p", "up_ctrl_pkt": "protocol"},
     "qos_profiles": {"config": ["profile_type", "name"]},
+    "qos_tca": {"config": ["name", "queue"]},
     "software_mngt": {"oswp": "id"},
     "system": {"sntp.servers": "ip_address", "syslog.destinations": "name", "syslog.routes": "destination"},
     "vlans": {"config": "id"},
