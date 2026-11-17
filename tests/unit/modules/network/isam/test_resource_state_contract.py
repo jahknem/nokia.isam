@@ -71,6 +71,13 @@ RESOURCE_MODULES = (
     "isam_xdsl_inm",
     "isam_xdsl_onts",
     "isam_xdsl_system",
+    "isam_qos_global",
+    "isam_cwmp_plt",
+    "isam_error",
+    "isam_nat",
+    "isam_pon_global",
+    "isam_pppox_relay_global",
+    "isam_trouble_shooting_pon",
 )
 
 CANONICAL_STATES = {

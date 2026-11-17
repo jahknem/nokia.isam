@@ -21,6 +21,31 @@ class Xdsl_boardsArgs(object):  # pylint: disable=R0903
                         "card_type": {"type": "str"},
                         "dpbo_profile": {"type": "str"},
                         "vce_profile": {"type": "str"},
+                        "vplt_autodiscover": {"type": "str"},
+                        "vce_capacity_mode": {"type": "str"},
+                        "leg_upbo_profile": {"type": "str"},
+                        "vect_class": {"type": "str"},
+                        "vect_fallback": {
+                            "type": "dict",
+                            "options": {
+                                "fb_vplt_com_fail": {"type": "bool"},
+                                "fb_cpe_cap_mism": {"type": "bool"},
+                                "fb_conf_not_feas": {"type": "bool"},
+                                "spectrum_profile": {"type": "str"},
+                                "service_profile": {"type": "str"},
+                                "dpbo_profile": {"type": "str"},
+                                "rtx_profile": {"type": "str"},
+                                "sos_profile": {"type": "str"},
+                            },
+                        },
+                        "auto_port_reset": {
+                            "type": "dict",
+                            "options": {
+                                "max_retry_attempt": {"type": "int"},
+                                "reset_interval": {"type": "int"},
+                                "reset_threshold": {"type": "int"},
+                            },
+                        },
                     },
                 },
                 "vp_boards": {
@@ -29,8 +54,14 @@ class Xdsl_boardsArgs(object):  # pylint: disable=R0903
                     "options": {
                         "vp_board_id": {"type": "str", "required": True},
                         "admin_state": {"type": "str", "choices": ["up", "down"]},
-                        "lt_expect": {"type": "str"},
-                        "vp_link": {"type": "str"},
+                        "vp_links": {
+                            "type": "list",
+                            "elements": "dict",
+                            "options": {
+                                "link_id": {"type": "str", "required": True},
+                                "lt_expect": {"type": "str"},
+                            },
+                        },
                     },
                 },
             },

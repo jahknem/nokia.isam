@@ -21,6 +21,9 @@ SCOPED_RMS = {
     "Xdsl_boards",
     "Xdsl_inm",
     "Xdsl_lines",
+    "Pon_global",
+    "Pppox_relay_global",
+    "Trouble_shooting_pon",
 }
 
 # These RMs have been audited and intentionally have no compactable
@@ -62,6 +65,10 @@ UNSCOPED_RMS = {
     "Xdsl_profiles": "profile commands have distinct nested scopes",
     "Xdsl_bonding": "single global option",
     "Xstp": "global and per-port scopes differ",
+    "Qos_global": "custom renderer already packs one command per section/line card",
+    "Nat": "single global option",
+    "Error": "single global option",
+    "Cwmp_plt": "single global option",
     "Xdsl_onts": "single attribute per ONT",
     "Xdsl_system": "single global option",
     "L2uni_onts": "custom renderer already packs one command per UNI scope",

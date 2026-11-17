@@ -10,7 +10,7 @@ DOCUMENTATION = """
 module: isam_mcast_general
 short_description: Manage Nokia ISAM multicast general configuration.
 description:
-  - Manages C(configure mcast general) configuration.
+  - Manages C(configure mcast general) and C(configure mcast capacity) configuration.
 version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:
@@ -24,8 +24,44 @@ options:
       forward_method:
         description: Multicast forward method.
         type: str
+      fast_change:
+        description: Enable or disable multicast fast channel change (C(fast-change)).
+        type: bool
+      package_member:
+        description: Multicast package membership as printed by the device (C(package-member)).
+        type: str
+      capacity:
+        description:
+          - Multicast capacity (C(configure mcast capacity)), set and reset (C(no <attribute>)) in place.
+          - Values at the device default are not reported in facts.
+          - C(merged) sets the given values, C(replaced) and C(overridden) also reset the omitted capacity
+            attributes, C(deleted) resets all capacity attributes.
+        type: dict
+        suboptions:
+          max_num_group:
+            description:
+              - Maximum number of groups the system (per LT) supports in enough bandwidth (C(max-num-group)),
+                range 0-2048. Device default C(1024).
+            type: int
+          max_num_uncfg:
+            description:
+              - Maximum number of unconfigured groups the system (per LT) supports in enough bandwidth
+                (C(max-num-uncfg)), range 0-2048. Device default C(64).
+            type: int
+          cfg_res_time:
+            description:
+              - Time in seconds to reserve the unused guaranteed configured groups (C(cfg-res-time)).
+                Device default C(125).
+            type: int
+          uncfg_res_time:
+            description:
+              - Time in seconds to reserve the unused unconfigured groups (C(uncfg-res-time)).
+                Device default C(0).
+            type: int
   running_config:
-    description: Device native configuration to parse.
+    description:
+      - Device native configuration to parse (C(info configure mcast general flat) and
+        C(info configure mcast capacity flat) output).
     type: str
   state:
     description: The state of the configuration after module completion.
@@ -45,6 +81,17 @@ EXAMPLES = """
       admin_state: true
       forward_method: proxy
     state: merged
+
+- name: Configure multicast capacity
+  nokia.isam.isam_mcast_general:
+    config:
+      capacity:
+        max_num_group: 512
+        cfg_res_time: 60
+    state: merged
+
+# commands:
+# - configure mcast capacity max-num-group 512 cfg-res-time 60
 """
 
 RETURN = """

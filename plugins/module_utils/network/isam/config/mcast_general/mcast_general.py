@@ -15,6 +15,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.mcast_general import (
     Mcast_generalTemplate,
+    capacity_commands,
 )
 
 
@@ -23,6 +24,7 @@ class Mcast_general(ResourceModule):
 
     COMPACT_COMMAND_SCOPES = (
         r"^(?P<scope>configure mcast general) (?P<suffix>.+)$",
+        r"^(?P<scope>configure mcast capacity) (?P<suffix>.+)$",
     )
 
     def __init__(self, module):
@@ -51,6 +53,9 @@ class Mcast_general(ResourceModule):
     def generate_commands(self):
         want = self.want or {}
         have = self.have or {}
+        # capacity: set/reset in place; merged sets what differs, replaced/overridden
+        # also reset omitted attributes, deleted resets all (added after the general commands).
+        capacity = capacity_commands(self.state, want.get("capacity"), have.get("capacity"))
 
         if self.state == "merged":
             want = dict_merge(have, want)
@@ -81,3 +86,5 @@ class Mcast_general(ResourceModule):
 
         if "package_member" in want and want.get("package_member") != have.get("package_member"):
             self.addcmd({"package_member": want.get("package_member")}, "package_member")
+
+        self.commands.extend(capacity)

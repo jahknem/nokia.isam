@@ -35,6 +35,13 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.link_agg.link_agg import Link_aggFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xstp.xstp import XstpFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.alarm.alarm import AlarmFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.qos_global.qos_global import Qos_globalFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.cwmp_plt.cwmp_plt import Cwmp_pltFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.error.error import ErrorFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.nat.nat import NatFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.pon_global.pon_global import Pon_globalFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.pppox_relay_global.pppox_relay_global import Pppox_relay_globalFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.trouble_shooting_pon.trouble_shooting_pon import Trouble_shooting_ponFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_inm.xdsl_inm import Xdsl_inmFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_onts.xdsl_onts import Xdsl_ontsFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_system.xdsl_system import Xdsl_systemFacts
@@ -147,6 +154,13 @@ FACT_RESOURCE_SUBSETS = dict(
     qos_interfaces=Qos_interfacesFacts,
     qos_maps=Qos_mapsFacts,
     qos_profiles=Qos_profilesFacts,
+    qos_global=Qos_globalFacts,
+    cwmp_plt=Cwmp_pltFacts,
+    error=ErrorFacts,
+    nat=NatFacts,
+    pon_global=Pon_globalFacts,
+    pppox_relay_global=Pppox_relay_globalFacts,
+    trouble_shooting_pon=Trouble_shooting_ponFacts,
     qos_tca=Qos_tcaFacts,
     xdsl_inm=Xdsl_inmFacts,
     xdsl_onts=Xdsl_ontsFacts,

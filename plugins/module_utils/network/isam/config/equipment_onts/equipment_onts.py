@@ -13,8 +13,15 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import is_masked_secret
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.equipment_onts import (
+    INTERFACE_SUBNODES,
+    LOOP_FIELDS,
+    PM_COLLECT_FIELDS,
+    SW_CTRL_EXTRA_FIELDS,
+    SW_CTRL_SUBNODES,
     Equipment_ontsTemplate,
 )
+
+EMPTY = {"interfaces": [], "slots": [], "sw_ctrls": [], "loops": [], "pm_collects": []}
 
 
 class Equipment_onts(ResourceModule):
@@ -26,6 +33,8 @@ class Equipment_onts(ResourceModule):
         r"^(?P<scope>configure equipment ont slot \S+) (?P<suffix>.+)$",
         r"^(?P<scope>configure equipment ont sw-ctrl \S+) (?P<suffix>(?!delay-act(?:\s|$)).+)$",
         r"^(?P<scope>configure equipment ont sw-ctrl \S+ delay-act) (?P<suffix>.+)$",
+        r"^(?P<scope>configure equipment ont loop \S+) (?P<suffix>.+)$",
+        r"^(?P<scope>configure equipment ont pm-collect \S+) (?P<suffix>.+)$",
     )
 
     SECRET_FIELDS = ("log_auth_pwd",)
@@ -87,11 +96,21 @@ class Equipment_onts(ResourceModule):
         "plnd_sw_version",
         "plnd_sw_ver_conf",
         "sw_dwload_ver",
+    ] + [field for field, _cli in SW_CTRL_EXTRA_FIELDS]
+    # Sub-node fields, compared as "<key>.<field>" (parser "<prefix>.<key>.<field>").
+    INTERFACE_FIELDS = INTERFACE_FIELDS + [
+        "%s.%s" % (key, field) for key, _cli, fields in INTERFACE_SUBNODES for field, _attr in fields
     ]
+    SW_CTRL_FIELDS = SW_CTRL_FIELDS + [
+        "%s.%s" % (key, field) for key, _cli, fields in SW_CTRL_SUBNODES for field, _attr in fields
+    ]
+    # ONT-keyed nodes without create/delete form: {field: CLI default}.
+    LOOP_DEFAULTS = dict((field, default) for field, _cli, default in LOOP_FIELDS)
+    PM_COLLECT_DEFAULTS = dict((field, default) for field, _cli, default in PM_COLLECT_FIELDS)
 
     def __init__(self, module):
         super(Equipment_onts, self).__init__(
-            empty_fact_val={"interfaces": [], "slots": [], "sw_ctrls": []},
+            empty_fact_val=deepcopy(EMPTY),
             facts_module=Facts(module),
             module=module,
             resource="equipment_onts",
@@ -107,8 +126,8 @@ class Equipment_onts(ResourceModule):
         return self.result
 
     def generate_commands(self):
-        want = self.want or {"interfaces": [], "slots": [], "sw_ctrls": []}
-        have = self.have or {"interfaces": [], "slots": [], "sw_ctrls": []}
+        want = self.want or deepcopy(EMPTY)
+        have = self.have or deepcopy(EMPTY)
         delete_all = self.state == "deleted" and not self.want
 
         sections = [
@@ -142,6 +161,60 @@ class Equipment_onts(ResourceModule):
             self.SW_CTRL_FIELDS,
             delete_all or bool(want.get("sw_ctrls")),
         )
+        # Loop / pm-collect settings go away with a removed ONT; resetting them
+        # after "no interface" would address a non-existing ONT.
+        removed = set(
+            command.rsplit(" ", 1)[1] for command in self.commands
+            if command.startswith("configure equipment ont no interface ")
+        )
+        for section, parser_prefix, defaults in (
+            ("loops", "loop", self.LOOP_DEFAULTS),
+            ("pm_collects", "pm_collect", self.PM_COLLECT_DEFAULTS),
+        ):
+            self._compare_ont_nodes(
+                want.get(section) or [],
+                have.get(section) or [],
+                parser_prefix,
+                defaults,
+                delete_all or bool(want.get(section)),
+                removed,
+            )
+
+    def _compare_ont_nodes(self, want_list, have_list, parser_prefix, defaults, requested, removed=()):
+        """Loop / pm-collect nodes exist with their ONT: removal resets the fields.
+
+        A value equal to the CLI default is the same as an unset field (the device
+        prints both as ``no <attr>``).
+        """
+        def clean(entry):
+            return dict(
+                (key, value) for key, value in entry.items()
+                if key == "ont_idx" or (value is not None and value != defaults.get(key))
+            )
+
+        wantd = dict((entry["ont_idx"], clean(entry)) for entry in want_list)
+        haved = dict((entry["ont_idx"], clean(entry)) for entry in have_list if entry["ont_idx"] not in removed)
+        fields = list(defaults)
+
+        if self.state == "deleted":
+            if not requested:
+                return
+            for ont_idx, have in iteritems(haved):
+                if not wantd or ont_idx in wantd:
+                    for field in fields:
+                        if have.get(field) is not None:
+                            self.addcmd(have, "%s.%s" % (parser_prefix, field), negate=True)
+            return
+
+        if self.state == "overridden":
+            for ont_idx, have in iteritems(haved):
+                if ont_idx not in wantd:
+                    for field in fields:
+                        if have.get(field) is not None:
+                            self.addcmd(have, "%s.%s" % (parser_prefix, field), negate=True)
+
+        for ont_idx, want in iteritems(wantd):
+            self._compare_entry(want, haved.get(ont_idx, {"ont_idx": ont_idx}), parser_prefix, fields)
 
     def _compare_section(self, want_list, have_list, key, parser_prefix, fields, requested=True):
         wantd = {entry[key]: entry for entry in want_list}
@@ -183,10 +256,17 @@ class Equipment_onts(ResourceModule):
                 continue
             self._compare_entry(desired, have, parser_prefix, fields)
 
+    @staticmethod
+    def _get(entry, field):
+        """Value of a field, or of "<sub-node>.<field>"."""
+        for part in field.split("."):
+            entry = entry.get(part) if isinstance(entry, dict) else None
+        return entry
+
     def _compare_entry(self, want, have, parser_prefix, fields):
         for field in fields:
-            inw = want.get(field)
-            inh = have.get(field)
+            inw = self._get(want, field)
+            inh = self._get(have, field)
             if field in self.SECRET_FIELDS and is_masked_secret(inw):
                 # The device only ever shows passwords masked; a masked value read
                 # back (e.g. copied from another ONT) is not the password.
