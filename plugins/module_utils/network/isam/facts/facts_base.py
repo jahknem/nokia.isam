@@ -67,6 +67,7 @@ RESOURCE_CONFIG_PREFIXES = {
     "qos_profiles": ("configure qos profiles ",),
     "software_mngt": ("configure software-mngt ",),
     "system": ("configure system ",),
+    "isam_system_security": ("configure system security ",),
     "vlans": ("configure vlan id ",),
     "voice_sip": ("configure voice sip ",),
     "xdsl_boards": ("configure xdsl board ", "configure xdsl vp-board "),
@@ -86,6 +87,9 @@ RESOURCE_CONFIG_EXCLUDES = {
     "isam_equipment": (
         "configure equipment ont ",
         "configure equipment replan ",
+    ),
+    "system": (
+        "configure system security ",
     ),
 }
 

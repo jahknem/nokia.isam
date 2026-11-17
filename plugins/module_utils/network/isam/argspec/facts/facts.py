@@ -65,6 +65,7 @@ class FactsArgs(object):  # pylint: disable=R0903
         'qos_tca',
         'software_mngt',
         'system',
+        'isam_system_security',
         'vlans',
         'voice_sip',
         'xdsl_boards',
