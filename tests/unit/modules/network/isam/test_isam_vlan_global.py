@@ -1,3 +1,4 @@
+import os
 from textwrap import dedent
 
 from ansible_collections.nokia.isam.plugins.modules import isam_vlan_global
@@ -49,14 +50,10 @@ class TestIsamVlanGlobalModule(TestIsamModule):
                 config=dict(
                     broadcast_frames=dict(drop_unknown_multicast=True),
                     priority_regen=[
-                        dict(dot1p=0, regen_dot1p=0),
-                        dict(dot1p=1, regen_dot1p=1),
-                        dict(dot1p=2, regen_dot1p=2),
-                        dict(dot1p=3, regen_dot1p=3),
-                        dict(dot1p=4, regen_dot1p=4),
-                        dict(dot1p=5, regen_dot1p=5),
-                        dict(dot1p=6, regen_dot1p=6),
-                        dict(dot1p=7, regen_dot1p=7),
+                        dict(id=1, profile_name="TrustedPort", pbit0=0, pbit1=1, pbit2=2, pbit3=3,
+                             pbit4=4, pbit5=5, pbit6=6, pbit7=7),
+                        dict(id=11, profile_name="Custom"),
+                        dict(id=12, pbit6=6, pbit7=6),
                     ],
                     tpid=dict(value="8100"),
                     vmac_address_format=dict(format="canonical"),
@@ -69,14 +66,9 @@ class TestIsamVlanGlobalModule(TestIsamModule):
             sorted(result["rendered"]),
             sorted([
                 "configure vlan broadcast-frames drop-unknown-multicast",
-                "configure vlan priority-regen dot1p 0 regen-dot1p 0",
-                "configure vlan priority-regen dot1p 1 regen-dot1p 1",
-                "configure vlan priority-regen dot1p 2 regen-dot1p 2",
-                "configure vlan priority-regen dot1p 3 regen-dot1p 3",
-                "configure vlan priority-regen dot1p 4 regen-dot1p 4",
-                "configure vlan priority-regen dot1p 5 regen-dot1p 5",
-                "configure vlan priority-regen dot1p 6 regen-dot1p 6",
-                "configure vlan priority-regen dot1p 7 regen-dot1p 7",
+                "configure vlan priority-regen 1 profile-name TrustedPort pbit0 0 pbit1 1 pbit2 2 pbit3 3 pbit4 4 pbit5 5 pbit6 6 pbit7 7",
+                "configure vlan priority-regen 11 profile-name Custom",
+                "configure vlan priority-regen 12 pbit6 6 pbit7 6",
                 "configure vlan tpid 8100",
                 "configure vlan vmac-address-format canonical",
             ]),
@@ -93,14 +85,8 @@ class TestIsamVlanGlobalModule(TestIsamModule):
                     broadcast-frames
                       drop-unknown-multicast
                     exit
-                    priority-regen dot1p 0 regen-dot1p 0
-                    priority-regen dot1p 1 regen-dot1p 1
-                    priority-regen dot1p 2 regen-dot1p 2
-                    priority-regen dot1p 3 regen-dot1p 3
-                    priority-regen dot1p 4 regen-dot1p 4
-                    priority-regen dot1p 5 regen-dot1p 5
-                    priority-regen dot1p 6 regen-dot1p 6
-                    priority-regen dot1p 7 regen-dot1p 7
+                    priority-regen 1 profile-name TrustedPort pbit0 0 pbit1 1 pbit2 2 pbit3 3 pbit4 4 pbit5 5 pbit6 6 pbit7 7
+                    priority-regen 2 profile-name BestEffort pbit0 0 pbit1 0 pbit2 0 pbit3 0 pbit4 0 pbit5 0 pbit6 0 pbit7 0
                     tpid 8100
                     vmac-address-format canonical
                     exit
@@ -111,30 +97,47 @@ class TestIsamVlanGlobalModule(TestIsamModule):
             ignore_provider_arg,
         )
         result = self.execute_module(changed=False)
+        self.assertEqual(result["parsed"]["broadcast_frames"], dict(drop_unknown_multicast=True))
         self.assertEqual(
-            result["parsed"]["broadcast_frames"],
-            dict(drop_unknown_multicast=True),
+            result["parsed"]["priority_regen"],
+            [
+                dict(id=1, profile_name="TrustedPort", pbit0=0, pbit1=1, pbit2=2, pbit3=3, pbit4=4, pbit5=5, pbit6=6, pbit7=7),
+                dict(id=2, profile_name="BestEffort", pbit0=0, pbit1=0, pbit2=0, pbit3=0, pbit4=0, pbit5=0, pbit6=0, pbit7=0),
+            ],
         )
-        self.assertEqual(len(result["parsed"]["priority_regen"]), 8)
         self.assertEqual(result["parsed"]["tpid"], dict(value="8100"))
-        self.assertEqual(
-            result["parsed"]["vmac_address_format"],
-            dict(format="canonical"),
-        )
+        self.assertEqual(result["parsed"]["vmac_address_format"], dict(format="canonical"))
+
+    def test_isam_vlan_global_parsed_capture_priority_regen_lines(self):
+        """Every 'configure vlan priority-regen' line of the lab capture is parsed completely."""
+        capture = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..",
+                               "local_captures", "DS-LIN-TEST-01", "info_configure_flat.txt")
+        if not os.path.exists(capture):
+            self.skipTest("lab capture not available")
+        with open(capture) as handle:
+            lines = [line.rstrip() for line in handle if line.startswith("configure vlan priority-regen ")]
+        self.assertTrue(lines)
+        set_module_args(dict(state="parsed", running_config="\n".join(lines)), ignore_provider_arg)
+        result = self.execute_module(changed=False)
+        entries = result["parsed"]["priority_regen"]
+        self.assertEqual(len(entries), len(lines))
+        for line, entry in zip(lines, entries):
+            tokens = line.split()
+            expected = dict(id=int(tokens[3]), profile_name=tokens[5])
+            expected.update((tokens[i], int(tokens[i + 1])) for i in range(6, len(tokens), 2))
+            self.assertEqual(entry, expected)
+        # and the parsed entries render back to exactly the device lines
+        set_module_args(dict(state="rendered", config=dict(priority_regen=entries)), ignore_provider_arg)
+        rendered = self.execute_module(changed=False)["rendered"]
+        self.assertEqual(sorted(rendered), sorted(lines))
 
     def test_isam_vlan_global_merged_idempotent(self):
         self.get_config.return_value = dedent(
             """\
-            configure
-            vlan
-            broadcast-frames
-              drop-unknown-multicast
-            exit
-            priority-regen dot1p 0 regen-dot1p 0
-            tpid 8100
-            vmac-address-format canonical
-            exit
-            exit
+            configure vlan broadcast-frames drop-unknown-multicast
+            configure vlan priority-regen 2 profile-name BestEffort pbit0 0 pbit1 0 pbit2 0 pbit3 0 pbit4 0 pbit5 0 pbit6 0 pbit7 0
+            configure vlan tpid 8100
+            configure vlan vmac-address-format canonical
             """
         )
         set_module_args(
@@ -142,7 +145,7 @@ class TestIsamVlanGlobalModule(TestIsamModule):
                 state="merged",
                 config=dict(
                     broadcast_frames=dict(drop_unknown_multicast=True),
-                    priority_regen=[dict(dot1p=0, regen_dot1p=0)],
+                    priority_regen=[dict(id=2, profile_name="BestEffort", pbit6=0)],
                     tpid=dict(value="8100"),
                     vmac_address_format=dict(format="canonical"),
                 ),
@@ -152,6 +155,37 @@ class TestIsamVlanGlobalModule(TestIsamModule):
         result = self.execute_module(changed=False)
         self.assertEqual(result["commands"], [])
 
+    def test_isam_vlan_global_merged_changes_pbit(self):
+        self.get_config.return_value = (
+            "configure vlan priority-regen 2 profile-name BestEffort pbit0 0 pbit1 0 pbit2 0 pbit3 0 pbit4 0 pbit5 0 pbit6 0 pbit7 0\n"
+        )
+        set_module_args(dict(state="merged", config=dict(priority_regen=[dict(id=2, pbit6=6)])), ignore_provider_arg)
+        result = self.execute_module(changed=True)
+        self.assertEqual(
+            result["commands"],
+            ["configure vlan priority-regen 2 profile-name BestEffort pbit0 0 pbit1 0 pbit2 0 pbit3 0 pbit4 0 pbit5 0 pbit6 6 pbit7 0"],
+        )
+
+    def test_isam_vlan_global_deleted_and_overridden_remove_profile(self):
+        self.get_config.return_value = dedent(
+            """\
+            configure vlan priority-regen 2 profile-name BestEffort pbit0 0 pbit1 0 pbit2 0 pbit3 0 pbit4 0 pbit5 0 pbit6 0 pbit7 0
+            configure vlan priority-regen 11 profile-name Custom pbit0 1 pbit1 1 pbit2 1 pbit3 1 pbit4 1 pbit5 1 pbit6 1 pbit7 1
+            """
+        )
+        set_module_args(dict(state="deleted", config=dict(priority_regen=[dict(id=11)])), ignore_provider_arg)
+        result = self.execute_module(changed=True)
+        self.assertEqual(result["commands"], ["configure vlan no priority-regen 11"])
+
+        set_module_args(
+            dict(state="overridden", config=dict(priority_regen=[
+                dict(id=2, profile_name="BestEffort", pbit0=0, pbit1=0, pbit2=0, pbit3=0, pbit4=0, pbit5=0, pbit6=0, pbit7=0),
+            ])),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=True)
+        self.assertEqual(result["commands"], ["configure vlan no priority-regen 11"])
+
     def test_isam_vlan_global_gathered(self):
         self.get_config.return_value = dedent(
             """\
@@ -160,7 +194,7 @@ class TestIsamVlanGlobalModule(TestIsamModule):
             broadcast-frames
               drop-unknown-multicast
             exit
-            priority-regen dot1p 0 regen-dot1p 0
+            priority-regen 3 profile-name ControlledLoad3 pbit0 3 pbit1 3 pbit2 3 pbit3 3 pbit4 3 pbit5 3 pbit6 3 pbit7 3
             tpid 88a8
             vmac-address-format non-canonical
             exit
@@ -169,24 +203,21 @@ class TestIsamVlanGlobalModule(TestIsamModule):
         )
         set_module_args(dict(state="gathered"), ignore_provider_arg)
         result = self.execute_module(changed=False)
-        self.assertEqual(
-            result["gathered"]["broadcast_frames"],
-            dict(drop_unknown_multicast=True),
-        )
+        self.assertEqual(result["gathered"]["broadcast_frames"], dict(drop_unknown_multicast=True))
+        self.assertEqual(result["gathered"]["priority_regen"][0]["id"], 3)
+        self.assertEqual(result["gathered"]["priority_regen"][0]["profile_name"], "ControlledLoad3")
         self.assertEqual(result["gathered"]["tpid"], dict(value="88a8"))
-        self.assertEqual(
-            result["gathered"]["vmac_address_format"],
-            dict(format="non-canonical"),
-        )
+        self.assertEqual(result["gathered"]["vmac_address_format"], dict(format="non-canonical"))
 
-    def test_isam_vlan_global_negative_forms(self):
+    def test_isam_vlan_global_old_dot1p_form_is_not_parsed(self):
+        """The former invented 'priority-regen dot1p N regen-dot1p M' form is not a device form."""
         set_module_args(
             dict(
                 state="parsed",
                 running_config=dedent(
                     """\
                     configure vlan
-                    priority-regen dot1p 3 no regen-dot1p
+                    priority-regen dot1p 3 regen-dot1p 3
                     no tpid
                     no vmac-address-format
                     exit
@@ -196,6 +227,6 @@ class TestIsamVlanGlobalModule(TestIsamModule):
             ignore_provider_arg,
         )
         result = self.execute_module(changed=False)
-        self.assertEqual(result["parsed"]["priority_regen"], [{"dot1p": 3}])
+        self.assertNotIn("priority_regen", result["parsed"])
         self.assertNotIn("tpid", result["parsed"])
         self.assertNotIn("vmac_address_format", result["parsed"])

@@ -103,3 +103,71 @@ class TestIsamXstpModule(TestIsamModule):
     def test_isam_xstp_parsed_requires_running_config(self):
         set_module_args(dict(state="parsed"), ignore_provider_arg)
         self.execute_module(failed=True)
+
+    def test_isam_xstp_parsed_several_options_on_one_line(self):
+        running = dedent(
+            """
+            configure xstp general enable-stp region-name e4:a1:e6:dd:f3:8f
+            configure xstp port 1/1/8/1 priority 128 path-cost 200000
+            configure xstp port 1/1/8/2
+            """
+        )
+        set_module_args(dict(running_config=running, state="parsed"), ignore_provider_arg)
+
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["parsed"]["general"], {"enable_stp": True, "region_name": "e4:a1:e6:dd:f3:8f"})
+        self.assertEqual(
+            result["parsed"]["ports"],
+            [{"port": "1/1/8/1", "path_cost": 200000}, {"port": "1/1/8/2"}],
+        )
+
+    def test_isam_xstp_hierarchical_inline_port_options(self):
+        running = dedent(
+            """
+            configure xstp
+            port 1/1/8/3 path-cost 300
+            exit
+            port 1/1/8/4
+            exit
+            exit
+            """
+        )
+        set_module_args(dict(running_config=running, state="parsed"), ignore_provider_arg)
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["parsed"]["ports"], [{"port": "1/1/8/3", "path_cost": 300}, {"port": "1/1/8/4"}])
+
+    def test_isam_xstp_option_less_port_renders_nothing(self):
+        set_module_args(dict(config=dict(ports=[dict(port="1/1/8/2")]), state="rendered"), ignore_provider_arg)
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["rendered"], [])
+
+    def test_isam_xstp_facts_are_validated_and_unwrapped(self):
+        from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xstp.xstp import XstpFacts
+        from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xstp import XstpTemplate
+
+        facts = {"ansible_network_resources": {}}
+        with patch.object(XstpTemplate, "validate_config", autospec=True, side_effect=lambda self, spec, data, redact=False: data) as validate:
+            XstpFacts(module=None).populate_facts(None, facts, data=("configure xstp port 1/1/8/1 path-cost 7\n", ""))
+        self.assertTrue(validate.called)
+        self.assertEqual(facts["ansible_network_resources"]["xstp"], {"ports": [{"port": "1/1/8/1", "path_cost": 7}]})
+
+    def test_isam_xstp_parsed_capture_lines(self):
+        """Every 'configure xstp' line of the lab capture is parsed, nothing is dropped."""
+        import os
+
+        capture = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..",
+                               "local_captures", "DS-LIN-TEST-01", "info_configure_flat.txt")
+        if not os.path.exists(capture):
+            self.skipTest("lab capture not available")
+        with open(capture) as handle:
+            lines = [line.rstrip() for line in handle if line.startswith("configure xstp ")]
+        port_lines = [line for line in lines if line.startswith("configure xstp port ")]
+        self.assertTrue(port_lines)
+        set_module_args(dict(running_config="\n".join(lines), state="parsed"), ignore_provider_arg)
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["parsed"]["general"], {"enable_stp": True, "region_name": "e4:a1:e6:dd:f3:8f"})
+        expected = sorted(
+            ({"port": line.split()[3], "path_cost": int(line.split()[5])} for line in port_lines),
+            key=lambda item: item["port"],
+        )
+        self.assertEqual(result["parsed"]["ports"], expected)

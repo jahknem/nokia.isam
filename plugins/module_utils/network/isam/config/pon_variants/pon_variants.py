@@ -2,8 +2,7 @@
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base import get_resource_connection
 from ansible.module_utils.common.text.converters import to_text
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import canonical_key
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.pon_variants.pon_variants import get_variant_config
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.pon_variants.pon_variants import _parse_lines, get_variant_config
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.pon_variants import Ngpon2_channel_groupsTemplate, Epon_interfacesTemplate, Channel_pair_pmTemplate
 
 
@@ -26,42 +25,9 @@ class _VariantFacts(object):
         return {"ansible_network_resources": {self.resource: self._parse(data)}}, []
 
     def _parse(self, data):
-        records = {}
-        for raw_line in (data or "").splitlines():
-            line = raw_line.strip()
-            if not line.startswith("configure "):
-                continue
-            tokens = line.split()
-            if self.resource == "epon_interfaces" and len(tokens) >= 6:
-                name = tokens[3]
-                item = records.setdefault(name, {"name": name})
-                item[canonical_key(tokens[4])] = tokens[5]
-            elif self.resource == "channel_pair_pm" and len(tokens) >= 7:
-                name = tokens[3]
-                item = records.setdefault(name, {"name": name})
-                item[canonical_key(tokens[4])] = tokens[6]
-            elif self.resource == "ngpon2_channel_groups" and len(tokens) >= 6:
-                group_id = int(tokens[3])
-                item = records.setdefault(group_id, {"id": group_id})
-                if tokens[4] == "channel-pair" and len(tokens) > 5:
-                    item.setdefault("channel_pairs", []).append(tokens[5])
-                elif tokens[4] == "subchannel-group" and len(tokens) >= 9:
-                    sub_id = int(tokens[6])
-                    sub = next(
-                        (entry for entry in item.setdefault("subchannel_groups", [])
-                         if entry.get("id") == sub_id),
-                        None,
-                    )
-                    if sub is None:
-                        sub = {"id": sub_id}
-                        item["subchannel_groups"].append(sub)
-                    if tokens[7] == "channel-pair":
-                        sub.setdefault("channel_pairs", []).append(tokens[8])
-                    elif len(tokens) > 8:
-                        sub[canonical_key(tokens[7])] = tokens[8]
-                else:
-                    item[canonical_key(tokens[4])] = tokens[5]
-        return list(records.values())
+        # The facts parser (isam_facts): one parser, values typed per argspec.
+        return _parse_lines(data, self.resource)
+
 
 class _Base(ResourceModule):
     fields = ()

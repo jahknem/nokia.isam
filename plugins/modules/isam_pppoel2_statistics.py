@@ -16,6 +16,9 @@ module: isam_pppoel2_statistics
 short_description: Manages Nokia ISAM PPPoE-L2 statistics collection.
 description:
   - Manages C(configure pppoel2 statistics <vlan-port>) on Nokia ISAM.
+  - The write states read C(info configure pppoel2 statistics flat) and compare against it; a device error fails the module.
+  - Ports with statistics enabled are the configured instances; removal is C(no statistics <vlan-port>).
+    C(vlan-port <port>) and C(vlan-port:<port>) name the same port.
 version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:

@@ -16,6 +16,16 @@ module: isam_pppoe_client_interface
 short_description: Manages Nokia ISAM PPPoE client interfaces.
 description:
   - Manages C(configure pppoe-client interface) on Nokia ISAM.
+  - An instance is identified by I(name) and I(client_id) (CLI C((ifindex) client-id <id>)); one port can carry several client ids.
+  - The write states read C(info configure pppoe-client interface flat) and compare against it; a device error fails the module.
+notes:
+  - Creating or changing a client interface sends all mandatory parameters (I(client_id), I(profile_name), I(username), I(password)).
+    Attributes not given are taken from the device, except I(password), which the device hides; a change without I(password) fails.
+  - I(password) is never compared, so a password-only change is not detected.
+  - An entry without I(client_id) addresses the only client id of its port; with several client ids on the port the module fails
+    (I(state=deleted) removes all client ids of the port).
+  - With I(state=replaced) or C(overridden), I(mac) and I(pbit) not given are reset to their defaults.
+  - I(ipversion), I(authproto) and I(mru) belong to PPP profiles and are ignored here.
 version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:
@@ -38,7 +48,9 @@ options:
         description: Maximum receive unit (PPP profiles).
         type: int
       client_id:
-        description: PPPoE client id (client interfaces).
+        description:
+          - PPPoE client id; together with I(name) the identity of the instance.
+          - Required to create an instance; optional when the port has exactly one client id.
         type: int
       profile_name:
         description: PPP profile name (client interfaces).

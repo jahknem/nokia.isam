@@ -52,7 +52,27 @@ def get_variant_config(module, connection, resource):
     return get_targeted_config(module, _OptionalConnection(connection), resource, full, {"config": single})
 
 
+_ARGSPECS = {
+    "ngpon2_channel_groups": Ngpon2_channel_groupsArgs.argument_spec,
+    "epon_interfaces": Epon_interfacesArgs.argument_spec,
+    "channel_pair_pm": Channel_pair_pmArgs.argument_spec,
+}
+
+
+def _typed(options, key, value):
+    """value converted to the argspec type of key (int fields); left as is when it is not a number."""
+    if (options.get(key) or {}).get("type") == "int":
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return value
+    return value
+
+
 def _parse_lines(data, resource):
+    """The one parser of the PON variant resources (isam_facts and the resource modules), typed per argspec."""
+    options = _ARGSPECS[resource]["config"]["options"]
+    sub_options = (options.get("subchannel_groups") or {}).get("options") or {}
     records = {}
     for raw_line in unwrap_response(data).splitlines():
         line = raw_line.strip()
@@ -63,19 +83,18 @@ def _parse_lines(data, resource):
             name = tokens[3]
             item = records.setdefault(name, {"name": name})
             field = canonical_key(tokens[4])
-            value = tokens[5]
-            item[field] = int(value) if field.startswith(("polling_period", "dba_polling")) else value
+            item[field] = _typed(options, field, tokens[5])
         elif resource == "channel_pair_pm" and len(tokens) >= 7:
             name = tokens[3]
             item = records.setdefault(name, {"name": name})
             item[canonical_key(tokens[4])] = tokens[6]
         elif resource == "ngpon2_channel_groups" and len(tokens) >= 6:
-            group_id = int(tokens[3])
+            group_id = _typed(options, "id", tokens[3])
             item = records.setdefault(group_id, {"id": group_id})
             if tokens[4] == "channel-pair" and len(tokens) > 5:
                 item.setdefault("channel_pairs", []).append(tokens[5])
             elif tokens[4] == "subchannel-group" and len(tokens) >= 9:
-                sub_id = int(tokens[6])
+                sub_id = _typed(sub_options, "id", tokens[6])
                 sub = next((entry for entry in item.setdefault("subchannel_groups", []) if entry.get("id") == sub_id), None)
                 if sub is None:
                     sub = {"id": sub_id}
@@ -84,12 +103,10 @@ def _parse_lines(data, resource):
                     sub.setdefault("channel_pairs", []).append(tokens[8])
                 elif len(tokens) > 8:
                     key = canonical_key(tokens[7])
-                    value = tokens[8]
-                    sub[key] = int(value) if key in ("closest_ont", "diff_reach") else value
+                    sub[key] = _typed(sub_options, key, tokens[8])
             else:
                 key = canonical_key(tokens[4])
-                value = tokens[5]
-                item[key] = int(value) if key == "polling_period" else value
+                item[key] = _typed(options, key, tokens[5])
     return list(records.values())
 
 class Ngpon2_channel_groupsFacts(object):

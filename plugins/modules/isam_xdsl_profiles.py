@@ -264,21 +264,11 @@ parsed:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_text
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base import (
-    get_resource_connection,
-)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.xdsl_profiles.xdsl_profiles import (
     Xdsl_profilesArgs,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_profiles.xdsl_profiles import (
-    Xdsl_profilesFacts,
-)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.xdsl_profiles.xdsl_profiles import (
     Xdsl_profiles,
-)
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_profiles import (
-    Xdsl_profilesTemplate,
 )
 
 
@@ -296,24 +286,8 @@ def main():
         supports_check_mode=True,
     )
 
-    if module.params["state"] == "parsed":
-        template = Xdsl_profilesTemplate()
-        result = {
-            "changed": False,
-            "parsed": template.normalize(template.parse(module.params.get("running_config"))),
-        }
-    elif module.params["state"] == "gathered":
-        ansible_facts = {"ansible_network_resources": {}}
-        try:
-            facts = Xdsl_profilesFacts(module).populate_facts(get_resource_connection(module), ansible_facts)
-        except Exception as exc:  # like netcommon's facts: a clear failure, no traceback
-            module.fail_json(msg=to_text(exc))
-        result = {
-            "changed": False,
-            "gathered": facts.get("ansible_network_resources", {}).get("xdsl_profiles", {}),
-        }
-    else:
-        result = Xdsl_profiles(module).execute_module()
+    # Every state goes through the config class (gathered/parsed via Facts, as in the other modules).
+    result = Xdsl_profiles(module).execute_module()
     module.exit_json(**result)
 
 
