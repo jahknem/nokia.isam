@@ -46,6 +46,11 @@ class Isam_equipmentFacts(object):
             "slots": "info configure equipment slot %s flat detail",
             "appliques": "info configure equipment applique %s flat",
             "protection_groups": "info configure equipment protection-group %s flat",
+            "diagnostics_sfp": "info configure equipment diagnostics sfp %s flat",
+            "protection_elements": "info configure equipment protection-element %s flat",
+            "racks": "info configure equipment rack %s flat",
+            "external_link_assigns": "info configure equipment external-link-assign %s flat",
+            "external_link_hosts": "info configure equipment external-link-host %s flat",
         })
 
     def populate_facts(self, connection, ansible_facts, data=None):
@@ -64,12 +69,22 @@ class Isam_equipmentFacts(object):
             "slots": list(parsed.get("slots", {}).values()),
             "appliques": list(parsed.get("appliques", {}).values()),
             "protection_groups": list(parsed.get("protection_groups", {}).values()),
+            "diagnostics_sfp": list(parsed.get("diagnostics_sfp", {}).values()),
+            "protection_elements": list(parsed.get("protection_elements", {}).values()),
+            "racks": list(parsed.get("racks", {}).values()),
+            "external_link_assigns": list(parsed.get("external_link_assigns", {}).values()),
+            "external_link_hosts": list(parsed.get("external_link_hosts", {}).values()),
+            "envbox": parsed.get("envbox", {}),
+            "isam": parsed.get("isam", {}),
         }
 
         for group in objs["protection_groups"]:
             group["id"] = int(group["id"])
             if "eps_quenchfactor" in group:
                 group["eps_quenchfactor"] = int(group["eps_quenchfactor"])
+        for sfp in objs["diagnostics_sfp"]:
+            if "rssi_prof_id" in sfp:
+                sfp["rssi_prof_id"] = int(sfp["rssi_prof_id"])
 
         ansible_facts["ansible_network_resources"].pop("isam_equipment", None)
         params = utils.remove_empties(
@@ -109,6 +124,18 @@ class Isam_equipmentFacts(object):
                     current = line
                 continue
 
+            if line.startswith((
+                "configure equipment diagnostics sfp ",
+                "configure equipment protection-element ",
+                "configure equipment rack ",
+                "configure equipment external-link-assign ",
+                "configure equipment external-link-host ",
+                "configure equipment envbox",
+                "configure equipment isam",
+            )):
+                flat_config.extend(self._split_subregion_line(line))
+                continue
+
             if stripped in ("equipment", "configure equipment"):
                 in_equipment = True
                 current = None
@@ -144,6 +171,27 @@ class Isam_equipmentFacts(object):
             bool_fields=self._BOOL_FIELDS.get(resource, ()),
             value_fields=self._VALUE_FIELDS.get(resource, ()),
         ):
+            suffix = ("no " if negate else "") + key
+            if value is not None:
+                suffix += " " + value
+            commands.append(prefix + " " + suffix)
+        return commands
+
+    @staticmethod
+    def _split_subregion_line(line):
+        """Expand the newer equipment sub-regions into one command per attribute."""
+        tokens = line.split()
+        resource = tokens[2]
+        if resource == "diagnostics":  # configure equipment diagnostics sfp <id>
+            depth = 5
+        elif resource in ("envbox", "isam"):  # no identity
+            depth = 3
+        else:  # protection-element / rack / external-link-assign / external-link-host <id>
+            depth = 4
+        prefix = " ".join(tokens[:depth])
+        value_fields = ("rssi-prof-id", "rssi-state", "redcy-ctrl-status", "description", "remote", "direction")
+        commands = []
+        for negate, key, value in iter_cli_fields(tokens[depth:], bool_fields=("enable-supervise",), value_fields=value_fields):
             suffix = ("no " if negate else "") + key
             if value is not None:
                 suffix += " " + value
