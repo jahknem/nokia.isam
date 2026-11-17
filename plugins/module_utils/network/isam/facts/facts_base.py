@@ -65,6 +65,7 @@ RESOURCE_CONFIG_PREFIXES = {
         "configure qos dn-ctrl-pkt ",
     ),
     "qos_profiles": ("configure qos profiles ",),
+    "qos_tca": ("configure qos tca ",),
     "software_mngt": ("configure software-mngt ",),
     "system": ("configure system ",),
     "isam_system_security": ("configure system security ",),
