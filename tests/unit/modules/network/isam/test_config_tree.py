@@ -293,3 +293,22 @@ def test_gap_report_never_shows_values():
     entry = report["families"]["isam_system_security"]
     assert entry["value_like"] == 2
     assert entry["unmodelled"] == {"system security ssh sftp-user <value>": ["password"]}
+
+
+def test_alarm_names_ending_in_auth_or_key_are_not_secrets():
+    tree = parse_config_tree("configure alarm entry reg-auth severity major\nconfigure alarm entry ground-key severity minor")
+    lines = [line for leaf in leaves(tree) for line in leaf["lines"]]
+    assert "configure alarm entry reg-auth severity major" in lines
+    assert "configure alarm entry ground-key severity minor" in lines
+
+
+def test_secret_keywords_are_still_masked():
+    tree = parse_config_tree("\n".join([
+        "configure system security snmp community public host-address 10.0.0.1/32",
+        "configure system security radius auth-server R1 secret clear-text-secret",
+        "configure ntp ont 1/1/5/1/3 key clear-key-value",
+        "configure equipment ont interface 1/1/5/1/3 log-auth-pwd plain:******",
+    ]))
+    text = repr(tree)
+    assert "public" not in text and "clear-text-secret" not in text and "clear-key-value" not in text
+    assert "plain:******" in text

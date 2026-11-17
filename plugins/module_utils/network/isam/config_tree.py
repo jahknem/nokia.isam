@@ -33,7 +33,17 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_gra
 
 REDACTED = "<redacted>"
 _TOKEN_RE = re.compile(r'"[^"]*"|\S+')
-_SECRET = re.compile(r"(pwd|password|secret|community|key|auth)$", re.I)
+# Keywords whose following token is a secret value. Exact names (plus -pwd/-password/
+# -secret endings) rather than suffixes such as "auth"/"key": alarm names like
+# "reg-auth" or "ground-key" are identities, and masking after them destroyed data.
+_SECRET_WORDS = frozenset(("password", "passwd", "secret", "community", "key", "auth-key", "priv-key",
+                           "auth-password", "priv-password", "encryption-key", "shared-secret", "psk"))
+_SECRET_ENDINGS = ("-pwd", "-password", "-passwd", "-secret")
+
+
+def _is_secret(word):
+    word = str(word).lower()
+    return word in _SECRET_WORDS or word.endswith(_SECRET_ENDINGS)
 _INDEX = re.compile(r"^[\d/:.\-]+$|^\d")
 _WORD = re.compile(r"^[a-z][a-z0-9_/-]*$")
 _MASKED = ("plain:", "encrypted:")
@@ -123,7 +133,7 @@ def _heuristic_frame(tokens):
     kws = []
     i = 0
     while i < len(tokens) and tokens[i] != "no" and not _looks_like_identity(tokens[i]):
-        if i >= 2 and _SECRET.search(tokens[i]) and i + 1 < len(tokens) and tokens[i + 1] != REDACTED:
+        if i >= 2 and _is_secret(tokens[i]) and i + 1 < len(tokens) and tokens[i + 1] != REDACTED:
             break  # 'operator x password encrypted:..': password is an attribute
         kws.append(tokens[i])
         i += 1
@@ -174,7 +184,7 @@ def _unquote(v):
 
 
 def _redact(name, value):
-    if _SECRET.search(name) and isinstance(value, str) and not value.startswith(_MASKED):
+    if _is_secret(name) and isinstance(value, str) and not value.startswith(_MASKED):
         return REDACTED
     return value
 
@@ -184,7 +194,7 @@ def _redact_tokens(tokens):
     a cleartext value). Device-masked (plain:) and hashed (encrypted:) values are kept."""
     out = list(tokens)
     for i, token in enumerate(out):
-        if _SECRET.search(token) and i + 1 < len(out):
+        if _is_secret(token) and i + 1 < len(out):
             nxt = out[i + 1]
             if not nxt.startswith(_MASKED) and nxt != "no":
                 out[i + 1] = REDACTED
