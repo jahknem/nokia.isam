@@ -357,10 +357,16 @@ def _snake(name):
 
 
 def _argspec_option_names(spec):
+    """Every option name of an argspec (nested), with its aliases, in snake_case.
+
+    Some families keep the CLI spelling as option key (qos_profiles `q0-priority`) or
+    reach it through an alias; all of these count as modelled.
+    """
     names = set()
     for key, value in (spec or {}).items():
-        names.add(key)
+        names.add(_snake(key))
         if isinstance(value, dict):
+            names |= {_snake(alias) for alias in value.get("aliases") or []}
             names |= _argspec_option_names(value.get("options"))
     return names
 
