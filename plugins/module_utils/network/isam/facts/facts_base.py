@@ -311,8 +311,12 @@ def _targeted_reply(command, response):
         else:
             kept.append(line)
     if not kept:
-        return path + "\n"
-    return "\n".join(kept) + "\n"
+        # Only a real header ('#---', 'echo ...') proves the instance exists; an empty
+        # reply stays empty (absent).
+        return path + "\n" if ("#" in response or "echo" in response) else response
+    cleaned = "\n".join(kept)
+    # Unchanged replies keep their exact form (parsers and tests rely on it).
+    return response if cleaned == response.strip("\n") else cleaned + "\n"
 
 
 def _section_items(config, section):

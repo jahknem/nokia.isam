@@ -65,5 +65,5 @@ def test_a_bare_header_reply_is_an_instance_without_attributes(monkeypatch, name
     device = BareHeader(case["lines"] + case["sibling"], full=harness.full_commands(monkeypatch, case))
     result = harness.gathered(monkeypatch, case, case["config"], device)
     assert not result.get("failed"), result
-    assert case["marker"] in harness.text(result) or identity in harness.text(result), result
+    assert case["marker"] in harness.text(result), result
     assert case["sibling_marker"] not in harness.text(result), result
