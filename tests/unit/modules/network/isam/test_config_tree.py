@@ -70,9 +70,13 @@ def test_ungrammared_region_is_lossless_at_branch_granularity():
 
 def test_gap_report_flags_unclaimed_and_unmodelled():
     report = gap_report(parse_config_tree(SAMPLE))
-    assert report["system security"]["unclaimed"] is False or report["system security"].get("no_grammar")
-    # qos tca is a grammar node not claimed by any family prefix
-    assert any(k.startswith("qos tca") for k in report)
+    # system security has no grammar entry: flagged, but claimed by isam_system_security
+    assert report["system security"].get("no_grammar") and report["system security"]["unclaimed"] is False
+    # qos tca is claimed by isam_qos_tca: never reported as unclaimed
+    assert not any(v["unclaimed"] for k, v in report.items() if k.startswith("qos tca"))
+    # a node no family claims is reported as unclaimed
+    unclaimed = gap_report(parse_config_tree("configure qos global lt:1/1/2 no queue-stats"))
+    assert any(v["unclaimed"] for v in unclaimed.values())
 
 
 @pytest.mark.skipif(not CAPTURE.exists(), reason="lab capture not available")
