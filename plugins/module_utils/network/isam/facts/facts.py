@@ -35,6 +35,11 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.link_agg.link_agg import Link_aggFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xstp.xstp import XstpFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.alarm.alarm import AlarmFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_inm.xdsl_inm import Xdsl_inmFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_onts.xdsl_onts import Xdsl_ontsFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_system.xdsl_system import Xdsl_systemFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.l2uni_onts.l2uni_onts import L2uni_ontsFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.uni_onts.uni_onts import Uni_ontsFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.configuration.configuration import Config_treeFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ani_onts.ani_onts import Ani_ontsFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.dhcp_server.dhcp_server import Isam_dhcp_serverFacts
@@ -143,6 +148,11 @@ FACT_RESOURCE_SUBSETS = dict(
     qos_maps=Qos_mapsFacts,
     qos_profiles=Qos_profilesFacts,
     qos_tca=Qos_tcaFacts,
+    xdsl_inm=Xdsl_inmFacts,
+    xdsl_onts=Xdsl_ontsFacts,
+    xdsl_system=Xdsl_systemFacts,
+    l2uni_onts=L2uni_ontsFacts,
+    uni_onts=Uni_ontsFacts,
     software_mngt=Software_mngtFacts,
     system=Isam_systemFacts,
     isam_system_security=Isam_system_securityFacts,

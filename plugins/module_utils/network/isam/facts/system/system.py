@@ -19,6 +19,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.sy
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.system import (
     Isam_systemTemplate,
+    parse_sync_if_timing,
 )
 
 
@@ -35,6 +36,9 @@ class Isam_systemFacts(object):
             "sntp.servers": "info configure system sntp server-table ip-address %s flat",
             "syslog.destinations": "info configure system syslog destination %s flat",
             "syslog.routes": "info configure system syslog route %s flat",
+            "sync_if_timing.ssm": "info configure system sync-if-timing ssm %s flat",
+            "sync_if_timing.synce": "info configure system sync-if-timing synce %s flat",
+            "sync_if_timing.ssmout_synce": "info configure system sync-if-timing ssmout-synce %s flat",
         })
 
     def populate_facts(self, connection, ansible_facts, data=None):
@@ -140,6 +144,8 @@ class Isam_systemFacts(object):
                 target.update(parse_cli_key_values(values))
             elif section == "syslog":
                 self._parse_syslog(values, objs.setdefault("syslog", {}))
+            elif section == "sync-if-timing":
+                parse_sync_if_timing(values, objs.setdefault("sync_if_timing", {}))
 
         return objs
 

@@ -12,8 +12,71 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.system import (
+    SYNC_LEGACY_FIELDS,
+    SYNC_LISTS,
     Isam_systemTemplate,
+    render_sync_if_timing,
 )
+
+
+def _legacy_sync(section):
+    """Only the sync-if-timing fields compared through PARSERS (mode, source)."""
+    if section is None:
+        return None
+    return dict((k, v) for k, v in section.items() if k in SYNC_LEGACY_FIELDS)
+
+
+def _sync_values(section):
+    """The structured sync-if-timing fields, lists indexed by identity."""
+    out = {}
+    for key, value in (section or {}).items():
+        if key in SYNC_LEGACY_FIELDS or value is None:
+            continue
+        if key in SYNC_LISTS:
+            ident = SYNC_LISTS[key][1]
+            out[key] = dict((e[ident], deepcopy(e)) for e in value if e.get(ident) is not None)
+        else:
+            out[key] = deepcopy(value)
+    return out
+
+
+def _sync_diff(want, have):
+    out = {}
+    for key, value in want.items():
+        if value is None:
+            continue
+        current = have.get(key)
+        if isinstance(value, dict):
+            sub = _sync_diff(value, current if isinstance(current, dict) else {})
+            if sub:
+                out[key] = sub
+        elif value != current:
+            out[key] = value
+    return out
+
+
+def _sync_absent(want, have):
+    out = {}
+    for key, value in have.items():
+        if value is None:
+            continue
+        wanted = want.get(key)
+        if isinstance(value, dict):
+            sub = _sync_absent(wanted if isinstance(wanted, dict) else {}, value)
+            if sub:
+                out[key] = sub
+        elif wanted is None:
+            out[key] = value
+    return out
+
+
+def _sync_lists(values):
+    """Back from identity-indexed lists to lists, each entry carrying its identity."""
+    out = dict(values)
+    for key, (_cli, ident) in SYNC_LISTS.items():
+        if key in out:
+            out[key] = [dict(entry, **{ident: name}) for name, entry in out[key].items()]
+    return out
 
 
 class Isam_system(ResourceModule):
@@ -75,6 +138,10 @@ class Isam_system(ResourceModule):
                 have_section = (
                     {section: have.get(section)} if section in have else None
                 )
+            elif section == "sync_if_timing":
+                self._sync_commands(want.get(section), have.get(section))
+                want_section = _legacy_sync(want.get(section))
+                have_section = _legacy_sync(have.get(section))
             else:
                 want_section = want.get(section)
                 have_section = have.get(section)
@@ -95,6 +162,35 @@ class Isam_system(ResourceModule):
 
             if want_section is not None:
                 self._compare_section(want_section, have_section or {}, parsers)
+
+    def _sync_commands(self, want_section, have_section):
+        """sync-if-timing references, SSM, SyncE and BITS settings (not PARSERS based).
+
+        Lists are fixed instances (timing references, SyncE ports): an instance not
+        wanted is reset, never removed.
+        """
+        if want_section is None and self.state != "overridden":
+            return
+        wantv = _sync_values(want_section)
+        havev = _sync_values(have_section)
+        if self.state == "deleted":
+            reset = havev
+            changed = {}
+        else:
+            changed = _sync_diff(wantv, havev)
+            reset = {}
+            if self.state in ("replaced", "overridden"):
+                reset = _sync_absent(wantv, havev)
+        # list entries keep only the attributes to render; identity is re-added below
+        for key, (_cli, ident) in SYNC_LISTS.items():
+            for values in (changed, reset):
+                for name in list((values.get(key) or {})):
+                    entry = values[key][name]
+                    entry.pop(ident, None)
+                    if not entry:
+                        del values[key][name]
+        self.commands.extend(render_sync_if_timing(_sync_lists(changed)))
+        self.commands.extend(render_sync_if_timing(_sync_lists(reset), reset=True))
 
     def _compare_section(self, want, have, parsers):
         self.compare(parsers=parsers, want=want, have=have)

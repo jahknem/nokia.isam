@@ -11,12 +11,192 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 )
 
 
+_TOKEN = re.compile(r'"[^"]*"|\S+')
+
+# CLI family -> resource key
+FAMILIES = (("igmp", "igmp"), ("mcast-control", "mcast_control"))
+
+# (CLI keyword, field, type) in device order; type "bool" is a [no] flag.
+PACKAGE_FIELDS = (
+    ("name", "name", "str"),
+    ("template-name", "template_name", "str"),
+    ("template-version", "template_version", "int"),
+)
+
+CDR_TYPE_FIELDS = (
+    ("periodic", "periodic", "bool"),
+    ("period", "period", "int"),
+    ("attempt-max-pview", "attempt_max_pview", "bool"),
+    ("attempt-blackout", "attempt_blackout", "bool"),
+    ("attempt-no-perm", "attempt_no_perm", "bool"),
+)
+
+
+def _system_fields(mld):
+    fields = [("src-ip-address", "src_ip_address", "str")]
+    if mld:
+        fields.append(("v6-src-ip-address", "v6_src_ip_address", "str"))
+    fields += [
+        ("verify-checksum", "verify_checksum", "bool"),
+        ("query-interval", "query_interval", "int"),
+        ("max-rsp-time", "max_rsp_time", "int"),
+        ("robustness", "robustness", "int"),
+        ("mem-query-int", "mem_query_int", "int"),
+        ("last-memb-cnt", "last_memb_cnt", "int"),
+        ("last-max-resp-tim", "last_max_resp_tim", "int"),
+        ("host-report-intv", "host_report_intv", "int"),
+        ("start", "start", "bool"),
+        ("preview-valid", "preview_valid", "int"),
+        ("cdr-validation", "cdr_validation", "str"),
+        ("cdr-generation", "cdr_generation", "bool"),
+        ("except-cdr-rate", "except_cdr_rate", "int"),
+        ("cdr-export", "cdr_export", "str"),
+        ("cdr-file-aging", "cdr_file_aging", "int"),
+        ("cdr-polling", "cdr_polling", "int"),
+        ("user-igmp-version", "user_igmp_version", "str"),
+        ("netw-igmp-version", "netw_igmp_version", "str"),
+    ]
+    if mld:
+        fields += [
+            ("user-mld-version", "user_mld_version", "str"),
+            ("netw-mld-version", "netw_mld_version", "str"),
+        ]
+    fields += [
+        ("v3-max-num-rec", "v3_max_num_rec", "int"),
+        ("forking", "forking", "bool"),
+        ("lt-ont-signaling", "lt_ont_signaling", "bool"),
+        ("vlan-selection", "vlan_selection", "bool"),
+        ("disc-lwr-version", "disc_lwr_version", "bool"),
+        ("uncfg-mcast-supp", "uncfg_mcast_supp", "str"),
+    ]
+    return tuple(fields)
+
+
+SYSTEM_FIELDS = {"igmp": _system_fields(False), "mcast_control": _system_fields(True)}
+
+_PACKAGE = re.compile(r"^configure\s(?P<family>igmp|mcast-control)\spackage\s(?P<index>\d+)(?:\s(?P<rest>.*))?$")
+_CDR_TYPE = re.compile(r"^configure\s(?P<family>igmp|mcast-control)\ssystem\scdr-type(?:\s(?P<rest>.*))?$")
+_SYSTEM = re.compile(r"^configure\s(?P<family>igmp|mcast-control)\ssystem(?:\s(?P<rest>(?!cdr-type(?:\s|$)).*))?$")
+
+
+def _unquote(value):
+    return value[1:-1] if len(value) >= 2 and value.startswith('"') and value.endswith('"') else value
+
+
+def _quote(value):
+    value = str(value)
+    return '"%s"' % value if not value or re.search(r"\s", value) else value
+
+
+def parse_attributes(rest, fields):
+    """Attribute tokens of one line -> (entry, leftover tokens).
+
+    ``no <value field>`` is the default (absent), ``[no] <flag>`` is False/True.
+    """
+    by_cli = dict((cli, (key, kind)) for cli, key, kind in fields)
+    tokens = _TOKEN.findall(rest or "")
+    entry, leftover, i = {}, [], 0
+    while i < len(tokens):
+        negate = tokens[i] == "no" and i + 1 < len(tokens) and tokens[i + 1] in by_cli
+        cli = tokens[i + 1] if negate else tokens[i]
+        if cli not in by_cli:
+            leftover.append(tokens[i])
+            i += 1
+            continue
+        key, kind = by_cli[cli]
+        i += 2 if negate else 1
+        if kind == "bool":
+            entry[key] = not negate
+        elif negate:
+            entry.pop(key, None)
+        elif i < len(tokens):
+            value = _unquote(tokens[i])
+            entry[key] = int(value) if kind == "int" and value.isdigit() else value
+            i += 1
+        else:
+            leftover.append(cli)
+    return entry, leftover
+
+
+def parse_line(line):
+    """One package/system line -> (resource key, section, index, entry, leftover), or None."""
+    for regex, section in ((_PACKAGE, "packages"), (_CDR_TYPE, "cdr_type"), (_SYSTEM, "system")):
+        match = regex.match(line)
+        if not match:
+            continue
+        family = "igmp" if match.group("family") == "igmp" else "mcast_control"
+        fields = PACKAGE_FIELDS if section == "packages" else CDR_TYPE_FIELDS if section == "cdr_type" else SYSTEM_FIELDS[family]
+        entry, leftover = parse_attributes(match.group("rest"), fields)
+        index = int(match.group("index")) if section == "packages" else None
+        return family, section, index, entry, leftover
+    return None
+
+
+def render_attributes(fields, want, have, reset):
+    """Attribute words setting want (where it differs from have) and resetting ``reset`` keys."""
+    words = []
+    for cli, key, kind in fields:
+        if want.get(key) is not None:
+            value = want[key]
+            current = have.get(key)
+            if kind == "bool":
+                if bool(value) != bool(current):
+                    words.append(cli if value else "no " + cli)
+            elif current is None or str(value) != str(current):
+                words.append("%s %s" % (cli, _quote(value)))
+        elif key in reset:
+            if kind == "bool":
+                if have.get(key):
+                    words.append("no " + cli)
+            elif have.get(key) is not None:
+                words.append("no " + cli)
+    return words
+
+
+def cli_family(resource):
+    return "igmp" if resource == "igmp" else "mcast-control"
+
+
 class MulticastTemplate(NetworkTemplate):
     def __init__(self, lines=None, module=None):
         super(MulticastTemplate, self).__init__(lines=lines, tmplt=self, module=module)
 
+    def parse(self):
+        """Regex parsers for the context selectors, a token parser for package/system lines.
+
+        Packages with only default values (``no name no template-name no template-version``
+        in ``detail`` output) are not returned: the 1024 package slots always exist.
+        """
+        result = super(MulticastTemplate, self).parse()
+        packages = {}
+        for raw in self._lines:
+            parsed = parse_line(raw.strip())
+            if parsed is None:
+                continue
+            family, section, index, entry, leftover = parsed
+            if section == "packages":
+                packages.setdefault(family, {}).setdefault(index, {}).update(entry)
+            elif not entry:
+                continue
+            elif section == "cdr_type":
+                result.setdefault(family, {}).setdefault("system", {}).setdefault("cdr_type", {}).update(entry)
+            else:
+                result.setdefault(family, {}).setdefault("system", {}).update(entry)
+        for family, by_index in packages.items():
+            entries = [dict(entry, index=index) for index, entry in sorted(by_index.items()) if entry]
+            if entries:
+                result.setdefault(family, {})["packages"] = entries
+        return result
+
     # fmt: off
     PARSERS = [
+        {
+            # Claims package/system lines for the unmatched-line tracker; parse() reads them.
+            "name": "package_system",
+            "getval": re.compile(r"^configure\s(?:igmp|mcast-control)\s(?:package\s\d+|system)(?:\s.*)?$"),
+            "setval": "",
+            "result": {},
+        },
         {
             "name": "igmp.mcast_svc_context",
             "getval": re.compile(

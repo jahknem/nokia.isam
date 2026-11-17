@@ -19,6 +19,7 @@ SCOPED_RMS = {
     "Qos_interfaces",
     "Vlans",
     "Xdsl_boards",
+    "Xdsl_inm",
     "Xdsl_lines",
 }
 
@@ -33,7 +34,7 @@ UNSCOPED_RMS = {
     "Equipment_replan": "single global option",
     "Interface_alarms": "identity plus one configurable field",
     "InterfaceCages": "live output has one field per cage; packed form unconfirmed",
-    "Igmp": "live output only confirms context selector",
+    "Igmp": "package/system emitted as one line per object; context selector separate",
     "Iphost": "object-level command",
     "Isam_arp_relay": "single global statistics option",
     "Isam_dhcp_relay": "distinct top-level command families",
@@ -49,8 +50,8 @@ UNSCOPED_RMS = {
     "L2cpSession": "distinct session operations",
     "L2cpUserPort": "distinct user-port operations",
     "Li_vlan": "single VLAN field",
-    "Mcast_control": "live output only confirms context selector",
-    "Multicast": "live output only confirms context selector",
+    "Mcast_control": "package/system emitted as one line per object; context selector separate",
+    "Multicast": "package/system emitted as one line per object; context selector separate",
     "Ntp_onts": "per-ONT fields are separate command verbs",
     "PppoeClient": "custom renderer emits complete object commands",
     "Pppoel2": "per-interface operations use distinct verbs",
@@ -61,6 +62,10 @@ UNSCOPED_RMS = {
     "Xdsl_profiles": "profile commands have distinct nested scopes",
     "Xdsl_bonding": "single global option",
     "Xstp": "global and per-port scopes differ",
+    "Xdsl_onts": "single attribute per ONT",
+    "Xdsl_system": "single global option",
+    "L2uni_onts": "custom renderer already packs one command per UNI scope",
+    "Uni_onts": "single field per UNI",
 }
 
 

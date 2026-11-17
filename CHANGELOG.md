@@ -16,6 +16,25 @@
   Nodes without a grammar entry are kept losslessly at branch granularity and flagged.
 - `config_tree.gap_report` shows what the root contains that the families do not model:
   unclaimed nodes (no family), nodes without a grammar, and unmodelled attributes.
+- `isam_system_security` slice 2: SNMP notify-views, domains, SSH (server profile,
+  access, SFTP users), file transfer (servers), TACACS, LI, password policy, default
+  profile, slots, peripheral-management MAC filters, PAE (802.1X) port access and per-port
+  authenticator / ext-authenticator, and the general settings line. Slice-1 fixes: SNMP
+  communities are keyed by name and host-address, views by name and subtree; removals use
+  the device form (`snmp no view X subtree S`); `deleted` with config only touches the
+  named sections; values with spaces are quoted; replaced/overridden reset omitted
+  attributes. All 679 security lines of the lab detail capture parse.
+- `isam_system` models `sync-if-timing` (revert, wait-time, thresholds, BITS, bits-bind,
+  force-reference, ref-order, ssm, synce, ssmout-synce).
+- `isam_igmp` / `isam_mcast_control` / `isam_multicast`: `packages` (targeted by index)
+  and the `system` settings incl. `cdr-type`. Packages cannot be removed, only reset;
+  all-default packages are not reported.
+- New resources `isam_l2uni_onts` (UNI performance monitor incl. `pm-collect-ext`, TC-layer
+  thresholds) and `isam_uni_onts` (UNI TC layer), keyed by `uni_idx`; defaults are not
+  reported; removal resets to the default.
+- New resources `isam_xdsl_inm` (impulse noise sensors near-end / far-end),
+  `isam_xdsl_onts` (xDSL ONT interface, keyed by `ont_idx`) and `isam_xdsl_system`
+  (`auto-port-reset`).
 - New resource `isam_system_security` (slice 1): operators, profiles (permissions as a
   dict), SNMP communities/views/managers/notify-profiles, RADIUS auth-servers/policies/
   auth-super-user/dyn-auth-clients. Targeted gathering by name; secret values (operator
