@@ -6,7 +6,6 @@ __metaclass__ = type
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
-    get_targeted_config,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.vlan_global.vlan_global import (
@@ -30,9 +29,8 @@ class Isam_vlan_globalFacts(object):
         The device lists them as 'configure vlan priority-regen <id> profile-name ...';
         the parser takes <id> as priority_regen[].id.
         """
-        return get_targeted_config(self._module, connection, "isam_vlan_global", "info configure vlan flat", {
-            "priority_regen": "info configure vlan priority-regen %s flat",
-        })
+        # The device has no single-instance read for priority-regen profiles ("invalid token").
+        return connection.get("info configure vlan flat")
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}

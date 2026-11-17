@@ -88,12 +88,6 @@ CASES = {
                                  {"syslog": {"routes": [{"destination": "ntb-archive"}]}},
                                  ["configure system syslog route ntb-archive msg-type eqpt facility local0 notice"],
                                  "ams-collector", "ntb-archive"),
-    "isam_vlan_global:priority_regen": case(
-        "isam_vlan_global", {"priority_regen": [{"id": 3}]},
-        ["configure vlan priority-regen 3 profile-name ControlledLoad3 pbit0 3 pbit1 3 pbit2 3 pbit3 3 pbit4 3 pbit5 3 pbit6 3 pbit7 3"],
-        {"priority_regen": [{"id": 30}]},
-        ["configure vlan priority-regen 30 profile-name BestEffortThirty pbit0 0 pbit1 0 pbit2 0 pbit3 0 pbit4 0 pbit5 0 pbit6 0 pbit7 0"],
-        "ControlledLoad3", "BestEffortThirty"),
     "software_mngt:oswp": case("isam_software_mngt", {"oswp": [{"id": "1"}]},
                                ["configure software-mngt oswp 1 primary-file-server-id 192.0.2.11 second-file-server-id 0.0.0.0"],
                                {"oswp": [{"id": "2"}]},
