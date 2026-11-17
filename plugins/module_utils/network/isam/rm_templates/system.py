@@ -486,3 +486,175 @@ def render_sync_if_timing(values, reset=False):
         if parts:
             commands.append("{0} ssmout-synce {1} {2}".format(SYNC_PREFIX, entry["port"], " ".join(parts)))
     return commands
+
+
+# ---------------------------------------------------------------------------
+# Settings attributes from the real 'info configure detail flat' (no CLI help is
+# available for 'configure system'; flag vs. value is inferred from the keyword
+# and the detail output, set/reset forms are NOT verified on a device):
+#
+#   configure system id <node-id> name <n> location <l> [no] access-oper-id <v> [no] system-40gkr4
+#       contact-person <c> [no] en-snmp-auth-trap nt-intercon-vlan <v> [no] periph-mgnt-vlan <v> ...
+#   configure system sntp server-ip-addr <ip> [no] server-port <p> polling-rate <n> [no] enable ...
+#   configure system syslog [no] version <v> [no] time-format <v>
+#   configure system syslog destination <name> type <t> [no] disable [no] upload-rotate
+#       [no] persist-enable [no] persist-timer <n>
+#   configure system syslog route <dest> msg-type <t> facility <f> [no] syslog-vlan <v> [no] <severity>...
+#   configure system transaction [no] time-out-value <n> log-full-action <a>
+#   configure system external-leds [no] status
+#   configure system auto-laser-shutdown [no] action <v>
+#   configure system auto-switch [no] xdsl-atm-ptm [no] xdsl-stepup-delay
+#   configure system zero-touch-provision [no] action <v>
+#   configure system pon-ont [no] slid-mode <v> [no] pwrbrst-mode <v> [no] sn-bundle-timer <n>
+#       [no] sw-ver-mis-block [no] sn-autounlock
+#   configure system nt-sftp [no] write-enable
+#
+# 'no <kw>' is the device default and is not reported (flags included: only a set
+# flag is reported, as True). Reset: 'no <kw>'. Values of int attributes that are
+# not numeric are ignored (never fail the read); unknown tokens are ignored.
+# ---------------------------------------------------------------------------
+
+# (option, CLI keyword, kind "str" | "int" | "bool")
+ID_ATTRS = (
+    ("access_oper_id", "access-oper-id", "str"),
+    ("system_40gkr4", "system-40gkr4", "bool"),
+    ("en_snmp_auth_trap", "en-snmp-auth-trap", "bool"),
+    ("periph_mgnt_vlan", "periph-mgnt-vlan", "int"),
+    ("periph_mgnt_ctrl", "periph-mgnt-ctrl", "bool"),
+    ("port_num_in_proto", "port-num-in-proto", "str"),
+    ("ont_trc_dbg_vlan", "ont-trc-dbg-vlan", "int"),
+    ("ntr_ssmout_vlan", "ntr-ssmout-vlan", "int"),
+    ("ntr_ptp_vlan", "ntr-ptp-vlan", "int"),
+    ("customer_id", "customer-id", "str"),
+    ("voiceoswp", "voiceoswp", "str"),
+    ("scalingmode", "scalingmode", "str"),
+    ("arp_polling_inter", "arp-polling-inter", "int"),
+    ("bsnap_state", "bsnap-state", "str"),
+    ("bsnap_server_ip", "bsnap-server-ip", "str"),
+    ("bsnap_server_port", "bsnap-server-port", "int"),
+    ("arp_tca_threshold", "arp-tca-threshold", "int"),
+)
+# keywords of the id line handled elsewhere (never consumed as a value)
+ID_OTHER_KEYWORDS = ("name", "location", "contact-person", "nt-intercon-vlan", "internal-nw-vlan", "system-mac")
+
+SYSLOG_DEST_ATTRS = (
+    ("disable", "disable", "bool"),
+    ("upload_rotate", "upload-rotate", "bool"),
+    ("persist_enable", "persist-enable", "bool"),
+    ("persist_timer", "persist-timer", "int"),
+)
+SYSLOG_ROUTE_ATTRS = (
+    ("syslog_vlan", "syslog-vlan", "int"),
+)
+SYSLOG_SEVERITIES = ("emergency", "alert", "critical", "error", "warning", "notice", "information", "debug")
+
+# section -> (CLI node after 'configure system', attrs, other keywords of the node)
+SETTINGS = {
+    "id": ("id", ID_ATTRS, ID_OTHER_KEYWORDS),
+    "sntp": ("sntp", (("server_port", "server-port", "int"),),
+             ("server-ip-addr", "polling-rate", "enable", "timezone-offset")),
+    "syslog": ("syslog", (("version", "version", "str"), ("time_format", "time-format", "str")), ()),
+    "transaction": ("transaction", (("time_out_value", "time-out-value", "int"),), ("log-full-action",)),
+    "external_leds": ("external-leds", (("status", "status", "bool"),), ()),
+    "auto_laser_shutdown": ("auto-laser-shutdown", (("action", "action", "str"),), ()),
+    "auto_switch": ("auto-switch", (("xdsl_atm_ptm", "xdsl-atm-ptm", "bool"),
+                                    ("xdsl_stepup_delay", "xdsl-stepup-delay", "bool")), ()),
+    "zero_touch_provision": ("zero-touch-provision", (("action", "action", "str"),), ()),
+    "pon_ont": ("pon-ont", (
+        ("slid_mode", "slid-mode", "str"),
+        ("pwrbrst_mode", "pwrbrst-mode", "str"),
+        ("sn_bundle_timer", "sn-bundle-timer", "int"),
+        ("sw_ver_mis_block", "sw-ver-mis-block", "bool"),
+        ("sn_autounlock", "sn-autounlock", "bool"),
+    ), ()),
+    "nt_sftp": ("nt-sftp", (("write_enable", "write-enable", "bool"),), ()),
+}
+# (section, list option) -> (CLI node, identity option, attrs, other keywords)
+SETTINGS_LISTS = {
+    ("syslog", "destinations"): ("syslog destination", "name", SYSLOG_DEST_ATTRS, ("type",)),
+    ("syslog", "routes"): ("syslog route", "destination", SYSLOG_ROUTE_ATTRS,
+                           ("msg-type", "facility") + SYSLOG_SEVERITIES),
+}
+# CLI node -> section, for the nodes that only hold SETTINGS attributes
+SETTINGS_NODES = dict((node, section) for section, (node, _a, _o) in SETTINGS.items()
+                      if section not in ("id", "sntp", "syslog", "transaction"))
+
+
+def parse_settings(tokens, attrs, target, other_keywords=()):
+    """Apply packed '[no] <kw> [<value>]' tokens of attrs to target (see block comment)."""
+    cli = dict((c, (option, kind)) for option, c, kind in attrs)
+    keywords = set(cli) | set(other_keywords)
+    i = 0
+    while i < len(tokens):
+        negate = tokens[i] == "no" and i + 1 < len(tokens) and tokens[i + 1] in keywords
+        key = tokens[i + 1] if negate else tokens[i]
+        i += 2 if negate else 1
+        if key not in cli:
+            continue
+        option, kind = cli[key]
+        if negate:
+            target.pop(option, None)
+        elif kind == "bool":
+            target[option] = True
+        elif i < len(tokens) and tokens[i] not in keywords and tokens[i] != "no":
+            value = tokens[i].strip('"')
+            i += 1
+            if kind == "int":
+                if not value.lstrip("-").isdigit():
+                    target.pop(option, None)
+                    continue
+                value = int(value)
+            target[option] = value
+    return target
+
+
+def _setting_quote(value):
+    value = str(value)
+    return '"' + value + '"' if value == "" or re.search(r"\s", value) else value
+
+
+def render_settings(attrs, values, reset=False):
+    """'[no] <kw> [<value>]' clauses of the given values (reset=True: 'no <kw>')."""
+    parts = []
+    for option, cli, kind in attrs:
+        value = values.get(option)
+        if value is None:
+            continue
+        if reset or (kind == "bool" and not value):
+            parts.append("no " + cli)
+        elif kind == "bool":
+            parts.append(cli)
+        else:
+            parts.append("{0} {1}".format(cli, _setting_quote(value)))
+    return parts
+
+
+def settings_prefix(section, node_id=None):
+    """Command prefix of a SETTINGS section ('configure system id <node-id>' for id)."""
+    prefix = "configure system " + SETTINGS[section][0]
+    if section == "id" and node_id:
+        prefix += " " + _setting_quote(node_id)
+    return prefix
+
+
+def render_settings_commands(values, reset=False, node_id=None):
+    """Commands setting (reset=True: resetting) structured settings values.
+
+    values: {section: {option: value, list option: [{identity, option: value}]}},
+    restricted to the SETTINGS / SETTINGS_LISTS attributes.
+    """
+    commands = []
+    for section in SETTINGS:
+        section_values = values.get(section) or {}
+        parts = render_settings(SETTINGS[section][1], section_values, reset)
+        if parts:
+            commands.append(settings_prefix(section, node_id) + " " + " ".join(parts))
+        for (list_section, key), (node, ident, attrs, _other) in SETTINGS_LISTS.items():
+            if list_section != section:
+                continue
+            for entry in section_values.get(key) or []:
+                parts = render_settings(attrs, entry, reset)
+                if parts:
+                    commands.append("configure system {0} {1} {2}".format(
+                        node, _setting_quote(entry[ident]), " ".join(parts)))
+    return commands

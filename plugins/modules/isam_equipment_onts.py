@@ -82,6 +82,105 @@ options:
             description: IP host connectivity allowance mode.
             type: str
             choices: [disable, enable]
+          battery_bkup:
+            description:
+              - Battery backup (C(battery-bkup)), C(disable) or C(enable); device default C(disable).
+            type: str
+          berint:
+            description:
+              - Accumulation interval in downstream frames for the ONU BER calculation (C(berint)), 8000-100000; device default C(8000).
+            type: str
+          desc1:
+            description:
+              - Free-form ONT description 1 (C(desc1)), at most 64 characters; device default empty.
+            type: str
+          desc2:
+            description:
+              - Free-form ONT description 2 (C(desc2)), at most 64 characters; device default empty.
+            type: str
+          provversion:
+            description:
+              - Provisioned version number (C(provversion)); device default C(*).
+            type: str
+          pwr_shed_prof_id:
+            description:
+              - Power shed profile index (C(pwr-shed-prof-id)), C(none) or 0-50; device default C(none).
+            type: str
+          rf_filter:
+            description:
+              - RF video filter (C(rf-filter)), one of C(pass-none), C(pass-low), C(pass-low-high), C(pass-low-middle);
+                device default C(pass-low-high).
+            type: str
+          us_police_mode:
+            description:
+              - Upstream police mode (C(us-police-mode)), C(local), C(remote) or the obsolete C(network); device default C(local).
+            type: str
+          slid_visibility:
+            description:
+              - SLID visibility (C(slid-visibility)), C(disabled), C(enabled-slid-on) or C(enabled-all); device default C(disabled).
+            type: str
+          log_auth_id:
+            description:
+              - Logical authentication id of the ONT (C(log-auth-id)), at most 24 characters; device default empty.
+            type: str
+          sn_bundle_ctrl:
+            description:
+              - Serial number bundling with SLID/LOID (C(sn-bundle-ctrl)), C(unbundle), C(bundle) or C(auto); device default C(unbundle).
+            type: str
+          pland_cfgfile1:
+            description:
+              - Planned configuration file 1 version (C(pland-cfgfile1)); device default C(DISABLED).
+            type: str
+          pland_cfgfile2:
+            description:
+              - Planned configuration file 2 version (C(pland-cfgfile2)); device default C(DISABLED).
+            type: str
+          dnload_cfgfile1:
+            description:
+              - Configuration file 1 version to download (C(dnload-cfgfile1)); device default C(DISABLED).
+            type: str
+          dnload_cfgfile2:
+            description:
+              - Configuration file 2 version to download (C(dnload-cfgfile2)); device default C(DISABLED).
+            type: str
+          us_tcpolice_mode:
+            description:
+              - Upstream TC (GEM port) police mode (C(us-tcpolice-mode)), C(local) or C(remote); device default C(local).
+            type: str
+          oltdscppbitalign:
+            description:
+              - Whether the OLT aligns DSCP to P-bit for this ONU (C(oltdscppbitalign)), C(disable) or C(enable); device default C(disable).
+            type: str
+          ratelimit_us_dhcp:
+            description:
+              - Upstream DHCP rate limit in packets per second (C(ratelimit-us-dhcp)), 0 (disabled) to 16; device default C(10).
+            type: str
+          ratelimit_us_arp:
+            description:
+              - Upstream ARP rate limit in packets per second (C(ratelimit-us-arp)), 0 (disabled) to 16; device default C(10).
+            type: str
+          flush_mac:
+            description:
+              - Flush learned MACs when UNIs of this ONT go down (C(flush-mac)), C(disable) or C(enable); device default C(disable).
+            type: str
+          template_name:
+            description:
+              - ONU auto-provisioning template name (C(template-name)), at most 20 characters; device default C(DEFAULT).
+            type: str
+          evtocd:
+            description:
+              - Extended VLAN tagging operation configuration data ME control (C(evtocd)), C(disable) or C(enable); device default C(enable).
+            type: str
+          vtfd:
+            description:
+              - VLAN tagging filter data ME control (C(vtfd)), C(disable) or C(enable); device default C(enable).
+            type: str
+          pwr_shed_prof_name:
+            description:
+              - Power shed profile name (C(pwr-shed-prof-name)) as displayed by the device.
+              - The CLI help lists it only as a display parameter; a value given here is rendered as C(pwr-shed-prof-name <value>),
+                which is unverified on the device. Prefer O(config.interfaces[].pwr_shed_prof_id) for writes.
+            type: str
           admin_state:
             description: Administrative state.
             type: str

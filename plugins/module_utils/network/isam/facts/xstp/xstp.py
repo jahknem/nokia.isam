@@ -17,8 +17,25 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.xs
     XstpArgs,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xstp import (
+    XSTP_GENERAL_FIELDS,
+    XSTP_PORT_FIELDS,
+    XSTP_PORT_FLAGS,
     XstpTemplate,
 )
+
+_GENERAL_BY_CLI = dict((spec[0], (field, spec[2], spec[1])) for field, spec in XSTP_GENERAL_FIELDS.items())
+_PORT_BY_CLI = dict((spec[0], (field, spec[2], spec[1])) for field, spec in XSTP_PORT_FIELDS.items())
+_PORT_FLAG_BY_CLI = dict((cli, field) for field, cli in XSTP_PORT_FLAGS.items())
+
+
+def _set_value(target, field, kind, raw, default):
+    """Store a CLI value unless it is the device default; a value that does not fit the type is skipped."""
+    try:
+        value = kind(raw)
+    except ValueError:
+        return
+    if value != default:
+        target[field] = value
 
 
 class XstpFacts(object):
@@ -131,17 +148,37 @@ class XstpFacts(object):
             elif token == "region-name" and index + 1 < len(tokens):
                 general["region_name"] = tokens[index + 1]
                 index += 1
+            elif token == "no" and index + 1 < len(tokens) and tokens[index + 1] in _GENERAL_BY_CLI:
+                index += 1  # 'no <attr>': the device default, not reported
+            elif token in _GENERAL_BY_CLI and index + 1 < len(tokens):
+                field, kind, default = _GENERAL_BY_CLI[token]
+                _set_value(general, field, kind, tokens[index + 1], default)
+                index += 1
             index += 1
 
     def _parse_port_option(self, line, port):
-        """One or several port options, e.g. 'path-cost 200000' (unknown options are skipped)."""
+        """One or several port options, e.g. 'path-cost 200000' (unknown options are skipped).
+
+        Defaults printed in detail mode ('no priority', 'no edge-port', ...) are not reported.
+        """
         tokens = self._tokens(line)
         index = 0
         while index < len(tokens):
-            if tokens[index] == "path-cost" and index + 1 < len(tokens):
+            token = tokens[index]
+            if token == "path-cost" and index + 1 < len(tokens):
                 try:
                     port["path_cost"] = int(tokens[index + 1])
                 except ValueError:
                     pass
+                index += 1
+            elif token == "no" and index + 1 < len(tokens) and (
+                tokens[index + 1] in _PORT_BY_CLI or tokens[index + 1] in _PORT_FLAG_BY_CLI
+            ):
+                index += 1
+            elif token in _PORT_FLAG_BY_CLI:
+                port[_PORT_FLAG_BY_CLI[token]] = True
+            elif token in _PORT_BY_CLI and index + 1 < len(tokens):
+                field, kind, default = _PORT_BY_CLI[token]
+                _set_value(port, field, kind, tokens[index + 1], default)
                 index += 1
             index += 1

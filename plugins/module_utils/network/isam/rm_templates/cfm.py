@@ -6,6 +6,9 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common imp
     parse_cli_fields,
 )
 
+# configure cfm slm inactivity-time: device default (seconds), from the CLI help
+SLM_INACTIVITY_DEFAULT = 100
+
 
 class CfmTemplate(NetworkTemplate):
     """Parser for the flat CFM command form returned by ISAM."""
@@ -41,8 +44,15 @@ class CfmTemplate(NetworkTemplate):
             if len(words) < 3 or words[:2] != ["configure", "cfm"]:
                 continue
             if words[2] == "slm":
-                if len(words) >= 5 and words[3] == "inactivity-time":
-                    result["slm"]["inactivity_time"] = int(words[4])
+                # configure cfm slm [ no inactivity-time | inactivity-time <10..100> ]
+                # 'no inactivity-time' and the default 100 are not reported.
+                if len(words) >= 5 and words[3] == "inactivity-time" and words[4].isdigit():
+                    if int(words[4]) == SLM_INACTIVITY_DEFAULT:
+                        result["slm"].pop("inactivity_time", None)
+                    else:
+                        result["slm"]["inactivity_time"] = int(words[4])
+                elif "inactivity-time" in words[3:5] and words[3] == "no":
+                    result["slm"].pop("inactivity_time", None)
                 continue
             if words[2] == "y1731pm":
                 self._parse_pm(words[3:], result["y1731pm"])

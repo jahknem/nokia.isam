@@ -9,8 +9,15 @@ DOCUMENTATION = """
 module: isam_system
 short_description: Manages system configuration on Nokia ISAM.
 description:
-  - Manages the C(configure system) resources including id, security, sntp,
-    sync-if-timing, syslog, and transaction settings.
+  - Manages the C(configure system) resources including id, sntp, sync-if-timing, syslog, transaction,
+    external-leds, auto-laser-shutdown, auto-switch, zero-touch-provision, pon-ont and nt-sftp settings.
+  - C(configure system security) belongs to M(nokia.isam.isam_system_security); this module does not read it
+    (the I(security) option is deprecated, see there).
+  - Settings attributes added from the real C(info configure detail flat) output (marked below) are reported only
+    when they differ from the device default (C(no <keyword>)); a flag is reported only when set (C(true)).
+    I(state=merged) sets what differs, I(state=replaced) and I(state=overridden) also reset what a given section
+    omits with C(configure system <node> no <keyword>) (overridden also omitted sections), I(state=deleted) resets
+    the given sections. These set/reset forms are inferred from the detail output and not yet verified on a device.
 version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:
@@ -32,7 +39,10 @@ options:
             description: System contact information.
             type: str
           node_id:
-            description: System node identifier.
+            description:
+              - System node identifier (the C(<node-id>) of C(configure system id <node-id> ...)).
+              - The id attributes below (I(access_oper_id) to I(arp_tca_threshold)) are rendered as
+                C(configure system id <node_id> <keyword> ...) with I(node_id) from the task, else from the device.
             type: str
           nt_intercon_vlan:
             description: NT interconnection VLAN identifier.
@@ -43,8 +53,80 @@ options:
           system_mac:
             description: System MAC address.
             type: str
+          access_oper_id:
+            description:
+              - Access operator identifier (C(configure system id <node-id> access-oper-id)).
+            type: str
+          system_40gkr4:
+            description:
+              - 40G KR4 system mode flag (C(configure system id <node-id> system-40gkr4)).
+            type: bool
+          en_snmp_auth_trap:
+            description:
+              - Send SNMP authentication failure traps (flag) (C(configure system id <node-id> en-snmp-auth-trap)).
+            type: bool
+          periph_mgnt_vlan:
+            description:
+              - Peripheral management VLAN (C(configure system id <node-id> periph-mgnt-vlan)).
+            type: int
+          periph_mgnt_ctrl:
+            description:
+              - Peripheral management control (flag) (C(configure system id <node-id> periph-mgnt-ctrl)).
+            type: bool
+          port_num_in_proto:
+            description:
+              - Port numbering used in protocols, for example C(type-based) (C(configure system id <node-id> port-num-in-proto)).
+            type: str
+          ont_trc_dbg_vlan:
+            description:
+              - ONT trace/debug VLAN (C(configure system id <node-id> ont-trc-dbg-vlan)).
+            type: int
+          ntr_ssmout_vlan:
+            description:
+              - NTR SSM-out VLAN (C(configure system id <node-id> ntr-ssmout-vlan)).
+            type: int
+          ntr_ptp_vlan:
+            description:
+              - NTR PTP VLAN (C(configure system id <node-id> ntr-ptp-vlan)).
+            type: int
+          customer_id:
+            description:
+              - Customer identifier (C(configure system id <node-id> customer-id)).
+            type: str
+          voiceoswp:
+            description:
+              - Voice OSWP type, for example C(sip) (C(configure system id <node-id> voiceoswp)).
+            type: str
+          scalingmode:
+            description:
+              - System scaling mode (C(configure system id <node-id> scalingmode)).
+            type: str
+          arp_polling_inter:
+            description:
+              - ARP polling interval (C(configure system id <node-id> arp-polling-inter)).
+            type: int
+          bsnap_state:
+            description:
+              - BSNAP state, for example C(disable) (C(configure system id <node-id> bsnap-state)).
+            type: str
+          bsnap_server_ip:
+            description:
+              - BSNAP server IP address (C(configure system id <node-id> bsnap-server-ip)).
+            type: str
+          bsnap_server_port:
+            description:
+              - BSNAP server port (C(configure system id <node-id> bsnap-server-port)).
+            type: int
+          arp_tca_threshold:
+            description:
+              - ARP TCA threshold (C(configure system id <node-id> arp-tca-threshold)).
+            type: int
       security:
-        description: System security settings.
+        description:
+          - Deprecated, use M(nokia.isam.isam_system_security) (for example its C(general.welcome_banner)).
+          - C(configure system security) is owned by isam_system_security; this module no longer reads it, so these
+            values are never reported, I(state=merged) always sends them and the other states never reset them.
+            They are still rendered for compatibility.
         type: dict
         suboptions:
           ssh:
@@ -84,6 +166,10 @@ options:
           timezone_offset:
             description: Time zone offset from UTC.
             type: int
+          server_port:
+            description:
+              - SNTP server port of the device-native configuration (C(configure system sntp server-port)).
+            type: int
           servers:
             description: SNTP server entries.
             type: list
@@ -109,6 +195,14 @@ options:
           severity:
             description: Syslog severity level.
             type: str
+          version:
+            description:
+              - Syslog message format version (C(configure system syslog version)).
+            type: str
+          time_format:
+            description:
+              - Syslog time stamp format (C(configure system syslog time-format)).
+            type: str
           destinations:
             description: Syslog destination entries.
             type: list
@@ -121,6 +215,22 @@ options:
               type:
                 description: Syslog destination type.
                 type: str
+              disable:
+                description:
+                  - Destination disabled (flag); only the attributes of existing destinations are set/reset, a destination is never created or removed (C(configure system syslog destination <name> disable)).
+                type: bool
+              upload_rotate:
+                description:
+                  - Upload on file rotation (flag) (C(configure system syslog destination <name> upload-rotate)).
+                type: bool
+              persist_enable:
+                description:
+                  - Persistent logging enabled (flag) (C(configure system syslog destination <name> persist-enable)).
+                type: bool
+              persist_timer:
+                description:
+                  - Persistence timer (C(configure system syslog destination <name> persist-timer)).
+                type: int
           routes:
             description: Syslog route entries.
             type: list
@@ -137,9 +247,15 @@ options:
                 description: Syslog facility to route.
                 type: str
               severities:
-                description: Syslog severities to route.
+                description:
+                  - Enabled syslog severities of the route (C(emergency), C(alert), ..., C(debug)); C(no <severity>) is not enabled.
+                  - Read only (not rendered).
                 type: list
                 elements: str
+              syslog_vlan:
+                description:
+                  - Syslog VLAN of the route; only the attributes of existing routes are set/reset (C(configure system syslog route <destination> syslog-vlan)).
+                type: int
       sync_if_timing:
         description: Synchronous interface timing configuration.
         type: dict
@@ -278,12 +394,53 @@ options:
       max_lt_link_speed:
         description: Maximum link speed used by the line termination.
         type: str
+      external_leds:
+        description: External LEDs (C(configure system external-leds)).
+        type: dict
+        suboptions:
+          status: {description: External LED status flag (C(status)), type: bool}
+      auto_laser_shutdown:
+        description: Automatic laser shutdown (C(configure system auto-laser-shutdown)).
+        type: dict
+        suboptions:
+          action: {description: Automatic laser shutdown action (C(action)), type: str}
+      auto_switch:
+        description: xDSL automatic switching (C(configure system auto-switch)).
+        type: dict
+        suboptions:
+          xdsl_atm_ptm: {description: Automatic ATM/PTM switching flag (C(xdsl-atm-ptm)), type: bool}
+          xdsl_stepup_delay: {description: xDSL step-up delay flag (C(xdsl-stepup-delay)), type: bool}
+      zero_touch_provision:
+        description: Zero touch provisioning (C(configure system zero-touch-provision)).
+        type: dict
+        suboptions:
+          action: {description: Zero touch provisioning action (C(action)), type: str}
+      pon_ont:
+        description: System wide PON ONT settings (C(configure system pon-ont)).
+        type: dict
+        suboptions:
+          slid_mode: {description: SLID mode (C(slid-mode)), type: str}
+          pwrbrst_mode: {description: Power burst mode (C(pwrbrst-mode)), type: str}
+          sn_bundle_timer: {description: Serial number bundle timer (C(sn-bundle-timer)), type: int}
+          sw_ver_mis_block: {description: Block ONTs on software version mismatch flag (C(sw-ver-mis-block)), type: bool}
+          sn_autounlock: {description: Serial number auto unlock flag (C(sn-autounlock)), type: bool}
+      nt_sftp:
+        description: NT SFTP access (C(configure system nt-sftp)).
+        type: dict
+        suboptions:
+          write_enable: {description: SFTP write access flag (C(write-enable)), type: bool}
       transaction:
         description: Transaction configuration.
         type: dict
         suboptions:
           timeout:
-            description: Transaction timeout in seconds.
+            description:
+              - Legacy transaction timeout, form C(configure system transaction timeout <n>).
+              - The device prints C(time-out-value); use I(time_out_value).
+            type: int
+          time_out_value:
+            description:
+              - Transaction time-out value (C(configure system transaction time-out-value)).
             type: int
           log_full_action:
             description: Action to take when the transaction log is full.

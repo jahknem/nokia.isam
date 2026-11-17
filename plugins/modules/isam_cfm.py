@@ -30,8 +30,16 @@ options:
         type: list
         elements: dict
       slm:
-        description: SLM settings (C(inactivity_time)); a settings block, not an instance list.
+        description:
+          - SLM settings (C(configure cfm slm)); a settings block, not an instance list.
         type: dict
+        suboptions:
+          inactivity_time:
+            description:
+              - SLM inactivity timer in seconds (10-100), C(configure cfm slm inactivity-time).
+              - The device default (100, C(no inactivity-time)) is not reported. I(state=replaced),
+                I(state=overridden) and I(state=deleted) reset it with C(configure cfm slm no inactivity-time).
+            type: int
       y1731pm:
         description:
           - Y.1731 PM sessions, keyed by C(domain_index), C(association), C(mep) and C(session_id),

@@ -13,8 +13,17 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.isam_equipment import (
+    EQUIPMENT_FLAG_FIELDS,
+    EQUIPMENT_SECTIONS,
+    EQUIPMENT_VALUE_FIELDS,
     Isam_equipmentTemplate,
 )
+
+# section -> {field: device default}; a requested default equals an absent value.
+_DEFAULTS = {}
+for _section, _field, _cli, _default in EQUIPMENT_VALUE_FIELDS:
+    _DEFAULTS.setdefault(EQUIPMENT_SECTIONS[_section], {})[_field] = _default
+_DEFAULTS.setdefault("shelves", {})["description"] = ""
 
 
 class Isam_equipment(ResourceModule):
@@ -42,6 +51,11 @@ class Isam_equipment(ResourceModule):
             "external_link_assigns": ["external_link_assign.remote"],
             "external_link_hosts": ["external_link_host.direction"],
         }
+        for _section, _field, _cli, _default in EQUIPMENT_VALUE_FIELDS:
+            self.parsers[EQUIPMENT_SECTIONS[_section]].append(_section + "." + _field)
+        for _section, _field, _cli in EQUIPMENT_FLAG_FIELDS:
+            self.parsers[EQUIPMENT_SECTIONS[_section]].append(_section + "." + _field)
+        self.parsers["shelves"].append("shelf.description")
         self.singleton_parsers = {
             "envbox": ["envbox.enable_supervise"],
             "isam": ["isam.description"],
@@ -68,6 +82,9 @@ class Isam_equipment(ResourceModule):
 
             if self.state == "merged":
                 wantd = dict_merge(haved, wantd)
+            if section in _DEFAULTS:
+                wantd = dict((k, self._strip_defaults(section, v)) for k, v in iteritems(wantd))
+                haved = dict((k, self._strip_defaults(section, v)) for k, v in iteritems(haved))
 
             if self.state == "deleted":
                 haved = {k: v for k, v in iteritems(haved) if k in wantd or not wantd}
@@ -92,6 +109,11 @@ class Isam_equipment(ResourceModule):
                 self._compare_entry({}, haved, parsers)
             else:
                 self._compare_entry(wantd, haved, parsers)
+
+    @staticmethod
+    def _strip_defaults(section, entry):
+        defaults = _DEFAULTS[section]
+        return dict((k, v) for k, v in iteritems(entry) if k not in defaults or v != defaults[k])
 
     def _compare_entry(self, want, have, parsers):
         self.compare(parsers=parsers, want=want, have=have)

@@ -16,9 +16,11 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common imp
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.system_security import (
     LISTS,
+    NESTED,
     SECRET_FIELDS,
     SETTINGS,
     Isam_system_securityTemplate,
+    normalize_policy,
     scalar_fields,
     sub_dicts,
 )
@@ -43,6 +45,15 @@ def _settings_part(section, value):
     if section == "default_profile":
         keys.add("permissions")
     return dict((k, v) for k, v in value.items() if k in keys and v is not None)
+
+
+def _split_nested(section, entry):
+    """(entry without its nested instance lists, {nested key: list or None})."""
+    keys = [kw.replace("-", "_") for kw in NESTED.get(section, {})]
+    if not keys or not isinstance(entry, dict):
+        return entry, {}
+    return (dict((k, v) for k, v in entry.items() if k not in keys),
+            dict((k, entry.get(k)) for k in keys))
 
 
 def _named(key, wanted):
@@ -165,14 +176,23 @@ class Isam_system_security(ResourceModule):
         for key, entry in wantd.items():
             current = haved.get(key, {})
             entry = self._clean_secrets(section, entry, current)
+            if section == "radius_policies":
+                entry = normalize_policy(entry)
+            entry, nested_want = _split_nested(section, entry)
+            current, nested_have = _split_nested(section, current)
             changed = _diff(entry, current)
             identity = dict((f, entry.get(f)) for f in ident)
-            if changed:
+            nested_changed, nested_remove, nested_reset = self._nested_commands(
+                section, identity, nested_want, nested_have)
+            self.commands.extend(nested_remove)
+            if changed or nested_changed:
                 if kind == "create":
-                    self.commands.extend(tmplt.render_entry(section, entry))
+                    self.commands.extend(tmplt.render_entry(section, dict(entry, **nested_changed)))
                 else:
                     changed.update(identity)
+                    changed.update(nested_changed)
                     self.commands.extend(tmplt.render_entry(section, changed))
+            self.commands.extend(nested_reset)
             if self.state in ("replaced", "overridden") and current:
                 stale = _absent(entry, current)
                 for field in ident:
@@ -180,6 +200,45 @@ class Isam_system_security(ResourceModule):
                 if stale:
                     stale.update(identity)
                     self.commands.extend(tmplt.render_reset(section, stale))
+
+    def _nested_commands(self, section, identity, nested_want, nested_have):
+        """Nested instance lists (radius policy servers) of one list entry.
+
+        Returns (changed nested entries per key, removal commands, reset commands).
+        merged only adds/changes the given entries; replaced/overridden also remove
+        entries and attributes the want entry does not give.
+        """
+        tmplt = Isam_system_securityTemplate
+        changed, removes, resets = {}, [], []
+        replace = self.state in ("replaced", "overridden")
+        for kw, id_field in NESTED.get(section, {}).items():
+            key = kw.replace("-", "_")
+            wanted = nested_want.get(key)
+            have = dict((c.get(id_field), c) for c in nested_have.get(key) or [])
+            if wanted is None and not replace:
+                continue
+            wanted = dict((c.get(id_field), c) for c in wanted or [] if c.get(id_field) is not None)
+            if replace:
+                for index in have:
+                    if index not in wanted:
+                        removes.append(tmplt.render_nested_remove(section, identity, kw, index))
+            out = []
+            for index, child in wanted.items():
+                current = have.get(index)
+                diff = _diff(child, current or {})
+                diff.pop(id_field, None)
+                if diff or current is None:
+                    diff[id_field] = index
+                    out.append(diff)
+                if replace and current:
+                    stale = _absent(child, current)
+                    stale.pop(id_field, None)
+                    if stale:
+                        stale[id_field] = index
+                        resets.extend(tmplt.render_nested_reset(section, identity, kw, stale))
+            if out:
+                changed[key] = out
+        return changed, removes, resets
 
     def _settings_commands(self, section, want, have):
         tmplt = Isam_system_securityTemplate

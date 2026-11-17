@@ -15,6 +15,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.mc
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.mcast_general import (
     parse_capacity,
+    parse_general_settings,
 )
 
 
@@ -90,3 +91,8 @@ class Mcast_generalFacts(object):
             config["fast_change"] = False
         elif line.startswith("package-member "):
             config["package_member"] = line.split(None, 1)[1]
+            return
+        # fast channel change attributes (pkg-memb-bitmap, max-bitrate, mean-bit-rate),
+        # printed on the fast-change line or on a line of their own
+        if not line.startswith("forward-method "):
+            parse_general_settings(line, config)

@@ -9,7 +9,11 @@ import re
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (
     NetworkTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_inm import (
+    parse_attributes,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.settings_block import (
+    convert,
     node_regex,
     parse_clauses,
     render_clause,
@@ -53,6 +57,45 @@ def render_capacity(option, value):
 
 def capacity_commands(state, want, have):
     return settings_commands(state, want, have, CAPACITY_ATTRS, render_capacity)
+
+
+# Fast channel change attributes printed on the 'configure mcast general' line
+# (real 'info configure detail flat':
+#   configure mcast general fast-change no pkg-memb-bitmap no max-bitrate no mean-bit-rate)
+# Syntax assumed from the detail output: [ no <kw> | <kw> <value> ]; the
+# set/reset forms are not verified on a device. The device default is
+# 'no <kw>' (not reported).
+GENERAL_ATTRS = (
+    ("pkg_memb_bitmap", "pkg-memb-bitmap", "str", None),
+    ("max_bitrate", "max-bitrate", "int", None),
+    ("mean_bit_rate", "mean-bit-rate", "int", None),
+)
+_GENERAL_CLI = dict((cli, option) for option, cli, _kind, _default in GENERAL_ATTRS)
+
+
+def parse_general_settings(rest, config):
+    """Apply the fast channel change clauses of one 'mcast general' line to config.
+
+    ``<kw> <value>`` sets, ``no <kw>`` removes (device default); other tokens are ignored.
+    """
+    raw = {}
+    tokens = (rest or "").split()
+    for cli, option in _GENERAL_CLI.items():
+        if cli in tokens:
+            config.pop(option, None)
+    parse_attributes(rest, raw, _GENERAL_CLI)
+    for option, _cli, kind, _default in GENERAL_ATTRS:
+        if option in raw:
+            config[option] = convert(kind, raw[option])
+
+
+def render_general(option, value):
+    """``configure mcast general <kw> <value>``; value None renders the reset form."""
+    return "configure mcast general " + render_clause(GENERAL_ATTRS, option, value)
+
+
+def general_commands(state, want, have):
+    return settings_commands(state, want, have, GENERAL_ATTRS, render_general)
 
 
 class Mcast_generalTemplate(NetworkTemplate):

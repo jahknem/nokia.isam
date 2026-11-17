@@ -87,7 +87,7 @@ def test_secret_community_is_redacted_but_masked_password_kept():
     assert ont["attrs"]["log-auth-pwd"] == "plain:******"  # device-masked, kept
 
 
-def test_redaction_cleartext_masked_plain_and_encrypted_kept():
+def test_redaction_cleartext_and_encrypted_masked_placeholders_kept():
     text = "\n".join([
         "configure system security snmp community s3cr3t host-address 10.0.0.1/32",
         "configure system security operator isadmin password encrypted:aa:bb prompt %i",
@@ -97,11 +97,11 @@ def test_redaction_cleartext_masked_plain_and_encrypted_kept():
     ])
     tree = parse_config_tree(text)
     values = all_values(tree)
-    for secret in ("s3cr3t", "topsecret", "hunter2"):
+    for secret in ("s3cr3t", "topsecret", "hunter2", "encrypted:aa:bb"):
         assert secret not in values
         assert not any(secret in str(v) for v in values)
     op = tree["system"]["security"]["operator"]["isadmin"]["__config__"]
-    assert op["attrs"] == {"password": "encrypted:aa:bb", "prompt": "%i"}
+    assert op["attrs"] == {"password": "<redacted>", "prompt": "%i"}
     assert tree["system"]["security"]["operator"]["other"]["__config__"]["attrs"]["password"] == "plain:****"
     pppoe = tree["pppoe-client"]["interface"]["1/1/1/1"]["client-id"]["1"]["__config__"]
     assert pppoe["attrs"]["password"] == "<redacted>" and pppoe["source"] == "grammar"
@@ -111,7 +111,7 @@ def test_ungrammared_region_nests_by_heuristic_and_stays_lossless():
     line = "configure system security operator isadmin password encrypted:aa:bb prompt %i"
     tree = parse_config_tree(line)
     leaf = tree["system"]["security"]["operator"]["isadmin"]["__config__"]
-    assert leaf["lines"] == [line]  # hashed value kept
+    assert leaf["lines"] == [line.replace("encrypted:aa:bb", "<redacted>")]
     assert leaf["node"] == "system security operator isadmin"
 
 
@@ -189,6 +189,8 @@ def test_root_captures_are_lossless(capture):
     tree = parse_config_tree(text)
     kept = [line for leaf in leaves(tree) for line in leaf["lines"]]
     assert sorted(kept) == sorted(redacted_source(text))
+    # Inspect keys, values and stored CLI lines without reporting credential material.
+    assert not any("encrypted:" in str(value) for value in all_values(tree))
     stats = nesting_stats(text)
     assert sum(stats.values()) == len(kept)
     assert stats.get("grammar", 0) > 0
@@ -312,3 +314,18 @@ def test_secret_keywords_are_still_masked():
     text = repr(tree)
     assert "public" not in text and "clear-text-secret" not in text and "clear-key-value" not in text
     assert "plain:******" in text
+
+
+def test_encrypted_credentials_are_removed_even_at_unknown_paths():
+    import json
+
+    tree = parse_config_tree("\n".join([
+        'configure system security ssh sftp-user user1 password "encrypted:hash-one"',
+        'configure unknown node encrypted:hash-two no enabled',
+        'configure system security operator user2 password plain:clear-password',
+    ]))
+    output = json.dumps(tree)
+    assert "encrypted:" not in output
+    assert "hash-one" not in output and "hash-two" not in output
+    assert "clear-password" not in output
+    assert "<redacted>" in output

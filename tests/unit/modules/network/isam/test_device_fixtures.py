@@ -515,7 +515,8 @@ def test_equipment_live_scoped_compact_slot_fixture_is_parseable():
     parsed = Isam_equipmentTemplate(lines=facts._flatten_config(output)).parse()
 
     assert descriptor["command"] == "info configure equipment slot lt:1/1/5 flat detail"
-    assert parsed == {"slots": {"lt:1/1/5": {"id": "lt:1/1/5", "planned_type": "fglt-b", "unlock": True}}}
+    assert parsed == {"slots": {"lt:1/1/5": {"id": "lt:1/1/5", "planned_type": "fglt-b", "unlock": True,
+                                             "capab_profile": "fttu_lt", "operational_mode": "gpon"}}}
 
 
 def test_equipment_live_scoped_hierarchical_slot_fixture_is_parseable():
@@ -524,7 +525,8 @@ def test_equipment_live_scoped_hierarchical_slot_fixture_is_parseable():
     parsed = Isam_equipmentTemplate(lines=facts._flatten_config(output)).parse()
 
     assert descriptor["command"] == "info configure equipment slot lt:1/1/5 detail"
-    assert parsed == {"slots": {"lt:1/1/5": {"id": "lt:1/1/5", "planned_type": "fglt-b", "unlock": True}}}
+    assert parsed == {"slots": {"lt:1/1/5": {"id": "lt:1/1/5", "planned_type": "fglt-b", "unlock": True,
+                                             "capab_profile": "fttu_lt", "operational_mode": "gpon"}}}
 
 
 def test_ethernet_onts_live_flat_fixture_is_parseable():

@@ -7,6 +7,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from collections import OrderedDict
+
 __metaclass__ = type
 
 """
@@ -51,6 +53,11 @@ PORT_PARSERS = [
     "mirror_vlan",
     "pvid_tagging_flag",
     "ds_pbit_mode",
+    "outervlancapture",
+    "direction",
+    "default_tpid",
+    "vlan_tpid0",
+    "vlan_tpid1",
 ]
 
 # Vlan-level parsers (fields on configure bridge port <id> vlan-id <vid>)
@@ -78,7 +85,19 @@ VLAN_PARSERS = [
     "max_cvlan_id",
     "ds_dedicated_q",
     "tpid",
+    "inner_pbit_remark",
+    "groupid",
+    "usacceptframetype",
+    "oltregenprofile",
 ]
+
+
+# Flags whose device default is off: "no <flag>" (read as False) equals unset.
+PORT_DEFAULT_OFF_FLAGS = frozenset(("mac_learn_off",))
+VLAN_DEFAULT_OFF_FLAGS = frozenset((
+    "prior_best_effort", "prior_background", "prior_spare", "prior_exc_effort",
+    "prior_ctrl_load", "prior_less_100ms", "prior_less_10ms", "prior_nw_ctrl",
+))
 
 
 class Bridges(ResourceModule):
@@ -144,7 +163,7 @@ class Bridges(ResourceModule):
 
         # if state is merged, merge want onto have and then compare
         if self.state == "merged":
-            wantd = dict_merge(haved, wantd)
+            wantd = self._merge_ports(haved, wantd)
 
         # Keep requested identities for targeted deletion.  A bridge port can
         # contain several VLANs, so deleting the port entry wholesale would
@@ -163,6 +182,31 @@ class Bridges(ResourceModule):
 
         for k, want in iteritems(wantd):
             self._compare(want=want, have=haved.pop(k, {}))
+
+    @staticmethod
+    def _merge_ports(haved, wantd):
+        """merged: want onto have, VLAN entries merged by id.
+
+        netcommon's dict_merge appends lists of dicts, so a partial VLAN entry would
+        sit next to the full one and replace it (its omitted attributes removed).
+        """
+        merged = {}
+        for key in set(haved) | set(wantd):
+            have, want = haved.get(key, {}), wantd.get(key)
+            if want is None:
+                merged[key] = have
+                continue
+            have_rest = {k: v for k, v in have.items() if k != "vlan_id"}
+            want_rest = {k: v for k, v in want.items() if k != "vlan_id"}
+            entry = dict_merge(have_rest, want_rest)
+            if have.get("vlan_id") or want.get("vlan_id"):
+                vlans = OrderedDict((str(v.get("id")), v) for v in have.get("vlan_id") or [])
+                for vlan in want.get("vlan_id") or []:
+                    vid = str(vlan.get("id"))
+                    vlans[vid] = dict_merge(vlans[vid], vlan) if vid in vlans else vlan
+                entry["vlan_id"] = list(vlans.values())
+            merged[key] = entry
+        return merged
 
     def _compare(self, want, have):
         """Compare want vs have for a single bridge port,
@@ -283,9 +327,28 @@ class Bridges(ResourceModule):
                     "configure bridge port %s no vlan-id %s" % (port_name, vid)
                 )
 
+    @staticmethod
+    def _without_default_off(data, keys):
+        """Treat False of a default-off flag as absent on both sides of a compare.
+
+        A "flat detail" read reports e.g. "no mac-learn-off" as False. Comparing that
+        with an unset want made the base compare re-issue the flag in its positive
+        form ("mac-learn-off", "prior-best-effort False"). False and absent mean the
+        same device state, so neither side needs a command for it.
+        """
+        if not isinstance(data, dict):
+            return data
+        return {
+            k: v for k, v in data.items()
+            if not (v is False and (k in keys or k.replace("-", "_") in keys))
+        }
+
     def _compare_port_fields(self, want, have):
         # Targeted deletion runs before this so defaults cannot reset unrelated settings.
         port_start = len(self.commands)
+        if self.state != "rendered":  # rendered has no device state: "no <flag>" stays explicit
+            want = self._without_default_off(want, PORT_DEFAULT_OFF_FLAGS)
+        have = self._without_default_off(have, PORT_DEFAULT_OFF_FLAGS)
         self.compare(parsers=PORT_PARSERS, want=want, have=have)
         return self._defer_pvid_commands(port_start)
 
@@ -331,7 +394,11 @@ class Bridges(ResourceModule):
         want_vlan = self._normalize_vlan(port_name, vid, want_vlan)
         have_vlan = self._normalize_vlan(port_name, vid, have_vlan)
         vlan_start = len(self.commands)
-        self.compare(parsers=VLAN_PARSERS, want=want_vlan, have=have_vlan)
+        self.compare(
+            parsers=VLAN_PARSERS,
+            want=want_vlan if self.state == "rendered" else self._without_default_off(want_vlan, VLAN_DEFAULT_OFF_FLAGS),
+            have=self._without_default_off(have_vlan, VLAN_DEFAULT_OFF_FLAGS),
+        )
         self._compare_static_users(port_name, vid, want_vlan, have_vlan)
         vlan_commands = self.commands[vlan_start:]
         # The vlan_id parser is used by facts, not command generation. A VLAN
@@ -368,7 +435,7 @@ class Bridges(ResourceModule):
 
     def _compare_stale_vlan(self, port_name, vid, have_vlan):
         have_vlan = self._normalize_vlan(port_name, vid, have_vlan)
-        self.compare(parsers=VLAN_PARSERS, want={}, have=have_vlan)
+        self.compare(parsers=VLAN_PARSERS, want={}, have=self._without_default_off(have_vlan, VLAN_DEFAULT_OFF_FLAGS))
 
     # Attributes that the device requires to be issued together with
     # "tag"/"l2fwder-vlan" on a single "vlan-id <id> ..." command. Live

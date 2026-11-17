@@ -21,7 +21,11 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.xd
     Xdsl_linesArgs,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_lines import (
+    XDSL_TCA_FIELDS,
     Xdsl_linesTemplate,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    iter_cli_fields,
 )
 
 
@@ -114,6 +118,19 @@ class Xdsl_linesFacts(object):
 
         return root
 
+    _TCA_VALUE_WORDS = tuple(field.replace("_", "-") for field in XDSL_TCA_FIELDS)
+
+    def _split_tca(self, prefix, rest):
+        """'... tca-line-threshold no enable es-nearend 5 ...' -> one line per attribute."""
+        lines = []
+        for negate, key, value in iter_cli_fields(
+            rest.split(), bool_fields=("enable",), value_fields=self._TCA_VALUE_WORDS
+        ):
+            if value == "0":
+                continue  # 0 disables the threshold: the device default, not reported
+            lines.append(prefix + ("no " if negate else "") + key + ("" if value is None else " " + value))
+        return lines
+
     def _flatten_config(self, config):
         if not config:
             return []
@@ -136,6 +153,10 @@ class Xdsl_linesFacts(object):
                 r"|(?:no\s+)?(?:" + flag_words + r")|(?:no\s+)?admin-up"
             )
             for line in lines:
+                tca = re.match(r"(configure xdsl line\s+\S+\s+tca-line-threshold\s+)(.*)", line)
+                if tca:
+                    result.extend(self._split_tca(tca.group(1), tca.group(2)))
+                    continue
                 match = re.match(r"(configure xdsl line\s+\S+\s+)(.*)", line)
                 if match:
                     result.extend(match.group(1) + clause.group(0) for clause in clauses.finditer(match.group(2)))

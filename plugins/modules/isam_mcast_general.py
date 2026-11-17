@@ -27,6 +27,26 @@ options:
       fast_change:
         description: Enable or disable multicast fast channel change (C(fast-change)).
         type: bool
+      pkg_memb_bitmap:
+        description:
+          - Fast channel change package membership bitmap (C(configure mcast general pkg-memb-bitmap <value>)),
+            value as printed by the device.
+          - The device default (C(no pkg-memb-bitmap)) is not reported. I(state=replaced), I(state=overridden)
+            and I(state=deleted) reset it with C(configure mcast general no pkg-memb-bitmap).
+          - Set and reset forms follow the C(info configure detail flat) output and are not yet verified on a device.
+        type: str
+      max_bitrate:
+        description:
+          - Fast channel change maximum bit rate (C(configure mcast general max-bitrate <value>)).
+          - The device default (C(no max-bitrate)) is not reported; reset with C(configure mcast general no max-bitrate)
+            (not yet verified on a device).
+        type: int
+      mean_bit_rate:
+        description:
+          - Fast channel change mean bit rate (C(configure mcast general mean-bit-rate <value>)).
+          - The device default (C(no mean-bit-rate)) is not reported; reset with C(configure mcast general no mean-bit-rate)
+            (not yet verified on a device).
+        type: int
       package_member:
         description: Multicast package membership as printed by the device (C(package-member)).
         type: str

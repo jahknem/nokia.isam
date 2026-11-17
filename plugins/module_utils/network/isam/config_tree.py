@@ -17,8 +17,8 @@ The path/attribute split works in three layers:
    The decision is learned per node type across the whole capture, so it is consistent.
 
 Secrets are masked in the tokens *before* any structuring, so neither path keys, nor
-attribute values, nor stored lines can carry a cleartext secret. Device-masked
-('plain:...') and hashed ('encrypted:...') values are kept.
+attribute values, nor stored lines can carry a cleartext secret or encrypted
+credential. Only device-masked ('plain:******') placeholders are kept.
 
 This is the schema-less "root" view; the resource families remain the typed view of the
 parts they model. gap_report compares the two.
@@ -133,7 +133,7 @@ def _heuristic_frame(tokens):
     kws = []
     i = 0
     while i < len(tokens) and tokens[i] != "no" and not _looks_like_identity(tokens[i]):
-        if i >= 2 and _is_secret(tokens[i]) and i + 1 < len(tokens) and tokens[i + 1] != REDACTED:
+        if i >= 2 and _is_secret(tokens[i]) and tokens[i] != "community" and i + 1 < len(tokens):
             break  # 'operator x password encrypted:..': password is an attribute
         kws.append(tokens[i])
         i += 1
@@ -184,19 +184,26 @@ def _unquote(v):
 
 
 def _redact(name, value):
-    if _is_secret(name) and isinstance(value, str) and not value.startswith(_MASKED):
+    if isinstance(value, str) and (value.startswith("encrypted:") or
+                                 (_is_secret(name) and not _is_masked_placeholder(value))):
         return REDACTED
     return value
 
 
+def _is_masked_placeholder(value):
+    return bool(re.fullmatch(r"plain:\*+", _unquote(value)))
+
+
 def _redact_tokens(tokens):
-    """Mask secret values in a raw token list (community/password/secret/... followed by
-    a cleartext value). Device-masked (plain:) and hashed (encrypted:) values are kept."""
-    out = list(tokens)
+    """Strip encrypted credentials before structuring, even at unknown CLI paths.
+
+    Secret values are masked; only actual device-masked placeholders are retained.
+    """
+    out = [REDACTED if _unquote(t).startswith("encrypted:") else t for t in tokens]
     for i, token in enumerate(out):
         if _is_secret(token) and i + 1 < len(out):
             nxt = out[i + 1]
-            if not nxt.startswith(_MASKED) and nxt != "no":
+            if not _is_masked_placeholder(nxt) and nxt != "no":
                 out[i + 1] = REDACTED
     return out
 

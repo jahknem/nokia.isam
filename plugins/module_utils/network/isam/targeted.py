@@ -28,6 +28,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 TARGETED_GATHER = {
+    "xdsl_bonding": {"groups": "group_id", "boards": "board_id"},
     "igmp": {"packages": "index"},
     "mcast_control": {"packages": "index"},
     "multicast": {"igmp.packages": "index", "mcast_control.packages": "index"},

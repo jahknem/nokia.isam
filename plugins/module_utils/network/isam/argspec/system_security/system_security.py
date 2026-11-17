@@ -120,6 +120,14 @@ class Isam_system_securityArgs(object):
                     "acc_server": {"type": "str"},
                     "acc_router_inst": {"type": "str"},
                     "priority": {"type": "int"},
+                    "servers": _lst({
+                        "index": {"type": "int", "required": True},
+                        "auth_server": {"type": "str"},
+                        "auth_router_inst": {"type": "str"},
+                        "acc_server": {"type": "str"},
+                        "acc_router_inst": {"type": "str"},
+                        "priority": {"type": "int"},
+                    }),
                 }),
                 "radius_auth_super_user": {
                     "type": "dict",
@@ -133,6 +141,7 @@ class Isam_system_securityArgs(object):
                     "ip_address": {"type": "str"},
                     "secret": {"type": "str", "no_log": True},
                     "router_instance": {"type": "str"},
+                    "admin_down": {"type": "bool"},
                 }),
                 "snmp_notify_views": _lst({
                     "name": {"type": "str", "required": True},
