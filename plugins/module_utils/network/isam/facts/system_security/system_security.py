@@ -17,7 +17,8 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
     Isam_system_securityTemplate,
 )
 
-# section -> single-instance read command (identity is the entry name)
+# section -> single-instance read command (identity per TARGETED_GATHER); the SNMP
+# views are selected by name only (all subtrees of the view are read)
 _TARGETED = {
     "operators": "info configure system security operator %s flat",
     "profiles": "info configure system security profile %s flat",
@@ -28,6 +29,18 @@ _TARGETED = {
     "radius_auth_servers": "info configure system security radius auth-server %s flat",
     "radius_policies": "info configure system security radius policy %s flat",
     "radius_dyn_auth_clients": "info configure system security radius dyn-auth-client %s flat",
+    "snmp_notify_views": "info configure system security snmp notify-view %s flat",
+    "domains": "info configure system security domain %s flat",
+    "slots": "info configure system security slot %s flat",
+    "ssh.sftp_users": "info configure system security ssh sftp-user %s flat",
+    "filetransfer.servers": "info configure system security filetransfer server %s flat",
+    "peripheral_mgnt.mac_filters": "info configure system security peripheral-mgnt mac-filter %s flat",
+    # one 802.1X port is spread over three nodes
+    "pae.ports": lambda port: [
+        "info configure system security pae port %s flat" % port,
+        "info configure system security pae authenticator %s flat" % port,
+        "info configure system security pae ext-authenticator %s flat" % port,
+    ],
 }
 
 

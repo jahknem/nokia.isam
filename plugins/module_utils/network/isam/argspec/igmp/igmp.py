@@ -2,21 +2,18 @@
 
 from __future__ import absolute_import, division, print_function
 
+import copy
+
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.multicast.multicast import (
+    IGMP_OPTIONS,
+)
+
 
 class IgmpArgs(object):
     argument_spec = {
         "config": {
             "type": "dict",
-            "options": {
-                "mcast_svc_context": {"type": "str"},
-                "mld_snooping": {"type": "bool"},
-                "mld_querier": {"type": "bool"},
-                "igmp_snooping": {"type": "bool"},
-                "igmp_querier": {"type": "bool"},
-                "query_interval": {"type": "int"},
-                "query_response_interval": {"type": "int"},
-                "robustness_count": {"type": "int"},
-            },
+            "options": copy.deepcopy(IGMP_OPTIONS),
         },
         "running_config": {"type": "str"},
         "state": {

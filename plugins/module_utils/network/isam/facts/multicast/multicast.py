@@ -13,6 +13,38 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.mu
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.multicast import (
     MulticastTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_targeted_config,
+)
+
+IGMP_PACKAGE = "info configure igmp package %s flat"
+MCAST_CONTROL_PACKAGE = "info configure mcast-control package %s flat"
+
+# facts resource -> {instance list: single-instance read}
+TARGETED_FORMATS = {
+    "igmp": {"packages": IGMP_PACKAGE},
+    "mcast_control": {"packages": MCAST_CONTROL_PACKAGE},
+    "multicast": {"igmp.packages": IGMP_PACKAGE, "mcast_control.packages": MCAST_CONTROL_PACKAGE},
+}
+
+
+def _whole(connection):
+    igmp_data = connection.get("info configure igmp flat")
+    mcast_data = connection.get("info configure mcast-control flat")
+    return igmp_data + "\n" + mcast_data
+
+
+def module_resource(module):
+    """Which of the three public resources the module is (they share this facts class)."""
+    spec = getattr(module, "argument_spec", None) or {}
+    options = (spec.get("config") or {}).get("options") or {}
+    if "igmp" in options:
+        return "multicast"
+    if "admin_state" in options:
+        return "mcast_control"
+    if "mld_snooping" in options:
+        return "igmp"
+    return None
 
 
 class MulticastFacts(object):
@@ -26,9 +58,11 @@ class MulticastFacts(object):
         facts = {}
 
         if not data:
-            igmp_data = connection.get("info configure igmp flat")
-            mcast_data = connection.get("info configure mcast-control flat")
-            data = igmp_data + "\n" + mcast_data
+            resource = module_resource(self._module)
+            if resource:
+                data = get_targeted_config(self._module, connection, resource, _whole, TARGETED_FORMATS[resource])
+            else:
+                data = _whole(connection)
 
         data = self._flatten_config(data)
         parser = MulticastTemplate(lines=data, module=self._module)

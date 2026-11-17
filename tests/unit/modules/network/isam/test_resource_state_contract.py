@@ -64,6 +64,13 @@ RESOURCE_MODULES = (
     "isam_xdsl_lines",
     "isam_xdsl_profiles",
     "isam_xstp",
+    "isam_qos_tca",
+    "isam_system_security",
+    "isam_l2uni_onts",
+    "isam_uni_onts",
+    "isam_xdsl_inm",
+    "isam_xdsl_onts",
+    "isam_xdsl_system",
 )
 
 CANONICAL_STATES = {

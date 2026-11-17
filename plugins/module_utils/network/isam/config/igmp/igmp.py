@@ -5,6 +5,9 @@ from __future__ import absolute_import, division, print_function
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.multicast import MulticastTemplate
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.multicast.multicast import (
+    names_blocks, package_system_commands, strip_blocks,
+)
 
 
 class Igmp(ResourceModule):
@@ -22,8 +25,11 @@ class Igmp(ResourceModule):
         ]
 
     def generate_commands(self):
-        want = {"igmp": self.want or {}}
-        have = {"igmp": self.have or {}}
+        self.commands.extend(package_system_commands(self.state, "igmp", self.want, self.have))
+        if self.state == "deleted" and names_blocks(self.want):
+            return
+        want = {"igmp": strip_blocks(self.want)}
+        have = {"igmp": strip_blocks(self.have)}
         if self.state == "merged":
             from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import dict_merge
             want = dict_merge(have, want)

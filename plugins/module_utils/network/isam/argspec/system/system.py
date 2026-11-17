@@ -84,6 +84,54 @@ class Isam_systemArgs(object):  # pylint: disable=R0903
                     "options": {
                         "mode": {"type": "str"},
                         "source": {"type": "str"},
+                        "revert": {"type": "bool"},
+                        "wait_time": {"type": "int"},
+                        "output_ql_thresh": {"type": "str"},
+                        "ssmout_en_bits": {"type": "bool"},
+                        "ssmout_ceiling": {"type": "str"},
+                        "ais_sensitivity": {"type": "bool"},
+                        "bits": {"type": "str"},
+                        "bits_bind": {
+                            "type": "dict",
+                            "options": {
+                                "bits_a_bind": {"type": "str"},
+                                "bits_b_bind": {"type": "str"},
+                            },
+                        },
+                        "force_reference": {"type": "str"},
+                        "ref_order": {
+                            "type": "dict",
+                            "options": {
+                                "prio1": {"type": "str"},
+                                "prio2": {"type": "str"},
+                            },
+                        },
+                        "ssm": {
+                            "type": "list",
+                            "elements": "dict",
+                            "options": {
+                                "reference": {"type": "str", "required": True},
+                                "ssmenable": {"type": "bool"},
+                                "default_ql": {"type": "str"},
+                                "target_ql": {"type": "str"},
+                            },
+                        },
+                        "synce": {
+                            "type": "list",
+                            "elements": "dict",
+                            "options": {
+                                "reference": {"type": "str", "required": True},
+                                "port": {"type": "str"},
+                            },
+                        },
+                        "ssmout_synce": {
+                            "type": "list",
+                            "elements": "dict",
+                            "options": {
+                                "port": {"type": "str", "required": True},
+                                "ssmout_enable": {"type": "bool"},
+                            },
+                        },
                     },
                 },
                 "loop_id_syntax": {

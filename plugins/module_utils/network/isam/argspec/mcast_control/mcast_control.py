@@ -2,17 +2,18 @@
 
 from __future__ import absolute_import, division, print_function
 
+import copy
+
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.multicast.multicast import (
+    MCAST_CONTROL_OPTIONS,
+)
+
 
 class Mcast_controlArgs(object):
     argument_spec = {
         "config": {
             "type": "dict",
-            "options": {
-                "mcast_svc_context": {"type": "str"},
-                "admin_state": {"type": "bool"},
-                "max_groups": {"type": "int"},
-                "max_sources": {"type": "int"},
-            },
+            "options": copy.deepcopy(MCAST_CONTROL_OPTIONS),
         },
         "running_config": {"type": "str"},
         "state": {

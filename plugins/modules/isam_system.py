@@ -150,6 +150,116 @@ options:
           source:
             description: Timing source.
             type: str
+          revert:
+            description:
+              - Revertive switching back to a recovered higher-priority reference (C(revert) / C(no revert)).
+              - Removal resets it with C(no revert).
+            type: bool
+          wait_time:
+            description:
+              - Wait-to-restore time before reverting to a recovered reference (C(wait-time)).
+              - Removal resets it with C(no wait-time).
+            type: int
+          output_ql_thresh:
+            description:
+              - Quality-level threshold below which the timing output is squelched (C(output-ql-thresh)), for example C(clk-ql-dnu).
+              - Removal uses C(no output-ql-thresh) (standard ISAM form, not verified on a device).
+            type: str
+          ssmout_en_bits:
+            description:
+              - Send SSM on the BITS output (C(ssmout-en-bits)).
+              - Removal resets it with C(no ssmout-en-bits).
+            type: bool
+          ssmout_ceiling:
+            description:
+              - Highest quality level announced in outgoing SSM (C(ssmout-ceiling)), for example C(clk-ql-prc).
+              - Removal uses C(no ssmout-ceiling) (standard ISAM form, not verified on a device).
+            type: str
+          ais_sensitivity:
+            description:
+              - Treat AIS on a reference as a failure (C(ais-sensitivity)).
+              - Removal resets it with C(no ais-sensitivity).
+            type: bool
+          bits:
+            description:
+              - BITS interface mode (C(sync-if-timing bits <mode>)), for example C(autoselect).
+              - Removal uses C(no bits) (standard ISAM form, not verified on a device).
+            type: str
+          bits_bind:
+            description: BITS input binding (C(sync-if-timing bits-bind)).
+            type: dict
+            suboptions:
+              bits_a_bind:
+                description:
+                  - Binding of BITS input A (C(bits-a-bind)). Removal uses C(no bits-a-bind).
+                type: str
+              bits_b_bind:
+                description:
+                  - Binding of BITS input B (C(bits-b-bind)). Removal uses C(no bits-b-bind).
+                type: str
+          force_reference:
+            description:
+              - Reference the clock is forced to (C(sync-if-timing force-reference)), or C(none).
+              - Removal sets it back to C(none).
+            type: str
+          ref_order:
+            description: Timing reference priority order (C(sync-if-timing ref-order prio1|prio2)).
+            type: dict
+            suboptions:
+              prio1:
+                description: Reference with priority 1, or C(none). Removal sets it back to C(none).
+                type: str
+              prio2:
+                description: Reference with priority 2, or C(none). Removal sets it back to C(none).
+                type: str
+          ssm:
+            description:
+              - Synchronization status message settings per timing reference (C(sync-if-timing ssm <reference>)).
+              - References are fixed on the device; an entry is never removed, its attributes are reset with C(no <attr>).
+            type: list
+            elements: dict
+            suboptions:
+              reference:
+                description: Timing reference, for example C(bits-a), C(bits-b), C(synce-1), C(synce-2), C(ieee1588-a), C(ieee1588-b).
+                type: str
+                required: true
+              ssmenable:
+                description: Use received SSM for this reference (C(ssmenable)).
+                type: bool
+              default_ql:
+                description: Quality level assumed without SSM (C(default-ql)), for example C(clk-ql-prc).
+                type: str
+              target_ql:
+                description: Target quality level (C(target-ql)), for example C(clk-ql-dnu).
+                type: str
+          synce:
+            description:
+              - SyncE timing references (C(sync-if-timing synce <reference> <port>)).
+              - An entry is never removed; removal sets its port back to C(none).
+            type: list
+            elements: dict
+            suboptions:
+              reference:
+                description: SyncE reference, C(synce-1) or C(synce-2).
+                type: str
+                required: true
+              port:
+                description: Port recovering the clock, for example C(nt-a:xfp:1), or C(none).
+                type: str
+          ssmout_synce:
+            description:
+              - Outgoing SSM per SyncE capable port (C(sync-if-timing ssmout-synce <port>)).
+              - An entry is never removed; removal resets it with C(no ssmout-enable).
+            type: list
+            elements: dict
+            suboptions:
+              port:
+                description: SyncE port, for example C(nt-a:xfp:1) or C(ntio-1:sfp:6).
+                type: str
+                required: true
+              ssmout_enable:
+                description: Send SSM on this port (C(ssmout-enable)).
+                type: bool
       loop_id_syntax:
         description: Loop identifier syntax strings by access technology.
         type: dict
@@ -185,8 +295,9 @@ options:
     description:
       - Desired resource state.
       - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by
-        C(sntp.servers[].ip_address) and C(syslog.destinations[].name) and C(syslog.routes[].destination) (targeted
-        gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole
+        C(sntp.servers[].ip_address), C(syslog.destinations[].name), C(syslog.routes[].destination),
+        C(sync_if_timing.ssm[].reference), C(sync_if_timing.synce[].reference) and C(sync_if_timing.ssmout_synce[].port)
+        (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole
         resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
