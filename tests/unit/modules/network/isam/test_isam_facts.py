@@ -399,6 +399,7 @@ class TestIsamFactsModule(TestIsamModule):
         facts = result["ansible_facts"]
 
         for key in (
+            "config_tree",
             "active_alarms",
             "dhcp_relay",
             "equipment_status",
@@ -416,6 +417,7 @@ class TestIsamFactsModule(TestIsamModule):
         self.assertEqual(
             set(connection.commands),
             {
+                "info configure flat",
                 "show alarm current table",
                 "info configure dhcp-relay flat",
                 "show dhcp-relay session",

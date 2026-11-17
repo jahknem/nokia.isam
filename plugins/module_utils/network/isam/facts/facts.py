@@ -34,6 +34,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.link_agg.link_agg import Link_aggFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xstp.xstp import XstpFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.alarm.alarm import AlarmFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.configuration.configuration import Config_treeFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ani_onts.ani_onts import Ani_ontsFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.dhcp_server.dhcp_server import Isam_dhcp_serverFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.dhcp_relay.dhcp_relay import Isam_dhcp_relayFacts
@@ -84,6 +85,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl
 
 
 FACT_LEGACY_SUBSETS = dict(
+    config_tree=Config_treeFacts,
     active_alarms=Active_alarmsFacts,
     dhcp_relay=Dhcp_relayFacts,
     equipment_status=Equipment_statusFacts,

@@ -78,5 +78,6 @@ class FactsArgs(object):  # pylint: disable=R0903
         'gather_network_resources': dict(choices=choices,
                                           type='list'),
         'gather_configuration': dict(default=False, type='bool'),
+        'config_tree_detail': dict(default=False, type='bool'),
         'provider': dict(type='dict', no_log=True),
     }
