@@ -277,12 +277,42 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
             raise
         normalized_response = response.lower()
         if (
-            "instance does not exist" not in normalized_response
-            and "specified instance does not exist" not in normalized_response
-            and "lower-interface does not exist" not in normalized_response
+            "instance does not exist" in normalized_response
+            or "specified instance does not exist" in normalized_response
+            or "lower-interface does not exist" in normalized_response
         ):
-            scoped_results.append(response)
+            continue
+        scoped_results.append(_targeted_reply(command, response))
     return "\n".join(scoped_results)
+
+
+def _targeted_reply(command, response):
+    """Clean a single-instance reply; a bare header means the instance exists, unset.
+
+    The device answers an instance without configured attributes with only the
+    header ('#---', 'echo ...'), so parsers would see nothing and treat it as
+    absent. For flat reads the bare configuration line is added instead. Echoed
+    command text (the terminal wraps it) is dropped.
+    """
+    if not command.startswith("info configure ") or " flat" not in command:
+        return response
+    path = command[len("info "):]
+    path = re.sub(r"( detail)? flat( detail)?$", "", path)
+    words = set(path.split())
+    kept = []
+    for line in response.splitlines():
+        stripped = line.split("#", 1)[0].strip()
+        if not stripped or stripped.startswith("echo"):
+            continue
+        if line.startswith("configure ") or line[:1].isspace():
+            kept.append(line)
+        elif not set(stripped.split()) - words:
+            continue  # echoed command text, possibly wrapped by the terminal
+        else:
+            kept.append(line)
+    if not kept:
+        return path + "\n"
+    return "\n".join(kept) + "\n"
 
 
 def _section_items(config, section):

@@ -90,23 +90,14 @@ options:
   state:
     description:
       - Desired resource state.
-      - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by
-        C(priority_regen[].id) (targeted gathering). Other fields are ignored and absent instances are not
-        returned. Without I(config) the whole resource is read.
+      - C(gathered) always reads the whole resource; the device has no single-instance read for the
+        priority-regen profiles (targeted gathering is not available here).
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
 """
 
 EXAMPLES = """
-- name: Read only the named instances (targeted gathering)
-  nokia.isam.isam_vlan_global:
-    config:
-      priority_regen:
-        - id: 1
-        - id: 6
-    state: gathered
-
 - name: Gather VLAN global config
   nokia.isam.isam_vlan_global:
     state: gathered
