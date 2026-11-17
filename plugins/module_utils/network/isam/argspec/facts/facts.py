@@ -62,6 +62,7 @@ class FactsArgs(object):  # pylint: disable=R0903
         'qos_interfaces',
         'qos_maps',
         'qos_profiles',
+        'qos_tca',
         'software_mngt',
         'system',
         'vlans',

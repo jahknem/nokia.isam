@@ -55,6 +55,7 @@ UNSCOPED_RMS = {
     "Pppoel2": "per-interface operations use distinct verbs",
     "Qos_maps": "map entries are separate operations",
     "Qos_profiles": "profile renderer already emits atomic profile commands",
+    "Qos_tca": "per-queue attributes are separate set/reset commands",
     "Software_mngt": "database and OSWP renderers already group supported options",
     "Xdsl_profiles": "profile commands have distinct nested scopes",
     "Xdsl_bonding": "single global option",

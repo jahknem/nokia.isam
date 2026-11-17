@@ -16,6 +16,10 @@
   Nodes without a grammar entry are kept losslessly at branch granularity and flagged.
 - `config_tree.gap_report` shows what the root contains that the families do not model:
   unclaimed nodes (no family), nodes without a grammar, and unmodelled attributes.
+- New resource `isam_qos_tca`: per-port/queue QoS threshold crossing alarms
+  (`configure qos tca <port> queue <n>`), composite identity (name, queue), targeted
+  gathering, merged/replaced/overridden/deleted/rendered/parsed/gathered. Queues reset
+  in place (not individually removable). Previously unmodelled (964 detail lines).
 - Bug fixes: `isam_ethernet_line` no longer crashes on a port-type line without a `mau`
   block, and a `mau` block keeps all its attributes (`type` and `power`). `isam_qos_maps`
   models `up-ctrl-pkt`/`dn-ctrl-pkt` in the real device form (`<protocol> [dscp] [pbit]
