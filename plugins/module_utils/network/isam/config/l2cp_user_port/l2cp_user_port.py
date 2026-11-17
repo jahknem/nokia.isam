@@ -6,6 +6,13 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 
 
 class L2cpUserPort(ResourceModule):
+    """User-port partition assignments.
+
+    The CLI identity is (user-port, partition-id): the removal form is
+    "configure l2cp no user-port <port> partition-id <id>" and needs the assigned id,
+    which is taken from the device.
+    """
+
     def __init__(self, module):
         self.template = L2cpUserPortTemplate()
         super(L2cpUserPort, self).__init__(empty_fact_val=[], facts_module=L2cpUserPortFacts(module), module=module, resource="l2cp_user_port", tmplt=self)
@@ -18,34 +25,36 @@ class L2cpUserPort(ResourceModule):
             return {"parsed": self.template.parse(self._module.params.get("running_config")), "changed": False}
         if self.state == "rendered":
             return {"rendered": self.template.render(self._module.params.get("config")), "changed": False}
+        if self.state == "gathered":
+            return self.result
         desired = self.want or []
-        current = {item["name"]: item for item in self.have or []}
+        wanted_names = set(item["name"] for item in desired)
+        current = {}
+        for item in self.have or []:
+            if item.get("partition_id") is not None:
+                current.setdefault(item["name"], []).append(str(item["partition_id"]))
+        self.commands = []
         if self.state == "deleted":
-            targets = desired or list(current.values())
-            self.commands = self.template.render(
-                [dict(item, partition_id=None) for item in targets]
-            )
+            for name, partitions in current.items():
+                if not wanted_names or name in wanted_names:
+                    self.commands.extend(self._remove(name, partitions))
         else:
-            self.commands = []
             if self.state == "overridden":
-                wanted_names = {item["name"] for item in desired}
-                self.commands.extend(
-                    self.template.render([dict(item, partition_id=None)])
-                    for name, item in current.items()
-                    if name not in wanted_names
-                )
-            if self.state in ("replaced", "overridden"):
-                self.commands.extend(
-                    self.template.render([dict(current[item["name"]], partition_id=None)])
-                    for item in desired
-                    if item["name"] in current
-                )
-            if self.state == "merged":
-                desired = [dict(current.get(item["name"], {}), **item) for item in desired]
-            self.commands.extend(self.template.render(desired))
-            self.commands = [command for commands in self.commands for command in (
-                commands if isinstance(commands, list) else [commands]
-            )]
+                for name, partitions in current.items():
+                    if name not in wanted_names:
+                        self.commands.extend(self._remove(name, partitions))
+            for item in desired:
+                partitions = current.get(item["name"], [])
+                wanted = item.get("partition_id")
+                wanted = None if wanted is None else str(wanted)
+                if self.state in ("replaced", "overridden"):
+                    self.commands.extend(self._remove(item["name"], [pid for pid in partitions if pid != wanted]))
+                if wanted is not None and wanted not in partitions:
+                    self.commands.append("configure l2cp user-port %s partition-id %s" % (item["name"], wanted))
         if self.commands:
             self.run_commands()
         return self.result
+
+    @staticmethod
+    def _remove(name, partitions):
+        return ["configure l2cp no user-port %s partition-id %s" % (name, pid) for pid in partitions]

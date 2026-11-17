@@ -23,6 +23,12 @@ class Interface_alarmsFacts(object):
         self.argument_spec = Interface_alarmsArgs.argument_spec
 
     def get_config(self, connection):
+        """The whole resource, or only the alarms named in config (targeted gathering).
+
+        Same output format (not flat) as the whole-resource read.
+        """
+        # The device has no single-instance read here: it always answers the whole
+        # node, with a 'configure interface' header and 'alarm <name>' blocks.
         return connection.get("info configure interface alarm")
 
     @staticmethod
@@ -93,11 +99,53 @@ class Interface_alarmsFacts(object):
         if not config:
             return []
 
-        root = self._parse_config_to_tree(config)
-        if root is None:
-            return []
-
+        config = self._join_header(config)
         flat_config = []
-        for leaf in root.leaves:
-            flat_config.append(" ".join(node.name for node in leaf.path))
+        for block in self._top_level_blocks(config):
+            root = self._parse_config_to_tree(block)
+            if root is None:
+                continue
+            for leaf in root.leaves:
+                flat_config.append(" ".join(node.name for node in leaf.path))
         return flat_config
+
+    @staticmethod
+    def _join_header(config):
+        """The device answers 'configure interface' + 'alarm <name>' blocks; join them.
+
+        Flat lines ('configure interface alarm <name> ...') pass through unchanged.
+        """
+        lines = []
+        header = None
+        for line in config.splitlines():
+            stripped = line.split("#", 1)[0].strip()
+            if not stripped or stripped.startswith("echo") or stripped == "exit":
+                continue
+            if stripped == "configure interface":
+                header = stripped
+                continue
+            if header and stripped.startswith("alarm "):
+                lines.append(header + " " + stripped)
+                continue
+            if header and line[:1].isspace() and lines:
+                lines[-1] += " " + stripped
+                continue
+            lines.append(line)
+        return "\n".join(lines)
+
+    @staticmethod
+    def _top_level_blocks(config):
+        """Split output into its top-level blocks.
+
+        Each unindented line (e.g. one per alarm, or one per targeted read)
+        starts its own tree, so blocks are not nested into each other.
+        """
+        blocks = []
+        for line in config.splitlines():
+            if line.startswith("echo") or line.startswith("#") or not line.strip():
+                continue
+            if not line[:1].isspace() and line.split("#", 1)[0].strip() != "exit":
+                blocks.append([])
+            if blocks:
+                blocks[-1].append(line)
+        return ["\n".join(block) for block in blocks]

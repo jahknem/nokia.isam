@@ -43,6 +43,7 @@ options:
   state:
     description:
     - The state the configuration should be left in.
+    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(id) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
     type: str
     choices:
     - merged
@@ -80,6 +81,12 @@ EXAMPLES = """
 
 - name: Gather interface cage facts
   nokia.isam.isam_interface_cages:
+    state: gathered
+
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_interface_cages:
+    config:
+      - id: "1"
     state: gathered
 
 - name: Parse interface cage configuration

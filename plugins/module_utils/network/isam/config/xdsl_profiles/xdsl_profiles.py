@@ -9,9 +9,6 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
     ResourceModule,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_profiles.xdsl_profiles import (
-    Xdsl_profilesFacts,
-)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_profiles import (
     PROFILE_TYPES,
     Xdsl_profilesTemplate,
@@ -32,14 +29,10 @@ class Xdsl_profiles(ResourceModule):
         )
 
     def execute_module(self):
-        if self.state == "parsed":
-            self.result["parsed"] = self.template.normalize(
-                self.template.parse(self._module.params.get("running_config"))
-            )
-        elif self.state == "gathered":
-            ansible_facts = {"ansible_network_resources": {}}
-            facts = Xdsl_profilesFacts(self._module).populate_facts(self._connection, ansible_facts)
-            self.result["gathered"] = facts.get("ansible_network_resources", {}).get("xdsl_profiles", {})
+        # parsed / gathered: the result is self.before, read through Facts like the other modules
+        # (gathered: targeted when config names profiles, device errors fail the module).
+        if self.state in ("parsed", "gathered"):
+            pass
         elif self.state == "rendered":
             self.generate_commands()
         else:

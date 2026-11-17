@@ -18,24 +18,17 @@ class L2cp(ResourceModule):
             return {"parsed": self.template.parse(self._module.params.get("running_config")), "changed": False}
         if self.state == "rendered":
             return {"rendered": self.template.render(self._module.params.get("config")), "changed": False}
-        desired = self.want or []
-        current = self.have or []
-        if self.state == "deleted" and any(
-            item.get("partition_type") != "no-partition" for item in current
-        ) and self.before:
-            self.commands = self.template.render([{"partition_type": "no-partition"}])
-        elif self.state == "deleted":
-            self.commands = []
-        elif self.state == "overridden" and not desired and current:
-            self.commands = self.template.render([{"partition_type": "no-partition"}])
-        elif self.state == "merged" and current and desired:
-            merged = dict(current[0])
-            merged.update(desired[0])
-            self.commands = [] if merged == current[0] else self.template.render([merged])
-        elif self.state in ("replaced", "overridden") and desired == current:
-            self.commands = []
+        if self.state == "gathered":
+            return self.result
+        # A single settings block with one attribute: "info configure l2cp flat" omits the default
+        # (no-partition), so an empty read means no-partition.
+        current = (self.have or [{}])[-1].get("partition_type") or "no-partition"
+        if self.state == "deleted":
+            target = "no-partition"
         else:
-            self.commands = self.template.render(desired)
+            # merged/replaced/overridden: the one attribute is always set (argspec default no-partition).
+            target = ((self.want or [{}])[-1].get("partition_type")) or "no-partition"
+        self.commands = [] if target == current else self.template.render([{"partition_type": target}])
         if self.commands:
             self.run_commands()
         return self.result

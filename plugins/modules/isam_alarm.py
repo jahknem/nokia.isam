@@ -18,7 +18,9 @@ options:
     type: dict
     suboptions:
       log:
-        description: Global alarm log severity settings.
+        description:
+          - Global alarm log severity settings.
+          - No removal form in the CLI; left unchanged by I(state=deleted) and when omitted with I(state=overridden).
         type: dict
         suboptions:
           log_sev_level:
@@ -39,15 +41,23 @@ options:
         elements: dict
         suboptions:
           index:
-            description: Alarm entry index (alarm type).
+            description:
+              - Alarm entry index (alarm type), for example C(door), C(board-missing) or C(xdsl-ne-los).
+              - Not restricted by the module; the set of alarm types depends on the software release
+                (R6.2.04 knows more than a thousand) and is validated by the device.
             type: str
             required: true
           severity:
-            description: Alarm severity threshold.
+            description:
+              - Alarm severity. C(ignore) means the alarm is not processed by the system.
+              - With I(state=replaced) or I(state=overridden) an omitted severity is reset to the device default (C(no severity)).
             type: str
-            choices: [indeterminate, warning, minor, major, critical]
+            choices: [indeterminate, warning, minor, major, critical, ignore]
           service_affecting:
-            description: Whether the alarm is service-affecting.
+            description:
+              - Whether the alarm is service-affecting.
+              - The CLI has no reset to the default for the flags (C(no service-affecting) sets C(false)), so omitted
+                flags are left unchanged by every state.
             type: bool
           reporting:
             description: Enable alarm reporting.
@@ -56,7 +66,11 @@ options:
             description: Enable alarm logging.
             type: bool
       filters:
-        description: Alarm filter configuration list.
+        description:
+          - Alarm filter configuration list.
+          - The device holds a fixed table of temporal and spatial filters; filters cannot be removed. With
+            I(state=deleted) or I(state=overridden) C(status), C(threshold) and C(window) are reset (C(no status) etc.);
+            C(alarmid) has no removal form and is left unchanged (with a warning unless it is C(all)).
         type: list
         elements: dict
         suboptions:
@@ -70,40 +84,50 @@ options:
             type: int
             required: true
           alarmid:
-            description: Alarm type to filter.
+            description:
+              - Alarm type to filter, C(all) or an alarm type (see I(entries[].index)); validated by the device.
             type: str
           status:
-            description: Filter status.
-            type: int
+            description: Filter status (device default C(not-used)).
+            type: str
+            choices: [not-used, used]
           threshold:
-            description: Filter threshold value.
+            description: Filter threshold value (2-65535, device default 2).
             type: int
           window:
-            description: Filter window value.
+            description: Filter window in seconds (1-65535, device default 60), temporal filters only.
             type: int
           suppressions:
-            description: Sub-filter suppression entries.
+            description:
+              - Alarm suppression filter (C(configure alarm suppression filterid ..)) with the same filterid as this
+                temporal filter; only valid under a temporal filter.
+              - Suppression filters cannot be removed. On removal C(status) and C(threshold) are reset; C(interface)
+                and C(alarmid) have no removal form and are left unchanged with a warning.
             type: list
             elements: dict
             suboptions:
               filterid:
-                description: Suppression filter ID.
+                description: Suppression filter ID, equal to the filterid of the enclosing temporal filter.
                 type: int
                 required: true
               interface:
-                description: Interface for suppression.
+                description: LT slot of the suppression filter, for example C(lt:1/1/4).
                 type: str
               alarmid:
                 description: Alarm type for suppression.
                 type: str
+                choices: [board-missing, board-init]
               status:
-                description: Suppression status.
-                type: int
+                description: Suppression status (device default C(not-used)).
+                type: str
+                choices: [not-used, used]
               threshold:
-                description: Suppression threshold.
+                description: Suppression threshold (1-100, device default 1).
                 type: int
       delta_log:
-        description: Delta log full action settings.
+        description:
+          - Delta log full action settings.
+          - No removal form in the CLI; left unchanged by I(state=deleted) and when omitted with I(state=overridden).
         type: dict
         suboptions:
           indet_log_full_action:
@@ -127,7 +151,9 @@ options:
             type: str
             choices: [wrap, halt]
       custom_profiles:
-        description: Customizable alarm profile entries.
+        description:
+          - Customizable alarm profile entries.
+          - Removed with C(configure alarm no custom-profile <name>).
         type: list
         elements: dict
         suboptions:
@@ -135,11 +161,125 @@ options:
             description: Profile name.
             type: str
             required: true
+          mnemonic1:
+            description: Mnemonic of external alarm 1.
+            type: str
+          description1:
+            description: Description of external alarm 1.
+            type: str
+          visible1:
+            description: Whether external alarm 1 triggers a visible alarm output.
+            type: bool
+          audible1:
+            description: Whether external alarm 1 triggers an audible alarm output.
+            type: bool
+          polarity1:
+            description: Polarity of external alarm 1 (C(normal) or C(inverse)).
+            type: str
+          severity1:
+            description: Severity of external alarm 1.
+            type: str
+            choices: [indeterminate, warning, minor, major, critical]
+          mnemonic2:
+            description: Mnemonic of external alarm 2.
+            type: str
+          description2:
+            description: Description of external alarm 2.
+            type: str
+          visible2:
+            description: Whether external alarm 2 triggers a visible alarm output.
+            type: bool
+          audible2:
+            description: Whether external alarm 2 triggers an audible alarm output.
+            type: bool
+          polarity2:
+            description: Polarity of external alarm 2 (C(normal) or C(inverse)).
+            type: str
+          severity2:
+            description: Severity of external alarm 2.
+            type: str
+            choices: [indeterminate, warning, minor, major, critical]
+          mnemonic3:
+            description: Mnemonic of external alarm 3.
+            type: str
+          description3:
+            description: Description of external alarm 3.
+            type: str
+          visible3:
+            description: Whether external alarm 3 triggers a visible alarm output.
+            type: bool
+          audible3:
+            description: Whether external alarm 3 triggers an audible alarm output.
+            type: bool
+          polarity3:
+            description: Polarity of external alarm 3 (C(normal) or C(inverse)).
+            type: str
+          severity3:
+            description: Severity of external alarm 3.
+            type: str
+            choices: [indeterminate, warning, minor, major, critical]
+          mnemonic4:
+            description: Mnemonic of external alarm 4.
+            type: str
+          description4:
+            description: Description of external alarm 4.
+            type: str
+          visible4:
+            description: Whether external alarm 4 triggers a visible alarm output.
+            type: bool
+          audible4:
+            description: Whether external alarm 4 triggers an audible alarm output.
+            type: bool
+          polarity4:
+            description: Polarity of external alarm 4 (C(normal) or C(inverse)).
+            type: str
+          severity4:
+            description: Severity of external alarm 4.
+            type: str
+            choices: [indeterminate, warning, minor, major, critical]
+          mnemonic5:
+            description: Mnemonic of external alarm 5.
+            type: str
+          description5:
+            description: Description of external alarm 5.
+            type: str
+          visible5:
+            description: Whether external alarm 5 triggers a visible alarm output.
+            type: bool
+          audible5:
+            description: Whether external alarm 5 triggers an audible alarm output.
+            type: bool
+          polarity5:
+            description: Polarity of external alarm 5 (C(normal) or C(inverse)).
+            type: str
+          severity5:
+            description: Severity of external alarm 5.
+            type: str
+            choices: [indeterminate, warning, minor, major, critical]
+      hgutr069_custs:
+        description:
+          - HGU TR069 customizable alarms.
+          - Removed with C(configure alarm no hgutr069-cust <alarm-id>).
+        type: list
+        elements: dict
+        suboptions:
+          alarm_id:
+            description: HGU TR069 customizable alarm ID (for example C(cust-alm1)).
+            type: str
+            required: true
+          description:
+            description: Alarm description (1-64 characters), mandatory when the alarm is created.
+            type: str
   running_config:
     description: Device-native running configuration for parsed state.
     type: str
   state:
-    description: The state the configuration should be left in.
+    description:
+      - The state the configuration should be left in.
+      - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by
+        C(entries[].index) and C(filters[].fltr_type) and C(filters[].filterid) and C(custom_profiles[].name) and
+        C(hgutr069_custs[].alarm_id) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either.
+        Without I(config) the whole resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -148,6 +288,18 @@ options:
 EXAMPLES = """
 - name: Gather alarm configuration
   nokia.isam.isam_alarm:
+    state: gathered
+
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_alarm:
+    config:
+      entries:
+        - index: xdsl-ne-los
+      filters:
+        - fltr_type: temporal
+          filterid: 3
+      custom_profiles:
+        - name: cabinet1
     state: gathered
 
 - name: Configure alarm log severity

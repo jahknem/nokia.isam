@@ -41,3 +41,21 @@ class TestCfmModule(TestIsamModule):
         set_module_args({"state": "merged", "config": {"domains": [{"domain_index": 1, "name": "string operator", "level": 3, "associations": [{"association_index": 2, "ccm_interval": "10"}]}]}}, True)
         result = self.execute_module(changed=True)
         self.assertEqual(result["commands"], ["configure cfm domain 1 association 2 ccm-interval 10"])
+
+
+def test_y1731pm_short_lines_do_not_raise():
+    """Lines shorter than the 8-word y1731pm identity used to raise IndexError (guard was len < 6, read words[7])."""
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.cfm import CfmTemplate
+
+    lines = [
+        "configure cfm y1731pm domain 1 association 2 mep 3",
+        "configure cfm y1731pm domain 1 association 2 mep 3 session-id",
+        "configure cfm y1731pm domain 1 association 2 mep",
+        "configure cfm y1731pm domain 1 association 2 xx 3 session-id 4",
+        "configure cfm y1731pm domain 1 association 2 mep 3 session-id 4 type dmm target-mac 00:11:22:33:44:55 priority 5",
+    ]
+    parsed = CfmTemplate(lines=lines).parse()
+    assert parsed["y1731pm"] == [{
+        "domain_index": 1, "association": 2, "mep": 3, "session_id": 4,
+        "type": "dmm", "target_mac": "00:11:22:33:44:55", "priority": 5,
+    }]

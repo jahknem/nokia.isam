@@ -58,7 +58,9 @@ options:
         by executing the command C(info configure xdsl board).
     type: str
   state:
-    description: The state the configuration should be left in.
+    description:
+      - The state the configuration should be left in.
+      - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(boards[].board_id) and C(vp_boards[].vp_board_id) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -67,6 +69,15 @@ options:
 EXAMPLES = """
 - name: Gather xdsl boards
   nokia.isam.isam_xdsl_boards:
+    state: gathered
+
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_xdsl_boards:
+    config:
+      boards:
+        - board_id: 1/1/3
+      vp_boards:
+        - vp_board_id: 1/1/4
     state: gathered
 
 - name: Merge an xdsl board

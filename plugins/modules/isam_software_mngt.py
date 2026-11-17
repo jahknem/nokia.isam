@@ -75,13 +75,24 @@ options:
     description: Device native configuration to parse.
     type: str
   state:
-    description: The state of the configuration after module completion.
+    description:
+      - The state of the configuration after module completion.
+      - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by
+        C(oswp[].id) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without
+        I(config) the whole resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
 """
 
 EXAMPLES = """
+- name: Read only the named instances (targeted gathering)
+  nokia.isam.isam_software_mngt:
+    config:
+      oswp:
+        - id: "1"
+    state: gathered
+
 - name: Gather software management configuration
   nokia.isam.isam_software_mngt:
     state: gathered

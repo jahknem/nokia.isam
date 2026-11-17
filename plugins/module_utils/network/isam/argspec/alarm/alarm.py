@@ -8,18 +8,13 @@ __metaclass__ = type
 SEVERITY_CHOICES = ["indeterminate", "warning", "minor", "major", "critical"]
 LOG_FULL_ACTION_CHOICES = ["wrap", "halt"]
 FLTR_TYPE_CHOICES = ["temporal", "spatial"]
-ALARM_ENTRY_CHOICES = [
-    "all", "xtca-ne-es", "xtca-ne-ses", "xtca-ne-uas",
-    "xtca-ne-day-es", "xtca-ne-day-ses", "xtca-ne-day-uas",
-    "xtca-fe-es", "xtca-fe-ses", "xtca-fe-uas",
-    "xtca-fe-day-es", "xtca-fe-day-ses", "xtca-fe-day-uas",
-    "xtca-leftrs", "xtca-day-leftrs", "xtca-fe-leftrs", "xtca-fe-day-leftrs",
-    "xtca-auto-port-reset", "xtca-reinit", "xtca-day-reinit",
-    "xdsl-ne-los", "xdsl-ne-lof", "xdsl-ne-lom", "xdsl-ne-ese",
-    "xdsl-act-cfg-error", "xdsl-act-not-feas", "xdsl-up-br-reach",
-    "xdsl-ne-ncd", "xdsl-ne-lcd", "xdsl-fe-los", "xdsl-fe-lof",
-    "xdsl-fe-lpr", "xdsl-fe-lol", "xdsl-fe-lom",
-]
+ENTRY_SEVERITY_CHOICES = SEVERITY_CHOICES + ["ignore"]
+FLTR_STATUS_CHOICES = ["not-used", "used"]
+SUPPRESSION_ALARM_CHOICES = ["board-missing", "board-init"]
+# Entry indexes and filter alarmids are alarm types (<Alarm::alarmIndexExt>): the
+# R6.2.04 CLI help lists 1243 of them (door, board-missing, ONT/MDU/SFU types, ...)
+# and the set changes with the release, so they are not restricted here; the
+# device validates them.
 
 
 class AlarmArgs(object):
@@ -50,8 +45,8 @@ class AlarmArgs(object):
                     "type": "list",
                     "elements": "dict",
                     "options": {
-                        "index": {"type": "str", "required": True, "choices": ALARM_ENTRY_CHOICES},
-                        "severity": {"type": "str", "choices": SEVERITY_CHOICES},
+                        "index": {"type": "str", "required": True},
+                        "severity": {"type": "str", "choices": ENTRY_SEVERITY_CHOICES},
                         "service_affecting": {"type": "bool"},
                         "reporting": {"type": "bool"},
                         "logging": {"type": "bool"},
@@ -63,8 +58,8 @@ class AlarmArgs(object):
                     "options": {
                         "fltr_type": {"type": "str", "required": True, "choices": FLTR_TYPE_CHOICES},
                         "filterid": {"type": "int", "required": True},
-                        "alarmid": {"type": "str", "choices": ALARM_ENTRY_CHOICES},
-                        "status": {"type": "int"},
+                        "alarmid": {"type": "str"},
+                        "status": {"type": "str", "choices": FLTR_STATUS_CHOICES},
                         "threshold": {"type": "int"},
                         "window": {"type": "int"},
                         "suppressions": {
@@ -73,8 +68,8 @@ class AlarmArgs(object):
                             "options": {
                                 "filterid": {"type": "int", "required": True},
                                 "interface": {"type": "str"},
-                                "alarmid": {"type": "str", "choices": ALARM_ENTRY_CHOICES},
-                                "status": {"type": "int"},
+                                "alarmid": {"type": "str", "choices": SUPPRESSION_ALARM_CHOICES},
+                                "status": {"type": "str", "choices": FLTR_STATUS_CHOICES},
                                 "threshold": {"type": "int"},
                             },
                         },

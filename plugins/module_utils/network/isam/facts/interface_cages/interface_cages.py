@@ -19,6 +19,10 @@ based on the configuration.
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_targeted_config,
+    unwrap_response,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.interface_cages import (
     InterfaceCagesTemplate,
 )
@@ -36,7 +40,10 @@ class InterfaceCagesFacts(object):
         self.argument_spec = InterfaceCagesArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure interface cage flat")
+        """The whole resource, or only the cages named in config (targeted gathering)."""
+        return get_targeted_config(self._module, connection, "interface_cages", "info configure interface cage flat", {
+            "config": "info configure interface cage %s flat",
+        })
 
     def populate_facts(self, connection, ansible_facts, data=None):
         """ Populate the facts for InterfaceCages network resource
@@ -53,6 +60,7 @@ class InterfaceCagesFacts(object):
 
         if not data:
             data = self.get_config(connection)
+        data = unwrap_response(data)
 
         # parse native config using the InterfaceCages template
         interface_cages_parser = InterfaceCagesTemplate(

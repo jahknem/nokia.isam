@@ -25,8 +25,8 @@ class TestIsamDhcpRelayModule(TestIsamModule):
 
     def tearDown(self):
         super(TestIsamDhcpRelayModule, self).tearDown()
-        self.get_resource_connection.stop()
-        self.get_config.stop()
+        self.mock_get_resource_connection.stop()
+        self.mock_get_config.stop()
 
     def test_rendered(self):
         set_module_args(

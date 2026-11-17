@@ -32,9 +32,9 @@ class TestIsamQosMapsModule(TestIsamModule):
 
     def tearDown(self):
         super(TestIsamQosMapsModule, self).tearDown()
-        self.get_resource_connection.stop()
-        self.get_resource_connection_config.stop()
-        self.get_resource_connection_facts.stop()
+        self.mock_get_resource_connection.stop()
+        self.mock_get_resource_connection_config.stop()
+        self.mock_get_resource_connection_facts.stop()
 
     def test_isam_qos_maps_parsed(self):
         running = dedent(
@@ -188,3 +188,57 @@ class TestIsamQosMapsModule(TestIsamModule):
         self.assertEqual(gathered.get("dscp_map_dot1p") or [], [])
         self.assertEqual(gathered.get("up_ctrl_pkt") or [], [])
         self.assertEqual(gathered.get("dn_ctrl_pkt") or [], [])
+
+
+def _doc_options_match_argspec(doc_options, spec_options, path=""):
+    """Every argspec option is documented (recursively) and vice versa."""
+    assert set(doc_options) == set(spec_options), (path, sorted(set(doc_options) ^ set(spec_options)))
+    for name, spec in spec_options.items():
+        if spec.get("options"):
+            _doc_options_match_argspec(doc_options[name].get("suboptions") or {}, spec["options"], path + "." + name)
+
+
+def test_isam_qos_maps_documentation_matches_argspec():
+    import yaml
+
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.qos_maps.qos_maps import Qos_mapsArgs
+
+    doc = yaml.safe_load(isam_qos_maps.DOCUMENTATION)
+    _doc_options_match_argspec(doc["options"], Qos_mapsArgs.argument_spec)
+    tc_doc = doc["options"]["config"]["suboptions"]["tc_map_dot1p"]["suboptions"]
+    assert tc_doc["dpcolor"]["type"] == "str"
+    assert tc_doc["policer_color"]["type"] == "str"
+
+
+def test_isam_qos_maps_capture_map_lines_are_parsed():
+    """tc-map-dot1p / dscp-map-dot1p lines of the lab capture are parsed completely.
+
+    up-ctrl-pkt / dn-ctrl-pkt lines are not checked: the device form ('<protocol> [dscp|pbit|tc]')
+    does not match the module's queue/profile model (reported separately).
+    """
+    import os
+
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.qos_maps import Qos_mapsTemplate
+
+    capture = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..",
+                           "local_captures", "DS-LIN-TEST-01", "info_configure_flat.txt")
+    if not os.path.exists(capture):
+        import pytest
+        pytest.skip("lab capture not available")
+    with open(capture) as handle:
+        tc_lines = []
+        dscp_lines = []
+        for line in handle:
+            if line.startswith("configure qos tc-map-dot1p "):
+                tc_lines.append(line.rstrip())
+            elif line.startswith("configure qos dscp-map-dot1p "):
+                dscp_lines.append(line.rstrip())
+    parsed = Qos_mapsTemplate(lines=tc_lines + dscp_lines).parse()
+    assert len(parsed["tc_map_dot1p"]) == len(tc_lines) == 8
+    for line, entry in zip(tc_lines, parsed["tc_map_dot1p"]):
+        tokens = line.split()
+        assert entry == {"dot1p": int(tokens[3]), "tc": int(tokens[5]), "dpcolor": tokens[7], "policer_color": tokens[9]}
+    assert len(parsed["dscp_map_dot1p"]) == len(dscp_lines)
+    for line, entry in zip(dscp_lines, parsed["dscp_map_dot1p"]):
+        tokens = line.split()
+        assert entry == {"dscp": tokens[3], "dot1p": int(tokens[5])}

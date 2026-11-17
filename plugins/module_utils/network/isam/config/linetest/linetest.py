@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+from ansible.module_utils.common.text.converters import to_text
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.linetest import LinetestTemplate
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base import (
     get_resource_connection,
@@ -25,9 +26,12 @@ class Linetest(object):
         elif state == "gathered":
             from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.linetest.linetest import LinetestFacts
 
-            facts = LinetestFacts(self.module).populate_facts(
-                get_resource_connection(self.module), {"ansible_network_resources": {}}
-            )
+            try:
+                facts = LinetestFacts(self.module).populate_facts(
+                    get_resource_connection(self.module), {"ansible_network_resources": {}}
+                )
+            except Exception as exc:  # like netcommon's facts: a clear failure, no traceback
+                self.module.fail_json(msg=to_text(exc))
             result["gathered"] = facts["ansible_network_resources"]["linetest"]
         else:
             from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.linetest.linetest import LinetestFacts

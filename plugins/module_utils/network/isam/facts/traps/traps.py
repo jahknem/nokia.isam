@@ -13,6 +13,9 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.tr
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
     canonical_key,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_targeted_config,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.traps import (
     Isam_trapsTemplate,
     TRAP_TYPE_NAMES,
@@ -26,7 +29,16 @@ class Isam_trapsFacts(object):
         self.argument_spec = Isam_trapsArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure trap")
+        """The whole resource, or only the instances named in config (targeted gathering).
+
+        Like the whole-resource read, single instances are read hierarchically
+        (without flat); _flatten_config handles both.
+        """
+        return get_targeted_config(self._module, connection, "isam_traps", "info configure trap", {
+            "definitions": "info configure trap definition %s",
+            "managers": "info configure trap manager %s",
+            "v6managers": "info configure trap v6manager %s",
+        })
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}
@@ -90,10 +102,18 @@ class Isam_trapsFacts(object):
 
         in_trap = False
         current_resource = None
+        resource_indent = 0
         for raw_line in config.splitlines():
             line = raw_line.split("#", 1)[0].rstrip()
             stripped = line.strip()
             if not stripped or stripped.startswith("echo") or stripped.startswith("#"):
+                continue
+
+            if stripped == "configure trap":
+                # Context header of 'info configure trap [<resource> <id>]': the
+                # trap children follow indented (single-instance reads included).
+                in_trap = True
+                current_resource = None
                 continue
 
             if line.startswith("configure trap"):
@@ -117,11 +137,11 @@ class Isam_trapsFacts(object):
 
             leading_spaces = len(line) - len(line.lstrip())
 
-            if current_resource and leading_spaces > 4:
-                line_suffix = stripped
-                flat_config.append("%s %s" % (current_resource, line_suffix))
+            if current_resource and leading_spaces > resource_indent:
+                flat_config.append("%s %s" % (current_resource, stripped))
             elif stripped.startswith("definition") or stripped.startswith("manager") or stripped.startswith("v6manager"):
                 current_resource = "configure trap %s" % stripped
+                resource_indent = leading_spaces
                 flat_config.append(current_resource)
 
         return flat_config
