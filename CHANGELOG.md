@@ -16,6 +16,9 @@
   Nodes without a grammar entry are kept losslessly at branch granularity and flagged.
 - `config_tree.gap_report` shows what the root contains that the families do not model:
   unclaimed nodes (no family), nodes without a grammar, and unmodelled attributes.
+- `isam_equipment` models more sub-regions: `diagnostics_sfp`, `protection_elements`,
+  `racks`, `external_link_assigns`, `external_link_hosts` (lists, targeted by id) and the
+  `envbox`/`isam` settings blocks. Previously dropped (detail-only on the lab device).
 - New resource `isam_qos_tca`: per-port/queue QoS threshold crossing alarms
   (`configure qos tca <port> queue <n>`), composite identity (name, queue), targeted
   gathering, merged/replaced/overridden/deleted/rendered/parsed/gathered. Queues reset

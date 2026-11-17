@@ -53,6 +53,59 @@ class Isam_equipmentArgs(object):  # pylint: disable=R0903
                         "eps_quenchfactor": {"type": "int"},
                     },
                 },
+                "diagnostics_sfp": {
+                    "type": "list",
+                    "elements": "dict",
+                    "options": {
+                        "id": {"type": "str", "required": True},
+                        "rssi_prof_id": {"type": "int"},
+                        "rssi_state": {"type": "str"},
+                    },
+                },
+                "protection_elements": {
+                    "type": "list",
+                    "elements": "dict",
+                    "options": {
+                        "id": {"type": "str", "required": True},
+                        "redcy_ctrl_status": {"type": "str"},
+                    },
+                },
+                "racks": {
+                    "type": "list",
+                    "elements": "dict",
+                    "options": {
+                        "id": {"type": "str", "required": True},
+                        "description": {"type": "str"},
+                    },
+                },
+                "external_link_assigns": {
+                    "type": "list",
+                    "elements": "dict",
+                    "options": {
+                        "id": {"type": "str", "required": True},
+                        "remote": {"type": "str"},
+                    },
+                },
+                "external_link_hosts": {
+                    "type": "list",
+                    "elements": "dict",
+                    "options": {
+                        "id": {"type": "str", "required": True},
+                        "direction": {"type": "str"},
+                    },
+                },
+                "envbox": {
+                    "type": "dict",
+                    "options": {
+                        "enable_supervise": {"type": "bool"},
+                    },
+                },
+                "isam": {
+                    "type": "dict",
+                    "options": {
+                        "description": {"type": "str"},
+                    },
+                },
             },
         },
         "running_config": {"type": "str"},

@@ -36,6 +36,15 @@ class Isam_equipment(ResourceModule):
                 "protection_group.admin_status",
                 "protection_group.eps_quenchfactor",
             ],
+            "diagnostics_sfp": ["diagnostics_sfp.rssi_prof_id", "diagnostics_sfp.rssi_state"],
+            "protection_elements": ["protection_element.redcy_ctrl_status"],
+            "racks": ["rack.description"],
+            "external_link_assigns": ["external_link_assign.remote"],
+            "external_link_hosts": ["external_link_host.direction"],
+        }
+        self.singleton_parsers = {
+            "envbox": ["envbox.enable_supervise"],
+            "isam": ["isam.description"],
         }
         self.want = self._normalize_config(self.want)
         self.have = self._normalize_config(self.have)
@@ -71,6 +80,18 @@ class Isam_equipment(ResourceModule):
 
             for key, entry in iteritems(wantd):
                 self._compare_entry(entry, haved.pop(key, {}), parsers)
+
+        for section, parsers in iteritems(self.singleton_parsers):
+            wantd = want.get(section) or {}
+            haved = have.get(section) or {}
+            if self.state == "merged":
+                wantd = dict_merge(haved, wantd)
+            if self.state == "deleted":
+                self._compare_entry({}, haved, parsers)
+            elif self.state == "overridden" and not wantd:
+                self._compare_entry({}, haved, parsers)
+            else:
+                self._compare_entry(wantd, haved, parsers)
 
     def _compare_entry(self, want, have, parsers):
         self.compare(parsers=parsers, want=want, have=have)

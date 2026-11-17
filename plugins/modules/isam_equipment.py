@@ -77,13 +77,90 @@ options:
           eps_quenchfactor:
             description: EPS quench factor.
             type: int
+      diagnostics_sfp:
+        description: SFP diagnostics entries.
+        type: list
+        elements: dict
+        suboptions:
+          id:
+            description: SFP position (e.g. C(ntio-1:sfp:2)).
+            type: str
+            required: true
+          rssi_prof_id:
+            description: RSSI profile index.
+            type: int
+          rssi_state:
+            description: RSSI state.
+            type: str
+      protection_elements:
+        description: Protection element entries.
+        type: list
+        elements: dict
+        suboptions:
+          id:
+            description: Protection element identifier (e.g. C(nt-a)).
+            type: str
+            required: true
+          redcy_ctrl_status:
+            description: Redundancy control status.
+            type: str
+      racks:
+        description: Rack entries.
+        type: list
+        elements: dict
+        suboptions:
+          id:
+            description: Rack identifier.
+            type: str
+            required: true
+          description:
+            description: Rack description.
+            type: str
+      external_link_assigns:
+        description: External link assignment entries.
+        type: list
+        elements: dict
+        suboptions:
+          id:
+            description: External link identifier.
+            type: str
+            required: true
+          remote:
+            description: Remote expansion slot index.
+            type: str
+      external_link_hosts:
+        description: External link host entries.
+        type: list
+        elements: dict
+        suboptions:
+          id:
+            description: Faceplate number.
+            type: str
+            required: true
+          direction:
+            description: External link direction.
+            type: str
+      envbox:
+        description: Environment box settings.
+        type: dict
+        suboptions:
+          enable_supervise:
+            description: Enable environment supervision.
+            type: bool
+      isam:
+        description: ISAM system settings.
+        type: dict
+        suboptions:
+          description:
+            description: ISAM description.
+            type: str
   running_config:
     description: Device-native running configuration for parsed state.
     type: str
   state:
     description:
     - The state the configuration should be left in.
-    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(shelves[].id), C(slots[].id), C(appliques[].id) and C(protection_groups[].id) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
+    - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(shelves[].id), C(slots[].id), C(appliques[].id), C(protection_groups[].id), C(diagnostics_sfp[].id), C(protection_elements[].id), C(racks[].id), C(external_link_assigns[].id) and C(external_link_hosts[].id) (targeted gathering). The C(envbox) and C(isam) settings blocks are read whole. Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
