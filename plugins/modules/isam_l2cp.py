@@ -17,6 +17,7 @@ short_description: Manages the Nokia ISAM global L2CP partition type.
 description:
   - Manages C(configure l2cp partition-type) on Nokia ISAM.
   - A single settings block (one entry named C(l2cp)); C(gathered) always reads it completely.
+  - The write states read C(info configure l2cp flat) and compare against it (an empty read means C(no-partition)); a device error fails the module.
 version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:

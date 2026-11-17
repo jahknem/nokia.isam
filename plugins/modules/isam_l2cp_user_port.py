@@ -16,6 +16,9 @@ module: isam_l2cp_user_port
 short_description: Manages Nokia ISAM L2CP user ports.
 description:
   - Manages C(configure l2cp user-port <port> partition-id) on Nokia ISAM.
+  - The write states read C(info configure l2cp user-port flat) and compare against it; a device error fails the module.
+  - The removal form C(no user-port <port> partition-id <id>) needs the assigned id, which is taken from the device.
+    With I(state=replaced) or C(overridden) a different assigned partition is removed before the new one is set.
 version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:

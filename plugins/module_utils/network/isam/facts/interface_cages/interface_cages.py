@@ -21,6 +21,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
     get_targeted_config,
+    unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.interface_cages import (
     InterfaceCagesTemplate,
@@ -59,6 +60,7 @@ class InterfaceCagesFacts(object):
 
         if not data:
             data = self.get_config(connection)
+        data = unwrap_response(data)
 
         # parse native config using the InterfaceCages template
         interface_cages_parser = InterfaceCagesTemplate(

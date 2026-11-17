@@ -33,6 +33,16 @@ options:
           tc:
             type: int
             description: Traffic class index.
+          dpcolor:
+            type: str
+            description:
+            - Output discard precedence on the queue (C(dpcolor)).
+            - Device values are C(green) or C(yellow).
+          policer_color:
+            type: str
+            description:
+            - Frame colour for trTCM (C(policer-color)).
+            - Device values are C(green), C(yellow) or C(red).
       dscp_map_dot1p:
         type: list
         elements: dict

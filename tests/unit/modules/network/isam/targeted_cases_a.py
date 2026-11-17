@@ -49,14 +49,14 @@ def voice_case(section, cli, target, sibling, attributes):
 
 CASES = {
     "alarm:entries": case("isam_alarm", {"entries": [{"index": "xdsl-ne-los"}]},
-                          ["configure alarm entry xdsl-ne-los severity major", "configure alarm entry xdsl-ne-los no reporting"],
-                          {"entries": [{"index": "xdsl-fe-lof"}]},
-                          ["configure alarm entry xdsl-fe-lof severity minor"], "xdsl-ne-los", "xdsl-fe-lof"),
+                          # one line per entry, as 'info configure alarm flat' prints it
+                          ["configure alarm entry xdsl-ne-los severity major service-affecting no reporting logging"],
+                          {"entries": [{"index": "door"}]},
+                          ["configure alarm entry door severity critical service-affecting reporting logging"], "xdsl-ne-los", "door"),
     # Composite identity: the neighbour has the same filterid but the other type.
     "alarm:filters": case("isam_alarm", {"filters": [{"fltr_type": "temporal", "filterid": 3}]},
-                          ["configure alarm filter temporal filterid 3 alarmid xtca-ne-es",
-                           "configure alarm filter temporal filterid 3 threshold 7",
-                           "configure alarm suppression filterid 3 interface 1/1/1/1 alarmid xdsl-ne-los status 1"],
+                          ["configure alarm filter temporal filterid 3 alarmid xtca-ne-es threshold 7",
+                           "configure alarm suppression filterid 3 interface lt:1/1/4 alarmid board-missing status used"],
                           {"filters": [{"fltr_type": "spatial", "filterid": 3}]},
                           ["configure alarm filter spatial filterid 3 alarmid xtca-fe-uas"], "xtca-ne-es", "xtca-fe-uas"),
     "alarm:custom_profiles": case("isam_alarm", {"custom_profiles": [{"name": "cabinet-a"}]},
@@ -89,9 +89,9 @@ CASES = {
                                  ["configure system syslog route ntb-archive msg-type eqpt facility local0 notice"],
                                  "ams-collector", "ntb-archive"),
     "isam_vlan_global:priority_regen": case(
-        "isam_vlan_global", {"priority_regen": [{"dot1p": 3}]},
+        "isam_vlan_global", {"priority_regen": [{"id": 3}]},
         ["configure vlan priority-regen 3 profile-name ControlledLoad3 pbit0 3 pbit1 3 pbit2 3 pbit3 3 pbit4 3 pbit5 3 pbit6 3 pbit7 3"],
-        {"priority_regen": [{"dot1p": 30}]},
+        {"priority_regen": [{"id": 30}]},
         ["configure vlan priority-regen 30 profile-name BestEffortThirty pbit0 0 pbit1 0 pbit2 0 pbit3 0 pbit4 0 pbit5 0 pbit6 0 pbit7 0"],
         "ControlledLoad3", "BestEffortThirty"),
     "software_mngt:oswp": case("isam_software_mngt", {"oswp": [{"id": "1"}]},

@@ -41,7 +41,7 @@ class Isam_vlan_global(ResourceModule):
         }
         self.list_parsers = {
             "priority_regen": [
-                "priority_regen.dot1p",
+                "priority_regen",
             ],
         }
         self.want = self._normalize_config(self.want)
@@ -75,8 +75,8 @@ class Isam_vlan_global(ResourceModule):
                 self._compare_entry(want_section or {}, have_section or {}, parsers)
 
         for section, parsers in iteritems(self.list_parsers):
-            wantd = self._index_by_dot1p(want.get(section, []))
-            haved = self._index_by_dot1p(have.get(section, []))
+            wantd = self._index_by_id(want.get(section, []))
+            haved = self._index_by_id(have.get(section, []))
 
             if self.state == "merged":
                 wantd = dict_merge(haved, wantd)
@@ -101,8 +101,8 @@ class Isam_vlan_global(ResourceModule):
         have_wrapped = {section: have} if have else {}
         self.compare(parsers=parsers, want=want_wrapped, have=have_wrapped)
 
-    def _index_by_dot1p(self, entries):
-        return {str(entry["dot1p"]): entry for entry in entries or [] if entry.get("dot1p") is not None}
+    def _index_by_id(self, entries):
+        return {str(entry["id"]): entry for entry in entries or [] if entry.get("id") is not None}
 
     def _normalize_config(self, config):
         config = deepcopy(config or {})

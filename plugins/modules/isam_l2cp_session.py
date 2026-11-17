@@ -16,6 +16,10 @@ module: isam_l2cp_session
 short_description: Manages Nokia ISAM L2CP sessions.
 description:
   - Manages C(configure l2cp session) on Nokia ISAM.
+  - The write states read C(info configure l2cp session flat) and compare against it, attributes at their device default included;
+    a device error fails the module.
+  - I(bras_ip_address) is mandatory to create a session; for an existing session it is taken from the device when not given.
+    Deletion removes whole sessions (C(no session <index>)).
 version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:

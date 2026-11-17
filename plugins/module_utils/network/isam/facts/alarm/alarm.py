@@ -53,6 +53,9 @@ class AlarmFacts(object):
         for key in ("filters", "custom_profiles", "hgutr069_custs"):
             if key in parsed:
                 parsed[key] = list(parsed[key].values())
+        for fltr in parsed.get("filters", []):
+            if isinstance(fltr.get("suppressions"), dict):
+                fltr["suppressions"] = list(fltr["suppressions"].values())
 
         ansible_facts["ansible_network_resources"].pop("alarm", None)
 

@@ -17,9 +17,9 @@ class L2cpUserPortFacts(object):
 
     def get_facts(self, resource_facts_type=None, data=None, **kwargs):
         resource = (resource_facts_type or ["l2cp_user_port"])[0]
-        state = (getattr(self._module, "params", None) or {}).get("state")
-        if data is None and state == "gathered":
-            # gathered reads the device here; the other states keep their former behaviour.
+        if data is None:
+            # Every state reads the device: gathered (targeted when config names instances) and the
+            # write states (the whole resource, so merged/replaced/overridden/deleted compare against it).
             try:
                 data = self.get_config(get_resource_connection(self._module))
             except Exception as exc:  # like netcommon's facts: a clear failure, no traceback

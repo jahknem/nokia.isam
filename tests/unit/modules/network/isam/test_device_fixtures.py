@@ -355,6 +355,10 @@ def test_alarm_live_flat_fixture_is_parseable():
     assert descriptor["command"] == "info configure alarm flat"
     assert parsed["filters"]["temporal/1"]["alarmid"] == "all"
     assert parsed["log"]["log_sev_level"] == "critical"
+    assert len(parsed["filters"]) == 62
+    assert parsed["entries"]["door"] == {
+        "index": "door", "severity": "critical", "service_affecting": True, "reporting": True, "logging": True,
+    }
 
 
 def test_interface_alarm_live_flat_fixture_is_parseable():

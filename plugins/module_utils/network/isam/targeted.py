@@ -47,7 +47,7 @@ TARGETED_GATHER = {
     "isam_equipment": {"appliques": "id", "protection_groups": "id", "shelves": "id", "slots": "id"},
     "isam_ipv6_antispoofing_slot": {"config": "name"},
     "isam_traps": {"definitions": "name", "managers": "address", "v6managers": "ipv6address"},
-    "isam_vlan_global": {"priority_regen": "dot1p"},
+    "isam_vlan_global": {"priority_regen": "id"},
     "l2cp_session": {"config": "name"},
     "l2cp_user_port": {"config": "name"},
     "link_agg": {"groups": "id", "ports": "id"},

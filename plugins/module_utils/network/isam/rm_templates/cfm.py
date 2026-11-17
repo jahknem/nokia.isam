@@ -105,7 +105,8 @@ class CfmTemplate(NetworkTemplate):
         return item
 
     def _parse_pm(self, words, items):
-        if len(words) < 6 or words[0] != "domain":
+        # domain <d> association <a> mep <m> session-id <s> [options]: 8 identity words needed
+        if len(words) < 8 or [words[0], words[2], words[4], words[6]] != ["domain", "association", "mep", "session-id"]:
             return
         item = {"domain_index": int(words[1]), "association": int(words[3]), "mep": int(words[5]), "session_id": int(words[7])}
         self._options(words[8:], item, {"type": "type", "target-mac": "target_mac", "priority": "priority", "admin-up": "admin_up", "interval": "interval", "size": "size", "measurement-intvl": "measurement_intvl"})

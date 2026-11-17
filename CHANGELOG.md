@@ -34,6 +34,41 @@
   - `isam_qos_profiles`: flat `configure qos profiles marker d1p` lines.
   - `isam_dist_service`: flat lines with several attributes.
   - `isam_ipv6_antispoofing_slot`: a single-slot block.
+- Bug fixes (writes; check the command differences before upgrading playbooks):
+  - `isam_alarm`: merged/replaced/overridden/deleted/rendered crashed for every list
+    section; rewritten per section with the removal forms of the CLI help. Entries,
+    filters and suppressions cannot be removed on the device: their resettable
+    attributes are reset (`no severity`, `no status no threshold no window`), the rest
+    is left with a warning. Custom profiles and hgutr069 entries are removed
+    (`configure alarm no custom-profile|hgutr069-cust <id>`). Log/delta-log send only
+    known or changed values.
+  - `isam_alarm` parsing: the device's one-line entry form (`entry door severity
+    critical service-affecting reporting logging`) was dropped; `no severity` means
+    the default (unset), not `indeterminate`; filter/suppression `status` is
+    `used`/`not-used` (string, was int); `no threshold`/`no window` read as the CLI
+    defaults; suppressions without their temporal filter line keep their identity.
+    `entries[].index` and `filters[].alarmid` no longer restrict `choices` (open sets
+    that change per release; the device validates); entry `severity` gains `ignore`.
+  - `isam_vlan_global` `priority_regen` used a form the device does not know
+    (`priority-regen dot1p N regen-dot1p M`). It now models the device form
+    `priority-regen <id> profile-name <name> pbit0..pbit7` (identity `id`; argspec
+    `dot1p`/`regen_dot1p` replaced by `id`, `profile_name`, `pbit0`-`pbit7`); removal
+    `configure vlan no priority-regen <id>`.
+  - `isam_l2cp`, `isam_l2cp_session`, `isam_l2cp_user_port`,
+    `isam_pppoe_client_interface`, `isam_pppoe_client_ppp_profile`,
+    `isam_pppoel2_statistics` never read the device for writes (deleted/overridden did
+    nothing, merged always resent). All states read the device now; invalid removal
+    forms fixed (`no ppp-profile`, `no interface <port> client-id <id>`,
+    `no user-port <port> partition-id <id>`); replaced/overridden change in place
+    instead of delete and recreate. PPPoE client interfaces are keyed by port and
+    client id. The PPPoE password is never compared (the device hides it).
+  - `isam_ipv6_antispoofing_slot`: `bit_len` 64-128 is enforced (argspec `min`/`max`
+    are not supported by AnsibleModule).
+- Bug fixes (parsing): `isam_xstp` (all options of a line, option-less ports,
+  validation), `isam_interface_alarms` (`default_severity` was never parsed), PON
+  variants (module path and `isam_facts` share one typed parser),
+  `isam_interface_cages` (tuple replies), `isam_cfm` (short y1731pm lines raised).
+  `isam_xdsl_profiles` gathers through the normal facts path.
 - Documentation: `state` describes targeted gathering with an example in every
   targetable module; full option docs, examples and return values for the modules that
   only had stubs (EFM OAM, ARP/DHCP relay, CFM, PON variants, L2CP, PPPoE, linetest,

@@ -16,19 +16,8 @@ class Interface_alarmsTemplate(NetworkTemplate):
         super(Interface_alarmsTemplate, self).__init__(lines=lines, tmplt=self, module=module)
 
     PARSERS = [
-        {
-            "name": "name",
-            "getval": re.compile(
-                r"^configure\s+interface\s+alarm\s+(?P<name>\S+)\s+.*$"
-            ),
-            "setval": "configure interface alarm {{ name }}",
-            "result": {
-                "{{ name }}": {
-                    "name": "{{ name }}",
-                }
-            },
-            "shared": True,
-        },
+        # default_severity must come first: NetworkTemplate.parse() stops at the first matching
+        # parser, so the catch-all "name" parser would otherwise swallow default-severity lines.
         {
             "name": "default_severity",
             "getval": re.compile(
@@ -40,6 +29,18 @@ class Interface_alarmsTemplate(NetworkTemplate):
                 "{{ name }}": {
                     "name": "{{ name }}",
                     "default_severity": "{{ '' if negate is defined else default_severity }}",
+                }
+            },
+        },
+        {
+            "name": "name",
+            "getval": re.compile(
+                r"^configure\s+interface\s+alarm\s+(?P<name>\S+)(?:\s+.*)?$"
+            ),
+            "setval": "configure interface alarm {{ name }}",
+            "result": {
+                "{{ name }}": {
+                    "name": "{{ name }}",
                 }
             },
         },

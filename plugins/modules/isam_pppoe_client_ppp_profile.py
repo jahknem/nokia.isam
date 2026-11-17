@@ -16,6 +16,10 @@ module: isam_pppoe_client_ppp_profile
 short_description: Manages Nokia ISAM PPPoE client PPP profiles.
 description:
   - Manages C(configure pppoe-client ppp-profile) on Nokia ISAM.
+  - The write states read C(info configure pppoe-client ppp-profile flat) and compare against it; a device error fails the module.
+  - Attributes at their device default (I(ipversion=ipv4), I(authproto=auto), I(mru=1500)) equal absent ones. With I(state=replaced) or C(overridden),
+    attributes not given are reset (C(no ipversion) etc.); deletion uses C(no ppp-profile <name>).
+  - I(client_id), I(profile_name), I(username), I(password), I(mac) and I(pbit) belong to client interfaces and are ignored here.
 version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:
