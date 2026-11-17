@@ -161,7 +161,7 @@ def test_gap_report_families_and_unclaimed():
     argspecs = {"qos_tca": {"tca_enable", "load_thresh"}, "bridges": {"max_unicast_mac", "pvid"}}
     prefixes = {"qos_tca": ("configure qos tca ",), "bridges": ("configure bridge ",)}
     report = gap_report(parse_config_tree(text), argspec_names=argspecs, prefixes=prefixes, excludes={})
-    assert report["families"]["qos_tca"] == {"argspec": True, "lines": 1, "unmodelled": {}}
+    assert report["families"]["qos_tca"] == {"argspec": True, "lines": 1, "unmodelled": {}, "value_like": 0}
     assert report["families"]["bridges"]["unmodelled"] == {"bridge port": ["brand-new-knob"]}
     assert report["unclaimed"]["qos global"] == 1
     assert "system security snmp community" in report["unclaimed"]
@@ -277,3 +277,19 @@ def test_facts_subset_reads_flat_and_detail():
     Module.params = {"config_tree_detail": True}
     Config_treeFacts(Module()).populate_facts(connection)
     assert connection.commands[-1] == "info configure detail flat"
+
+
+def test_gap_report_never_shows_values():
+    """A value parsed into a name position (e.g. a hash) is counted, never shown."""
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam import config_tree
+
+    tree = {"x": {"__config__": {"lines": ["configure system security ssh sftp-user u1 password encrypted:aa:bb"],
+                                 "node": "system security ssh sftp-user U1User",
+                                 "attrs": {"encrypted:aa:bb": True, "password": "x", "Secret Value": True}}}}
+    report = config_tree.gap_report(tree, argspec_names={"isam_system_security": set()},
+                                    prefixes={"isam_system_security": ("configure system security ",)}, excludes={})
+    text = repr(report)
+    assert "encrypted:aa:bb" not in text and "Secret Value" not in text and "U1User" not in text
+    entry = report["families"]["isam_system_security"]
+    assert entry["value_like"] == 2
+    assert entry["unmodelled"] == {"system security ssh sftp-user <value>": ["password"]}
