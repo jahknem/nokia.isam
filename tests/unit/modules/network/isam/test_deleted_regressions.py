@@ -167,3 +167,13 @@ def test_deleted_naming_one_instance_touches_only_it_on_the_lab_capture(monkeypa
         if result.get("failed") or stray:
             problems.append("%s:%s" % (name, path))  # names only: commands may quote config
     assert not problems, problems
+
+
+def test_qos_interface_deleted_skips_settings_that_are_not_configured(monkeypatch):
+    """The device rejected 'no bc-scheduler-node' on an ONT UNI whose value was 'none'."""
+    text = ("configure qos interface 1/1/7/16/1/1/1 scheduler-node name:NGLT_Default cac-profile name:FD_ONTUniVideo "
+            "ds-num-rem-queue not-applicable mc-scheduler-node none bc-scheduler-node none")
+    result = run_module(monkeypatch, "isam_qos_interfaces", {"state": "deleted", "config": [{"name": "1/1/7/16/1/1/1"}]}, text)
+    assert not any("bc-scheduler-node" in c or "mc-scheduler-node" in c or "ds-num-rem-queue" in c
+                   for c in result["commands"]), result["commands"]
+    assert any("no scheduler-node" in c for c in result["commands"])

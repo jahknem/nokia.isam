@@ -238,6 +238,7 @@ class TestIsamEquipmentOntsNodes(TestIsamModule):
                 result = self.run_state("deleted", config)
                 assert result["commands"] == [
                     "configure equipment ont interface 1/1/2/1/2 admin-state down",
+                    "configure equipment ont slot 1/1/2/1/2/1 admin-state down",
                     "configure equipment ont no slot 1/1/2/1/2/1",
                     "configure equipment ont no interface 1/1/2/1/2",
                     "configure equipment ont no sw-ctrl 1",
@@ -277,3 +278,32 @@ class TestIsamEquipmentOntsNodes(TestIsamModule):
             "configure equipment ont loop 1/1/2/1/2 no loop-detect no loop-portautoshut",
             "configure equipment ont pm-collect 1/1/2/1/2 no xg-pm-collect",
         ]
+
+
+def test_admin_state_is_sent_separately_from_the_creating_command(monkeypatch):
+    """The device rejected 'admin-state up' on the line that creates the ONT (lab ISAM)."""
+    from .module_runner import run_module
+
+    config = {"interfaces": [{"ont_idx": "1/1/7/16/1", "sw_ver_pland": "disabled", "sernum": "ZZZZ:00000001",
+                              "admin_state": "up"}],
+              "slots": [{"ont_slot_idx": "1/1/7/16/1/1", "planned_card_type": "ethernet", "plndnumdataports": 1,
+                         "plndnumvoiceports": 0}]}
+    rendered = run_module(monkeypatch, "isam_equipment_onts", {"state": "rendered", "config": config})["rendered"]
+    assert rendered == [
+        "configure equipment ont interface 1/1/7/16/1 sw-ver-pland disabled sernum ZZZZ:00000001",
+        "configure equipment ont interface 1/1/7/16/1 admin-state up",
+        "configure equipment ont slot 1/1/7/16/1/1 planned-card-type ethernet plndnumdataports 1 plndnumvoiceports 0",
+    ]
+
+
+def test_replaced_leaves_device_defaults_and_masked_password_alone(monkeypatch):
+    """The device rejected 'no subslocid' (lab ISAM); log-auth-pwd is shown masked even if unset."""
+    from .module_runner import run_module
+
+    device = ("configure equipment ont interface 1/1/7/16/1 sw-ver-pland disabled sernum ZZZZ:00000001 "
+              "subslocid WILDCARD log-auth-pwd plain:****** desc1 zztest\n"
+              "configure equipment ont interface 1/1/7/16/1 admin-state up\n")
+    want = {"interfaces": [{"ont_idx": "1/1/7/16/1", "sw_ver_pland": "disabled", "sernum": "ZZZZ:00000001",
+                            "admin_state": "up"}]}
+    result = run_module(monkeypatch, "isam_equipment_onts", {"state": "replaced", "config": want}, device)
+    assert result["commands"] == ["configure equipment ont interface 1/1/7/16/1 no desc1"]

@@ -11,6 +11,9 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.qos_interfaces import Qos_interfacesTemplate
 
 
+UNSET_VALUES = ("none", "not-applicable")
+
+
 class Qos_interfaces(ResourceModule):
     """The isam_qos_interfaces config class."""
 
@@ -117,7 +120,10 @@ class Qos_interfaces(ResourceModule):
                 requested = {self._tmplt.get_parser(parser)["compval"] for parser in self.top_parsers}
             for field in sorted(requested):
                 value = have.get(field)
-                if value is not None:
+                # 'none'/'not-applicable' mean nothing is configured; resetting them is
+                # pointless and the device rejects it where the setting is unsupported
+                # (lab ISAM, ONT UNI: "does not support ... Broadcast Scheduler Profile").
+                if value is not None and value not in UNSET_VALUES:
                     self.addcmd(
                         {"name": have.get("name", want.get("name")), field: value},
                         "interface.%s" % field,
