@@ -15,8 +15,8 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_gra
 
 
 def redacted_source(text):
-    return ["configure " + " ".join(_redact_tokens(_tokens(l.strip())[1:]))
-            for l in text.splitlines() if l.strip().startswith("configure ")]
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_tree import redacted_token_lines
+    return ["configure " + " ".join(tokens) for tokens in redacted_token_lines(text) if tokens]
 
 
 REPO = pathlib.Path(__file__).resolve().parents[5]
@@ -419,3 +419,33 @@ def test_lab_gap_report_has_no_unclaimed_or_unmodelled_fields(capture):
     assert not report["unclaimed"]
     # Counts only: assertion failures must not print identities or credentials.
     assert all(entry["argspec"] and not entry["unmodelled"] for entry in report["families"].values())
+
+
+def test_community_embedded_in_snmp_version_is_masked():
+    import json
+    text = "\n".join([
+        "configure system security snmp community privcomm host-address 10.0.0.1/32 context base",
+        "configure system security snmp notify-profile prof1 snmp-version v2c:privcomm",
+        "configure system security snmp notify-profile prof2 snmp-version v1:other-only-here",
+        "configure system security snmp notify-profile prof3 snmp-version v3",
+        "configure equipment ont interface 1/1/1/1/1 desc1 note-privcomm-ref",
+    ])
+    out = json.dumps(parse_config_tree(text))
+    assert "privcomm" not in out and "other-only-here" not in out
+    assert "v2c:<redacted>" in out and "v1:<redacted>" in out
+    assert '"snmp-version": "v3"' in out  # a plain version stays readable
+
+
+@pytest.mark.parametrize("capture", ROOT_CAPTURES, ids=lambda p: p.name)
+def test_root_capture_tree_contains_no_known_secret(capture):
+    """No cleartext secret seen behind a secret keyword survives anywhere in the tree."""
+    import json
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_tree import _known_secrets, _tokens
+
+    if not capture.exists():
+        pytest.skip("root capture not available")
+    text = capture.read_text(errors="replace")
+    known = _known_secrets(_tokens(l.strip())[1:] for l in text.splitlines() if l.strip().startswith("configure "))
+    out = json.dumps(parse_config_tree(text))
+    leaked = sum(1 for secret in known if secret in out)
+    assert leaked == 0, "%d known secret value(s) leaked" % leaked  # count only

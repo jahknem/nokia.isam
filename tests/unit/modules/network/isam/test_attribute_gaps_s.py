@@ -106,3 +106,8 @@ class TestInterruptedAttributeBatch(TestIsamModule):
                     wanted = {"slots": [{"id": "lt:1/1/5"}]}
                 result = self.run_state(family, "replaced", wanted, text)
                 self.assertTrue(result["commands"])
+
+    def test_bonding_overridden_keeps_a_wanted_assembly_time(self):
+        text = "configure xdsl-bonding group-assembly-time 0"
+        result = self.run_state("xdsl_bonding", "overridden", {"group_assembly_time": 0}, text)
+        self.assertEqual(result["commands"], [])

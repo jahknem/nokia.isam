@@ -40,7 +40,7 @@ class Ntp_ontsFacts(object):
     def get_config(self, connection):
         """The whole resource, or only the NTP ONTs named in config (targeted gathering)."""
         commands = ["info configure ntp ont %s flat" % ont for ont in requested_identities(self._module, "ntp_onts")]
-        return get_scoped_config(self._module, connection, None, "info configure ntp flat", commands)
+        return get_scoped_config(self._module, connection, None, "info configure ntp flat", commands, bare_commands=True)
 
     def populate_facts(self, connection, ansible_facts, data=None):
         """Populate the facts for Ntp_onts network resource."""

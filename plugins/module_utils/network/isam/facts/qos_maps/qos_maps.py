@@ -37,7 +37,7 @@ class Qos_mapsFacts(object):
             "dscp_map_dot1p": "info configure qos dscp-map-dot1p %s flat",
             "up_ctrl_pkt": "info configure qos up-ctrl-pkt %s flat",
             "dn_ctrl_pkt": "info configure qos dn-ctrl-pkt %s flat",
-        })
+        }, bare_sections=("up_ctrl_pkt", "dn_ctrl_pkt"))
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}
