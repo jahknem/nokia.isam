@@ -2,6 +2,21 @@
 
 ## 0.3.14
 
+- Backlog closeout: `equipment_onts` with `state: deleted` and no config now deletes
+  the whole resource instead of silently doing nothing. Interfaces are shut down,
+  slots removed before interfaces, and loop/PM settings are not reset after their
+  ONT is removed. Explicitly named sections remain scoped.
+- Root-tree nesting uses resource-backed CLI metadata for missing security,
+  timing, syslog, xDSL profile, trap-manager and multicast nodes. Lowercase names,
+  composite SNMP identities and indexed RADIUS/PSD entries no longer depend on
+  heuristics or line order. `source: resource` identifies this metadata.
+  The password-policy node is no longer mistaken for a password attribute.
+- Gap reporting recognises intentional option-name differences and schema-less
+  permission dictionaries without suppressing unknown attributes elsewhere.
+  Both lab captures now have zero unclaimed lines and zero reported attribute
+  gaps (regression-tested). This measures capture coverage, not device verification
+  of inferred write syntax. Diagnostic output still needs review before sharing
+  because unknown CLI syntax can be misinterpreted by the heuristic fallback.
 - Root config tree: `isam_facts` subset `config_tree` reads `info configure flat` once
   and parses the whole configuration into a nested, lossless tree
   (`ansible_net_config_tree`), keyed by CLI path with attributes at the leaves. Every

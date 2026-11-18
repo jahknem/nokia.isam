@@ -425,6 +425,7 @@ options:
     - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(interfaces[].ont_idx), C(slots[].ont_slot_idx), C(sw_ctrls[].sw_ctrl_id), C(loops[].ont_idx) and C(pm_collects[].ont_idx) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
     - With C(merged), C(replaced) or C(deleted) and I(config) naming only C(interfaces) and C(slots), the current configuration is likewise read only for the named instances.
     - Deleting an ONT (C(interfaces)) removes its C(loops) and C(pm_collects) settings with it; no reset is sent for them.
+    - With C(deleted) and no I(config), or an empty I(config), all gathered ONT interfaces, slots and software-control entries are removed. Interfaces are shut down before slots and interfaces are removed. This is destructive; provide explicit identities to limit deletion.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged

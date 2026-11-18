@@ -68,6 +68,9 @@ options:
         paths, attributes and stored CLI lines. Only device-masked placeholders such
         as C(plain:******) are retained. Leaves contain C(attrs), C(lines), C(node)
         and C(source); this view is lossless except for credential redaction.
+        C(source) is C(grammar), C(resource) (resource-backed CLI metadata), or
+        C(heuristic). Unknown syntax retains its redacted CLI lines even when
+        the inferred nesting is approximate.
     required: false
     default: false
     type: bool

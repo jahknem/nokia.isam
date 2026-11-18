@@ -128,7 +128,9 @@ class Equipment_onts(ResourceModule):
     def generate_commands(self):
         want = self.want or deepcopy(EMPTY)
         have = self.have or deepcopy(EMPTY)
-        delete_all = self.state == "deleted" and not self.want
+        # ResourceModule uses EMPTY when config is omitted. That mapping is truthy
+        # even though every section is empty; test its contents, not the mapping.
+        delete_all = self.state == "deleted" and not any(want.values())
 
         sections = [
             ("interfaces", "ont_idx", "interface", self.INTERFACE_FIELDS),
