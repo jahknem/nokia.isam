@@ -31,6 +31,19 @@
   - Not verifiable in scope: `isam_nat` needs the CWMP platform enabled ("CWMP platform
     is disabled"). Test values outside documented ranges were rejected by the device as
     expected (alarm mnemonic letters only, CFM SLM 10-100 s, NAT aging 60-240 s).
+- Live write verification on an empty PON of the lab ISAM (PON interface and port,
+  test VLANs, a test ONT with slot/UNI/ANI/NTP/PM settings; record in
+  `docs/live-validation-2026-11-18.md`). Fixed:
+  - `isam_equipment_onts`: `admin-state` was packed into the command that creates an
+    ONT; the device rejects it there (`invalid token`). It is sent on its own line.
+    `deleted` admin-downs ONT slots as well as ONTs before removing them (the device
+    refuses: "Not in admin down state to delete"). `replaced` sent `no subslocid`,
+    which does not exist; `WILDCARD` (the device's unset value) counts as unset and a
+    set value is kept. A `log-auth-pwd` shown masked no longer counts as configured.
+  - `isam_qos_interfaces` `deleted`: settings showing `none`/`not-applicable` are not
+    reset (the device rejected `no bc-scheduler-node` on an ONT UNI).
+  - `isam_bridges` documents that a VLAN on an ONT UNI bridge port needs an
+    upstream-queue bandwidth profile (VLAN MGT error 277).
 - Live verification on the lab ISAM (read-only / check mode). Every resource module's
   live `gathered` matches the parse of a fresh capture; 57 targeted reads and 102
   check-mode merged/replaced/overridden runs with the gathered facts as config. Fixed:

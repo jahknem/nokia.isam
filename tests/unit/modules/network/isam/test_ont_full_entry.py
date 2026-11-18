@@ -127,6 +127,7 @@ def test_gathered_full_entry_is_idempotent_and_can_be_deleted(monkeypatch, famil
     if family == "equipment_onts":
         assert deleted["commands"] == [
             "configure equipment ont interface %s admin-state down" % ONT,
+            "configure equipment ont slot %s/1 admin-state down" % ONT,
             "configure equipment ont no slot %s/1" % ONT,
             "configure equipment ont no interface %s" % ONT,
         ]

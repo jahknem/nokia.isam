@@ -20,6 +20,11 @@ version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 notes:
   - 'Tested against Nokia ISAM with OS Version R6.2.04m'
+  - >-
+    Attaching a VLAN to a bridge port on an ONT UNI needs a bandwidth profile on the
+    UNI's upstream queue (C(isam_qos_interfaces) C(upstream_queue.bandwidth_profile)).
+    Without it the device refuses the attachment with "VLAN MGT error 277 : Attach
+    ingress QoS profile to VLAN port refused due to missing bandwidth profile".
 options:
   config:
     description: The provided configuration

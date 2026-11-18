@@ -4,6 +4,8 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+import re
+
 from copy import deepcopy
 
 from ansible.module_utils.six import iteritems
@@ -24,20 +26,37 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 EMPTY = {"interfaces": [], "slots": [], "sw_ctrls": [], "loops": [], "pm_collects": []}
 
 
+def _subnode_scopes(node, subnodes, unpacked=()):
+    """Compaction scopes for a node and its subnodes: subnode settings are packed
+    under their own scope, never into the node line; ``unpacked`` keywords are
+    always sent as a line of their own."""
+    names = "|".join(re.escape(cli) for _key, cli, _fields in subnodes)
+    excluded = "|".join(re.escape(word) for word in tuple(unpacked) + tuple(cli for _k, cli, _f in subnodes))
+    prefix = r"^(?P<scope>configure equipment ont %s \S+" % node
+    return (
+        prefix + r") (?P<suffix>(?!(?:%s)(?:\s|$)).+)$" % excluded,
+        prefix + r" (?:%s)) (?P<suffix>.+)$" % names,
+    )
+
+
 class Equipment_onts(ResourceModule):
     """The isam_equipment_onts config class."""
 
+    # admin-state is never packed: the device rejects it on the line that creates the
+    # ONT ("invalid token") and prints it as a line of its own.
     COMPACT_COMMAND_SCOPES = (
-        r"^(?P<scope>configure equipment ont interface \S+) (?P<suffix>(?!tc-layer(?:\s|$)|tc-layer-threshold(?:\s|$)|mcast-tc-layer(?:\s|$)|fec-tc-layer(?:\s|$)|ethernet(?:\s|$)|xg-tc-layer(?:\s|$)|phy-layer(?:\s|$)|delay-act(?:\s|$)|cpu-load(?:\s|$)|memory-usage(?:\s|$)).+)$",
-        r"^(?P<scope>configure equipment ont interface \S+ (?:tc-layer|tc-layer-threshold|mcast-tc-layer|fec-tc-layer|ethernet|xg-tc-layer|phy-layer|delay-act|cpu-load|memory-usage)) (?P<suffix>.+)$",
-        r"^(?P<scope>configure equipment ont slot \S+) (?P<suffix>.+)$",
-        r"^(?P<scope>configure equipment ont sw-ctrl \S+) (?P<suffix>(?!delay-act(?:\s|$)).+)$",
-        r"^(?P<scope>configure equipment ont sw-ctrl \S+ delay-act) (?P<suffix>.+)$",
-        r"^(?P<scope>configure equipment ont loop \S+) (?P<suffix>.+)$",
-        r"^(?P<scope>configure equipment ont pm-collect \S+) (?P<suffix>.+)$",
+        _subnode_scopes("interface", INTERFACE_SUBNODES, unpacked=("admin-state",))
+        + (r"^(?P<scope>configure equipment ont slot \S+) (?P<suffix>.+)$",)
+        + _subnode_scopes("sw-ctrl", SW_CTRL_SUBNODES)
+        + (
+            r"^(?P<scope>configure equipment ont loop \S+) (?P<suffix>.+)$",
+            r"^(?P<scope>configure equipment ont pm-collect \S+) (?P<suffix>.+)$",
+        )
     )
 
     SECRET_FIELDS = ("log_auth_pwd",)
+    # Interface values the device shows for an unset field; equal to unset when comparing.
+    INTERFACE_DEFAULTS = {"subslocid": "WILDCARD"}
     INTERFACE_FIELDS = [
         "sw_ver_pland",
         "sernum",
@@ -139,12 +158,7 @@ class Equipment_onts(ResourceModule):
         # An ONT is built interface first, then its slots; it is removed the other way
         # round (the device refuses to delete an ONT that still has slots).
         if self.state == "deleted":
-            requested = {item["ont_idx"] for item in want.get("interfaces") or []}
-            for interface in have.get("interfaces") or []:
-                if (delete_all or interface["ont_idx"] in requested) and interface.get("admin_state") != "down":
-                    self.commands.append(
-                        "configure equipment ont interface %s admin-state down" % interface["ont_idx"]
-                    )
+            self._shut_down_before_delete(want, have, delete_all)
             sections.reverse()
         for section, key, parser_prefix, fields in sections:
             self._compare_section(
@@ -181,6 +195,15 @@ class Equipment_onts(ResourceModule):
                 delete_all or bool(want.get(section)),
                 removed,
             )
+
+    def _shut_down_before_delete(self, want, have, delete_all):
+        """Admin-down what is about to be removed: the device refuses to delete an ONT
+        or an ONT slot that is not admin down ("Not in admin down state to delete")."""
+        for section, key, node in (("interfaces", "ont_idx", "interface"), ("slots", "ont_slot_idx", "slot")):
+            named = set(item[key] for item in want.get(section) or [])
+            for entry in have.get(section) or []:
+                if (delete_all or entry[key] in named) and entry.get("admin_state") != "down":
+                    self.commands.append("configure equipment ont %s %s admin-state down" % (node, entry[key]))
 
     def _compare_ont_nodes(self, want_list, have_list, parser_prefix, defaults, requested, removed=()):
         """Loop / pm-collect nodes exist with their ONT: removal resets the fields.
@@ -269,9 +292,11 @@ class Equipment_onts(ResourceModule):
         for field in fields:
             inw = self._get(want, field)
             inh = self._get(have, field)
-            if field in self.SECRET_FIELDS and is_masked_secret(inw):
-                # The device only ever shows passwords masked; a masked value read
-                # back (e.g. copied from another ONT) is not the password.
+            if field in self.SECRET_FIELDS and (is_masked_secret(inw) or (inw is None and is_masked_secret(inh))):
+                # The device only ever shows passwords masked, also when none is set: a
+                # masked value is neither the password nor proof that one is set.
+                continue
+            if parser_prefix == "interface" and inh == self.INTERFACE_DEFAULTS.get(field) and inw is None:
                 continue
             if inw is not None and inw != inh:
                 self.addcmd(want, "%s.%s" % (parser_prefix, field))
