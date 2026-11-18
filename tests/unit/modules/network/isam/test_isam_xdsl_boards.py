@@ -48,7 +48,8 @@ class TestIsamXdslBoardsModule(TestIsamModule):
             True,
         )
         result = self.execute_module(changed=True)
-        self.assertEqual(result["commands"], ["configure xdsl no board 1/1/1"])
+        # a board is reset, not removed ('no board' is an invalid token, lab ISAM)
+        self.assertEqual(result["commands"], ["configure xdsl board 1/1/1 no vce-profile"])
 
     DETAIL = "\n".join([
         "configure xdsl board 1/1/1 no dpbo-profile vce-profile 10 no vplt-autodiscover no vce-capacity-mode"
@@ -193,8 +194,9 @@ class TestIsamXdslBoardsModule(TestIsamModule):
                 {"link_id": "2", "lt_expect": "1/1/3"},
             ]}],
         }}, True)
-        result = self.execute_module(changed=True)
-        self.assertEqual(result["commands"], ["configure xdsl no board 1/1/4"])
+        # the unlisted board 1/1/4 is reset, not removed; it has nothing but defaults
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["commands"], [])
 
     def test_render_parse_round_trip(self):
         config = {

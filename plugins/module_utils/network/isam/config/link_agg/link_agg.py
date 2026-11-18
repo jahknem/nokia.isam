@@ -181,7 +181,7 @@ class Link_agg(ResourceModule):
         if self.state == "merged":
             remove_ports = set()
         else:
-            remove_ports = have_ports - want_ports
+            remove_ports = self._removable(group_id, have_ports - want_ports)
         add_ports = want_ports - have_ports
 
         for port in sorted(remove_ports):
@@ -189,9 +189,15 @@ class Link_agg(ResourceModule):
         for port in sorted(add_ports):
             self.commands.append("configure link-agg group {0} port {1}".format(group_id, port))
 
+    @staticmethod
+    def _removable(group_id, ports):
+        """A port always belongs to the group of its own id, its default aggregator; the
+        device refuses to remove it (LINK AGG error 22, lab ISAM)."""
+        return set(port for port in ports if port != group_id)
+
     def _delete_group(self, have):
         group_id = have["id"]
-        for port in sorted(have.get("ports", [])):
+        for port in sorted(self._removable(group_id, have.get("ports", []))):
             self.commands.append("configure link-agg group {0} no port {1}".format(group_id, port))
         for field in self.GROUP_FIELDS:
             self._delete_group_field(group_id, field, have)

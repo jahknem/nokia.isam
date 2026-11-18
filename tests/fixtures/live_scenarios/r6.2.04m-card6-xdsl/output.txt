@@ -1,0 +1,352 @@
+configure equipment slot lt:1/1/6 planned-type ndlt-f unlock capab-profile 8vc_default
+configure xdsl board 1/1/6 dpbo-profile 1
+configure xdsl line 1/1/6/1 service-profile 13 spectrum-profile 2 dpbo-profile 1 admin-up
+configure xdsl line 1/1/6/1 tca-line-threshold enable es-nearend 10
+configure xdsl line 1/1/6/3 service-profile 13 spectrum-profile 2 imp-noise-sensor
+configure xdsl line 1/1/6/7 admin-up
+configure xdsl imp-noise-sensor near-end 1/1/6/3 inm-mode enable inm-iat-offset 10
+configure xdsl imp-noise-sensor far-end 1/1/6/3 ins-sensitivity 5
+configure interface port xdsl-line:1/1/6/1 admin-up
+configure interface port xdsl-line:1/1/6/7 admin-up link-updown-trap
+configure interface port bonding:1/1/6/1 user "" severity no-value
+configure interface port bonding:1/1/6/2 user "" severity no-value
+configure interface port bonding:1/1/6/3 user "" severity no-value
+configure interface port bonding:1/1/6/4 user "" severity no-value
+configure interface port bonding:1/1/6/5 user "" severity no-value
+configure interface port bonding:1/1/6/6 user "" severity no-value
+configure interface port bonding:1/1/6/7 user "" severity no-value
+configure interface port bonding:1/1/6/8 user "" severity no-value
+configure interface port bonding:1/1/6/9 user "" severity no-value
+configure interface port bonding:1/1/6/10 user "" severity no-value
+configure interface port bonding:1/1/6/11 user "" severity no-value
+configure interface port bonding:1/1/6/12 user "" severity no-value
+configure interface port bonding:1/1/6/13 user "" severity no-value
+configure interface port bonding:1/1/6/14 user "" severity no-value
+configure interface port bonding:1/1/6/15 user "" severity no-value
+configure interface port bonding:1/1/6/16 user "" severity no-value
+configure interface port bonding:1/1/6/17 user "" severity no-value
+configure interface port bonding:1/1/6/18 user "" severity no-value
+configure interface port bonding:1/1/6/19 user "" severity no-value
+configure interface port bonding:1/1/6/20 user "" severity no-value
+configure interface port bonding:1/1/6/21 user "" severity no-value
+configure interface port bonding:1/1/6/22 user "" severity no-value
+configure interface port bonding:1/1/6/23 user "" severity no-value
+configure interface port bonding:1/1/6/24 user "" severity no-value
+configure interface port bonding:1/1/6/25 user "" severity no-value
+configure interface port bonding:1/1/6/26 user "" severity no-value
+configure interface port bonding:1/1/6/27 user "" severity no-value
+configure interface port bonding:1/1/6/28 user "" severity no-value
+configure interface port bonding:1/1/6/29 user "" severity no-value
+configure interface port bonding:1/1/6/30 user "" severity no-value
+configure interface port bonding:1/1/6/31 user "" severity no-value
+configure interface port bonding:1/1/6/32 user "" severity no-value
+configure interface port bonding:1/1/6/33 user "" severity no-value
+configure interface port bonding:1/1/6/34 user "" severity no-value
+configure interface port bonding:1/1/6/35 user "" severity no-value
+configure interface port bonding:1/1/6/36 user "" severity no-value
+configure interface port bonding:1/1/6/37 user "" severity no-value
+configure interface port bonding:1/1/6/38 user "" severity no-value
+configure interface port bonding:1/1/6/39 user "" severity no-value
+configure interface port bonding:1/1/6/40 user "" severity no-value
+configure interface port bonding:1/1/6/41 user "" severity no-value
+configure interface port bonding:1/1/6/42 user "" severity no-value
+configure interface port bonding:1/1/6/43 user "" severity no-value
+configure interface port bonding:1/1/6/44 user "" severity no-value
+configure interface port bonding:1/1/6/45 user "" severity no-value
+configure interface port bonding:1/1/6/46 user "" severity no-value
+configure interface port bonding:1/1/6/47 user "" severity no-value
+configure interface port bonding:1/1/6/48 user "" severity no-value
+configure interface port ethernet-line:1/1/6/1 admin-up
+configure interface port ethernet-line:1/1/6/2 admin-up
+configure interface port ethernet-line:1/1/6/3 admin-up
+configure interface port ethernet-line:1/1/6/4 admin-up
+configure interface port ethernet-line:1/1/6/5 admin-up
+configure interface port ethernet-line:1/1/6/6 admin-up
+configure interface port ethernet-line:1/1/6/7 admin-up
+configure interface port ethernet-line:1/1/6/8 admin-up
+configure interface port ethernet-line:1/1/6/9 admin-up
+configure interface port ethernet-line:1/1/6/10 admin-up
+configure interface port ethernet-line:1/1/6/11 admin-up
+configure interface port ethernet-line:1/1/6/12 admin-up
+configure interface port ethernet-line:1/1/6/13 admin-up
+configure interface port ethernet-line:1/1/6/14 admin-up
+configure interface port ethernet-line:1/1/6/15 admin-up
+configure interface port ethernet-line:1/1/6/16 admin-up
+configure interface port ethernet-line:1/1/6/17 admin-up
+configure interface port ethernet-line:1/1/6/18 admin-up
+configure interface port ethernet-line:1/1/6/19 admin-up
+configure interface port ethernet-line:1/1/6/20 admin-up
+configure interface port ethernet-line:1/1/6/21 admin-up
+configure interface port ethernet-line:1/1/6/22 admin-up
+configure interface port ethernet-line:1/1/6/23 admin-up
+configure interface port ethernet-line:1/1/6/24 admin-up
+configure interface port ethernet-line:1/1/6/25 admin-up
+configure interface port ethernet-line:1/1/6/26 admin-up
+configure interface port ethernet-line:1/1/6/27 admin-up
+configure interface port ethernet-line:1/1/6/28 admin-up
+configure interface port ethernet-line:1/1/6/29 admin-up
+configure interface port ethernet-line:1/1/6/30 admin-up
+configure interface port ethernet-line:1/1/6/31 admin-up
+configure interface port ethernet-line:1/1/6/32 admin-up
+configure interface port ethernet-line:1/1/6/33 admin-up
+configure interface port ethernet-line:1/1/6/34 admin-up
+configure interface port ethernet-line:1/1/6/35 admin-up
+configure interface port ethernet-line:1/1/6/36 admin-up
+configure interface port ethernet-line:1/1/6/37 admin-up
+configure interface port ethernet-line:1/1/6/38 admin-up
+configure interface port ethernet-line:1/1/6/39 admin-up
+configure interface port ethernet-line:1/1/6/40 admin-up
+configure interface port ethernet-line:1/1/6/41 admin-up
+configure interface port ethernet-line:1/1/6/42 admin-up
+configure interface port ethernet-line:1/1/6/43 admin-up
+configure interface port ethernet-line:1/1/6/44 admin-up
+configure interface port ethernet-line:1/1/6/45 admin-up
+configure interface port ethernet-line:1/1/6/46 admin-up
+configure interface port ethernet-line:1/1/6/47 admin-up
+configure interface port ethernet-line:1/1/6/48 admin-up
+configure interface port vlan-port:1/1/6/1:99 admin-up severity no-value
+configure qos interface 1/1/6/1 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/1 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/1 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/1 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/1 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/2 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/2 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/2 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/2 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/2 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/3 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/3 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/3 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/3 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/3 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/4 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/4 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/4 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/4 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/4 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/5 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/5 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/5 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/5 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/5 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/6 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/6 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/6 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/6 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/6 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/7 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/7 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/7 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/7 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/7 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/8 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/8 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/8 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/8 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/8 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/9 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/9 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/9 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/9 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/9 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/10 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/10 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/10 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/10 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/10 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/11 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/11 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/11 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/11 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/11 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/12 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/12 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/12 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/12 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/12 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/13 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/13 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/13 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/13 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/13 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/14 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/14 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/14 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/14 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/14 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/15 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/15 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/15 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/15 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/15 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/16 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/16 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/16 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/16 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/16 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/17 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/17 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/17 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/17 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/17 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/18 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/18 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/18 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/18 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/18 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/19 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/19 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/19 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/19 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/19 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/20 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/20 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/20 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/20 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/20 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/21 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/21 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/21 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/21 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/21 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/22 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/22 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/22 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/22 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/22 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/23 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/23 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/23 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/23 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/23 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/24 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/24 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/24 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/24 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/24 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/25 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/25 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/25 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/25 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/25 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/26 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/26 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/26 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/26 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/26 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/27 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/27 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/27 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/27 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/27 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/28 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/28 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/28 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/28 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/28 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/29 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/29 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/29 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/29 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/29 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/30 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/30 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/30 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/30 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/30 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/31 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/31 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/31 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/31 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/31 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/32 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/32 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/32 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/32 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/32 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/33 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/33 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/33 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/33 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/33 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/34 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/34 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/34 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/34 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/34 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/35 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/35 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/35 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/35 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/35 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/36 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/36 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/36 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/36 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/36 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/37 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/37 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/37 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/37 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/37 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/38 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/38 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/38 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/38 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/38 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/39 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/39 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/39 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/39 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/39 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/40 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/40 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/40 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/40 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/40 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/41 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/41 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/41 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/41 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/41 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/42 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/42 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/42 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/42 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/42 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/43 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/43 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/43 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/43 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/43 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/44 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/44 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/44 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/44 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/44 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/45 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/45 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/45 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/45 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/45 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/46 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/46 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/46 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/46 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/46 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/47 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/47 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/47 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/47 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/47 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/48 cac-profile name:FD_Default ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 0 oper-rate 0 gem-sharing not-applicable mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/48 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/48 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/48 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/48 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure bridge port 1/1/6/1
+configure bridge port 1/1/6/1 vlan-id 99
+configure bridge port 1/1/6/1 pvid 99
+configure l2cp user-port 1/1/6/4 partition-id 5
+configure efm-oam interface 1/1/6/5 admin-up

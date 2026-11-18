@@ -8,15 +8,102 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 """
-The Ethernet_line parser templates file. This contains
-a list of parser definitions and associated functions that
-facilitates both facts gathering and native command generation for
-the given network resource.
+Parser templates for the isam_ethernet_line resource.
+
+The device prints all attributes of a node on one line (lab ISAM)::
+
+    configure ethernet line 1/1/6/1 port-type uni no admin-up
+    configure ethernet line 1/1/6/1 tca-line-threshold no enable no los ... no tx-octets-day
+    configure ethernet line 1/1/6/1 mau 1 type 100basebx10d power down no speed-auto-sense ...
+
+The facts split such lines into one attribute per line (iter_cli_fields); each parser
+below reads and writes one attribute, and COMPACT_COMMAND_SCOPES (config class) packs
+the commands of one node again.
 """
 
 import re
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (
     NetworkTemplate,
+)
+
+LINE = r"^configure\sethernet\sline\s(?P<if_index>\S+)\s"
+MAU = LINE + r"mau\s(?P<index>\d+)\s"
+TCA = LINE + r"tca-line-threshold\s"
+
+# CLI keywords per node; the flattening in the facts and the parsers both use them.
+LINE_FLAGS = ("admin-up",)
+LINE_VALUES = ("port-type",)
+TCA_FLAGS = ("enable",)
+TCA_THRESHOLDS = ("los", "fcs", "rx-octets", "tx-octets", "los-day", "fcs-day", "rx-octets-day", "tx-octets-day")
+MAU_FLAGS = ("speed-auto-sense", "autonegotiate", "cap100base-tfd", "cap1000base-xfd", "cap1000base-tfd")
+MAU_VALUES = ("type", "power")
+
+
+def _key(cli):
+    return cli.replace("-", "_")
+
+
+def _flag(name, getval_prefix, scope, cli, key, result):
+    """[no] <cli>: True / False."""
+    return {
+        "name": name,
+        "getval": re.compile(getval_prefix + r"(?P<negate>no\s)?" + re.escape(cli) + r"$"),
+        "setval": scope + " " + cli,
+        "remval": scope + " no " + cli,
+        "result": result("{{ False if negate is defined else True }}"),
+        "compval": key,
+    }
+
+
+def _value(name, getval_prefix, scope, cli, key, result, kind="str", removable=True):
+    """<cli> <value> / no <cli> (unset, the device default)."""
+    parser = {
+        "name": name,
+        "getval": re.compile(getval_prefix + r"(?:(?P<negate>no\s)" + re.escape(cli) + r"|" + re.escape(cli)
+                             + r"\s(?P<value>\S+))$"),
+        "setval": scope + " " + cli + " {{ " + key + " }}",
+        "result": result("{{ none if negate is defined else value" + ("|int" if kind == "int" else "") + " }}"),
+        "compval": key,
+    }
+    if removable:
+        parser["remval"] = scope + " no " + cli
+    else:
+        parser["no_remval"] = True  # set only: the CLI has no "no" form
+    return parser
+
+
+def _line_result(key):
+    return lambda value: {"{{ if_index }}": {"if_index": "{{ if_index }}", key: value}}
+
+
+def _tca_result(key):
+    return lambda value: {"{{ if_index }}": {"if_index": "{{ if_index }}", "tca_line_threshold": {key: value}}}
+
+
+def _mau_result(key):
+    return lambda value: {"{{ if_index }}": {"if_index": "{{ if_index }}",
+                                             "mau": {"{{ index }}": {"index": "{{ index|int }}", key: value}}}}
+
+
+LINE_SCOPE = "configure ethernet line {{ if_index }}"
+TCA_SCOPE = LINE_SCOPE + " tca-line-threshold"
+MAU_SCOPE = LINE_SCOPE + " mau {{ index }}"
+
+LINE_PARSERS = (
+    [_value(_key(cli), LINE, LINE_SCOPE, cli, _key(cli), _line_result(_key(cli)), removable=False) for cli in LINE_VALUES]
+    + [_flag(_key(cli), LINE, LINE_SCOPE, cli, _key(cli), _line_result(_key(cli))) for cli in LINE_FLAGS]
+)
+TCA_PARSERS = (
+    [_flag("tca_line_threshold." + _key(cli), TCA, TCA_SCOPE, cli, "tca_line_threshold." + _key(cli),
+           _tca_result(_key(cli))) for cli in TCA_FLAGS]
+    + [_value("tca_line_threshold." + _key(cli), TCA, TCA_SCOPE, cli, "tca_line_threshold." + _key(cli),
+              _tca_result(_key(cli)), kind="int") for cli in TCA_THRESHOLDS]
+)
+MAU_PARSERS = (
+    [_value("mau.mau_type", MAU, MAU_SCOPE, "type", "mau_type", _mau_result("mau_type"), removable=False),
+     _value("mau.power", MAU, MAU_SCOPE, "power", "power", _mau_result("power"), removable=False)]
+    + [_flag("mau." + _key(cli), MAU, MAU_SCOPE, cli, _key(cli), _mau_result(_key(cli))) for cli in MAU_FLAGS]
 )
 
 
@@ -24,312 +111,4 @@ class Ethernet_lineTemplate(NetworkTemplate):
     def __init__(self, lines=None, module=None):
         super(Ethernet_lineTemplate, self).__init__(lines=lines, tmplt=self, module=module)
 
-    # fmt: off
-    PARSERS = [
-        {
-            "name": "line.port_type",
-            "getval": re.compile(
-                r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\sport-type\s(?P<port_type>\S+)
-                $""", re.VERBOSE),
-            "setval": "configure ethernet line {{ if_index }} port-type {{ port_type }}",
-            "result": {
-                "{{ if_index }}": {
-                    "if_index": "{{ if_index }}",
-                    "port_type": "{{ port_type }}",
-                }
-            },
-        },
-        {
-            "name": "line.admin_up",
-            "getval": re.compile(
-                r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\s((?P<negate_admin_up>no\sadmin-up)|(?P<admin_up>admin-up))
-                $""", re.VERBOSE),
-            "setval": "configure ethernet line {{ if_index }} {{ 'no' if admin_up is 'False' else '' }}admin-up",
-            "result": {
-                "{{ if_index }}": {
-                    "if_index": "{{ if_index }}",
-                    "admin_up": "{{ False if negate_admin_up else True }}",
-                }
-            },
-        },
-        {
-            "name": "line.tca_line_threshold_enable",
-            "getval": re.compile(
-                r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_enable>no\senable)|(?P<tca_line_threshold_enable>enable))
-                $""", re.VERBOSE),
-            "setval": "configure ethernet line {{ if_index }} tca-line-threshold {{ 'no' if tca_line_threshold_enable is 'False' else '' }}enable",
-            "result": {
-                "{{ if_index }}": {
-                    "if_index": "{{ if_index }}",
-                    "tca_line_threshold": {
-                        "enable": "{{ 'False' if negate_tca_line_threshold_enable or if not tca_line_threshold_enable else 'True' }}",
-                    }
-                }
-            },
-        },
-        {
-            "name": "line.tca_line_threshold_los",
-            "getval": re.compile(
-                r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_los>no\slos)|los\s(?P<tca_line_threshold_los>\d+))
-                $""", re.VERBOSE),
-            "setval": "configure ethernet line {{ if_index }} tca-line-threshold los {{ 'no los' if tca_line_threshold_los is 'False' else tca_line_threshold_los }}",
-            "result": {
-                "{{ if_index }}": {
-                    "if_index": "{{ if_index }}",
-                    "tca_line_threshold": {
-                        "los": "{{ if not negate_tca_line_threshold_los then tca_line_threshold_los }}",
-                    }
-                }
-            },
-        },
-        {
-            "name": "line.tca_line_threshold_fcs",
-            "getval": re.compile(
-                r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_fcs>no\sfcs)|fcs\s(?P<tca_line_threshold_fcs>\d+))
-                $""", re.VERBOSE),
-            "setval": "configure ethernet line {{ if_index }} tca-line-threshold fcs {{ 'no fcs' if tca_line_threshold_fcs is 'False' else tca_line_threshold_fcs }}",
-            "result": {
-                "{{ if_index }}": {
-                    "if_index": "{{ if_index }}",
-                    "tca_line_threshold": {
-                        "fcs": "{{ if not negate_tca_line_threshold_fcs then tca_line_threshold_fcs }}",
-                    }
-                }
-            },
-        },
-        {
-            "name": "line.tca_line_threshold_rx_octets",
-            "getval": re.compile(
-                r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_rx_octets>no\srx-octets)|rx-octets\s(?P<tca_line_threshold_rx_octets>\d+))
-                $""", re.VERBOSE),
-            "setval": "configure ethernet line {{ if_index }} tca-line-threshold rx-octets {{ 'no rx-octets' if tca_line_threshold_rx_octets is 'False' else tca_line_threshold_rx_octets }}",
-            "result": {
-                "{{ if_index }}": {
-                    "if_index": "{{ if_index }}",
-                    "tca_line_threshold": {
-                        "rx_octets": "{{ if not negate_tca_line_threshold_rx_octets then tca_line_threshold_rx_octets else 0}}",
-                    }
-                }
-            },
-        },
-        {
-            "name": "line.tca_line_threshold_tx_octets",
-            "getval": re.compile(
-                r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_tx_octets>no\stx-octets)|tx-octets\s(?P<tca_line_threshold_tx_octets>\d+))
-                $""", re.VERBOSE),
-            "setval": "configure ethernet line {{ if_index }} tca-line-threshold tx-octets {{ 'no tx-octets' if tca_line_threshold_tx_octets is 'False' else tca_line_threshold_tx_octets }}",
-            "result": {
-                "{{ if_index }}": {
-                    "if_index": "{{ if_index }}",
-                    "tca_line_threshold": {
-                        "tx_octets": "{{ if not negate_tca_line_threshold_tx_octets then tca_line_threshold_tx_octets else 0}}",
-                    }
-                }
-            },
-        },
-        {
-            "name": "line.tca_line_threshold_los_day",
-            "getval": re.compile(
-                r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_los_day>no\slos-day)|los-day\s(?P<tca_line_threshold_los_day>\d+))
-                $""", re.VERBOSE),
-            "setval": "configure ethernet line {{ if_index }} tca-line-threshold los-day {{ 'no los-day' if tca_line_threshold_los_day is 'False' else tca_line_threshold_los_day }}",
-            "result": {
-                "{{ if_index }}": {
-                    "if_index": "{{ if_index }}",
-                    "tca_line_threshold": {
-                        "los_day": "{{ if tca_line_threshold_los_day is defined and negate_tca_line_threshold_los_day is not defined then tca_line_threshold_los_day else 0}}",
-                    }
-                }
-            },
-        },
-        {
-            "name": "line.tca_line_threshold_fcs_day",
-            "getval": re.compile(
-                r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_fcs_day>no\sfcs-day)|fcs-day\s(?P<tca_line_threshold_fcs_day>\d+))
-                $""", re.VERBOSE),
-            "setval": "",
-            "result": {
-                "{{ if_index }}": {
-                    "if_index": "{{ if_index }}",
-                    "tca_line_threshold": {
-                        "fcs_day": "{{ if tca_line_threshold_fcs_day is defined and negate_tca_line_threshold_fcs_day is not defined then tca_line_threshold_fcs_day else 0}}",
-                    }
-                }
-            },
-        },
-        {
-            "name": "line.tca_line_threshold_rx_octets_day",
-            "getval": re.compile(
-                r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_rx_octets_day>no\srx-octets-day)|rx-octets-day\s(?P<tca_line_threshold_rx_octets_day>\d+))
-                $""", re.VERBOSE),
-            "setval": "",
-            "result": {
-                "{{ if_index }}": {
-                    "if_index": "{{ if_index }}",
-                    "tca_line_threshold": {
-                        "rx_octets_day": "{{ if tca_line_threshold_rx_octets_day is defined and negate_tca_line_threshold_rx_octets_day is not defined then tca_line_threshold_rx_octets_day else 0}}",
-                    }
-                }
-            },
-        },
-        {
-            "name": "line.tca_line_threshold_tx_octets_day",
-            "getval": re.compile(
-                r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\stca-line-threshold\s((?P<negate_tca_line_threshold_tx_octets_day>no\stx-octets-day)|tx-octets-day\s(?P<tca_line_threshold_tx_octets_day>\d+))
-                $""", re.VERBOSE),
-            "setval": "",
-            "result": {
-                "{{ if_index }}": {
-                    "if_index": "{{ if_index }}",
-                    "tca_line_threshold": {
-                        "tx_octets_day": "{{ if tca_line_threshold_tx_octets_day is defined and negate_tca_line_threshold_tx_octets_day is not defined then tca_line_threshold_tx_octets_day else 0}}",
-                    }
-                }
-            },
-        },
-        {
-            "name": "line.mau.mau_type",
-            "getval": re.compile(
-                r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\smau\s(?P<index>\d+)\stype\s(?P<mau_type>\S+)
-                $""", re.VERBOSE),
-            "setval": "configure ethernet line {{ if_index }} mau {{ index }} type {{ mau_type }}",
-            "result": {
-                "{{ if_index }}": {
-                    "if_index": "{{ if_index }}",
-                    "mau": {
-                        "{{ index }}": {
-                            "index": "{{ index }}",
-                            "mau_type": "{{ mau_type }}",
-                        }
-                    }
-                }
-            },
-        },
-        {
-            "name": "line.mau.mau_power",
-            "getval": re.compile(
-                r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\smau\s(?P<index>\d+)\spower\s(?P<mau_power>\S+)
-                $""", re.VERBOSE),
-            "setval": "configure ethernet line {{ if_index }} mau {{ index }} power {{ 'down' if mau_power is False else 'up' }}",
-            "result": {
-                "{{ if_index }}": {
-                    "if_index": "{{ if_index }}",
-                    "mau": {
-                        "{{ index }}": {
-                            "index": "{{ index }}",
-                            "power": "{{ 'down' if mau_power is false else 'up' }}",
-                        }
-                    }
-                }
-            },
-        },
-        {
-            "name": "line.mau.mau_speed_auto_sense",
-            "getval": re.compile(
-                r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\smau\s(?P<index>\d+)\s((?P<no_mau_speed_auto_sense>no\sspeed-auto-sense)|(?P<mau_speed_auto_sense>speed-auto-sense))
-                $""", re.VERBOSE),
-            "setval": "configure ethernet line {{ if_index }} mau {{ index }} {{ 'no' if no_mau_speed_auto_sense is defined else '' }} speed_auto_sense",
-            "result": {
-                "{{ if_index }}": {
-                    "if_index": "{{ if_index }}",
-                    "mau": {
-                        "{{ index }}": {
-                            "index": "{{ index }}",
-                            "speed_auto_sense": "{{ False if no_mau_speed_auto_sense is defined else True }}",
-                        }
-                    }
-                }
-            },
-        },
-        {
-            "name": "line.mau.mau_autonegotiate",
-            "getval": re.compile(
-                r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\smau\s(?P<index>\d+)\s((?P<no_mau_autonegotiate>no\sautonegotiate)|(?P<mau_autonegotiate>autonegotiate))
-                $""", re.VERBOSE),
-            "setval": "configure ethernet line {{ if_index }} mau {{ index }} {{ 'no' if no_mau_autonegotiate is defined else '' }} autonegotiate",
-            "result": {
-                "{{ if_index }}": {
-                    "if_index": "{{ if_index }}",
-                    "mau": {
-                        "{{ index }}": {
-                            "index": "{{ index }}",
-                            "autonegotiate": "{{ False if no_mau_autonegotiate is defined else True }}",
-                        }
-                    }
-                }
-            },
-        },
-        {
-            "name": "line.mau.mau_cap100base_tfd",
-            "getval": re.compile(
-                r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\smau\s(?P<index>\d+)\s((?P<no_mau_cap100base_tfd>no\scap100base-tfd)|(?P<mau_cap100base_tfd>cap100base-tfd))
-                $""", re.VERBOSE),
-            "setval": "configure ethernet line {{ if_index }} mau {{ index }} {{ 'no' if no_mau_cap100base_tfd is defined else '' }} cap100base-tfd",
-            "result": {
-                "{{ if_index }}": {
-                    "if_index": "{{ if_index }}",
-                    "mau": {
-                        "{{ index }}": {
-                            "index": "{{ index }}",
-                            "cap100base_tfd": "{{ False if no_mau_cap100base_tfd is defined else True }}",
-                        }
-                    }
-                }
-            },
-        },
-        {
-            "name": "line.mau.mau_cap1000base_xfd",
-            "getval": re.compile(
-                r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\smau\s(?P<index>\d+)\s((?P<no_mau_cap1000base_xfd>no\scap1000base-xfd)|(?P<mau_cap1000base_xfd>cap1000base-xfd))
-                $""", re.VERBOSE),
-            "setval": "configure ethernet line {{ if_index }} mau {{ index }} {{ 'no' if no_mau_cap1000base_xfd is defined else '' }} cap1000base-xfd",
-            "result": {
-                "{{ if_index }}": {
-                    "if_index": "{{ if_index }}",
-                    "mau": {
-                        "{{ index }}": {
-                            "index": "{{ index }}",
-                            "cap1000base_xfd": "{{ False if no_mau_cap1000base_xfd is defined else True }}",
-                        }
-                    }
-                }
-            },
-        },
-        {
-            "name": "line.mau.mau_cap1000base_tfd",
-            "getval": re.compile(
-                r"""
-                configure\sethernet\sline\s(?P<if_index>\S+)\smau\s(?P<index>\d+)\s((?P<no_mau_cap1000base_tfd>no\scap1000base-tfd)|(?P<mau_cap1000base_tfd>cap1000base-tfd))
-                $""", re.VERBOSE),
-            "setval": "configure ethernet line {{ if_index }} mau {{ index }} {{ 'no' if no_mau_cap1000base_tfd is defined else '' }} cap1000base-tfd",
-            "result": {
-                "{{ if_index }}": {
-                    "if_index": "{{ if_index }}",
-                    "mau": {
-                        "{{ index }}": {
-                            "index": "{{ index }}",
-                            "cap1000base_tfd": "{{ False if no_mau_cap1000base_tfd is defined else True }}",
-                        }
-                    }
-                }
-            },
-        },
-    ]
-    # fmt: on
+    PARSERS = LINE_PARSERS + TCA_PARSERS + MAU_PARSERS

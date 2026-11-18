@@ -58,6 +58,7 @@ module: isam_dhcp_relay
 short_description: Manage Nokia ISAM DHCP relay port statistics
 description:
   - Manages C(configure dhcp-relay port-stats / v6-port-stats) on Nokia ISAM.
+  - R6.2.04m accepts the setting but shows it in no read (C(info configure ... flat) or C(flat detail)), so the module cannot verify it and C(merged) sends it on every run (lab ISAM).
 version_added: 0.3.13
 author: Jan Kühnemund (@jahknem)
 options:
@@ -69,7 +70,7 @@ options:
       name:
         type: str
         required: true
-        description: Port, e.g. C(vlan-port:1/1/5/1/3/1/1:10).
+        description: Port, e.g. C(vlan:1/1/5/1/3/1/1:10) or C(1/1/3/1). The device refuses the C(vlan-port:) form for this command (lab ISAM).
       port_stats:
         type: bool
         description: DHCPv4 relay port statistics.
@@ -93,14 +94,14 @@ EXAMPLES = """
 - name: Merge the configuration of one port
   nokia.isam.isam_dhcp_relay:
     config:
-      - name: vlan-port:1/1/5/1/3/1/1:10
+      - name: vlan:1/1/5/1/3/1/1:10
         port_stats: true
     state: merged
 
 - name: Read only the named instances (targeted gathering)
   nokia.isam.isam_dhcp_relay:
     config:
-      - name: vlan-port:1/1/5/1/3/1/1:10
+      - name: vlan:1/1/5/1/3/1/1:10
     state: gathered
 """
 

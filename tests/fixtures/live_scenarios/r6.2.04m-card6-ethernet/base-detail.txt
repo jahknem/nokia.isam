@@ -1,0 +1,1011 @@
+configure equipment slot lt:1/1/6 planned-type nelt-b no power-down unlock no alarm-profile capab-profile 8vc_default no board-40gkr4 no operational-mode no dual-host-ip no dual-host-loc
+configure equipment protection-element lt:1/1/6 no redcy-ctrl-status
+configure equipment diagnostics sfp lt:1/1/6:sfp:1 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:2 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:3 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:4 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:5 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:6 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:7 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:8 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:9 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:10 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:11 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:12 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:13 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:14 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:15 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:16 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:17 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:18 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:19 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:20 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:21 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:22 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:23 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:24 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:25 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:26 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:27 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:28 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:29 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:30 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:31 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:32 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:33 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:34 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:35 no rssi-prof-id no rssi-state
+configure equipment diagnostics sfp lt:1/1/6:sfp:36 no rssi-prof-id no rssi-state
+configure interface port ethernet-line:1/1/6/1 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/2 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/3 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/4 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/5 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/6 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/7 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/8 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/9 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/10 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/11 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/12 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/13 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/14 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/15 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/16 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/17 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/18 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/19 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/20 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/21 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/22 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/23 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/24 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/25 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/26 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/27 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/28 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/29 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/30 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/31 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/32 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/33 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/34 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/35 no admin-up link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/36 no admin-up link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/1 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/2 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/3 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/4 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/5 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/6 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/7 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/8 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/9 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/10 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/11 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/12 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/13 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/14 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/15 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/16 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/17 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/18 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/19 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/20 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/21 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/22 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/23 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/24 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/25 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/26 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/27 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/28 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/29 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/30 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/31 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/32 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/33 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/34 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/35 admin-up no link-updown-trap no user no severity no port-type
+configure interface port la-group:1/1/6/36 admin-up no link-updown-trap no user no severity no port-type
+configure qos global lt:1/1/6 no buffer-occ-thresh no queue-stats no dsload-tca no dsload-thresh no buffer-tca no up-buf-thresh no up-obc-thresh no dn-obc-thresh no dn-buf-thresh no part-buf-thresh
+configure qos tca 1/1/6/1 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/1 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/1 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/1 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/1 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/1 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/1 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/1 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/2 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/2 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/2 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/2 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/2 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/2 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/2 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/2 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/3 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/3 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/3 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/3 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/3 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/3 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/3 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/3 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/4 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/4 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/4 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/4 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/4 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/4 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/4 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/4 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/5 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/5 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/5 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/5 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/5 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/5 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/5 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/5 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/6 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/6 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/6 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/6 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/6 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/6 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/6 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/6 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/7 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/7 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/7 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/7 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/7 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/7 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/7 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/7 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/8 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/8 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/8 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/8 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/8 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/8 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/8 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/8 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/9 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/9 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/9 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/9 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/9 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/9 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/9 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/9 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/10 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/10 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/10 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/10 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/10 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/10 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/10 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/10 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/11 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/11 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/11 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/11 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/11 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/11 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/11 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/11 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/12 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/12 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/12 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/12 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/12 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/12 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/12 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/12 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/13 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/13 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/13 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/13 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/13 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/13 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/13 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/13 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/14 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/14 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/14 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/14 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/14 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/14 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/14 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/14 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/15 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/15 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/15 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/15 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/15 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/15 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/15 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/15 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/16 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/16 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/16 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/16 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/16 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/16 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/16 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/16 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/17 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/17 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/17 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/17 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/17 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/17 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/17 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/17 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/18 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/18 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/18 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/18 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/18 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/18 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/18 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/18 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/19 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/19 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/19 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/19 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/19 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/19 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/19 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/19 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/20 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/20 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/20 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/20 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/20 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/20 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/20 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/20 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/21 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/21 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/21 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/21 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/21 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/21 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/21 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/21 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/22 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/22 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/22 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/22 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/22 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/22 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/22 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/22 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/23 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/23 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/23 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/23 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/23 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/23 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/23 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/23 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/24 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/24 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/24 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/24 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/24 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/24 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/24 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/24 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/25 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/25 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/25 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/25 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/25 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/25 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/25 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/25 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/26 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/26 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/26 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/26 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/26 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/26 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/26 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/26 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/27 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/27 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/27 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/27 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/27 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/27 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/27 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/27 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/28 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/28 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/28 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/28 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/28 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/28 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/28 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/28 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/29 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/29 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/29 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/29 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/29 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/29 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/29 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/29 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/30 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/30 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/30 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/30 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/30 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/30 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/30 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/30 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/31 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/31 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/31 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/31 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/31 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/31 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/31 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/31 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/32 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/32 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/32 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/32 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/32 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/32 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/32 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/32 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/33 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/33 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/33 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/33 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/33 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/33 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/33 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/33 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/34 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/34 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/34 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/34 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/34 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/34 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/34 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/34 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/35 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/35 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/35 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/35 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/35 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/35 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/35 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/35 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/36 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/36 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/36 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/36 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/36 queue 4 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/36 queue 5 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/36 queue 6 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/36 queue 7 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos interface 1/1/6/1 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/1 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/1 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/1 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/1 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/1 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/1 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/1 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/1 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/2 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/2 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/2 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/2 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/2 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/2 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/2 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/2 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/2 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/3 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/3 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/3 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/3 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/3 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/3 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/3 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/3 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/3 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/4 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/4 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/4 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/4 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/4 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/4 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/4 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/4 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/4 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/5 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/5 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/5 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/5 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/5 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/5 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/5 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/5 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/5 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/6 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/6 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/6 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/6 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/6 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/6 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/6 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/6 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/6 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/7 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/7 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/7 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/7 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/7 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/7 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/7 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/7 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/7 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/8 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/8 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/8 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/8 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/8 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/8 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/8 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/8 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/8 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/9 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/9 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/9 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/9 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/9 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/9 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/9 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/9 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/9 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/10 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/10 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/10 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/10 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/10 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/10 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/10 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/10 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/10 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/11 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/11 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/11 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/11 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/11 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/11 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/11 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/11 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/11 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/12 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/12 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/12 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/12 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/12 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/12 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/12 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/12 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/12 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/13 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/13 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/13 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/13 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/13 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/13 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/13 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/13 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/13 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/14 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/14 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/14 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/14 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/14 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/14 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/14 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/14 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/14 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/15 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/15 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/15 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/15 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/15 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/15 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/15 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/15 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/15 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/16 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/16 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/16 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/16 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/16 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/16 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/16 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/16 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/16 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/17 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/17 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/17 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/17 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/17 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/17 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/17 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/17 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/17 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/18 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/18 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/18 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/18 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/18 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/18 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/18 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/18 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/18 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/19 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/19 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/19 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/19 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/19 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/19 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/19 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/19 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/19 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/20 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/20 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/20 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/20 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/20 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/20 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/20 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/20 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/20 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/21 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/21 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/21 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/21 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/21 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/21 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/21 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/21 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/21 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/22 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/22 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/22 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/22 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/22 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/22 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/22 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/22 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/22 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/23 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/23 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/23 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/23 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/23 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/23 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/23 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/23 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/23 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/24 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/24 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/24 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/24 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/24 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/24 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/24 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/24 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/24 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/25 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/25 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/25 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/25 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/25 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/25 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/25 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/25 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/25 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/26 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/26 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/26 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/26 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/26 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/26 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/26 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/26 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/26 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/27 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/27 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/27 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/27 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/27 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/27 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/27 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/27 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/27 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/28 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/28 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/28 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/28 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/28 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/28 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/28 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/28 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/28 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/29 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/29 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/29 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/29 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/29 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/29 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/29 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/29 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/29 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/30 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/30 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/30 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/30 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/30 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/30 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/30 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/30 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/30 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/31 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/31 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/31 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/31 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/31 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/31 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/31 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/31 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/31 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/32 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/32 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/32 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/32 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/32 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/32 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/32 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/32 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/32 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/33 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/33 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/33 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/33 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/33 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/33 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/33 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/33 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/33 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/34 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/34 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/34 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/34 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/34 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/34 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/34 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/34 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/34 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/35 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/35 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/35 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/35 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/35 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/35 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/35 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/35 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/35 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/36 scheduler-node name:NGLT_Default no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing ds-num-queue 8 ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/36 queue 0 priority 1 weight 10 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/36 queue 1 priority 1 weight 20 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/36 queue 2 priority 1 weight 30 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/36 queue 3 priority 1 weight 40 oper-weight 0 queue-profile name:UNI_BECLQ shaper-profile none
+configure qos interface 1/1/6/36 queue 4 priority 5 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/36 queue 5 priority 6 weight 0 oper-weight 0 queue-profile name:UNI_VideoQ shaper-profile none
+configure qos interface 1/1/6/36 queue 6 priority 7 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure qos interface 1/1/6/36 queue 7 priority 8 weight 0 oper-weight 0 queue-profile name:UNI_VoiceQ shaper-profile none
+configure ethernet line 1/1/6/1 port-type uni no admin-up
+configure ethernet line 1/1/6/1 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/1 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/2 port-type uni no admin-up
+configure ethernet line 1/1/6/2 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/2 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/3 port-type uni no admin-up
+configure ethernet line 1/1/6/3 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/3 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/4 port-type uni no admin-up
+configure ethernet line 1/1/6/4 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/4 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/5 port-type uni no admin-up
+configure ethernet line 1/1/6/5 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/5 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/6 port-type uni no admin-up
+configure ethernet line 1/1/6/6 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/6 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/7 port-type uni no admin-up
+configure ethernet line 1/1/6/7 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/7 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/8 port-type uni no admin-up
+configure ethernet line 1/1/6/8 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/8 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/9 port-type uni no admin-up
+configure ethernet line 1/1/6/9 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/9 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/10 port-type uni no admin-up
+configure ethernet line 1/1/6/10 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/10 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/11 port-type uni no admin-up
+configure ethernet line 1/1/6/11 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/11 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/12 port-type uni no admin-up
+configure ethernet line 1/1/6/12 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/12 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/13 port-type uni no admin-up
+configure ethernet line 1/1/6/13 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/13 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/14 port-type uni no admin-up
+configure ethernet line 1/1/6/14 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/14 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/15 port-type uni no admin-up
+configure ethernet line 1/1/6/15 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/15 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/16 port-type uni no admin-up
+configure ethernet line 1/1/6/16 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/16 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/17 port-type uni no admin-up
+configure ethernet line 1/1/6/17 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/17 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/18 port-type uni no admin-up
+configure ethernet line 1/1/6/18 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/18 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/19 port-type uni no admin-up
+configure ethernet line 1/1/6/19 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/19 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/20 port-type uni no admin-up
+configure ethernet line 1/1/6/20 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/20 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/21 port-type uni no admin-up
+configure ethernet line 1/1/6/21 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/21 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/22 port-type uni no admin-up
+configure ethernet line 1/1/6/22 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/22 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/23 port-type uni no admin-up
+configure ethernet line 1/1/6/23 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/23 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/24 port-type uni no admin-up
+configure ethernet line 1/1/6/24 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/24 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/25 port-type uni no admin-up
+configure ethernet line 1/1/6/25 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/25 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/26 port-type uni no admin-up
+configure ethernet line 1/1/6/26 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/26 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/27 port-type uni no admin-up
+configure ethernet line 1/1/6/27 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/27 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/28 port-type uni no admin-up
+configure ethernet line 1/1/6/28 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/28 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/29 port-type uni no admin-up
+configure ethernet line 1/1/6/29 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/29 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/30 port-type uni no admin-up
+configure ethernet line 1/1/6/30 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/30 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/31 port-type uni no admin-up
+configure ethernet line 1/1/6/31 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/31 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/32 port-type uni no admin-up
+configure ethernet line 1/1/6/32 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/32 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/33 port-type uni no admin-up
+configure ethernet line 1/1/6/33 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/33 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/34 port-type uni no admin-up
+configure ethernet line 1/1/6/34 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/34 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/35 port-type uni no admin-up
+configure ethernet line 1/1/6/35 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/35 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure ethernet line 1/1/6/36 port-type uni no admin-up
+configure ethernet line 1/1/6/36 tca-line-threshold no enable no los no fcs no rx-octets no tx-octets no los-day no fcs-day no rx-octets-day no tx-octets-day
+configure ethernet line 1/1/6/36 mau 1 type 100basebx10d power down no speed-auto-sense no autonegotiate no cap100base-tfd no cap1000base-xfd no cap1000base-tfd
+configure efm-oam interface 1/1/6/1 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/2 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/3 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/4 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/5 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/6 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/7 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/8 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/9 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/10 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/11 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/12 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/13 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/14 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/15 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/16 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/17 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/18 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/19 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/20 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/21 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/22 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/23 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/24 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/25 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/26 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/27 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/28 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/29 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/30 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/31 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/32 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/33 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/34 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/35 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/36 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure link-agg port 1/1/6/1 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/2 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/3 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/4 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/5 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/6 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/7 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/8 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/9 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/10 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/11 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/12 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/13 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/14 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/15 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/16 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/17 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/18 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/19 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/20 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/21 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/22 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/23 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/24 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/25 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/26 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/27 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/28 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/29 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/30 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/31 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/32 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/33 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/34 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/35 passive-lacp short-timeout no actor-port-prio
+configure link-agg port 1/1/6/36 passive-lacp short-timeout no actor-port-prio
+configure link-agg group 1/1/6/1 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/1 port 1/1/6/1
+configure link-agg group 1/1/6/2 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/2 port 1/1/6/2
+configure link-agg group 1/1/6/3 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/3 port 1/1/6/3
+configure link-agg group 1/1/6/4 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/4 port 1/1/6/4
+configure link-agg group 1/1/6/5 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/5 port 1/1/6/5
+configure link-agg group 1/1/6/6 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/6 port 1/1/6/6
+configure link-agg group 1/1/6/7 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/7 port 1/1/6/7
+configure link-agg group 1/1/6/8 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/8 port 1/1/6/8
+configure link-agg group 1/1/6/9 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/9 port 1/1/6/9
+configure link-agg group 1/1/6/10 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/10 port 1/1/6/10
+configure link-agg group 1/1/6/11 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/11 port 1/1/6/11
+configure link-agg group 1/1/6/12 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/12 port 1/1/6/12
+configure link-agg group 1/1/6/13 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/13 port 1/1/6/13
+configure link-agg group 1/1/6/14 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/14 port 1/1/6/14
+configure link-agg group 1/1/6/15 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/15 port 1/1/6/15
+configure link-agg group 1/1/6/16 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/16 port 1/1/6/16
+configure link-agg group 1/1/6/17 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/17 port 1/1/6/17
+configure link-agg group 1/1/6/18 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/18 port 1/1/6/18
+configure link-agg group 1/1/6/19 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/19 port 1/1/6/19
+configure link-agg group 1/1/6/20 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/20 port 1/1/6/20
+configure link-agg group 1/1/6/21 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/21 port 1/1/6/21
+configure link-agg group 1/1/6/22 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/22 port 1/1/6/22
+configure link-agg group 1/1/6/23 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/23 port 1/1/6/23
+configure link-agg group 1/1/6/24 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/24 port 1/1/6/24
+configure link-agg group 1/1/6/25 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/25 port 1/1/6/25
+configure link-agg group 1/1/6/26 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/26 port 1/1/6/26
+configure link-agg group 1/1/6/27 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/27 port 1/1/6/27
+configure link-agg group 1/1/6/28 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/28 port 1/1/6/28
+configure link-agg group 1/1/6/29 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/29 port 1/1/6/29
+configure link-agg group 1/1/6/30 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/30 port 1/1/6/30
+configure link-agg group 1/1/6/31 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/31 port 1/1/6/31
+configure link-agg group 1/1/6/32 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/32 port 1/1/6/32
+configure link-agg group 1/1/6/33 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/33 port 1/1/6/33
+configure link-agg group 1/1/6/34 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/34 port 1/1/6/34
+configure link-agg group 1/1/6/35 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/35 port 1/1/6/35
+configure link-agg group 1/1/6/36 load-sharing-policy mac-src no max-active-port no swo-threshold no priority swo-revert enable mode static master-iwf auto
+configure link-agg group 1/1/6/36 port 1/1/6/36
+configure xstp port 1/1/6/1 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/2 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/3 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/4 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/5 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/6 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/7 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/8 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/9 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/10 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/11 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/12 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/13 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/14 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/15 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/16 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/17 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/18 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/19 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/20 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/21 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/22 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/23 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/24 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/25 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/26 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/27 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/28 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/29 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/30 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/31 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/32 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/33 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/34 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/35 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time
+configure xstp port 1/1/6/36 no priority no enable-stp path-cost 200000 no edge-port no admin-p2p no hello-time

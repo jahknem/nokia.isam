@@ -6,4 +6,5 @@ Project documentation is organized as follows:
 - `live-validation-2026-08-10.md`: read-only device validation evidence.
 - `live-validation-2026-11-18.md`: device-verified command forms (reads and writes).
 - `live-test-matrix.md`: per family, what is verified on the device and what remains.
+- `development-style.md`: how resource modules are built (layout, parsers, compare, tests).
 - `resource_parser_helpers.md`: contributor guidance for shared parser and normalization helpers.

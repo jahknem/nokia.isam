@@ -68,6 +68,7 @@ class Xdsl_boards(ResourceModule):
             "board",
             self._compare_board,
             delete_all or bool(want.get("boards")),
+            reset=self._reset_board,
         )
         self._compare_section(
             want.get("vp_boards") or [],
@@ -78,29 +79,50 @@ class Xdsl_boards(ResourceModule):
             delete_all or bool(want.get("vp_boards")),
         )
 
-    def _compare_section(self, want_list, have_list, key, parser_prefix, compare, requested=True):
+    def _compare_section(self, want_list, have_list, key, parser_prefix, compare, requested=True, reset=None):
+        """reset(want, have): remove an entry by resetting its attributes, for entries
+        without a removal command (xDSL boards); otherwise the entry's remval is used."""
         wantd = dict((entry[key], entry) for entry in want_list)
         haved = dict((entry[key], entry) for entry in have_list)
+
+        def remove(want, have):
+            if reset:
+                reset(want, have)
+            else:
+                self.addcmd(have, parser_prefix, negate=True)
 
         if self.state == "deleted":
             if not requested:
                 return
             for item_key, have in iteritems(haved):
                 if not wantd or item_key in wantd:
-                    self.addcmd(have, parser_prefix, negate=True)
+                    remove(wantd.get(item_key, {}), have)
             return
 
         if self.state in ["overridden"]:
             for item_key, have in iteritems(haved):
                 if item_key not in wantd:
-                    self.addcmd(have, parser_prefix, negate=True)
+                    remove({}, have)
 
         for item_key, want in iteritems(wantd):
             compare(want, haved.get(item_key, {}))
 
     @property
     def _replacing(self):
-        return self.state in ("replaced", "overridden")
+        return self.state in ("replaced", "overridden") or self._resetting
+
+    _resetting = False
+
+    def _reset_board(self, want, have):
+        """A board has no removal command ("configure xdsl no board" is an invalid token,
+        lab ISAM): its attributes are reset, only the named ones when want names any."""
+        named = [field for field, value in want.items() if field != "board_id" and value not in (None, {}, [])]
+        keep = dict((field, value) for field, value in have.items() if named and field not in named)
+        self._resetting = True
+        try:
+            self._compare_board(dict(keep, board_id=have["board_id"]), have)
+        finally:
+            self._resetting = False
 
     def _compare_fields(self, want, have, attrs, parser_prefix, render_want, render_have):
         """Set changed attributes; on replaced/overridden remove the unwanted ones.

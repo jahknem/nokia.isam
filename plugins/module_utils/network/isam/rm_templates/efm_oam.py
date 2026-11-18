@@ -29,7 +29,9 @@ class EfmOamTemplate(object):
             resources.append(item)
         return resources
 
-    def render(self, config):
+    def render(self, config, resets=False):
+        """Commands for the given attributes; with resets, a present None value renders
+        "no <attr>" (state commands), otherwise unset attributes are left out (rendered)."""
         commands = []
         for item in config or []:
             command = ["configure", "efm-oam", "interface", str(item["name"])]
@@ -37,9 +39,9 @@ class EfmOamTemplate(object):
                 if field in item and item[field] is not None:
                     command.extend(([cli_name] if item[field] else ["no", cli_name]))
             for field, cli_name in (("keep_alive_intvl", "keep-alive-intvl"), ("response_intvl", "response-intvl")):
-                if field in item and item[field] is not None:
+                if item.get(field) is not None:
                     command.extend((cli_name, str(item[field])))
-                elif field in item:
+                elif resets and field in item:
                     command.extend(("no", cli_name))
             commands.append(" ".join(command))
         return commands

@@ -75,10 +75,11 @@ def _board_parsers():
                 "setval": setval,
                 "remval": prefix + "no %s" % keyword,
             })
+    # A board has no removal command ("configure xdsl no board" is an invalid token, lab
+    # ISAM); deleted/overridden reset its attributes instead (config class).
     parsers.append({
         "name": "board",
         "setval": "configure xdsl board {{ board_id }}",
-        "remval": "configure xdsl no board {{ board_id }}",
     })
     return parsers
 

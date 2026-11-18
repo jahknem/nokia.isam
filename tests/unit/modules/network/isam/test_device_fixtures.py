@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pytest
 import yaml
 
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.pon_variants import (
@@ -488,7 +489,7 @@ def test_generic_pon_live_flat_fixture_is_parseable():
 
 def test_ethernet_line_live_flat_fixture_is_parseable():
     descriptor, output = fixture_bundle("ethernet_line", "r6.2.04m")
-    lines = Ethernet_lineFacts._compact_lines(
+    lines = Ethernet_lineFacts._split_attributes(
         output.splitlines(), "configure ethernet line "
     )
     parsed = Ethernet_lineTemplate(lines=lines).parse()
@@ -933,3 +934,39 @@ def test_linetest_fixture_is_parseable():
     assert parsed["parameters"][0]["session_id"] == "1/1/1/1"
     assert parsed["parameters"][0]["test_name"] == "resistance"
     assert parsed["parameters"][0]["value1"] == "1000"
+
+
+# Live write scenarios (tests/fixtures/live_scenarios/<bundle>/scenarios.yml): device text
+# before a step (the card freshly planned, or with every set step applied) and what the
+# device accepted from that state (commands) or returned (gathered facts).
+SCENARIO_ROOT = FIXTURE_ROOT / "live_scenarios"
+
+
+def _scenarios():
+    for bundle in sorted(SCENARIO_ROOT.glob("*/scenarios.yml")):
+        for scenario in yaml.safe_load(bundle.read_text())["scenarios"]:
+            yield pytest.param(bundle.parent, scenario, id="%s: %s" % (bundle.parent.name, scenario["name"]))
+
+
+@pytest.mark.parametrize("bundle, scenario", list(_scenarios()))
+def test_live_write_scenario(monkeypatch, bundle, scenario):
+    from .module_runner import capture_device, run_module
+
+    if scenario["device"] == "base":
+        device = capture_device((bundle / "base.txt").read_text(), (bundle / "base-detail.txt").read_text())
+    else:
+        device = capture_device((bundle / "output.txt").read_text(), (bundle / "output-detail.txt").read_text())
+    result = run_module(monkeypatch, scenario["module"], {"state": scenario["state"], "config": scenario["config"]}, device)
+    assert not result.get("failed"), result.get("msg")
+    if scenario["state"] == "gathered":
+        assert result["gathered"] == scenario["gathered"]
+    else:
+        assert result["commands"] == scenario["commands"]
+
+
+def test_live_scenario_bundles_are_complete():
+    bundles = sorted(path.parent for path in SCENARIO_ROOT.glob("*/scenarios.yml"))
+    assert bundles
+    for bundle in bundles:
+        for name in ("fixture.yml", "output.txt", "output-detail.txt", "base.txt", "base-detail.txt"):
+            assert (bundle / name).is_file(), (bundle, name)

@@ -47,10 +47,11 @@ def test_xdsl_boards_deleted_without_config_removes_all(monkeypatch):
         args = {"state": "deleted"} if config is None else {"state": "deleted", "config": config}
         result = run_module(monkeypatch, "isam_xdsl_boards", args, text)
         assert not result.get("failed"), result.get("msg")
-        assert result["commands"] == ["configure xdsl no board 1/1/1", "configure xdsl no board 1/1/3"]
+        # boards cannot be removed ('no board' is an invalid token, lab ISAM): reset
+        assert result["commands"] == ["configure xdsl board 1/1/1 no vce-profile", "configure xdsl board 1/1/3 no vce-profile"]
     named = run_module(monkeypatch, "isam_xdsl_boards",
                        {"state": "deleted", "config": {"boards": [{"board_id": "1/1/3"}]}}, text)
-    assert named["commands"] == ["configure xdsl no board 1/1/3"]
+    assert named["commands"] == ["configure xdsl board 1/1/3 no vce-profile"]
 
 
 def test_mcast_general_deleted_resets_fast_change(monkeypatch):
@@ -260,3 +261,54 @@ def test_qos_interface_profile_none_equals_the_unset_profile(monkeypatch):
     text = "configure qos interface pon:1/1/6/2 cac-profile name:FD_GponVideo\n"
     result = run_module(monkeypatch, "isam_qos_interfaces", {"state": "merged", "config": [{"name": "pon:1/1/6/2", "cac_profile": "none"}]}, text)
     assert result["commands"] == ["configure qos interface pon:1/1/6/2 cac-profile none"]
+
+
+XDSL_BOARD = ("configure xdsl board 1/1/6 dpbo-profile 4\n"
+              "configure xdsl board 1/1/6 vect-fallback fb-vplt-com-fail\n"
+              "configure xdsl board 1/1/3 dpbo-profile 1\n")
+
+
+def test_xdsl_board_deleted_resets_attributes(monkeypatch):
+    """Lab ISAM: 'configure xdsl no board <id>' is an invalid token; boards cannot be removed."""
+    def deleted(config):
+        return run_module(monkeypatch, "isam_xdsl_boards", {"state": "deleted", "config": config}, XDSL_BOARD)["commands"]
+
+    assert deleted({"boards": [{"board_id": "1/1/6"}]}) == [
+        "configure xdsl board 1/1/6 no dpbo-profile", "configure xdsl board 1/1/6 vect-fallback no fb-vplt-com-fail"]
+    assert deleted({"boards": [{"board_id": "1/1/6", "dpbo_profile": "4"}]}) == ["configure xdsl board 1/1/6 no dpbo-profile"]
+    assert not any("no board" in c for c in deleted(None))
+
+
+PLANNED_SLOT = "configure equipment slot lt:1/1/6 planned-type ndlt-f unlock capab-profile 8vc_default\n"
+
+
+def test_equipment_slot_unplanning_sends_only_no_planned_type(monkeypatch):
+    """Lab ISAM: after 'no planned-type' the slot refuses 'no unlock' ("not yet planned", error 1)."""
+    result = run_module(monkeypatch, "isam_equipment", {"state": "deleted", "config": {"slots": [{"id": "lt:1/1/6"}]}}, PLANNED_SLOT)
+    assert result["commands"] == ["configure equipment slot lt:1/1/6 no planned-type"]
+
+
+def test_equipment_slot_type_change_fails_before_any_command(monkeypatch):
+    """Lab ISAM: 'planned-type <other>' on a planned slot: "needs to be unplanned first" (error 40)."""
+    result = run_module(monkeypatch, "isam_equipment",
+                        {"state": "merged", "config": {"slots": [{"id": "lt:1/1/6", "planned_type": "nelt-b"}]}}, PLANNED_SLOT)
+    assert result.get("failed") and "Unplan it first with state deleted" in result["msg"]
+    assert not result.get("commands")
+    # planning an unplanned slot: the type alone (the device sets the capability profile itself)
+    result = run_module(monkeypatch, "isam_equipment",
+                        {"state": "merged", "config": {"slots": [{"id": "lt:1/1/6", "planned_type": "nelt-b", "unlock": True}]}},
+                        "configure equipment slot lt:1/1/6 unlock\n")
+    assert result["commands"] == ["configure equipment slot lt:1/1/6 planned-type nelt-b"]
+
+
+def test_link_agg_group_keeps_its_default_member_port(monkeypatch):
+    """Lab ISAM: 'link-agg group 1/1/6/3 no port 1/1/6/3' is refused (default aggregator, error 22)."""
+    text = ("configure link-agg group 1/1/6/3 load-sharing-policy mac-dst mode static\n"
+            "configure link-agg group 1/1/6/3 port 1/1/6/3\n"
+            "configure link-agg group 1/1/6/3 port 1/1/6/4\n")
+    commands = run_module(monkeypatch, "isam_link_agg", {"state": "deleted", "config": {"groups": [{"id": "1/1/6/3"}]}}, text)["commands"]
+    assert "configure link-agg group 1/1/6/3 no port 1/1/6/4" in commands
+    assert not any(c.endswith("no port 1/1/6/3") for c in commands), commands
+    replaced = run_module(monkeypatch, "isam_link_agg",
+                          {"state": "replaced", "config": {"groups": [{"id": "1/1/6/3", "mode": "static"}]}}, text)["commands"]
+    assert not any(c.endswith("no port 1/1/6/3") for c in replaced), replaced
