@@ -44,6 +44,7 @@ options:
     description:
     - The state the configuration should be left in.
     - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(id) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
+    - C(operational_mode) has no CLI removal form (cages are fixed positions). With C(deleted), C(replaced) or C(overridden) a mode that would be removed is kept on the device and a warning is returned.
     type: str
     choices:
     - merged

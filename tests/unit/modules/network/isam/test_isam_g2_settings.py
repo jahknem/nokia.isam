@@ -40,9 +40,10 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 from ansible_collections.nokia.isam.tests.unit.compat.mock import patch
 
 from .isam_module import TestIsamModule, set_module_args
+from . import lab_captures
 
 ignore_provider_arg = True
-LOCAL = pathlib.Path("/home/jahknem/Projects/BlueNetworks/pon-migration-planner/.local")
+LOCAL = lab_captures.CAPTURE_DIR
 CAPTURES = [LOCAL / "root-detail-flat.txt", LOCAL / "root-flat.txt"]
 DETAIL = CAPTURES[0]
 
@@ -461,7 +462,9 @@ class TestIsamMcastGeneralCapacity(_Base):
     def test_deleted_resets_capacity(self):
         self.device(MCAST)
         result = self.run_state("deleted", True)
-        assert result["commands"] == ["configure mcast capacity no max-num-group no cfg-res-time"]
+        # deleted resets every resettable attribute of the singleton, fast-change included
+        assert result["commands"] == ["configure mcast general no fast-change",
+                                      "configure mcast capacity no max-num-group no cfg-res-time"]
 
     def test_replaced_resets_omitted_capacity(self):
         self.device(MCAST)

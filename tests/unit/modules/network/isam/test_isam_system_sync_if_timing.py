@@ -13,9 +13,10 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 from ansible_collections.nokia.isam.tests.unit.compat.mock import patch
 
 from .isam_module import TestIsamModule, set_module_args
+from . import lab_captures
 
 ignore_provider_arg = True
-CAPTURE_DIR = pathlib.Path("/home/jahknem/Projects/BlueNetworks/pon-migration-planner/.local")
+CAPTURE_DIR = lab_captures.CAPTURE_DIR
 DETAIL = CAPTURE_DIR / "root-detail-flat.txt"
 CONFIGURED = CAPTURE_DIR / "root-flat.txt"
 PREFIX = "configure system sync-if-timing"

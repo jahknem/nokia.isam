@@ -57,7 +57,9 @@ class Xdsl_boards(ResourceModule):
     def generate_commands(self):
         want = self.want or {"boards": [], "vp_boards": []}
         have = self.have or {"boards": [], "vp_boards": []}
-        delete_all = self.state == "deleted" and not self.want
+        # Without config ResourceModule supplies empty_fact_val, a truthy dict of
+        # empty lists: test the contents, otherwise deleted would silently do nothing.
+        delete_all = self.state == "deleted" and not any(want.values())
 
         self._compare_section(
             want.get("boards") or [],

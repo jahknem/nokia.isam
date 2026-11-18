@@ -6,8 +6,9 @@ from ansible.module_utils import basic
 
 from ansible_collections.nokia.isam.tests.unit.modules.network.isam.isam_module import set_module_args
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ethernet_line.ethernet_line import Ethernet_lineFacts
+from . import lab_captures
 
-CAPTURE = pathlib.Path("/home/jahknem/Projects/BlueNetworks/pon-migration-planner/.local/root-flat.txt")
+CAPTURE = lab_captures.CONFIGURED
 
 
 def parse(text):

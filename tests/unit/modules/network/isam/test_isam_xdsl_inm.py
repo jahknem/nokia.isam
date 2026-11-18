@@ -17,9 +17,10 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 from ansible_collections.nokia.isam.tests.unit.compat.mock import patch
 
 from .isam_module import TestIsamModule, set_module_args
+from . import lab_captures
 
 ignore_provider_arg = True
-CAPTURE = pathlib.Path("/home/jahknem/Projects/BlueNetworks/pon-migration-planner/.local/root-detail-flat.txt")
+CAPTURE = lab_captures.DETAIL
 
 INM_DEFAULTS = "no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step"
 INM_ATTRS = ("inm_mode", "inm_eq_inp_mode", "ins_sensitivity", "inm_cluster_cont", "inm_iat_offset", "inm_iat_step")

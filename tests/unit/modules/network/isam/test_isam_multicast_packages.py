@@ -12,9 +12,10 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 )
 
 from .isam_module import TestIsamModule, set_module_args
+from . import lab_captures
 
 ignore_provider_arg = True
-CAPTURE = pathlib.Path("/home/jahknem/Projects/BlueNetworks/pon-migration-planner/.local/root-detail-flat.txt")
+CAPTURE = lab_captures.DETAIL
 
 DEVICE = "\n".join([
     "configure igmp mcast-svc-context Default",
