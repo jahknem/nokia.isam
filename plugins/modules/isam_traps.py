@@ -195,6 +195,7 @@ options:
       - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by
         C(definitions[].name) and C(managers[].address) and C(v6managers[].ipv6address) (targeted gathering). Other
         fields are ignored and absent instances are not returned. Without I(config) the whole resource is read.
+      - With C(deleted) and I(config), only the sections and instances named in I(config) are deleted or reset; other sections are left alone. Without I(config) everything is deleted.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged

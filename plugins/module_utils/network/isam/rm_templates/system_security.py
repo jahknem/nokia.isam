@@ -119,7 +119,13 @@ def normalize_policy(entry):
 
 
 # 'snmp-version v1:<community>' (notify profiles) embeds an SNMP community string.
-_EMBEDDED_COMMUNITY = re.compile(r"^v[0-9a-z]+:(.+)$", re.I)
+_EMBEDDED_COMMUNITY = re.compile(r"^(v[0-9a-z]+:)(.+)$", re.I)
+
+
+def split_snmp_version(value):
+    """('v1:', '<community>') for an snmp-version value that embeds a community, else None."""
+    match = _EMBEDDED_COMMUNITY.match(str(value or ""))
+    return match.groups() if match else None
 
 
 def register_embedded_secrets(module, config):
@@ -134,9 +140,29 @@ def register_embedded_secrets(module, config):
     if no_log_values is None or not isinstance(config, dict):
         return
     for profile in config.get("snmp_notify_profiles") or []:
-        match = _EMBEDDED_COMMUNITY.match(str((profile or {}).get("snmp_version") or ""))
-        if match:
-            no_log_values.add(match.group(1))
+        parts = split_snmp_version((profile or {}).get("snmp_version"))
+        if parts:
+            no_log_values.add(parts[1])
+
+
+# The device stores a view subtree given as a numeric OID under its MIB name and prints
+# that name (verified on the lab ISAM, 2026-11-18). Only these exact OIDs are mapped;
+# others are compared as given.
+SNMP_OID_NAMES = {
+    "1.3.6.1": "internet", "1.3.6.1.2": "mgmt", "1.3.6.1.2.1": "mib_2", "1.3.6.1.2.1.1": "system",
+    "1.3.6.1.2.1.2": "interfaces", "1.3.6.1.2.1.4": "ip", "1.3.6.1.2.1.31": "ifMIB",
+    "1.3.6.1.4": "private", "1.3.6.1.4.1": "enterprises", "1.3.6.1.4.1.637": "alcatel",
+    "1.3.6.1.6": "snmpV2", "1.3.6.1.6.3": "snmpModules", "1.3.6.1.6.3.1": "snmpMIB",
+    "1.3.6.1.6.3.15": "snmpUsmMIB", "1.3.6.1.6.3.16": "snmpVacmMIB",
+}
+VIEW_SECTIONS = ("snmp_views", "snmp_notify_views")
+
+
+def canonical_subtree(value):
+    """A view subtree as the device prints it (numeric OID -> MIB name where known)."""
+    if value is None:
+        return None
+    return SNMP_OID_NAMES.get(str(value).strip("."), value)
 
 
 def _snake(key):

@@ -19,11 +19,12 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
     NESTED,
     SECRET_FIELDS,
     SETTINGS,
+    VIEW_SECTIONS,
     Isam_system_securityTemplate,
+    canonical_subtree,
     normalize_policy,
     register_embedded_secrets,
     scalar_fields,
-    sub_dicts,
 )
 
 _MISSING = object()
@@ -55,6 +56,13 @@ def _split_nested(section, entry):
         return entry, {}
     return (dict((k, v) for k, v in entry.items() if k not in keys),
             dict((k, entry.get(k)) for k in keys))
+
+
+def _identity_value(section, field, value):
+    """An identity value as compared: SNMP view subtrees by the name the device prints."""
+    if section in VIEW_SECTIONS and field == "subtree":
+        return canonical_subtree(value)
+    return value
 
 
 def _named(key, wanted):
@@ -124,7 +132,7 @@ class Isam_system_security(ResourceModule):
         ident = LISTS[section][0]
         out = {}
         for entry in entries or []:
-            key = tuple(entry.get(f) for f in ident)
+            key = tuple(_identity_value(section, f, entry.get(f)) for f in ident)
             if key[0] is not None:
                 out[key] = entry
         return out
@@ -177,6 +185,9 @@ class Isam_system_security(ResourceModule):
 
         for key, entry in wantd.items():
             current = haved.get(key, {})
+            if section in VIEW_SECTIONS and current:
+                # same subtree, written as OID vs. the name the device prints
+                entry = dict(entry, subtree=current.get("subtree"))
             entry = self._clean_secrets(section, entry, current)
             if section == "radius_policies":
                 entry = normalize_policy(entry)

@@ -97,7 +97,7 @@ class TestIsamNetworkCliConnection(object):
 
         connection._reset_transport.assert_called_once_with()
 
-    def test_reset_transport_discards_shell_and_ssh_connection(self):
+    def test_reset_transport_discards_shell_and_closes_ssh_connection(self):
         connection = object.__new__(Connection)
         connection._ssh_shell = Mock()
         connection._ssh_type_conn = Mock()
@@ -110,7 +110,7 @@ class TestIsamNetworkCliConnection(object):
         shell.close.assert_called_once_with()
         ssh_connection.close.assert_called_once_with()
         assert connection._ssh_shell is None
-        assert connection._ssh_type_conn is None
+        assert connection._ssh_type_conn is ssh_connection  # closed, kept with its options
         assert connection._connected is False
 
     def test_unknown_connect_error_is_not_retried(self):

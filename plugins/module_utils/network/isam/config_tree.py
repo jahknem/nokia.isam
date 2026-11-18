@@ -33,6 +33,9 @@ import re
 __metaclass__ = type
 
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_grammar import CONFIG_GRAMMAR
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.system_security import (
+    split_snmp_version,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_tree_metadata import (
     modelled_name,
     resource_grammar,
@@ -201,8 +204,9 @@ def _is_masked_placeholder(value):
     return bool(re.fullmatch(r"plain:\*+", _unquote(value)))
 
 
-# 'snmp-version v1:<community>' (SNMP notify profiles) embeds the community string.
-_SNMP_VERSION_COMMUNITY = re.compile(r"^(\"?v[0-9a-z]+:)(.+?)(\"?)$", re.I)
+# A secret seen on one line is masked wherever else it appears inside a token. Very
+# short values are left out: masking every occurrence of e.g. 'ab' would destroy
+# unrelated data, and real secrets are longer.
 _MIN_KNOWN_SECRET = 3
 
 
@@ -211,17 +215,22 @@ def _is_policy_node(tokens, i):
     return i == 2 and list(tokens[:3]) == ["system", "security", "password"]
 
 
+def _holds_secret(tokens, i):
+    """Whether tokens[i + 1] is a cleartext secret: the value of a secret keyword."""
+    if i + 1 >= len(tokens) or _is_policy_node(tokens, i) or not _is_secret(tokens[i]):
+        return False
+    return tokens[i + 1] != "no" and not _is_masked_placeholder(tokens[i + 1])
+
+
 def _known_secrets(token_lists):
     """Cleartext secret values seen behind a secret keyword anywhere in the input."""
     known = set()
     for tokens in token_lists:
-        for i, token in enumerate(tokens[:-1]):
-            if _is_policy_node(tokens, i):
-                continue
-            nxt = _unquote(tokens[i + 1])
-            if _is_secret(token) and nxt != "no" and not _is_masked_placeholder(nxt) \
-                    and not nxt.lower().startswith("encrypted:") and len(nxt) >= _MIN_KNOWN_SECRET:
-                known.add(nxt)
+        for i in range(len(tokens)):
+            if _holds_secret(tokens, i):
+                value = _unquote(tokens[i + 1])
+                if not value.lower().startswith("encrypted:") and len(value) >= _MIN_KNOWN_SECRET:
+                    known.add(value)
     return known
 
 
@@ -235,16 +244,11 @@ def _redact_tokens(tokens, known=()):
     out = [REDACTED if _unquote(t).lower().startswith("encrypted:") else t for t in tokens]
     for i, token in enumerate(out):
         if token == "snmp-version" and i + 1 < len(out):
-            match = _SNMP_VERSION_COMMUNITY.match(out[i + 1])
-            if match:
-                out[i + 1] = match.group(1) + REDACTED + match.group(3)
-            continue
-        if _is_policy_node(out, i):
-            continue
-        if _is_secret(token) and i + 1 < len(out):
-            nxt = out[i + 1]
-            if not _is_masked_placeholder(nxt) and nxt != "no":
-                out[i + 1] = REDACTED
+            parts = split_snmp_version(_unquote(out[i + 1]))
+            if parts:
+                out[i + 1] = parts[0] + REDACTED
+        elif _holds_secret(out, i):
+            out[i + 1] = REDACTED
     for secret in sorted(known, key=len, reverse=True):
         out = [t.replace(secret, REDACTED) if secret in t and t != REDACTED else t for t in out]
     return out

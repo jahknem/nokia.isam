@@ -760,6 +760,8 @@ options:
     description:
     - Desired resource state.
     - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(profile_type) and C(name) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
+    - All changes to one profile are sent as one command (the mandatory parameters followed by the changes), as the device validates parameters that depend on each other together.
+    - The device does not allow changing the type of an existing shaper profile; the module fails before sending such a change (delete and create the profile instead).
     type: str
     default: merged
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]

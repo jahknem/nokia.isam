@@ -150,26 +150,50 @@ class TestQosProfilesGaps(_Base):
             result = self._run("merged", config=parsed, running=text)
             assert result["commands"] == []
 
+    def test_dependent_parameters_go_in_one_command(self):
+        """The device rejected 'excess-info-rate' sent before 'type' (EIR needs a two-rate type)."""
+        result = self._run(
+            "merged",
+            config=[{"profile_type": "shaper", "name": "NewTwoRate", "committed_info_rate": 1024,
+                     "committed_burst_size": 256000, "shaper_type": "twotokenbuckettworate", "excess_info_rate": 2048}],
+            running=DETAIL_LINES,
+            changed=True,
+        )
+        assert len(result["commands"]) == 1
+        command = result["commands"][0]
+        assert command.startswith("configure qos profiles shaper NewTwoRate committed-info-rate 1024 committed-burst-size 256000")
+        assert " type twotokenbuckettworate" in command and " excess-info-rate 2048" in command
+
+    def test_changing_the_type_of_an_existing_shaper_fails_early(self):
+        """The device refuses ('changing type is not allowed'); fail before sending."""
+        from ansible_collections.nokia.isam.tests.unit.modules.utils import AnsibleFailJson
+
+        running = "configure qos profiles shaper S1 committed-info-rate 1024 committed-burst-size 256000"
+        with self.assertRaises((AnsibleFailJson, AssertionError)) as raised:
+            self._run("merged", config=[{"profile_type": "shaper", "name": "S1", "shaper_type": "twotokenbuckettworate"}],
+                      running=running, changed=True)
+        assert "cannot be changed" in str(raised.exception)
+
     def test_merged_changes_and_aliases(self):
         result = self._run(
             "merged",
             config=[
                 {"profile_type": "aggrqueuesconfig", "name": "DefaultDnQueuesConfig", "q4_priority": 3, "q0_bw_sharing": "ont-sharing"},
                 {"profile_type": "ingress-qos", "name": "Ingress_Default", "use_dei": True, "dot1_p2_color": "red"},
-                {"profile_type": "shaper", "name": "GPONqssShaperDN10Mbps", "shaper_type": "singletokenbucket"},
+                {"profile_type": "shaper", "name": "GPONqssShaperDN10Mbps", "excess_info_rate": 20480},
                 {"profile_type": "policer", "name": "qpp5Mbps", "committed_info_rate": 6000},
             ],
             running=DETAIL_LINES,
             changed=True,
         )
-        assert sorted(result["commands"]) == sorted([
-            "configure qos profiles aggrqueuesconfig DefaultDnQueuesConfig q4-priority 3",
-            "configure qos profiles aggrqueuesconfig DefaultDnQueuesConfig q0-bw-sharing ont-sharing",
-            "configure qos profiles ingress-qos Ingress_Default use-dei",
-            "configure qos profiles ingress-qos Ingress_Default dot1-p2-color red",
-            "configure qos profiles shaper GPONqssShaperDN10Mbps type singletokenbucket",
+        # one packed command per profile: mandatory parameters (as on the device) first
+        assert sorted(result["commands"]) == [
+            "configure qos profiles aggrqueuesconfig DefaultDnQueuesConfig q0-bw-sharing ont-sharing q4-priority 3",
+            "configure qos profiles ingress-qos Ingress_Default use-dei dot1-p2-color red",
             "configure qos profiles policer qpp5Mbps committed-info-rate 6000 committed-burst-size 256000",
-        ])
+            "configure qos profiles shaper GPONqssShaperDN10Mbps committed-info-rate 0 committed-burst-size 0 "
+            "excess-info-rate 20480",
+        ]
 
     def test_replaced_resets_optional_keeps_mandatory(self):
         from ansible.module_utils import basic
@@ -189,19 +213,21 @@ class TestQosProfilesGaps(_Base):
             )
         warnings = [call[0][0] for call in warn.call_args_list]
         commands = result["commands"]
-        for field in ("down-policer", "up-marker", "ing-outer-marker", "ds-schedule-tag", "up-policer-per-tc",
-                      "up-dscptotc-prof", "dn-dscptotc-prof", "up-pbittotc-prof", "dn-pbittotc-prof",
-                      "up-default-tc", "dn-default-tc"):
-            assert "configure qos profiles session SF no %s" % field in commands
-        for field in ("policer-type", "excess-info-rate", "excess-burst-size", "coupling-flag", "color-mode",
-                      "green-action", "yellow-action", "red-action", "policed-size-ctrl", "peak-info-rate",
-                      "peak-burst-size", "cos-threshold"):
-            assert "configure qos profiles policer PT no %s" % field in commands
-        assert "configure qos profiles ingress-qos IQ no use-dei" in commands
-        assert "configure qos profiles ingress-qos IQ no dot1-p3-color" in commands
-        assert "configure qos profiles ingress-qos IQ no dot1-p3-pol-tc" in commands
-        for field in ("weight", "shaper-prof", "queue-prof", "bandwidth-prof", "bw-sharing"):
-            assert "configure qos profiles aggrqueuesconfig AQ no q7-%s" % field in commands
+        resets = {
+            "session SF": ("down-policer", "up-marker", "ing-outer-marker", "ds-schedule-tag", "up-policer-per-tc",
+                           "up-dscptotc-prof", "dn-dscptotc-prof", "up-pbittotc-prof", "dn-pbittotc-prof",
+                           "up-default-tc", "dn-default-tc"),
+            "policer PT": ("policer-type", "excess-info-rate", "excess-burst-size", "coupling-flag", "color-mode",
+                           "green-action", "yellow-action", "red-action", "policed-size-ctrl", "peak-info-rate",
+                           "peak-burst-size", "cos-threshold"),
+            "ingress-qos IQ": ("use-dei", "dot1-p3-color", "dot1-p3-pol-tc"),
+            "aggrqueuesconfig AQ": tuple("q7-" + f for f in ("weight", "shaper-prof", "queue-prof", "bandwidth-prof",
+                                                            "bw-sharing")),
+        }
+        for profile, fields in resets.items():
+            command = profile_command(commands, profile)
+            for field in fields:
+                assert " no %s " % field in command + " ", (profile, field)
         # committed-burst-size is mandatory: never "no committed-burst-size"; kept with a warning.
         assert not any("no committed-burst-size" in c or "no logical-flow-type" in c for c in commands)
         assert any("committed-burst-size" in w for w in warnings)
@@ -260,3 +286,11 @@ def test_capture_gap_report_empty_with_aliases():
     names["qos_profiles"] = set(names["qos_profiles"]) | {a for o in spec.values() for a in o.get("aliases") or []} | {"type"}
     report = config_tree.gap_report(tree, argspec_names=names)
     assert report["families"]["qos_profiles"]["unmodelled"] == {}
+
+
+def profile_command(commands, profile):
+    """The one packed command of '<type> <name>' (commands are packed per profile)."""
+    prefix = "configure qos profiles %s " % profile
+    matching = [c for c in commands if c.startswith(prefix)]
+    assert len(matching) == 1, (profile, len(matching))
+    return matching[0]

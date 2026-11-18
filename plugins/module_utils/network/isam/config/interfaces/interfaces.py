@@ -35,19 +35,15 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 )
 
 
+# Flags whose device default is off. 'false' is printed only by the targeted 'detail'
+# comparison read ('no admin-up'); the plain read omits it, so false means unset.
 DEFAULT_OFF_FLAGS = ("admin_up", "link_updown_trap")
 
 
-def _without_false_flags(entry, have=None):
-    """entry without default-off flags set to False.
-
-    have: a False flag is kept where have sets that flag (merged must turn it off).
-    """
-    if not isinstance(entry, dict):
-        return entry
-    have = have or {}
+def _without_false_flags(entry, keep=()):
+    """entry without default-off flags set to False (flags in keep excepted)."""
     return dict((k, v) for k, v in entry.items()
-                if not (k in DEFAULT_OFF_FLAGS and v is False and not have.get(k)))
+                if not (k in DEFAULT_OFF_FLAGS and v is False and k not in keep))
 
 
 class Interfaces(ResourceModule):
@@ -94,16 +90,18 @@ class Interfaces(ResourceModule):
         """
         wantd = self._index_by_id(self.want)
         haved = self._index_by_id(self.have)
-        # Default-off flags: 'false' is the device default, printed only by the
-        # targeted 'detail' comparison read ('no admin-up'); the plain read omits it.
-        # Treat false as unset so replaced/overridden do not re-send the defaults --
-        # except an explicit false in merged while the device has the flag set.
+        # replaced/overridden must not re-send the defaults the detail read prints; an
+        # explicit false is still sent in merged where the device has the flag set, and
+        # rendered renders what was asked for.
         haved = dict((k, _without_false_flags(v)) for k, v in iteritems(haved))
-        if self.state != "rendered":
-            wantd = dict(
-                (k, _without_false_flags(v, haved.get(k, {}) if self.state == "merged" else {}))
-                for k, v in iteritems(wantd)
-            )
+        for k, v in iteritems(dict(wantd)):
+            if self.state == "rendered":
+                keep = DEFAULT_OFF_FLAGS
+            elif self.state == "merged":
+                keep = [flag for flag in DEFAULT_OFF_FLAGS if haved.get(k, {}).get(flag)]
+            else:
+                keep = ()
+            wantd[k] = _without_false_flags(v, keep)
 
         # if state is merged, merge want onto have and then compare
         if self.state == "merged":

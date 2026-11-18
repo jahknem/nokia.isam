@@ -20,6 +20,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
     XSTP_PORT_FLAGS,
     XstpTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import requested_sections
 
 
 def _without_default(value, default):
@@ -63,7 +64,14 @@ class Xstp(ResourceModule):
             want = dict_merge(have, want)
 
         if self.state == "deleted":
-            want = {}
+            # with config only the named sections and ports (deleting a port must not
+            # disable STP globally)
+            requested = requested_sections(self._module)
+            if not requested or "general" in requested:
+                self._compare_general({}, have.get("general", {}))
+            if not requested or "ports" in requested:
+                self._compare_ports(want.get("ports", []), have.get("ports", []))
+            return
 
         self._compare_general(want.get("general", {}), have.get("general", {}))
         self._compare_ports(want.get("ports", []), have.get("ports", []))

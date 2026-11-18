@@ -14,6 +14,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.link_agg import (
     Link_aggTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import requested_sections
 
 
 class Link_agg(ResourceModule):
@@ -55,8 +56,12 @@ class Link_agg(ResourceModule):
         want = self._normalize_config(self.want)
         have = self._normalize_config(self.have)
 
-        self._generate_port_commands(want.get("ports", []), have.get("ports", []))
-        self._generate_group_commands(want.get("groups", []), have.get("groups", []))
+        # deleted with config acts on the named sections only
+        requested = requested_sections(self._module) if self.state == "deleted" else set()
+        if not requested or "ports" in requested:
+            self._generate_port_commands(want.get("ports", []), have.get("ports", []))
+        if not requested or "groups" in requested:
+            self._generate_group_commands(want.get("groups", []), have.get("groups", []))
 
     def _normalize_config(self, config):
         config = deepcopy(config or {})
