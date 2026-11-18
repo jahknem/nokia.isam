@@ -7,9 +7,7 @@ __metaclass__ = type
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
 )
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
@@ -18,7 +16,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 )
 
 
-class Iphost(ResourceModule):
+class Iphost(IsamResourceModule):
     """The isam_iphost config class."""
 
     def __init__(self, module):

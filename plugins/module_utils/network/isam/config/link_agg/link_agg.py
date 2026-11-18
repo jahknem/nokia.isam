@@ -7,17 +7,15 @@ __metaclass__ = type
 from copy import deepcopy
 
 from ansible.module_utils.six import iteritems
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.link_agg import (
     Link_aggTemplate,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import requested_sections
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import deleted_targets, requested_sections
 
 
-class Link_agg(ResourceModule):
+class Link_agg(IsamResourceModule):
     """The isam_link_agg config class."""
 
     COMPACT_COMMAND_SCOPES = (
@@ -98,10 +96,11 @@ class Link_agg(ResourceModule):
                 wantd[key] = merged
 
         if self.state == "deleted":
-            haved = {k: v for k, v in iteritems(haved) if k in wantd or not wantd}
-            wantd = {}
+            for target, have in deleted_targets(wantd, haved, ("id", "name")):
+                self._delete_port(have, keep=target)
+            return
 
-        if self.state in ["overridden", "deleted"]:
+        if self.state == "overridden":
             for key, have in iteritems(haved):
                 if key not in wantd:
                     self._delete_port(have)
@@ -155,13 +154,17 @@ class Link_agg(ResourceModule):
             elif have.get("actor_port_prio") is not None:
                 self.commands.append("configure link-agg port {0} no actor-port-prio".format(port_id))
 
-    def _delete_port(self, have):
+    def _delete_port(self, have, keep=None):
+        """Reset the port's settings, except those in keep (named-field deletion)."""
         port_id = have["id"]
-        if have.get("passive_lacp") is not None:
+        keep = keep or {}
+        lacp_kept = "passive_lacp" in keep or "lacp_mode" in keep
+        timeout_kept = "short_timeout" in keep or "timeout" in keep
+        if have.get("passive_lacp") is not None and not lacp_kept:
             self.commands.append("configure link-agg port {0} no passive-lacp".format(port_id))
-        if have.get("short_timeout") is not None:
+        if have.get("short_timeout") is not None and not timeout_kept:
             self.commands.append("configure link-agg port {0} no short-timeout".format(port_id))
-        if have.get("actor_port_prio") is not None:
+        if have.get("actor_port_prio") is not None and "actor_port_prio" not in keep:
             self.commands.append("configure link-agg port {0} no actor-port-prio".format(port_id))
 
     def _compare_group(self, want, have):

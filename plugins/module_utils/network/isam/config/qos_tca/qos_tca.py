@@ -6,9 +6,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from ansible.module_utils.six import iteritems
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
@@ -19,7 +17,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 _ATTRS = ("tca_enable", "load_thresh", "dis_frame_th", "qpeak_usage_th")
 
 
-class Qos_tca(ResourceModule):
+class Qos_tca(IsamResourceModule):
     """The isam_qos_tca config class.
 
     A queue's TCA attributes are set/reset in place; queues are not individually

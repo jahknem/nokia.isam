@@ -312,3 +312,63 @@ def test_link_agg_group_keeps_its_default_member_port(monkeypatch):
     replaced = run_module(monkeypatch, "isam_link_agg",
                           {"state": "replaced", "config": {"groups": [{"id": "1/1/6/3", "mode": "static"}]}}, text)["commands"]
     assert not any(c.endswith("no port 1/1/6/3") for c in replaced), replaced
+
+
+NAMED_FIELD_CASES = [
+    ("isam_interfaces", "configure interface port pon:1/1/2/2 admin-up link-updown-trap\n",
+     [{"name": "pon:1/1/2/2", "admin_up": False}], ["configure interface port pon:1/1/2/2 no admin-up"]),
+    ("isam_link_agg", "configure link-agg port 1/1/8/1 passive-lacp short-timeout actor-port-prio 100\n",
+     {"ports": [{"id": "1/1/8/1", "actor_port_prio": "100"}]}, ["configure link-agg port 1/1/8/1 no actor-port-prio"]),
+    ("isam_xdsl_inm", "configure xdsl imp-noise-sensor near-end 1/1/6/3 inm-mode enable inm-iat-offset 10\n",
+     {"near_end": [{"name": "1/1/6/3", "inm_mode": "enable"}]}, ["configure xdsl imp-noise-sensor near-end 1/1/6/3 no inm-mode"]),
+    ("isam_xdsl_lines", "configure xdsl line 1/1/3/1 service-profile 13 spectrum-profile 2 admin-up\n",
+     [{"name": "1/1/3/1", "admin_up": True}], ["configure xdsl line 1/1/3/1 no admin-up"]),
+    ("isam_xstp", "configure xstp port 1/1/6/4 priority 64 edge-port path-cost 100000\n",
+     {"ports": [{"port": "1/1/6/4", "priority": 64}]}, ["configure xstp port 1/1/6/4 no priority"]),
+    ("isam_vlan_global", "configure vlan broadcast-frames priority-policy port-default\nconfigure vlan tpid 88a8\n"
+     "configure vlan priority-regen 2 profile-name BestEffort pbit0 0 pbit1 0\n",
+     {"priority_regen": [{"id": 2}]}, None),
+]
+
+
+@pytest.mark.parametrize("module, running, config, expected", NAMED_FIELD_CASES, ids=[c[0] for c in NAMED_FIELD_CASES])
+def test_deleted_with_a_named_field_resets_only_that_field(monkeypatch, module, running, config, expected):
+    """Found by a sweep over the lab capture: naming one field reset the whole instance."""
+    commands = run_module(monkeypatch, module, {"state": "deleted", "config": config}, running)["commands"]
+    if expected is not None:
+        assert commands == expected
+    else:  # vlan_global: a priority-regen entry must not reset other sections
+        assert commands and not any("broadcast-frames" in c or "tpid" in c for c in commands), commands
+
+
+def test_equipment_ont_deleted_with_a_named_field_keeps_the_ont(monkeypatch):
+    """Found by the named-field sweep: naming desc1 removed the whole ONT."""
+    running = ("configure equipment ont interface 1/1/5/1/3 sw-ver-pland disabled sernum ZZZZ:00000001 desc1 zztest\n"
+               "configure equipment ont interface 1/1/5/1/3 admin-state up\n")
+
+    def deleted(entry):
+        return run_module(monkeypatch, "isam_equipment_onts", {"state": "deleted", "config": {"interfaces": [entry]}}, running)["commands"]
+    assert deleted({"ont_idx": "1/1/5/1/3", "desc1": "zztest"}) == ["configure equipment ont interface 1/1/5/1/3 no desc1"]
+    assert deleted({"ont_idx": "1/1/5/1/3"}) == ["configure equipment ont interface 1/1/5/1/3 admin-state down",
+                                                 "configure equipment ont no interface 1/1/5/1/3"]
+
+
+RENDER_FALSE_CASES = [
+    ("isam_equipment", {"slots": [{"id": "lt:1/1/6", "unlock": False}]}, "configure equipment slot lt:1/1/6 no unlock"),
+    ("isam_interfaces", [{"name": "pon:1/1/2/2", "admin_up": False}], "configure interface port pon:1/1/2/2 no admin-up"),
+    ("isam_xdsl_lines", [{"name": "1/1/3/1", "admin_up": False}], "configure xdsl line 1/1/3/1 no admin-up"),
+    ("isam_xstp", {"ports": [{"port": "1/1/6/4", "edge_port": False}]}, "configure xstp port 1/1/6/4 no edge-port"),
+    ("isam_ethernet_line", [{"if_index": "1/1/6/1", "admin_up": False}], "configure ethernet line 1/1/6/1 no admin-up"),
+]
+
+
+@pytest.mark.parametrize("module, config, command", RENDER_FALSE_CASES, ids=[c[0] for c in RENDER_FALSE_CASES])
+def test_rendered_renders_an_explicit_false(monkeypatch, module, config, command):
+    """netcommon's compare() drops False without a device value; rendered must not."""
+    assert command in run_module(monkeypatch, module, {"state": "rendered", "config": config})["rendered"]
+
+
+def test_dhcp_server_lease_time_reset_is_sent_once(monkeypatch):
+    result = run_module(monkeypatch, "isam_dhcp_server", {"state": "merged", "config": {"lease_time_enabled": False}},
+                        "configure dhcp-server lease-time 3600\n")
+    assert result["commands"].count("configure dhcp-server no lease-time") == 1, result["commands"]

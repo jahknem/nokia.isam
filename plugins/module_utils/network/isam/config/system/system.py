@@ -7,9 +7,7 @@ __metaclass__ = type
 from copy import deepcopy
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import dict_merge
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.targeted import TARGETED_GATHER
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.system import (
@@ -132,7 +130,7 @@ def _settings_absent(kinds, want, have):
                 and not (kinds[o] == "bool" and not v))
 
 
-class Isam_system(ResourceModule):
+class Isam_system(IsamResourceModule):
     """The isam_system config class."""
 
     def __init__(self, module):

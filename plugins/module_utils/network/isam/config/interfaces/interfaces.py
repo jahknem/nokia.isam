@@ -21,13 +21,12 @@ from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
 )
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    deleted_targets,
     normalize_resource_keys,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.interfaces import (
@@ -46,7 +45,7 @@ def _without_false_flags(entry, keep=()):
                 if not (k in DEFAULT_OFF_FLAGS and v is False and k not in keep))
 
 
-class Interfaces(ResourceModule):
+class Interfaces(IsamResourceModule):
     """
     The isam_interfaces config class
     """
@@ -94,6 +93,11 @@ class Interfaces(ResourceModule):
         # explicit false is still sent in merged where the device has the flag set, and
         # rendered renders what was asked for.
         haved = dict((k, _without_false_flags(v)) for k, v in iteritems(haved))
+        if self.state == "deleted":
+            # before want's false flags are dropped: "admin_up: false" names the attribute too
+            for target, have in deleted_targets(wantd, haved, ("name", "id")):
+                self._compare(want=target, have=have)
+            return
         for k, v in iteritems(dict(wantd)):
             if self.state == "rendered":
                 keep = DEFAULT_OFF_FLAGS
@@ -107,15 +111,8 @@ class Interfaces(ResourceModule):
         if self.state == "merged":
             wantd = dict_merge(haved, wantd)
 
-        # if state is deleted, empty out wantd and set haved to wantd
-        if self.state == "deleted":
-            haved = {
-                k: v for k, v in iteritems(haved) if k in wantd or not wantd
-            }
-            wantd = {}
-
-        # remove superfluous config for overridden and deleted
-        if self.state in ["overridden", "deleted"]:
+        # remove superfluous config for overridden
+        if self.state == "overridden":
             for k, have in iteritems(haved):
                 if k not in wantd:
                     self._compare(want={}, have=have)

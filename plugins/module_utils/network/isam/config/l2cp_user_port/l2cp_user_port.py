@@ -1,11 +1,11 @@
 from __future__ import absolute_import, division, print_function
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.l2cp_user_port.l2cp_user_port import L2cpUserPortFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.l2cp import L2cpUserPortTemplate
 
 
-class L2cpUserPort(ResourceModule):
+class L2cpUserPort(IsamResourceModule):
     """User-port partition assignments.
 
     The CLI identity is (user-port, partition-id): the removal form is

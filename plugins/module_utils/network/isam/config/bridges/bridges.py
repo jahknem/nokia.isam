@@ -23,9 +23,7 @@ from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
 )
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
@@ -100,7 +98,7 @@ VLAN_DEFAULT_OFF_FLAGS = frozenset((
 ))
 
 
-class Bridges(ResourceModule):
+class Bridges(IsamResourceModule):
     """
     The isam_bridges config class
     """

@@ -86,3 +86,8 @@ def test_an_interval_at_its_device_default_equals_the_unset_interval(monkeypatch
     running = "configure efm-oam interface 1/1/6/5 admin-up\n"
     assert _efm(monkeypatch, "merged", [{"name": "1/1/6/5", "response_intvl": "5"}], running) == []
     assert _efm(monkeypatch, "merged", [{"name": "1/1/6/5", "keep_alive_intvl": "300"}], running) == []
+
+
+def test_deleted_named_setting_keeps_the_others(monkeypatch):
+    assert _efm(monkeypatch, "deleted", [{"name": "1/1/6/5", "admin_up": True}]) == [
+        "configure efm-oam interface 1/1/6/5 no admin-up"]

@@ -8,9 +8,7 @@ from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
 )
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
@@ -20,7 +18,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
     XSTP_PORT_FLAGS,
     XstpTemplate,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import requested_sections
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import deleted_targets, requested_sections
 
 
 def _without_default(value, default):
@@ -28,7 +26,7 @@ def _without_default(value, default):
     return None if value is None or value == default else value
 
 
-class Xstp(ResourceModule):
+class Xstp(IsamResourceModule):
     """The isam_xstp config class."""
 
     def __init__(self, module):
@@ -107,10 +105,11 @@ class Xstp(ResourceModule):
             wantd = dict_merge(haved, wantd)
 
         if self.state == "deleted":
-            haved = {k: v for k, v in iteritems(haved) if k in wantd or not wantd}
-            wantd = {}
+            for target, have_entry in deleted_targets(wantd, haved, ("port",)):
+                self._compare_port_resettable(target, have_entry)
+            return
 
-        if self.state in ["overridden", "deleted"]:
+        if self.state == "overridden":
             # path-cost has no documented no-form and stays unchanged on unmentioned ports;
             # the attributes with a 'no <attr>' form are reset there.
             for port, have_entry in iteritems(haved):
@@ -129,6 +128,11 @@ class Xstp(ResourceModule):
         defaults = dict((field, spec[1]) for field, spec in XSTP_PORT_FIELDS.items())
         defaults.update((field, False) for field in XSTP_PORT_FLAGS)
         for field, default in defaults.items():
+            if self.state == "rendered":
+                # rendered renders what is given, an explicit default ("no <attr>") included
+                if want.get(field) is not None:
+                    self.addcmd({"port": port, field: want[field]}, "ports." + field, want[field] is False)
+                continue
             wanted = _without_default(want.get(field), default)
             current = _without_default(have.get(field), default)
             if wanted == current:

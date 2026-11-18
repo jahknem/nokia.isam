@@ -9,9 +9,7 @@ __metaclass__ = type
 The isam_nat config file.
 """
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
@@ -20,7 +18,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 )
 
 
-class Nat(ResourceModule):
+class Nat(IsamResourceModule):
     """The isam_nat config class (settings block ``configure nat``).
 
     Nothing can be removed; ``deleted`` resets the attributes to the device

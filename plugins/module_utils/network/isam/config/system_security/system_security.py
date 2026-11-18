@@ -5,9 +5,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
@@ -106,7 +104,7 @@ def _absent(want, have):
     return out
 
 
-class Isam_system_security(ResourceModule):
+class Isam_system_security(IsamResourceModule):
     """The isam_system_security config class."""
 
     def __init__(self, module):

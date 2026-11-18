@@ -7,9 +7,7 @@ __metaclass__ = type
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
 )
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
@@ -20,7 +18,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 )
 
 
-class Mcast_general(ResourceModule):
+class Mcast_general(IsamResourceModule):
     """The isam_mcast_general config class."""
 
     COMPACT_COMMAND_SCOPES = (

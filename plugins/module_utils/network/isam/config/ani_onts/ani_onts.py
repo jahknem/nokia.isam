@@ -5,9 +5,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from ansible.module_utils.six import iteritems
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
@@ -16,7 +14,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 )
 
 
-class Ani_onts(ResourceModule):
+class Ani_onts(IsamResourceModule):
     """The isam_ani_onts config class."""
 
     def __init__(self, module):

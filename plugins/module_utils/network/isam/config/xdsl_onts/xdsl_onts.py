@@ -10,9 +10,7 @@ The isam_xdsl_onts config file.
 """
 
 from ansible.module_utils.six import iteritems
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
@@ -24,7 +22,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 _ATTRS = tuple(attr for attr, _cli in ATTRS)
 
 
-class Xdsl_onts(ResourceModule):
+class Xdsl_onts(IsamResourceModule):
     """The isam_xdsl_onts config class.
 
     The xDSL interface node of an ONT exists with the ONT itself (it is created

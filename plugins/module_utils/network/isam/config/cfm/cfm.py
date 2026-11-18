@@ -1,11 +1,11 @@
 from copy import deepcopy
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.cfm.cfm import CfmFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.cfm import CfmTemplate
 
 
-class Cfm(ResourceModule):
+class Cfm(IsamResourceModule):
     def __init__(self, module):
         super(Cfm, self).__init__(empty_fact_val={}, facts_module=CfmFacts(module), module=module, resource="isam_cfm", tmplt=CfmTemplate())
 

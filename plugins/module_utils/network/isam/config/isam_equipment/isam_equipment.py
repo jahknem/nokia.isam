@@ -8,9 +8,7 @@ from copy import deepcopy
 
 from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import dict_merge
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.isam_equipment import (
     EQUIPMENT_FLAG_FIELDS,
@@ -27,7 +25,7 @@ for _section, _field, _cli, _default in EQUIPMENT_VALUE_FIELDS:
 _DEFAULTS.setdefault("shelves", {})["description"] = ""
 
 
-class Isam_equipment(ResourceModule):
+class Isam_equipment(IsamResourceModule):
     """The isam_equipment config class."""
 
     def __init__(self, module):

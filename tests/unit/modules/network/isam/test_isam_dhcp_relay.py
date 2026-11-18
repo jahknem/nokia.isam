@@ -37,9 +37,10 @@ class TestIsamDhcpRelayModule(TestIsamModule):
             ignore_provider_arg,
         )
         result = self.execute_module(changed=False)
+        # rendered renders what is given: the explicit False as its "no" form
         self.assertEqual(
             result["rendered"],
-            ["configure dhcp-relay port-stats vlan-port:1/1/1/1"],
+            ["configure dhcp-relay port-stats vlan-port:1/1/1/1", "configure dhcp-relay no v6-port-stats vlan-port:1/1/1/1"],
         )
 
     def test_parsed(self):

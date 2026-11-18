@@ -9,9 +9,7 @@ __metaclass__ = type
 The isam_trouble_shooting_pon config file.
 """
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
@@ -32,7 +30,7 @@ def _by_name(entries):
     return result
 
 
-class Trouble_shooting_pon(ResourceModule):
+class Trouble_shooting_pon(IsamResourceModule):
     """The isam_trouble_shooting_pon config class.
 
     ``interfaces`` (extensive counters) are created and removed (``[no] interface``).

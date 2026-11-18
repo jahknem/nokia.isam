@@ -9,10 +9,8 @@ import re
 from copy import deepcopy
 
 from ansible.module_utils.six import iteritems
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import is_masked_secret
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import covers_entry, is_masked_secret
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.equipment_onts import (
     INTERFACE_SUBNODES,
@@ -39,7 +37,7 @@ def _subnode_scopes(node, subnodes, unpacked=()):
     )
 
 
-class Equipment_onts(ResourceModule):
+class Equipment_onts(IsamResourceModule):
     """The isam_equipment_onts config class."""
 
     # admin-state is never packed: the device rejects it on the line that creates the
@@ -200,9 +198,10 @@ class Equipment_onts(ResourceModule):
         """Admin-down what is about to be removed: the device refuses to delete an ONT
         or an ONT slot that is not admin down ("Not in admin down state to delete")."""
         for section, key, node in (("interfaces", "ont_idx", "interface"), ("slots", "ont_slot_idx", "slot")):
-            named = set(item[key] for item in want.get(section) or [])
+            named = dict((item[key], item) for item in want.get(section) or [])
             for entry in have.get(section) or []:
-                if (delete_all or entry[key] in named) and entry.get("admin_state") != "down":
+                removed = delete_all or (entry[key] in named and covers_entry(named[entry[key]], entry, (key,)))
+                if removed and entry.get("admin_state") != "down":
                     self.commands.append("configure equipment ont %s %s admin-state down" % (node, entry[key]))
 
     def _compare_ont_nodes(self, want_list, have_list, parser_prefix, defaults, requested, removed=()):
@@ -249,8 +248,16 @@ class Equipment_onts(ResourceModule):
             if not requested:
                 return
             for item_key, have in iteritems(haved):
-                if not wantd or item_key in wantd:
+                if wantd and item_key not in wantd:
+                    continue
+                want = wantd.get(item_key, {})
+                if covers_entry(want, have, (key,)):
                     self.addcmd(have, parser_prefix, negate=True)
+                    continue
+                # named settings only: reset them, the ONT / slot stays
+                for field in fields:
+                    if self._get(want, field) is not None and self._get(have, field) is not None:
+                        self.addcmd(have, "%s.%s" % (parser_prefix, field), negate=True)
             return
 
         if self.state == "overridden":
