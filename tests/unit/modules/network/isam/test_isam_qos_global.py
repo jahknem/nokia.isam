@@ -13,10 +13,11 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 from ansible_collections.nokia.isam.tests.unit.compat.mock import patch
 
 from .isam_module import TestIsamModule, set_module_args
+from . import lab_captures
 
 
 ignore_provider_arg = True
-LOCAL = pathlib.Path("/path/to/pon-migration-planner/.local")
+LOCAL = lab_captures.CAPTURE_DIR
 CAPTURES = [LOCAL / "root-detail-flat.txt", LOCAL / "root-flat.txt"]
 OWNED_HEADS = ("global", "dsl-ctrl-pkt-policer", "nni-ctrl-pkt-policer", "ctrl-pkt-policer",
                "pbit-scheduling", "upstr-prot-dsl", "no", "atm-overhead-fact", "eth-efm-fact",

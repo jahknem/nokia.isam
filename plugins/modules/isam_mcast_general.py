@@ -25,7 +25,10 @@ options:
         description: Multicast forward method.
         type: str
       fast_change:
-        description: Enable or disable multicast fast channel change (C(fast-change)).
+        description:
+          - Enable or disable multicast fast channel change (C(fast-change)).
+          - When enabled on the device, C(replaced) and C(overridden) without it, and C(deleted), reset it
+            with C(configure mcast general no fast-change).
         type: bool
       pkg_memb_bitmap:
         description:

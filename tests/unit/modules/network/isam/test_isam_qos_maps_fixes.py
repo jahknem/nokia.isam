@@ -4,8 +4,9 @@ import pathlib
 import pytest
 
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.qos_maps import Qos_mapsTemplate
+from . import lab_captures
 
-CAPTURE = pathlib.Path("/path/to/pon-migration-planner/.local/root-flat.txt")
+CAPTURE = lab_captures.CONFIGURED
 
 
 def test_bare_and_attributed_ctrl_pkt_parse():

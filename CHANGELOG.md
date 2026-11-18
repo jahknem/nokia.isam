@@ -2,6 +2,23 @@
 
 ## 0.3.14
 
+- `state: deleted` against configured devices (new regression test runs every
+  resource module's `deleted` without config over a real capture):
+  - `isam_epon_interfaces`, `isam_channel_pair_pm`, `isam_ngpon2_channel_groups`:
+    deleted/replaced/overridden crashed (`AttributeError`) whenever an instance
+    existed. Their parser also turned unrelated `configure` lines into instances
+    (visible with `state: parsed` on a full running config); only their own lines
+    are read now.
+  - `isam_xdsl_boards`: deleted without config silently did nothing (same truthy
+    empty-facts cause as `isam_equipment_onts`); it now removes all boards.
+  - `isam_mcast_general`: deleted and overridden reset `fast_change` (previously
+    only replaced).
+  - `isam_interface_cages`: deleted/overridden failed on `operational_mode`, which
+    has no CLI removal form; the mode is now kept with a warning.
+  - `isam_system` deleted without config remains a no-op by design (it resets only
+    the named sections).
+- Capture tests locate the lab captures through `ISAM_ROOT_CAPTURES` (default: the
+  sibling `pon-migration-planner/.local`) instead of an absolute home path.
 - Backlog closeout: `equipment_onts` with `state: deleted` and no config now deletes
   the whole resource instead of silently doing nothing. Interfaces are shut down,
   slots removed before interfaces, and loop/PM settings are not reset after their

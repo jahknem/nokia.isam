@@ -70,7 +70,7 @@ class Mcast_general(ResourceModule):
             if "admin_state" not in want and have.get("admin_state") is True:
                 self.addcmd({"admin_state": False}, "admin_state")
 
-        if self.state == "replaced":
+        if self.state in ["replaced", "overridden", "deleted"]:
             # fast_change has a CLI no-form; reset to default when omitted
             if "fast_change" not in want and have.get("fast_change") is True:
                 self.addcmd({"fast_change": False}, "fast_change")

@@ -11,10 +11,11 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
     Isam_system_securityTemplate,
 )
 
+from . import lab_captures
 from .isam_module import TestIsamModule, set_module_args
 
 ignore_provider_arg = True
-CAPTURE = pathlib.Path("/path/to/pon-migration-planner/.local/root-detail-flat.txt")
+CAPTURE = lab_captures.DETAIL
 
 
 def test_template_parses_subregions():

@@ -11,10 +11,11 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 from ansible_collections.nokia.isam.tests.unit.compat.mock import patch
 
 from .isam_module import TestIsamModule, set_module_args
+from . import lab_captures
 
 
 ignore_provider_arg = True
-CAPTURE = pathlib.Path("/path/to/pon-migration-planner/.local/root-detail-flat.txt")
+CAPTURE = lab_captures.DETAIL
 PREFIX = "configure uni ont tc-layer "
 UNI = "1/1/2/1/1/1/1"
 UNI2 = "1/1/2/1/100/1/1"
