@@ -76,12 +76,12 @@ def test_grammar_node_nests_path_and_attributes():
 
 def test_secret_community_is_redacted_but_masked_password_kept():
     tree = parse_config_tree(SAMPLE)
-    # system security has no grammar: heuristic frame, the community (an identity) masked
+    # Both parts of the composite community identity belong to the CLI path.
     community = tree["system"]["security"]["snmp"]["community"]
     assert list(community) == ["<redacted>"]
-    leaf = community["<redacted>"]["__config__"]
-    assert leaf["attrs"] == {"host-address": "10.0.0.1/32"}
-    assert leaf["source"] == "heuristic"
+    leaf = community["<redacted>"]["host-address"]["10.0.0.1/32"]["__config__"]
+    assert leaf["attrs"] == {}
+    assert leaf["source"] == "resource"
     assert "public" not in all_values(tree)
     ont = tree["equipment"]["ont"]["interface"]["1/1/5/1/3"]["__config__"]
     assert ont["attrs"]["log-auth-pwd"] == "plain:******"  # device-masked, kept
@@ -107,12 +107,12 @@ def test_redaction_cleartext_and_encrypted_masked_placeholders_kept():
     assert pppoe["attrs"]["password"] == "<redacted>" and pppoe["source"] == "grammar"
 
 
-def test_ungrammared_region_nests_by_heuristic_and_stays_lossless():
+def test_resource_schema_nests_lowercase_identity_and_stays_lossless():
     line = "configure system security operator isadmin password encrypted:aa:bb prompt %i"
     tree = parse_config_tree(line)
     leaf = tree["system"]["security"]["operator"]["isadmin"]["__config__"]
     assert leaf["lines"] == [line.replace("encrypted:aa:bb", "<redacted>")]
-    assert leaf["node"] == "system security operator isadmin"
+    assert leaf["node"] == "system security operator"
 
 
 def test_learned_subnodes_nest_below_their_parent():
@@ -164,7 +164,7 @@ def test_gap_report_families_and_unclaimed():
     assert report["families"]["qos_tca"] == {"argspec": True, "lines": 1, "unmodelled": {}, "value_like": 0}
     assert report["families"]["bridges"]["unmodelled"] == {"bridge port": ["brand-new-knob"]}
     assert report["unclaimed"]["qos global"] == 1
-    assert "system security snmp community" in report["unclaimed"]
+    assert "system security snmp community host-address" in report["unclaimed"]
 
 
 def test_gap_report_defaults_load_collection_argspecs():
@@ -322,10 +322,100 @@ def test_encrypted_credentials_are_removed_even_at_unknown_paths():
     tree = parse_config_tree("\n".join([
         'configure system security ssh sftp-user user1 password "encrypted:hash-one"',
         'configure unknown node encrypted:hash-two no enabled',
+        'configure unknown node "ENCRYPTED:hash-three" no enabled',
         'configure system security operator user2 password plain:clear-password',
     ]))
     output = json.dumps(tree)
     assert "encrypted:" not in output
-    assert "hash-one" not in output and "hash-two" not in output
+    assert "hash-one" not in output and "hash-two" not in output and "hash-three" not in output
     assert "clear-password" not in output
     assert "<redacted>" in output
+
+
+def test_resource_paths_do_not_depend_on_identity_spelling_or_line_order():
+    text = "\n".join([
+        "configure system security ssh sftp-user lowercase password encrypted:private-hash",
+        "configure system security snmp view lowercase subtree * type include",
+        "configure system security filetransfer protocol ftp",
+        "configure system security radius policy lowercase servers 2 auth-server server-two priority 2",
+        "configure system security radius policy lowercase servers 1 auth-server server-one priority 1",
+        "configure system syslog route lowercase msg-type log facility local0 emergency no debug",
+        "configure system sync-if-timing synce synce-1 none",
+    ])
+    tree = parse_config_tree(text)
+    security = tree["system"]["security"]
+    user = security["ssh"]["sftp-user"]["lowercase"]["__config__"]
+    assert user["attrs"] == {"password": "<redacted>"}
+    assert user["node"] == "system security ssh sftp-user"
+    assert security["snmp"]["view"]["lowercase"]["subtree"]["*"]["__config__"]["attrs"] == {"type": "include"}
+    assert security["filetransfer"]["__config__"]["attrs"] == {"protocol": "ftp"}
+    servers = security["radius"]["policy"]["lowercase"]["servers"]
+    assert servers["1"]["__config__"]["attrs"]["auth-server"] == "server-one"
+    assert servers["2"]["__config__"]["attrs"]["auth-server"] == "server-two"
+    route = tree["system"]["syslog"]["route"]["lowercase"]["__config__"]
+    assert route["node"] == "system syslog route"
+    assert route["attrs"] == {"msg-type": "log", "facility": "local0", "emergency": True, "debug": False}
+    assert tree["system"]["sync-if-timing"]["synce"]["synce-1"]["__config__"]["attrs"] == {"port": "none"}
+
+
+def test_password_policy_is_not_redacted_as_a_password_value():
+    line = "configure system security password min-length 12 min-num-numeric-char 2 no mixed-case"
+    tree = parse_config_tree(line)
+    leaf = tree["system"]["security"]["password"]["__config__"]
+    assert leaf["lines"] == [line]
+    assert leaf["attrs"] == {"min-length": "12", "min-num-numeric-char": "2", "mixed-case": False}
+
+
+def test_explicit_profile_nodes_preserve_values_without_detail_negations():
+    line = "configure xdsl spectrum-profile 1 vdsl vdsl-band-plan annex-b-998ade adsl-band allow-adsl"
+    tree = parse_config_tree(line)
+    leaf = tree["xdsl"]["spectrum-profile"]["1"]["vdsl"]["__config__"]
+    assert leaf["attrs"] == {"vdsl-band-plan": "annex-b-998ade", "adsl-band": "allow-adsl"}
+    assert leaf["node"] == "xdsl spectrum-profile vdsl"
+    assert leaf["source"] == "resource"
+    root = parse_config_tree("configure mcast general fast-change")
+    assert root["mcast"]["general"]["__config__"]["attrs"] == {"fast-change": True}
+
+
+def test_explicit_system_id_accepts_node_identity_and_legacy_forms():
+    for line, identity in (("configure system id node-name name node-name", True),
+                           ("configure system id name node-name", False)):
+        root = parse_config_tree(line)["system"]["id"]
+        leaf = (root["node-name"] if identity else root)["__config__"]
+        assert leaf["node"] == "system id"
+        assert leaf["attrs"] == {"name": "node-name"}
+
+
+def test_every_explicit_cli_name_mapping_targets_an_existing_option():
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_tree import load_argspec_names
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_tree_metadata import OPTION_NAMES, modelled_name
+
+    specs = load_argspec_names({family for family, _node, _attr in OPTION_NAMES})
+    for (family, node, attr), target in OPTION_NAMES.items():
+        assert target in specs[family]
+        assert modelled_name(family, node, attr, specs[family])
+        assert not modelled_name(family, "unrelated node", attr, specs[family])
+
+
+def test_gap_report_mappings_are_node_scoped_and_require_an_option():
+    tree = parse_config_tree("configure cwmp plt adminstate locked")
+    report = gap_report(tree, argspec_names={"cwmp_plt": {"admin_state"}},
+                        prefixes={"cwmp_plt": ("configure cwmp ",)}, excludes={})
+    assert report["families"]["cwmp_plt"]["unmodelled"] == {}
+    missing = gap_report(tree, argspec_names={"cwmp_plt": set()},
+                         prefixes={"cwmp_plt": ("configure cwmp ",)}, excludes={})
+    assert missing["families"]["cwmp_plt"]["unmodelled"] == {"cwmp plt": ["adminstate"]}
+    future = parse_config_tree("configure cwmp plt future-setting new-value")
+    report = gap_report(future, argspec_names={"cwmp_plt": {"admin_state"}},
+                        prefixes={"cwmp_plt": ("configure cwmp ",)}, excludes={})
+    assert report["families"]["cwmp_plt"]["unmodelled"] == {"cwmp plt": ["future-setting"]}
+
+
+@pytest.mark.parametrize("capture", ROOT_CAPTURES, ids=lambda p: p.name)
+def test_lab_gap_report_has_no_unclaimed_or_unmodelled_fields(capture):
+    if not capture.exists():
+        pytest.skip("root capture not available")
+    report = gap_report(parse_config_tree(capture.read_text(errors="replace")))
+    assert not report["unclaimed"]
+    # Counts only: assertion failures must not print identities or credentials.
+    assert all(entry["argspec"] and not entry["unmodelled"] for entry in report["families"].values())

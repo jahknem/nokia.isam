@@ -225,6 +225,28 @@ class TestIsamEquipmentOntsNodes(TestIsamModule):
             "configure equipment ont pm-collect 1/1/2/1/2 no xg-pm-collect",
         ]
 
+    def test_deleted_without_config_removes_all_in_dependency_order(self):
+        self.get_config.return_value = "\n".join([
+            "configure equipment ont interface 1/1/2/1/2 admin-state up",
+            "configure equipment ont slot 1/1/2/1/2/1 planned-card-type ethernet plndnumdataports 1 plndnumvoiceports 0",
+            "configure equipment ont sw-ctrl 1 hw-version HW1",
+            "configure equipment ont loop 1/1/2/1/2 loop-detect enable",
+            "configure equipment ont pm-collect 1/1/2/1/2 xg-pm-collect enable",
+        ])
+        for config in (None, {}, {"interfaces": [], "slots": []}):
+            with self.subTest(config=config):
+                result = self.run_state("deleted", config)
+                assert result["commands"] == [
+                    "configure equipment ont interface 1/1/2/1/2 admin-state down",
+                    "configure equipment ont no slot 1/1/2/1/2/1",
+                    "configure equipment ont no interface 1/1/2/1/2",
+                    "configure equipment ont no sw-ctrl 1",
+                ]
+
+    def test_deleted_without_config_is_idempotent_on_empty_device(self):
+        self.get_config.return_value = "# empty configuration"
+        assert self.run_state("deleted", changed=False)["commands"] == []
+
     def test_deleting_the_ont_does_not_reset_its_loop_afterwards(self):
         self.get_config.return_value = "\n".join([
             "configure equipment ont interface 1/1/2/1/2 admin-state up",

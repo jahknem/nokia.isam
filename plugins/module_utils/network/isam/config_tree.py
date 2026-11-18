@@ -10,6 +10,9 @@ The path/attribute split works in three layers:
    structure (keywords, identity slots) and the attribute keywords.
 2. Heuristic frame: lines without a grammar node are split at the first identity token
    (an index such as 1/1/3/1, a number, a quoted string) or the first 'no'.
+Resource schemas supplement missing grammar for security, profiles and timing nodes;
+their explicit identity slots also cover lowercase names and compound identities.
+
 3. Learned sub-nodes: a keyword after the node identity that the grammar does not know
    and that is followed by 'no <attr>' or by an index, on a line that is not the first
    line of its node (or that repeats per node, e.g. 'queue 0', 'queue 1'), is a sub-node
@@ -30,6 +33,10 @@ import re
 __metaclass__ = type
 
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_grammar import CONFIG_GRAMMAR
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_tree_metadata import (
+    modelled_name,
+    resource_grammar,
+)
 
 REDACTED = "<redacted>"
 _TOKEN_RE = re.compile(r'"[^"]*"|\S+')
@@ -184,7 +191,7 @@ def _unquote(v):
 
 
 def _redact(name, value):
-    if isinstance(value, str) and (value.startswith("encrypted:") or
+    if isinstance(value, str) and (value.lower().startswith("encrypted:") or
                                  (_is_secret(name) and not _is_masked_placeholder(value))):
         return REDACTED
     return value
@@ -199,8 +206,10 @@ def _redact_tokens(tokens):
 
     Secret values are masked; only actual device-masked placeholders are retained.
     """
-    out = [REDACTED if _unquote(t).startswith("encrypted:") else t for t in tokens]
+    out = [REDACTED if _unquote(t).lower().startswith("encrypted:") else t for t in tokens]
     for i, token in enumerate(out):
+        if i == 2 and out[:2] == ["system", "security"] and token == "password":
+            continue  # password policy node, not a credential attribute
         if _is_secret(token) and i + 1 < len(out):
             nxt = out[i + 1]
             if not _is_masked_placeholder(nxt) and nxt != "no":
@@ -222,6 +231,17 @@ class _Line(object):
 
 
 def _frame(order, tokens, stored):
+    for metadata in resource_grammar():
+        consumed = _consume_path(tokens, metadata["path"])
+        if consumed is not None:
+            path, rest, shape = consumed
+            if path == ["system", "security"] and rest and rest[0] != "no" and rest[0] not in metadata["attrs"]:
+                continue  # unknown security child: retain heuristic nesting
+            if shape == ("system", "id") and len(path) == 3 and path[-1] in metadata["attrs"]:
+                continue  # legacy 'system id name X' has no node-id identity
+            if metadata["positionals"] and rest:
+                rest = [metadata["positionals"][0], rest[0]] + rest[1:]
+            return _Line(order, stored, list(path), list(rest), tuple(shape), metadata["attrs"], "resource")
     node = _node_for(_leading_keywords(tokens))
     if node:
         attrs = CONFIG_GRAMMAR[node]["attrs"]
@@ -341,7 +361,7 @@ def parse_config_tree(text):
     """Nested tree of the whole flat configuration. Lossless (raw lines kept, masked).
 
     Leaves are {"__config__": {"attrs": {...}, "lines": [...], "node": "<keyword path>",
-    "source": "grammar" | "heuristic"}} under the CLI path (keywords and identities).
+    "source": "grammar" | "resource" | "heuristic"}} under the CLI path (keywords and identities).
     """
     lines = _parsed_lines(text)
     names = _structure(lines)
@@ -453,9 +473,11 @@ def gap_report(tree, argspec_names=None, prefixes=None, excludes=None):
 
     'node' is the leaf's keyword path (e.g. 'qos interface queue'); an attribute is
     unmodelled when its snake_case name is not an option anywhere in the family argspec.
-    Safe to share: only keyword-shaped names leave the report. A token that is not
+    Only keyword-shaped names leave the report. A token that is not
     (a value the tree parsed into a name position) is counted per family under
     "value_like" and never shown; path parts of that kind become "<value>".
+    Heuristic nodes may still mistake an unknown lowercase identity/value for a
+    keyword. This is a diagnostic, not a general-purpose anonymisation guarantee.
     """
     if prefixes is None or excludes is None:
         from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
@@ -489,7 +511,9 @@ def gap_report(tree, argspec_names=None, prefixes=None, excludes=None):
             entry["lines"] += len(lines)
             names = list(value.get("attrs", {}))
             entry["value_like"] += sum(1 for a in names if not _safe_name(a))
-            missing = sorted(a for a in names if _safe_name(a) and (known is None or _snake(a) not in known))
+            missing = sorted(a for a in names if _safe_name(a) and (
+                known is None or (_snake(a) not in known and not modelled_name(owner, node_name, a, known))
+            ))
             if missing:
                 bucket = entry["unmodelled"].setdefault(node_name, [])
                 entry["unmodelled"][node_name] = sorted(set(bucket) | set(missing))
