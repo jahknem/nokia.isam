@@ -5,17 +5,17 @@ import pathlib
 import pytest
 
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_tree import (
-    parse_config_tree,
+    _known_secrets,
+    _tokens,
     gap_report,
     nesting_stats,
-    _redact_tokens,
-    _tokens,
+    parse_config_tree,
+    redacted_token_lines,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_grammar import CONFIG_GRAMMAR
 
 
 def redacted_source(text):
-    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_tree import redacted_token_lines
     return ["configure " + " ".join(tokens) for tokens in redacted_token_lines(text) if tokens]
 
 
@@ -440,7 +440,6 @@ def test_community_embedded_in_snmp_version_is_masked():
 def test_root_capture_tree_contains_no_known_secret(capture):
     """No cleartext secret seen behind a secret keyword survives anywhere in the tree."""
     import json
-    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_tree import _known_secrets, _tokens
 
     if not capture.exists():
         pytest.skip("root capture not available")

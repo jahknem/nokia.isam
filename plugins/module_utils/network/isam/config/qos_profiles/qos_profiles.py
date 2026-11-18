@@ -22,6 +22,10 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 class Qos_profiles(ResourceModule):
     """The isam_qos_profiles config class."""
 
+    # Fields the device refuses to change on an existing profile -> their default
+    # (lab ISAM: "QOS MGT error 2 : changing type is not allowed").
+    IMMUTABLE = {"shaper": {"shaper-type": "singletokenbucket"}}
+
     def __init__(self, module):
         super(Qos_profiles, self).__init__(
             empty_fact_val=[],
@@ -70,4 +74,41 @@ class Qos_profiles(ResourceModule):
             # its parameters; per-parameter removals after it would be invalid.
             self.compare(parsers=["profile_type"], want=want, have=have)
             return
+        self._check_immutable(want, have)
+        before = len(self.commands)
         self.compare(parsers=self.parsers, want=want, have=have)
+        self._pack(before, want, have)
+
+    def _check_immutable(self, want, have):
+        """Fail before sending a change the device refuses for an existing profile."""
+        if not have:
+            return
+        for field, default in self.IMMUTABLE.get(want.get("profile_type"), {}).items():
+            wanted = want.get(field)
+            if wanted is not None and wanted != (have.get(field) or default):
+                self._module.fail_json(msg=(
+                    "qos profile %s %s: %s cannot be changed on an existing profile; "
+                    "delete the profile and create it again" % (want["profile_type"], want["name"], field)))
+
+    def _pack(self, before, want, have):
+        """One command per profile: '<path> <mandatory params> <changes>'.
+
+        The device validates a profile command as a whole, and some parameters depend
+        on each other (a shaper's excess-info-rate is only valid with a two-rate type).
+        Sent as separate commands -- excess-info-rate before type -- the device rejected
+        the first one. The packed line is also the form the device prints.
+        """
+        path = "configure qos profiles " + Qos_profilesTemplate._profile_path(want)
+        new = self.commands[before:]
+        mine = [c for c in new if c == path or c.startswith(path + " ")]
+        if not mine:
+            return
+        data = dict(have)
+        data.update(want)
+        parts = []
+        for part in [Qos_profilesTemplate._render_profile_line(data)[len(path):].strip()] + \
+                [c[len(path):].strip() for c in mine]:
+            if part and part not in parts:
+                parts.append(part)
+        others = [c for c in new if c not in mine]
+        self.commands[before:] = others + [" ".join([path] + parts)]

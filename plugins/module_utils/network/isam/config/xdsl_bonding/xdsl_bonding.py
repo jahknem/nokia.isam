@@ -81,7 +81,6 @@ class Xdsl_bonding(ResourceModule):
                 self.commands.append("configure xdsl-bonding no group-assembly-time")
             return
 
-        # overridden used to reset the value even when the config asked for it
         if self.state in ["replaced", "overridden"]:
             if want is None and have is not None:
                 self.commands.append("configure xdsl-bonding no group-assembly-time")

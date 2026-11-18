@@ -98,6 +98,7 @@ options:
     description:
     - Desired resource state.
     - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(tc_map_dot1p[].dot1p) and C(dscp_map_dot1p[].dscp) and C(up_ctrl_pkt[].protocol) and C(dn_ctrl_pkt[].protocol) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
+    - With C(deleted) and I(config), only the sections and instances named in I(config) are deleted or reset; other sections are left alone. Without I(config) everything is deleted. Naming an entry by its identity alone is enough.
     type: str
     default: merged
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]

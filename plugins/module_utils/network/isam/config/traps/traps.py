@@ -18,6 +18,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
     canonical_key,
+    requested_sections,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.traps import (
     Isam_trapsTemplate,
@@ -27,6 +28,13 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 
 
 class Isam_traps(ResourceModule):
+    # (section, identity field, removal form; None: definitions are reset field by field)
+    SECTIONS = (
+        ("definitions", "name", None),
+        ("managers", "address", "configure trap no manager %s"),
+        ("v6managers", "ipv6address", "configure trap no v6manager %s"),
+    )
+
     COMPACT_COMMAND_SCOPES = (
         r"^(?P<scope>configure trap manager \S+) (?P<suffix>.+)$",
         r"^(?P<scope>configure trap v6manager \S+) (?P<suffix>.+)$",
@@ -112,14 +120,13 @@ class Isam_traps(ResourceModule):
         want = deepcopy(self.want) or {}
         have = deepcopy(self.have) or {}
 
-        self._compare_section(want.get("definitions", []), have.get("definitions", []),
-                              "definitions", "name")
-        self._compare_section(want.get("managers", []), have.get("managers", []),
-                              "managers", "address",
-                              no_prefix="configure trap no manager %s")
-        self._compare_section(want.get("v6managers", []), have.get("v6managers", []),
-                              "v6managers", "ipv6address",
-                              no_prefix="configure trap no v6manager %s")
+        # deleted with config acts on the named sections only
+        requested = requested_sections(self._module) if self.state == "deleted" else set()
+        for section, key_field, no_prefix in self.SECTIONS:
+            if requested and section not in requested:
+                continue
+            self._compare_section(want.get(section, []), have.get(section, []), section, key_field,
+                                  no_prefix=no_prefix)
 
     def _compare_section(self, want_list, have_list, section, key_field, no_prefix=None):
         w_map = {e[key_field]: e for e in want_list if e.get(key_field)}

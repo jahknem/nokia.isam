@@ -456,6 +456,7 @@ options:
         C(sync_if_timing.ssm[].reference), C(sync_if_timing.synce[].reference) and C(sync_if_timing.ssmout_synce[].port)
         (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole
         resource is read.
+      - With C(deleted), a section whose I(config) names only list entries (for example one SNTP server or one sync-if-timing reference) acts on those entries alone. SNTP servers have no write form in this module, so nothing is sent for them.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged

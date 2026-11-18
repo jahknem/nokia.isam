@@ -911,6 +911,7 @@ options:
     description:
       - Desired resource state.
       - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(dpbo_profiles[].id) and C(service_profiles[].id) and C(spectrum_profiles[].id) and C(vce_profiles[].id) and C(vect_profiles[].id) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
+      - With C(deleted) and I(config), only the profiles named in I(config) are deleted or reset; profile types not named are left alone. Without I(config) everything is deleted.
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
 """

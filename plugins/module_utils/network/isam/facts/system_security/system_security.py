@@ -51,6 +51,18 @@ _TARGETED = {
 }
 
 
+def _only_sftp_users(data, users):
+    """Of the ssh node's lines (read for targeted sftp users), keep the named users only.
+
+    Lines of other targeted sections pass unchanged.
+    """
+    wanted = tuple("%ssftp-user %s" % (_SSH_PREFIX, user) for user in users)
+    kept = [line for line in str(data or "").splitlines()
+            if not line.strip().startswith(_SSH_PREFIX)
+            or any(line.strip() == w or line.strip().startswith(w + " ") for w in wanted)]
+    return "\n".join(kept) + ("\n" if kept else "")
+
+
 class Isam_system_securityFacts(object):
     """The isam_system_security facts class."""
 
@@ -62,20 +74,8 @@ class Isam_system_securityFacts(object):
         data = get_targeted_config(self._module, connection, "isam_system_security",
                                    "info configure system security flat", _TARGETED)
         users = requested_identities(self._module, "isam_system_security", "ssh.sftp_users")
-        state = (getattr(self._module, "params", None) or {}).get("state")
-        if users and state == "gathered":
-            wanted = tuple("%ssftp-user %s" % (_SSH_PREFIX, user) for user in users)
-            seen = set()
-            kept = []
-            for line in str(data or "").splitlines():
-                stripped = line.strip()
-                if stripped.startswith(_SSH_PREFIX):
-                    # only the named users' lines, once (several users share the ssh read)
-                    if not any(stripped == w or stripped.startswith(w + " ") for w in wanted) or stripped in seen:
-                        continue
-                    seen.add(stripped)
-                kept.append(line)
-            data = "\n".join(kept) + ("\n" if kept else "")
+        if users and self._module.params.get("state") == "gathered":
+            data = _only_sftp_users(data, users)
         return data
 
     def populate_facts(self, connection, ansible_facts, data=None):

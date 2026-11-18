@@ -18,6 +18,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
     EQUIPMENT_VALUE_FIELDS,
     Isam_equipmentTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import requested_sections
 
 # section -> {field: device default}; a requested default equals an absent value.
 _DEFAULTS = {}
@@ -75,8 +76,13 @@ class Isam_equipment(ResourceModule):
     def generate_commands(self):
         want = self.want or {}
         have = self.have or {}
+        # deleted with config acts on the named sections only (naming one applique must
+        # not unplan the shelf or the slots)
+        requested = requested_sections(self._module) if self.state == "deleted" else set()
 
         for section, parsers in iteritems(self.parsers):
+            if requested and section not in requested:
+                continue
             wantd = self._index_by_id(want.get(section, []))
             haved = self._index_by_id(have.get(section, []))
 
@@ -99,6 +105,8 @@ class Isam_equipment(ResourceModule):
                 self._compare_entry(entry, haved.pop(key, {}), parsers)
 
         for section, parsers in iteritems(self.singleton_parsers):
+            if requested and section not in requested:
+                continue
             wantd = want.get(section) or {}
             haved = have.get(section) or {}
             if self.state == "merged":

@@ -211,6 +211,7 @@ options:
     description:
     - The state the configuration should be left in.
     - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(shelves[].id), C(slots[].id), C(appliques[].id), C(protection_groups[].id), C(diagnostics_sfp[].id), C(protection_elements[].id), C(racks[].id), C(external_link_assigns[].id) and C(external_link_hosts[].id) (targeted gathering). The C(envbox) and C(isam) settings blocks are read whole. Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
+    - With C(deleted) and I(config), only the sections and instances named in I(config) are deleted or reset; other sections are left alone. Without I(config) everything is deleted.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged

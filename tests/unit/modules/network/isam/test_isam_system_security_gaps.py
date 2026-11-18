@@ -239,27 +239,33 @@ def test_capture_gap_report_only_false_positives():
         assert ok, "unexpected unmodelled attribute(s) under %s (%d)" % (node, len(attrs - mapped))
 
 
-def test_community_embedded_in_notify_profile_is_registered_no_log():
-    """A targeted notify-profile read does not read the communities; the community
-    inside snmp_version must still be masked in module output."""
-    from types import SimpleNamespace
-    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.system_security.system_security import (
-        Isam_system_securityFacts,
-    )
-    module = SimpleNamespace(params={"state": "gathered"}, no_log_values=set(), check_mode=False, _socket_path=None, _name="isam_system_security")
-    facts = {"ansible_network_resources": {}}
-    Isam_system_securityFacts(module).populate_facts(
-        None, facts, "configure system security snmp notify-profile tl1 snmp-version v1:hidden-comm\n"
-        "configure system security snmp notify-profile p3 snmp-version v3\n")
-    assert "hidden-comm" in module.no_log_values
-    assert "v3" not in module.no_log_values and "v1" not in module.no_log_values
+
+def test_community_embedded_in_notify_profile_is_masked(monkeypatch):
+    """A targeted notify-profile read does not read the communities (whose no_log
+    registration masks them); the community inside snmp_version must be masked anyway."""
+    from .module_runner import run_module
+
+    device = {"info configure system security snmp notify-profile tl1 flat":
+              "configure system security snmp notify-profile tl1 snmp-version v1:hidden-comm\n"}
+    result = run_module(monkeypatch, "isam_system_security",
+                        {"state": "gathered", "config": {"snmp_notify_profiles": [{"name": "tl1"}]}}, device)
+    assert "hidden-comm" in result["_no_log_values"]
+    wanted = {"snmp_notify_profiles": [{"name": "p", "snmp_version": "v2c:wanted-comm"}]}
+    assert "wanted-comm" in run_module(monkeypatch, "isam_system_security",
+                                       {"state": "rendered", "config": wanted})["_no_log_values"]
+    plain = {"snmp_notify_profiles": [{"name": "p", "snmp_version": "v3"}]}
+    assert "v3" not in run_module(monkeypatch, "isam_system_security", {"state": "rendered", "config": plain})["_no_log_values"]
 
 
-def test_community_in_wanted_snmp_version_is_registered_no_log():
-    from types import SimpleNamespace
-    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.system_security import (
-        register_embedded_secrets,
-    )
-    module = SimpleNamespace(no_log_values=set())
-    register_embedded_secrets(module, {"snmp_notify_profiles": [{"name": "a", "snmp_version": "v2c:wanted-comm"}]})
-    assert module.no_log_values == {"wanted-comm"}
+def test_snmp_view_numeric_oid_matches_the_name_the_device_prints(monkeypatch):
+    """The device stores '1.3.6.1.2.1' as 'mib_2' (lab ISAM); merged re-sent it every run."""
+    from .module_runner import run_module
+
+    text = "configure system security snmp view zzv subtree mib_2 type include"
+    want = {"snmp_views": [{"name": "zzv", "subtree": "1.3.6.1.2.1", "type": "include"}]}
+    assert run_module(monkeypatch, "isam_system_security", {"state": "merged", "config": want}, text)["commands"] == []
+    deleted = run_module(monkeypatch, "isam_system_security",
+                         {"state": "deleted", "config": {"snmp_views": [{"name": "zzv", "subtree": "1.3.6.1.2.1"}]}}, text)
+    assert deleted["commands"] == ["configure system security snmp no view zzv subtree mib_2"]
+    created = run_module(monkeypatch, "isam_system_security", {"state": "merged", "config": want}, "")
+    assert created["commands"] == ["configure system security snmp view zzv subtree 1.3.6.1.2.1 type include"]

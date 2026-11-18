@@ -307,9 +307,10 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
     without discovering unrelated family members.  Overridden and unqualified
     deletion still require the complete family to identify entries to remove.
 
-    bare_commands: single reads (or True for all) of lists whose whole read lists an
-    instance without configured attributes as its bare path; for these an empty
-    reply is re-checked with 'flat detail' (see _bare_instance).
+    bare_commands: the single reads of lists whose whole read shows an instance
+    without configured attributes as its bare path; for these an empty reply is
+    re-checked with 'flat detail' (see _bare_instance).
+    Identical commands are sent once (several identities can share one read).
     """
     if module is None:
         return connection.get(fallback_command)
@@ -319,7 +320,7 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
     if not commands or state not in safe_states:
         return connection.get(fallback_command)
     scoped_results = []
-    for command in commands:
+    for command in list(dict.fromkeys(commands)):
         try:
             response = connection.get(command)
         except Exception as exc:  # connection plugins surface device errors here
@@ -329,7 +330,7 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
         if _is_absent_error(response):
             continue
         reply = _targeted_reply(command, response)
-        if not reply.strip() and (bare_commands is True or command in bare_commands):
+        if not reply.strip() and command in bare_commands:
             reply = _bare_instance(connection, command)
         scoped_results.append(reply)
     return "\n".join(scoped_results)
@@ -451,9 +452,8 @@ def get_targeted_config(module, connection, resource, fallback, formats, write_s
     commands = targeted_commands(module, resource, formats) if module is not None else []
     state = module.params.get("state", "merged") if module is not None else None
     if commands and state in states:
-        bare = targeted_commands(module, resource, dict((s, formats[s]) for s in bare_sections if s in formats)) \
-            if module is not None else []
-        return get_scoped_config(module, connection, None, None, commands, safe_states=states, bare_commands=set(bare))
+        bare = targeted_commands(module, resource, dict((s, formats[s]) for s in bare_sections if s in formats))
+        return get_scoped_config(module, connection, None, None, commands, safe_states=states, bare_commands=bare)
     return fallback(connection) if callable(fallback) else connection.get(fallback)
 
 

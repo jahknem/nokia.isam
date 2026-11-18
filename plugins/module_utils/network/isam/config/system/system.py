@@ -11,6 +11,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
     ResourceModule,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.targeted import TARGETED_GATHER
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.system import (
     SETTINGS,
     SETTINGS_LISTS,
@@ -181,6 +182,8 @@ class Isam_system(ResourceModule):
     def generate_commands(self):
         want = self.want or {}
         have = self.have or {}
+        if self.state == "deleted":
+            have = self._only_named_entries(want, have)
 
         for section, parsers in self.parsers.items():
             if section == "max_lt_link_speed":
@@ -306,6 +309,33 @@ class Isam_system(ResourceModule):
                         del values[key][name]
         self.commands.extend(render_sync_if_timing(_sync_lists(changed)))
         self.commands.extend(render_sync_if_timing(_sync_lists(reset), reset=True))
+
+    @staticmethod
+    def _only_named_entries(want, have):
+        """deleted: a section whose config names only list entries (e.g. one SNTP server,
+        one sync-if-timing reference) acts on those entries alone, not on the section.
+
+        The section's 'have' is narrowed to the named entries, so the reset logic touches
+        nothing else (SNTP servers have no write form here: nothing is sent for them).
+        """
+        identities = TARGETED_GATHER.get("system") or {}
+        have = deepcopy(have)
+        for section, value in (want or {}).items():
+            if not isinstance(value, dict) or not value:
+                continue
+            set_keys = [k for k, v in value.items() if v not in (None, [], {})]
+            if not set_keys or not all(isinstance(value[k], list) for k in set_keys):
+                continue
+            narrowed = {}
+            for key in set_keys:
+                field = identities.get("%s.%s" % (section, key))
+                if not field:
+                    continue
+                names = set(str(entry.get(field)) for entry in value[key])
+                narrowed[key] = [entry for entry in (have.get(section) or {}).get(key) or []
+                                 if str(entry.get(field)) in names]
+            have[section] = narrowed
+        return have
 
     def _compare_section(self, want, have, parsers):
         self.compare(parsers=parsers, want=want, have=have)

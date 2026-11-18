@@ -103,12 +103,17 @@ class Xdsl_profiles(ResourceModule):
         return commands
 
     def _delete(self, want, have):
+        """Without config: every profile. With config: only the named profiles; profile
+        types the config does not name are left alone (lines use them)."""
         commands = []
+        requested = any(want.get(profile_type) for profile_type in PROFILE_TYPES)
         for profile_type in PROFILE_TYPES:
-            targets = want.get(profile_type) or have.get(profile_type) or []
+            if requested and not want.get(profile_type):
+                continue
             haved = self._index(have.get(profile_type))
+            targets = want.get(profile_type) if requested else have.get(profile_type) or []
             for profile in targets:
-                if not want.get(profile_type) or self.template.key_for(profile) in haved:
+                if not requested or self.template.key_for(profile) in haved:
                     commands.append(self.template.delete_profile(profile_type, profile))
         return commands
 

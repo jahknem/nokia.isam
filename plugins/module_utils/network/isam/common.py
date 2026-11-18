@@ -270,3 +270,19 @@ def covers_entry(want, have, keys):
     named = {key for key, value in (want or {}).items() if key not in keys and value is not None}
     present = {key for key, value in (have or {}).items() if key not in keys and value not in (None, [], {})}
     return not named or present <= named
+
+
+def requested_sections(module):
+    """Top-level sections named in a dict config.
+
+    Ansible fills options the user did not give with None, so a section is named when
+    it is present and not None -- also as an empty dict or list ('envbox: {}' asks to
+    reset that section). For state deleted an empty result means 'no config, delete
+    everything'; otherwise only the named sections may be touched: naming one entry of
+    one list must never reset or remove the resource's other sections.
+    """
+    params = getattr(module, "params", None) or {}
+    config = params.get("config")
+    if not isinstance(config, dict):
+        return set()
+    return set(key for key, value in config.items() if value is not None)

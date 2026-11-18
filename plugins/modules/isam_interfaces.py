@@ -89,6 +89,7 @@ options:
     description:
     - The state the configuration should be left in.
     - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(name) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
+    - C(admin_up) and C(link_updown_trap) set to C(false) (their device default) count as unset when comparing; with C(merged) an explicit C(false) is still sent where the device has the flag set.
     - With C(merged), C(replaced) or C(deleted) and I(config), the current configuration is likewise read only for the named instances.
     type: str
     choices:

@@ -2,6 +2,35 @@
 
 ## 0.3.14
 
+- Live write verification on the lab ISAM (approved scope: traffic-free test objects;
+  every change read back, reverted and read back; before/after captures identical).
+  Verified set and reset/delete forms: QoS shaper profiles (create, two-rate EIR,
+  `no excess-info-rate`, delete), alarm custom profiles, xDSL service profiles, SNMP
+  views, CFM SLM timer, PPPoX relay global session, mcast-control and IGMP package names.
+  Fixed:
+  - Connection plugin: after any write (edit_config resets the session) and after a
+    retried connect, the next connect over libssh failed with "Hostname required" -- the
+    rebuilt transport had lost its options. The transport is now closed and kept.
+  - `deleted` naming one instance touched other sections or profiles (all present in
+    0.3.13): `isam_xdsl_profiles` deleted every spectrum/DPBO/vect/VCE profile when one
+    service profile was named; `isam_equipment` unplanned the shelf and every slot;
+    `isam_xstp` ran `xstp general no enable-stp`; `isam_qos_maps` deleted every map
+    entry (and crashed for tc/dscp maps named by identity); `isam_link_agg`,
+    `isam_traps` and `isam_system` (SNTP servers, sync-if-timing references) reset
+    other sections. With config, only the named sections and entries are touched; a
+    regression test runs this for every targetable list over the lab capture.
+  - `isam_qos_profiles` sends one packed command per profile (dependent parameters such
+    as a shaper's EIR and type were rejected as separate commands) and fails early when
+    asked to change an existing shaper's type (the device refuses).
+  - `isam_system_security` SNMP views: the device stores well-known numeric OIDs under
+    their MIB names (`1.3.6.1.2.1` -> `mib_2`, ...); merged re-sent them every run. The
+    15 verified names are compared as equal to their OIDs.
+  - The `state` documentation of the affected modules describes the `deleted` scope,
+    the packed QoS profile commands and the default handling. Identical targeted reads
+    (several identities sharing one node) are sent once.
+  - Not verifiable in scope: `isam_nat` needs the CWMP platform enabled ("CWMP platform
+    is disabled"). Test values outside documented ranges were rejected by the device as
+    expected (alarm mnemonic letters only, CFM SLM 10-100 s, NAT aging 60-240 s).
 - Live verification on the lab ISAM (read-only / check mode). Every resource module's
   live `gathered` matches the parse of a fresh capture; 57 targeted reads and 102
   check-mode merged/replaced/overridden runs with the gathered facts as config. Fixed:

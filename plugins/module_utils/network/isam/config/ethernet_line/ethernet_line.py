@@ -127,9 +127,8 @@ class Ethernet_line(ResourceModule):
            the `want` and `have` data with the `parsers` defined
            for the Ethernet_line network resource.
         """
-        # Only differences are sent, in every state (overridden used to re-send every
-        # wanted value, so it was never idempotent). Omission-based negation (have has
-        # a value, want omits it) is handled by the elif branches below.
+        # Only differences are sent, in every state. Omission-based negation (have has a
+        # value, want omits it) is handled by the elif branches below.
         # Mau fields (mau_type, mau_power) have no no-form and are set-only.
 
         if want.get("port_type") != have.get("port_type"):
@@ -166,13 +165,13 @@ class Ethernet_line(ResourceModule):
         have_mau = {entry["index"]: entry for entry in have.get("mau") or []}
         for index, entry in iteritems(want_mau):
             before = have_mau.get(index, {})
-            if (entry.get("mau_type") != before.get("mau_type")) and entry.get("mau_type") is not None:
+            if entry.get("mau_type") != before.get("mau_type") and entry.get("mau_type") is not None:
                 self.commands.append(
                     "configure ethernet line {0} mau {1} type {2}".format(
                         want["if_index"], index, entry["mau_type"]
                     )
                 )
-            if (entry.get("power") != before.get("power")) and entry.get("power") is not None:
+            if entry.get("power") != before.get("power") and entry.get("power") is not None:
                 self.commands.append(
                     "configure ethernet line {0} mau {1} power {2}".format(
                         want["if_index"], index, entry["power"]
