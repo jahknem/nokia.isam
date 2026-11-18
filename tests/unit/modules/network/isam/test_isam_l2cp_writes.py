@@ -96,11 +96,6 @@ class TestL2cpSessionWrites(_Base):
     read = "info configure l2cp session flat"
     output = SESSIONS
 
-    FULL_2 = ("configure l2cp session 2 bras-ip-address 192.0.2.20 gsmp-version 3 gsmp-sub-version 1 encap-type tcp "
-              "topo-discovery enabled layer2-oam enabled alive-timer 250 port-reprt-shaper 10 aggr-reprt-shaper 10 "
-              "tcp-retry-time 10 gsmp-retry-time 10 dslam-name 00 : 00 : 00 partition-id 0 window-size 10 tcp-port 6068 "
-              "router-instance base")
-
     def test_merged_is_idempotent(self):
         self.commands("merged", [
             {"name": "1", "bras_ip_address": "192.0.2.10", "alive_timer": "300", "sig_partition_id": True},
@@ -108,14 +103,14 @@ class TestL2cpSessionWrites(_Base):
         ])
 
     def test_merged_changes_only_the_differing_session(self):
+        # An existing session takes only the short form (lab ISAM: repeating bras-ip-address is refused).
         self.commands("merged", [
             {"name": "1", "bras_ip_address": "192.0.2.10", "alive_timer": "300", "sig_partition_id": True},
-            {"name": "2", "bras_ip_address": "192.0.2.20", "topo_discovery": "disabled"},
-        ], [self.FULL_2.replace("topo-discovery enabled", "topo-discovery disabled") + " no sig-partition-id"])
+            {"name": "2", "bras_ip_address": "192.0.2.20", "alive_timer": "200"},
+        ], ["configure l2cp session 2 alive-timer 200"])
 
     def test_merged_keeps_bras_address_of_existing_session(self):
-        self.commands("merged", [{"name": "2", "tcp_port": "6069"}], [
-            self.FULL_2.replace("tcp-port 6068", "tcp-port 6069") + " no sig-partition-id"])
+        self.commands("merged", [{"name": "2", "tcp_retry_time": "20"}], ["configure l2cp session 2 tcp-retry-time 20"])
 
     def test_merged_without_bras_address_cannot_create(self):
         with patch.object(basic.AnsibleModule, "warn") as warn:
@@ -123,8 +118,8 @@ class TestL2cpSessionWrites(_Base):
         self.assertIn("bras_ip_address", warn.call_args[0][0])
 
     def test_replaced_negates_unnamed_attributes(self):
-        self.commands("replaced", [{"name": "1", "bras_ip_address": "192.0.2.10"}], [
-            self.FULL_2.replace("session 2", "session 1").replace("192.0.2.20", "192.0.2.10") + " no sig-partition-id"])
+        self.commands("replaced", [{"name": "1", "bras_ip_address": "192.0.2.10", "sig_partition_id": True}], [
+            "configure l2cp session 1 no alive-timer"])
 
     def test_overridden_removes_unnamed_sessions(self):
         self.commands("overridden", [{"name": "2", "bras_ip_address": "192.0.2.20"}], ["configure l2cp no session 1"])

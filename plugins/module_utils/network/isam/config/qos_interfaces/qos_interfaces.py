@@ -112,6 +112,10 @@ class Qos_interfaces(ResourceModule):
         if self.state == "deleted":
             self._delete_fields(want, have)
         else:
+            # 'none'/'not-applicable' and an unset value are the same device state: the
+            # device omits a profile set to none (lab ISAM, pon: cac-profile none).
+            want = dict((key, value) for key, value in want.items()
+                        if not (value in UNSET_VALUES and have.get(key) is None))
             self.compare(parsers=self.top_parsers, want=want, have=have)
         for list_name, parsers in iteritems(self.list_parsers):
             self._compare_list(list_name, parsers, want, have)

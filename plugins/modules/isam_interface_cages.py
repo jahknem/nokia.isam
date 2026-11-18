@@ -21,6 +21,7 @@ description: 'This module manages interface cage configuration and facts on Noki
 author: Jan Kühnemund (@jahknem)
 notes:
 - 'Tested against Nokia ISAM with OS Version R6.2.04m'
+- R6.2.04m only knows C(operational-mode) for a cage; it refuses C(description) and C(apply-qos) (C(invalid token)).
 options:
   config:
     description: A dictionary of options for interface cages

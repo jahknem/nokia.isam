@@ -229,3 +229,34 @@ def test_ethernet_ont_deleted_resets_named_unis_and_named_fields_only(monkeypatc
 def test_gathered_from_an_empty_device_matches_the_config_type(monkeypatch, module, empty):
     """Lab ISAM: gathered of a removed UNI returned {} for the list-type ethernet_onts."""
     assert run_module(monkeypatch, module, {"state": "gathered"}, "")["gathered"] == empty
+
+
+def test_targeted_gathered_finds_instances_with_only_default_settings(monkeypatch):
+    """Lab ISAM: a trap manager at its default priority and an enabled trouble-shooting PON
+    interface answer their single read with the header alone; flat detail shows them."""
+    trap = "configure trap manager 192.0.2.1:162"
+    device = {"info configure trap manager 192.0.2.1:162 flat detail": trap + " priority medium no cold-start-trap\n"}
+    result = run_module(monkeypatch, "isam_traps", {"state": "gathered", "config": {"managers": [{"address": "192.0.2.1:162"}]}}, device)
+    assert result["gathered"] == {"managers": [{"address": "192.0.2.1:162"}]}
+
+    # trouble-shooting: the detail read of an enabled interface prints nothing either, an absent one fails
+    single = "info configure trouble-shooting pon statistics interface %s flat"
+    absent = Exception("Error : instance does not exist")
+
+    def tsp_device(command):
+        if command == (single % "1/1/6/3") + " detail":
+            raise absent
+        return "#---\necho \"statistics\"\n"
+    config = {"interfaces": [{"name": "1/1/6/2"}, {"name": "1/1/6/3"}]}
+    result = run_module(monkeypatch, "isam_trouble_shooting_pon", {"state": "gathered", "config": config}, tsp_device)
+    assert result["gathered"] == {"interfaces": [{"name": "1/1/6/2"}]}
+
+
+def test_qos_interface_profile_none_equals_the_unset_profile(monkeypatch):
+    """Lab ISAM: after 'cac-profile none' the device omits cac-profile; merged re-sent it."""
+    text = "configure qos interface pon:1/1/6/2 ds-num-rem-queue not-applicable us-num-queue not-applicable\n"
+    result = run_module(monkeypatch, "isam_qos_interfaces", {"state": "merged", "config": [{"name": "pon:1/1/6/2", "cac_profile": "none"}]}, text)
+    assert result["commands"] == []
+    text = "configure qos interface pon:1/1/6/2 cac-profile name:FD_GponVideo\n"
+    result = run_module(monkeypatch, "isam_qos_interfaces", {"state": "merged", "config": [{"name": "pon:1/1/6/2", "cac_profile": "none"}]}, text)
+    assert result["commands"] == ["configure qos interface pon:1/1/6/2 cac-profile none"]

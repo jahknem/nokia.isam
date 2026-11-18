@@ -63,6 +63,21 @@
     by tests.)
   - `isam_qos_interfaces` documents that upstream-queue parameters cannot change while
     a bridge VLAN uses the queue (QOS MGT error 41).
+- Live write tests of the remaining families on linecard 6 and traffic-free test objects
+  (status per family: `docs/live-test-matrix.md`). Fixed (all present in 0.3.13):
+  - `isam_l2cp_session`: changing an existing session always failed (the full creation
+    command was re-sent; the device only accepts `session <index> alive-timer <value>`),
+    and `merged` overwrote unnamed attributes with argspec defaults (one of them wrong,
+    `dslam-name 00 : 00 : 00`). Defaults are now the device's, kept in the module;
+    creation sends the given attributes, changes use the short form, and attributes the
+    device only accepts at creation fail the module before any change.
+  - Targeted `gathered` missed instances with only default settings: `isam_traps`
+    managers (now read flat with the detail re-check) and `isam_trouble_shooting_pon`
+    interfaces (their detail read prints nothing either; the instance exists when that
+    read does not fail with "instance does not exist").
+  - `isam_qos_interfaces`: a profile set to `none` (shown by the device as unset) was
+    re-sent by every `merged` run.
+  - `isam_interface_cages` documents that R6.2.04m has no cage `description`/`apply_qos`.
 - Live verification on the lab ISAM (read-only / check mode). Every resource module's
   live `gathered` matches the parse of a fresh capture; 57 targeted reads and 102
   check-mode merged/replaced/overridden runs with the gathered facts as config. Fixed:
