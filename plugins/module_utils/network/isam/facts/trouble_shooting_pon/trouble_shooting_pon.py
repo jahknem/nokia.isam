@@ -49,7 +49,7 @@ class Trouble_shooting_ponFacts(object):
         return get_targeted_config(self._module, connection, "trouble_shooting_pon", "info configure trouble-shooting pon flat", {
             "interfaces": "info configure trouble-shooting pon statistics interface %s flat",
             "threshold.interfaces": "info configure trouble-shooting pon statistics threshold interface %s flat",
-        })
+        }, silent_bare_sections=("interfaces",))  # an enabled interface has no attributes, also in detail (lab ISAM)
 
     def populate_facts(self, connection, ansible_facts, data=None):
         """Populate facts for the trouble_shooting_pon network resource."""

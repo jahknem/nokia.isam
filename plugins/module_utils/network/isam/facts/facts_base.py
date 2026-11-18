@@ -275,13 +275,16 @@ def _is_absent_error(text):
             or "lower-interface does not exist" in text)
 
 
-def _bare_instance(connection, command):
+def _bare_instance(connection, command, silent=False):
     """The bare instance line for an instance without configured attributes, or "".
 
     The device answers a single read of such an instance with only the header, like
     a non-existing one. 'flat detail' tells them apart (it prints the instance with
     its defaults); the plain whole read shows it as the bare path, so that is what
     is returned -- the defaults are not.
+    silent: nodes without attributes whose detail read prints nothing either; there
+    the instance exists when the detail read does not fail with "instance does not
+    exist" (lab ISAM: trouble-shooting pon statistics interface).
     """
     if not command.startswith("info configure ") or not command.endswith(" flat"):
         return ""
@@ -296,11 +299,13 @@ def _bare_instance(connection, command):
         line = line.strip()
         if line == bare or line.startswith(bare + " "):
             return bare + "\n"
+    if silent and not _is_absent_error(response) and not _targeted_reply(command + " detail", response).strip():
+        return bare + "\n"
     return ""
 
 
 def get_scoped_config(module, connection, config, fallback_command, commands, safe_states=None,
-                      bare_commands=()):
+                      bare_commands=(), silent_bare_commands=()):
     """Read only explicitly addressed resource identities when it is safe.
 
     Resource modules can compare merged/replaced/explicitly deleted entries
@@ -309,7 +314,8 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
 
     bare_commands: the single reads of lists whose whole read shows an instance
     without configured attributes as its bare path; for these an empty reply is
-    re-checked with 'flat detail' (see _bare_instance).
+    re-checked with 'flat detail' (see _bare_instance); silent_bare_commands likewise,
+    for nodes whose detail read prints nothing either.
     Identical commands are sent once (several identities can share one read).
     """
     if module is None:
@@ -330,8 +336,8 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
         if _is_absent_error(response):
             continue
         reply = _targeted_reply(command, response)
-        if not reply.strip() and command in bare_commands:
-            reply = _bare_instance(connection, command)
+        if not reply.strip() and (command in bare_commands or command in silent_bare_commands):
+            reply = _bare_instance(connection, command, silent=command in silent_bare_commands)
         scoped_results.append(reply)
     return "\n".join(scoped_results)
 
@@ -439,21 +445,26 @@ def targeted_commands(module, resource, formats):
     return commands
 
 
-def get_targeted_config(module, connection, resource, fallback, formats, write_states=False, bare_sections=()):
+def get_targeted_config(module, connection, resource, fallback, formats, write_states=False, bare_sections=(),
+                        silent_bare_sections=()):
     """The whole resource, or only the instances named in config with state gathered.
 
     fallback: command for the whole resource, or a callable(connection) reading it.
     write_states: also compare merged/replaced/deleted against only the named
     instances (only for resources made of instance lists, where that is exact).
     bare_sections: lists whose whole read shows unconfigured instances as their bare
-    path (see get_scoped_config bare_commands).
+    path (see get_scoped_config bare_commands); silent_bare_sections likewise, for
+    nodes whose detail read prints nothing either (silent_bare_commands).
     """
     states = ("merged", "replaced", "deleted", "gathered") if write_states else ("gathered",)
     commands = targeted_commands(module, resource, formats) if module is not None else []
     state = module.params.get("state", "merged") if module is not None else None
     if commands and state in states:
-        bare = targeted_commands(module, resource, dict((s, formats[s]) for s in bare_sections if s in formats))
-        return get_scoped_config(module, connection, None, None, commands, safe_states=states, bare_commands=bare)
+        def section_commands(sections):
+            return targeted_commands(module, resource, dict((s, formats[s]) for s in sections if s in formats))
+        return get_scoped_config(module, connection, None, None, commands, safe_states=states,
+                                 bare_commands=section_commands(bare_sections),
+                                 silent_bare_commands=section_commands(silent_bare_sections))
     return fallback(connection) if callable(fallback) else connection.get(fallback)
 
 

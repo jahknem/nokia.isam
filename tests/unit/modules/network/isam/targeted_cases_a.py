@@ -10,12 +10,17 @@ def case(module, config, lines, sibling_config, sibling, marker, sibling_marker,
 
 
 def trap_answer(command, lines):
-    """'info configure trap [<resource> <id>]' answered hierarchically (no flat), like the device.
+    """'info configure trap [<resource> <id>]' answered hierarchically (no flat), like the device;
+    a flat read (single managers) is answered with the flat lines.
 
     Flat case lines 'configure trap <resource> <id> <attribute...>' become
     '<resource> <id>' blocks with one indented attribute per line.
     """
-    assert command.startswith("info configure trap") and not command.endswith(" flat"), command
+    assert command.startswith("info configure trap"), command
+    if command.endswith(" flat"):
+        prefix = "configure " + command[len("info configure "):-len(" flat")]
+        hits = [line for line in lines if line == prefix or line.startswith(prefix + " ")]
+        return "\n".join(hits) + "\n" if hits else None
     prefix = "configure " + command[len("info configure "):]
     hits = [line for line in lines if line == prefix or line.startswith(prefix + " ")]
     if not hits:

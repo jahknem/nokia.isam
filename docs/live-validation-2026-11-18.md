@@ -75,6 +75,31 @@ Raw probe on a fresh ONT UNI (accepted / refused):
 | upstream-queue `bandwidth-profile`/`no bandwidth-profile`/`no bandwidth-sharing` | accepted (no VLAN attached) |
 | `ont:` `scheduler-node` / `no scheduler-node` | accepted |
 
+## Remaining families on linecard 6 and test objects
+
+Per family: set, read, idempotent, change, delete, read (status per family in
+`live-test-matrix.md`). Raw probes, accepted / refused:
+
+| Command | Device |
+|---|---|
+| `l2cp session N bras-ip-address X [attributes]` (create) | accepted |
+| `l2cp session N alive-timer V` (existing session) | accepted |
+| `l2cp session N bras-ip-address X <attribute> ...` (existing session) | refused (`invalid token`) |
+| `pppoe-client interface <vlan-port> client-id 1 profile-name name:<p> username U password P` | accepted; password shown masked |
+| `pppoe-client ppp-profile P ipversion ipv4` | accepted, not kept (`no ipversion`) |
+| `arp-relay statistics <vlan-port>`, `pppoel2 statistics <vlan-port>` | accepted, shown in no read |
+| `dhcp-relay port-stats <ONT vlan-port>`, `efm-oam interface <ONT UNI>` | refused (`invalid token`) |
+| `interface cage <cage> description X` | refused (`invalid token`) |
+| `ipv6-antispoofing slot 1/1/6 bit-len 64` | refused: not supported on this board |
+| `qos global lt:1/1/6 buffer-occ-thresh 50` | refused (error 84, no board) |
+| `dist-service <id> service-type ies/tls/epipe` | refused: invalid service type |
+| `xdsl ont interface <ont> dpbo-profile 1/4` | refused: profile not active |
+| `equipment ont sw-ctrl <id> plnd-sw-version <unknown>` | refused: version does not exist |
+| `equipment ont pm-collect <GPON ONT> xg-pm-collect enable` | refused: not for GPON ONTs |
+| `trap manager X priority medium` (default) | single read prints only the header |
+| `trouble-shooting pon statistics interface P` | single read and its detail read print nothing; absent: "instance does not exist" |
+| `qos interface pon:P cac-profile none` | accepted; the device omits the profile afterwards |
+
 ## Device behaviour learned (fixed or documented)
 
 - `admin-state` is rejected on the line that creates an ONT (`invalid token`). It is

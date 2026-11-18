@@ -16,10 +16,13 @@ module: isam_l2cp_session
 short_description: Manages Nokia ISAM L2CP sessions.
 description:
   - Manages C(configure l2cp session) on Nokia ISAM.
-  - The write states read C(info configure l2cp session flat) and compare against it, attributes at their device default included;
-    a device error fails the module.
+  - The write states read C(info configure l2cp session flat) and compare against it; an unset attribute equals its device
+    default. A device error fails the module.
   - I(bras_ip_address) is mandatory to create a session; for an existing session it is taken from the device when not given.
     Deletion removes whole sessions (C(no session <index>)).
+  - Only I(alive_timer) and I(tcp_retry_time) can be changed on an existing session (C(session <index> alive-timer <value>)).
+    All other attributes, I(bras_ip_address) included, are set when the session is created; a different value for an
+    existing session fails the module before any change (delete the session first).
 version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:
@@ -38,66 +41,51 @@ options:
       gsmp_version:
         description: GSMP version.
         type: str
-        default: "3"
       gsmp_sub_version:
         description: GSMP sub version.
         type: str
-        default: "1"
       encap_type:
         description: Encapsulation type.
         type: str
-        default: "tcp"
         choices: [tcp]
       topo_discovery:
         description: Topology discovery.
         type: str
-        default: "enabled"
         choices: [disabled, enabled]
       layer2_oam:
         description: Layer 2 OAM.
         type: str
-        default: "enabled"
         choices: [disabled, enabled]
       alive_timer:
         description: Alive timer.
         type: str
-        default: "250"
       port_reprt_shaper:
         description: Port report shaper.
         type: str
-        default: "10"
       aggr_reprt_shaper:
         description: Aggregate report shaper.
         type: str
-        default: "10"
       tcp_retry_time:
         description: TCP retry time.
         type: str
-        default: "10"
       gsmp_retry_time:
         description: GSMP retry time.
         type: str
-        default: "10"
       dslam_name:
         description: DSLAM name.
         type: str
-        default: "00 : 00 : 00"
       partition_id:
         description: Partition identifier.
         type: str
-        default: "0"
       window_size:
         description: Window size.
         type: str
-        default: "10"
       tcp_port:
         description: TCP port.
         type: str
-        default: "6068"
       router_instance:
         description: Router instance.
         type: str
-        default: "base"
       sig_partition_id:
         description: Signal the partition identifier.
         type: bool
