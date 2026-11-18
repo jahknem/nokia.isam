@@ -269,12 +269,47 @@ def unwrap_response(data):
     return data
 
 
-def get_scoped_config(module, connection, config, fallback_command, commands, safe_states=None):
+def _is_absent_error(text):
+    text = text.lower()
+    return ("instance does not exist" in text or "specified instance does not exist" in text
+            or "lower-interface does not exist" in text)
+
+
+def _bare_instance(connection, command):
+    """The bare instance line for an instance without configured attributes, or "".
+
+    The device answers a single read of such an instance with only the header, like
+    a non-existing one. 'flat detail' tells them apart (it prints the instance with
+    its defaults); the plain whole read shows it as the bare path, so that is what
+    is returned -- the defaults are not.
+    """
+    if not command.startswith("info configure ") or not command.endswith(" flat"):
+        return ""
+    bare = command[len("info "):-len(" flat")]
+    try:
+        response = connection.get(command + " detail")
+    except Exception as exc:  # absent instance or unsupported node: nothing to return
+        if _is_absent_error(str(exc)) or "invalid token" in str(exc).lower():
+            return ""
+        raise
+    for line in response.splitlines():
+        line = line.strip()
+        if line == bare or line.startswith(bare + " "):
+            return bare + "\n"
+    return ""
+
+
+def get_scoped_config(module, connection, config, fallback_command, commands, safe_states=None,
+                      bare_commands=()):
     """Read only explicitly addressed resource identities when it is safe.
 
     Resource modules can compare merged/replaced/explicitly deleted entries
     without discovering unrelated family members.  Overridden and unqualified
     deletion still require the complete family to identify entries to remove.
+
+    bare_commands: single reads (or True for all) of lists whose whole read lists an
+    instance without configured attributes as its bare path; for these an empty
+    reply is re-checked with 'flat detail' (see _bare_instance).
     """
     if module is None:
         return connection.get(fallback_command)
@@ -288,23 +323,35 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
         try:
             response = connection.get(command)
         except Exception as exc:  # connection plugins surface device errors here
-            normalized_error = str(exc).lower()
-            if (
-                "instance does not exist" in normalized_error
-                or "specified instance does not exist" in normalized_error
-                or "lower-interface does not exist" in normalized_error
-            ):
+            if _is_absent_error(str(exc)):
                 continue
             raise
-        normalized_response = response.lower()
-        if (
-            "instance does not exist" in normalized_response
-            or "specified instance does not exist" in normalized_response
-            or "lower-interface does not exist" in normalized_response
-        ):
+        if _is_absent_error(response):
             continue
-        scoped_results.append(_targeted_reply(command, response))
+        reply = _targeted_reply(command, response)
+        if not reply.strip() and (bare_commands is True or command in bare_commands):
+            reply = _bare_instance(connection, command)
+        scoped_results.append(reply)
     return "\n".join(scoped_results)
+
+
+def _strip_echo(command, lines):
+    """Drop the echoed command at the top of a reply.
+
+    The terminal wraps the echo at its width, also in the middle of a word
+    ('... 1/1/2/1/100 fl' + 'at'), so the leading lines are removed while their
+    plain concatenation is still a prefix of the command that was sent.
+    """
+    lines = [line.rstrip("\r") for line in lines]
+    joined = ""
+    for index, line in enumerate(lines):
+        joined += line
+        text = joined.strip()
+        if text == command:
+            return lines[index + 1:]
+        if not text or not command.startswith(text):
+            return lines
+    return lines
 
 
 def _targeted_reply(command, response):
@@ -320,7 +367,7 @@ def _targeted_reply(command, response):
     path = re.sub(r"( detail)? flat( detail)?$", "", path)
     words = set(path.split())
     kept = []
-    for line in response.splitlines():
+    for line in _strip_echo(command, response.splitlines()):
         stripped = line.split("#", 1)[0].strip()
         if not stripped or stripped.startswith("echo"):
             continue
@@ -391,18 +438,22 @@ def targeted_commands(module, resource, formats):
     return commands
 
 
-def get_targeted_config(module, connection, resource, fallback, formats, write_states=False):
+def get_targeted_config(module, connection, resource, fallback, formats, write_states=False, bare_sections=()):
     """The whole resource, or only the instances named in config with state gathered.
 
     fallback: command for the whole resource, or a callable(connection) reading it.
     write_states: also compare merged/replaced/deleted against only the named
     instances (only for resources made of instance lists, where that is exact).
+    bare_sections: lists whose whole read shows unconfigured instances as their bare
+    path (see get_scoped_config bare_commands).
     """
     states = ("merged", "replaced", "deleted", "gathered") if write_states else ("gathered",)
     commands = targeted_commands(module, resource, formats) if module is not None else []
     state = module.params.get("state", "merged") if module is not None else None
     if commands and state in states:
-        return get_scoped_config(module, connection, None, None, commands, safe_states=states)
+        bare = targeted_commands(module, resource, dict((s, formats[s]) for s in bare_sections if s in formats)) \
+            if module is not None else []
+        return get_scoped_config(module, connection, None, None, commands, safe_states=states, bare_commands=set(bare))
     return fallback(connection) if callable(fallback) else connection.get(fallback)
 
 

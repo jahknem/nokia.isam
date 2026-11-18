@@ -35,6 +35,21 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 )
 
 
+DEFAULT_OFF_FLAGS = ("admin_up", "link_updown_trap")
+
+
+def _without_false_flags(entry, have=None):
+    """entry without default-off flags set to False.
+
+    have: a False flag is kept where have sets that flag (merged must turn it off).
+    """
+    if not isinstance(entry, dict):
+        return entry
+    have = have or {}
+    return dict((k, v) for k, v in entry.items()
+                if not (k in DEFAULT_OFF_FLAGS and v is False and not have.get(k)))
+
+
 class Interfaces(ResourceModule):
     """
     The isam_interfaces config class
@@ -79,6 +94,16 @@ class Interfaces(ResourceModule):
         """
         wantd = self._index_by_id(self.want)
         haved = self._index_by_id(self.have)
+        # Default-off flags: 'false' is the device default, printed only by the
+        # targeted 'detail' comparison read ('no admin-up'); the plain read omits it.
+        # Treat false as unset so replaced/overridden do not re-send the defaults --
+        # except an explicit false in merged while the device has the flag set.
+        haved = dict((k, _without_false_flags(v)) for k, v in iteritems(haved))
+        if self.state != "rendered":
+            wantd = dict(
+                (k, _without_false_flags(v, haved.get(k, {}) if self.state == "merged" else {}))
+                for k, v in iteritems(wantd)
+            )
 
         # if state is merged, merge want onto have and then compare
         if self.state == "merged":

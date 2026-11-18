@@ -118,6 +118,27 @@ def normalize_policy(entry):
     return entry
 
 
+# 'snmp-version v1:<community>' (notify profiles) embeds an SNMP community string.
+_EMBEDDED_COMMUNITY = re.compile(r"^v[0-9a-z]+:(.+)$", re.I)
+
+
+def register_embedded_secrets(module, config):
+    """Register secrets embedded in non-secret fields as no_log values.
+
+    The community inside a notify profile's snmp_version is masked by Ansible only if
+    the community list was read in the same run; a targeted read of the profile alone
+    would otherwise return it in clear text. Only the community part is registered:
+    marking snmp_version itself no_log would mask every 'v1'/'v3' in the output.
+    """
+    no_log_values = getattr(module, "no_log_values", None)
+    if no_log_values is None or not isinstance(config, dict):
+        return
+    for profile in config.get("snmp_notify_profiles") or []:
+        match = _EMBEDDED_COMMUNITY.match(str((profile or {}).get("snmp_version") or ""))
+        if match:
+            no_log_values.add(match.group(1))
+
+
 def _snake(key):
     return key.replace("-", "_")
 

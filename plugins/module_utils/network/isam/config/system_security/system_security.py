@@ -21,6 +21,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
     SETTINGS,
     Isam_system_securityTemplate,
     normalize_policy,
+    register_embedded_secrets,
     scalar_fields,
     sub_dicts,
 )
@@ -108,6 +109,7 @@ class Isam_system_security(ResourceModule):
             resource="isam_system_security",
             tmplt=Isam_system_securityTemplate(),
         )
+        register_embedded_secrets(module, self.want)
 
     def execute_module(self):
         if self.state == "rendered":

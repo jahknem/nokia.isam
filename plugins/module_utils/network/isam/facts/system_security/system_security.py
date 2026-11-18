@@ -8,6 +8,7 @@ __metaclass__ = type
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
     get_targeted_config,
+    requested_identities,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.system_security.system_security import (
@@ -15,7 +16,11 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.sy
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.system_security import (
     Isam_system_securityTemplate,
+    register_embedded_secrets,
 )
+
+_SSH_COMMAND = "info configure system security ssh flat"
+_SSH_PREFIX = "configure system security ssh "
 
 # section -> single-instance read command (identity per TARGETED_GATHER); the SNMP
 # views are selected by name only (all subtrees of the view are read)
@@ -32,7 +37,9 @@ _TARGETED = {
     "snmp_notify_views": "info configure system security snmp notify-view %s flat",
     "domains": "info configure system security domain %s flat",
     "slots": "info configure system security slot %s flat",
-    "ssh.sftp_users": "info configure system security ssh sftp-user %s flat",
+    # The device rejects 'ssh sftp-user <name>' (invalid token): read the small ssh
+    # node and keep only the named users (get_config).
+    "ssh.sftp_users": lambda name: [_SSH_COMMAND],
     "filetransfer.servers": "info configure system security filetransfer server %s flat",
     "peripheral_mgnt.mac_filters": "info configure system security peripheral-mgnt mac-filter %s flat",
     # one 802.1X port is spread over three nodes
@@ -52,8 +59,24 @@ class Isam_system_securityFacts(object):
         self.argument_spec = Isam_system_securityArgs.argument_spec
 
     def get_config(self, connection):
-        return get_targeted_config(self._module, connection, "isam_system_security",
+        data = get_targeted_config(self._module, connection, "isam_system_security",
                                    "info configure system security flat", _TARGETED)
+        users = requested_identities(self._module, "isam_system_security", "ssh.sftp_users")
+        state = (getattr(self._module, "params", None) or {}).get("state")
+        if users and state == "gathered":
+            wanted = tuple("%ssftp-user %s" % (_SSH_PREFIX, user) for user in users)
+            seen = set()
+            kept = []
+            for line in str(data or "").splitlines():
+                stripped = line.strip()
+                if stripped.startswith(_SSH_PREFIX):
+                    # only the named users' lines, once (several users share the ssh read)
+                    if not any(stripped == w or stripped.startswith(w + " ") for w in wanted) or stripped in seen:
+                        continue
+                    seen.add(stripped)
+                kept.append(line)
+            data = "\n".join(kept) + ("\n" if kept else "")
+        return data
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}
@@ -62,6 +85,7 @@ class Isam_system_securityFacts(object):
         data = unwrap_response(data)
         parser = Isam_system_securityTemplate(lines=str(data or "").splitlines(), module=self._module)
         objs = parser.parse()
+        register_embedded_secrets(self._module, objs)
 
         ansible_facts["ansible_network_resources"].pop("isam_system_security", None)
         params = utils.remove_empties(

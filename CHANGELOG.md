@@ -2,6 +2,34 @@
 
 ## 0.3.14
 
+- Live verification on the lab ISAM (read-only / check mode). Every resource module's
+  live `gathered` matches the parse of a fresh capture; 57 targeted reads and 102
+  check-mode merged/replaced/overridden runs with the gathered facts as config. Fixed:
+  - `replaced` on `isam_pon_interfaces` with config from a plain read "reset" every
+    default printed by the `flat detail` comparison read and wrapped it in
+    `admin-state down`/`up` (all ONTs of the PON offline). `isam_interfaces` likewise
+    re-sent `no admin-up`/`no link-updown-trap`. Values equal to the device default
+    (default-off flags: false) count as unset; an explicit default in `merged` is still
+    sent when the device differs. Present since before 0.3.13.
+  - `isam_ethernet_line` `overridden` re-sent every wanted value (never idempotent);
+    `isam_xdsl_bonding` `overridden` reset a wanted `group_assembly_time`.
+  - Targeted reads: the terminal wraps the echoed command mid-word for long commands
+    (`... 1/1/2/1/100 fl` / `at`); the fragments made an empty reply look non-empty.
+    The echo is now removed by prefix match. Instances without configured attributes
+    answer a single read with only a header, although the whole read lists them; for
+    `ani_onts`, `ntp_onts`, `alarm` custom profiles and `qos_maps` ctrl-pkt entries an
+    empty reply is re-checked with `flat detail` and the bare instance returned (as the
+    whole read does). Before, `merged` re-created such instances.
+  - `isam_system_security` `ssh.sftp_users`: the device rejects `ssh sftp-user <name>`
+    (`invalid token`); targeted reads use the ssh node and keep the named users.
+  - Secrets: the SNMP community inside a notify profile's `snmp-version v1:<community>`
+    was printed in clear text by a targeted read (the community list, whose no_log
+    registration masked it, was not read) and stayed unmasked in the root tree. It is
+    registered as a no_log value, and the tree masks it (and, as a safety net, any
+    secret seen behind a secret keyword wherever it reappears).
+  - Known, unchanged: targeted reads of `bridges` and `pon_interfaces` use `flat detail`
+    and report default values the whole read omits (same as 0.3.13; NOC consumes
+    targeted bridge facts). Writes treat them as unset.
 - `state: deleted` against configured devices (new regression test runs every
   resource module's `deleted` without config over a real capture):
   - `isam_epon_interfaces`, `isam_channel_pair_pm`, `isam_ngpon2_channel_groups`:

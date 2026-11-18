@@ -28,7 +28,8 @@ class RecordingConnection:
 
     def get(self, command):
         self.commands.append(command)
-        return command
+        # a reply line, not the bare command text (that is the terminal echo and is dropped)
+        return "configure reply-to " + command
 
 
 def module(config, state="merged"):
@@ -65,7 +66,7 @@ def test_resource_facts_read_only_requested_identities(facts_cls, config, expect
     result = facts_cls(module(config)).get_config(connection)
 
     assert connection.commands == [expected]
-    assert result == expected
+    assert result.strip() == "configure reply-to " + expected
 
 
 def test_equipment_facts_reads_requested_interface_and_slot_identities():
@@ -97,7 +98,7 @@ def test_qos_facts_scope_uses_one_command_per_requested_interface():
     )
 
     assert connection.commands == ["info configure qos interface 1/1/5/1/100/1/1 flat"]
-    assert result == connection.commands[0]
+    assert result.strip() == "configure reply-to " + connection.commands[0]
 
 
 def test_scoped_facts_ignore_missing_requested_instances():

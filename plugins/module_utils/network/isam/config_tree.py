@@ -201,20 +201,68 @@ def _is_masked_placeholder(value):
     return bool(re.fullmatch(r"plain:\*+", _unquote(value)))
 
 
-def _redact_tokens(tokens):
+# 'snmp-version v1:<community>' (SNMP notify profiles) embeds the community string.
+_SNMP_VERSION_COMMUNITY = re.compile(r"^(\"?v[0-9a-z]+:)(.+?)(\"?)$", re.I)
+_MIN_KNOWN_SECRET = 3
+
+
+def _is_policy_node(tokens, i):
+    """'system security password ...' is the password policy node, not a credential."""
+    return i == 2 and list(tokens[:3]) == ["system", "security", "password"]
+
+
+def _known_secrets(token_lists):
+    """Cleartext secret values seen behind a secret keyword anywhere in the input."""
+    known = set()
+    for tokens in token_lists:
+        for i, token in enumerate(tokens[:-1]):
+            if _is_policy_node(tokens, i):
+                continue
+            nxt = _unquote(tokens[i + 1])
+            if _is_secret(token) and nxt != "no" and not _is_masked_placeholder(nxt) \
+                    and not nxt.lower().startswith("encrypted:") and len(nxt) >= _MIN_KNOWN_SECRET:
+                known.add(nxt)
+    return known
+
+
+def _redact_tokens(tokens, known=()):
     """Strip encrypted credentials before structuring, even at unknown CLI paths.
 
     Secret values are masked; only actual device-masked placeholders are retained.
+    ``known`` are cleartext secrets seen elsewhere in the same input (e.g. an SNMP
+    community): they are masked wherever they reappear inside another token.
     """
     out = [REDACTED if _unquote(t).lower().startswith("encrypted:") else t for t in tokens]
     for i, token in enumerate(out):
-        if i == 2 and out[:2] == ["system", "security"] and token == "password":
-            continue  # password policy node, not a credential attribute
+        if token == "snmp-version" and i + 1 < len(out):
+            match = _SNMP_VERSION_COMMUNITY.match(out[i + 1])
+            if match:
+                out[i + 1] = match.group(1) + REDACTED + match.group(3)
+            continue
+        if _is_policy_node(out, i):
+            continue
         if _is_secret(token) and i + 1 < len(out):
             nxt = out[i + 1]
             if not _is_masked_placeholder(nxt) and nxt != "no":
                 out[i + 1] = REDACTED
+    for secret in sorted(known, key=len, reverse=True):
+        out = [t.replace(secret, REDACTED) if secret in t and t != REDACTED else t for t in out]
     return out
+
+
+def redacted_token_lines(text):
+    """Token lists (without 'configure') of every configure line, secrets masked.
+
+    Two passes: secrets found behind secret keywords on any line are masked wherever
+    else they appear, so a secret embedded in another value never survives.
+    """
+    raw = []
+    for line in str(text or "").splitlines():
+        line = line.strip()
+        if line.startswith("configure "):
+            raw.append(_tokens(line)[1:])
+    known = _known_secrets(raw)
+    return [_redact_tokens(tokens, known) for tokens in raw]
 
 
 class _Line(object):
@@ -346,11 +394,7 @@ def _nest(tree, line, names):
 
 def _parsed_lines(text):
     lines = []
-    for raw in str(text or "").splitlines():
-        line = raw.strip()
-        if not line.startswith("configure "):
-            continue
-        tokens = _redact_tokens(_tokens(line)[1:])  # drop 'configure'; mask secrets first
+    for tokens in redacted_token_lines(text):  # secrets masked before any structuring
         if not tokens:
             continue
         lines.append(_frame(len(lines), tokens, "configure " + " ".join(tokens)))

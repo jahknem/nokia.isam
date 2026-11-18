@@ -336,12 +336,29 @@ class TestIsamEthernetLineModule(TestIsamModule):
             ),
             ignore_provider_arg,
         )
-        commands = [
-            "configure ethernet line 1/1/8/2 port-type uni",
-            "configure ethernet line 1/1/8/2 mau 1 type 1000basebx10d power up",
-        ]
+        # config equals the device: overridden is idempotent (unlisted 1/1/8/1 untouched)
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["commands"], [])
+
+    def test_isam_ethernet_line_overridden_sends_only_differences(self):
+        self.get_config.return_value = dedent("""configure ethernet
+        line 1/1/8/2
+          port-type uni
+          mau 1
+            type 1000basebx10d
+            power up
+          exit
+        exit
+        """)
+        set_module_args(
+            dict(
+                config=[dict(if_index="1/1/8/2", port_type="uni", mau=[dict(index=1, mau_type="1000basebx10d", power="down")])],
+                state="overridden",
+            ),
+            ignore_provider_arg,
+        )
         result = self.execute_module(changed=True)
-        self.assertEqual(set(result["commands"]), set(commands))
+        self.assertEqual(result["commands"], ["configure ethernet line 1/1/8/2 mau 1 power down"])
 
     def test_isam_ethernet_line_replaced(self):
         # test replaced: omitted port_type is negated; unmentioned ports stay untouched.
