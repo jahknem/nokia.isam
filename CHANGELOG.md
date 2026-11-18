@@ -44,6 +44,25 @@
     reset (the device rejected `no bc-scheduler-node` on an ONT UNI).
   - `isam_bridges` documents that a VLAN on an ONT UNI bridge port needs an
     upstream-queue bandwidth profile (VLAN MGT error 277).
+- Live write verification on linecard 6 (planned, no board): a full customer ONT built
+  from the modules' `parsed` output of another ONT, read back equal in all fields,
+  changed, and deleted module by module. Fixed (all present in 0.3.13):
+  - `isam_bridges` `replaced`/`overridden` reset a no longer wanted VLAN attribute by
+    attribute (`vlan-id N no tag no l2fwder-vlan ...`); the device refuses that for
+    service VLANs (VLAN MGT error 81). The VLAN is removed with `no vlan-id N`, after a
+    new PVID is set.
+  - `isam_qos_interfaces` `deleted` sent `no scheduler-node` on interfaces with
+    downstream queues (every ONT UNI); the device refuses it (QOS MGT error 52) and the
+    queues cannot be removed. The scheduler node is kept, with a warning. `deleted`
+    without config now also skips `none`/`not-applicable` values.
+  - `isam_ethernet_onts` `deleted`: a UNI named by `uni_idx` alone was not reset at
+    all, and a UNI named with settings had every setting reset. Now the identity resets
+    the UNI and named settings reset only themselves.
+  - `isam_ethernet_onts` and `isam_ethernet_line` returned `{}` instead of `[]` from an
+    empty device. (`isam_bridges` returns `[]` for its dict config; unchanged, pinned
+    by tests.)
+  - `isam_qos_interfaces` documents that upstream-queue parameters cannot change while
+    a bridge VLAN uses the queue (QOS MGT error 41).
 - Live verification on the lab ISAM (read-only / check mode). Every resource module's
   live `gathered` matches the parse of a fresh capture; 57 targeted reads and 102
   check-mode merged/replaced/overridden runs with the gathered facts as config. Fixed:

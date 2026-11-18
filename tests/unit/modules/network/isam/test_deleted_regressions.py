@@ -177,3 +177,55 @@ def test_qos_interface_deleted_skips_settings_that_are_not_configured(monkeypatc
     assert not any("bc-scheduler-node" in c or "mc-scheduler-node" in c or "ds-num-rem-queue" in c
                    for c in result["commands"]), result["commands"]
     assert any("no scheduler-node" in c for c in result["commands"])
+
+
+ONT_UNI_QOS = """configure qos interface 1/1/6/1/1/1/1 scheduler-node name:NGLT_Default cac-profile name:FD_ONTUniVideo ds-num-rem-queue not-applicable us-num-queue not-applicable oper-weight 50 oper-rate 0 mc-scheduler-node none bc-scheduler-node none
+configure qos interface 1/1/6/1/1/1/1 queue 0 priority 6 weight 34 oper-weight 34 queue-profile name:NGLT_Default shaper-profile none
+configure qos interface 1/1/6/1/1/1/1 upstream-queue 0 bandwidth-profile name:GPONqpp1000Mbps bandwidth-sharing uni-sharing
+"""
+
+
+def test_qos_interface_deleted_keeps_the_scheduler_node_of_an_interface_with_queues(monkeypatch):
+    """Lab ISAM, ONT UNI: 'no scheduler-node' is refused while the interface has queues
+    (QOS MGT error 52) and its queues cannot be removed; 'no us-num-queue' (error 48) and
+    'no mc-/bc-scheduler-node' are refused for their 'not-applicable'/'none' values."""
+    for config in ([{"name": "1/1/6/1/1/1/1"}], None):
+        result = run_module(monkeypatch, "isam_qos_interfaces", {"state": "deleted", "config": config}, ONT_UNI_QOS)
+        assert result["commands"] == [
+            "configure qos interface 1/1/6/1/1/1/1 no cac-profile",
+            "configure qos interface 1/1/6/1/1/1/1 upstream-queue 0 no bandwidth-profile",
+            "configure qos interface 1/1/6/1/1/1/1 upstream-queue 0 no bandwidth-sharing",
+        ], result["commands"]
+        assert any("keeps scheduler-node name:NGLT_Default" in w for w in result["_warnings"]), result["_warnings"]
+
+
+def test_qos_interface_deleted_removes_the_scheduler_node_of_an_ont(monkeypatch):
+    """Accepted by the lab ISAM: an ont: QoS interface has no queues."""
+    text = "configure qos interface ont:1/1/6/1/1 scheduler-node name:GPONShaperDN1000Mbps ds-num-queue not-applicable\n"
+    result = run_module(monkeypatch, "isam_qos_interfaces", {"state": "deleted", "config": [{"name": "ont:1/1/6/1/1"}]}, text)
+    assert result["commands"] == ["configure qos interface ont:1/1/6/1/1 no scheduler-node"]
+
+
+ETHERNET_UNI = ("configure ethernet ont 1/1/6/1/1/1/1 cust-info Y33445566 auto-detect auto\n"
+                "configure ethernet ont 1/1/6/1/1/1/1 admin-state up\n"
+                "configure ethernet ont 1/1/6/1/1/1/2 cust-info Y00000000\n")
+
+
+def test_ethernet_ont_deleted_resets_named_unis_and_named_fields_only(monkeypatch):
+    def deleted(config):
+        return run_module(monkeypatch, "isam_ethernet_onts", {"state": "deleted", "config": config}, ETHERNET_UNI)["commands"]
+
+    # identity: every removable setting of that UNI (auto-detect has no 'no' form);
+    # before, nothing was reset (lab ISAM)
+    assert deleted([{"uni_idx": "1/1/6/1/1/1/1"}]) == [
+        "configure ethernet ont 1/1/6/1/1/1/1 no cust-info no admin-state"]
+    # named field: only that one (before, every setting of the UNI was reset)
+    assert deleted([{"uni_idx": "1/1/6/1/1/1/1", "cust_info": "Y33445566"}]) == [
+        "configure ethernet ont 1/1/6/1/1/1/1 no cust-info"]
+    assert len(deleted(None)) == 2
+
+
+@pytest.mark.parametrize("module, empty", [("isam_ethernet_onts", []), ("isam_ethernet_line", [])])
+def test_gathered_from_an_empty_device_matches_the_config_type(monkeypatch, module, empty):
+    """Lab ISAM: gathered of a removed UNI returned {} for the list-type ethernet_onts."""
+    assert run_module(monkeypatch, module, {"state": "gathered"}, "")["gathered"] == empty

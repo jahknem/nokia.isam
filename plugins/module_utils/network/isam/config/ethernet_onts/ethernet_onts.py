@@ -54,7 +54,7 @@ class Ethernet_onts(ResourceModule):
 
     def __init__(self, module):
         super(Ethernet_onts, self).__init__(
-            empty_fact_val={},
+            empty_fact_val=[],
             facts_module=Facts(module),
             module=module,
             resource="ethernet_onts",
@@ -90,30 +90,28 @@ class Ethernet_onts(ResourceModule):
             wantd = dict_merge(haved, wantd)
 
         if self.state == "deleted":
-            # Ethernet ONTs have no object-level remove command.  An identity
-            # alone must not reset every customer-facing attribute.
-            requested = self._module.params.get("config") or []
-            if requested and all(
-                not any(
-                    value is not None
-                    for key, value in entry.items()
-                    if key not in {"uni_idx", "name"}
-                )
-                for entry in requested
-            ):
-                return
-            haved = {
-                k: v for k, v in iteritems(haved) if k in wantd or not wantd
-            }
-            wantd = {}
+            self._delete(wantd, haved)
+            return
 
-        if self.state in ["overridden", "deleted"]:
+        if self.state == "overridden":
             for k, have in iteritems(haved):
                 if k not in wantd:
                     self._compare(want={}, have=have)
 
         for k, want in iteritems(wantd):
             self._compare(want=want, have=haved.pop(k, {}))
+
+    def _delete(self, wantd, haved):
+        """Ethernet ONTs have no remove command: their settings are reset. Without
+        config every UNI, otherwise the named UNIs: all settings for an identity
+        alone, else only the named ones (the others are kept)."""
+        for uni_idx, have in iteritems(haved):
+            if wantd and uni_idx not in wantd:
+                continue
+            named = set(key for key, value in iteritems(wantd.get(uni_idx) or {})
+                        if key not in ("uni_idx", "name") and value is not None)
+            keep = dict((key, value) for key, value in iteritems(have) if named and key not in named)
+            self._compare(want=keep, have=have)
 
     def _compare(self, want, have):
         self.compare(parsers=self.parsers, want=self._strip_subnode_defaults(want),

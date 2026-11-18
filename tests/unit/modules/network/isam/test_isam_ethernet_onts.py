@@ -153,9 +153,9 @@ class TestIsamEthernetOntsModule(TestIsamModule):
             ),
             ignore_provider_arg,
         )
-        result = self.execute_module(changed=False)
-        self.assertEqual(result["commands"], [])
-        self.assertFalse(any("1/1/1/1/1/1/2" in command for command in result["commands"]))
+        # An identity resets that UNI only (lab ISAM: before, nothing was reset).
+        result = self.execute_module(changed=True)
+        self.assertEqual(result["commands"], ["configure ethernet ont 1/1/1/1/1/1/1 no admin-state"])
 
     def test_isam_ethernet_onts_merged_idempotent(self):
         self.get_config.return_value = dedent(

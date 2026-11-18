@@ -175,6 +175,8 @@ options:
     - The state the configuration should be left in.
     - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(name) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
     - With C(merged), C(replaced) or C(deleted) and I(config), the current configuration is likewise read only for the named instances.
+    - C(deleted) resets the named settings, or every setting for an interface named by C(name) alone. Values the device shows for an unset setting (C(none), C(not-applicable)) are not reset. An interface with downstream queues (e.g. an ONT UNI) keeps its C(scheduler_node), with a warning; the device requires one while queues exist and the queues themselves cannot be removed.
+    - The device changes upstream-queue parameters only while no bridge VLAN uses the queue (C(QOS MGT error 41)); change them before attaching VLANs on the UNI.
     type: str
     default: merged
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]

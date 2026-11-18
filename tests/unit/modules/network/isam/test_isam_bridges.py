@@ -526,3 +526,34 @@ class TestIsamBridgesModule(TestIsamModule):
             ["configure bridge port 1/1/8/1 no pvid"],
         )
         self.assertFalse(any("vlan-id" in command for command in result["commands"]))
+
+
+ONT_UNI_BRIDGE = """configure bridge port 1/1/6/1/1/1/1 max-unicast-mac 5
+configure bridge port 1/1/6/1/1/1/1 vlan-id 10 tag single-tagged l2fwder-vlan 410 vlan-scope local
+configure bridge port 1/1/6/1/1/1/1 vlan-id 30 tag single-tagged l2fwder-vlan 730 vlan-scope local qos priority:4
+configure bridge port 1/1/6/1/1/1/1 vlan-id 99
+configure bridge port 1/1/6/1/1/1/1 pvid 99
+"""
+
+
+def test_replaced_removes_unwanted_vlans_from_the_port(monkeypatch):
+    """Resetting a service VLAN's attributes was refused (VLAN MGT error 81, lab ISAM)."""
+    from .module_runner import run_module
+
+    want = {"port": [{"port": "1/1/6/1/1/1/1", "max_unicast_mac": 5, "pvid": 99,
+                      "vlan_id": [{"id": "10", "tag": "single-tagged", "l2fwder_vlan": "410", "vlan_scope": "local"},
+                                  {"id": "99"}]}]}
+    result = run_module(monkeypatch, "isam_bridges", {"state": "replaced", "config": want}, ONT_UNI_BRIDGE)
+    assert result["commands"] == ["configure bridge port 1/1/6/1/1/1/1 no vlan-id 30"]
+
+
+def test_replaced_moves_the_pvid_before_removing_its_old_vlan(monkeypatch):
+    from .module_runner import run_module
+
+    want = {"port": [{"port": "1/1/6/1/1/1/1", "max_unicast_mac": 5, "pvid": 10,
+                      "vlan_id": [{"id": "10", "tag": "single-tagged", "l2fwder_vlan": "410", "vlan_scope": "local"},
+                                  {"id": "30", "tag": "single-tagged", "l2fwder_vlan": "730", "vlan_scope": "local",
+                                   "qos": "priority:4"}]}]}
+    result = run_module(monkeypatch, "isam_bridges", {"state": "replaced", "config": want}, ONT_UNI_BRIDGE)
+    assert result["commands"] == ["configure bridge port 1/1/6/1/1/1/1 pvid 10",
+                                  "configure bridge port 1/1/6/1/1/1/1 no vlan-id 99"]

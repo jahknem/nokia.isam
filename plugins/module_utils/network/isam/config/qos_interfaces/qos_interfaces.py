@@ -109,30 +109,37 @@ class Qos_interfaces(ResourceModule):
             self._compare(want=want, have=haved.pop(k, {}))
 
     def _compare(self, want, have):
-        if self.state == "deleted" and want:
-            requested = {
-                key for key, value in want.items()
-                if key not in {"name", "id", "queue", "upstream_queue", "ds_rem_queue"} and value is not None
-            }
-            # Identity-only deletion resets every removable setting on this
-            # interface. A full gathered entry takes the same path field by field.
-            if not any(value is not None for key, value in want.items() if key not in {"name", "id"}):
-                requested = {self._tmplt.get_parser(parser)["compval"] for parser in self.top_parsers}
-            for field in sorted(requested):
-                value = have.get(field)
-                # 'none'/'not-applicable' mean nothing is configured; resetting them is
-                # pointless and the device rejects it where the setting is unsupported
-                # (lab ISAM, ONT UNI: "does not support ... Broadcast Scheduler Profile").
-                if value is not None and value not in UNSET_VALUES:
-                    self.addcmd(
-                        {"name": have.get("name", want.get("name")), field: value},
-                        "interface.%s" % field,
-                        True,
-                    )
+        if self.state == "deleted":
+            self._delete_fields(want, have)
         else:
             self.compare(parsers=self.top_parsers, want=want, have=have)
         for list_name, parsers in iteritems(self.list_parsers):
             self._compare_list(list_name, parsers, want, have)
+
+    def _delete_fields(self, want, have):
+        """Reset the named interface settings, or every setting for an identity-only
+        entry (or no config). A full gathered entry takes the same path field by field."""
+        requested = {
+            key for key, value in want.items()
+            if key not in {"name", "id", "queue", "upstream_queue", "ds_rem_queue"} and value is not None
+        }
+        if not any(value is not None for key, value in want.items() if key not in {"name", "id"}):
+            requested = {self._tmplt.get_parser(parser)["compval"] for parser in self.top_parsers}
+        name = have.get("name", want.get("name"))
+        for field in sorted(requested):
+            value = have.get(field)
+            # 'none'/'not-applicable' mean nothing is configured; resetting them is
+            # pointless and the device rejects it where the setting is unsupported
+            # (lab ISAM, ONT UNI: "does not support ... Broadcast Scheduler Profile").
+            if value is None or value in UNSET_VALUES:
+                continue
+            if field == "scheduler_node" and have.get("queue"):
+                # Downstream queues always need a scheduler node and a queue profile
+                # (lab ISAM: "QOS MGT error 52", "error 162"); neither can be removed.
+                self._module.warn("qos interface %s keeps scheduler-node %s: it is required while the "
+                                  "interface has queues" % (name, value))
+                continue
+            self.addcmd({"name": name, field: value}, "interface.%s" % field, True)
 
     def _compare_list(self, list_name, parsers, want, have):
         wantd = {entry["id"]: entry for entry in want.get(list_name, [])}
