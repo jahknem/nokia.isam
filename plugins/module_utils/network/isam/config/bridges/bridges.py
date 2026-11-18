@@ -237,11 +237,14 @@ class Bridges(ResourceModule):
                 self.commands.extend(deferred_pvid_commands)
                 deferred_pvid_commands = []
 
-        # remaining vlans in have (present in running but not in want)
-        for vid, have_vlan in iteritems(have_vlans):
-            self._compare_stale_vlan(port_name, vid, have_vlan)
-
         self.commands.extend(deferred_pvid_commands)
+
+        # VLANs on the device but not wanted (replaced/overridden) leave the port,
+        # after a new PVID is set. Resetting their attributes instead is refused for
+        # service VLANs ("VLAN MGT error 81 : Given L2-forwarder has not been created
+        # yet", lab ISAM).
+        for vid in have_vlans:
+            self.commands.append("configure bridge port %s no vlan-id %s" % (port_name, vid))
 
     def _normalize_port(self, data):
         data = normalize_resource_keys(data)
@@ -432,10 +435,6 @@ class Bridges(ResourceModule):
                 "configure bridge port %s vlan-id %s static-user ip-address %s"
                 % (port_name, vid, ip_address)
             )
-
-    def _compare_stale_vlan(self, port_name, vid, have_vlan):
-        have_vlan = self._normalize_vlan(port_name, vid, have_vlan)
-        self.compare(parsers=VLAN_PARSERS, want={}, have=self._without_default_off(have_vlan, VLAN_DEFAULT_OFF_FLAGS))
 
     # Attributes that the device requires to be issued together with
     # "tag"/"l2fwder-vlan" on a single "vlan-id <id> ..." command. Live

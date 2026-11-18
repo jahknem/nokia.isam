@@ -45,7 +45,7 @@ class Ethernet_line(ResourceModule):
 
     def __init__(self, module):
         super(Ethernet_line, self).__init__(
-            empty_fact_val={},
+            empty_fact_val=[],
             facts_module=Facts(module),
             module=module,
             resource="ethernet_line",
