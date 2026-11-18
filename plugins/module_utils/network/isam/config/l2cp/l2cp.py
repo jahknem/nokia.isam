@@ -1,11 +1,11 @@
 from __future__ import absolute_import, division, print_function
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.l2cp.l2cp import L2cpFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.l2cp import L2cpTemplate
 
 
-class L2cp(ResourceModule):
+class L2cp(IsamResourceModule):
     def __init__(self, module):
         self.template = L2cpTemplate()
         super(L2cp, self).__init__(empty_fact_val=[], facts_module=L2cpFacts(module), module=module, resource="l2cp", tmplt=self)

@@ -8,7 +8,7 @@ from copy import deepcopy
 
 from ansible.module_utils.common.text.converters import to_text
 from ansible.module_utils.six import iteritems
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.dhcp_relay.dhcp_relay import Isam_dhcp_relayFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.dhcp_relay import Isam_dhcp_relayTemplate
@@ -32,7 +32,7 @@ class _DhcpRelayFactsProvider(object):
         return ansible_facts, []
 
 
-class Isam_dhcp_relay(ResourceModule):
+class Isam_dhcp_relay(IsamResourceModule):
     """The isam_dhcp_relay config class."""
 
     def __init__(self, module):

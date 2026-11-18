@@ -272,6 +272,33 @@ def covers_entry(want, have, keys):
     return not named or present <= named
 
 
+def deleted_targets(wantd, haved, keys):
+    """For state deleted: (target, have) per instance to reset.
+
+    wantd/haved map an instance's identity to its entry. Without config (empty wantd)
+    every instance is reset, otherwise only the named ones. The target is what the
+    instance keeps: its identity keys, plus every attribute the request does not name.
+    An identity alone names everything; a named sub-dict names only its given keys.
+    Comparing want=target with have then resets exactly the named attributes.
+    """
+    keys = set(keys)
+    for key, have in haved.items():
+        if wantd and key not in wantd:
+            continue
+        want = wantd.get(key) or {}
+        named = dict((k, v) for k, v in want.items() if k not in keys and v not in (None, [], {}))
+        target = {}
+        for k, v in have.items():
+            if k in keys or (named and k not in named):
+                target[k] = v
+            elif named and isinstance(v, dict) and isinstance(named[k], dict):
+                sub = [s for s, sv in named[k].items() if sv is not None]
+                kept = dict((s, sv) for s, sv in v.items() if sub and s not in sub)
+                if kept:
+                    target[k] = kept
+        yield target, have
+
+
 def requested_sections(module):
     """Top-level sections named in a dict config.
 

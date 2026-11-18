@@ -4,7 +4,7 @@ from __future__ import absolute_import, division, print_function
 
 from copy import deepcopy
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ipv6_antispoofing_slot.ipv6_antispoofing_slot import Isam_ipv6_antispoofing_slotFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ipv6_antispoofing_slot import Isam_ipv6_antispoofing_slotTemplate
 
@@ -22,7 +22,7 @@ def validate_bit_len(module):
                 item.get("name"), BIT_LEN_MIN, BIT_LEN_MAX, bit_len))
 
 
-class Isam_ipv6_antispoofing_slot(ResourceModule):
+class Isam_ipv6_antispoofing_slot(IsamResourceModule):
     def __init__(self, module):
         validate_bit_len(module)
         super(Isam_ipv6_antispoofing_slot, self).__init__(

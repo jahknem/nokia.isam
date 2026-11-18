@@ -14,9 +14,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
@@ -140,7 +138,7 @@ class UniPmConfigMixin(object):
         return any(entries for entries in sections.values())
 
 
-class L2uni_onts(UniPmConfigMixin, ResourceModule):
+class L2uni_onts(UniPmConfigMixin, IsamResourceModule):
     """The isam_l2uni_onts config class."""
 
     TEMPLATE = L2uni_ontsTemplate

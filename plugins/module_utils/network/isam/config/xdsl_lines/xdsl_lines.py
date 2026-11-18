@@ -9,9 +9,7 @@ The isam_xdsl_lines config file.
 """
 
 from ansible.module_utils.six import iteritems
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
 )
@@ -19,6 +17,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
     Facts,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    deleted_targets,
     normalize_resource_keys,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_lines import (
@@ -27,7 +26,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 )
 
 
-class Xdsl_lines(ResourceModule):
+class Xdsl_lines(IsamResourceModule):
     """The isam_xdsl_lines config class."""
 
     COMPACT_COMMAND_SCOPES = (
@@ -111,10 +110,11 @@ class Xdsl_lines(ResourceModule):
             wantd = dict_merge(haved, wantd)
 
         if self.state == "deleted":
-            haved = {k: v for k, v in iteritems(haved) if k in wantd or not wantd}
-            wantd = {}
+            for target, have in deleted_targets(wantd, haved, ("name", "if_index")):
+                self._compare(want=target, have=have)
+            return
 
-        if self.state in ["overridden", "deleted"]:
+        if self.state == "overridden":
             for k, have in iteritems(haved):
                 if k not in wantd:
                     self._compare(want={}, have=have)

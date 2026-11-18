@@ -6,7 +6,7 @@ from copy import deepcopy
 
 from ansible.module_utils._text import to_text
 from ansible.module_utils.six import iteritems
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.dist_service.dist_service import Isam_dist_serviceFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.dist_service import Isam_dist_serviceTemplate
@@ -26,7 +26,7 @@ class _DistServiceFactsProvider(object):
         return ansible_facts, []
 
 
-class Isam_dist_service(ResourceModule):
+class Isam_dist_service(IsamResourceModule):
     def __init__(self, module):
         super(Isam_dist_service, self).__init__(
             empty_fact_val=[], facts_module=_DistServiceFactsProvider(module), module=module,

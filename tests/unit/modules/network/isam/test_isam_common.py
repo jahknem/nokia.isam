@@ -1,7 +1,7 @@
 import re
 from types import SimpleNamespace
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import compact_cli_commands
 
 
@@ -44,7 +44,7 @@ def test_compact_cli_commands_allows_negation_when_the_scope_allows_it():
     ]
 
 
-class _DirectCommandResource(ResourceModule):
+class _DirectCommandResource(IsamResourceModule):
     COMPACT_COMMAND_SCOPES = QOS_SCOPES
 
 
@@ -79,3 +79,18 @@ def test_resource_run_commands_compacts_before_check_mode_result():
         "configure qos interface 1/1/8/28 queue 0 priority 6 weight 34"
     ]
     assert resource.changed is True
+
+
+def test_config_classes_use_the_explicit_isam_base_and_netcommon_is_not_patched():
+    import pathlib
+    import re
+
+    from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
+        ResourceModule,
+    )
+
+    config = pathlib.Path(__file__).parents[5] / "plugins" / "module_utils" / "network" / "isam" / "config"
+    direct = [p.name for p in config.glob("*/*.py") if re.search(r"class \w+\((?:\w+, )?ResourceModule\)", p.read_text())]
+    assert direct == []
+    assert ResourceModule.addcmd.__module__.startswith("ansible_collections.ansible.netcommon.")
+    assert not hasattr(ResourceModule, "COMPACT_COMMAND_SCOPES")

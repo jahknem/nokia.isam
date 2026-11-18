@@ -9,9 +9,7 @@ __metaclass__ = type
 The isam_cwmp_plt config file.
 """
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
@@ -20,7 +18,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 )
 
 
-class Cwmp_plt(ResourceModule):
+class Cwmp_plt(IsamResourceModule):
     """The isam_cwmp_plt config class (settings block ``configure cwmp plt``).
 
     Nothing can be removed; ``deleted`` resets the attributes to the device

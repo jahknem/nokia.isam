@@ -4,12 +4,12 @@ from __future__ import absolute_import, division, print_function
 
 from copy import deepcopy
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.arp_relay.arp_relay import Isam_arp_relayFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.arp_relay import Isam_arp_relayTemplate
 
 
-class Isam_arp_relay(ResourceModule):
+class Isam_arp_relay(IsamResourceModule):
     def __init__(self, module):
         super(Isam_arp_relay, self).__init__(
             empty_fact_val=[], facts_module=Isam_arp_relayFacts(module), module=module,

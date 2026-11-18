@@ -101,8 +101,22 @@
   - `isam_dhcp_relay` documented the `vlan-port:` form, which the device refuses for
     port statistics; `isam_dhcp_relay`, `isam_arp_relay` and `isam_pppoel2_statistics`
     document that R6.2.04m shows the setting in no read.
-- `docs/development-style.md`: the collection's module style (netcommon layout, one
-  parser per attribute, defaults per node, `compare`, scenario fixtures).
+- `docs/development-style.md`: the collection's module style: netcommon layout, one
+  state contract for every family, templates chosen by grammar (explicit parsers,
+  small factories, or the shared settings block), scenario and contract tests.
+- `IsamResourceModule` (`module_utils/network/isam/resource_module.py`) is the explicit
+  base of every config class. It replaces the monkey-patching of netcommon's
+  `ResourceModule` (removal forms, command compaction) and adds: an explicit `False` is
+  rendered as its `no` form in `rendered` (dropped before for `isam_equipment`,
+  `isam_interfaces`, `isam_xdsl_lines`; fixed locally in `isam_xstp`).
+- Named-field deletion, found by a sweep over the lab capture and verified on the device
+  (linecard 6 as GPON, xDSL and Ethernet board): `deleted` naming one attribute reset the
+  whole instance in `isam_interfaces`, `isam_link_agg` ports, `isam_xdsl_inm`,
+  `isam_xdsl_lines`, `isam_xstp` ports, `isam_ethernet_line` MAUs and
+  `isam_efm_oam_interface`; `isam_equipment_onts` removed the whole ONT (or slot) when
+  one of its settings was named; `isam_vlan_global` deleting a priority-regen entry also
+  reset broadcast-frames and tpid. All now use the shared `deleted_targets` /
+  `covers_entry` rules. `isam_dhcp_server` sent `no lease-time` twice in merged.
 - Live verification on the lab ISAM (read-only / check mode). Every resource module's
   live `gathered` matches the parse of a fresh capture; 57 targeted reads and 102
   check-mode merged/replaced/overridden runs with the gathered facts as config. Fixed:

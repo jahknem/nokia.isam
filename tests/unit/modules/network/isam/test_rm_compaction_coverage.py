@@ -85,7 +85,7 @@ def _resource_module_classes():
             if not isinstance(node, ast.ClassDef) or node.name.startswith("_"):
                 continue
             if any(
-                (isinstance(base, ast.Name) and base.id in {"ResourceModule", "_Base"})
+                (isinstance(base, ast.Name) and base.id in {"ResourceModule", "IsamResourceModule", "_Base"})
                 for base in node.bases
             ):
                 classes.add(node.name)

@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.efm_oam.efm_oam import EfmOamFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.efm_oam import EfmOamTemplate
 
@@ -9,7 +9,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 DEFAULTS = {"admin_up": False, "passive_mode": False, "keep_alive_intvl": "300", "response_intvl": "5"}
 
 
-class EfmOam(ResourceModule):
+class EfmOam(IsamResourceModule):
     def __init__(self, module):
         self.template = EfmOamTemplate()
         super(EfmOam, self).__init__(
@@ -40,7 +40,12 @@ class EfmOam(ResourceModule):
         named = dict((item["name"], item) for item in config)
         targets = []
         if self.state == "deleted":
-            targets = [(name, dict(DEFAULTS)) for name in have if not named or name in named]
+            # an identity alone resets the port, named settings reset only themselves
+            for name, current in have.items():
+                if named and name not in named:
+                    continue
+                fields = [k for k, v in named.get(name, {}).items() if k != "name" and v is not None]
+                targets.append((name, dict(current, **dict((k, DEFAULTS[k]) for k in fields)) if fields else dict(DEFAULTS)))
         else:
             for name, item in named.items():
                 given = dict((k, v) for k, v in item.items() if k != "name" and v is not None)

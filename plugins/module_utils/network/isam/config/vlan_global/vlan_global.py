@@ -8,16 +8,15 @@ from copy import deepcopy
 
 from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import dict_merge
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import deleted_targets, requested_sections
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.vlan_global import (
     Isam_vlan_globalTemplate,
 )
 
 
-class Isam_vlan_global(ResourceModule):
+class Isam_vlan_global(IsamResourceModule):
     """The isam_vlan_global config class."""
 
     def __init__(self, module):
@@ -60,8 +59,12 @@ class Isam_vlan_global(ResourceModule):
     def generate_commands(self):
         want = self.want or {}
         have = self.have or {}
+        # deleted with config acts on the named sections only
+        requested = requested_sections(self._module) if self.state == "deleted" else set()
 
         for section, parsers in iteritems(self.dict_parsers):
+            if requested and section not in requested:
+                continue
             want_section = want.get(section)
             have_section = have.get(section)
 
@@ -76,6 +79,8 @@ class Isam_vlan_global(ResourceModule):
                 self._compare_entry(want_section or {}, have_section or {}, parsers)
 
         for section, parsers in iteritems(self.list_parsers):
+            if requested and section not in requested:
+                continue
             wantd = self._index_by_id(want.get(section, []))
             haved = self._index_by_id(have.get(section, []))
 
@@ -83,10 +88,12 @@ class Isam_vlan_global(ResourceModule):
                 wantd = dict_merge(haved, wantd)
 
             if self.state == "deleted":
-                haved = {k: v for k, v in iteritems(haved) if k in wantd or not wantd}
-                wantd = {}
+                for target, entry in deleted_targets(wantd, haved, ("id",)):
+                    # an entry keeping only its id is removed as a whole
+                    self._compare_list_entry(target if len(target) > 1 else {}, entry, section, parsers)
+                continue
 
-            if self.state in ["overridden", "deleted"]:
+            if self.state == "overridden":
                 for key, entry in iteritems(haved):
                     if key not in wantd:
                         self._compare_list_entry({}, entry, section, parsers)

@@ -7,9 +7,7 @@ __metaclass__ = type
 from copy import deepcopy
 
 from ansible.module_utils.six import iteritems
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
 )
@@ -26,7 +24,7 @@ _VECT_FALLBACK_DEFAULTS = {"group_profile": "group-level", "group_rtx_profile": 
 _PTM_INIT_MODE_DEFAULT = "mode1"
 
 
-class Xdsl_bonding(ResourceModule):
+class Xdsl_bonding(IsamResourceModule):
     """The isam_xdsl_bonding config class."""
 
     def __init__(self, module):

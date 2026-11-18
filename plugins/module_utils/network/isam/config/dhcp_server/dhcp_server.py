@@ -6,16 +6,14 @@ __metaclass__ = type
 
 from copy import deepcopy
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.dhcp_server import (
     Isam_dhcp_serverTemplate,
 )
 
 
-class Isam_dhcp_server(ResourceModule):
+class Isam_dhcp_server(IsamResourceModule):
     """The isam_dhcp_server config class."""
 
     def __init__(self, module):
@@ -60,8 +58,11 @@ class Isam_dhcp_server(ResourceModule):
             want = {}
 
         self.compare(parsers=self.parsers, want=want, have=have)
-        if self.want.get("lease_time_enabled") is False and self.have.get("lease_time_enabled") is not False:
-            self.commands.append("configure dhcp-server no lease-time")
+        # compare() skips False when the device shows no lease-time line at all
+        reset = "configure dhcp-server no lease-time"
+        if self.want.get("lease_time_enabled") is False and self.have.get("lease_time_enabled") is not False \
+                and reset not in self.commands:
+            self.commands.append(reset)
 
     def _normalize_config(self, config):
         normalized = deepcopy(config or {})

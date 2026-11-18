@@ -4,13 +4,13 @@ from __future__ import absolute_import, division, print_function
 import re
 
 from ansible.module_utils.common.text.converters import to_text
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base import get_resource_connection
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import get_targeted_config
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.pppoe_client import Pppoel2StatisticsTemplate
 
 
-class Pppoel2(ResourceModule):
+class Pppoel2(IsamResourceModule):
     def __init__(self, module):
         self.template = Pppoel2StatisticsTemplate()
         super(Pppoel2, self).__init__(

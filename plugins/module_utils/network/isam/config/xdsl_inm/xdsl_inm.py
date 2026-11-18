@@ -10,9 +10,8 @@ The isam_xdsl_inm config file.
 """
 
 from ansible.module_utils.six import iteritems
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import deleted_targets
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
@@ -25,7 +24,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 _ATTRS = tuple(attr for attr, _cli in ATTRS)
 
 
-class Xdsl_inm(ResourceModule):
+class Xdsl_inm(IsamResourceModule):
     """The isam_xdsl_inm config class.
 
     A sensor exists for every xDSL line and cannot be removed; its attributes are
@@ -83,9 +82,10 @@ class Xdsl_inm(ResourceModule):
                 # config names sensors: reset those; no config at all: reset every sensor.
                 if want and side not in want:
                     continue
-                for name, entry in iteritems(haved):
-                    if not wantd or name in wantd:
-                        self._reset_all(side, entry)
+                for target, entry in deleted_targets(wantd, haved, ("name",)):
+                    for attr in _ATTRS:
+                        if entry.get(attr) is not None and attr not in target:
+                            self._reset(side, entry["name"], attr)
                 continue
 
             if self.state == "overridden":

@@ -15,6 +15,16 @@ differences are the known `flat detail` reads of `bridges` and `pon_interfaces`)
 Later fixes, verified live: targeted reads of instances with only default settings
 (`traps` managers, `trouble_shooting_pon` interfaces).
 
+## Contract checks (2026-11-18)
+
+Named-field deletion (`deleted` naming one attribute resets only that attribute) and an
+explicit `false` in `rendered` were swept over every family with the lab capture
+(`test_deleted_regressions.py`). The named-field deletion fixes were verified on the
+device on card 6: `isam_interfaces`, `isam_equipment_onts` (GPON); `isam_xdsl_lines`,
+`isam_xdsl_inm`, `isam_efm_oam_interface` (xDSL board); `isam_ethernet_line`,
+`isam_link_agg`, `isam_xstp` (Ethernet board). `isam_vlan_global` and
+`isam_dhcp_server` (global settings) are unit-tested only.
+
 ## Writes
 
 Legend: **verified** = set, read back, idempotent, change and/or reset, delete, read

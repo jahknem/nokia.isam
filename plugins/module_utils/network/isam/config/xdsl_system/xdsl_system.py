@@ -9,9 +9,7 @@ __metaclass__ = type
 The isam_xdsl_system config file.
 """
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
@@ -24,7 +22,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 _DEFAULTS = {("auto_port_reset", "enable"): False}
 
 
-class Xdsl_system(ResourceModule):
+class Xdsl_system(IsamResourceModule):
     """The isam_xdsl_system config class (system-wide settings block).
 
     Nothing here can be removed; ``deleted`` resets the configured attributes
