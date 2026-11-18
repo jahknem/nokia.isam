@@ -1,0 +1,252 @@
+scenarios:
+- name: 'bridge port on a DSL line: create'
+  module: isam_bridges
+  state: merged
+  device: base
+  config:
+    port:
+    - port: 1/1/6/1
+      vlan_id:
+      - id: '99'
+      pvid: 99
+  commands:
+  - configure bridge port 1/1/6/1
+  - configure bridge port 1/1/6/1 vlan-id 99
+  - configure bridge port 1/1/6/1 pvid 99
+- name: 'xdsl board: set DPBO profile'
+  module: isam_xdsl_boards
+  state: merged
+  device: base
+  config: &id001
+    boards:
+    - board_id: 1/1/6
+      dpbo_profile: '1'
+  commands:
+  - configure xdsl board 1/1/6 dpbo-profile 1
+- name: 'xdsl board: read'
+  module: isam_xdsl_boards
+  state: gathered
+  device: configured
+  config:
+    boards:
+    - board_id: 1/1/6
+  gathered:
+    boards:
+    - board_id: 1/1/6
+      dpbo_profile: '1'
+- name: 'xdsl line: profiles, admin-up, TCA'
+  module: isam_xdsl_lines
+  state: merged
+  device: base
+  config: &id002
+  - name: 1/1/6/1
+    service_profile: '13'
+    spectrum_profile: '2'
+    dpbo_profile: '1'
+    admin_up: true
+    tca_line_threshold:
+      enable: true
+      es_nearend: 10
+  commands:
+  - configure xdsl line 1/1/6/1 service-profile 13 spectrum-profile 2 dpbo-profile 1 admin-up
+  - configure xdsl line 1/1/6/1 tca-line-threshold enable es-nearend 10
+- name: 'xdsl line: read'
+  module: isam_xdsl_lines
+  state: gathered
+  device: configured
+  config:
+  - name: 1/1/6/1
+  gathered:
+  - name: 1/1/6/1
+    service_profile: '13'
+    spectrum_profile: '2'
+    dpbo_profile: '1'
+    admin_up: true
+    tca_line_threshold:
+      enable: true
+      es_nearend: 10
+- name: 'l2cp user port: set partition'
+  module: isam_l2cp_user_port
+  state: merged
+  device: base
+  config: &id004
+  - name: 1/1/6/4
+    partition_id: '5'
+  commands:
+  - configure l2cp user-port 1/1/6/4 partition-id 5
+- name: 'l2cp user port: read'
+  module: isam_l2cp_user_port
+  state: gathered
+  device: configured
+  config: &id005
+  - name: 1/1/6/4
+  gathered:
+  - name: 1/1/6/4
+    partition_id: '5'
+- name: 'xdsl-line port: admin-up, trap'
+  module: isam_interfaces
+  state: merged
+  device: base
+  config: &id006
+  - name: xdsl-line:1/1/6/7
+    admin_up: true
+    link_updown_trap: true
+  commands:
+  - configure interface port xdsl-line:1/1/6/7 admin-up link-updown-trap
+- name: 'xdsl-line port: read'
+  module: isam_interfaces
+  state: gathered
+  device: configured
+  config: &id007
+  - name: xdsl-line:1/1/6/7
+  gathered:
+  - name: xdsl-line:1/1/6/7
+    admin_up: true
+    link_updown_trap: true
+- name: 'impulse noise sensor: set'
+  module: isam_xdsl_inm
+  state: merged
+  device: base
+  config: &id003
+    near_end:
+    - name: 1/1/6/3
+      inm_mode: enable
+      inm_iat_offset: '10'
+    far_end:
+    - name: 1/1/6/3
+      ins_sensitivity: '5'
+  commands:
+  - configure xdsl imp-noise-sensor near-end 1/1/6/3 inm-mode enable inm-iat-offset 10
+  - configure xdsl imp-noise-sensor far-end 1/1/6/3 ins-sensitivity 5
+- name: 'impulse noise sensor: read'
+  module: isam_xdsl_inm
+  state: gathered
+  device: configured
+  config:
+    near_end:
+    - name: 1/1/6/3
+    far_end:
+    - name: 1/1/6/3
+  gathered:
+    near_end:
+    - name: 1/1/6/3
+      inm_mode: enable
+      inm_iat_offset: '10'
+    far_end:
+    - name: 1/1/6/3
+      ins_sensitivity: '5'
+- name: 'EFM OAM: admin-up'
+  module: isam_efm_oam_interface
+  state: merged
+  device: base
+  config: &id008
+  - name: 1/1/6/5
+    admin_up: true
+  commands:
+  - configure efm-oam interface 1/1/6/5 admin-up
+- name: 'EFM OAM: read'
+  module: isam_efm_oam_interface
+  state: gathered
+  device: configured
+  config:
+  - name: 1/1/6/5
+  gathered:
+  - name: 1/1/6/5
+    admin_up: true
+- name: 'xdsl board: idempotent'
+  module: isam_xdsl_boards
+  state: merged
+  device: configured
+  config: *id001
+  commands: []
+- name: 'xdsl board: change DPBO profile'
+  module: isam_xdsl_boards
+  state: merged
+  device: configured
+  config:
+    boards:
+    - board_id: 1/1/6
+      dpbo_profile: '4'
+  commands:
+  - configure xdsl board 1/1/6 dpbo-profile 4
+- name: 'xdsl line: idempotent'
+  module: isam_xdsl_lines
+  state: merged
+  device: configured
+  config: *id002
+  commands: []
+- name: 'xdsl line: admin down, TCA threshold'
+  module: isam_xdsl_lines
+  state: merged
+  device: configured
+  config:
+  - name: 1/1/6/1
+    admin_up: false
+    tca_line_threshold:
+      es_nearend: 20
+  commands:
+  - configure xdsl line 1/1/6/1 no admin-up
+  - configure xdsl line 1/1/6/1 tca-line-threshold es-nearend 20
+- name: 'impulse noise sensor: idempotent'
+  module: isam_xdsl_inm
+  state: merged
+  device: configured
+  config: *id003
+  commands: []
+- name: 'impulse noise sensor: change'
+  module: isam_xdsl_inm
+  state: merged
+  device: configured
+  config:
+    near_end:
+    - name: 1/1/6/3
+      inm_iat_step: '2'
+  commands:
+  - configure xdsl imp-noise-sensor near-end 1/1/6/3 inm-iat-step 2
+- name: 'l2cp user port: idempotent'
+  module: isam_l2cp_user_port
+  state: merged
+  device: configured
+  config: *id004
+  commands: []
+- name: 'l2cp user port: deleted'
+  module: isam_l2cp_user_port
+  state: deleted
+  device: configured
+  config: *id005
+  commands:
+  - configure l2cp no user-port 1/1/6/4 partition-id 5
+- name: 'xdsl-line port: idempotent'
+  module: isam_interfaces
+  state: merged
+  device: configured
+  config: *id006
+  commands: []
+- name: 'xdsl-line port: deleted'
+  module: isam_interfaces
+  state: deleted
+  device: configured
+  config: *id007
+  commands:
+  - configure interface port xdsl-line:1/1/6/7 no admin-up no link-updown-trap
+- name: 'EFM OAM: idempotent'
+  module: isam_efm_oam_interface
+  state: merged
+  device: configured
+  config: *id008
+  commands: []
+- name: 'EFM OAM: response interval'
+  module: isam_efm_oam_interface
+  state: merged
+  device: configured
+  config:
+  - name: 1/1/6/5
+    response_intvl: '7'
+  commands:
+  - configure efm-oam interface 1/1/6/5 response-intvl 7
+- name: 'xdsl board: idempotent (fixed module)'
+  module: isam_xdsl_boards
+  state: merged
+  device: configured
+  config: *id001
+  commands: []

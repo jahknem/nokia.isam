@@ -50,6 +50,7 @@ module: isam_arp_relay
 short_description: Manage Nokia ISAM ARP relay statistics
 description:
   - Manages C(configure arp-relay statistics) on Nokia ISAM.
+  - R6.2.04m accepts the setting but shows it in no read (C(info configure ... flat) or C(flat detail)), so the module cannot verify it and C(merged) sends it on every run (lab ISAM).
 version_added: 0.3.13
 author: Jan Kühnemund (@jahknem)
 options:

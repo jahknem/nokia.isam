@@ -1,0 +1,920 @@
+configure equipment slot lt:1/1/6 planned-type ndlt-f no power-down unlock no alarm-profile capab-profile 8vc_default no board-40gkr4 no operational-mode no dual-host-ip no dual-host-loc
+configure equipment protection-element lt:1/1/6 no redcy-ctrl-status
+configure equipment diagnostics sfp lt:1/1/6:qsfp:1 no rssi-prof-id no rssi-state
+configure xdsl board 1/1/6 no dpbo-profile no vce-profile no vplt-autodiscover no vce-capacity-mode no leg-upbo-profile no vect-class
+configure xdsl board 1/1/6 vect-fallback no fb-vplt-com-fail no fb-cpe-cap-mism no fb-conf-not-feas no spectrum-profile no service-profile no dpbo-profile no rtx-profile no sos-profile
+configure xdsl board 1/1/6 auto-port-reset no max-retry-attempt no reset-interval no reset-threshold
+configure xdsl line 1/1/6/1 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/1 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/2 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/2 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/3 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/3 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/4 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/4 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/5 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/5 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/6 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/6 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/7 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/7 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/8 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/8 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/9 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/9 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/10 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/10 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/11 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/11 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/12 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/12 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/13 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/13 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/14 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/14 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/15 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/15 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/16 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/16 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/17 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/17 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/18 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/18 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/19 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/19 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/20 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/20 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/21 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/21 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/22 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/22 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/23 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/23 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/24 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/24 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/25 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/25 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/26 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/26 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/27 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/27 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/28 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/28 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/29 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/29 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/30 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/30 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/31 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/31 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/32 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/32 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/33 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/33 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/34 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/34 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/35 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/35 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/36 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/36 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/37 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/37 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/38 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/38 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/39 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/39 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/40 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/40 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/41 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/41 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/42 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/42 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/43 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/43 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/44 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/44 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/45 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/45 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/46 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/46 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/47 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/47 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl line 1/1/6/48 no service-profile no spectrum-profile no dpbo-profile no rtx-profile no vect-profile no sos-profile no ansi-t1413 no etsi-dts no g992-1-a no g992-1-b no g992-2-a no g992-3-a no g992-3-b no g992-3-aj no g992-3-l1 no g992-3-l2 no g992-3-am no g992-5-a no g992-5-b no ansi-t1.424 no etsi-ts no itu-g993-1 no ieee-802.3ah no g992-5-aj no g992-5-am no g993-2-8a no g993-2-8b no g993-2-8c no g993-2-8d no g993-2-12a no g993-2-12b no g993-2-17a no g993-2-30a no g993-2-35b no carrier-data-mode no admin-up no transfer-mode no imp-noise-sensor no vect-qln-mode no auto-switch no vect-fallback
+configure xdsl line 1/1/6/48 tca-line-threshold no enable no es-nearend no ses-nearend no uas-nearend no leftr-nearend no leftr-day-nearend no es-day-nearend no ses-day-nearend no uas-day-nearend no es-farend no ses-farend no uas-farend no es-day-farend no ses-day-farend no uas-day-farend no leftr-farend no leftr-day-farend no reinit no reinit-day
+configure xdsl imp-noise-sensor near-end 1/1/6/1 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/2 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/3 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/4 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/5 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/6 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/7 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/8 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/9 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/10 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/11 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/12 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/13 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/14 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/15 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/16 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/17 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/18 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/19 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/20 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/21 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/22 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/23 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/24 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/25 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/26 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/27 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/28 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/29 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/30 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/31 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/32 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/33 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/34 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/35 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/36 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/37 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/38 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/39 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/40 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/41 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/42 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/43 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/44 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/45 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/46 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/47 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor near-end 1/1/6/48 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/1 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/2 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/3 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/4 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/5 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/6 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/7 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/8 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/9 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/10 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/11 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/12 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/13 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/14 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/15 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/16 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/17 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/18 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/19 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/20 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/21 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/22 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/23 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/24 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/25 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/26 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/27 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/28 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/29 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/30 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/31 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/32 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/33 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/34 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/35 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/36 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/37 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/38 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/39 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/40 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/41 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/42 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/43 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/44 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/45 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/46 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/47 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure xdsl imp-noise-sensor far-end 1/1/6/48 no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step
+configure interface port xdsl-line:1/1/6/1 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/2 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/3 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/4 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/5 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/6 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/7 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/8 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/9 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/10 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/11 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/12 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/13 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/14 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/15 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/16 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/17 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/18 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/19 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/20 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/21 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/22 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/23 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/24 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/25 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/26 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/27 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/28 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/29 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/30 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/31 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/32 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/33 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/34 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/35 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/36 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/37 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/38 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/39 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/40 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/41 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/42 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/43 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/44 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/45 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/46 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/47 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port xdsl-line:1/1/6/48 no admin-up no link-updown-trap no user no severity no port-type
+configure interface port bonding:1/1/6/1 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/2 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/3 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/4 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/5 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/6 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/7 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/8 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/9 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/10 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/11 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/12 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/13 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/14 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/15 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/16 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/17 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/18 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/19 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/20 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/21 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/22 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/23 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/24 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/25 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/26 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/27 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/28 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/29 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/30 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/31 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/32 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/33 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/34 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/35 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/36 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/37 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/38 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/39 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/40 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/41 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/42 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/43 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/44 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/45 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/46 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/47 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port bonding:1/1/6/48 no admin-up no link-updown-trap user "" severity no-value no port-type
+configure interface port ethernet-line:1/1/6/1 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/2 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/3 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/4 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/5 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/6 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/7 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/8 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/9 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/10 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/11 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/12 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/13 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/14 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/15 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/16 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/17 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/18 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/19 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/20 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/21 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/22 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/23 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/24 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/25 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/26 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/27 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/28 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/29 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/30 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/31 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/32 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/33 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/34 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/35 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/36 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/37 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/38 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/39 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/40 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/41 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/42 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/43 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/44 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/45 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/46 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/47 admin-up no link-updown-trap no user no severity no port-type
+configure interface port ethernet-line:1/1/6/48 admin-up no link-updown-trap no user no severity no port-type
+configure qos global lt:1/1/6 no buffer-occ-thresh no queue-stats no dsload-tca no dsload-thresh no buffer-tca no up-buf-thresh no up-obc-thresh no dn-obc-thresh no dn-buf-thresh no part-buf-thresh
+configure qos tca 1/1/6/1 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/1 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/1 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/1 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/2 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/2 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/2 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/2 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/3 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/3 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/3 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/3 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/4 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/4 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/4 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/4 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/5 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/5 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/5 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/5 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/6 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/6 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/6 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/6 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/7 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/7 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/7 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/7 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/8 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/8 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/8 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/8 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/9 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/9 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/9 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/9 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/10 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/10 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/10 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/10 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/11 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/11 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/11 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/11 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/12 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/12 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/12 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/12 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/13 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/13 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/13 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/13 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/14 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/14 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/14 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/14 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/15 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/15 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/15 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/15 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/16 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/16 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/16 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/16 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/17 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/17 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/17 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/17 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/18 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/18 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/18 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/18 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/19 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/19 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/19 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/19 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/20 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/20 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/20 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/20 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/21 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/21 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/21 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/21 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/22 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/22 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/22 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/22 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/23 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/23 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/23 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/23 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/24 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/24 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/24 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/24 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/25 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/25 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/25 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/25 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/26 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/26 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/26 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/26 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/27 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/27 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/27 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/27 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/28 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/28 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/28 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/28 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/29 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/29 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/29 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/29 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/30 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/30 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/30 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/30 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/31 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/31 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/31 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/31 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/32 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/32 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/32 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/32 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/33 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/33 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/33 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/33 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/34 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/34 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/34 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/34 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/35 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/35 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/35 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/35 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/36 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/36 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/36 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/36 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/37 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/37 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/37 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/37 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/38 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/38 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/38 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/38 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/39 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/39 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/39 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/39 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/40 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/40 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/40 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/40 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/41 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/41 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/41 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/41 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/42 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/42 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/42 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/42 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/43 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/43 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/43 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/43 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/44 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/44 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/44 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/44 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/45 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/45 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/45 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/45 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/46 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/46 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/46 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/46 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/47 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/47 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/47 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/47 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/48 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/48 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/48 queue 2 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos tca 1/1/6/48 queue 3 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th
+configure qos interface 1/1/6/1 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/1 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/1 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/1 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/1 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/2 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/2 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/2 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/2 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/2 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/3 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/3 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/3 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/3 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/3 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/4 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/4 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/4 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/4 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/4 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/5 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/5 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/5 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/5 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/5 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/6 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/6 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/6 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/6 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/6 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/7 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/7 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/7 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/7 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/7 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/8 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/8 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/8 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/8 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/8 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/9 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/9 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/9 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/9 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/9 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/10 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/10 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/10 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/10 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/10 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/11 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/11 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/11 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/11 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/11 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/12 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/12 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/12 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/12 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/12 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/13 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/13 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/13 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/13 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/13 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/14 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/14 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/14 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/14 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/14 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/15 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/15 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/15 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/15 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/15 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/16 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/16 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/16 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/16 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/16 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/17 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/17 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/17 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/17 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/17 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/18 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/18 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/18 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/18 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/18 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/19 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/19 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/19 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/19 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/19 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/20 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/20 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/20 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/20 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/20 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/21 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/21 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/21 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/21 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/21 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/22 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/22 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/22 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/22 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/22 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/23 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/23 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/23 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/23 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/23 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/24 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/24 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/24 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/24 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/24 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/25 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/25 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/25 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/25 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/25 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/26 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/26 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/26 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/26 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/26 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/27 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/27 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/27 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/27 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/27 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/28 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/28 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/28 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/28 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/28 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/29 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/29 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/29 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/29 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/29 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/30 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/30 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/30 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/30 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/30 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/31 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/31 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/31 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/31 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/31 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/32 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/32 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/32 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/32 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/32 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/33 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/33 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/33 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/33 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/33 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/34 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/34 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/34 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/34 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/34 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/35 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/35 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/35 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/35 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/35 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/36 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/36 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/36 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/36 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/36 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/37 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/37 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/37 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/37 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/37 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/38 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/38 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/38 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/38 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/38 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/39 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/39 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/39 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/39 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/39 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/40 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/40 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/40 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/40 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/40 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/41 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/41 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/41 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/41 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/41 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/42 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/42 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/42 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/42 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/42 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/43 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/43 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/43 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/43 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/43 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/44 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/44 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/44 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/44 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/44 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/45 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/45 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/45 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/45 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/45 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/46 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/46 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/46 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/46 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/46 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/47 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/47 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/47 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/47 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/47 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure qos interface 1/1/6/48 no scheduler-node no ingress-profile cac-profile name:FD_Default no ext-cac no ds-queue-sharing no us-queue-sharing no ds-num-queue ds-num-rem-queue not-applicable us-num-queue not-applicable no queue-stats-on no autoschedule oper-weight 0 oper-rate 0 no us-vlanport-queue no dsfld-shaper-prof no bandwidth-profile no bandwidth-sharing no aggr-usq-profile no aggr-dsq-profile gem-sharing not-applicable no scheduler-mode mc-scheduler-node none bc-scheduler-node none no ds-schedule-tag
+configure qos interface 1/1/6/48 queue 0 priority 6 weight 34 oper-weight 0 queue-profile name:FD_BEQ shaper-profile none
+configure qos interface 1/1/6/48 queue 1 priority 6 weight 66 oper-weight 0 queue-profile name:FD_CLQ shaper-profile none
+configure qos interface 1/1/6/48 queue 2 priority 7 weight 0 oper-weight 0 queue-profile name:FD_VideoQ shaper-profile none
+configure qos interface 1/1/6/48 queue 3 priority 8 weight 0 oper-weight 0 queue-profile name:FD_VoiceQ shaper-profile none
+configure xdsl-bonding group 1/1/6/1 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/1 no up
+configure xdsl-bonding group 1/1/6/2 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/2 no up
+configure xdsl-bonding group 1/1/6/3 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/3 no up
+configure xdsl-bonding group 1/1/6/4 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/4 no up
+configure xdsl-bonding group 1/1/6/5 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/5 no up
+configure xdsl-bonding group 1/1/6/6 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/6 no up
+configure xdsl-bonding group 1/1/6/7 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/7 no up
+configure xdsl-bonding group 1/1/6/8 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/8 no up
+configure xdsl-bonding group 1/1/6/9 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/9 no up
+configure xdsl-bonding group 1/1/6/10 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/10 no up
+configure xdsl-bonding group 1/1/6/11 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/11 no up
+configure xdsl-bonding group 1/1/6/12 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/12 no up
+configure xdsl-bonding group 1/1/6/13 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/13 no up
+configure xdsl-bonding group 1/1/6/14 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/14 no up
+configure xdsl-bonding group 1/1/6/15 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/15 no up
+configure xdsl-bonding group 1/1/6/16 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/16 no up
+configure xdsl-bonding group 1/1/6/17 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/17 no up
+configure xdsl-bonding group 1/1/6/18 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/18 no up
+configure xdsl-bonding group 1/1/6/19 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/19 no up
+configure xdsl-bonding group 1/1/6/20 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/20 no up
+configure xdsl-bonding group 1/1/6/21 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/21 no up
+configure xdsl-bonding group 1/1/6/22 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/22 no up
+configure xdsl-bonding group 1/1/6/23 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/23 no up
+configure xdsl-bonding group 1/1/6/24 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/24 no up
+configure xdsl-bonding group 1/1/6/25 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/25 no up
+configure xdsl-bonding group 1/1/6/26 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/26 no up
+configure xdsl-bonding group 1/1/6/27 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/27 no up
+configure xdsl-bonding group 1/1/6/28 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/28 no up
+configure xdsl-bonding group 1/1/6/29 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/29 no up
+configure xdsl-bonding group 1/1/6/30 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/30 no up
+configure xdsl-bonding group 1/1/6/31 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/31 no up
+configure xdsl-bonding group 1/1/6/32 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/32 no up
+configure xdsl-bonding group 1/1/6/33 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/33 no up
+configure xdsl-bonding group 1/1/6/34 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/34 no up
+configure xdsl-bonding group 1/1/6/35 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/35 no up
+configure xdsl-bonding group 1/1/6/36 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/36 no up
+configure xdsl-bonding group 1/1/6/37 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/37 no up
+configure xdsl-bonding group 1/1/6/38 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/38 no up
+configure xdsl-bonding group 1/1/6/39 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/39 no up
+configure xdsl-bonding group 1/1/6/40 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/40 no up
+configure xdsl-bonding group 1/1/6/41 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/41 no up
+configure xdsl-bonding group 1/1/6/42 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/42 no up
+configure xdsl-bonding group 1/1/6/43 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/43 no up
+configure xdsl-bonding group 1/1/6/44 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/44 no up
+configure xdsl-bonding group 1/1/6/45 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/45 no up
+configure xdsl-bonding group 1/1/6/46 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/46 no up
+configure xdsl-bonding group 1/1/6/47 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/47 no up
+configure xdsl-bonding group 1/1/6/48 no group-profile no group-rtx-profile
+configure xdsl-bonding group 1/1/6/48 no up
+configure xdsl-bonding board 1/1/6 vect-fallback no group-profile no group-rtx-profile
+configure efm-oam interface 1/1/6/1 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/2 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/3 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/4 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/5 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/6 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/7 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/8 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/9 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/10 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/11 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/12 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/13 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/14 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/15 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/16 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/17 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/18 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/19 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/20 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/21 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/22 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/23 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/24 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/25 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/26 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/27 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/28 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/29 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/30 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/31 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/32 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/33 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/34 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/35 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/36 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/37 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/38 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/39 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/40 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/41 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/42 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/43 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/44 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/45 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/46 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/47 no admin-up no passive-mode no keep-alive-intvl no response-intvl
+configure efm-oam interface 1/1/6/48 no admin-up no passive-mode no keep-alive-intvl no response-intvl

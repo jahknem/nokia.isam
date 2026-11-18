@@ -88,7 +88,6 @@ options:
             description: |
               optional parameter with default value: 0
               loss of signal error in 15 minute
-            default: 0
           fcs:
             type: int
             description: |
@@ -96,7 +95,6 @@ options:
               frame check sequence error in 15 minute
               Format
               - the tca threshold value (frames), 0 - disable
-            default: 0
           rx_octets:
             type: int
             description: |
@@ -104,7 +102,6 @@ options:
               receive octets in 15 minute (specify in MB)
               Format:
               - the tca threshold value (specify octets in MB), 0 - disable
-            default: 0
           tx_octets:
             type: int
             description: |
@@ -112,7 +109,6 @@ options:
               transmit octets in 15 minute (specify in MB)
               Format:
               - the tca threshold value (specify octets in MB), 0 - disable
-            default: 0
           los_day:
             type: int
             description: |
@@ -120,7 +116,6 @@ options:
               loss of signal error in 24 hour
               Format:
               - the tca threshold value (times), 0 - disable
-            default: 0
           fcs_day:
             type: int
             description: |
@@ -128,7 +123,6 @@ options:
               frame check sequence error in 24 hour
               Format:
               - the tca threshold value (frames), 0 - disable
-            default: 0
           rx_octets_day:
             type: int
             description: |
@@ -136,7 +130,6 @@ options:
               receive octets in 24 hour (specify in MB)
               Format:
               - the tca threshold value (specify octets in MB), 0 - disable
-            default: 0
           tx_octets_day:
             type: int
             description: |
@@ -144,7 +137,6 @@ options:
               transmit octets in 24 hour (specify in MB)
               Format:
               - the tca threshold value (specify octets in MB), 0 - disable
-            default: 0
       mau:
         type: list
         elements: dict

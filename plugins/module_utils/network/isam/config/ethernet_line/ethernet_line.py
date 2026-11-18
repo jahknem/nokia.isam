@@ -18,9 +18,6 @@ created.
 """
 
 from ansible.module_utils.six import iteritems
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    dict_merge,
-)
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
     ResourceModule,
 )
@@ -28,8 +25,25 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
     Facts,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ethernet_line import (
+    LINE_PARSERS,
+    MAU_PARSERS,
+    TCA_PARSERS,
     Ethernet_lineTemplate,
 )
+
+# Device defaults (CLI guide, lab ISAM 'flat detail'): a value at its default equals an
+# unset one. port-type and the MAU type/power have no "no" form; they are only set.
+LINE_DEFAULTS = {"admin_up": False}
+TCA_DEFAULTS = {"enable": False, "los": 0, "fcs": 0, "rx_octets": 0, "tx_octets": 0,
+                "los_day": 0, "fcs_day": 0, "rx_octets_day": 0, "tx_octets_day": 0}
+MAU_DEFAULTS = {"speed_auto_sense": False, "autonegotiate": False, "cap100base_tfd": False,
+                "cap1000base_xfd": False, "cap1000base_tfd": False}
+SET_ONLY = ("port_type", "mau_type", "power")
+
+
+def _without_defaults(entry, defaults):
+    return dict((key, value) for key, value in iteritems(entry or {})
+                if value is not None and not (key in defaults and value == defaults[key]))
 
 
 class Ethernet_line(ResourceModule):
@@ -39,7 +53,7 @@ class Ethernet_line(ResourceModule):
 
     COMPACT_COMMAND_SCOPES = (
         r"^(?P<scope>configure ethernet line \S+) (?P<suffix>(?!tca-line-threshold(?:\s|$)|mau(?:\s|$)).+)$",
-        r"^(?P<scope>configure ethernet line \S+ tca-line-threshold(?: \S+)?) (?P<suffix>.+)$",
+        r"^(?P<scope>configure ethernet line \S+ tca-line-threshold) (?P<suffix>.+)$",
         r"^(?P<scope>configure ethernet line \S+ mau \S+) (?P<suffix>.+)$",
     )
 
@@ -51,30 +65,11 @@ class Ethernet_line(ResourceModule):
             resource="ethernet_line",
             tmplt=Ethernet_lineTemplate(),
         )
-        self.parsers = [
-            "line.port_type",
-            "line.admin_up",
-            "line.tca_line_threshold_enable",
-            "line.tca_line_threshold_los",
-            "line.tca_line_threshold_fcs",
-            "line.tca_line_threshold_rx_octets",
-            "line.tca_line_threshold_tx_octets",
-            "line.tca_line_threshold_los_day",
-            "line.tca_line_threshold_fcs_day",
-            "line.tca_line_threshold_rx_octets_day",
-            "line.tca_line_threshold_tx_octets_day",
-            "line.mau.mau_type",
-            "line.mau.mau_power",
-            "line.mau.mau_speed_auto_sense",
-            "line.mau.mau_autonegotiate",
-            "line.mau.mau_cap100base_tfd",
-            "line.mau.mau_cap1000base_xfd",
-            "line.mau.mau_cap1000base_tfd",
-        ]
+        self.line_parsers = [parser["name"] for parser in LINE_PARSERS + TCA_PARSERS]
+        self.mau_parsers = [parser["name"] for parser in MAU_PARSERS]
 
     def execute_module(self):
         """ Execute the module
-
         :rtype: A dictionary
         :returns: The result from module execution
         """
@@ -89,91 +84,79 @@ class Ethernet_line(ResourceModule):
         """ Generate configuration commands to send based on
             want, have and desired state.
         """
-        wantd = {entry['if_index']: entry for entry in self.want}
-        haved = {entry['if_index']: entry for entry in self.have}
+        wantd = dict((entry["if_index"], entry) for entry in self.want or [])
+        haved = dict((entry["if_index"], entry) for entry in self.have or [])
 
-        # if state is merged, merge want onto have and then compare
-        if self.state == "merged":
-            wantd = dict_merge(haved, wantd)
-
-        # if state is deleted, empty out wantd and set haved to wantd
         if self.state == "deleted":
-            requested = self._module.params.get("config") or []
-            if requested and all(
-                not any(value is not None for key, value in entry.items() if key != "if_index")
-                for entry in requested
-            ):
-                return
-            haved = {
-                k: v for k, v in iteritems(haved) if k in wantd or not wantd
-            }
-            wantd = {}
+            for if_index, have in iteritems(haved):
+                if not wantd or if_index in wantd:
+                    self._compare(self._deleted_target(wantd.get(if_index) or {}, have), have)
+            return
+        if self.state == "overridden":
+            for if_index, have in iteritems(haved):
+                if if_index not in wantd:
+                    self._compare({"if_index": if_index}, have)
+        for if_index, want in iteritems(wantd):
+            have = haved.get(if_index, {})
+            self._compare(self._merge(have, want) if self.state == "merged" else want, have)
 
-        # remove superfluous config for deleted only
-        # NOTE: the collection standard is ["overridden", "deleted"], but overridden is
-        # omitted here because the existing overridden test expects unmentioned ports to
-        # be left untouched; changing this guard would break that test.
-        if self.state in ["deleted"]:
-            for k, have in iteritems(haved):
-                if k not in wantd:
-                    self._compare(want={}, have=have)
+    @staticmethod
+    def _merge(have, want):
+        """merged: want onto have; MAU entries merged by index."""
+        merged = dict(have, **dict((k, v) for k, v in iteritems(want) if v is not None and k not in ("mau", "tca_line_threshold")))
+        merged["tca_line_threshold"] = dict(have.get("tca_line_threshold") or {},
+                                            **_without_defaults(want.get("tca_line_threshold"), {}))
+        maus = dict((entry["index"], dict(entry)) for entry in have.get("mau") or [])
+        for entry in want.get("mau") or []:
+            maus[entry["index"]] = dict(maus.get(entry["index"], {}), **_without_defaults(entry, {}))
+        merged["mau"] = list(maus.values())
+        return merged
 
-        for k, want in iteritems(wantd):
-            self._compare(want=want, have=haved.pop(k, {}))
+    @staticmethod
+    def _deleted_target(want, have):
+        """deleted: an identity alone resets the line; named settings reset only those."""
+        named = [key for key, value in iteritems(want) if key != "if_index" and value not in (None, {}, [])]
+        if not named:
+            return {"if_index": have["if_index"]}
+        target = dict((key, value) for key, value in iteritems(have) if key not in named)
+        if "tca_line_threshold" in named:
+            named_tca = [key for key, value in iteritems(want["tca_line_threshold"]) if value is not None]
+            target["tca_line_threshold"] = dict((key, value) for key, value in iteritems(have.get("tca_line_threshold") or {})
+                                                if named_tca and key not in named_tca)
+        if "mau" in named:
+            reset = set(entry["index"] for entry in want["mau"])
+            target["mau"] = [entry for entry in have.get("mau") or [] if entry["index"] not in reset]
+        return target
 
     def _compare(self, want, have):
-        """Leverages the base class `compare()` method and
-           populates the list of commands to be run by comparing
-           the `want` and `have` data with the `parsers` defined
-           for the Ethernet_line network resource.
-        """
-        # Only differences are sent, in every state. Omission-based negation (have has a
-        # value, want omits it) is handled by the elif branches below.
-        # Mau fields (mau_type, mau_power) have no no-form and are set-only.
+        """The line with its TCA thresholds, then each MAU. Defaults equal unset values;
+        set-only attributes the request does not name are kept."""
+        if_index = want.get("if_index") or have["if_index"]
+        rendering = self.state == "rendered"
+        self.compare(parsers=self.line_parsers, want=self._line(want, have, rendering), have=self._line(have, {}, rendering))
+        want_mau = dict((entry["index"], entry) for entry in want.get("mau") or [])
+        have_mau = dict((entry["index"], entry) for entry in have.get("mau") or [])
+        for index in list(want_mau) + [index for index in have_mau if index not in want_mau]:
+            base = {"if_index": if_index, "index": index}
+            wanted = dict(base, **want_mau.get(index, {}))
+            current = dict(base, **have_mau.get(index, {}))
+            for key in SET_ONLY:
+                if wanted.get(key) is None and current.get(key) is not None:
+                    wanted[key] = current[key]
+            if not rendering:
+                wanted, current = (dict(base, **_without_defaults(entry, MAU_DEFAULTS)) for entry in (wanted, current))
+            self.compare(parsers=self.mau_parsers, want=wanted, have=current)
 
-        if want.get("port_type") != have.get("port_type"):
-            if want.get("port_type") is not None:
-                self.commands.append(
-                    "configure ethernet line {0} port-type {1}".format(
-                        want["if_index"], want["port_type"]
-                    )
-                )
-            elif have.get("port_type") is not None and self.state in ["replaced", "overridden", "deleted"]:
-                self.commands.append(
-                    "configure ethernet no line {0} port-type {1}".format(
-                        have["if_index"], have["port_type"]
-                    )
-                )
-
-        if want.get("admin_up") != have.get("admin_up"):
-            if want.get("admin_up") is not None:
-                prefix = "" if want["admin_up"] else "no "
-                self.commands.append(
-                    "configure ethernet line {0} {1}admin-up".format(
-                        want["if_index"], prefix
-                    )
-                )
-            elif have.get("admin_up") is not None and self.state in ["replaced", "overridden", "deleted"]:
-                prefix = "" if have["admin_up"] else "no "
-                self.commands.append(
-                    "configure ethernet no line {0} {1}admin-up".format(
-                        have["if_index"], prefix
-                    )
-                )
-
-        want_mau = {entry["index"]: entry for entry in want.get("mau") or []}
-        have_mau = {entry["index"]: entry for entry in have.get("mau") or []}
-        for index, entry in iteritems(want_mau):
-            before = have_mau.get(index, {})
-            if entry.get("mau_type") != before.get("mau_type") and entry.get("mau_type") is not None:
-                self.commands.append(
-                    "configure ethernet line {0} mau {1} type {2}".format(
-                        want["if_index"], index, entry["mau_type"]
-                    )
-                )
-            if entry.get("power") != before.get("power") and entry.get("power") is not None:
-                self.commands.append(
-                    "configure ethernet line {0} mau {1} power {2}".format(
-                        want["if_index"], index, entry["power"]
-                    )
-                )
+    @staticmethod
+    def _line(entry, keep_from, rendering):
+        line = dict((key, value) for key, value in iteritems(entry) if key != "mau")
+        line["if_index"] = entry.get("if_index") or keep_from.get("if_index")
+        if line.get("port_type") is None and keep_from.get("port_type") is not None:
+            line["port_type"] = keep_from["port_type"]
+        if rendering:
+            return line
+        tca = _without_defaults(line.pop("tca_line_threshold", None), TCA_DEFAULTS)
+        line = dict(_without_defaults(line, LINE_DEFAULTS), if_index=line["if_index"])
+        if tca:
+            line["tca_line_threshold"] = tca
+        return line

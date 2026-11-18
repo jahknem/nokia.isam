@@ -100,6 +100,31 @@ Per family: set, read, idempotent, change, delete, read (status per family in
 | `trouble-shooting pon statistics interface P` | single read and its detail read print nothing; absent: "instance does not exist" |
 | `qos interface pon:P cac-profile none` | accepted; the device omits the profile afterwards |
 
+## Linecard 6 as xDSL and Ethernet board
+
+Card 6 was unplanned and planned as NDLT-F (xDSL), then NELT-B (Ethernet), then FGLT-B
+again (each time without board). Every card-6 line of both board types is claimed and
+modelled (gap report). Per family: set, read, idempotent, change, deleted; the before/after
+captures of each board type are identical. Scenario fixtures:
+`tests/fixtures/live_scenarios/r6.2.04m-card6-{xdsl,ethernet}`.
+
+| Command / rule | Device |
+|---|---|
+| `equipment slot <lt> planned-type <other>` on a planned slot | refused (EQPT MGT error 40): unplan first |
+| after `no planned-type`: any slot setting (`no unlock`) | refused ("not yet planned", error 1); unplanning removes the card's configuration |
+| planning sets the capability profile itself | `planned-type ndlt-f` -> `capab-profile 8vc_default` |
+| xDSL line parameters (vectoring, INM) on an unconfigured line | refused (XDSL MGT error 33): service and spectrum profile first |
+| INM on a line without impulse noise sensor | refused (error 133) |
+| `xdsl board <b> vce-profile` on NDLT-F | refused (error 161); line vectoring needs the VP board link (error 165) |
+| `xdsl no board <b>` | invalid token: boards are reset, not removed |
+| `xdsl-bonding group <g> up` | refused without bonding profiles (error 35) |
+| `efm-oam interface <p> passive-mode` | refused ("Only active mode allowed") |
+| `efm-oam ... response-intvl 5` / `keep-alive-intvl 300` | defaults: not shown afterwards |
+| `ethernet line <l> mau <n> autonegotiate` without capabilities | refused (ETH MGT error 43) |
+| `link-agg group <g> no port <g>` | refused (error 22): the default aggregator member |
+| `link-agg group` load-sharing-policy, swo-revert, mode, master-iwf; `xstp port` path-cost | no `no` form: set only |
+| `xdsl line admin-up` / `interface port xdsl-line: admin-up`; `interface port pon: admin-up` / `pon interface admin-state` | coupled: one sets the other |
+
 ## Device behaviour learned (fixed or documented)
 
 - `admin-state` is rejected on the line that creates an ONT (`invalid token`). It is

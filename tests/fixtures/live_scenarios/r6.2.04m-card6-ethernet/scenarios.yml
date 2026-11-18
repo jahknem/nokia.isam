@@ -1,0 +1,197 @@
+scenarios:
+- name: 'ethernet line: admin-up, TCA, MAU type/power'
+  module: isam_ethernet_line
+  state: merged
+  device: base
+  config: &id001
+  - if_index: 1/1/6/1
+    admin_up: true
+    tca_line_threshold:
+      enable: true
+    mau:
+    - index: 1
+      mau_type: 1000basebx10d
+      power: up
+  commands:
+  - configure ethernet line 1/1/6/1 admin-up
+  - configure ethernet line 1/1/6/1 tca-line-threshold enable
+  - configure ethernet line 1/1/6/1 mau 1 type 1000basebx10d power up
+- name: 'ethernet line: read'
+  module: isam_ethernet_line
+  state: gathered
+  device: configured
+  config:
+  - if_index: 1/1/6/1
+  gathered:
+  - if_index: 1/1/6/1
+    port_type: uni
+    admin_up: true
+    tca_line_threshold:
+      enable: true
+    mau:
+    - index: 1
+      mau_type: 1000basebx10d
+      power: up
+- name: 'link-agg port: actor port priority'
+  module: isam_link_agg
+  state: merged
+  device: base
+  config: &id002
+    ports:
+    - id: 1/1/6/2
+      actor_port_prio: '100'
+  commands:
+  - configure link-agg port 1/1/6/2 actor-port-prio 100
+- name: 'link-agg port: read'
+  module: isam_link_agg
+  state: gathered
+  device: configured
+  config: &id003
+    ports:
+    - id: 1/1/6/2
+  gathered:
+    ports:
+    - id: 1/1/6/2
+      passive_lacp: true
+      short_timeout: true
+      actor_port_prio: '100'
+      lacp_mode: passive
+      timeout: short
+- name: 'link-agg group: load sharing policy'
+  module: isam_link_agg
+  state: merged
+  device: base
+  config: &id004
+    groups:
+    - id: 1/1/6/3
+      load_sharing_policy: mac-src-dst
+  commands:
+  - configure link-agg group 1/1/6/3 load-sharing-policy mac-src-dst
+- name: 'link-agg group: read'
+  module: isam_link_agg
+  state: gathered
+  device: configured
+  config:
+    groups:
+    - id: 1/1/6/3
+  gathered:
+    groups:
+    - id: 1/1/6/3
+      load_sharing_policy: mac-src-dst
+      swo_revert: enable
+      mode: static
+      master_iwf: auto
+      ports:
+      - 1/1/6/3
+- name: 'xstp port: priority, edge port'
+  module: isam_xstp
+  state: merged
+  device: base
+  config: &id005
+    ports:
+    - port: 1/1/6/4
+      priority: 64
+      edge_port: true
+  commands:
+  - configure xstp port 1/1/6/4 priority 64
+  - configure xstp port 1/1/6/4 edge-port
+- name: 'xstp port: read'
+  module: isam_xstp
+  state: gathered
+  device: configured
+  config: &id006
+    ports:
+    - port: 1/1/6/4
+  gathered:
+    ports:
+    - port: 1/1/6/4
+      priority: 64
+      path_cost: 200000
+      edge_port: true
+- name: 'ethernet line: idempotent'
+  module: isam_ethernet_line
+  state: merged
+  device: configured
+  config: *id001
+  commands: []
+- name: 'link-agg port: idempotent'
+  module: isam_link_agg
+  state: merged
+  device: configured
+  config: *id002
+  commands: []
+- name: 'link-agg port: change priority'
+  module: isam_link_agg
+  state: merged
+  device: configured
+  config:
+    ports:
+    - id: 1/1/6/2
+      actor_port_prio: '200'
+  commands:
+  - configure link-agg port 1/1/6/2 actor-port-prio 200
+- name: 'link-agg port: deleted (device CLI defaults)'
+  module: isam_link_agg
+  state: deleted
+  device: configured
+  config: *id003
+  commands:
+  - configure link-agg port 1/1/6/2 no passive-lacp no short-timeout no actor-port-prio
+- name: 'link-agg group: idempotent'
+  module: isam_link_agg
+  state: merged
+  device: configured
+  config: *id004
+  commands: []
+- name: 'link-agg group: change policy'
+  module: isam_link_agg
+  state: merged
+  device: configured
+  config:
+    groups:
+    - id: 1/1/6/3
+      load_sharing_policy: mac-dst
+  commands:
+  - configure link-agg group 1/1/6/3 load-sharing-policy mac-dst
+- name: 'xstp port: idempotent'
+  module: isam_xstp
+  state: merged
+  device: configured
+  config: *id005
+  commands: []
+- name: 'xstp port: path cost'
+  module: isam_xstp
+  state: merged
+  device: configured
+  config:
+    ports:
+    - port: 1/1/6/4
+      path_cost: 100000
+  commands:
+  - configure xstp port 1/1/6/4 path-cost 100000
+- name: 'xstp port: deleted (path-cost has no ''no'' form)'
+  module: isam_xstp
+  state: deleted
+  device: configured
+  config: *id006
+  commands:
+  - configure xstp port 1/1/6/4 no priority
+  - configure xstp port 1/1/6/4 no edge-port
+- name: 'ethernet line: admin down, TCA threshold, MAU capability'
+  module: isam_ethernet_line
+  state: merged
+  device: configured
+  config:
+  - if_index: 1/1/6/1
+    admin_up: false
+    tca_line_threshold:
+      los: 5
+    mau:
+    - index: 1
+      power: down
+      cap1000base_xfd: true
+      autonegotiate: true
+  commands:
+  - configure ethernet line 1/1/6/1 no admin-up
+  - configure ethernet line 1/1/6/1 tca-line-threshold los 5
+  - configure ethernet line 1/1/6/1 mau 1 power down autonegotiate cap1000base-xfd

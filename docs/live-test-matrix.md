@@ -28,14 +28,18 @@ traffic-free object with its own name (`zztest`, `192.0.2.1`, unused ids).
 | `isam_ani_onts` | verified | card 6 / PON 7/16: entry create/delete | – |
 | `isam_bridges` | verified | card 6: port with 4 VLANs, PVID, L2 forwarders; partial merged; replaced removing/adding a VLAN; deleted | `ageing_time` (global) |
 | `isam_cfm` | verified (part) | SLM timer set/reset | domains |
-| `isam_equipment` | verified (part) | card 6: slot lock/unlock, replaced restore | diagnostics SFP, protection elements |
+| `isam_equipment` | verified (part) | card 6: slot lock/unlock, replaced restore, unplan (`no planned-type` only) and plan as NDLT-F/NELT-B/FGLT-B | diagnostics SFP, protection elements |
 | `isam_equipment_onts` | verified | card 6: interface, slot, loops, sw-ctrl (test id 200), admin down/up, delete with shutdown | `pm_collects` (XGS ONTs only), sw-ctrl config files (need a real file) |
 | `isam_ethernet_onts` | verified | card 6: UNI settings, phy/l2/cfm sub-nodes, identity and named-field deleted | – |
 | `isam_igmp` | verified (part) | package names set/reset | other settings (global) |
 | `isam_interface_alarms` | verified | test object `epon` (no EPON hardware): severity set/restore | – |
+| `isam_efm_oam_interface` | verified | card 6 as xDSL: admin-up, response interval (default 5 equals unset), deleted | passive mode not allowed on the port |
+| `isam_ethernet_line` | verified | card 6 as Ethernet: admin, TCA enable/threshold, MAU type/power/capability/autonegotiate, deleted (type/power kept: no "no" form) | – |
 | `isam_interface_cages` | read only | card 6: operational-mode idempotent | `description`/`apply_qos` do not exist on R6.2.04m |
-| `isam_interfaces` | verified | card 6 / PON 7/16: pon, ont, uni, vlan-port ports | – |
+| `isam_interfaces` | verified | card 6 / PON 7/16: pon, ont, uni, vlan-port, xdsl-line ports | – |
 | `isam_l2cp_session` | verified | test session 200: create, alive-timer change, delete | – |
+| `isam_l2cp_user_port` | verified | card 6 as xDSL: partition id set, deleted | – |
+| `isam_link_agg` | verified | card 6 as Ethernet: port priority (deleted returns the CLI defaults, not the board's initial passive/short), group policy and max-active-port | group attributes without "no" form are kept |
 | `isam_l2uni_onts` | verified | PON 7/16: PM, TC-layer threshold set/deleted | – |
 | `isam_mcast_control` | verified (part) | package names set/reset | other settings (global) |
 | `isam_ntp_onts` | verified | PON 7/16: client set, idempotent, deleted | – |
@@ -51,20 +55,23 @@ traffic-free object with its own name (`zztest`, `192.0.2.1`, unused ids).
 | `isam_trouble_shooting_pon` | verified | card 6 PON 1/1/6/2: statistics interface, threshold, deleted | interval (global) |
 | `isam_uni_onts` | verified | PON 7/16: TC-layer PM set/deleted | – |
 | `isam_vlans` | verified | VLANs 3990/3991: create, change, replaced reset, delete | – |
+| `isam_xdsl_boards` | verified (part) | card 6 as xDSL: DPBO profile set/change, deleted (reset; a board cannot be removed) | VCE profile (not on NDLT-F), VP boards (active card 1) |
+| `isam_xdsl_inm` | verified | card 6 as xDSL: near/far end sensor set, change, deleted (needs the line's impulse noise sensor) | – |
+| `isam_xdsl_lines` | verified | card 6 as xDSL: profiles, admin, TCA, impulse noise sensor, deleted | vectoring profile (needs the VP board link on active card 1) |
 | `isam_xdsl_profiles` | verified (part) | service profile create/delete | spectrum, DPBO, vectoring, VCE profiles |
+| `isam_xstp` | verified (part) | card 6 as Ethernet: port priority, edge port, path cost (no "no" form), deleted | global STP (not written) |
 
 ### Not testable on this device (device or hardware limit)
 
 | Family | Reason (device answer) |
 |---|---|
 | `isam_arp_relay`, `isam_pppoel2_statistics` | accepted on an ONT VLAN port, but shown in no read (flat or detail): not verifiable |
-| `isam_dhcp_relay` | `port-stats` invalid for ONT VLAN ports; needs a DSL/Ethernet LT port |
-| `isam_efm_oam_interface` | invalid for ONT UNIs; needs an EFM (LT Ethernet) port |
+| `isam_dhcp_relay` | accepted on a DSL VLAN port (`vlan:<port>:<vlan>`; `vlan-port:` is refused), shown in no read: not verifiable |
 | `isam_ipv6_antispoofing_slot` | "not supported on this board" (FGLT-B) |
 | `isam_qos_global` | line card settings need a plugged board (error 84) |
 | `isam_dist_service` | every service type invalid (no MPLS/drouter). **Open bug:** a refused create still leaves a bare `configure dist-service <id>`; the device removes it with `configure no dist-service <id>` (verified), but `deleted` only resets attributes and the parser ignores the bare line |
 | `isam_xdsl_onts` | DPBO profiles not active; needs an xDSL ONT |
-| `isam_l2cp_user_port` | DSL ports only |
+| `isam_xdsl_bonding` | "Bonding is not configured yet" without global bonding profiles |
 | `isam_nat` | needs the CWMP platform enabled |
 | `isam_epon_interfaces`, `isam_ngpon2_channel_groups`, `isam_channel_pair_pm` | hardware not installed |
 
@@ -77,9 +84,9 @@ explicit decision per family: `isam_cwmp_plt`, `isam_dhcp_server`,
 `isam_software_mngt`, `isam_system`, `isam_vlan_global`, `isam_voice_sip`,
 `isam_xdsl_system`, `isam_xstp`, `isam_iphost`, `isam_linetest`.
 
-Not on card 6 and carrying configuration of other cards: `isam_ethernet_line` and
-`isam_link_agg` (NNI uplink ports, card 8), `isam_xdsl_lines`, `isam_xdsl_boards`,
-`isam_xdsl_bonding`, `isam_xdsl_inm` (xDSL card 3).
+Tested on card 6 replanned as xDSL (NDLT-F) and Ethernet (NELT-B) board instead of
+the active cards 3 and 8; see the rows above and the offline scenarios in
+`tests/fixtures/live_scenarios/`.
 
 `isam_security_ext_authenticator` is action-only, `isam_facts` read-only.
 
@@ -93,3 +100,6 @@ the test objects; cleanup runs at the end; before/after captures are compared.
 - `live-write-families-gen.py`: the remaining families, one phase each; a phase list
   as fourth argument runs only those phases.
 - `live-probe-gen.py`: raw command sequences (accepted/refused probes).
+- `live-write-card6-gen.py`: families on card 6 replanned as another board type, in two
+  parts with a capture in between; `build-scenarios.py` turns the results and captures
+  into the scenario fixtures.

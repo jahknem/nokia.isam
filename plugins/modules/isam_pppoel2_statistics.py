@@ -19,6 +19,7 @@ description:
   - The write states read C(info configure pppoel2 statistics flat) and compare against it; a device error fails the module.
   - Ports with statistics enabled are the configured instances; removal is C(no statistics <vlan-port>).
     C(vlan-port <port>) and C(vlan-port:<port>) name the same port.
+  - Only on GPON line cards (PPPOERELAY MGNT error 6 elsewhere). R6.2.04m accepts the setting but shows it in no read (C(info configure ... flat) or C(flat detail)), so the module cannot verify it and C(merged) sends it on every run (lab ISAM).
 version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:

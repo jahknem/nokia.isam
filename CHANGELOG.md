@@ -78,6 +78,31 @@
   - `isam_qos_interfaces`: a profile set to `none` (shown by the device as unset) was
     re-sent by every `merged` run.
   - `isam_interface_cages` documents that R6.2.04m has no cage `description`/`apply_qos`.
+- Live write tests on linecard 6 replanned as xDSL (NDLT-F) and Ethernet (NELT-B) board.
+  Offline scenario fixtures pin every step whose prior state was captured
+  (`tests/fixtures/live_scenarios/`, `test_live_write_scenario`). Fixed (all present in
+  0.3.13):
+  - `isam_ethernet_line` rebuilt in the collection style (`docs/development-style.md`):
+    `power down` was read as `up`, TCA settings were never rendered (broken parser
+    templates), MAU flags rendered with underscores, `admin-up` was not read, removal
+    forms like `configure ethernet no line <l> port-type` do not exist, TCA argspec
+    defaults overwrote unnamed thresholds. Now one parser per attribute, packed lines
+    split on read and packed on write; `overridden` resets unnamed lines, `deleted`
+    resets named settings (port-type and MAU type/power have no `no` form and are kept).
+  - `isam_efm_oam_interface` never compared with the device: every `merged` re-sent the
+    port and reset unnamed intervals; `overridden` left other ports. It compares now,
+    knows the device defaults (keep-alive 300 s, response 5 s) and sends only changes.
+  - `isam_xdsl_boards` `deleted`/`overridden` sent `configure xdsl no board`, which does
+    not exist; the board's attributes are reset (only the named ones with config).
+  - `isam_equipment`: unplanning a slot also sent `no unlock`/`no capab-profile`, refused
+    after `no planned-type`; it sends only `no planned-type`. Changing the type of a
+    planned slot fails early (the device needs it unplanned first).
+  - `isam_link_agg` removed a group's default member port (refused, error 22).
+  - `isam_dhcp_relay` documented the `vlan-port:` form, which the device refuses for
+    port statistics; `isam_dhcp_relay`, `isam_arp_relay` and `isam_pppoel2_statistics`
+    document that R6.2.04m shows the setting in no read.
+- `docs/development-style.md`: the collection's module style (netcommon layout, one
+  parser per attribute, defaults per node, `compare`, scenario fixtures).
 - Live verification on the lab ISAM (read-only / check mode). Every resource module's
   live `gathered` matches the parse of a fresh capture; 57 targeted reads and 102
   check-mode merged/replaced/overridden runs with the gathered facts as config. Fixed:

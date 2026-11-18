@@ -1,0 +1,14 @@
+schema_version: 1
+resource: live_scenarios
+device_type: Nokia ISAM 7330 FTTN
+software_version: R6.2.04m
+command: info configure flat / info configure detail flat (linecard 6 lines)
+captured_at: '2026-11-18'
+source: sanitized-live-capture
+description: Linecard 6 planned as NDLT-F (xDSL, no board)
+files:
+  output.txt: configured state (flat)
+  output-detail.txt: configured state (detail)
+  base.txt: card freshly planned (flat)
+  base-detail.txt: card freshly planned (detail)
+  scenarios.yml: device-accepted commands / returned facts per step
