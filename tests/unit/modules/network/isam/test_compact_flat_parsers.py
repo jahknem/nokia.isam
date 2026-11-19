@@ -99,7 +99,7 @@ def test_interface_cages_normalizes_compact_flat_lines_without_rewriting_them():
 
 
 def test_six_resources_normalize_live_compact_flat_lines():
-    assert Ethernet_lineFacts(module=None)._compact_lines(
+    assert Ethernet_lineFacts(module=None)._split_attributes(
         ["configure ethernet line 1/1/8/1 port-type uni"],
         "configure ethernet line ",
     ) == ["configure ethernet line 1/1/8/1 port-type uni"]

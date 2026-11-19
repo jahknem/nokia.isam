@@ -5,11 +5,18 @@ from __future__ import absolute_import, division, print_function
 from copy import deepcopy
 
 from ansible.module_utils._text import to_text
-from ansible.module_utils.six import iteritems
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import covers_entry, deleted_targets
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.dist_service.dist_service import Isam_dist_serviceFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.dist_service import Isam_dist_serviceTemplate
+
+
+DEFAULTS = {"service_type": "apipe", "qos_profile": "none"}
+
+
+def _without_defaults(entry):
+    return {key: value for key, value in entry.items() if value is not None and DEFAULTS.get(key) != value}
 
 
 class _DistServiceFactsProvider(object):
@@ -44,21 +51,24 @@ class Isam_dist_service(ResourceModule):
         return self.result
 
     def generate_commands(self):
-        want = {entry["name"]: entry for entry in (self.want or [])}
-        have = {entry["name"]: entry for entry in (self.have or [])}
-        if self.state == "merged":
-            for name, item in iteritems(have):
-                if name in want:
-                    merged = deepcopy(item)
-                    merged.update(want[name])
-                    want[name] = merged
+        wantd = {entry["name"]: _without_defaults(entry) for entry in self.want or []}
+        haved = {entry["name"]: _without_defaults(entry) for entry in self.have or []}
         if self.state == "deleted":
-            if want:
-                have = {name: item for name, item in iteritems(have) if name in want}
-            want = {}
-        if self.state in ["overridden", "deleted"]:
-            for name, item in iteritems(have):
-                if name not in want:
-                    self.compare(parsers=self.parsers, want={}, have=item)
-        for name, item in iteritems(want):
-            self.compare(parsers=self.parsers, want=item, have=have.get(name, {}))
+            for target, have in deleted_targets(wantd, haved, ("name",)):
+                if covers_entry(wantd.get(have["name"], {}), have, ("name",)):
+                    self.addcmd(have, "service", True)
+                else:
+                    self.compare(parsers=self.parsers, want=target, have=have)
+            return
+        if self.state == "overridden":
+            for name, have in haved.items():
+                if name not in wantd:
+                    self.addcmd(have, "service", True)
+        for name, want in wantd.items():
+            have = haved.get(name, {})
+            if self.state == "merged":
+                want = dict(have, **want)
+            before = len(self.commands)
+            self.compare(parsers=self.parsers, want=want, have=have)
+            if not have and len(self.commands) == before:
+                self.addcmd(want, "service", False)

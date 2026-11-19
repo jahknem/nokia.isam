@@ -34,7 +34,6 @@ options:
         description: Partition type.
         type: str
         choices: [no-partition, fixed-assigned]
-        default: no-partition
   running_config:
     description: Native C(info configure ... flat) output to parse with I(state=parsed).
     type: str

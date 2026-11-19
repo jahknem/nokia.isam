@@ -28,6 +28,7 @@ leaves them on the device.
 """
 
 from copy import deepcopy
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import quote_cli_value
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
     ResourceModule,
@@ -68,8 +69,7 @@ PROFILE_FIELDS = tuple(
 
 
 def _quote(value):
-    value = str(value)
-    return '"%s"' % value if (not value or any(c.isspace() for c in value)) else value
+    return quote_cli_value(value)
 
 
 def _cli_value(field, value):

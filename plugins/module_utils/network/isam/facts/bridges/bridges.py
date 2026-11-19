@@ -167,6 +167,8 @@ class BridgesFacts(object):
         self._apply_rest(
             vlan_entry, rest, VLAN_BOOL_KEYS, normalize_bridge_vlan_alias
         )
+        if vlan_entry.get("tpid") is not None:
+            vlan_entry["tpid"] = str(vlan_entry["tpid"])
 
     def _apply_rest(self, entry, rest, bool_keys, canonicalize=None):
         if not rest:

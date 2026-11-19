@@ -52,17 +52,20 @@ class Isam_ipv6_antispoofing_slot(ResourceModule):
                 want.setdefault(name, item)
         elif self.state == "deleted":
             want = {name: {} for name in (want or have)}
-        elif self.state in ("replaced", "overridden"):
-            for name in set(have) - set(want):
+        elif self.state == "overridden":
+            for name in sorted(set(have) - set(want)):
                 self._add_command(name, None)
 
         for name, item in want.items():
             current = have.get(name, {})
             if self.state == "deleted":
-                if current:
+                if current.get("bit_len") is not None:
                     self._add_command(name, None)
-            elif item.get("bit_len") is not None and item.get("bit_len") != current.get("bit_len"):
-                self._add_command(name, item["bit_len"])
+            elif item.get("bit_len") is not None:
+                if item["bit_len"] != current.get("bit_len"):
+                    self._add_command(name, item["bit_len"])
+            elif self.state in ("replaced", "overridden") and current.get("bit_len") is not None:
+                self._add_command(name, None)  # unnamed: back to the device default
 
     def _add_command(self, name, bit_len):
         if bit_len is None:

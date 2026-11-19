@@ -5,7 +5,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import re
 
 __metaclass__ = type
 
@@ -25,8 +24,15 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ethernet_line import (
+    LINE_FLAGS,
+    LINE_VALUES,
+    MAU_FLAGS,
+    MAU_VALUES,
+    TCA_FLAGS,
+    TCA_THRESHOLDS,
     Ethernet_lineTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import iter_cli_fields
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.ethernet_line.ethernet_line import (
     Ethernet_lineArgs,
 )
@@ -66,10 +72,9 @@ class Ethernet_lineFacts(object):
             data = self.get_config(connection)
         data = unwrap_response(data)
         lines = str(data or "").splitlines()
-        if any(line.strip().startswith("configure ethernet line ") for line in lines):
-            data = self._compact_lines(lines, "configure ethernet line ")
-        else:
-            data = flatten_indented_tree(data)
+        if not any(line.strip().startswith("configure ethernet line ") for line in lines):
+            lines = flatten_indented_tree(data) or []
+        data = self._split_attributes(lines, "configure ethernet line ")
 
         # parse native config using the Ethernet_line template
         ethernet_line_parser = Ethernet_lineTemplate(lines=data, module=self._module)
@@ -77,7 +82,8 @@ class Ethernet_lineFacts(object):
         objs = list(ethernet_line_parser.parse().values())
 
         for item in objs:
-            item["mau"] = list(item["mau"].values())
+            if "mau" in item:
+                item["mau"] = list(item["mau"].values())
 
         ansible_facts['ansible_network_resources'].pop('ethernet_line', None)
 
@@ -91,18 +97,25 @@ class Ethernet_lineFacts(object):
         return ansible_facts
 
     @staticmethod
-    def _compact_lines(lines, prefix):
-        clauses = re.compile(
-            r"(?:port-type\s+\S+|(?:no\s+)?admin-up|"
-            r"mau\s+\d+\s+(?:type|power)\s+\S+|"
-            r"tca-line-threshold\s+(?:no\s+)?(?:enable|los|fcs|rx-octets|tx-octets|los-day|fcs-day|rx-octets-day|tx-octets-day)(?:\s+\S+)?)"
-        )
+    def _split_attributes(lines, prefix):
+        """Split each device line into one line per attribute (the template parses one
+        attribute per line): 'configure ethernet line <id> mau 1 type X power down' becomes
+        '... mau 1 type X' and '... mau 1 power down'."""
         result = []
         for raw in lines:
             line = raw.strip()
             if not line.startswith(prefix):
                 continue
-            identifier, body = line[len(prefix):].split(None, 1)
-            matches = list(clauses.finditer(body))
-            result.extend(prefix + identifier + " " + match.group(0) for match in matches)
+            tokens = line[len(prefix):].split()
+            if len(tokens) < 2:
+                continue
+            scope, rest = prefix + tokens[0], tokens[1:]
+            if rest[0] == "tca-line-threshold":
+                scope, rest, flags, values = scope + " tca-line-threshold", rest[1:], TCA_FLAGS, TCA_THRESHOLDS
+            elif rest[0] == "mau" and len(rest) > 1:
+                scope, rest, flags, values = "%s mau %s" % (scope, rest[1]), rest[2:], MAU_FLAGS, MAU_VALUES
+            else:
+                flags, values = LINE_FLAGS, LINE_VALUES
+            for negate, key, value in iter_cli_fields(rest, bool_fields=flags, value_fields=values):
+                result.append(" ".join(word for word in (scope, "no" if negate else "", key, value or "") if word))
         return result

@@ -4,11 +4,13 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
     compact_cli_commands,
 )
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import get_from_dict, to_list
 
 
 _resource_module_addcmd = ResourceModule.addcmd
 _resource_module_result = ResourceModule.result.fget
 _resource_module_run_commands = ResourceModule.run_commands
+_resource_module_compare = ResourceModule.compare
 ResourceModule.COMPACT_COMMAND_SCOPES = ()
 
 
@@ -77,6 +79,20 @@ def _isam_run_commands(self):
     return _resource_module_run_commands(self)
 
 
+def _isam_compare(self, parsers, want=None, have=None):
+    """Render explicit false flags instead of dropping them against empty facts."""
+    if self.state != "rendered" or not self.__class__.__module__.startswith("ansible_collections.nokia.isam."):
+        return _resource_module_compare(self, parsers, want=want, have=have)
+    want = self.want if want is None else want
+    for parser in to_list(parsers):
+        compval = self._tmplt.get_parser(parser).get("compval") or parser
+        if get_from_dict(want, compval) is False:
+            self.addcmd(want, parser, True)
+        else:
+            _resource_module_compare(self, [parser], want=want, have=have)
+
+
 ResourceModule.addcmd = _isam_addcmd
 ResourceModule.result = property(_isam_result)
 ResourceModule.run_commands = _isam_run_commands
+ResourceModule.compare = _isam_compare

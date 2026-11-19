@@ -210,5 +210,10 @@ class Connection(NetworkCliConnection):
             except Exception:
                 pass
         self._ssh_shell = None
-        self._ssh_type_conn = None
+        # Keep the transport object: it reconnects on the next _connect(). Its options
+        # (remote_addr, credentials, ...) are only pushed by set_options() when the
+        # connection is set up; a newly created libssh transport has none and fails
+        # with "Hostname required" -- after every write (edit_config resets) and after
+        # every retried connect. (netcommon's paramiko transport reads its parent's
+        # options, which hid this.)
         self._connected = False

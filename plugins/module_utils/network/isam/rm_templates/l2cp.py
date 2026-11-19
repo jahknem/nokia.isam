@@ -74,10 +74,8 @@ class L2cpSessionTemplate(object):
                 continue
             command = ["configure", "l2cp", "session", name, "bras-ip-address", str(item["bras_ip_address"])]
             for field, cli_name in cli_fields:
-                if field in item and item[field] is not None:
+                if item.get(field) is not None:
                     command.extend((cli_name, str(item[field])))
-                elif field in item:
-                    command.extend(("no", cli_name))
             if item.get("sig_partition_id") is not None:
                 command.extend((["sig-partition-id"] if item["sig_partition_id"] else ["no", "sig-partition-id"]))
             commands.append(" ".join(command))

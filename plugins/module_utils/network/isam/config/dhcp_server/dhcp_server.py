@@ -60,8 +60,11 @@ class Isam_dhcp_server(ResourceModule):
             want = {}
 
         self.compare(parsers=self.parsers, want=want, have=have)
-        if self.want.get("lease_time_enabled") is False and self.have.get("lease_time_enabled") is not False:
-            self.commands.append("configure dhcp-server no lease-time")
+        # compare() skips False when the device shows no lease-time line at all
+        reset = "configure dhcp-server no lease-time"
+        if self.want.get("lease_time_enabled") is False and self.have.get("lease_time_enabled") is not False \
+                and reset not in self.commands:
+            self.commands.append(reset)
 
     def _normalize_config(self, config):
         normalized = deepcopy(config or {})

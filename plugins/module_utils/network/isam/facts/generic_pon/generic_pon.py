@@ -63,15 +63,16 @@ class Generic_ponFacts(object):
                     result.append(line)
                 continue
             tokens = line.split()
+            path_length = 4 if tokens[2:4] == ["utilization", "threshold"] else 3
             starts = [
-                index for index, token in enumerate(tokens[3:], 3)
-                if (token in self._PACKED_WORDS and (index == 3 or tokens[index - 1] != "no"))
+                index for index, token in enumerate(tokens[path_length:], path_length)
+                if (token in self._PACKED_WORDS and (index == path_length or tokens[index - 1] != "no"))
                 or (token == "no" and index + 1 < len(tokens) and tokens[index + 1] in self._PACKED_WORDS)
             ]
             if not starts:
                 result.append(line)
                 continue
-            prefix = " ".join(tokens[:3])
+            prefix = " ".join(tokens[:path_length])
             result.extend(
                 prefix + " " + " ".join(tokens[start:end])
                 for start, end in zip(starts, starts[1:] + [len(tokens)])

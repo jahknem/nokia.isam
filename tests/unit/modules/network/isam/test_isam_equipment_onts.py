@@ -79,7 +79,9 @@ class TestIsamEquipmentOntsModule(TestIsamModule):
             ignore_provider_arg,
         )
         commands = [
-            "configure equipment ont interface 1/1/5/1/1 sw-ver-pland auto sernum ALCL:F9772423 fec-up disable bridge-map-mode n-mp-bridge-map-filter ont-enable enable p2p-enable enable admin-state up",
+            "configure equipment ont interface 1/1/5/1/1 sw-ver-pland auto sernum ALCL:F9772423 fec-up disable bridge-map-mode n-mp-bridge-map-filter ont-enable enable p2p-enable enable",
+            # admin-state is its own command: the device rejects it on the creating line
+            "configure equipment ont interface 1/1/5/1/1 admin-state up",
             "configure equipment ont slot 1/1/5/1/1/1 planned-card-type ethernet plndnumdataports 1 plndnumvoiceports 0",
             "configure equipment ont sw-ctrl 1 hw-version 3FE47211AB* ont-variant DO",
         ]
@@ -177,6 +179,7 @@ class TestIsamEquipmentOntsModule(TestIsamModule):
             result["commands"],
             [
                 "configure equipment ont interface 1/1/5/1/1 admin-state down",
+                "configure equipment ont slot 1/1/5/1/1/1 admin-state down",
                 "configure equipment ont no slot 1/1/5/1/1/1",
                 "configure equipment ont no interface 1/1/5/1/1",
             ],

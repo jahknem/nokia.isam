@@ -14,14 +14,14 @@ class TestIsamSecurityExtAuthenticatorModule(TestIsamModule):
             set_module_args({
                 "_ansible_check_mode": True,
                 "config": [
-                    {"port": "1/1/1/1"},
+                    {"port": "1/1/1/1", "clear_statistics": True},
                     {"port": "1/1/1/2", "clear_statistics": True},
                 ],
             }, True)
             result = self.execute_module(changed=True)
         get_connection.assert_not_called()
         self.assertEqual(result["commands"], [
-            "admin security ext-authenticator 1/1/1/1",
+            "admin security ext-authenticator 1/1/1/1 clear-statistics",
             "admin security ext-authenticator 1/1/1/2 clear-statistics",
         ])
 
@@ -45,13 +45,13 @@ class TestIsamSecurityExtAuthenticatorModule(TestIsamModule):
         get_connection.return_value = connection
         try:
             set_module_args(
-                {"config": [{"port": "1/1/1/1"}]},
+                {"config": [{"port": "1/1/1/1", "clear_statistics": True}]},
                 False,
             )
             result = self.execute_module(changed=True)
             self.assertEqual(
                 result["commands"],
-                ["admin security ext-authenticator 1/1/1/1"],
+                ["admin security ext-authenticator 1/1/1/1 clear-statistics"],
             )
         finally:
             connection_patch.stop()

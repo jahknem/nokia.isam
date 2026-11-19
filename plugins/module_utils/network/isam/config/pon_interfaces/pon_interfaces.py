@@ -8,7 +8,39 @@ from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import dict_merge
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.pon_interfaces import Pon_interfacesTemplate
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.pon_interfaces import (
+    NAME_DEPENDENT_DEFAULTS,
+    PON_DEFAULTS,
+    Pon_interfacesTemplate,
+    pon_default,
+)
+
+
+# A value equal to its device default is the same as unset. Otherwise the targeted
+# 'flat detail' comparison read (which prints every default) makes replaced/overridden
+# "reset" defaults that a config taken from a plain read leaves out -- including a
+# restricted-field change that bounces the PON through admin-state down/up.
+# admin_state, label and the nested PM settings are deliberately not covered.
+DEFAULTED_FIELDS = tuple(PON_DEFAULTS) + tuple(NAME_DEPENDENT_DEFAULTS)
+
+
+def _without_defaults(entry, keep=()):
+    """entry without values equal to their device default (fields in keep excepted)."""
+    out = dict(entry)
+    for field in DEFAULTED_FIELDS:
+        value = out.get(field)
+        if value is not None and field not in keep and str(value) == str(pon_default(field, out.get("name"))):
+            out.pop(field)
+    # tc-layer: 'no pm-collect' (detail) parses to pm-enable without TCA, the default
+    tc_layer = out.get("tc_layer")
+    if isinstance(tc_layer, dict) and "tc_layer" not in keep and tc_layer.get("pm_collect") in (None, "pm-enable") \
+            and not tc_layer.get("tca_enable"):
+        rest = dict((k, v) for k, v in tc_layer.items() if k not in ("pm_collect", "tca_enable"))
+        if rest:
+            out["tc_layer"] = rest
+        else:
+            out.pop("tc_layer")
+    return out
 
 
 class Pon_interfaces(ResourceModule):
@@ -98,8 +130,10 @@ class Pon_interfaces(ResourceModule):
         return self.result
 
     def generate_commands(self):
-        wantd = {entry["name"]: entry for entry in self.want}
-        haved = {entry["name"]: entry for entry in self.have}
+        haved = {entry["name"]: _without_defaults(entry) for entry in self.have}
+        wantd = {}
+        for entry in self.want:
+            wantd[entry["name"]] = _without_defaults(entry, self._kept_defaults(haved.get(entry["name"], {})))
 
         if self.state == "merged":
             wantd = dict_merge(haved, wantd)
@@ -123,6 +157,19 @@ class Pon_interfaces(ResourceModule):
 
         for k, want in iteritems(wantd):
             self._compare(want=want, have=haved.pop(k, {}))
+
+    def _kept_defaults(self, have):
+        """Fields whose wanted default value is sent rather than treated as unset.
+
+        rendered renders what was asked for; merged must still set an explicit default
+        where the device holds another value; replaced/overridden reset to the default
+        anyway (no <attr>).
+        """
+        if self.state == "rendered":
+            return set(DEFAULTED_FIELDS) | {"tc_layer"}
+        if self.state == "merged":
+            return set(field for field in have if field in DEFAULTED_FIELDS or field == "tc_layer")
+        return set()
 
     def addcmd(self, data, tmplt, negate=False):
         parser = self._tmplt.get_parser(tmplt)

@@ -28,11 +28,23 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
     Facts,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    deleted_targets,
     normalize_resource_keys,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.interfaces import (
     InterfacesTemplate,
 )
+
+
+# Flags whose device default is off. 'false' is printed only by the targeted 'detail'
+# comparison read ('no admin-up'); the plain read omits it, so false means unset.
+DEFAULT_OFF_FLAGS = ("admin_up", "link_updown_trap")
+
+
+def _without_false_flags(entry, keep=()):
+    """entry without default-off flags set to False (flags in keep excepted)."""
+    return dict((k, v) for k, v in entry.items()
+                if not (k in DEFAULT_OFF_FLAGS and v is False and k not in keep))
 
 
 class Interfaces(ResourceModule):
@@ -79,20 +91,30 @@ class Interfaces(ResourceModule):
         """
         wantd = self._index_by_id(self.want)
         haved = self._index_by_id(self.have)
+        # replaced/overridden must not re-send the defaults the detail read prints; an
+        # explicit false is still sent in merged where the device has the flag set, and
+        # rendered renders what was asked for.
+        haved = dict((k, _without_false_flags(v)) for k, v in iteritems(haved))
+        if self.state == "deleted":
+            # before want's false flags are dropped: "admin_up: false" names the attribute too
+            for target, have in deleted_targets(wantd, haved, ("name", "id")):
+                self._compare(want=target, have=have)
+            return
+        for k, v in iteritems(dict(wantd)):
+            if self.state == "rendered":
+                keep = DEFAULT_OFF_FLAGS
+            elif self.state == "merged":
+                keep = [flag for flag in DEFAULT_OFF_FLAGS if haved.get(k, {}).get(flag)]
+            else:
+                keep = ()
+            wantd[k] = _without_false_flags(v, keep)
 
         # if state is merged, merge want onto have and then compare
         if self.state == "merged":
             wantd = dict_merge(haved, wantd)
 
-        # if state is deleted, empty out wantd and set haved to wantd
-        if self.state == "deleted":
-            haved = {
-                k: v for k, v in iteritems(haved) if k in wantd or not wantd
-            }
-            wantd = {}
-
-        # remove superfluous config for overridden and deleted
-        if self.state in ["overridden", "deleted"]:
+        # remove superfluous config for overridden
+        if self.state == "overridden":
             for k, have in iteritems(haved):
                 if k not in wantd:
                     self._compare(want={}, have=have)

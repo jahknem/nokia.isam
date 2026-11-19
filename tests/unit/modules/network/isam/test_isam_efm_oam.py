@@ -50,3 +50,39 @@ class TestEfmOam(TestIsamModule):
         }, True)
         result = self.execute_module(changed=False)
         self.assertEqual(result["commands"], [])
+
+
+PORT = "configure efm-oam interface 1/1/6/5 admin-up response-intvl 7\n"
+
+
+def _efm(monkeypatch, state, config, running=PORT):
+    from .module_runner import run_module
+
+    return run_module(monkeypatch, "isam_efm_oam_interface", {"state": state, "config": config}, running)["commands"]
+
+
+def test_merged_compares_with_the_device_and_keeps_unnamed_attributes(monkeypatch):
+    """Lab ISAM: merged re-sent the whole port every run and reset unnamed intervals."""
+    assert _efm(monkeypatch, "merged", [{"name": "1/1/6/5", "admin_up": True}]) == []
+    assert _efm(monkeypatch, "merged", [{"name": "1/1/6/5", "keep_alive_intvl": "5"}]) == [
+        "configure efm-oam interface 1/1/6/5 keep-alive-intvl 5"]
+    assert _efm(monkeypatch, "merged", [{"name": "1/1/6/7", "admin_up": True}], running="") == [
+        "configure efm-oam interface 1/1/6/7 admin-up"]
+
+
+def test_replaced_overridden_and_deleted_reset_to_the_defaults(monkeypatch):
+    assert _efm(monkeypatch, "replaced", [{"name": "1/1/6/5", "admin_up": True}]) == [
+        "configure efm-oam interface 1/1/6/5 no response-intvl"]
+    assert _efm(monkeypatch, "overridden", [{"name": "1/1/6/7", "admin_up": True}]) == [
+        "configure efm-oam interface 1/1/6/7 admin-up",
+        "configure efm-oam interface 1/1/6/5 no admin-up no response-intvl"]
+    assert _efm(monkeypatch, "deleted", [{"name": "1/1/6/5"}]) == [
+        "configure efm-oam interface 1/1/6/5 no admin-up no response-intvl"]
+    assert _efm(monkeypatch, "deleted", [{"name": "1/1/6/5"}], running="") == []
+
+
+def test_an_interval_at_its_device_default_equals_the_unset_interval(monkeypatch):
+    """Lab ISAM: 'response-intvl 5' is the default and not shown afterwards."""
+    running = "configure efm-oam interface 1/1/6/5 admin-up\n"
+    assert _efm(monkeypatch, "merged", [{"name": "1/1/6/5", "response_intvl": "5"}], running) == []
+    assert _efm(monkeypatch, "merged", [{"name": "1/1/6/5", "keep_alive_intvl": "300"}], running) == []

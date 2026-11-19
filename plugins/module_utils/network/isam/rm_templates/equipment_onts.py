@@ -24,7 +24,9 @@ class Equipment_ontsTemplate(NetworkTemplate):
             "result": {"interfaces": {"{{ ont_idx }}": {"ont_idx": "{{ ont_idx }}", "sw_ver_pland": "{{ sw_ver_pland }}"}}},
         },
         {"name": "interface.sernum", "setval": "configure equipment ont interface {{ ont_idx }} sernum {{ sernum }}", "remval": "configure equipment ont interface {{ ont_idx }} no sernum"},
-        {"name": "interface.subslocid", "setval": "configure equipment ont interface {{ ont_idx }} subslocid {{ subslocid }}", "remval": "configure equipment ont interface {{ ont_idx }} no subslocid"},
+        {"name": "interface.subslocid", "setval": "configure equipment ont interface {{ ont_idx }} subslocid {{ subslocid }}",
+         # no 'no subslocid' form (the device rejects it): a value is kept, with a warning
+         "no_remval": True},
         {"name": "interface.fec_up", "setval": "configure equipment ont interface {{ ont_idx }} fec-up {{ fec_up }}", "remval": "configure equipment ont interface {{ ont_idx }} no fec-up"},
         {"name": "interface.sw_dnload_version", "setval": "configure equipment ont interface {{ ont_idx }} sw-dnload-version {{ sw_dnload_version }}", "remval": "configure equipment ont interface {{ ont_idx }} no sw-dnload-version"},
         {"name": "interface.plnd_var", "setval": "configure equipment ont interface {{ ont_idx }} plnd-var {{ plnd_var }}", "remval": "configure equipment ont interface {{ ont_idx }} no plnd-var"},

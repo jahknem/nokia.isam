@@ -80,14 +80,18 @@ class Qos_maps(ResourceModule):
                 merged = dict_merge(have_dict, want_dict)
                 wantd[field] = list(merged.values())
 
-        # deleted: if want is empty, delete every field and return
+        # deleted: without config every entry; with config only the named entries of the
+        # named maps. The device's entry is rendered, so naming the identity is enough.
         if self.state == "deleted":
+            named = dict((field, set(self._key(e, field) for e in wantd.get(field) or []))
+                         for field in wantd if wantd.get(field))
             for field in list(haved.keys()):
-                if field not in wantd or not wantd:
-                    self._del_commands(haved.get(field), field)
-            if not wantd:
-                self.commands = list(dict.fromkeys(self.commands))
-                return
+                if named and field not in named:
+                    continue
+                self._del_commands([e for e in haved.get(field) or []
+                                    if not named or self._key(e, field) in named[field]], field)
+            self.commands = list(dict.fromkeys(self.commands))
+            return
 
         # overridden/deleted: remove entire fields present in have but absent from want
         if self.state in ["overridden", "deleted"]:

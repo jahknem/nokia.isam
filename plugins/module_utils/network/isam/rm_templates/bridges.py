@@ -371,7 +371,7 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_best_effort>no\sprior-best-effort)|(prior-best-effort\s(?P<prior_best_effort>\S+))
                 $""", re.VERBOSE),
-            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-best-effort {{ prior_best_effort }}",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} {{ '' if prior_best_effort else 'no ' }}prior-best-effort",
             "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-best-effort",
             "result": {
                 "port": {
@@ -391,7 +391,7 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_background>no\sprior-background)|(prior-background\s(?P<prior_background>\S+))
                 $""", re.VERBOSE),
-            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-background {{ prior_background }}",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} {{ '' if prior_background else 'no ' }}prior-background",
             "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-background",
             "result": {
                 "port": {
@@ -411,7 +411,7 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_spare>no\sprior-spar)|(prior-spare\s(?P<prior_spare>\S+))
                 $""", re.VERBOSE),
-            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-spare {{ prior_spare }}",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} {{ '' if prior_spare else 'no ' }}prior-spare",
             "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-spare",
             "result": {
                 "port": {
@@ -431,7 +431,7 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_exc_effort>no\sprior-exc-effort)|(prior-exc-effort\s(?P<prior_exc_effort>\S+))
                 $""", re.VERBOSE),
-            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-exc-effort {{ prior_exc_effort }}",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} {{ '' if prior_exc_effort else 'no ' }}prior-exc-effort",
             "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-exc-effort",
             "result": {
                 "port": {
@@ -451,7 +451,7 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_ctrl_load>no\sprior-ctrl-load)|(prior-ctrl-load\s(?P<prior_ctrl_load>\S+))
                 $""", re.VERBOSE),
-            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-ctrl-load {{ prior_ctrl_load }}",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} {{ '' if prior_ctrl_load else 'no ' }}prior-ctrl-load",
             "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-ctrl-load",
             "result": {
                 "port": {
@@ -471,7 +471,7 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_less_100ms>no\sprior-less-100ms)|(prior-less-100ms\s(?P<prior_less_100ms>\S+))
                 $""", re.VERBOSE),
-            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-less-100ms {{ prior_less_100ms }}",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} {{ '' if prior_less_100ms else 'no ' }}prior-less-100ms",
             "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-less-100ms",
             "result": {
                 "port": {
@@ -491,7 +491,7 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_less_10ms>no\sprior-less-10ms)|(prior-less-10ms\s(?P<prior_less_10ms>\S+))
                 $""", re.VERBOSE),
-            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-less-10ms {{ prior_less_10ms }}",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} {{ '' if prior_less_10ms else 'no ' }}prior-less-10ms",
             "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-less-10ms",
             "result": {
                 "port": {
@@ -511,7 +511,7 @@ class BridgesTemplate(NetworkTemplate):
                 r"""
                 configure\sbridge\sport\s(?P<id>\S+)\svlan-id\s(?P<negate_prior_nw_ctrl>no\sprior-nw-ctrl)|(prior-nw-ctrl\s(?P<prior_nw_ctrl>\S+))
                 $""", re.VERBOSE),
-            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} prior-nw-ctrl {{ prior_nw_ctrl }}",
+            "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} {{ '' if prior_nw_ctrl else 'no ' }}prior-nw-ctrl",
             "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no prior-nw-ctrl",
             "result": {
                 "port": {
@@ -714,6 +714,8 @@ class BridgesTemplate(NetworkTemplate):
                 \s+tpid\s(?P<tpid>[a-zA-Z0-9_]*)
                 $""", re.VERBOSE),
             "setval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} tpid {{ tpid }}",
+            # "no tpid" is the form "flat detail" prints for the default (8100).
+            "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no tpid",
             "result": {
                 "port": {
                     "{{ id }}": {

@@ -67,9 +67,9 @@ class _Base(ResourceModule):
 
     def _delete_command(self, item):
         key = item.get("name", item.get("id"))
-        if self.resource == "ngpon2_channel_groups":
+        if self._resource == "ngpon2_channel_groups":
             return "configure channel-group no id %s" % key
-        if self.resource == "epon_interfaces":
+        if self._resource == "epon_interfaces":
             return "configure epon no interface %s" % key
         return "configure channel-pair no interface %s" % key
 

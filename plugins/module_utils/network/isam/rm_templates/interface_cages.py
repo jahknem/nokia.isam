@@ -48,6 +48,9 @@ class InterfaceCagesTemplate(NetworkTemplate):
                 r"^configure\sinterface\scage\s(?P<id>\S+)\soperational-mode\s(?P<operational_mode>\S+)\s*$"
             ),
             "setval": "configure interface cage {{ id }} operational-mode {{ operational_mode }}",
+            # Help syntax: [ operational-mode <mode> ] -- no 'no' form. Cages are fixed
+            # positions, so deleted/overridden keep the mode (with a warning).
+            "no_remval": True,
             "result": {
                 "{{ id }}": {
                     "id": "{{ id }}",

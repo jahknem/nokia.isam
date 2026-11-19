@@ -5,6 +5,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from copy import deepcopy
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import deleted_targets
 
 from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
@@ -56,7 +57,9 @@ class Xdsl_boards(ResourceModule):
     def generate_commands(self):
         want = self.want or {"boards": [], "vp_boards": []}
         have = self.have or {"boards": [], "vp_boards": []}
-        delete_all = self.state == "deleted" and not self.want
+        # Without config ResourceModule supplies empty_fact_val, a truthy dict of
+        # empty lists: test the contents, otherwise deleted would silently do nothing.
+        delete_all = self.state == "deleted" and not any(want.values())
 
         self._compare_section(
             want.get("boards") or [],
@@ -82,15 +85,14 @@ class Xdsl_boards(ResourceModule):
         if self.state == "deleted":
             if not requested:
                 return
-            for item_key, have in iteritems(haved):
-                if not wantd or item_key in wantd:
-                    self.addcmd(have, parser_prefix, negate=True)
+            for target, have in deleted_targets(wantd, haved, (key,)):
+                self._reset_entry(target, have, parser_prefix, fields)
             return
 
         if self.state in ["overridden"]:
             for item_key, have in iteritems(haved):
                 if item_key not in wantd:
-                    self.addcmd(have, parser_prefix, negate=True)
+                    self._reset_entry({}, have, parser_prefix, fields)
 
         for item_key, want in iteritems(wantd):
             have = haved.get(item_key, {})
@@ -99,6 +101,12 @@ class Xdsl_boards(ResourceModule):
                 desired = deepcopy(have)
                 desired.update(want)
             self._compare_entry(desired, have, parser_prefix, fields)
+
+    def _reset_entry(self, want, have, parser_prefix, fields):
+        """Boards cannot be removed: only their resettable settings are cleared."""
+        for field in fields:
+            if have.get(field) is not None and want.get(field) is None:
+                self.addcmd(have, "%s.%s" % (parser_prefix, field), negate=True)
 
     def _compare_entry(self, want, have, parser_prefix, fields):
         for field in fields:
