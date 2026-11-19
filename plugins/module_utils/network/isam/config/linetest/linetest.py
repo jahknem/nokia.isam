@@ -10,6 +10,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.linetest import (
     LinetestTemplate,
+    RESET_FIELDS,
 )
 
 
@@ -34,10 +35,10 @@ class Linetest(IsamResourceModule):
         )
 
     def generate_commands(self):
-        # The raw config (not self.want) is used on purpose: Ansible fills omitted
-        # options with None, and the template renders None for group-opt/busy-overwrite/
-        # force-measure as their trailing-no reset form. remove_empties would drop those.
-        config = self._module.params.get("config") or {}
+        # Ansible fills omitted options with None. Those are not reset requests:
+        # merged/rendered must preserve omissions. Replaced generates supported
+        # resets explicitly, against the current session, in _diff_commands.
+        config = self.want or {}
         if self.state == "rendered":
             self.commands = self.template.render(config)
             return
@@ -55,7 +56,7 @@ class Linetest(IsamResourceModule):
         }
 
         if state == "deleted":
-            targets = desired or current
+            targets = desired if any(desired.values()) else current
             # A parameter has no delete command; only its session can be destroyed.
             if targets.get("parameters") and not targets.get("sessions"):
                 self._module.fail_json(msg="LineTest parameters have no supported delete command; delete their session instead")
@@ -89,12 +90,6 @@ class Linetest(IsamResourceModule):
             )
             if any(key in current_parameters for key in set(current_parameters) - desired_parameters):
                 self._module.fail_json(msg="LineTest parameters have no supported delete command; delete their session instead")
-        else:  # replaced
-            commands.extend(
-                self.template.render({"parameters": [item]})[0]
-                for item in desired.get("parameters") or []
-                if (item["session_id"], item["test_name"]) in current_parameters
-            )
         return commands + self._diff_commands(current, desired)
 
     def _diff_commands(self, current, desired):
@@ -107,6 +102,10 @@ class Linetest(IsamResourceModule):
         for item in desired.get("sessions") or []:
             previous = current_sessions.get(item["session_id"], {})
             changed = {key: value for key, value in item.items() if previous.get(key) != value}
+            if self.state in ("replaced", "overridden"):
+                changed.update((field.replace("-", "_"), None) for field in RESET_FIELDS
+                               if item.get(field.replace("-", "_")) is None and
+                               previous.get(field.replace("-", "_")) is not None)
             if changed:
                 commands.extend(self.template.render({"sessions": [dict(changed, session_id=item["session_id"])]}))
         for item in desired.get("parameters") or []:

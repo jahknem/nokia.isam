@@ -287,11 +287,11 @@ def compact_cli_commands(commands, scopes):
     return compacted
 
 
-_MASKED_SECRET = re.compile(r"^(?:plain:|encrypted:)?\*+$")
+_MASKED_SECRET = re.compile(r"^(?:plain:|encrypted:)?(?:\*+|VALUE_SPECIFIED_IN_NO_LOG_PARAMETER)$")
 
 
 def is_masked_secret(value):
-    """A secret as the device displays it (e.g. ``plain:******``), not a usable value."""
+    """A device or Ansible-redacted secret, never a usable credential value."""
     return isinstance(value, str) and bool(_MASKED_SECRET.match(value))
 
 

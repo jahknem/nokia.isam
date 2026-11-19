@@ -12,6 +12,14 @@ short_description: Manages Nokia ISAM system security (operators, profiles, SNMP
 description:
   - Manages C(configure system security) on Nokia ISAM.
   - Secret values (operator, SFTP and file transfer passwords, RADIUS secrets, SNMP community strings) are redacted in output.
+  - Replayed device or Ansible-redacted credential values preserve existing credentials;
+    they are never sent as passwords or secrets and cannot create new entries.
+  - With C(merged) or C(replaced), entries whose identity is redacted (such as an SNMP
+    community name) are left unchanged with a warning. Supply the concrete identity to
+    manage them. Redacted identities are rejected in C(rendered), C(deleted), C(overridden)
+    and targeted C(gathered); the module never guesses which hidden object was intended.
+  - A redacted community embedded in a notify profile's C(snmp_version) preserves the
+    existing version only; supply a concrete community to create or change the version.
   - Instance lists are matched by their identity. Instances that can be created are removed with
     C(no <node> <identity>); fixed instances (slots, MAC filters, 802.1X ports) and settings blocks are
     reset attribute by attribute with C(no <attr>).

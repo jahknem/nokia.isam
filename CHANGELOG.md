@@ -108,6 +108,21 @@ validation records do not imply authorization to run disruptive actions.
     document that R6.2.04m shows the setting in no read.
 ### Shared infrastructure, state semantics and safety
 
+- Fixed redacted gathered-facts replay in `system_security`: device masks and Ansible's
+  `VALUE_SPECIFIED_IN_NO_LOG_PARAMETER` preserve existing secrets rather than generating
+  placeholder credential commands. Masked credentials are omitted from unrelated updates
+  and rejected when creating/rendering entries; concrete credential updates still work.
+  Redacted identities are never guessed: merged/replaced leave those entries unchanged
+  with a warning, while destructive states, rendering and targeted gathering reject them.
+  Embedded redacted notify-profile communities preserve the existing SNMP version only.
+  The live gathered -> merged/replaced check now returns no commands; removed the
+  masked-security exception from the integration assertion.
+- Fixed configured LineTest replay: replaced no longer resends an unchanged parameter,
+  and Ansible-injected unset options no longer cause spurious resets in merged/rendered.
+  Replaced/overridden reset supported omitted options only when currently configured.
+  Added configured offline merged/replaced and parse-render-parse coverage for all eight
+  resources that were empty during lab verification. This does not claim live writes.
+
 - Maintainability sweep: the common resource execution lifecycle now lives in
   `IsamResourceModule`, replacing copied implementations across the collection;
   custom execution paths remain explicit. Recursive changed/omitted-value comparison
