@@ -14,6 +14,7 @@ module_utils/network/isam/facts/<family>/        read: device text -> facts
 module_utils/network/isam/rm_templates/<family>  parsers
 module_utils/network/isam/config/<family>/       write: want + have -> commands
 module_utils/network/isam/resource_module.py     IsamResourceModule (base of every config class)
+module_utils/network/isam/action_module.py       IsamActionModule (base of operational action modules)
 module_utils/network/isam/common.py              shared helpers (parsing, state semantics)
 ```
 
@@ -83,6 +84,39 @@ accepted only at creation (fail early with a clear message), objects without a r
 command (reset their attributes), values shown for unset (`none`, `not-applicable`).
 
 Compare typed values (ints as ints); do not paper over type differences with `str()`.
+
+## Action modules (operational commands)
+
+Some device commands are one-shot **operations**, not persistent configuration: clearing
+counters, rebooting an ONT or linecard, triggering a line test, a protection switchover,
+a diagnostic ping. These are usually `admin ...` commands. They get an **action module**
+on `IsamActionModule` (`module_utils/network/isam/action_module.py`), not on
+`IsamResourceModule`. Reference: `isam_security_ext_authenticator`.
+
+Three things that are easy to confuse:
+
+- An **Ansible action plugin** (`plugins/action/`) is a controller-side execution helper;
+  it does not implement device operations. `IsamActionModule` is *not* one of these.
+- A **resource module** manages declarative persistent configuration with the states
+  above and idempotence.
+- An **action module** writes to the device but performs an event: no resource states, no
+  facts to gather, not idempotent. `changed` means "an operation was sent".
+
+The base keeps only the execution mechanics (check mode, sending, collecting responses,
+propagating failures). Device behaviour belongs to the module:
+
+- `build_commands` must require an **explicit operation**. A bare resource identifier
+  without an operation only navigates the ISAM admin hierarchy (CLI guide, global
+  commands) and is not an action -- reject it, do not report a change.
+- `verify` (optional) checks completion from the responses; override it for operations
+  needing a confirmation, a reconnect or a follow-up read. Never assume success just
+  because a command was sent.
+
+Not every `admin` command is a stateless one-shot (e.g. an Ethernet loopback is temporary
+operational state), and some `configure` commands execute actions (e.g. `configure
+linetest single ltsession ... session-cmd create|destroy`). Model those by what they do,
+not by their verb. The cliconf resets the CLI context (`exit all`) before both `configure`
+and `admin` commands, since both are absolute paths from the root.
 
 ## Tests
 
