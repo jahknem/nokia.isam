@@ -263,7 +263,7 @@ def test_vlan_live_flat_fixture_is_parseable():
 
     assert descriptor["command"] == "info configure vlan id flat"
     assert parsed[99]["mode"] == "residential-bridge"
-    assert parsed[99]["dhcp-opt82-ext"] == "add-or-forward"
+    assert parsed[99]["dhcp_opt82_ext"] == "add-or-forward"
     assert parsed[120]["priority"] == 5
 
 

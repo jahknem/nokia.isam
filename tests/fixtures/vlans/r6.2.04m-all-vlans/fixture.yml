@@ -1,0 +1,8 @@
+schema_version: 1
+resource: vlans
+device_type: Nokia ISAM 7330 FTTN
+software_version: R6.2.04m
+command: info configure vlan id flat (output.txt); info configure vlan id flat detail (output-detail.txt)
+captured_at: '2026-11-19'
+source: sanitized-live-capture
+description: All 47 VLANs of the lab ISAM; parse -> render reproduces output.txt exactly.

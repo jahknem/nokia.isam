@@ -8,754 +8,145 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 """
-The Vlans parser templates file. This contains
-a list of parser definitions and associated functions that
-facilitates both facts gathering and native command generation for
-the given network resource.
+Parser templates for the isam_vlans resource.
+
+The device prints a VLAN as two packed lines ('flat detail', lab ISAM)::
+
+    configure vlan id 99 mode residential-bridge name TR69-1 no sntp-proxy no priority ...
+    configure vlan id 99 no vmac-translation ... dhcp-opt82-ext add-or-forward ...
+
+VLAN_ATTRS below is the single description of that grammar: the facts split packed lines
+into one attribute per line with it, the parsers are generated from it (one per
+attribute), and the config class takes the device defaults from it.
 """
 
 import re
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (
     NetworkTemplate,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
-    canonical_key,
+
+# (option, CLI keyword, kind, device default) in the device's order.
+# kind: "flag" ([no] <kw>), "value" (<kw> <value> / no <kw>), "int" (value as int),
+# "set_only" (<kw> <value>, no removal form). A device default equals an unset value.
+VLAN_ATTRS = (
+    ("mode", "mode", "set_only", None),
+    ("name", "name", "value", None),
+    ("sntp_proxy", "sntp-proxy", "flag", False),
+    ("priority", "priority", "int", None),
+    ("vmac_not_in_opt61", "vmac-not-in-opt61", "flag", False),
+    ("new_broadcast", "new-broadcast", "value", "inherit"),
+    ("protocol_filter", "protocol-filter", "value", "pass-all"),
+    ("pppoe_relay_tag", "pppoe-relay-tag", "value", None),
+    ("drly_srv_usr_side", "drly-srv-usr-side", "flag", False),
+    ("new_secure_fwd", "new-secure-fwd", "value", None),
+    ("aging_time", "aging-time", "int", None),
+    ("l2cp_transparent", "l2cp-transparent", "flag", False),
+    ("in_qos_prof_name", "in-qos-prof-name", "value", None),
+    ("ipv4_mcast_ctrl", "ipv4-mcast-ctrl", "flag", False),
+    ("ipv6_mcast_ctrl", "ipv6-mcast-ctrl", "flag", False),
+    ("mac_mcast_ctrl", "mac-mcast-ctrl", "flag", False),
+    ("dis_proto_rip", "dis-proto-rip", "flag", False),
+    ("proto_ntp", "proto-ntp", "flag", False),
+    ("dis_ip_antispoof", "dis-ip-antispoof", "flag", False),
+    ("unknown_unicast", "unknown-unicast", "flag", False),
+    ("pt2ptgem_flooding", "pt2ptgem-flooding", "flag", False),
+    ("mac_movement_ctrl", "mac-movement-ctrl", "flag", False),
+    ("cvlan4095passthru", "cvlan4095passthru", "value", None),
+    ("arp_snooping", "arp-snooping", "flag", False),
+    ("arp_polling", "arp-polling", "flag", False),
+    ("arp_polling_ip", "arp-polling-ip", "value", None),
+    ("mac_unauth", "mac-unauth", "flag", False),
+    ("vmac_translation", "vmac-translation", "flag", False),
+    ("vmac_dnstr_filter", "vmac-dnstr-filter", "flag", False),
+    ("dhcp_opt82_ext", "dhcp-opt82-ext", "value", None),
+    ("dhcp_opt82_nni", "dhcp-opt82-nni", "flag", False),
+    ("dhcp_opt82_uplink", "dhcp-opt82-uplink", "flag", False),
+    ("circuit_id_dhcp", "circuit-id-dhcp", "value", None),
+    ("remote_id_dhcp", "remote-id-dhcp", "value", None),
+    ("relay_id_dhcp", "relay-id-dhcp", "flag", False),
+    ("dhcp_linerate", "dhcp-linerate", "flag", False),
+    ("pppoe_linerate", "pppoe-linerate", "flag", False),
+    ("dhcpv6_linerate", "dhcpv6-linerate", "flag", False),
+    ("pppoe_l2_encaps", "pppoe-l2-encaps", "flag", False),
+    ("dhcp_l2_encaps", "dhcp-l2-encaps", "flag", False),
+    ("dhcpv6_l2_encaps", "dhcpv6-l2-encaps", "flag", False),
+    ("l2_encaps1", "l2-encaps1", "flag", False),
+    ("pppoer_vlanaware", "pppoer-vlanaware", "flag", False),
+    ("dhcpr_vlanaware", "dhcpr-vlanaware", "flag", False),
+    ("dhcpv6r_vlanaware", "dhcpv6r-vlanaware", "flag", False),
+    ("circuit_id_pppoe", "circuit-id-pppoe", "value", None),
+    ("remote_id_pppoe", "remote-id-pppoe", "value", None),
+    ("dhcpv6_itf_id", "dhcpv6-itf-id", "value", None),
+    ("dhcpv6_remote_id", "dhcpv6-remote-id", "value", None),
+    ("dhcpv6_relay_id", "dhcpv6-relay-id", "flag", False),
+    ("dhcpv6_trst_port", "dhcpv6-trst-port", "flag", False),
+    ("enterprise_number", "enterprise-number", "int", None),
+    ("icmpv6_sec_fltr", "icmpv6-sec-fltr", "flag", False),
 )
 
+VLAN_DEFAULTS = dict((option, default) for option, _cli, _kind, default in VLAN_ATTRS if default is not None)
+VLAN_FLAG_KEYWORDS = tuple(cli for _option, cli, kind, _default in VLAN_ATTRS if kind == "flag")
+VLAN_VALUE_KEYWORDS = tuple(cli for _option, cli, kind, _default in VLAN_ATTRS if kind != "flag")
+
+_ID = r"^configure\svlan\sid\s(?P<id>\d+|stacked:\d+:\d+)\s"
+_SCOPE = "configure vlan id {{ id }}"
 
 
-# Device defaults (CLI guide): equal to an unset value. Facts do not report them and
-# requests never get them injected (they are not argspec defaults).
-VLAN_DEFAULTS = {"new-broadcast": "inherit", "protocol-filter": "pass-all", "drly-srv-usr-side": False}
+def _result(option, value):
+    return {"{{ id }}": {"id": "{{ id }}", option: value}}
+
+
+def _flag(option, cli):
+    return {
+        "name": option,
+        "getval": re.compile(_ID + r"(?P<negate>no\s)?" + re.escape(cli) + r"$"),
+        "setval": _SCOPE + " " + cli,
+        "remval": _SCOPE + " no " + cli,
+        "result": _result(option, "{{ False if negate is defined else True }}"),
+    }
+
+
+def _value(option, cli, kind):
+    parser = {
+        "name": option,
+        # a value may be quoted by the device ("name \"a b\"")
+        "getval": re.compile(_ID + r"(?:(?P<negate>no\s)" + re.escape(cli) + r"|" + re.escape(cli)
+                             + r"\s\"?(?P<value>.+?)\"?)$"),
+        "setval": _SCOPE + " " + cli + " {{ " + option + " }}",
+        "remval": _SCOPE + " no " + cli,
+        "result": _result(option, "{{ none if negate is defined else value" + ("|int" if kind == "int" else "") + " }}"),
+    }
+    if kind == "set_only":
+        del parser["remval"]
+        parser["no_remval"] = True
+    return parser
+
+
+def _name_setval(data):
+    """A name with characters beyond letters, digits and _.:- is sent in double quotes,
+    as the device prints it; single quotes are an invalid token (lab ISAM)."""
+    name = str(data["name"])
+    return "configure vlan id %s name %s" % (data["id"], name if re.match(r"^[A-Za-z0-9_.:-]+$", name) else '"%s"' % name)
+
+
+PARSERS = [{
+    # identity: a VLAN without attributes, creation and removal of the VLAN
+    "name": "id",
+    "getval": re.compile(r"^configure\svlan\sid\s(?P<id>\d+|stacked:\d+:\d+)$"),
+    "setval": _SCOPE,
+    "remval": "configure vlan no id {{ id }}",
+    "result": {"{{ id }}": {"id": "{{ id }}"}},
+}]
+for _option, _cli, _kind, _default in VLAN_ATTRS:
+    PARSERS.append(_flag(_option, _cli) if _kind == "flag" else _value(_option, _cli, _kind))
+for _parser in PARSERS:
+    if _parser["name"] == "name":
+        _parser["setval"] = _name_setval
+
 
 class VlansTemplate(NetworkTemplate):
     def __init__(self, lines=None, module=None):
         super(VlansTemplate, self).__init__(lines=lines, tmplt=self, module=module)
 
-    # fmt: off
-    PARSERS = [
-        {
-            'name': 'id',
-            'getval': re.compile(
-                r'''\bid\s+(?P<id>(?:\d+|stacked:\d+:\d+))\s*$''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                },
-            },
-            'shared': True,
-        },
-        {
-            'name': 'id_with_mode',
-            'getval': re.compile(
-                r'''\bid\s+(?P<id>(?:\d+|stacked:\d+:\d+))\s+mode\s+(?P<mode>(cross-connect|residential-bridge|qos-aware|layer2-terminated|mirror))\s*$''',
-                re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }} mode {{ mode }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'mode': '{{ mode }}',
-                },
-            },
-            'shared': True,
-        },
-        {
-            'name': 'name',
-            'getval': re.compile(
-                r'''^(?:id\s+(?P<id>(?:\d+|stacked:\d+:\d+))\s+|\s+)(?P<negate>no\s+)?name\s+(?:"(?P<name_quoted>[^"]+)"|(?P<name>[A-Za-z0-9_\-]+))\s*$''',
-                re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'name': '{{ name_quoted|default(name)|string }}',
-                },
-            },
-        },
-        {
-            'name': 'mode',
-            'getval': re.compile(
-                r'''^(?:id\s+(?P<id>(?:\d+|stacked:\d+:\d+))\s+|\s+)mode\s+(?P<mode>(cross-connect|residential-bridge|qos-aware|layer2-terminated|mirror))\s*$''',
-                re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'mode': '{{ mode }}',
-                },
-            },
-        },
-        {
-            'name': 'sntp-proxy',
-            'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s(?P<sntp_proxy>sntp-proxy)
-                $''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                },
-            },
-        },
-        {
-            'name': 'priority',
-            'getval': re.compile(
-                r'''^\s+(?P<negate>no\s+)?priority\s+(?P<priority>\d+)\s*$''',
-                re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'priority': '{{ priority|int }}',
-                },
-            },
-        },
-        {
-            'name': 'vmac-not-in-opt61',
-            'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s(?P<vmac_not_in_opt61>vmac-not-in-opt61)
-                $''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                },
-            },
-        },
-        {
-            'name': 'new-broadcast',
-            'getval': re.compile(
-                r'''^(?:id\s+(?P<id>(?:\d+|stacked:\d+:\d+))\s+|\s+)(?:(?P<negate>no)\s+new-broadcast|(new-broadcast\s+(?P<new_broadcast>(inherit|disable|enable)))\s*)$''',
-                re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    # "no new-broadcast" is how "flat detail" prints the default (inherit).
-                    'new-broadcast': '{{ "inherit" if negate is defined else new_broadcast|default("inherit") }}',
-                },
-            },
-        },
-        {
-            'name': 'protocol-filter',
-            'getval': re.compile(
-                r'''^(?:id\s+(?P<id>(?:\d+|stacked:\d+:\d+))\s+|\s+)(?:(?P<negate>no)\s+protocol-filter|(protocol-filter\s+(?P<protocol_filter>(pass-all|pass-pppoe|pass-ipoe|pass-pppoe-ipoe|pass-ipv6oe|pass-pppoe-ipv6oe|pass-ipoe-ipv6oe|pass-pppoe-ipoe-ipv6oe)))\s*)$''',
-                re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'protocol-filter': '{{ "pass-all" if negate is defined else protocol_filter|default("pass-all") }}',
-                },
-            },
-        },
-        {
-            'name': 'pppoe-relay-tag',
-            'getval': re.compile(
-                r'''^\s+pppoe-relay-tag\s+(?P<pppoe_relay_tag>true|false|configurable)\s*$''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'pppoe-relay-tag': '{{ pppoe_relay_tag }}',
-                },
-            },
-        },
-        {
-            'name': 'drly-srv-usr-side',
-            'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s(?P<drly_srv_usr_side>drly-srv-usr-side)
-                $''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                },
-            },
-        },
-        {
-            'name': 'new-secure-fwd',
-            'getval': re.compile(
-                r'''^\s+new-secure-fwd\s+(?P<new_secure_fwd>(inherit|enable|disable))\s*$''',
-                re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'new-secure-fwd': '{{ new_secure_fwd }}',
-                },
-            },
-        },
-        {
-            'name': 'aging-time',
-            'getval': re.compile(
-                r'''^\s+aging-time\s+(?P<aging_time>\d+)\s*$''',
-                re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'aging-time': '{{ aging_time|int }}',
-                },
-            },
-        },
-        {
-            'name': 'l2cp-transparent',
-            'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s(?P<l2cp_transparent>l2cp-transparent)
-                $''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                },
-            },
-        },
-        {
-            'name': 'in-qos-prof-name',
-            'getval': re.compile(
-                r'''^(?:id\s+(?P<id>(?:\d+|stacked:\d+:\d+))\s+|\s+)in-qos-prof-name\s+(?P<inqpn>\S+)\s*$''',
-                re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'in-qos-prof-name': '{{ inqpn|string }}',
-                },
-            },
-        },
-        {
-            'name': 'ipv4-mcast-ctrl',
-            'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s(?P<ipv4_mcast_ctrl>ipv4-mcast-ctrl)
-                $''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                },
-            },
-        },
-        {
-            'name': 'ipv6-mcast-ctrl',
-            'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s(?P<ipv6_mcast_ctrl>ipv6-mcast-ctrl)
-                $''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                },
-            },
-        },
-        {
-            'name': 'mac-mcast-ctrl',
-            'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s(?P<mac_mcast_ctrl>mac-mcast-ctrl)
-                $''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                },
-            },
-        },
-        {
-            'name': 'dis-proto-rip',
-            'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s(?P<dis_proto_rip>dis-proto-rip)
-                $''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                },
-            },
-        },
-        {
-            'name': 'proto-ntp',
-            'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s(?P<proto_ntp>proto-ntp)
-                $''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                },
-            },
-        },
-        {
-            'name': 'dis-ip-antispoof',
-            'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s(?P<dis_ip_antispoof>dis-ip-antispoof)
-                $''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                },
-            },
-        },
-        {
-            'name': 'unknown-unicast',
-            'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s(?P<unknown_unicast>unknown-unicast)
-                $''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                },
-            },
-        },
-        {
-            'name': 'pt2ptgem-flooding',
-            'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s(?P<pt2ptgem_flooding>pt2ptgem-flooding)
-                $''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                },
-            },
-        },
-        {
-            'name': 'mac-movement-ctrl',
-            'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s(?P<mac_movement_ctrl>mac-movement-ctrl)
-                $''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                },
-            },
-        },
-        {
-            'name': 'cvlan4095passthru',
-            'getval': re.compile(
-                r'''^\s+cvlan4095passthru\s+(?P<cvlan4095passthru>passthru|not-applicable)\s*$''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'cvlan4095passthru': '{{ cvlan4095passthru }}',
-                },
-            },
-        },
-        {
-            'name': 'arp-snooping',
-            'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s(?P<arp_snooping>arp-snooping)
-                $''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                },
-            },
-        },
-        {
-            'name': 'arp-polling',
-            'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s(?P<arp_polling>arp-polling)
-                $''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                },
-            },
-        },
-        {
-            'name': 'arp-polling-ip',
-            'getval': re.compile(
-                r'''^\s+arp-polling-ip\s+(?P<arp_polling_ip>\S+)\s*$''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'arp-polling-ip': '{{ arp_polling_ip }}',
-                },
-            },
-        },
-        {
-            'name': 'mac-unauth',
-            'getval': re.compile(
-                r'''
-                (?P<negate> no)?\s(?P<mac_unauth>mac-unauth)
-                $''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                },
-            },
-        },
-        # Additional DHCP/PPPoE and related options
-        {
-            'name': 'dhcp-opt82-ext',
-            'getval': re.compile(
-                r'''^\s+dhcp-opt82-ext\s+(?P<dhcp_opt82_ext>add-or-forward|enable)\s*$''',
-                re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'dhcp-opt82-ext': '{{ dhcp_opt82_ext }}',
-                },
-            },
-        },
-        {
-            'name': 'dhcp-opt82-nni',
-            'getval': re.compile(
-                r'''^\s+dhcp-opt82-nni\s*$''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'dhcp-opt82-nni': True,
-                },
-            },
-        },
-        {
-            'name': 'dhcp-opt82-uplink',
-            'getval': re.compile(
-                r'''^\s+dhcp-opt82-uplink\s*$''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'dhcp-opt82-uplink': True,
-                },
-            },
-        },
-        {
-            'name': 'circuit-id-dhcp',
-            'getval': re.compile(
-                r'''^\s+circuit-id-dhcp\s+(?P<circuit_id_dhcp>physical-id)\s*$''',
-                re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'circuit-id-dhcp': '{{ circuit_id_dhcp }}',
-                },
-            },
-        },
-        {
-            'name': 'remote-id-dhcp',
-            'getval': re.compile(
-                r'''^\s+remote-id-dhcp\s+(?P<remote_id_dhcp>customer-id)\s*$''',
-                re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'remote-id-dhcp': '{{ remote_id_dhcp }}',
-                },
-            },
-        },
-        {
-            'name': 'relay-id-dhcp',
-            'getval': re.compile(
-                r'''^(?:id\s+(?P<id>(?:\d+|stacked:\d+:\d+))\s+|\s+)relay-id-dhcp\s*$''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'relay-id-dhcp': True,
-                },
-            },
-        },
-        {
-            'name': 'dhcp-linerate',
-            'getval': re.compile(
-                r'''^(?:id\s+(?P<id>(?:\d+|stacked:\d+:\d+))\s+|\s+)dhcp-linerate\s*$''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'dhcp-linerate': True,
-                },
-            },
-        },
-        {
-            'name': 'linerates',
-            'getval': re.compile(
-                r'''^(?:id\s+(?P<id>(?:\d+|stacked:\d+:\d+))\s+|\s+)(?P<lr>(?:dhcp|pppoe|dhcpv6)-linerate)\s*$''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    '{{ lr }}': True,
-                },
-            },
-        },
-        {
-            'name': 'pppoe-l2-encaps',
-            'getval': re.compile(
-                r'''^(?:id\s+(?P<id>(?:\d+|stacked:\d+:\d+))\s+|\s+)pppoe-l2-encaps\s*$''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'pppoe-l2-encaps': True,
-                },
-            },
-        },
-        {
-            'name': 'l2-encaps',
-            'getval': re.compile(
-                r'''^(?:id\s+(?P<id>(?:\d+|stacked:\d+:\d+))\s+|\s+)(?P<l2>(?:pppoe|dhcp|dhcpv6)-l2-encaps|l2-encaps1)\s*$''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    '{{ l2 }}': True,
-                },
-            },
-        },
-        {
-            'name': 'vlanaware',
-            'getval': re.compile(
-                r'''^\s+(?P<aware>(?:pppoer|dhcpr|dhcpv6r)-vlanaware)\s*$''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    '{{ aware }}': True,
-                },
-            },
-        },
-        {
-            'name': 'circuit-id-pppoe',
-            'getval': re.compile(
-                r'''^\s+circuit-id-pppoe\s+(?P<circuit_id_pppoe>physical-id)\s*$''',
-                re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'circuit-id-pppoe': '{{ circuit_id_pppoe }}',
-                },
-            },
-        },
-        {
-            'name': 'remote-id-pppoe',
-            'getval': re.compile(
-                r'''^\s+remote-id-pppoe\s+(?P<remote_id_pppoe>customer-id)\s*$''',
-                re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'remote-id-pppoe': '{{ remote_id_pppoe }}',
-                },
-            },
-        },
-        {
-            'name': 'dhcpv6-identifiers',
-            'getval': re.compile(
-                r'''^\s+(?P<key>dhcpv6-(?:itf-id|remote-id))\s+(?P<val>physical-id|customer-id)\s*$''',
-                re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    '{{ key }}': '{{ val }}',
-                },
-            },
-        },
-        {
-            'name': 'dhcpv6-flags',
-            'getval': re.compile(
-                r'''^\s+(?P<key>dhcpv6-(?:relay-id|trst-port))\s*$''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    '{{ key }}': True,
-                },
-            },
-        },
-        {
-            'name': 'enterprise-number',
-            'getval': re.compile(
-                r'''^\s+enterprise-number\s+(?P<enterprise_number>\d+)\s*$''',
-                re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'enterprise-number': '{{ enterprise_number|int }}',
-                },
-            },
-        },
-        {
-            'name': 'icmpv6-sec-fltr',
-            'getval': re.compile(
-                r'''^\s+icmpv6-sec-fltr\s*$''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'icmpv6-sec-fltr': True,
-                },
-            },
-        },
-        {
-            'name': 'vmac-translation',
-            'getval': re.compile(
-                r'''^\s+vmac-translation\s*$''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'vmac-translation': True,
-                },
-            },
-        },
-        {
-            'name': 'vmac-dnstr-filter',
-            'getval': re.compile(
-                r'''^\s+vmac-dnstr-filter\s*$''', re.VERBOSE,
-            ),
-            'setval': 'configure vlan id {{ id }}',
-            'result': {
-                '{{ id }}': {
-                    'id': '{{ id }}',
-                    'vmac-dnstr-filter': True,
-                },
-            },
-        },
-    ]
-
-    def parse(self):
-        """Retain valueless VLAN flags that the generated results omit."""
-        result = super(VlansTemplate, self).parse()
-        flag_keys = {
-            "sntp-proxy", "vmac-not-in-opt61", "drly-srv-usr-side", "dhcp-opt82-nni",
-            "dhcp-opt82-uplink", "relay-id-dhcp", "dhcp-linerate", "pppoe-linerate",
-            "dhcpv6-linerate", "pppoe-l2-encaps", "dhcp-l2-encaps", "dhcpv6-l2-encaps",
-            "l2-encaps1", "pppoer-vlanaware", "dhcpr-vlanaware", "dhcpv6r-vlanaware",
-            "dhcpv6-relay-id", "dhcpv6-trst-port", "vmac-translation", "vmac-dnstr-filter",
-            "icmpv6-sec-fltr", "l2cp-transparent", "ipv4-mcast-ctrl", "ipv6-mcast-ctrl",
-            "mac-mcast-ctrl", "dis-proto-rip", "proto-ntp", "dis-ip-antispoof",
-            "unknown-unicast", "pt2ptgem-flooding", "mac-movement-ctrl", "arp-snooping",
-            "arp-polling", "mac-unauth",
-        }
-        current_id = None
-        for raw_line in self._lines:
-            stripped = raw_line.strip()
-            id_match = re.match(r"^id\s+(\S+)(?:\s+.*)?$", stripped)
-            candidate = stripped
-            if id_match:
-                current_id = id_match.group(1)
-                if stripped == "id {0}".format(current_id):
-                    continue
-                candidate = stripped[len("id {0}".format(current_id)):].strip()
-            match = re.match(r"(?:(no)\s+)?(\S+)\s*$", candidate)
-            if not match or current_id is None or match.group(2) not in flag_keys:
-                continue
-            negate, key = match.groups()
-            entry = result.get(current_id) or result.get(int(current_id))
-            if entry is None:
-                entry = result.setdefault(current_id, {"id": current_id})
-            entry[key] = negate is None
-        return result
-
-
-_VLAN_BOOLEAN_FIELDS = {
-    "sntp-proxy", "vmac-not-in-opt61", "drly-srv-usr-side", "dhcp-opt82-nni",
-    "dhcp-opt82-uplink", "relay-id-dhcp", "dhcp-linerate", "pppoe-linerate",
-    "dhcpv6-linerate", "pppoe-l2-encaps", "dhcp-l2-encaps", "dhcpv6-l2-encaps",
-    "l2-encaps1", "pppoer-vlanaware", "dhcpr-vlanaware", "dhcpv6r-vlanaware",
-    "dhcpv6-relay-id", "dhcpv6-trst-port", "vmac-translation", "vmac-dnstr-filter",
-    "icmpv6-sec-fltr", "l2cp-transparent", "ipv4-mcast-ctrl", "ipv6-mcast-ctrl",
-    "mac-mcast-ctrl", "dis-proto-rip", "proto-ntp", "dis-ip-antispoof",
-    "unknown-unicast", "pt2ptgem-flooding", "mac-movement-ctrl", "arp-snooping",
-    "arp-polling", "mac-unauth",
-}
-_VLAN_VALUE_FIELDS = {
-    "priority", "pppoe-relay-tag", "new-secure-fwd", "aging-time", "in-qos-prof-name",
-    "dhcp-opt82-ext", "circuit-id-dhcp", "remote-id-dhcp", "circuit-id-pppoe",
-    "remote-id-pppoe", "dhcpv6-itf-id", "dhcpv6-remote-id", "enterprise-number",
-    "arp-polling-ip",
-}
-
-
-for _parser in VlansTemplate.PARSERS:
-    _parser_name = _parser.get("name")
-    if _parser_name in _VLAN_BOOLEAN_FIELDS:
-        _parser["setval"] = "configure vlan id {{ id }} " + _parser_name
-        _parser["remval"] = "configure vlan id {{ id }} no " + _parser_name
-    elif _parser_name in _VLAN_VALUE_FIELDS:
-        _parser["setval"] = "configure vlan id {{ id }} " + _parser_name + " {{ " + canonical_key(_parser_name) + " }}"
-        _parser["remval"] = "configure vlan id {{ id }} no " + _parser_name
-
-    # fmt: on
+    PARSERS = PARSERS

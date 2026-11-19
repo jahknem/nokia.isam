@@ -53,9 +53,13 @@ A `NetworkTemplate`. Pick per node:
 - **Explicit `PARSERS` entries** (netcommon format: `name`, `getval`, `setval`,
   `remval`, `result`, `compval`) for small or irregular grammars. Familiar and easy to
   inspect.
-- **Small factory functions** generating such entries from keyword tuples when a node
-  has many attributes of the same kind (flags, thresholds, queue fields). Example:
-  `rm_templates/ethernet_line.py`.
+- **Small factory functions** generating such entries from one attribute table when a
+  node has many attributes of the same kind (flags, values, thresholds). Reference:
+  `isam_vlans` -- `VLAN_ATTRS` (option, CLI keyword, kind, device default) generates the
+  parsers, drives the facts' line splitting and holds the defaults; options are
+  snake_case with the CLI spelling as alias; a test keeps table, argspec and
+  documentation in step, and parse -> render reproduces the device's lines.
+  `rm_templates/ethernet_line.py` follows the same idea for a node with sub-nodes.
 - **`SettingsBlockTemplate`** for singleton settings nodes whose attributes are all
   `[no] <kw> <value>` with known defaults (`nat`, `error`, `cwmp_plt`, ...): one table
   `(option, keyword, kind, default)`.
