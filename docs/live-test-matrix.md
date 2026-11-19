@@ -34,6 +34,25 @@ Those patch results must not be counted as 1.0 validation.
 - Tox now isolates collection/dependency layouts per environment, and release
   branches run CI without requiring a tag or publication.
 
+### Live-apply follow-up (offline, 2026-11-19)
+
+The [handover regression follow-up](live-apply-regressions-2026-11-19.md) covers
+standalone slot admin-state, reasserted/bounded-readback shutdown before deletion,
+severity/QoS placeholders, and caller-controlled QoS-before-bridge ordering.
+The Core 2.19.12 direct-execution lane covers literal/templated single-element
+merged lists and flat/block/wrapped-echo device replies in run/check mode. It does
+not reproduce the original `config.interfaces.flat` failure. No new live writes
+or device cleanup were performed; the new shutdown policy still needs separately
+approved live validation. Do not count older evidence below as validation of it.
+
+Final offline gate: Core 2.19.12 and 2.21.6 each passed **2,914 tests, 14 skipped,
+247 subtests**, including private-capture replay and connection plugins. All 50
+new cases also passed in the existing EE's Python 3.11/Core 2.19.12 runtime with
+changed plugin source mounted read-only and networking disabled. Lint/typecheck/
+docs passed; the local archive passed 610 file checksums/source equality and
+isolated module documentation checks. No EE was rebuilt or deployed by this
+follow-up.
+
 ## Reads (all families, 2026-11-18)
 
 Every resource module's live `gathered` equals `parsed` of a fresh capture; the root

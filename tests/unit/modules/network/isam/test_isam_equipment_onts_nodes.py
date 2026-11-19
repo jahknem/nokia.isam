@@ -142,8 +142,7 @@ class TestIsamEquipmentOntsNodes(TestIsamModule):
             patch("ansible_collections.ansible.netcommon.plugins.module_utils.network.common.cfg.base.get_resource_connection"),
             patch("ansible_collections.ansible.netcommon.plugins.module_utils.network.common.facts.facts.get_resource_connection"),
         ]
-        for item in self.patches:
-            item.start()
+        self.connections = [item.start() for item in self.patches]
         self.mock_get_config = patch(
             "ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.equipment_onts.equipment_onts.Equipment_ontsFacts.get_config"
         )
@@ -226,6 +225,10 @@ class TestIsamEquipmentOntsNodes(TestIsamModule):
         ]
 
     def test_deleted_without_config_removes_all_in_dependency_order(self):
+        self.connections[0].return_value.get.return_value = (
+            "configure equipment ont interface 1/1/2/1/2 admin-state down\n"
+            "configure equipment ont slot 1/1/2/1/2/1 admin-state down\n"
+        )
         self.get_config.return_value = "\n".join([
             "configure equipment ont interface 1/1/2/1/2 admin-state up",
             "configure equipment ont slot 1/1/2/1/2/1 planned-card-type ethernet plndnumdataports 1 plndnumvoiceports 0",
@@ -249,6 +252,9 @@ class TestIsamEquipmentOntsNodes(TestIsamModule):
         assert self.run_state("deleted", changed=False)["commands"] == []
 
     def test_deleting_the_ont_does_not_reset_its_loop_afterwards(self):
+        self.connections[0].return_value.get.return_value = (
+            "configure equipment ont interface 1/1/2/1/2 admin-state down\n"
+        )
         self.get_config.return_value = "\n".join([
             "configure equipment ont interface 1/1/2/1/2 admin-state up",
             "configure equipment ont loop 1/1/2/1/2 loop-detect enable",

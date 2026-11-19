@@ -426,6 +426,9 @@ options:
     - With C(merged), C(replaced) or C(deleted) and I(config) naming only C(interfaces) and C(slots), the current configuration is likewise read only for the named instances.
     - Deleting an ONT (C(interfaces)) removes its C(loops) and C(pm_collects) settings with it; no reset is sent for them.
     - With C(deleted) and no I(config), or an empty I(config), all gathered ONT interfaces, slots and software-control entries are removed. Interfaces are shut down before slots and interfaces are removed. This is destructive; provide explicit identities to limit deletion.
+    - Whole-entry C(deleted) reasserts C(admin-state down) separately for each removed interface and slot, even if gathered down. Before any removal, live execution waits one second and checks targeted detail readback, up to five times. Unconfirmed shutdown or a read error stops deletion; commands are never retried. Named-setting deletion does not shut down the parent object.
+    - Check mode reports the same shutdown/removal plan but does not write, wait or perform readiness polling. A write or verification failure reports accepted and pending commands; read back the device before deciding whether to retry.
+    - Interface and slot C(admin_state) commands are emitted separately from other creation or update parameters.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -487,6 +490,28 @@ parsed:
   description: Device-native config parsed into structured data.
   returned: when state is parsed
   type: dict
+accepted:
+  description: Commands accepted before a staged deletion failure; this is not proof that deletion completed.
+  returned: on a staged deletion failure
+  type: list
+  elements: str
+failed_command:
+  description: Command whose execution failed, or null when shutdown verification failed. Its outcome may be unknown.
+  returned: on a staged deletion failure
+  type: str
+pending:
+  description: Planned commands that were never sent after a staged deletion failure.
+  returned: on a staged deletion failure
+  type: list
+  elements: str
+failure_phase:
+  description: Whether staged deletion stopped during execution or shutdown verification.
+  returned: on a staged deletion failure
+  type: str
+completion_status:
+  description: Unknown after a staged deletion failure; inspect readback before retrying.
+  returned: on a staged deletion failure
+  type: str
 """
 
 from ansible.module_utils.basic import AnsibleModule

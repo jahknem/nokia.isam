@@ -148,6 +148,10 @@ class TestIsamEquipmentOntsModule(TestIsamModule):
         self.assertEqual(result["gathered"]["interfaces"][0]["sernum"], "ALCL:F9772423")
 
     def test_isam_equipment_onts_deleted_preserves_interface_and_slot_siblings(self):
+        self.get_resource_connection.return_value.get.return_value = (
+            "configure equipment ont interface 1/1/5/1/1 admin-state down\n"
+            "configure equipment ont slot 1/1/5/1/1/1 admin-state down\n"
+        )
         self.get_config.return_value = dedent(
             """
             configure equipment
@@ -188,6 +192,9 @@ class TestIsamEquipmentOntsModule(TestIsamModule):
         self.assertFalse(any("1/1/5/1/1/2" in command for command in result["commands"]))
 
     def test_isam_equipment_onts_deleted_brings_up_interface_delete_safely(self):
+        self.get_resource_connection.return_value.get.return_value = (
+            "configure equipment ont interface 1/1/5/1/100 admin-state down\n"
+        )
         self.get_config.return_value = dedent(
             """
             configure equipment

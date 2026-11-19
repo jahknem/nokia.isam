@@ -57,7 +57,7 @@ options:
         - '- critical : service breaking'
         - '- no-alarms : do not report alarm'
         - '- default : take default as specified via Interface Alarm Configuration command'
-        - '- no-value : no entry in the table'
+        - '- no-value : no entry in the table; renders as C(no severity), never C(severity no-value). A gathered no-value counts as unset.'
         choices:
         - indeterminate
         - warning
@@ -67,7 +67,6 @@ options:
         - no-alarms
         - default
         - no-value
-        default: no-value
       port_type:
         aliases: [port-type]
         description:

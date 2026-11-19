@@ -25,6 +25,28 @@ this new artifact. NOC remains unchanged.
 - Keep the complete 0.3.14 release notes below. Isolate tox's collection/dependency
   layouts per environment, retaining connection tests and type checking in CI.
 
+### Live-apply follow-up (offline)
+
+- Keep ONT slot `admin-state` separate from other create/update fields, matching
+  the existing interface rule. Whole-entry `equipment_onts` deletion reasserts
+  shutdown even for gathered-down interfaces/slots, waits for propagation and
+  verifies each targeted detail read before sending any removal. Readiness checks
+  are bounded; read errors/timeouts stop the operation. No write is retried, and
+  failures report accepted, failed and pending commands with an unknown outcome.
+  Check mode neither waits nor sends shutdown/removal commands.
+- Treat interface severity `no-value` as unset for reconciliation; an explicit
+  reset renders `no severity`, never the invalid `severity no-value` command.
+  Normalize QoS detail-only placeholders at both interface and queue comparison
+  boundaries, including replaced/overridden/deleted paths. Preserve explicit
+  `none` resets for real configured profiles.
+- Add a pinned Ansible Core 2.19.12 tox/CI lane and real netcommon direct-execution
+  regressions for single-element, templated admin-only `merged` inputs in run and
+  check mode. The reported `config.interfaces.flat` failure is not reproduced by
+  these cases; no speculative argument rewriting or upstream monkey-patch is added.
+- Document upstream QoS-before-bridge prerequisites and their cross-module
+  boundary. These offline changes do not claim fresh live verification, authorize
+  device cleanup or update the deployed EE.
+
 ### Lab validation
 
 - Fresh approved isolated write test after cleanup: PON troubleshooting statistics
