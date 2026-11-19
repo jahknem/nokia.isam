@@ -177,6 +177,20 @@
     a silent no-op, and is a no-op when the device is already at default (`isam_generic_pon`,
     `isam_voice_sip`, `isam_software_mngt`). Previously the default was stripped from the
     request, so e.g. turning `auto-verify` back to `disabled` did nothing.
+- One shared attribute-table core (`module_utils/network/isam/attribute_table.py`:
+  `Attr`, `Node`, `AttributeTable`, `TableTemplate`) and config base `TableResourceModule`
+  replace the per-family copies of the table parser, default stripping, diff/render rules,
+  argspec generator and state handling (they had already drifted: `software_mngt` did not
+  quote `#` values, `voice_sip` lacked the option-name fix). `isam_software_mngt`,
+  `isam_voice_sip` and `isam_generic_pon` use it; their parse and render output is unchanged
+  (compared against the previous implementation on the lab capture). `isam_generic_pon`
+  moves off netcommon `compare()`/`PARSERS` and its facts-side line splitter onto the table.
+  One parsing rule for every table: a line belongs to a node only when it is bare or starts
+  with one of its keywords; a `#` starting a word outside quotes begins a comment. A shared
+  test checks that each table, its argspec and its documentation agree.
+  **Behaviour fixes in `isam_generic_pon`:** `replaced` is now section-scoped (it used to
+  reset unnamed sections too), and `deleted` naming only a sub-section (e.g.
+  `utilization.threshold`) no longer resets the parent section's own attributes.
 - `isam_linetest` migrated onto `IsamResourceModule` (the last resource module still on a
   plain `object` base), so it shares the standard facts gathering, check-mode write path
   and before/after result. Its device rules are unchanged and now pinned by tests across

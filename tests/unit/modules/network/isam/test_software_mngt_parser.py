@@ -1,7 +1,6 @@
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.software_mngt import (
-    NODES_BY_KEY,
+    TABLE,
     Software_mngtTemplate,
-    diff_commands,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.software_mngt.software_mngt import (
     Software_mngtArgs,
@@ -86,8 +85,8 @@ def test_software_mngt_template_round_trips_backup_interval_and_scoped_admin_sta
     assert parsed["database"]["auto_backup_interval"] == 60
     assert parsed["oswp"] == [{"id": "7", "admin_state": False}]
 
-    rendered = diff_commands(
-        NODES_BY_KEY["database"], None,
+    rendered = TABLE.diff_commands(
+        TABLE.node("database"), None,
         {"backup": "backup-v4", "auto_backup_interval": 60}, {}, "rendered",
     )
     assert rendered == ["configure software-mngt database backup backup-v4 auto-backup-intvl 60"]
@@ -98,8 +97,8 @@ def test_software_mngt_oswp_schema_is_a_list_and_renders_records():
     assert oswp["type"] == "list"
     assert oswp["elements"] == "dict"
 
-    rendered = diff_commands(
-        NODES_BY_KEY["oswp"], "1",
+    rendered = TABLE.diff_commands(
+        TABLE.node("oswp"), "1",
         {"primary_file_server_id": "192.0.2.1", "second_file_server_id": "0.0.0.0"}, {}, "rendered",
     )
     assert rendered == ["configure software-mngt oswp 1 primary-file-server-id 192.0.2.1 second-file-server-id 0.0.0.0"]

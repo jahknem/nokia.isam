@@ -11,10 +11,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.voice_sip.voice_sip import (
     Isam_voice_sipArgs,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.voice_sip import (
-    parse_lines,
-    without_defaults,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.voice_sip import TABLE
 
 
 class Isam_voice_sipFacts(object):
@@ -38,25 +35,7 @@ class Isam_voice_sipFacts(object):
     def populate_facts(self, connection, ansible_facts, data=None):
         if not data:
             data = self.get_config(connection)
-        data = self._flatten_config(unwrap_response(data))
-        params = without_defaults(parse_lines("\n".join(data)))
+        params = TABLE.without_defaults(TABLE.parse(unwrap_response(data)))
         ansible_facts["ansible_network_resources"].pop("voice_sip", None)
         ansible_facts["ansible_network_resources"]["voice_sip"] = params
         return ansible_facts
-
-    @staticmethod
-    def _flatten_config(config):
-        flat_config = []
-        for raw_line in str(config or "").splitlines():
-            line = raw_line.rstrip()
-            # Strip comments (# preceded by space, not inside quoted values)
-            if " #" in line:
-                before = line[:line.index(" #")]
-                if before.count('"') % 2 == 0:
-                    line = before
-            stripped = line.strip()
-            if not stripped or stripped.startswith("echo") or stripped.startswith("#"):
-                continue
-            if line.startswith("configure voice sip "):
-                flat_config.append(line)
-        return flat_config
