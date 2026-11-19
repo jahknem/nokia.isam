@@ -103,14 +103,34 @@ Three things that are easy to confuse:
   facts to gather, not idempotent. `changed` means "an operation was sent".
 
 The base keeps only the execution mechanics (check mode, sending, collecting responses,
-propagating failures). Device behaviour belongs to the module:
+propagating failures). Device behaviour belongs to the module. Keep three outcomes
+distinct: **sent** (handed to the device), **accepted** (answered without a recognised
+error -- the terminal plugin raises on `Error:`, `invalid token`, ...), and **completed**
+(the operation took effect, which only the module can judge). A clean transport return is
+not proof of completion.
 
 - `build_commands` must require an **explicit operation**. A bare resource identifier
   without an operation only navigates the ISAM admin hierarchy (CLI guide, global
-  commands) and is not an action -- reject it, do not report a change.
-- `verify` (optional) checks completion from the responses; override it for operations
-  needing a confirmation, a reconnect or a follow-up read. Never assume success just
-  because a command was sent.
+  commands) and is not an action -- reject it, do not report a change. Validate every
+  identifier with `validate_identifier` before interpolating it (rejects whitespace,
+  control characters and command separators, so inventory data cannot inject CLI tokens).
+- Commands are sent **one per transaction**. A failure reports partial execution:
+  `completed`, `failed` (outcome **unknown** -- it may have executed; do not blindly retry)
+  and `pending` (never sent). This matters for non-idempotent operations. The cost is a
+  fresh shell per command.
+- `send_command` (optional override) sends one command. Override it for operations that
+  expect a **transport loss** (a reboot drops the SSH session before returning) or an
+  **interactive confirmation prompt** -- handle those *during* execution, not in `verify`,
+  which only runs after a clean return. Provide this before adding full-device reboot or
+  protection-switchover modules.
+- `verify` (optional override) checks completion from the responses; the default trusts the
+  transport. Override it for operations needing a confirmation, a reconnect or a follow-up
+  read. Never assume success just because a command was sent.
+
+`changed` defaults to "an operation was sent", which suits state-changing operations
+(counter resets, reboots). A **diagnostic** operation (e.g. a ping) does not change device
+state and must report `changed=False`; such a module overrides `execute_module` rather than
+inheriting the default.
 
 Not every `admin` command is a stateless one-shot (e.g. an Ethernet loopback is temporary
 operational state), and some `configure` commands execute actions (e.g. `configure

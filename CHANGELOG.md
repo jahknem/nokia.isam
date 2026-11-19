@@ -196,6 +196,16 @@
   it now rejects an entry without the `clear-statistics` operation. Documented the category
   in `docs/development-style.md`. The cliconf now resets the CLI context (`exit all`) before
   `admin` commands as well as `configure` commands (both are absolute paths from the root).
+- Hardened `IsamActionModule` execution safety: commands are sent one per transaction so a
+  failure reports partial execution (`completed` / `failed` with unknown outcome / `pending`),
+  preventing blind retries of non-idempotent operations; connection-acquisition errors are
+  formatted like execution errors; a `send_command` hook handles expected transport loss
+  (reboot) and interactive prompts during execution (before `verify`); `validate_identifier`
+  rejects whitespace, control characters and command separators in CLI resource identifiers
+  (used for the ext-authenticator port). The sent / accepted / completed distinction is
+  documented; diagnostic operations (e.g. ping) must report `changed=False`. Tests cover
+  partial execution, expected disconnects, failed verification, invalid identifiers,
+  malformed responses and connection-acquisition failures.
 - Device defaults out of the argspecs (they were injected into every request):
   `isam_vlans` merged renaming a VLAN reset `protocol-filter`, `new-broadcast` and
   `drly-srv-usr-side`; `deleted` naming a setting deleted the whole VLAN and sent
