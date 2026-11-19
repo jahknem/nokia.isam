@@ -25,8 +25,11 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
     get_from_dict,
     to_list,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.attribute_table import get_path
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
     compact_cli_commands,
+    covers_entry,
+    requested_sections,
 )
 
 
@@ -86,3 +89,131 @@ class IsamResourceModule(ResourceModule):
     def run_commands(self):
         self._compact()
         return super(IsamResourceModule, self).run_commands()
+
+
+class TableResourceModule(IsamResourceModule):
+    """A resource module whose grammar is one :class:`AttributeTable` (``TABLE``).
+
+    Implements the state contract of ``docs/development-style.md`` for every node of the
+    table, so a family only declares its table and adds device-rule code where needed:
+
+    * merged/replaced/overridden/rendered compare each instance or section with
+      ``TABLE.diff_commands``; replaced/overridden remove list instances not given.
+    * replaced and deleted with config touch only the named top-level sections.
+    * deleted: without config every section is reset and every list instance removed.
+      With config, a list instance named by its identity alone (or as a full entry) is
+      removed; named attributes reset only themselves. In a section, named attributes
+      reset only themselves; a section given without any value (``ont: {}``) is reset as
+      a whole, together with its sub-sections.
+    * Creating a list instance requires its node's mandatory options (fails early).
+
+    want is used raw (an explicit default means "reset to default"); have has its
+    defaults removed, so a default the device already has sends nothing.
+    """
+
+    TABLE = None
+
+    def execute_module(self):
+        if self.state == "rendered":
+            self.generate_commands()
+        elif self.state not in ["parsed", "gathered"]:
+            self.generate_commands()
+            self.run_commands()
+        return self.result
+
+    def generate_commands(self):
+        want = self.want or {}
+        have = self.TABLE.without_defaults(self.have)
+        for node in self.TABLE.nodes:
+            if not self._touches(node):
+                continue
+            if node.is_list:
+                self._compare_instances(node, want.get(node.key) or [], have.get(node.key) or [])
+            elif self.state == "deleted":
+                self._reset_section(node, get_path(have, node.path))
+            else:
+                self.commands.extend(self.TABLE.diff_commands(
+                    node, None, get_path(want, node.path), get_path(have, node.path), self.state))
+
+    def _touches(self, node):
+        if self.state not in ("replaced", "deleted"):
+            return True
+        requested = requested_sections(self._module)
+        if not requested:
+            return True
+        if not node.path:
+            return any(attr.option in requested for attr in node.attrs)
+        return node.path[0] in requested
+
+    def _compare_instances(self, node, want, have):
+        ident = node.identity
+        wantd = dict((str(entry[ident]), entry) for entry in want)
+        haved = dict((str(entry[ident]), entry) for entry in have)
+
+        if self.state == "deleted":
+            for name, have_entry in haved.items():
+                if wantd and name not in wantd:
+                    continue
+                want_entry = wantd.get(name) or {}
+                if covers_entry(want_entry, have_entry, [ident]):
+                    self.commands.append(self.TABLE.removal_command(node, name))
+                else:
+                    named = set(key for key, value in want_entry.items() if key != ident and value is not None)
+                    keep = dict((key, value) for key, value in have_entry.items() if key not in named)
+                    self.commands.extend(self.TABLE.diff_commands(node, name, keep, have_entry, "replaced"))
+            return
+
+        if self.state in ("replaced", "overridden"):
+            for name in haved:
+                if name not in wantd:
+                    self.commands.append(self.TABLE.removal_command(node, name))
+
+        for name, want_entry in wantd.items():
+            have_entry = haved.get(name, {})
+            creating = not have_entry and self.state != "rendered"
+            if creating:
+                missing = [option for option in node.mandatory if want_entry.get(option) is None]
+                if missing:
+                    self._module.fail_json(
+                        msg="Creating %s '%s' requires %s (mandatory at creation, no removal form)."
+                        % (node.cli, name, ", ".join(missing)))
+            commands = self.TABLE.diff_commands(node, name, want_entry, have_entry, self.state)
+            if not commands and (self.state == "rendered" or creating):
+                # an instance with only its identity is created by its bare line
+                commands = [self.TABLE.creation_command(node, name)]
+            self.commands.extend(commands)
+
+    def _reset_section(self, node, have):
+        scope = self._deleted_scope(node)
+        if scope is None:
+            return
+        keep = dict((key, value) for key, value in have.items() if scope and key not in scope)
+        self.commands.extend(self.TABLE.diff_commands(node, None, keep, have, "replaced"))
+
+    def _deleted_scope(self, node):
+        """deleted: None (section not named), an empty set (reset the whole section) or
+        the set of named options. Read from the raw parameters, where Ansible fills every
+        option not given with None: 'ont: {}' arrives as a dict of Nones."""
+        section = self._module.params.get("config")
+        if not section:
+            return set()
+        emptied = False
+        for key in node.path:
+            section = section.get(key) if isinstance(section, dict) else None
+            if section is None:
+                # a parent given without any value resets its sub-sections too
+                return set() if emptied else None
+            emptied = emptied or not _has_values(section)
+        named = set(attr.option for attr in node.attrs if section.get(attr.option) is not None)
+        if named:
+            return named
+        return set() if emptied else None
+
+
+def _has_values(value):
+    """Whether value holds anything but None (recursively; Ansible's unset options)."""
+    if isinstance(value, dict):
+        return any(_has_values(item) for item in value.values())
+    if isinstance(value, list):
+        return bool(value)
+    return value is not None

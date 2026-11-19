@@ -1,8 +1,7 @@
 from textwrap import dedent
 
 from ansible_collections.nokia.isam.plugins.modules import isam_generic_pon
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.generic_pon.generic_pon import Generic_ponFacts
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.generic_pon import Generic_ponTemplate
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.generic_pon import TABLE
 from ansible_collections.nokia.isam.tests.unit.compat.mock import patch
 
 from .isam_module import TestIsamModule, set_module_args
@@ -73,7 +72,7 @@ class TestIsamGenericPonModule(TestIsamModule):
             "configure generic-pon ont slid-mode hexa-dec sn-bundle-timer 30 no sw-ver-mis-block no sn-autounlock\n"
             "configure generic-pon alarmflag no ponlos-alarm-ctrl"
         )
-        result = Generic_ponTemplate(lines=Generic_ponFacts._split_packed_lines(running)).parse()
+        result = TABLE.without_defaults(TABLE.parse(running))
         self.assertEqual(result["utilization"], {"ont_pmcollect": "enable"})
         self.assertEqual(result["ont"]["slid_mode"], "hexa-dec")
         self.assertEqual(result["ont"]["sn_bundle_timer"], 30)
@@ -84,11 +83,11 @@ class TestIsamGenericPonModule(TestIsamModule):
             "configure generic-pon utilization threshold txmcutilhi 80 "
             "txucdropfrmhi disabled numtcint 60"
         )
-        threshold = Generic_ponTemplate(lines=Generic_ponFacts._split_packed_lines(running)).parse()["utilization"]["threshold"]
-        # raw template output (netcommon turns numeric strings into ints; the facts type them per argspec)
-        self.assertEqual(str(threshold["txmcutilhi"]), "80")
+        threshold = TABLE.parse(running)["utilization"]["threshold"]
+        # raw table output keeps the device's string values (a threshold is "disabled" or a number)
+        self.assertEqual(threshold["txmcutilhi"], "80")
         self.assertEqual(threshold["txucdropfrmhi"], "disabled")
-        self.assertEqual(str(threshold["numtcint"]), "60")
+        self.assertEqual(threshold["numtcint"], "60")
 
     def test_isam_generic_pon_rendered(self):
         set_module_args(
@@ -111,8 +110,8 @@ class TestIsamGenericPonModule(TestIsamModule):
 
     def test_isam_generic_pon_dpinteg_threshold_has_no_removal_form(self):
         """CLI guide: 'configure generic-pon dpinteg-threshold <value>', mandatory, no 'no' form."""
-        parser = Generic_ponTemplate().get_parser("dpinteg_threshold")
-        assert parser.get("no_remval") and "remval" not in parser
+        attr = TABLE.node(()).attrs[0]
+        assert attr.option == "dpinteg_threshold" and attr.removable is False
 
 
 GPON_DEVICE = ("configure generic-pon dpinteg-threshold 0\n"
@@ -149,18 +148,27 @@ def test_deleted_touches_named_sections_and_settings_only(monkeypatch):
 
 
 def test_table_argspec_and_documentation_agree():
-    import yaml
-
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.generic_pon.generic_pon import Generic_ponArgs
-    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.generic_pon import GENERIC_PON_NODES
     from ansible_collections.nokia.isam.plugins.modules import isam_generic_pon
 
-    spec = Generic_ponArgs.argument_spec["config"]["options"]
-    docs = yaml.safe_load(isam_generic_pon.DOCUMENTATION)["options"]["config"]["suboptions"]
-    for path, _node, attrs in GENERIC_PON_NODES:
-        s, d = spec, docs
-        for key in path:
-            s, d = s[key]["options"], d[key]["suboptions"]
-        assert set(s) - {"threshold"} == set(d) - {"threshold"} == set(option for option, _c, _k, _d in attrs), path
-        for option, _cli, kind, _default in attrs:
-            assert s[option]["type"] == d[option]["type"] == ("int" if kind == "int" else "str"), (path, option)
+    from .table_agreement import assert_table_matches
+    assert_table_matches(TABLE, Generic_ponArgs.argument_spec, isam_generic_pon.DOCUMENTATION)
+
+
+def test_replaced_touches_only_named_sections(monkeypatch):
+    # replaced is section-scoped: naming ont never resets utilization or its threshold
+    assert _gp(monkeypatch, "replaced", {"ont": {"slid_mode": "ascii"}})["commands"] == [
+        "configure generic-pon ont no slid-mode no sn-bundle-timer"]
+    assert _gp(monkeypatch, "replaced", {"utilization": {"threshold": {"numtcint": "60"}}})["commands"] == [
+        "configure generic-pon utilization no pon-pmcollect",
+        "configure generic-pon utilization threshold no txmcutilhi numtcint 60"]
+
+
+def test_deleted_naming_a_subsection_keeps_the_parent_attributes(monkeypatch):
+    # naming only utilization.threshold resets the threshold, not utilization's own attributes
+    assert _gp(monkeypatch, "deleted", {"utilization": {"threshold": {"txmcutilhi": "80"}}})["commands"] == [
+        "configure generic-pon utilization threshold no txmcutilhi"]
+    # an empty parent resets its own attributes and its sub-sections
+    assert _gp(monkeypatch, "deleted", {"utilization": {}})["commands"] == [
+        "configure generic-pon utilization no pon-pmcollect",
+        "configure generic-pon utilization threshold no txmcutilhi"]

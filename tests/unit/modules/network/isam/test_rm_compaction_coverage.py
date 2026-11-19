@@ -9,7 +9,6 @@ SCOPED_RMS = {
     "Equipment_onts",
     "Ethernet_line",
     "Ethernet_onts",
-    "Generic_pon",
     "Interfaces",
     "Isam_traps",
     "Link_agg",
@@ -24,6 +23,14 @@ SCOPED_RMS = {
     "Pon_global",
     "Pppox_relay_global",
     "Trouble_shooting_pon",
+}
+
+# Table families: the attribute table packs one command per CLI node, so there is
+# nothing left to compact (module_utils/network/isam/attribute_table.py).
+TABLE_RMS = {
+    "Generic_pon": "attribute table packs one line per PON settings scope",
+    "Isam_voice_sip": "attribute table packs one line per SIP object scope",
+    "Software_mngt": "attribute table packs one line per database/OSWP scope",
 }
 
 # These RMs have been audited and intentionally have no compactable
@@ -47,7 +54,6 @@ UNSCOPED_RMS = {
     "Isam_ipv6_antispoofing_slot": "single field per slot",
     "Isam_system": "separate system subcommands",
     "Isam_system_security": "custom renderer emits one command per security object",
-    "Isam_voice_sip": "distinct SIP object scopes",
     "Isam_vlan_global": "global singleton/list scopes already atomic",
     "L2cp": "custom atomic renderer",
     "L2cpSession": "distinct session operations",
@@ -62,7 +68,6 @@ UNSCOPED_RMS = {
     "Qos_maps": "map entries are separate operations",
     "Qos_profiles": "profile renderer already emits atomic profile commands",
     "Qos_tca": "per-queue attributes are separate set/reset commands",
-    "Software_mngt": "database and OSWP renderers already group supported options",
     "Xdsl_profiles": "profile commands have distinct nested scopes",
     "Xdsl_bonding": "single global option",
     "Xstp": "global and per-port scopes differ",
@@ -86,7 +91,7 @@ def _resource_module_classes():
             if not isinstance(node, ast.ClassDef) or node.name.startswith("_"):
                 continue
             if any(
-                (isinstance(base, ast.Name) and base.id in {"ResourceModule", "IsamResourceModule", "_Base"})
+                (isinstance(base, ast.Name) and base.id in {"ResourceModule", "IsamResourceModule", "TableResourceModule", "_Base"})
                 for base in node.bases
             ):
                 classes.add(node.name)
@@ -95,5 +100,5 @@ def _resource_module_classes():
 
 def test_every_resource_module_has_an_explicit_compaction_disposition():
     resource_modules = _resource_module_classes()
-    assert resource_modules == SCOPED_RMS | set(UNSCOPED_RMS)
+    assert resource_modules == SCOPED_RMS | set(UNSCOPED_RMS) | set(TABLE_RMS)
     assert all(UNSCOPED_RMS.values())

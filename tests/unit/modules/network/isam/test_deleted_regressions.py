@@ -482,8 +482,8 @@ def test_voice_sip_gathered_is_idempotent_and_round_trips(monkeypatch):
     rendered = _vsip(monkeypatch, "rendered", gathered)["rendered"]
     reparsed = run_module(monkeypatch, "isam_voice_sip",
                           {"state": "parsed", "running_config": "\n".join(rendered)})["parsed"]
-    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.voice_sip import without_defaults
-    assert without_defaults(reparsed) == gathered
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.voice_sip import TABLE
+    assert TABLE.without_defaults(reparsed) == gathered
 
 
 def test_voice_sip_deleted_scoping(monkeypatch):
@@ -506,23 +506,12 @@ def test_voice_sip_creation_requires_mandatory_values(monkeypatch):
 
 
 def test_voice_sip_table_argspec_and_documentation_agree():
-    import yaml
-
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.voice_sip.voice_sip import Isam_voice_sipArgs
-    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.voice_sip import VOICE_SIP_NODES, is_int
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.voice_sip import TABLE
     from ansible_collections.nokia.isam.plugins.modules import isam_voice_sip
 
-    spec = Isam_voice_sipArgs.argument_spec["config"]["options"]
-    docs = yaml.safe_load(isam_voice_sip.DOCUMENTATION)["options"]["config"]["suboptions"]
-    for node in VOICE_SIP_NODES:
-        s, d = spec[node["key"]]["options"], docs[node["key"]]["suboptions"]
-        attrs = set(a[0] for a in node["attrs"]) | ({node["identity"]} if node["identity"] else set())
-        assert set(s) == set(d) == attrs, node["key"]
-        for option, _cli, kind, _default, choices, _sub in node["attrs"]:
-            want_type = "bool" if kind == "flag" else ("int" if is_int(kind) else "str")
-            assert s[option]["type"] == d[option]["type"] == want_type, (node["key"], option)
-            if choices:
-                assert s[option]["choices"] == d[option]["choices"] == choices, (node["key"], option)
+    from .table_agreement import assert_table_matches
+    assert_table_matches(TABLE, Isam_voice_sipArgs.argument_spec, isam_voice_sip.DOCUMENTATION)
 
 
 def test_explicit_default_resets_to_default(monkeypatch):
@@ -572,8 +561,8 @@ def test_software_mngt_gathered_is_idempotent_and_round_trips(monkeypatch):
     rendered = _swmngt(monkeypatch, "rendered", gathered)["rendered"]
     reparsed = run_module(monkeypatch, "isam_software_mngt",
                           {"state": "parsed", "running_config": "\n".join(rendered)})["parsed"]
-    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.software_mngt import without_defaults
-    assert without_defaults(reparsed) == gathered
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.software_mngt import TABLE
+    assert TABLE.without_defaults(reparsed) == gathered
 
 
 def test_software_mngt_deleted_scoping(monkeypatch):
@@ -587,20 +576,9 @@ def test_software_mngt_deleted_scoping(monkeypatch):
 
 
 def test_software_mngt_table_argspec_and_documentation_agree():
-    import yaml
-
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.software_mngt.software_mngt import Software_mngtArgs
-    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.software_mngt import SOFTWARE_MNGT_NODES, is_int
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.software_mngt import TABLE
     from ansible_collections.nokia.isam.plugins.modules import isam_software_mngt
 
-    spec = Software_mngtArgs.argument_spec["config"]["options"]
-    docs = yaml.safe_load(isam_software_mngt.DOCUMENTATION)["options"]["config"]["suboptions"]
-    for node in SOFTWARE_MNGT_NODES:
-        s, d = spec[node["key"]]["options"], docs[node["key"]]["suboptions"]
-        attrs = set(a[0] for a in node["attrs"]) | ({node["identity"]} if node["identity"] else set())
-        assert set(s) == set(d) == attrs, node["key"]
-        for option, _cli, kind, _default, choices, _form in node["attrs"]:
-            want_type = "bool" if kind == "flag" else ("int" if is_int(kind) else "str")
-            assert s[option]["type"] == d[option]["type"] == want_type, (node["key"], option)
-            if choices:
-                assert s[option]["choices"] == d[option]["choices"] == choices, (node["key"], option)
+    from .table_agreement import assert_table_matches
+    assert_table_matches(TABLE, Software_mngtArgs.argument_spec, isam_software_mngt.DOCUMENTATION)

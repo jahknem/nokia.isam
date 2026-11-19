@@ -213,9 +213,9 @@ class TestIsamVoiceSipModule(TestIsamModule):
         self.assertEqual(result["commands"], ["configure voice sip no vsp vsp1"])
 
     def test_isam_voice_sip_statistics_positive_and_negative_parse(self):
-        from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.voice_sip import parse_lines
+        from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.voice_sip import TABLE
 
-        parsed = parse_lines(
+        parsed = TABLE.parse(
             "configure voice sip statistics stats-5min-config enable cdr-config enable\n"
             "configure voice sip statistics stats-config no per-line per-board\n"
         )
