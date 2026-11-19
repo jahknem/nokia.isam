@@ -28,6 +28,12 @@ def _user_command(data):
     return "configure interface port %s user %s" % (data["name"], value)
 
 
+def _severity_command(data):
+    # Detail output uses no-value for an unset severity; it is not a CLI value.
+    suffix = "no severity" if data["severity"] == "no-value" else "severity %s" % data["severity"]
+    return "configure interface port %s %s" % (data["name"], suffix)
+
+
 class InterfacesTemplate(NetworkTemplate):
     def __init__(self, lines=None, module=None):
         super(InterfacesTemplate, self).__init__(lines=lines, tmplt=self, module=module)
@@ -92,7 +98,7 @@ class InterfacesTemplate(NetworkTemplate):
             'getval': re.compile(
                 r'''^port\s+(?P<id>\S+)\s+(?:(?P<negate>no)\s+)?severity\s+(?P<severity>(indeterminate|warning|minor|major|critical|no-alarms|default|no-value|))$''', re.VERBOSE,
             ),
-            'setval': 'configure interface port {{ name }} severity {{ severity }}',
+            'setval': _severity_command,
             'remval': 'configure interface port {{ name }} no severity',
             'result': {
                 '{{ id }}': {

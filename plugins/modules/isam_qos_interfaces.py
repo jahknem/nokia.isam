@@ -177,6 +177,8 @@ options:
     - With C(merged), C(replaced) or C(deleted) and I(config), the current configuration is likewise read only for the named instances.
     - C(deleted) resets the named settings, or every setting for an interface named by C(name) alone. Values the device shows for an unset setting (C(none), C(not-applicable)) are not reset. An interface with downstream queues (e.g. an ONT UNI) keeps its C(scheduler_node), with a warning; the device requires one while queues exist and the queues themselves cannot be removed.
     - The device changes upstream-queue parameters only while no bridge VLAN uses the queue (C(QOS MGT error 41)); change them before attaching VLANs on the UNI.
+    - C(not-applicable) is a detail-output placeholder, not a settable value. It is never sent, and unset C(none)/C(not-applicable) top-level or queue settings do not generate resets. Explicit C(none) still clears a configured profile that supports that value.
+    - Provision upstream-queue bandwidth profiles before calling C(nokia.isam.isam_bridges) to attach VLANs (C(VLAN MGT error 277)). Separate module calls are executed in playbook order; this module does not reorder other tasks or create missing profiles implicitly.
     type: str
     default: merged
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]

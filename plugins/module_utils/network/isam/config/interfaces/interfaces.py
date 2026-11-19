@@ -39,10 +39,11 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 DEFAULT_OFF_FLAGS = ("admin_up", "link_updown_trap")
 
 
-def _without_false_flags(entry, keep=()):
-    """entry without default-off flags set to False (flags in keep excepted)."""
+def _without_defaults(entry, keep=()):
+    """Drop detail-only unset values, retaining explicitly requested resets."""
     return dict((k, v) for k, v in entry.items()
-                if not (k in DEFAULT_OFF_FLAGS and v is False and k not in keep))
+                if k in keep or not ((k in DEFAULT_OFF_FLAGS and v is False)
+                                     or (k == "severity" and v == "no-value")))
 
 
 class Interfaces(IsamResourceModule):
@@ -79,7 +80,7 @@ class Interfaces(IsamResourceModule):
         # replaced/overridden must not re-send the defaults the detail read prints; an
         # explicit false is still sent in merged where the device has the flag set, and
         # rendered renders what was asked for.
-        haved = dict((k, _without_false_flags(v)) for k, v in iteritems(haved))
+        haved = dict((k, _without_defaults(v)) for k, v in iteritems(haved))
         if self.state == "deleted":
             # before want's false flags are dropped: "admin_up: false" names the attribute too
             for target, have in deleted_targets(wantd, haved, ("name", "id")):
@@ -87,12 +88,14 @@ class Interfaces(IsamResourceModule):
             return
         for k, v in iteritems(dict(wantd)):
             if self.state == "rendered":
-                keep = DEFAULT_OFF_FLAGS
+                keep = list(DEFAULT_OFF_FLAGS) + ["severity"]
             elif self.state == "merged":
                 keep = [flag for flag in DEFAULT_OFF_FLAGS if haved.get(k, {}).get(flag)]
             else:
                 keep = ()
-            wantd[k] = _without_false_flags(v, keep)
+            if haved.get(k, {}).get("severity") is not None:
+                keep = list(keep) + ["severity"]
+            wantd[k] = _without_defaults(v, keep)
 
         # if state is merged, merge want onto have and then compare
         if self.state == "merged":

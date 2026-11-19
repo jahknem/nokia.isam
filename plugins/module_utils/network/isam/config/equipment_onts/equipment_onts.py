@@ -5,6 +5,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import re
+import time
 
 from copy import deepcopy
 
@@ -12,6 +13,8 @@ from ansible.module_utils.six import iteritems
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import covers_entry, is_masked_secret
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.equipment_onts.equipment_onts import Equipment_ontsFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import unwrap_response
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.equipment_onts import (
     INTERFACE_SUBNODES,
     LOOP_FIELDS,
@@ -40,11 +43,14 @@ def _subnode_scopes(node, subnodes, unpacked=()):
 class Equipment_onts(IsamResourceModule):
     """The isam_equipment_onts config class."""
 
+    SHUTDOWN_VERIFY_ATTEMPTS = 5
+    SHUTDOWN_VERIFY_INTERVAL = 1
+
     # admin-state is never packed: the device rejects it on the line that creates the
     # ONT ("invalid token") and prints it as a line of its own.
     COMPACT_COMMAND_SCOPES = (
-        _subnode_scopes("interface", INTERFACE_SUBNODES, unpacked=("admin-state",))
-        + (r"^(?P<scope>configure equipment ont slot \S+) (?P<suffix>.+)$",)
+        _subnode_scopes("interface", INTERFACE_SUBNODES, unpacked=("admin-state", "no admin-state"))
+        + (r"^(?P<scope>configure equipment ont slot \S+) (?P<suffix>(?!(?:no\s+)?admin-state(?:\s|$)).+)$",)
         + _subnode_scopes("sw-ctrl", SW_CTRL_SUBNODES)
         + (
             r"^(?P<scope>configure equipment ont loop \S+) (?P<suffix>.+)$",
@@ -135,6 +141,7 @@ class Equipment_onts(IsamResourceModule):
         )
 
     def generate_commands(self):
+        self._shutdown_targets = []
         want = self.want or deepcopy(EMPTY)
         have = self.have or deepcopy(EMPTY)
         # ResourceModule uses EMPTY when config is omitted. That mapping is truthy
@@ -188,13 +195,69 @@ class Equipment_onts(IsamResourceModule):
 
     def _shut_down_before_delete(self, want, have, delete_all):
         """Admin-down what is about to be removed: the device refuses to delete an ONT
-        or an ONT slot that is not admin down ("Not in admin down state to delete")."""
+        or an ONT slot that is not admin down ("Not in admin down state to delete").
+        Reassert even a gathered down state: interface and slot shutdown propagate
+        independently, and a stale/detail read is not proof deletion is ready.
+        """
         for section, key, node in (("interfaces", "ont_idx", "interface"), ("slots", "ont_slot_idx", "slot")):
             named = dict((item[key], item) for item in want.get(section) or [])
             for entry in have.get(section) or []:
                 removed = delete_all or (entry[key] in named and covers_entry(named[entry[key]], entry, (key,)))
-                if removed and entry.get("admin_state") != "down":
+                if removed:
                     self.commands.append("configure equipment ont %s %s admin-state down" % (node, entry[key]))
+                    self._shutdown_targets.append((section, key, node, entry[key]))
+
+    def run_commands(self):
+        if not self._shutdown_targets or self._module.check_mode:
+            return super(Equipment_onts, self).run_commands()
+        self._compact()
+        accepted = []
+        for command in self.commands:
+            # Shutdowns form the prelude. Do not send a single removal until all
+            # targeted interfaces AND slots have confirmed down after settling.
+            if len(accepted) == len(self._shutdown_targets):
+                self._verify_shutdown(accepted)
+            self.changed = True  # a transport failure can still mean a write occurred
+            try:
+                self._connection.edit_config(candidate=[command])
+            except Exception as exc:
+                self._delete_failure(str(exc), accepted, failed_command=command, phase="execution")
+            accepted.append(command)
+
+    def _verify_shutdown(self, accepted):
+        pending = list(self._shutdown_targets)
+        parser = Equipment_ontsFacts(self._module)
+        for _attempt in range(self.SHUTDOWN_VERIFY_ATTEMPTS):
+            # Even an immediate config read can reflect the desired state before
+            # the device permits deletion. Never poll in check mode or retry writes.
+            time.sleep(self.SHUTDOWN_VERIFY_INTERVAL)
+            remaining = []
+            for section, key, node, identity in pending:
+                command = "info configure equipment ont %s %s flat detail" % (node, identity)
+                try:
+                    response = unwrap_response(self._connection.get(command))
+                except Exception as exc:
+                    self._delete_failure("Shutdown readback failed: %s" % exc, accepted)
+                entries = parser._parse_config(response).get(section, [])
+                if not any(entry.get(key) == identity and entry.get("admin_state") == "down" for entry in entries):
+                    remaining.append((section, key, node, identity))
+            if not remaining:
+                return
+            pending = remaining
+        self._delete_failure("Shutdown did not confirm admin-state down for %s" %
+                             ", ".join("%s %s" % (node, identity) for _section, _key, node, identity in pending), accepted)
+
+    def _delete_failure(self, message, accepted, failed_command=None, phase="shutdown_verification"):
+        self._module.fail_json(
+            msg="ONT deletion stopped: %s. Read back device state before retrying; no command was retried." % message,
+            changed=self.changed,
+            commands=self.commands,
+            accepted=list(accepted),
+            failed_command=failed_command,
+            pending=self.commands[len(accepted) + (1 if failed_command is not None else 0):],
+            failure_phase=phase,
+            completion_status="unknown",
+        )
 
     def _compare_ont_nodes(self, want_list, have_list, parser_prefix, defaults, requested, removed=()):
         """Loop / pm-collect nodes exist with their ONT: removal resets the fields.
@@ -264,11 +327,17 @@ class Equipment_onts(IsamResourceModule):
                 desired = deepcopy(have)
                 desired.update(want)
             if parser_prefix == "slot" and not have and self.state in ("merged", "rendered"):
-                command = "configure equipment ont slot %s" % item_key
+                prefix = "configure equipment ont slot %s" % item_key
+                command = prefix
                 for field in self.SLOT_FIELDS:
-                    if desired.get(field) is not None:
+                    if field != "admin_state" and desired.get(field) is not None:
                         command += " %s %s" % (field.replace("_", "-"), desired[field])
-                self.commands.append(command)
+                # An admin-only request already addresses the slot; do not add a
+                # bare navigation/creation line when there are no other options.
+                if command != prefix or desired.get("admin_state") is None:
+                    self.commands.append(command)
+                if desired.get("admin_state") is not None:
+                    self.addcmd(desired, "slot.admin_state")
                 continue
             self._compare_entry(desired, have, parser_prefix, fields)
 

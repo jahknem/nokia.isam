@@ -14,6 +14,17 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 UNSET_VALUES = ("none", "not-applicable")
 
 
+def _without_unset_values(entry):
+    """Detail's absent/unsupported fields must not become removal commands.
+
+    Identities and queue lists are left intact; queue entries are normalized at
+    their own comparison boundary. Explicit 'none' in want is handled separately
+    because setting a real configured profile to none is a valid reset.
+    """
+    return dict((key, value) for key, value in entry.items()
+                if key in ("name", "id") or value not in UNSET_VALUES)
+
+
 class Qos_interfaces(IsamResourceModule):
     """The isam_qos_interfaces config class."""
 
@@ -101,13 +112,24 @@ class Qos_interfaces(IsamResourceModule):
             self._compare(want=want, have=haved.pop(k, {}))
 
     def _compare(self, want, have):
+        have = _without_unset_values(have)
         if self.state == "deleted":
             self._delete_fields(want, have)
         else:
             # 'none'/'not-applicable' and an unset value are the same device state: the
             # device omits a profile set to none (lab ISAM, pon: cac-profile none).
-            want = dict((key, value) for key, value in want.items()
-                        if not (value in UNSET_VALUES and have.get(key) is None))
+            want = dict(want)
+            for key, value in list(want.items()):
+                if key in ("name", "id"):
+                    continue
+                if value == "not-applicable":
+                    # Unsupported is not a request to remove a real target value.
+                    if key in have:
+                        want[key] = have[key]
+                    else:
+                        want.pop(key)
+                elif value == "none" and have.get(key) is None:
+                    want.pop(key)
             self.compare(parsers=self.top_parsers, want=want, have=have)
         for list_name, parsers in iteritems(self.list_parsers):
             self._compare_list(list_name, parsers, want, have)
@@ -153,6 +175,7 @@ class Qos_interfaces(IsamResourceModule):
             self._compare_list_entry(parsers, want_entry, haved.get(key, {}), want.get("name"))
 
     def _compare_list_entry(self, parsers, want, have, name):
+        have = _without_unset_values(have)
         # deleted removes what was requested and never sets a value: the named fields
         # of the entry, or every field when only its id is given.
         whole_entry = not any(value is not None for key, value in want.items() if key != "id")
@@ -160,6 +183,9 @@ class Qos_interfaces(IsamResourceModule):
             field = self._tmplt.get_parser(parser).get("compval")
             inw = want.get(field)
             inh = have.get(field)
+
+            if inw == "not-applicable" or (inw == "none" and inh is None and self.state != "rendered"):
+                continue
 
             if self.state == "merged" and inw is None:
                 continue

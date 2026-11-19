@@ -163,6 +163,26 @@ of resource-module options and not an action plan. Device-default/detail output
 is selected separately with `config_tree_detail`. Unknown command syntax may
 defeat heuristic redaction; review diagnostic output privately before sharing it.
 
+## ONT lifecycle and detail-output placeholders
+
+Interface and slot admin-state are separate commands, not part of the packed
+creation/update line. Whole-entry `isam_equipment_onts` deletion reasserts shutdown
+for the selected interfaces and slots even when gathered down. Live execution
+settles and verifies targeted detail readback before any removal (up to five
+one-second rounds); it stops on unconfirmed shutdown or a read error and never
+retries writes. Check mode does not wait or perform readiness polling.
+
+Severity `no-value` describes an unset value; clearing a real severity emits
+`no severity`. QoS `not-applicable` must not be replayed as a CLI value, and unset
+interface/queue fields do not generate unsupported reset commands. Configure
+upstream queue bandwidth profiles before attaching bridge VLANs in a later module
+call; the modules do not implicitly reorder tasks or detach existing services.
+
+See [the offline live-apply follow-up](live-apply-regressions-2026-11-19.md) for
+regressions, failure reporting and remaining live-validation boundaries. The
+original single-element `merged` `.flat` error is not reproduced by the pinned
+Core 2.19.12 direct-execution tests; that is not a claim of a verified live fix.
+
 ## Operational actions and validation boundaries
 
 Ethernet statistics, DHCP relay port statistics and learned-MAC deletion are new
