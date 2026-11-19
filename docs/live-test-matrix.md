@@ -99,6 +99,11 @@ Read-only check after the flag -> value fixes (2026-11-19): `isam_generic_pon`,
 merged and replaced of the gathered facts in check mode send nothing (system_security only
 differs on SNMP communities, whose names the gathered output redacts, unchanged by the fix).
 
+`isam_linetest` migrated to `IsamResourceModule` (2026-11-19); read-only on the lab ISAM
+(no LineTest configured): gathered returns `{sessions: [], parameters: []}`, rendered emits
+declarative commands only. Write behaviour (session destroy, parameters no-delete) is pinned
+by unit tests, not exercised live (creating a session invokes a test action).
+
 Tested on card 6 replanned as xDSL (NDLT-F) and Ethernet (NELT-B) board instead of
 the active cards 3 and 8; see the rows above and the offline scenarios in
 `tests/fixtures/live_scenarios/`.

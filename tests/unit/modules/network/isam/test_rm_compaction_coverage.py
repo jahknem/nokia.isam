@@ -53,6 +53,7 @@ UNSCOPED_RMS = {
     "L2cpSession": "distinct session operations",
     "L2cpUserPort": "distinct user-port operations",
     "Li_vlan": "single VLAN field",
+    "Linetest": "custom renderer emits complete per-field session/parameter commands; destroy is atomic",
     "Mcast_control": "package/system emitted as one line per object; context selector separate",
     "Multicast": "package/system emitted as one line per object; context selector separate",
     "Ntp_onts": "per-ONT fields are separate command verbs",
