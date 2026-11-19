@@ -54,8 +54,23 @@ A `NetworkTemplate`. Pick per node:
 - **Explicit `PARSERS` entries** (netcommon format: `name`, `getval`, `setval`,
   `remval`, `result`, `compval`) for small or irregular grammars. Familiar and easy to
   inspect.
-- **Small factory functions** generating such entries from one attribute table when a
-  node has many attributes of the same kind (flags, values, thresholds). Reference:
+- **`AttributeTable`** for uniform `[no] <keyword> [<value>]` clauses. Declare `Attr`
+  entries inside `Node` objects once; the table drives parsing, default stripping,
+  command rendering and `argument_spec()`. References: `rm_templates/software_mngt.py`,
+  `voice_sip.py` and `generic_pon.py`. Use `TableTemplate` and `TableResourceModule`;
+  do not copy their parsing or reconciliation loops into a family.
+  - `Attr.kind` is `flag`, `str` or `int`; device defaults belong in `Attr.default`.
+    `removable=False` marks attributes without a `no` form; `Node.mandatory` names
+    values required when creating a list instance.
+  - `Node.identity` makes a list node; its key can otherwise be a nested path tuple
+    or `()` for top-level attributes. `Attr.node` places a flat attribute on another
+    CLI sub-node. Packed clauses share a command; `form="solo"` and `form="scalar"`
+    describe separate commands and direct node arguments.
+  - Parsing requires a bare node or a known first clause, keeping sibling nodes out.
+    `parse()` keeps raw defaults; facts call `without_defaults()` afterwards. Requests
+    stay raw so an explicit default can reset a non-default device value.
+- **Small factory functions** generating netcommon parser entries remain appropriate
+  when a family's existing grammar needs that integration. Reference:
   `isam_vlans` -- `VLAN_ATTRS` (option, CLI keyword, kind, device default) generates the
   parsers, drives the facts' line splitting and holds the defaults; options are
   snake_case with the CLI spelling as alias; a test keeps table, argspec and
@@ -63,14 +78,20 @@ A `NetworkTemplate`. Pick per node:
   `rm_templates/ethernet_line.py` follows the same idea for a node with sub-nodes.
 - **`SettingsBlockTemplate`** for singleton settings nodes whose attributes are all
   `[no] <kw> <value>` with known defaults (`nat`, `error`, `cwmp_plt`, ...): one table
-  `(option, keyword, kind, default)`.
+  `(option, keyword, kind, default)`. It is a compatibility wrapper over the attribute
+  core, retaining one command per attribute, optional `configure` prefixes and the
+  netcommon line tracker. Its legacy `rendered` path omits device-default values.
 
-The device prints all attributes of a node on one line. Facts split such lines into
-one attribute per line (`iter_cli_fields`) where per-attribute parsers read them.
+The device prints all attributes of a node on one line. Attribute tables read that
+packed line directly; families using per-attribute netcommon parsers split it first
+(`iter_cli_fields`). Keep those two approaches distinct rather than adding a splitter
+in front of an attribute table.
 
 ## Config classes
 
-Use `compare(parsers=...)` where its field comparison fits, and explicit code where it
+Use `TableResourceModule` for attribute-table families: it implements list identity,
+mandatory-at-creation checks and section-scoped state handling. Other families use
+`compare(parsers=...)` where its field comparison fits, and explicit code where it
 is clearer. Code beyond the state semantics is for device rules only, each with a short
 comment naming the device evidence, for example:
 

@@ -191,6 +191,11 @@
   **Behaviour fixes in `isam_generic_pon`:** `replaced` is now section-scoped (it used to
   reset unnamed sections too), and `deleted` naming only a sub-section (e.g.
   `utilization.threshold`) no longer resets the parent section's own attributes.
+- `settings_block` now delegates clause parsing, type conversion and attribute-change
+  decisions to the shared attribute-table core. Its public helpers, optional `configure`
+  prefix, line tracking and separate per-attribute commands are preserved, including
+  legacy default suppression in `rendered`. Compatibility tests pin these differences
+  from packed table families; the development guide documents which pattern to use.
 - `isam_linetest` migrated onto `IsamResourceModule` (the last resource module still on a
   plain `object` base), so it shares the standard facts gathering, check-mode write path
   and before/after result. Its device rules are unchanged and now pinned by tests across
