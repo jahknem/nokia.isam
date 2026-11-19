@@ -10,6 +10,11 @@ attribute, defaults as ``no <keyword>``; the plain output omits defaults.
 
 Facts never report a known default: ``no <keyword>`` and ``<keyword> <default>``
 both mean "absent". Unknown keywords are ignored, never an error.
+
+The clause parsing and the per-attribute state decision come from the shared
+attribute-table core (attribute_table.py); this module keeps the settings-block
+specifics: the optional ``configure`` prefix, the line tracker, and one command per
+attribute (the table families pack a node's clauses into one line instead).
 """
 from __future__ import absolute_import, division, print_function
 
@@ -20,8 +25,11 @@ import re
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (
     NetworkTemplate,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_inm import (
-    parse_attributes,
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.attribute_table import (
+    Attr,
+    change,
+    convert as _convert,
+    parse_clauses as _parse_clauses,
 )
 
 
@@ -40,25 +48,17 @@ def node_regex(node, attrs):
 
 def convert(kind, value):
     """Typed value of a parsed token (ints stay strings when they are not numeric)."""
-    if kind == "int":
-        try:
-            return int(value)
-        except (TypeError, ValueError):
-            return value
-    return value
+    return _convert(kind, value)
 
 
 def parse_clauses(rest, attrs):
-    """{option: value} of the packed clauses, defaults dropped."""
-    cli_to_attr = dict((cli, option) for option, cli, _kind, _default in attrs)
-    raw = {}
-    parse_attributes(rest, raw, cli_to_attr)
+    """{option: value} of the packed clauses, defaults and negated values dropped."""
+    raw = _parse_clauses(rest.split(), tuple(Attr(option, cli, kind, default) for option, cli, kind, default in attrs))
     entry = {}
-    for option, _cli, kind, default in attrs:
-        if option in raw:
-            value = convert(kind, raw[option])
-            if value != default:
-                entry[option] = value
+    for option, _cli, _kind, default in attrs:
+        value = raw.get(option)
+        if value is not None and value != default:
+            entry[option] = value
     return entry
 
 
@@ -76,23 +76,24 @@ def settings_commands(state, want, have, attrs, render):
     render(option, value) returns the full command; value None is the reset form.
     have holds only non-default values (absent means the device default).
     merged sets what differs; replaced/overridden also reset what want omits;
-    deleted resets every non-default attribute.
+    deleted resets every non-default attribute. The per-attribute decision is the
+    shared core ``change`` (a default have value counts as absent); rendered keeps
+    the settings-block form (every given non-default value, one command each).
     """
     want = want or {}
     have = have or {}
     commands = []
-    for option, _cli, _kind, default in attrs:
+    for option, cli, kind, default in attrs:
         wv = want.get(option)
         hv = have.get(option)
-        current = default if hv is None else hv
-        if state == "deleted":
-            if hv is not None and hv != default:
-                commands.append(render(option, None))
-        elif wv is not None:
-            if wv != current:
-                commands.append(render(option, None if wv == default and hv is not None else wv))
-        elif state in ("replaced", "overridden") and hv is not None and hv != default:
-            commands.append(render(option, None))
+        # Legacy settings blocks suppress defaults even in rendered. Unlike the
+        # table renderer, that path has always made the merged-style decision.
+        comparison_state = {"deleted": "replaced", "rendered": "merged"}.get(state, state)
+        attr = Attr(option, cli, kind, default)
+        tokens = change(attr, None if state == "deleted" else wv, None if hv == default else hv,
+                        comparison_state)
+        if tokens:
+            commands.append(render(option, None if tokens[0] == "no" else wv))
     return commands
 
 

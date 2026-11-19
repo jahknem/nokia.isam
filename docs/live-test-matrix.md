@@ -99,6 +99,14 @@ Read-only check after the flag -> value fixes (2026-11-19): `isam_generic_pon`,
 merged and replaced of the gathered facts in check mode send nothing (system_security only
 differs on SNMP communities, whose names the gathered output redacts, unchanged by the fix).
 
+Shared attribute-table refactor (2026-11-19): offline differential checks against the
+previous implementation agree on the lab captures for `software_mngt`, `voice_sip` and
+`generic_pon` (voice_sip: 256 render cases). Fresh gathered / merged / replaced check-mode
+verification is **pending**: the inventory could not load because internal DNS did not
+resolve NetBox; the attempted playbooks matched no hosts. No device commands were sent.
+The `settings_block` compatibility wrapper is checked offline against the previous
+implementation and by unit tests; no new live verification is claimed for its users.
+
 `isam_linetest` migrated to `IsamResourceModule` (2026-11-19); read-only on the lab ISAM
 (no LineTest configured): gathered returns `{sessions: [], parameters: []}`, rendered emits
 declarative commands only. Write behaviour (session destroy, parameters no-delete) is pinned
