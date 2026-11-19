@@ -101,9 +101,11 @@ differs on SNMP communities, whose names the gathered output redacts, unchanged 
 
 Shared attribute-table refactor (2026-11-19): offline differential checks against the
 previous implementation agree on the lab captures for `software_mngt`, `voice_sip` and
-`generic_pon` (voice_sip: 256 render cases). Fresh gathered / merged / replaced check-mode
-verification is **pending**: the inventory could not load because internal DNS did not
-resolve NetBox; the attempted playbooks matched no hosts. No device commands were sent.
+`generic_pon` (voice_sip: 256 render cases). After VPN/DNS recovery, fresh read-only
+verification on DS-LIN-TEST-01 passed for all three: gathered succeeded, and merged and
+replaced of the gathered configuration in check mode both returned empty command lists
+(`changed=0`, no failures). No configuration writes were sent. The earlier attempt had
+matched no hosts because NetBox did not resolve; the successful retry clears that blocker.
 The `settings_block` compatibility wrapper is checked offline against the previous
 implementation and by unit tests; no new live verification is claimed for its users.
 
