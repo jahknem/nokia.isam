@@ -45,24 +45,28 @@ options:
         - qos-aware
         - layer2-terminated
         - mirror
-      sntp-proxy:
+      sntp_proxy:
+        aliases: [sntp-proxy]
         type: bool
         description: If the VLAN should be configured as a SNTP proxy
       priority:
         type: int
         description:
         - 'The priority of the VLAN. Range: [0...7]'
-      vmac-not-in-opt61:
+      vmac_not_in_opt61:
+        aliases: [vmac-not-in-opt61]
         type: bool
         description: Skip vmac translation in dhcp option 61 even when vmac is enabled
-      new-broadcast:
+      new_broadcast:
+        aliases: [new-broadcast]
         type: str
         description: Control downstream broadcast frames.
         choices:
         - inherit
         - enable
         - disable
-      protocol-filter:
+      protocol_filter:
+        aliases: [protocol-filter]
         type: str
         description: Control protocol group filters
         choices:
@@ -74,7 +78,8 @@ options:
         - pass-pppoe-ipv6oe
         - pass-ipoe-ipv6oe
         - pass-pppoe-ipoe-ipv6oe
-      pppoe-relay-tag:
+      pppoe_relay_tag:
+        aliases: [pppoe-relay-tag]
         type: str
         description:
         - Configure the format of the PPPoE relay tag
@@ -82,130 +87,158 @@ options:
         - true
         - false
         - configurable
-      drly-srv-usr-side:
+      drly_srv_usr_side:
+        aliases: [drly-srv-usr-side]
         description:
         - Enable DHCP(v4/v6) server transparency at the user side when DHCP(v4/v6) relay is enabled. Only applicable for CC forwarder
         type: bool
-      dhcp-opt82-ext:
+      dhcp_opt82_ext:
+        aliases: [dhcp-opt82-ext]
         description:
         - Configure DHCP option 82 handling for subscriber-side DHCP frames.
         type: str
         choices:
         - enable
         - add-or-forward
-      dhcp-opt82-nni:
+      dhcp_opt82_nni:
+        aliases: [dhcp-opt82-nni]
         description:
         - Enable DHCP option 82 processing on the network-to-network interface.
         type: bool
-      dhcp-opt82-uplink:
+      dhcp_opt82_uplink:
+        aliases: [dhcp-opt82-uplink]
         description:
         - Enable DHCP option 82 processing on uplink DHCP traffic.
         type: bool
-      circuit-id-dhcp:
+      circuit_id_dhcp:
+        aliases: [circuit-id-dhcp]
         description:
         - Configure the DHCP option 82 circuit-id format.
         type: str
         choices:
         - physical-id
-      remote-id-dhcp:
+      remote_id_dhcp:
+        aliases: [remote-id-dhcp]
         description:
         - Configure the DHCP option 82 remote-id format.
         type: str
         choices:
         - customer-id
-      relay-id-dhcp:
+      relay_id_dhcp:
+        aliases: [relay-id-dhcp]
         description:
         - Enable DHCP relay-id insertion.
         type: bool
-      dhcp-linerate:
+      dhcp_linerate:
+        aliases: [dhcp-linerate]
         description:
         - Enable DHCP line-rate information insertion.
         type: bool
-      pppoe-linerate:
+      pppoe_linerate:
+        aliases: [pppoe-linerate]
         description:
         - Enable PPPoE line-rate information insertion.
         type: bool
-      dhcpv6-linerate:
+      dhcpv6_linerate:
+        aliases: [dhcpv6-linerate]
         description:
         - Enable DHCPv6 line-rate information insertion.
         type: bool
-      pppoe-l2-encaps:
+      pppoe_l2_encaps:
+        aliases: [pppoe-l2-encaps]
         description:
         - Enable PPPoE Layer 2 encapsulation information insertion.
         type: bool
-      dhcp-l2-encaps:
+      dhcp_l2_encaps:
+        aliases: [dhcp-l2-encaps]
         description:
         - Enable DHCP Layer 2 encapsulation information insertion.
         type: bool
-      dhcpv6-l2-encaps:
+      dhcpv6_l2_encaps:
+        aliases: [dhcpv6-l2-encaps]
         description:
         - Enable DHCPv6 Layer 2 encapsulation information insertion.
         type: bool
-      l2-encaps1:
+      l2_encaps1:
+        aliases: [l2-encaps1]
         description:
         - Enable first Layer 2 encapsulation information insertion.
         type: bool
-      pppoer-vlanaware:
+      pppoer_vlanaware:
+        aliases: [pppoer-vlanaware]
         description:
         - Enable VLAN-aware PPPoE relay behavior.
         type: bool
-      dhcpr-vlanaware:
+      dhcpr_vlanaware:
+        aliases: [dhcpr-vlanaware]
         description:
         - Enable VLAN-aware DHCP relay behavior.
         type: bool
-      dhcpv6r-vlanaware:
+      dhcpv6r_vlanaware:
+        aliases: [dhcpv6r-vlanaware]
         description:
         - Enable VLAN-aware DHCPv6 relay behavior.
         type: bool
-      circuit-id-pppoe:
+      circuit_id_pppoe:
+        aliases: [circuit-id-pppoe]
         description:
         - Configure the PPPoE circuit-id format.
         type: str
         choices:
         - physical-id
-      remote-id-pppoe:
+      remote_id_pppoe:
+        aliases: [remote-id-pppoe]
         description:
         - Configure the PPPoE remote-id format.
         type: str
         choices:
         - customer-id
-      dhcpv6-itf-id:
+      dhcpv6_itf_id:
+        aliases: [dhcpv6-itf-id]
         description:
         - Configure the DHCPv6 interface-id format.
         type: str
         choices:
         - physical-id
-      dhcpv6-remote-id:
+      dhcpv6_remote_id:
+        aliases: [dhcpv6-remote-id]
         description:
         - Configure the DHCPv6 remote-id format.
         type: str
         choices:
         - customer-id
-      dhcpv6-relay-id:
+      dhcpv6_relay_id:
+        aliases: [dhcpv6-relay-id]
         description:
         - Enable DHCPv6 relay-id insertion.
         type: bool
-      dhcpv6-trst-port:
+      dhcpv6_trst_port:
+        aliases: [dhcpv6-trst-port]
         description:
         - Enable DHCPv6 trusted-port behavior.
         type: bool
-      enterprise-number:
+      enterprise_number:
+        aliases: [enterprise-number]
         description:
         - Configure the enterprise number used in DHCPv6 relay options.
         type: int
-      vmac-translation:
+      vmac_translation:
+        aliases: [vmac-translation]
         description:
         - Enable virtual MAC address translation.
         type: bool
-      vmac-dnstr-filter:
+      vmac_dnstr_filter:
+        aliases: [vmac-dnstr-filter]
         description:
         - Enable virtual MAC downstream filter behavior.
         type: bool
-      icmpv6-sec-fltr:
+      icmpv6_sec_fltr:
+        aliases: [icmpv6-sec-fltr]
         description:
         - Enable ICMPv6 security filtering.
         type: bool
-      new-secure-fwd:
+      new_secure_fwd:
+        aliases: [new-secure-fwd]
         description:
         - Enable secure forwarding for the VLAN. On GPON and L2+ LT boards, this can only be controlled at S-VLAN level
         type: str
@@ -213,50 +246,62 @@ options:
         - inherit
         - enable
         - disable
-      aging-time:
+      aging_time:
+        aliases: [aging-time]
         description:
         - Configure MAC aging time in seconds; if default, the system-level value is applicable.
         type: int
-      l2cp-transparent:
+      l2cp_transparent:
+        aliases: [l2cp-transparent]
         description: Enable l2cp-transparent
         type: bool
-      in-qos-prof-name:
+      in_qos_prof_name:
+        aliases: [in-qos-prof-name]
         description:
         - QoS ingress profile name
         type: str
-      ipv4-mcast-ctrl:
+      ipv4_mcast_ctrl:
+        aliases: [ipv4-mcast-ctrl]
         description:
         - 'Enable ipv4 multicast control: forward ipv4 multicast frames in this VLAN'
         type: bool
-      ipv6-mcast-ctrl:
+      ipv6_mcast_ctrl:
+        aliases: [ipv6-mcast-ctrl]
         description:
         - 'Enable ipv6 multicast control: forward ipv6 multicast frames in this VLAN'
         type: bool
-      mac-mcast-ctrl:
+      mac_mcast_ctrl:
+        aliases: [mac-mcast-ctrl]
         description:
         - 'Enable mac multicast control: forward mac multicast frames in this VLAN'
         type: bool
-      dis-proto-rip:
+      dis_proto_rip:
+        aliases: [dis-proto-rip]
         description:
         - Disable rip-ipv4 protocol
         type: bool
-      proto-ntp:
+      proto_ntp:
+        aliases: [proto-ntp]
         description:
         - Enable ntp protocol
         type: bool
-      dis-ip-antispoof:
+      dis_ip_antispoof:
+        aliases: [dis-ip-antispoof]
         description:
         - Disable IP anti-spoofing
         type: bool
-      unknown-unicast:
+      unknown_unicast:
+        aliases: [unknown-unicast]
         description:
         - Enable unknown unicast flooding
         type: bool
-      pt2ptgem-flooding:
+      pt2ptgem_flooding:
+        aliases: [pt2ptgem-flooding]
         description:
         - Enable flooding on unicast GEM port
         type: bool
-      mac-movement-ctrl:
+      mac_movement_ctrl:
+        aliases: [mac-movement-ctrl]
         description:
         - Enable MAC movement in this VLAN
         type: bool
@@ -267,19 +312,23 @@ options:
         choices:
         - passthru
         - not-applicable
-      arp-snooping:
+      arp_snooping:
+        aliases: [arp-snooping]
         description:
         - Enable ARP snooping
         type: bool
-      arp-polling:
+      arp_polling:
+        aliases: [arp-polling]
         description:
         - Enable ARP polling
         type: bool
-      arp-polling-ip:
+      arp_polling_ip:
+        aliases: [arp-polling-ip]
         description:
         - Configure ARP polling IP address in form of
         type: str
-      mac-unauth:
+      mac_unauth:
+        aliases: [mac-unauth]
         description:
         - 'Enable mac unauthorized default: forward the frame to this vlan if authorization failed'
         type: bool

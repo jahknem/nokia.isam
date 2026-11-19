@@ -117,6 +117,18 @@
   one of its settings was named; `isam_vlan_global` deleting a priority-regen entry also
   reset broadcast-frames and tpid. All now use the shared `deleted_targets` /
   `covers_entry` rules. `isam_dhcp_server` sent `no lease-time` twice in merged.
+- `isam_vlans` rebuilt as the collection's reference module: one attribute table
+  (`VLAN_ATTRS`) generates the parsers, drives the facts and holds the device defaults;
+  every state goes through the template and `compare()` (the hand-built command strings,
+  a separate render function and an unreachable code path are gone; 1000 -> 260 lines).
+  **Facts now use snake_case keys** (`protocol_filter`, `new_broadcast`, ...); the CLI
+  spellings (`protocol-filter`, ...) stay accepted as option aliases. Fixed on the way
+  (verified on the device with VLANs 3990/3991): `rendered`/`merged` dropped
+  `dhcpv6-itf-id` and `dhcpv6-remote-id`; names with spaces were sent in single quotes
+  (invalid token; now double quotes, as the device prints them); `replaced` sent
+  `no mode` (mode is mandatory, no removal form); a new VLAN without `mode` now fails
+  before sending. Parse -> render of all 47 lab VLANs reproduces the device's lines
+  exactly (fixture `vlans/r6.2.04m-all-vlans`).
 - Device defaults out of the argspecs (they were injected into every request):
   `isam_vlans` merged renaming a VLAN reset `protocol-filter`, `new-broadcast` and
   `drly-srv-usr-side`; `deleted` naming a setting deleted the whole VLAN and sent

@@ -1,11 +1,12 @@
 """vlans against `info configure detail flat` of a real ISAM.
 
-Every "vlan id" attribute of the capture is modelled (argspec keys keep the CLI
-spelling, so the gap report's snake_case lookup lists them all as false positives).
-Detail lines parse to the same values as the configured-only read, and merged is
-idempotent on them ("no new-broadcast" is the default, inherit).
+Every "vlan id" attribute of the capture is modelled (options use snake_case, the
+CLI spelling is accepted as alias). Detail lines parse to the same values as the
+configured-only read, and merged is idempotent on them ("no new-broadcast" is the
+default, inherit).
 """
 import os
+import pathlib
 
 import pytest
 
@@ -60,7 +61,7 @@ def test_detail_values_match_configured_read():
 
 def test_explicit_new_broadcast_values_still_parse():
     for value in ("enable", "disable"):
-        assert _facts("configure vlan id 5 new-broadcast %s" % value)["5"]["new-broadcast"] == value
+        assert _facts("configure vlan id 5 new-broadcast %s" % value)["5"]["new_broadcast"] == value
     assert "new-broadcast" not in _facts("configure vlan id 5 new-broadcast inherit")["5"]  # the default
 
 
@@ -120,9 +121,10 @@ def test_capture_every_token_is_modelled_and_read_into_its_field(name):
     each value lands in that option of the facts; "no X" reads as False or the default."""
     import shlex
 
-    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.vlans import (
-        _VLAN_BOOLEAN_FIELDS,
-    )
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.vlans import VLAN_ATTRS
+
+    option_of = dict((cli, option) for option, cli, _kind, _default in VLAN_ATTRS)
+    flags = set(cli for _option, cli, kind, _default in VLAN_ATTRS if kind == "flag")
 
     text = _capture(name)
     spec = VlansArgs.argument_spec["config"]["options"]
@@ -136,14 +138,15 @@ def test_capture_every_token_is_modelled_and_read_into_its_field(name):
         i = 1
         while i < len(tokens):
             negated = tokens[i] == "no"
-            key = tokens[i + 1] if negated else tokens[i]
-            assert key in spec, (line, key)
-            if key in _VLAN_BOOLEAN_FIELDS:
-                expected = None if VLAN_DEFAULTS.get(key) is (not negated) else (not negated)
+            cli = tokens[i + 1] if negated else tokens[i]
+            assert cli in option_of, (line, cli)
+            key = option_of[cli]
+            if cli in flags:
+                expected = True if not negated else None  # a flag that is off is the default
                 assert entry.get(key) is expected, (line, key)
                 i += 2 if negated else 1
             elif negated:
-                assert entry.get(key) in (None, spec[key].get("default")), (line, key, entry.get(key))
+                assert entry.get(key) is None, (line, key, entry.get(key))
                 i += 2
             else:
                 expected = int(tokens[i + 1]) if spec[key]["type"] == "int" else tokens[i + 1]
@@ -153,3 +156,53 @@ def test_capture_every_token_is_modelled_and_read_into_its_field(name):
                 i += 2
             checked += 1
     assert checked > 1000 if "detail" in name else checked > 100
+
+
+ALL_VLANS = pathlib.Path(__file__).parents[4] / "fixtures" / "vlans" / "r6.2.04m-all-vlans"
+
+
+def test_rendering_the_parsed_lab_vlans_reproduces_the_device_lines(monkeypatch):
+    """One grammar for reading and writing: parse -> render gives the device's own lines."""
+    from .module_runner import run_module
+
+    flat = (ALL_VLANS / "output.txt").read_text()
+    parsed = run_module(monkeypatch, "isam_vlans", {"state": "parsed", "running_config": flat})["parsed"]
+    detail = run_module(monkeypatch, "isam_vlans", {"state": "parsed", "running_config": (ALL_VLANS / "output-detail.txt").read_text()})["parsed"]
+    assert len(parsed) == 47 and parsed == detail
+    rendered = run_module(monkeypatch, "isam_vlans", {"state": "rendered", "config": parsed})["rendered"]
+    assert rendered == flat.splitlines()
+
+
+def test_table_argspec_and_documentation_agree():
+    import yaml
+
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.vlans import VLAN_ATTRS
+    from ansible_collections.nokia.isam.plugins.modules import isam_vlans
+
+    options = VlansArgs.argument_spec["config"]["options"]
+    documented = yaml.safe_load(isam_vlans.DOCUMENTATION)["options"]["config"]["suboptions"]
+    assert set(options) == set(documented) == set(["id"] + [option for option, _cli, _kind, _default in VLAN_ATTRS])
+    for option, cli, _kind, default in VLAN_ATTRS:
+        assert "default" not in options[option], option  # device defaults are not injected
+        if cli != option:
+            assert options[option]["aliases"] == [cli] and documented[option]["aliases"] == [cli], option
+
+
+def test_old_cli_spelled_options_still_work_and_new_vlans_need_a_mode(monkeypatch):
+    from .module_runner import run_module
+
+    running = "configure vlan id 110 mode residential-bridge name Internet\n"
+    result = run_module(monkeypatch, "isam_vlans", {"state": "merged", "config": [{"id": 110, "protocol-filter": "pass-pppoe"}]}, running)
+    assert result["commands"] == ["configure vlan id 110 protocol-filter pass-pppoe"]
+    result = run_module(monkeypatch, "isam_vlans", {"state": "merged", "config": [{"id": 3999, "name": "x"}]}, running)
+    assert result.get("failed") and "mode is required" in result["msg"]
+
+
+def test_a_name_with_spaces_is_sent_in_double_quotes(monkeypatch):
+    """Lab ISAM: single quotes are an invalid token; the device prints such names in double quotes."""
+    from .module_runner import run_module
+
+    rendered = run_module(monkeypatch, "isam_vlans", {"state": "rendered", "config": [
+        {"id": 3991, "mode": "residential-bridge", "name": "zztest 3991"}, {"id": 3990, "mode": "residential-bridge", "name": "a-b_c"}]})["rendered"]
+    assert rendered == ['configure vlan id 3991 mode residential-bridge name "zztest 3991"',
+                        "configure vlan id 3990 mode residential-bridge name a-b_c"]
