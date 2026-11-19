@@ -93,10 +93,10 @@ def test_lt_overridden_unrequested_parameters_fail(monkeypatch):
 
 
 def test_lt_rendered_is_configuration_only(monkeypatch):
-    # omitted optional fields arrive as None and render their trailing-no reset form
+    # Ansible-injected None options are omissions, not reset requests.
     rendered = _lt(monkeypatch, "rendered", {"sessions": [{"session_id": "1", "timeout_period": "120"}]})["rendered"]
     assert "configure linetest single ltsession 1 timeout-period 120" in rendered
-    assert "configure linetest single ltsession 1 group-opt no" in rendered
+    assert rendered == ["configure linetest single ltsession 1 timeout-period 120"]
     assert all("session-cmd" not in c for c in rendered)
 
 

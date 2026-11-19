@@ -25,6 +25,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
     normalize_policy,
     register_embedded_secrets,
     scalar_fields,
+    split_snmp_version,
 )
 
 _MISSING = object()
@@ -74,10 +75,21 @@ def _named(key, wanted):
     return False
 
 
+def _masked_identity(section, entry):
+    # '*' is a real SNMP subtree identity (the whole view), not a hidden secret.
+    return any(is_masked_secret(entry.get(field)) and not
+               (section in VIEW_SECTIONS and field == "subtree" and entry[field] == "*")
+               for field in LISTS[section][0])
+
+
 class Isam_system_security(IsamResourceModule):
     """The isam_system_security config class."""
 
     def __init__(self, module):
+        # Targeted gathering must not issue a read addressed to a redacted name.
+        # Other states gather the whole resource and validate before reconciling.
+        if module.params.get("state") == "gathered":
+            self._check_target_identities(module)
         super(Isam_system_security, self).__init__(
             empty_fact_val={},
             facts_module=Facts(module),
@@ -98,11 +110,50 @@ class Isam_system_security(IsamResourceModule):
         return out
 
     @staticmethod
-    def _clean_secrets(section, want, have):
+    def _check_target_identities(module):
+        for section in LISTS:
+            for entry in _get(module.params.get("config"), section) or []:
+                if _masked_identity(section, entry):
+                    module.fail_json(msg="%s: targeted gathering requires a concrete identity, not a redacted value." % section)
+
+    def _visible_entries(self, section, entries):
+        """Never guess the object behind a redacted identity (e.g. SNMP community).
+
+        merged/replaced can safely leave these opaque entries unchanged, with an
+        explicit warning. rendered and destructive states must fail closed: ignoring
+        them in overridden could remove objects the request intended to retain.
+        """
+        visible = []
+        for entry in entries or []:
+            if _masked_identity(section, entry):
+                if self.state not in ("merged", "replaced"):
+                    self._module.fail_json(msg="%s: %s requires concrete identities, not redacted values."
+                                           % (section, self.state))
+                self._module.warn("%s: entry with redacted identity left unchanged; supply its concrete identity to manage it."
+                                  % section)
+            else:
+                visible.append(entry)
+        return visible
+
+    def _clean_secrets(self, section, want, have):
+        """(comparison entry, fields to omit from commands) for redacted credentials."""
+        protected = set()
         for field in SECRET_FIELDS.get(section, ()):
             if is_masked_secret(want.get(field)):
+                if not have:
+                    self._module.fail_json(msg="%s: a redacted %s cannot be used to create or render an entry."
+                                           % (section, field))
                 want = dict(want, **{field: have.get(field)})
-        return want
+                protected.add(field)
+        if section == "snmp_notify_profiles":
+            parts = split_snmp_version(want.get("snmp_version"))
+            if parts and is_masked_secret(parts[1]):
+                current = split_snmp_version(have.get("snmp_version"))
+                if not current or current[0] != parts[0]:
+                    self._module.fail_json(msg="snmp_notify_profiles: supply a concrete community to create or change snmp_version.")
+                want = dict(want, snmp_version=have["snmp_version"])
+                protected.add("snmp_version")
+        return want, protected
 
     def _targets(self, want, section):
         """Whether 'deleted' acts on a section: all sections without config, else the named ones."""
@@ -111,6 +162,8 @@ class Isam_system_security(IsamResourceModule):
     def generate_commands(self):
         want = self.want or {}
         have = self.have or {}
+        # Validate all identities before any reconciliation (especially overridden).
+        self._wanted_entries = {section: self._visible_entries(section, _get(want, section)) for section in LISTS}
         for section in LISTS:
             self._list_commands(section, want, have)
         for section in SETTINGS:
@@ -127,7 +180,7 @@ class Isam_system_security(IsamResourceModule):
         tmplt = Isam_system_securityTemplate
         ident = LISTS[section][0]
         kind = LISTS[section][1]
-        wantd = self._index(section, _get(want, section))
+        wantd = self._index(section, self._wanted_entries[section])
         haved = self._index(section, _get(have, section))
 
         if self.state == "deleted":
@@ -148,7 +201,7 @@ class Isam_system_security(IsamResourceModule):
             if section in VIEW_SECTIONS and current:
                 # same subtree, written as OID vs. the name the device prints
                 entry = dict(entry, subtree=current.get("subtree"))
-            entry = self._clean_secrets(section, entry, current)
+            entry, protected = self._clean_secrets(section, entry, current)
             if section == "radius_policies":
                 entry = normalize_policy(entry)
             entry, nested_want = _split_nested(section, entry)
@@ -160,7 +213,10 @@ class Isam_system_security(IsamResourceModule):
             self.commands.extend(nested_remove)
             if changed or nested_changed:
                 if kind == "create":
-                    self.commands.extend(tmplt.render_entry(section, dict(entry, **nested_changed)))
+                    payload = dict((field, value) for field, value in entry.items()
+                                   if field not in protected and not
+                                   (field in SECRET_FIELDS.get(section, ()) and is_masked_secret(value)))
+                    self.commands.extend(tmplt.render_entry(section, dict(payload, **nested_changed)))
                 else:
                     changed.update(identity)
                     changed.update(nested_changed)

@@ -16,6 +16,9 @@ description:
   - Supports declarative single LineTest session and parameter configuration
     (C(configure linetest single ltsession) and C(configure linetest single ltparm)).
   - Sends only configuration commands; it does not execute LineTest actions.
+  - Omitted options are not rendered or reset with C(merged). With C(replaced) or
+    C(overridden), omitted configured C(group_opt), C(busy_overwrite) and C(force_measure)
+    are reset using their trailing C(no) form. Unchanged parameters emit no commands.
 version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:

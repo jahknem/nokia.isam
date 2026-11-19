@@ -125,6 +125,22 @@ were skipped, so only their gathering was verified. No configuration writes or a
 operations were executed. The integration check reports counts only, suppresses values,
 and rejects reconciliation commands outside the verified masked-security exception.
 
+Redacted-replay correction (2026-11-19): the security mismatch above is now fixed,
+not grandfathered in as an exception. Actual Ansible-redacted gathered facts replay
+with zero merged/replaced commands and `changed=0` on DS-LIN-TEST-01. Masked
+credentials preserve current values and cannot be rendered/used to create entries.
+Redacted identities are not recoverable: merged/replaced leave those entries unchanged
+with a warning; rendering, destructive states and targeted gathering reject them.
+Concrete identities are required to manage the hidden objects. The integration
+assertion now requires empty command lists for security too.
+
+Configured offline replay and parse-render-parse tests cover CFM, LineTest, NAT,
+error, CWMP platform, PON global, PPPoX relay global and trouble-shooting PON—the
+eight empty lab resources noted above. These tests exposed and now pin fixes for
+LineTest's redundant replaced-parameter commands and unset-option resets. Their
+configured live write verification remains unavailable without approved changes to
+the lab; offline configured coverage and live empty gathering are distinct claims.
+
 Read-only CLI help confirms CFM domain name/level are immutable and required at
 creation, and confirms EFM OAM, L2CP, PPPoE-client and PPPoE-L2 synthetic fixture grammar.
 Channel-pair, EPON and channel-group help is unsupported on this lab platform; their

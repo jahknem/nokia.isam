@@ -38,15 +38,9 @@
   ansible.builtin.assert:
     that:
       - >-
-        ((merged_resource.commands | default([])) + (replaced_resource.commands | default([])))
-        | reject('match', '^configure system security .*[*]{3,}')
-        | list | length == 0
+        merged_resource.commands | default([]) | length == 0
       - >-
-        resource_module == 'nokia.isam.isam_system_security' or
-        (merged_resource.commands | default([]) | length == 0 and
-         replaced_resource.commands | default([]) | length == 0)
+        replaced_resource.commands | default([]) | length == 0
     quiet: true
-  # Replaying redacted security facts produces masked-value commands (verified
-  # identical to the pre-cleanup baseline). Permit only masked commands under that
-  # resource, not arbitrary security changes, and never log secret-bearing values.
+  # No exception for masked-security commands: placeholders must never be sent.
   no_log: true
