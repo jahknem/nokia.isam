@@ -242,6 +242,9 @@ def test_software_fixture_is_parseable():
     parsed = Software_mngtTemplate(lines=output.splitlines()).parse()
     assert descriptor["device_type"] == "Nokia ISAM 7330 FTTN"
     assert len(parsed["oswp"]) == 2
+    assert parsed["oswp"][0]["id"] == "1"
+    assert parsed["sw_replacement_mode"]["mode"] == "upgrade-via-standby"
+    assert parsed["database"]["backup"] == "activate:192.0.2.1:backup/"
 
 
 def test_pon_variant_fixture_is_parseable():

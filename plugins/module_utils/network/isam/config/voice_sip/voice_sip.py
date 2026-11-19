@@ -45,8 +45,9 @@ class Isam_voice_sip(IsamResourceModule):
         return self.result
 
     def generate_commands(self):
-        rendering = self.state == "rendered"
-        want = (self.want or {}) if rendering else without_defaults(self.want)
+        # want stays raw: an explicit default value means "reset to default"; have holds
+        # non-defaults only (facts strip defaults), so the diff treats defaults as unset
+        want = self.want or {}
         have = without_defaults(self.have)
         # replaced/deleted with config touch only the named sections; overridden and
         # deleted without config touch every section

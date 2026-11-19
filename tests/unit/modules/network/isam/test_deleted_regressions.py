@@ -469,8 +469,10 @@ def test_voice_sip_value_options_are_read_as_values(monkeypatch):
     assert vsp["ta4"] == 5000 and vsp["digit_send_mode"] == "overlap-invite"
     assert _vsip(monkeypatch, "merged", {"vsp": [{"name": "vsp1", "ta4": 6000}]}, running=running)["commands"] == [
         "configure voice sip vsp vsp1 ta4 6000"]
-    # a value equal to the device default counts as unset
-    assert _vsip(monkeypatch, "merged", {"vsp": [{"name": "vsp1", "ta4": 4000}]}, running=running)["commands"] == []
+    # a value equal to the device default resets it when set, and is a no-op when already default
+    assert _vsip(monkeypatch, "merged", {"vsp": [{"name": "vsp1", "ta4": 4000}]}, running=running)["commands"] == [
+        "configure voice sip vsp vsp1 no ta4"]
+    assert _vsip(monkeypatch, "merged", {"vsp": [{"name": "vsp1", "ta4": 4000}]}, running="configure voice sip vsp vsp1 domain-name d\n")["commands"] == []
 
 
 def test_voice_sip_gathered_is_idempotent_and_round_trips(monkeypatch):
@@ -517,6 +519,87 @@ def test_voice_sip_table_argspec_and_documentation_agree():
         attrs = set(a[0] for a in node["attrs"]) | ({node["identity"]} if node["identity"] else set())
         assert set(s) == set(d) == attrs, node["key"]
         for option, _cli, kind, _default, choices, _sub in node["attrs"]:
+            want_type = "bool" if kind == "flag" else ("int" if is_int(kind) else "str")
+            assert s[option]["type"] == d[option]["type"] == want_type, (node["key"], option)
+            if choices:
+                assert s[option]["choices"] == d[option]["choices"] == choices, (node["key"], option)
+
+
+def test_explicit_default_resets_to_default(monkeypatch):
+    """Setting a value back to its device default must reset it (not be a silent no-op):
+    merged sends the no-form when the device is non-default, and nothing when already default."""
+    # generic_pon: ont slid-mode default ascii
+    run = "configure generic-pon ont slid-mode hexa-dec\n"
+    assert run_module(monkeypatch, "isam_generic_pon", {"state": "merged", "config": {"ont": {"slid_mode": "ascii"}}}, run)["commands"] == [
+        "configure generic-pon ont no slid-mode"]
+    assert run_module(monkeypatch, "isam_generic_pon", {"state": "merged", "config": {"ont": {"slid_mode": "ascii"}}}, "")["commands"] == []
+    # voice_sip: vsp auto-verify-like value (reg-sub default disable)
+    run = "configure voice sip vsp vsp1 domain-name d reg-sub enable\n"
+    assert run_module(monkeypatch, "isam_voice_sip", {"state": "merged", "config": {"vsp": [{"name": "vsp1", "reg_sub": "disable"}]}}, run)["commands"] == [
+        "configure voice sip vsp vsp1 no reg-sub"]
+    # software_mngt: oswp auto-verify default disabled
+    run = "configure software-mngt oswp 1 primary-file-server-id 1.2.3.4 second-file-server-id 0.0.0.0 auto-verify enabled\n"
+    assert run_module(monkeypatch, "isam_software_mngt", {"state": "merged", "config": {"oswp": [{"id": "1", "auto_verify": "disabled"}]}}, run)["commands"] == [
+        "configure software-mngt oswp 1 no auto-verify"]
+
+
+# --- isam_software_mngt: rebuilt on one grammar table (value options were bool flags) ---
+
+SWMNGT_LAB = (
+    "configure software-mngt sw-replacement-mode upgrade-via-standby\n"
+    "configure software-mngt oswp 1 primary-file-server-id 192.0.2.11 second-file-server-id 0.0.0.0 no activate no auto-verify no on-schedule-time\n"
+    "configure software-mngt database no activate backup activate:192.0.2.10:backup/ backupv6 activate:::/backup/ no auto-backup-intvl\n"
+)
+
+
+def _swmngt(monkeypatch, state, config=None, running=SWMNGT_LAB):
+    args = {"state": state} if config is None else {"state": state, "config": config}
+    return run_module(monkeypatch, "isam_software_mngt", args, running)
+
+
+def test_software_mngt_value_options_are_read_as_values(monkeypatch):
+    """Data loss before: activate after-download / auto-verify enabled were read as True."""
+    running = "configure software-mngt oswp 1 primary-file-server-id 192.0.2.1 second-file-server-id 0.0.0.0 activate after-download auto-verify enabled\n"
+    o = _swmngt(monkeypatch, "gathered", running=running)["gathered"]["oswp"][0]
+    assert o["activate"] == "after-download" and o["auto_verify"] == "enabled"
+    assert _swmngt(monkeypatch, "merged", {"oswp": [{"id": "1", "auto_verify": "enabled"}]}, running=running)["commands"] == []
+
+
+def test_software_mngt_gathered_is_idempotent_and_round_trips(monkeypatch):
+    gathered = _swmngt(monkeypatch, "gathered")["gathered"]
+    assert _swmngt(monkeypatch, "merged", gathered)["commands"] == []
+    assert _swmngt(monkeypatch, "replaced", gathered)["commands"] == []
+    rendered = _swmngt(monkeypatch, "rendered", gathered)["rendered"]
+    reparsed = run_module(monkeypatch, "isam_software_mngt",
+                          {"state": "parsed", "running_config": "\n".join(rendered)})["parsed"]
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.software_mngt import without_defaults
+    assert without_defaults(reparsed) == gathered
+
+
+def test_software_mngt_deleted_scoping(monkeypatch):
+    running = ("configure software-mngt oswp 1 primary-file-server-id 192.0.2.1 second-file-server-id 0.0.0.0 auto-verify enabled\n"
+               "configure software-mngt oswp 2 primary-file-server-id 192.0.2.2 second-file-server-id 0.0.0.0\n")
+    # naming an attribute resets only it; naming the instance removes it; siblings untouched
+    assert _swmngt(monkeypatch, "deleted", {"oswp": [{"id": "1", "auto_verify": "enabled"}]}, running=running)["commands"] == [
+        "configure software-mngt oswp 1 no auto-verify"]
+    assert _swmngt(monkeypatch, "deleted", {"oswp": [{"id": "1"}]}, running=running)["commands"] == [
+        "configure software-mngt no oswp 1"]
+
+
+def test_software_mngt_table_argspec_and_documentation_agree():
+    import yaml
+
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.software_mngt.software_mngt import Software_mngtArgs
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.software_mngt import SOFTWARE_MNGT_NODES, is_int
+    from ansible_collections.nokia.isam.plugins.modules import isam_software_mngt
+
+    spec = Software_mngtArgs.argument_spec["config"]["options"]
+    docs = yaml.safe_load(isam_software_mngt.DOCUMENTATION)["options"]["config"]["suboptions"]
+    for node in SOFTWARE_MNGT_NODES:
+        s, d = spec[node["key"]]["options"], docs[node["key"]]["suboptions"]
+        attrs = set(a[0] for a in node["attrs"]) | ({node["identity"]} if node["identity"] else set())
+        assert set(s) == set(d) == attrs, node["key"]
+        for option, _cli, kind, _default, choices, _form in node["attrs"]:
             want_type = "bool" if kind == "flag" else ("int" if is_int(kind) else "str")
             assert s[option]["type"] == d[option]["type"] == want_type, (node["key"], option)
             if choices:

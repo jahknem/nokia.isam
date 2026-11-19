@@ -19,58 +19,73 @@ options:
     type: dict
     suboptions:
       database:
-        description: Software database settings.
+        description: Software database settings (C(configure software-mngt database)).
         type: dict
         suboptions:
           version:
-            description: Software version.
+            description: Value C(configure software-mngt database version) (no removal form).
             type: str
           url:
-            description: Database URL.
+            description: Value C(configure software-mngt database url) (no removal form).
             type: str
+          activate:
+            description: Value C(configure software-mngt database activate); device default C(manually).
+            type: str
+            choices: [after-download, manually]
           backup:
-            description: IPv4 database backup target.
+            description: Value C(configure software-mngt database backup); device default C(manually).
             type: str
           backupv6:
-            description: IPv6 database backup target.
+            description: Value C(configure software-mngt database backupv6); device default C(manually).
             type: str
           auto_backup_interval:
-            description: Automatic database backup interval.
+            description: Value C(configure software-mngt database auto-backup-intvl); device default C(24).
             type: int
       oswp:
-        description: OSWP settings.
+        description: OSWP records (C(configure software-mngt oswp)).
         type: list
         elements: dict
         suboptions:
           id:
-            description: OSWP identifier.
+            description: Instance identifier.
             type: str
             required: true
           primary_file_server_id:
-            description: Primary file-server identifier.
+            description: Value C(configure software-mngt oswp primary-file-server-id) (no removal form).
             type: str
           second_file_server_id:
-            description: Secondary file-server identifier.
+            description: Value C(configure software-mngt oswp second-file-server-id) (no removal form).
             type: str
+          download_set:
+            description: Value C(configure software-mngt oswp download-set) (no removal form).
+            type: str
+            choices: [min-set, actual-set, complete-set]
+          autofetch:
+            description: Value C(configure software-mngt oswp autofetch) (no removal form).
+            type: str
+            choices: [disabled, enabled]
           activate:
-            description: Activate this OSWP record.
-            type: bool
+            description: Value C(configure software-mngt oswp activate); device default C(manually).
+            type: str
+            choices: [manually, after-download, on-schedule]
           auto_verify:
-            description: Enable automatic OSWP verification.
-            type: bool
+            description: Value C(configure software-mngt oswp auto-verify); device default C(disabled).
+            type: str
+            choices: [disabled, enabled]
           on_schedule_time:
-            description: Schedule activation at the configured time.
-            type: bool
+            description: Value C(configure software-mngt oswp on-schedule-time); no concrete default.
+            type: str
           admin_state:
-            description: Enable or disable OSWP administration.
+            description: On/off flag C(configure software-mngt oswp admin-state).
             type: bool
       sw_replacement_mode:
-        description: Software replacement mode settings.
+        description: Software replacement mode (C(configure software-mngt sw-replacement-mode)).
         type: dict
         suboptions:
           mode:
-            description: Replacement mode.
+            description: C(configure software-mngt sw-replacement-mode <value>).
             type: str
+            choices: [upgrade-via-active, upgrade-via-standby, lt-by-lt]
   running_config:
     description: Device native configuration to parse.
     type: str
@@ -102,16 +117,16 @@ EXAMPLES = """
     config:
       database:
         version: R6.2.04m
-        url: tftp://10.0.0.1/software.bin
+        url: tftp://192.0.2.1/software.bin
       oswp:
         - id: 1
-          primary_file_server_id: 10.0.0.1
+          primary_file_server_id: 192.0.2.1
           second_file_server_id: 0.0.0.0
-          activate: true
-          auto_verify: true
+          activate: after-download
+          auto_verify: enabled
           admin_state: true
       sw_replacement_mode:
-        mode: auto
+        mode: upgrade-via-standby
     state: merged
 """
 
