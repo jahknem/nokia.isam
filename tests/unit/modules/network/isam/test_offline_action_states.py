@@ -13,7 +13,8 @@ import pytest
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base import resource_module_base
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.facts import facts
 from ansible_collections.nokia.isam.plugins.modules import (
-    isam_bridges, isam_equipment_onts, isam_ethernet_onts, isam_interfaces, isam_qos_interfaces,
+    isam_ani_onts, isam_arp_relay, isam_bridges, isam_dhcp_relay, isam_efm_oam_interface,
+    isam_equipment_onts, isam_ethernet_onts, isam_interfaces, isam_ntp_onts, isam_qos_interfaces,
 )
 
 from .isam_module import set_module_args
@@ -62,7 +63,7 @@ def test_equipment_onts_delete_renders_removal_offline_from_json(monkeypatch, ca
     assert "configure equipment ont no slot 1/1/6/1/1/1" in commands
     assert any(c.endswith("admin-state down") for c in commands)
     assert result["before"] == EQUIPMENT
-    assert result["changed"] is True
+    assert result["changed"] is False
 
 
 def test_equipment_onts_delete_renders_removal_offline_from_cli(monkeypatch, capsys):
@@ -95,3 +96,32 @@ def test_offline_delete_of_a_subset_via_running_config(monkeypatch, capsys):
     result = invoke_offline(monkeypatch, capsys, isam_equipment_onts, json.dumps(subset))
     assert "configure equipment ont no interface 1/1/6/1/1" in result["commands"]
     assert not any("1/1/6/1/2" in c for c in result["commands"])
+
+@pytest.mark.parametrize("module,family,identity", [
+    (isam_ntp_onts, "ntp_onts", {"ont_id": "1/1/6/1/1"}),
+    (isam_ani_onts, "ani_onts", {"ont_idx": "1/1/6/1/1", "tca_thresh": True}),
+    (isam_dhcp_relay, "dhcp_relay", {"name": "vlan-port:1/1/6/1/1/1/1:10", "port_stats": True}),
+    (isam_arp_relay, "arp_relay", {"name": "1/1/6/1/1/1/1"}),
+    (isam_efm_oam_interface, "efm_oam", {"name": "1/1/6/1/1/1/1", "admin_up": True, "passive_mode": True}),
+])
+def test_remaining_noc_families_delete_offline(monkeypatch, capsys, module, family, identity):
+    result = invoke_offline(monkeypatch, capsys, module, json.dumps([identity]))
+    assert result["commands"], family
+    assert any("1/1/6/1/1" in c for c in result["commands"]), family
+    assert result["changed"] is False
+
+
+def test_offline_running_config_unknown_field_fails(monkeypatch, capsys):
+    # A renamed/unknown field must error, not silently render zero removal commands.
+    connection = Connection()
+    monkeypatch.setattr(resource_module_base, "get_resource_connection", lambda module: connection)
+    monkeypatch.setattr(facts, "get_resource_connection", lambda module: connection)
+    bad = {"interfaces": [{"ont_idx": "1/1/6/1/1", "sernum": "ALCL:F0000001", "bogus_field": "x"}], "slots": []}
+    set_module_args({"state": "deleted", "running_config": json.dumps(bad), "_ansible_check_mode": False}, True)
+    with pytest.raises(SystemExit) as exited:
+        isam_equipment_onts.main()
+    result = json.loads(capsys.readouterr().out)
+    assert exited.value.code != 0
+    assert result.get("failed")
+    assert "bogus_field" in result.get("msg", "")
+    assert connection.reads == [] and connection.writes == []

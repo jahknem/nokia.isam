@@ -1,2 +1,136 @@
 ---
 requires_ansible: ">=2.15.0"
+plugin_routing:
+  action:
+    isam_alarm:
+      redirect: nokia.isam.isam
+    isam_ani_onts:
+      redirect: nokia.isam.isam
+    isam_arp_relay:
+      redirect: nokia.isam.isam
+    isam_bridges:
+      redirect: nokia.isam.isam
+    isam_cfm:
+      redirect: nokia.isam.isam
+    isam_channel_pair_pm:
+      redirect: nokia.isam.isam
+    isam_cwmp_plt:
+      redirect: nokia.isam.isam
+    isam_dhcp_relay:
+      redirect: nokia.isam.isam
+    isam_dhcp_server:
+      redirect: nokia.isam.isam
+    isam_dist_service:
+      redirect: nokia.isam.isam
+    isam_efm_oam_interface:
+      redirect: nokia.isam.isam
+    isam_epon_interfaces:
+      redirect: nokia.isam.isam
+    isam_equipment:
+      redirect: nokia.isam.isam
+    isam_equipment_onts:
+      redirect: nokia.isam.isam
+    isam_equipment_replan:
+      redirect: nokia.isam.isam
+    isam_error:
+      redirect: nokia.isam.isam
+    isam_ethernet_line:
+      redirect: nokia.isam.isam
+    isam_ethernet_onts:
+      redirect: nokia.isam.isam
+    isam_generic_pon:
+      redirect: nokia.isam.isam
+    isam_igmp:
+      redirect: nokia.isam.isam
+    isam_interface_alarms:
+      redirect: nokia.isam.isam
+    isam_interface_cages:
+      redirect: nokia.isam.isam
+    isam_interfaces:
+      redirect: nokia.isam.isam
+    isam_iphost:
+      redirect: nokia.isam.isam
+    isam_ipv6_antispoofing_slot:
+      redirect: nokia.isam.isam
+    isam_l2cp:
+      redirect: nokia.isam.isam
+    isam_l2cp_session:
+      redirect: nokia.isam.isam
+    isam_l2cp_user_port:
+      redirect: nokia.isam.isam
+    isam_l2uni_onts:
+      redirect: nokia.isam.isam
+    isam_li_vlan:
+      redirect: nokia.isam.isam
+    isam_linetest:
+      redirect: nokia.isam.isam
+    isam_link_agg:
+      redirect: nokia.isam.isam
+    isam_mcast_control:
+      redirect: nokia.isam.isam
+    isam_mcast_general:
+      redirect: nokia.isam.isam
+    isam_multicast:
+      redirect: nokia.isam.isam
+    isam_nat:
+      redirect: nokia.isam.isam
+    isam_ngpon2_channel_groups:
+      redirect: nokia.isam.isam
+    isam_ntp_onts:
+      redirect: nokia.isam.isam
+    isam_pon_global:
+      redirect: nokia.isam.isam
+    isam_pon_interfaces:
+      redirect: nokia.isam.isam
+    isam_pppoe_client_interface:
+      redirect: nokia.isam.isam
+    isam_pppoe_client_ppp_profile:
+      redirect: nokia.isam.isam
+    isam_pppoel2_statistics:
+      redirect: nokia.isam.isam
+    isam_pppox_relay_global:
+      redirect: nokia.isam.isam
+    isam_qos_global:
+      redirect: nokia.isam.isam
+    isam_qos_interfaces:
+      redirect: nokia.isam.isam
+    isam_qos_maps:
+      redirect: nokia.isam.isam
+    isam_qos_profiles:
+      redirect: nokia.isam.isam
+    isam_qos_tca:
+      redirect: nokia.isam.isam
+    isam_software_mngt:
+      redirect: nokia.isam.isam
+    isam_system:
+      redirect: nokia.isam.isam
+    isam_system_security:
+      redirect: nokia.isam.isam
+    isam_traps:
+      redirect: nokia.isam.isam
+    isam_trouble_shooting_pon:
+      redirect: nokia.isam.isam
+    isam_uni_onts:
+      redirect: nokia.isam.isam
+    isam_vlan_global:
+      redirect: nokia.isam.isam
+    isam_vlans:
+      redirect: nokia.isam.isam
+    isam_voice_sip:
+      redirect: nokia.isam.isam
+    isam_xdsl_boards:
+      redirect: nokia.isam.isam
+    isam_xdsl_bonding:
+      redirect: nokia.isam.isam
+    isam_xdsl_inm:
+      redirect: nokia.isam.isam
+    isam_xdsl_lines:
+      redirect: nokia.isam.isam
+    isam_xdsl_onts:
+      redirect: nokia.isam.isam
+    isam_xdsl_profiles:
+      redirect: nokia.isam.isam
+    isam_xdsl_system:
+      redirect: nokia.isam.isam
+    isam_xstp:
+      redirect: nokia.isam.isam
