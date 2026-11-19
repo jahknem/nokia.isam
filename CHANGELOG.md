@@ -1,5 +1,78 @@
 # Changelog
 
+## 0.3.14 — A slice of π, without the breaking crust
+
+Patch release based on 0.3.13. Existing module names, option names, types,
+choices and aliases are preserved. New resources, root-config-tree support and
+incompatible schema corrections remain on the feature branch for a major release.
+See [the release audit](docs/release-0.3.14-audit.md) for the boundary and
+[the validation matrix](docs/live-test-matrix.md) for evidence limitations.
+
+### Fixes
+
+- Keep libssh transport options after writes and failed connections so reconnects
+  do not fail with `Hostname required`. Reset CLI context before `admin` as well
+  as `configure` commands.
+- Scope explicit deletion to named sections/instances in equipment, xDSL profiles,
+  QoS maps, link aggregation, traps, system, xSTP and VLAN-global settings. Named
+  field deletion preserves other attributes in interfaces, xDSL lines, Ethernet
+  ONTs, equipment ONTs, EFM OAM and link-aggregation ports.
+- ONT creation sends `admin-state` separately. Deletion admin-downs slots and
+  interfaces before removing them, removes slots first, and handles an omitted
+  config correctly. Keep unset `subslocid` and masked authentication passwords;
+  recognize Ansible-redacted secrets as placeholders, not usable credentials.
+- Bridge partial VLAN merges preserve unnamed attributes. Replacement removes stale
+  VLAN membership after switching PVID instead of sending invalid field resets.
+  Default-off detail flags remain off; priority flags render as bare keywords and
+  TPIDs retain string types and their supported reset form.
+- QoS interface deletion keeps scheduler nodes required by downstream queues and
+  skips unset `none`/`not-applicable` settings. Profile `none` equals unset on replay.
+  QoS profiles use packed dependent parameters, reject immutable type changes,
+  remove profiles without trailing resets, and keep mandatory parameters.
+- Ethernet-line parsing/rendering handles MAU power, flags, admin state and TCA
+  thresholds consistently. Comparison is idempotent, resets use supported forms,
+  and set-only attributes are retained. Empty Ethernet resources return lists.
+- EFM OAM compares with current configuration, preserves omitted merged settings
+  and understands interval defaults. Gathering never generates write commands.
+  xDSL boards reset attributes instead of sending invalid `no board` commands;
+  unknown board attributes do not make facts fail. Equipment slot type changes
+  fail before sending and unplanning sends only `no planned-type`.
+- L2CP session updates use the short update form and reject creation-only changes
+  before sending. Remove injected device defaults from L2CP, L2CP sessions, VLANs,
+  distribution services, IPv6 anti-spoofing and Ethernet TCA requests so partial
+  merges do not reset unnamed settings. Facts omit those injected defaults.
+- VLAN deletion resets named settings, removes identity/full-entry targets and
+  skips absent VLANs. Preserve mandatory mode on replacement; creating a VLAN
+  requires mode. Render DHCPv6 identifiers and use double quotes for spaced names.
+  Distribution-service deletion removes the service, including bare instances.
+- Deduplicate targeted reads, strip wrapped command echoes and recheck default-only
+  ANI/NTP/alarm/QoS/trap instances with detail reads before treating them as absent.
+  Fix PON-variant deletion crashes and ignore unrelated configuration lines.
+- Preserve device defaults during PON/interface replay, avoiding unnecessary PON
+  shutdown/restart commands. Fix xDSL-bonding overridden idempotence, multicast
+  fast-change resets, system SNTP/syslog parsing and generic-PON section scope.
+- CFM SLM/domain requests no longer affect each other's sections. Domain identity
+  is its index; immutable name/level changes fail safely. Unchanged SLM, remote-MEP
+  and Y.1731 PM settings no longer generate redundant commands.
+- LineTest replay does not resend unchanged parameters or interpret Ansible-injected
+  unset fields as resets. Supported omission resets remain explicit, trailing-`no`
+  forms parse as unset, and removing a session can remove its parameters with it.
+- SIP `replaced` preserves unnamed list instances in every existing SIP list;
+  only `overridden` removes them. Software-management replacement already had
+  this behavior in 0.3.13 and is now pinned by a regression test.
+- Render explicit false flags instead of dropping their `no` commands. The existing
+  ext-authenticator action requires an explicit operation, validates identifiers,
+  sends one operation per transaction and reports partial failure with
+  `failed_command` (not Ansible's reserved `failed` boolean), without retrying.
+
+### Upgrade notes
+
+Corrected deletion/reset behavior intentionally changes generated commands. Review
+check-mode output before applying changes. The legacy bool/value schemas of generic
+PON, SIP, software management and VLAN flags, and the legacy QoS-map `queue`/`profile`
+options, are not migrated by this patch. Their schema corrections require the major
+release. Historical feature-branch lab tests are not release-specific validation.
+
 ## 0.3.13
 
 - Targeted gathering for every resource with instance lists: with `state: gathered`
