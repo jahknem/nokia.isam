@@ -300,30 +300,39 @@ def render_attr(kind, cli, value):
     return [cli, quote_value(value)]
 
 
+def _target_tokens(kind, cli, value, default):
+    """Setting to the device default is a reset (no kw) where a removal form exists."""
+    if value == default and is_removable(kind):
+        return ["no", cli]
+    return render_attr(kind, cli, value)
+
+
 def diff_tokens(node, want, have, state):
     """{cli_node: [field tokens]} of the attributes to send for one instance/section.
 
     merged sends only changed attributes; replaced/overridden also reset omitted
     removable attributes; rendered sends every given attribute (explicit False as no).
+    want is raw (an explicit default means 'reset to default'); have holds non-defaults
+    only, so a default equal to an absent have value is already in effect (no command).
     """
     groups = {}
-    for option, cli, kind, _default, _choices, _sub in node["attrs"]:
+    for option, cli, kind, default, _choices, _sub in node["attrs"]:
         w, h = want.get(option), have.get(option)
         tokens = None
         if state == "rendered":
             if w is not None:
                 tokens = render_attr(kind, cli, w)
         elif state == "merged":
-            if w is not None and w != h:
-                tokens = render_attr(kind, cli, w)
+            if w is not None and w != h and not (w == default and h is None):
+                tokens = _target_tokens(kind, cli, w, default)
         elif state in ("replaced", "overridden"):
             if w is None:
                 if h is not None and is_removable(kind):
                     tokens = ["no", cli]
-            elif w != h:
-                tokens = render_attr(kind, cli, w)
+            elif w != h and not (w == default and h is None):
+                tokens = _target_tokens(kind, cli, w, default)
         if tokens:
-            groups.setdefault(cli_node(node, (option, cli, kind, _default, _choices, _sub)), []).extend(tokens)
+            groups.setdefault(cli_node(node, (option, cli, kind, default, _choices, _sub)), []).extend(tokens)
     return groups
 
 

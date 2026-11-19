@@ -46,8 +46,10 @@ class Generic_pon(IsamResourceModule):
         return self.result
 
     def generate_commands(self):
-        rendering = self.state == "rendered"
-        want = (self.want or {}) if rendering else without_defaults(self.want)
+        # want stays raw: an explicit default value means "reset to default". compare()
+        # resets an attribute absent from want but present in have, so a default is
+        # dropped from want (reset when have is non-default, no-op when have is absent).
+        want = self.want or {}
         have = without_defaults(self.have)
         # deleted with config touches only the named sections, and in a section only the
         # named attributes (a section named without attributes is reset as a whole)
@@ -64,11 +66,34 @@ class Generic_pon(IsamResourceModule):
             values = dict((k, v) for k, v in wanted.items() if not isinstance(v, dict))
             current = dict((k, v) for k, v in current.items() if not isinstance(v, dict))
             if self.state == "merged":
-                values = dict(current, **values)
+                values = self._merged_values(attrs, values, current)
             elif self.state == "deleted":
                 values = dict((k, v) for k, v in current.items() if values and k not in values)
+            elif self.state != "rendered":
+                values = self._drop_defaults(attrs, values)
             self.compare(parsers=[parser_name(path, option) for option, _cli, _kind, _default in attrs],
                          want=values, have=current)
+
+    @staticmethod
+    def _drop_defaults(attrs, values):
+        """A value equal to its device default counts as unset (dropped from want)."""
+        values = dict(values)
+        for option, _cli, _kind, default in attrs:
+            if values.get(option) == default:
+                values.pop(option, None)
+        return values
+
+    def _merged_values(self, attrs, values, current):
+        """merged keeps omitted attributes; a given default resets, a given value sets."""
+        merged = dict(current)
+        for option, _cli, _kind, default in attrs:
+            if option not in values:
+                continue
+            if values[option] == default:
+                merged.pop(option, None)
+            else:
+                merged[option] = values[option]
+        return merged
 
 
 def _named(path, given):

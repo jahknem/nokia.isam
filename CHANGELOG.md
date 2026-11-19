@@ -165,6 +165,18 @@
     now the `enable` flag; `redundancy_cmd.geo_fail_over` (a value of `fail_x_type`, not a
     field) is removed and `start_time`/`end_time` are ints. Parse -> render -> parse of the
     lab capture round-trips; merged/replaced of the gathered facts send nothing.
+  - `isam_software_mngt` rebuilt on one grammar table (`SOFTWARE_MNGT_NODES`) generating
+    the argspec and documentation and driving facts and config (the hand-written facts
+    parser and the fragile ordered-regex template are gone). oswp `activate`/`auto-verify`
+    (enums), `on-schedule-time` (datetime) and database `activate` are values, not bool
+    flags (a set value was read as `true`); added the missing oswp `download_set`/`autofetch`
+    and database `activate`. Packed attributes share a line; `version`/`url`/`admin-state`
+    and the scalar `sw-replacement-mode` keep their own command forms. `on-schedule-time`
+    and `backup`/`backupv6` are kept as raw string values.
+  - Setting a value back to its device default now resets it (`no <kw>`) instead of being
+    a silent no-op, and is a no-op when the device is already at default (`isam_generic_pon`,
+    `isam_voice_sip`, `isam_software_mngt`). Previously the default was stripped from the
+    request, so e.g. turning `auto-verify` back to `disabled` did nothing.
 - Device defaults out of the argspecs (they were injected into every request):
   `isam_vlans` merged renaming a VLAN reset `protocol-filter`, `new-broadcast` and
   `drly-srv-usr-side`; `deleted` naming a setting deleted the whole VLAN and sent
