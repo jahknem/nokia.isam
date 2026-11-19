@@ -106,7 +106,7 @@ class TableResourceModule(IsamResourceModule):
     table, so a family only declares its table and adds device-rule code where needed:
 
     * merged/replaced/overridden/rendered compare each instance or section with
-      ``TABLE.diff_commands``; replaced/overridden remove list instances not given.
+      ``TABLE.diff_commands``; only overridden removes list instances not given.
     * replaced and deleted with config touch only the named top-level sections.
     * deleted: without config every section is reset and every list instance removed.
       With config, a list instance named by its identity alone (or as a full entry) is
@@ -163,7 +163,7 @@ class TableResourceModule(IsamResourceModule):
                     self.commands.extend(self.TABLE.diff_commands(node, name, keep, have_entry, "replaced"))
             return
 
-        if self.state in ("replaced", "overridden"):
+        if self.state == "overridden":
             for name in haved:
                 if name not in wantd:
                     self.commands.append(self.TABLE.removal_command(node, name))

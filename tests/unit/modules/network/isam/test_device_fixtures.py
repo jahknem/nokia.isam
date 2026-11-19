@@ -812,6 +812,18 @@ def test_cfm_synthetic_fixture_is_parseable():
     assert parsed["domains"] == [{"domain_index": 1, "name": "string fixture", "level": 0, "associations": []}]
 
 
+def test_voice_sip_unknown_leading_attributes_preserve_known_values():
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.voice_sip import TABLE
+
+    descriptor, output = fixture_bundle("voice_sip", "unknown-leading-attribute")
+    assert descriptor["source"] == "synthetic-regression"
+    assert TABLE.without_defaults(TABLE.parse(output)) == {
+        "vsp": [{"name": "example", "domain_name": "example.org", "ta4": 5000}],
+        "lineid_syn_prof": [{"name": "example", "pots_syntax": "#"}],
+        "statistics": {"per_line": True, "per_board": False},
+    }
+
+
 def test_channel_pair_pm_synthetic_fixture_is_parseable():
     descriptor, output = fixture_bundle("channel_pair_pm", "r6.2.04m")
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.pon_variants.pon_variants import Channel_pair_pmFacts

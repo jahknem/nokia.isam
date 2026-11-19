@@ -92,6 +92,8 @@ options:
   state:
     description:
       - The state of the configuration after module completion.
+      - C(replaced) reconciles named OSWP entries and leaves unnamed OSWPs untouched;
+        only C(overridden) removes OSWPs absent from the requested configuration.
       - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by
         C(oswp[].id) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without
         I(config) the whole resource is read.
