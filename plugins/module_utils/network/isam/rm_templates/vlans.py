@@ -137,7 +137,8 @@ def _name_setval(data):
     """A name with characters beyond letters, digits and _.:- is sent in double quotes,
     as the device prints it; single quotes are an invalid token (lab ISAM)."""
     name = str(data["name"])
-    return "configure vlan id %s name %s" % (data["id"], name if re.match(r"^[A-Za-z0-9_.:-]+$", name) else '"%s"' % name)
+    value = name if re.fullmatch(r"[A-Za-z0-9_.:-]+", name) else '"%s"' % name.replace('"', '\\"')
+    return "configure vlan id %s name %s" % (data["id"], value)
 
 
 PARSERS = [{

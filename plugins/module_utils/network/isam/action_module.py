@@ -114,7 +114,7 @@ class IsamActionModule(object):
     def validate_identifier(self, value, label="identifier"):
         """Fail unless value is a safe Nokia CLI resource identifier (no whitespace,
         control characters or command separators). Returns the value when valid."""
-        if not isinstance(value, str) or not _IDENTIFIER_RE.match(value):
+        if not isinstance(value, str) or not _IDENTIFIER_RE.fullmatch(value):
             self._module.fail_json(
                 msg="Invalid %s %r: expected a Nokia CLI resource identifier "
                 "(letters, digits and / : . _ -), without whitespace or control characters." % (label, value),
@@ -123,7 +123,7 @@ class IsamActionModule(object):
 
     def validate_mac(self, value, label="MAC address"):
         """Fail unless value is six colon-separated hex bytes (aa:bb:cc:dd:ee:ff)."""
-        if not isinstance(value, str) or not _MAC_RE.match(value):
+        if not isinstance(value, str) or not _MAC_RE.fullmatch(value):
             self._module.fail_json(
                 msg="Invalid %s %r: expected six colon-separated hex bytes (aa:bb:cc:dd:ee:ff)." % (label, value),
             )
@@ -148,6 +148,7 @@ class IsamActionModule(object):
                     "Completed: %s. Not sent: %s."
                     % (index + 1, len(commands), command, to_text(exc), completed, commands[index + 1:]),
                     commands=commands,
+                    changed=True,
                     completed=completed,
                     failed_command=command,
                     pending=commands[index + 1:],
@@ -164,6 +165,7 @@ class IsamActionModule(object):
             self._module.fail_json(
                 msg="ISAM action failed to acquire a connection: %s" % to_text(exc),
                 commands=commands,
+                changed=False,
             )
 
     def send_command(self, connection, command):
