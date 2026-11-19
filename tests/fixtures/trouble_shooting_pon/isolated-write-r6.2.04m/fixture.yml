@@ -1,0 +1,8 @@
+schema_version: 1
+resource: trouble_shooting_pon
+device_type: Nokia ISAM
+software_version: R6.2.04m
+command: info configure flat
+captured_at: '2026-11-19'
+source: sanitized-live-capture
+notes: Resource lines extracted from the root capture after an approved isolated write on the traffic-free card-6 PON. Full root flat/detail restoration was verified separately.
