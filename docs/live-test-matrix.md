@@ -104,6 +104,13 @@ differs on SNMP communities, whose names the gathered output redacts, unchanged 
 declarative commands only. Write behaviour (session destroy, parameters no-delete) is pinned
 by unit tests, not exercised live (creating a session invokes a test action).
 
+Operational action modules (`IsamActionModule`, not config resources): `isam_security_ext_authenticator`,
+`isam_ethernet_statistics`, `isam_dhcp_relay_port_stats`, `isam_bridge_learned_mac`. Check-mode
+verified on the lab ISAM (2026-11-19): commands built, identifiers/MAC validated, nothing sent.
+The operations (clear counters/statistics, delete a learned MAC, clear 802.1X statistics) are not
+executed live without a per-action decision. Execution safety (partial-execution reporting,
+expected-disconnect hook, identifier validation) is pinned by unit tests.
+
 Tested on card 6 replanned as xDSL (NDLT-F) and Ethernet (NELT-B) board instead of
 the active cards 3 and 8; see the rows above and the offline scenarios in
 `tests/fixtures/live_scenarios/`.

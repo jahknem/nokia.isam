@@ -206,6 +206,15 @@
   documented; diagnostic operations (e.g. ping) must report `changed=False`. Tests cover
   partial execution, expected disconnects, failed verification, invalid identifiers,
   malformed responses and connection-acquisition failures.
+- New Tier-1 operational action modules on `IsamActionModule` (one-shot counter/MAC operations,
+  guide-verified syntax, explicit operation required, identifiers validated):
+  `isam_ethernet_statistics` (`admin ethernet statistics <index> clear-stats`, CLI guide 218.3),
+  `isam_dhcp_relay_port_stats` (`admin dhcp-relay port-stats <vlan-port> clear-statistics`, 222.2),
+  `isam_bridge_learned_mac` (`admin bridge learned-unicast-mac <vlan-port> unicast-mac-address <mac> delete`,
+  219.2, with MAC-address validation). Added `validate_mac` to the base. Check-mode verified on the
+  lab ISAM (commands built, nothing sent); the operations themselves are not executed without a
+  per-action decision. Disruptive actions (reboot, protection switchover) and diagnostics (ping) are
+  deferred until their `send_command`/`verify` (resp. `changed=False`) design is reviewed.
 - Device defaults out of the argspecs (they were injected into every request):
   `isam_vlans` merged renaming a VLAN reset `protocol-filter`, `new-broadcast` and
   `drly-srv-usr-side`; `deleted` naming a setting deleted the whole VLAN and sent
