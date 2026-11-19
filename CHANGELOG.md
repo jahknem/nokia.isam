@@ -8,6 +8,18 @@ intentional: read [the 1.0 upgrade guide](docs/upgrade-1.0.0.md) before upgradin
 Historical live-validation records do not authorize disruptive actions or certify
 this new artifact. NOC remains unchanged.
 
+### Offline action-state rendering
+
+- An action state given `running_config` renders against that configuration as the
+  current state instead of reading the device, and never sends commands. `running_config`
+  is the canonical resource JSON or CLI text. `deleted` with `running_config` and no
+  `config` renders the removal of everything in it — the offline counterpart of `rendered`
+  for deletions, so a move/copy/delete preview (NOC) needs no device access for either
+  half. Implemented once in `IsamResourceModule` (`_offline_config`, `gather_current`,
+  `_get_connection`, `execute_module`, `run_commands`, `result`); covers families that
+  override `execute_module` too. Covered by `test_offline_action_states.py` on Core
+  2.19.12 and 2.21.6.
+
 ### Major-release integration
 
 - Keep `IsamResourceModule`, `IsamActionModule` and `AttributeTable`, including all

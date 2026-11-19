@@ -13,15 +13,25 @@ netcommon's ResourceModule with the ISAM CLI adaptations:
   skips False when there is no device value, i.e. always in ``rendered``.
 * compaction: ``COMPACT_COMMAND_SCOPES`` packs the per-attribute commands of one CLI
   node into one command (the form the device prints), before commands are shown or sent.
+* offline action states: an action state (merged/replaced/overridden/deleted) given
+  ``running_config`` renders against that configuration instead of reading the device,
+  and never sends commands. ``running_config`` is the current state, either as CLI text
+  (parsed like ``parsed``) or as the canonical resource JSON. With ``deleted`` and no
+  ``config`` this renders the removal of everything in ``running_config`` — the offline
+  counterpart of ``rendered`` for deletions (e.g. NOC previews a move/copy/delete).
 """
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+import json
+from copy import deepcopy
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
     ResourceModule,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    emit_warnings,
     get_from_dict,
     to_list,
 )
@@ -33,17 +43,40 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common imp
 )
 
 
+def _offline_config(resource):
+    """An action state given ``running_config``: render against it, never touch the device.
+
+    A module-level helper (not a property) so the lifecycle methods also work when invoked
+    with a lightweight stand-in object in tests.
+    """
+    params = getattr(getattr(resource, "_module", None), "params", None) or {}
+    return resource.state in getattr(resource, "ACTION_STATES", ()) and bool(params.get("running_config"))
+
+
 class IsamResourceModule(ResourceModule):
     """ResourceModule for ISAM CLI resources (see the module docstring)."""
 
     # Regexes with named groups ``scope`` and ``suffix`` (see compact_cli_commands).
     COMPACT_COMMAND_SCOPES = ()
 
+    def _get_connection(self):
+        if _offline_config(self):
+            return None
+        return super(IsamResourceModule, self)._get_connection()
+
+    def gather_current(self):
+        if _offline_config(self):
+            running_config = self._module.params["running_config"]
+            if running_config.strip()[:1] in ("{", "["):
+                return deepcopy(json.loads(running_config))
+            return deepcopy(self.get_facts(self._empty_fact_val, data=running_config))
+        return super(IsamResourceModule, self).gather_current()
+
     def execute_module(self):
         """Common lifecycle; families override only for a different execution path."""
         if self.state not in ("parsed", "gathered"):
             self.generate_commands()
-            if self.state != "rendered":
+            if self.state != "rendered" and not _offline_config(self):
                 self.run_commands()
         return self.result
 
@@ -92,10 +125,22 @@ class IsamResourceModule(ResourceModule):
     @property
     def result(self):
         self._compact()
+        if _offline_config(self):
+            # Offline preview: commands and the supplied before-state, no device after-read.
+            result = {"warnings": self.warnings}
+            emit_warnings(self._module, result)
+            result["commands"] = self.commands
+            result["before"] = self.before
+            result["changed"] = bool(self.commands)
+            return result
         return super(IsamResourceModule, self).result
 
     def run_commands(self):
         self._compact()
+        if _offline_config(self):
+            # Offline preview: commands are rendered, never sent (also covers families
+            # that override execute_module and call run_commands directly).
+            return
         return super(IsamResourceModule, self).run_commands()
 
 
