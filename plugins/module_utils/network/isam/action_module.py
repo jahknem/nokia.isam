@@ -67,6 +67,8 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 # voip/vuni): letters, digits and / : . _ - only. No whitespace, control characters or
 # command separators, so an identifier from inventory cannot inject extra CLI tokens.
 _IDENTIFIER_RE = re.compile(r"^[A-Za-z0-9/:._-]+$")
+# A MAC address as the ISAM prints it: six colon-separated hex bytes (aa:bb:cc:a1:02:03).
+_MAC_RE = re.compile(r"^[0-9a-fA-F]{2}(:[0-9a-fA-F]{2}){5}$")
 
 
 class IsamActionModule(object):
@@ -101,6 +103,14 @@ class IsamActionModule(object):
             self._module.fail_json(
                 msg="Invalid %s %r: expected a Nokia CLI resource identifier "
                 "(letters, digits and / : . _ -), without whitespace or control characters." % (label, value),
+            )
+        return value
+
+    def validate_mac(self, value, label="MAC address"):
+        """Fail unless value is six colon-separated hex bytes (aa:bb:cc:dd:ee:ff)."""
+        if not isinstance(value, str) or not _MAC_RE.match(value):
+            self._module.fail_json(
+                msg="Invalid %s %r: expected six colon-separated hex bytes (aa:bb:cc:dd:ee:ff)." % (label, value),
             )
         return value
 
