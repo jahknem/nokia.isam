@@ -30,7 +30,6 @@ options:
         description: Slot identifier (e.g. 1/1/5).
       bit_len:
         type: int
-        default: 64
         description:
           - Prefix bit length used for anti-spoofing.
           - Must be between 64 and 128 (inclusive); other values fail the module before any device access.

@@ -14,6 +14,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import requested_sections
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xstp import (
     XstpTemplate,
 )
@@ -52,7 +53,12 @@ class Xstp(ResourceModule):
             want = dict_merge(have, want)
 
         if self.state == "deleted":
-            want = {}
+            requested = requested_sections(self._module)
+            if not requested or "general" in requested:
+                self._compare_general({}, have.get("general", {}))
+            if not requested or "ports" in requested:
+                self._compare_ports(want.get("ports", []), have.get("ports", []))
+            return
 
         self._compare_general(want.get("general", {}), have.get("general", {}))
         self._compare_ports(want.get("ports", []), have.get("ports", []))

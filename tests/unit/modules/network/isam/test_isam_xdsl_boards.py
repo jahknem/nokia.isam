@@ -40,4 +40,4 @@ class TestIsamXdslBoardsModule(TestIsamModule):
             True,
         )
         result = self.execute_module(changed=True)
-        self.assertEqual(result["commands"], ["configure xdsl no board 1/1/1"])
+        self.assertEqual(result["commands"], ["configure xdsl board 1/1/1 no vce-profile"])

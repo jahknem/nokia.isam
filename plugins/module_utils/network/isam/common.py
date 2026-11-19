@@ -17,6 +17,14 @@ def canonical_key(key):
     return key.replace("-", "_")
 
 
+def quote_cli_value(value):
+    """ISAM accepts double-quoted values, not shell-style single quotes."""
+    text = str(value)
+    if not text or text.startswith("#") or '"' in text or any(char.isspace() for char in text):
+        return '"%s"' % text.replace('"', '\\"')
+    return text
+
+
 def normalize_resource_keys(data, aliases=None):
     """Return a copy of data with canonical resource keys added.
 
@@ -251,11 +259,11 @@ def compact_cli_commands(commands, scopes):
     return compacted
 
 
-_MASKED_SECRET = re.compile(r"^(?:plain:|encrypted:)?\*+$")
+_MASKED_SECRET = re.compile(r"^(?:plain:|encrypted:)?(?:\*+|VALUE_SPECIFIED_IN_NO_LOG_PARAMETER)$")
 
 
 def is_masked_secret(value):
-    """A secret as the device displays it (e.g. ``plain:******``), not a usable value."""
+    """A device or Ansible-redacted secret, never a usable credential value."""
     return isinstance(value, str) and bool(_MASKED_SECRET.match(value))
 
 
@@ -270,3 +278,46 @@ def covers_entry(want, have, keys):
     named = {key for key, value in (want or {}).items() if key not in keys and value is not None}
     present = {key for key, value in (have or {}).items() if key not in keys and value not in (None, [], {})}
     return not named or present <= named
+
+
+def deleted_targets(wantd, haved, keys):
+    """For state deleted: (target, have) per instance to reset.
+
+    wantd/haved map an instance's identity to its entry. Without config (empty wantd)
+    every instance is reset, otherwise only the named ones. The target is what the
+    instance keeps: its identity keys, plus every attribute the request does not name.
+    An identity alone names everything; a named sub-dict names only its given keys.
+    Comparing want=target with have then resets exactly the named attributes.
+    """
+    keys = set(keys)
+    for key, have in haved.items():
+        if wantd and key not in wantd:
+            continue
+        want = wantd.get(key) or {}
+        named = dict((k, v) for k, v in want.items() if k not in keys and v not in (None, [], {}))
+        target = {}
+        for k, v in have.items():
+            if k in keys or (named and k not in named):
+                target[k] = v
+            elif named and isinstance(v, dict) and isinstance(named[k], dict):
+                sub = [s for s, sv in named[k].items() if sv is not None]
+                kept = dict((s, sv) for s, sv in v.items() if sub and s not in sub)
+                if kept:
+                    target[k] = kept
+        yield target, have
+
+
+def requested_sections(module):
+    """Top-level sections named in a dict config.
+
+    Ansible fills options the user did not give with None, so a section is named when
+    it is present and not None -- also as an empty dict or list ('envbox: {}' asks to
+    reset that section). For state deleted an empty result means 'no config, delete
+    everything'; otherwise only the named sections may be touched: naming one entry of
+    one list must never reset or remove the resource's other sections.
+    """
+    params = getattr(module, "params", None) or {}
+    config = params.get("config")
+    if not isinstance(config, dict):
+        return set()
+    return set(key for key, value in config.items() if value is not None)

@@ -5,6 +5,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from copy import deepcopy
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import deleted_targets, requested_sections
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
 )
@@ -65,7 +66,11 @@ class Generic_pon(ResourceModule):
             want = dict_merge(have, want)
 
         if self.state == "deleted":
-            want = {}
+            want, have = next(deleted_targets({"settings": want}, {"settings": have}, ()))
+
+        if self.state == "replaced":
+            requested = requested_sections(self._module)
+            have = {key: value for key, value in have.items() if key in requested}
 
         self._compare_dpinteg_threshold(want, have)
         self._compare_utilization(want, have)
@@ -123,15 +128,13 @@ class Generic_pon(ResourceModule):
                 and wv is None
             ):
                 # Negate: field present in have but absent from want
-                self.addcmd(self._field_data(section, field, False), section + "." + field)
+                self.addcmd(self._field_data(section, field, False), section + "." + field,
+                            negate=section == "utilization.threshold")
 
     @staticmethod
     def _field_data(section, field, value):
-        parts = section.split(".")
-        data = {field: value}
-        for part in reversed(parts):
-            data = {part: data}
-        return data
+        # Parser setval templates consume the leaf value, not the facts tree.
+        return {field: value}
 
     def _normalize(self, data):
         if not data:

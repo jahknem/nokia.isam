@@ -23,6 +23,11 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common imp
 )
 
 
+
+# Device defaults (CLI guide): equal to an unset value. Facts do not report them and
+# requests never get them injected (they are not argspec defaults).
+VLAN_DEFAULTS = {"new-broadcast": "inherit", "protocol-filter": "pass-all", "drly-srv-usr-side": False}
+
 class VlansTemplate(NetworkTemplate):
     def __init__(self, lines=None, module=None):
         super(VlansTemplate, self).__init__(lines=lines, tmplt=self, module=module)

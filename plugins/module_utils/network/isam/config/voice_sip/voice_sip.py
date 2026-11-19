@@ -221,7 +221,7 @@ class Isam_voice_sip(ResourceModule):
                 if name in have_dict:
                     self.addcmd(have_dict[name], "lineid_syn_prof", negate=True)
             return
-        if self.state in ("replaced", "overridden"):
+        if self.state == "overridden":
             for name, entry in have_dict.items():
                 if name not in want_dict:
                     self.addcmd(entry, "lineid_syn_prof", negate=True)
@@ -244,7 +244,7 @@ class Isam_voice_sip(ResourceModule):
                 if name in have_dict:
                     self.addcmd(have_dict[name], "vsp.id", negate=True)
             return
-        if self.state in ("replaced", "overridden"):
+        if self.state == "overridden":
             for name, entry in have_dict.items():
                 if name not in want_dict:
                     self.addcmd(entry, "vsp.id", negate=True)
@@ -266,7 +266,7 @@ class Isam_voice_sip(ResourceModule):
                 if name in have_dict:
                     self.addcmd(have_dict[name], "register.id", negate=True)
             return
-        if self.state in ("replaced", "overridden"):
+        if self.state == "overridden":
             for name, entry in have_dict.items():
                 if name not in want_dict:
                     self.addcmd(entry, "register.id", negate=True)
@@ -288,7 +288,7 @@ class Isam_voice_sip(ResourceModule):
                 if name in have_dict:
                     self.addcmd(have_dict[name], "redundancy.id", negate=True)
             return
-        if self.state in ("replaced", "overridden"):
+        if self.state == "overridden":
             for name, entry in have_dict.items():
                 if name not in want_dict:
                     self.addcmd(entry, "redundancy.id", negate=True)
@@ -325,7 +325,7 @@ class Isam_voice_sip(ResourceModule):
                 if name in have_dict:
                     self.addcmd(have_dict[name], "redundancy_cmd.id", negate=True)
             return
-        if self.state in ("replaced", "overridden"):
+        if self.state == "overridden":
             for name, entry in have_dict.items():
                 if name not in want_dict:
                     self.addcmd(entry, "redundancy_cmd.id", negate=True)
@@ -391,7 +391,7 @@ class Isam_voice_sip(ResourceModule):
                 if name in have_dict:
                     self.addcmd(have_dict[name], "cas_nsm_prof.id", negate=True)
             return
-        if self.state in ("replaced", "overridden"):
+        if self.state == "overridden":
             for name, entry in have_dict.items():
                 if name not in want_dict:
                     self.addcmd(entry, "cas_nsm_prof.id", negate=True)

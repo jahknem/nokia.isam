@@ -113,4 +113,7 @@ class Xdsl_boardsFacts(object):
         if len(parts) >= 2 and parts[0] == "no" and parts[1] == "admin-state":
             item["admin_state"] = False
             parts = parts[2:]
-        item.update(parse_cli_key_values(parts, bare_keys_as_true=True))
+        section = "boards" if "board_id" in item else "vp_boards"
+        options = self.argument_spec["config"]["options"][section]["options"]
+        parsed = parse_cli_key_values(parts, bare_keys_as_true=True)
+        item.update((key, value) for key, value in parsed.items() if key in options)

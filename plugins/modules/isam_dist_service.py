@@ -32,11 +32,9 @@ options:
         type: str
         description: Service type.
         choices: [unknown, epipe, p3pipe, tls, vprn, ies, mirror, apipe, fpipe, ipipe, cpipe]
-        default: apipe
       qos_profile:
         type: str
         description: QoS profile of the service, C(none) for no profile.
-        default: none
   running_config:
     description: The state-parsed running config (output of C(info configure dist-service flat)).
     type: str

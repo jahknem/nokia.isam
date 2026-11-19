@@ -24,6 +24,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
     get_targeted_config,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.vlans import (
+    VLAN_DEFAULTS,
     VlansTemplate,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.vlans.vlans import (
@@ -74,7 +75,8 @@ class VlansFacts(object):
             vlans_parser.validate_config(self.argument_spec, {"config": objs}, redact=True)
         ) or {}
 
-        facts['vlans'] = params.get('config') or []
+        facts['vlans'] = [dict((key, value) for key, value in entry.items() if VLAN_DEFAULTS.get(key) != value)
+                          for entry in params.get('config') or []]
         ansible_facts['ansible_network_resources'].update(facts)
 
         return ansible_facts

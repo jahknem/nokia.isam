@@ -47,7 +47,9 @@ class Qos_mapsTemplate(NetworkTemplate):
 
     @classmethod
     def _render_up_ctrl_pkt(cls, data):
-        cmd = "configure qos up-ctrl-pkt {0} queue {1}".format(data["protocol"], data["queue"])
+        cmd = "configure qos up-ctrl-pkt {0}".format(data["protocol"])
+        if data.get("queue") is not None:
+            cmd += " queue {0}".format(data["queue"])
         if data.get("profile"):
             cmd += " profile {0}".format(data["profile"])
         return cmd
@@ -58,7 +60,9 @@ class Qos_mapsTemplate(NetworkTemplate):
 
     @classmethod
     def _render_dn_ctrl_pkt(cls, data):
-        cmd = "configure qos dn-ctrl-pkt {0} queue {1}".format(data["protocol"], data["queue"])
+        cmd = "configure qos dn-ctrl-pkt {0}".format(data["protocol"])
+        if data.get("queue") is not None:
+            cmd += " queue {0}".format(data["queue"])
         if data.get("profile"):
             cmd += " profile {0}".format(data["profile"])
         return cmd
@@ -77,8 +81,8 @@ class Qos_mapsTemplate(NetworkTemplate):
 
         tc_re = re.compile(r"^tc-map-dot1p\s+(?P<dot1p>\d+)\s+tc\s+(?P<tc>\d+)(?:\s+dpcolor\s+(?P<dpcolor>\S+))?(?:\s+policer-color\s+(?P<policer_color>\S+))?\s*$")
         dscp_re = re.compile(r"^dscp-map-dot1p\s+(?P<dscp>\S+)\s+(?:dot1p|dot1p-value)\s+(?P<dot1p>\d+)\s*$")
-        up_ctrl_re = re.compile(r"^up-ctrl-pkt\s+(?P<protocol>\S+)\s+queue\s+(?P<queue>\d+)(?:\s+profile\s+(?P<profile>\S+))?\s*$")
-        dn_ctrl_re = re.compile(r"^dn-ctrl-pkt\s+(?P<protocol>\S+)\s+queue\s+(?P<queue>\d+)(?:\s+profile\s+(?P<profile>\S+))?\s*$")
+        up_ctrl_re = re.compile(r"^up-ctrl-pkt\s+(?P<protocol>\S+)(?:\s+queue\s+(?P<queue>\d+))?(?:\s+profile\s+(?P<profile>\S+))?\s*$")
+        dn_ctrl_re = re.compile(r"^dn-ctrl-pkt\s+(?P<protocol>\S+)(?:\s+queue\s+(?P<queue>\d+))?(?:\s+profile\s+(?P<profile>\S+))?\s*$")
 
         for raw_line in self._lines:
             stripped = raw_line.strip()
@@ -111,8 +115,9 @@ class Qos_mapsTemplate(NetworkTemplate):
             if match:
                 entry = {
                     "protocol": match.group("protocol"),
-                    "queue": int(match.group("queue")),
                 }
+                if match.group("queue") is not None:
+                    entry["queue"] = int(match.group("queue"))
                 if match.group("profile"):
                     entry["profile"] = match.group("profile")
                 result["up_ctrl_pkt"].append(entry)
@@ -122,8 +127,9 @@ class Qos_mapsTemplate(NetworkTemplate):
             if match:
                 entry = {
                     "protocol": match.group("protocol"),
-                    "queue": int(match.group("queue")),
                 }
+                if match.group("queue") is not None:
+                    entry["queue"] = int(match.group("queue"))
                 if match.group("profile"):
                     entry["profile"] = match.group("profile")
                 result["dn_ctrl_pkt"].append(entry)

@@ -55,11 +55,9 @@ class TestL2cp(TestIsamModule):
         config = [{"name": "1", "bras_ip_address": "192.0.2.10", "topo_discovery": "disabled", "sig_partition_id": False}]
         set_module_args({"state": "rendered", "config": config}, True)
         result = self.execute_module(changed=False)
+        # Only what is given (no argspec defaults: they overwrote unnamed attributes in merged).
         self.assertEqual(result["rendered"], [
-            "configure l2cp session 1 bras-ip-address 192.0.2.10 gsmp-version 3 gsmp-sub-version 1 encap-type tcp "
-            "topo-discovery disabled layer2-oam enabled alive-timer 250 port-reprt-shaper 10 aggr-reprt-shaper 10 "
-            "tcp-retry-time 10 gsmp-retry-time 10 dslam-name 00 : 00 : 00 partition-id 0 window-size 10 tcp-port 6068 "
-            "router-instance base no sig-partition-id"
+            "configure l2cp session 1 bras-ip-address 192.0.2.10 topo-discovery disabled no sig-partition-id"
         ])
 
         running = dedent("""\
@@ -78,3 +76,34 @@ class TestL2cp(TestIsamModule):
         set_module_args({"state": "parsed", "running_config": "configure l2cp no user-port 1/1/1/1 partition-id"}, True)
         result = self.execute_module(changed=False)
         self.assertEqual(result["parsed"], [{"name": "1/1/1/1", "partition_id": None}])
+
+
+SESSION = "configure l2cp session 200 bras-ip-address 192.0.2.1 topo-discovery disabled alive-timer 210\n"
+
+
+def _session(monkeypatch, state, config, running=SESSION):
+    from .module_runner import run_module
+
+    return run_module(monkeypatch, "isam_l2cp_session", {"state": state, "config": config}, running)
+
+
+def test_session_create_sends_only_non_default_attributes(monkeypatch):
+    result = _session(monkeypatch, "merged", [{"name": "200", "bras_ip_address": "192.0.2.1", "alive_timer": "250",
+                                               "dslam_name": "02:00:00:00:00:01"}], running="")
+    assert result["commands"] == ["configure l2cp session 200 bras-ip-address 192.0.2.1 dslam-name 02:00:00:00:00:01"]
+
+
+def test_session_change_uses_the_short_form_and_keeps_unnamed_attributes(monkeypatch):
+    """Lab ISAM: an existing session only accepts 'session <index> alive-timer <value>'."""
+    assert _session(monkeypatch, "merged", [{"name": "200", "alive_timer": "200"}])["commands"] == [
+        "configure l2cp session 200 alive-timer 200"]
+    assert _session(monkeypatch, "merged", [{"name": "200", "alive_timer": "210"}])["commands"] == []
+    # replaced returns the unnamed modifiable attribute to its default
+    assert _session(monkeypatch, "replaced", [{"name": "200", "topo_discovery": "disabled"}])["commands"] == [
+        "configure l2cp session 200 no alive-timer"]
+
+
+def test_session_creation_only_attribute_fails_before_any_change(monkeypatch):
+    result = _session(monkeypatch, "merged", [{"name": "200", "topo_discovery": "enabled", "alive_timer": "200"}])
+    assert result.get("failed") and "topo_discovery can only be set when the session is created" in result["msg"]
+    assert not result.get("commands")

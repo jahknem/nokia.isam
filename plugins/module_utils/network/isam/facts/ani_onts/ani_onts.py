@@ -30,7 +30,7 @@ class Ani_ontsFacts(object):
     def get_config(self, connection):
         """The whole resource, or only the ONT thresholds named in config (targeted gathering)."""
         commands = ["info configure ani ont tca-thresh %s flat" % ont for ont in requested_identities(self._module, "ani_onts")]
-        return get_scoped_config(self._module, connection, None, "info configure ani ont flat", commands)
+        return get_scoped_config(self._module, connection, None, "info configure ani ont flat", commands, bare_commands=commands)
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}

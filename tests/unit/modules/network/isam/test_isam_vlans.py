@@ -141,7 +141,7 @@ class TestIsamVlansModule(TestIsamModule):
         self.assertIn("rendered", result)
         self.assertIsInstance(result.get("rendered"), list)
         self.assertIn(
-            "configure vlan id 100 name HomeNet mode residential-bridge sntp-proxy priority 5 new-broadcast inherit protocol-filter pass-all no drly-srv-usr-side new-secure-fwd enable",
+            "configure vlan id 100 name HomeNet mode residential-bridge sntp-proxy priority 5 new-secure-fwd enable",
             result["rendered"],
         )
 
@@ -168,7 +168,7 @@ class TestIsamVlansModule(TestIsamModule):
         self.assertEqual(
             rendered,
             [
-                "configure vlan id 410 name HSI-4 mode residential-bridge new-broadcast inherit protocol-filter pass-all no drly-srv-usr-side new-secure-fwd enable in-qos-prof-name name:Default_TC0",
+                "configure vlan id 410 name HSI-4 mode residential-bridge new-secure-fwd enable in-qos-prof-name name:Default_TC0",
                 "configure vlan id 410 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id",
             ],
         )
@@ -229,7 +229,7 @@ class TestIsamVlansModule(TestIsamModule):
         )
         result = self.execute_module(changed=True)
         self.assertIn(
-            "configure vlan id 100 no mode no priority no new-secure-fwd name Changed",
+            "configure vlan id 100 no priority no new-secure-fwd name Changed",
             result["commands"],
         )
         self.assertTrue(any("no priority" in command for command in result["commands"]))

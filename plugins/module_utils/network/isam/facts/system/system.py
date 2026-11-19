@@ -115,7 +115,8 @@ class Isam_systemFacts(object):
 
             if section == "id" and values:
                 id_section = objs.setdefault("id", {})
-                id_section["node_id"] = values[0]
+                if values[0] not in ("name", "location", "contact", "contact-person", "no", "nt-intercon-vlan", "internal-nw-vlan", "system-mac"):
+                    id_section["node_id"] = values[0]
                 self._copy_token_value(values, "name", id_section, "name")
                 self._copy_token_value(values, "location", id_section, "location")
                 self._copy_token_value(values, "contact-person", id_section, "contact")
@@ -162,7 +163,8 @@ class Isam_systemFacts(object):
         self._copy_token_value(values, "polling-rate", sntp, "polling_rate", int)
         self._copy_token_value(values, "timezone-offset", sntp, "timezone_offset", int)
         if "enable" in values:
-            sntp["enabled"] = True
+            index = values.index("enable")
+            sntp["enabled"] = index == 0 or values[index - 1] != "no"
         if values[:1] == ["server-table"]:
             entry = {}
             self._copy_token_value(values, "ip-address", entry, "ip_address")
@@ -181,7 +183,10 @@ class Isam_systemFacts(object):
             self._copy_token_value(values, "facility", entry, "facility")
             if "facility" in values:
                 start = values.index("facility") + 2
-                entry["severities"] = values[start:]
+                severities = values[start:]
+                known = ("emergency", "alert", "critical", "error", "warning", "notice", "information", "debug")
+                entry["severities"] = [token for index, token in enumerate(severities)
+                                       if token in known and (index == 0 or severities[index - 1] != "no")]
             syslog.setdefault("routes", []).append(entry)
 
     @staticmethod

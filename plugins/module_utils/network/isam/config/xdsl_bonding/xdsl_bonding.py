@@ -51,12 +51,12 @@ class Xdsl_bonding(ResourceModule):
         )
 
     def _compare_group_assembly_time(self, want, have):
-        if self.state in ["overridden", "deleted"]:
+        if self.state == "deleted":
             if have is not None:
                 self.commands.append("configure xdsl-bonding no group-assembly-time")
             return
 
-        if self.state == "replaced":
+        if self.state in ("replaced", "overridden"):
             if want is None and have is not None:
                 self.commands.append("configure xdsl-bonding no group-assembly-time")
                 return

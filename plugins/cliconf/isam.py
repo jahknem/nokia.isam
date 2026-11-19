@@ -126,9 +126,11 @@ class Cliconf(CliconfBase):
             for line in to_list(candidate):
                 if not isinstance(line, str):
                     raise ValueError("candidate configuration is not a string")
-                if line.startswith("configure "):
-                    # ISAM retains nested configuration context between
-                    # commands; reset it before each resource-manager command.
+                if line.startswith(("configure ", "admin ")):
+                    # ISAM retains nested CLI context between commands. Both the
+                    # configure and the admin hierarchies are absolute paths from the
+                    # root, so reset to the root before each resource-manager command
+                    # and each operational action command.
                     self.send_command("exit all")
                 # if not line.endswith('\n'):
                 #     line += '\n'

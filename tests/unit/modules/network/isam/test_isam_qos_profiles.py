@@ -173,8 +173,8 @@ class TestIsamQosProfilesModule(TestIsamModule):
         )
         result = self.execute_module(changed=False)
         rendered = result.get("rendered")
-        self.assertIn("configure qos profiles ingress-qos IN dot1-p0-color green", rendered)
-        self.assertIn("configure qos profiles ingress-qos IN dot1-p0-pol-tc 2", rendered)
+        # one packed command per profile (the device validates a profile command whole)
+        self.assertIn("configure qos profiles ingress-qos IN dot1-p0-color green dot1-p0-pol-tc 2", rendered)
         self.assertIn("configure qos profiles rate-limit RL arp-rate 1", rendered)
         self.assertEqual(
             Qos_profilesTemplate._render_no_field("use-dei")(

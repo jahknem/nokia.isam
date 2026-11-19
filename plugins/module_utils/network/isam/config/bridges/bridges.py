@@ -6,6 +6,7 @@
 #
 
 from __future__ import absolute_import, division, print_function
+from collections import OrderedDict
 
 __metaclass__ = type
 
@@ -144,7 +145,7 @@ class Bridges(ResourceModule):
 
         # if state is merged, merge want onto have and then compare
         if self.state == "merged":
-            wantd = dict_merge(haved, wantd)
+            wantd = self._merge_ports(haved, wantd)
 
         # Keep requested identities for targeted deletion.  A bridge port can
         # contain several VLANs, so deleting the port entry wholesale would
@@ -193,11 +194,29 @@ class Bridges(ResourceModule):
                 self.commands.extend(deferred_pvid_commands)
                 deferred_pvid_commands = []
 
-        # remaining vlans in have (present in running but not in want)
-        for vid, have_vlan in iteritems(have_vlans):
-            self._compare_stale_vlan(port_name, vid, have_vlan)
-
         self.commands.extend(deferred_pvid_commands)
+        for vid in have_vlans:
+            self.commands.append("configure bridge port %s no vlan-id %s" % (port_name, vid))
+
+    @staticmethod
+    def _merge_ports(haved, wantd):
+        """Merge VLAN entries by identity instead of appending partial duplicates."""
+        merged = {}
+        for key in dict.fromkeys(list(haved) + list(wantd)):
+            have, want = haved.get(key, {}), wantd.get(key)
+            if want is None:
+                merged[key] = have
+                continue
+            entry = dict_merge({k: v for k, v in have.items() if k != "vlan_id"},
+                               {k: v for k, v in want.items() if k != "vlan_id"})
+            if have.get("vlan_id") or want.get("vlan_id"):
+                vlans = OrderedDict((str(v["id"]), v) for v in have.get("vlan_id") or [])
+                for vlan in want.get("vlan_id") or []:
+                    vid = str(vlan["id"])
+                    vlans[vid] = dict_merge(vlans[vid], vlan) if vid in vlans else vlan
+                entry["vlan_id"] = list(vlans.values())
+            merged[key] = entry
+        return merged
 
     def _normalize_port(self, data):
         data = normalize_resource_keys(data)
@@ -283,9 +302,18 @@ class Bridges(ResourceModule):
                     "configure bridge port %s no vlan-id %s" % (port_name, vid)
                 )
 
+    @staticmethod
+    def _without_default_off(data, keys):
+        """Detail-read false flags equal unset; never re-enable them on replay."""
+        return {key: value for key, value in data.items()
+                if not (value is False and key.replace("-", "_") in keys)}
+
     def _compare_port_fields(self, want, have):
         # Targeted deletion runs before this so defaults cannot reset unrelated settings.
         port_start = len(self.commands)
+        if self.state != "rendered":
+            want = self._without_default_off(want, ("mac_learn_off",))
+        have = self._without_default_off(have, ("mac_learn_off",))
         self.compare(parsers=PORT_PARSERS, want=want, have=have)
         return self._defer_pvid_commands(port_start)
 
@@ -331,7 +359,10 @@ class Bridges(ResourceModule):
         want_vlan = self._normalize_vlan(port_name, vid, want_vlan)
         have_vlan = self._normalize_vlan(port_name, vid, have_vlan)
         vlan_start = len(self.commands)
-        self.compare(parsers=VLAN_PARSERS, want=want_vlan, have=have_vlan)
+        flags = tuple(parser for parser in VLAN_PARSERS if parser.startswith("prior_"))
+        self.compare(parsers=VLAN_PARSERS,
+                     want=want_vlan if self.state == "rendered" else self._without_default_off(want_vlan, flags),
+                     have=self._without_default_off(have_vlan, flags))
         self._compare_static_users(port_name, vid, want_vlan, have_vlan)
         vlan_commands = self.commands[vlan_start:]
         # The vlan_id parser is used by facts, not command generation. A VLAN

@@ -110,7 +110,5 @@ class TestIsamGenericPonModule(TestIsamModule):
         set_module_args(dict(state="parsed"), ignore_provider_arg)
         self.execute_module(failed=True)
 
-    def test_isam_generic_pon_deleted_has_threshold_no_form(self):
-        assert Generic_ponTemplate().render(
-            {"dpinteg_threshold": None}, "dpinteg_threshold", negate=True
-        ) == "no configure generic-pon no dpinteg-threshold"
+    def test_isam_generic_pon_threshold_has_no_removal_form(self):
+        assert Generic_ponTemplate().get_parser("dpinteg_threshold")["no_remval"] is True

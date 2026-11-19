@@ -305,6 +305,7 @@ options:
   state:
     description:
       - The desired state of the configuration.
+      - C(replaced) updates named list instances and preserves unnamed instances; C(overridden) removes unnamed instances.
       - C(merged), C(replaced), C(overridden), and C(deleted) push configuration
         to the device.
       - C(gathered) retrieves the running configuration as structured data.

@@ -52,6 +52,14 @@ def get_variant_config(module, connection, resource):
     return get_targeted_config(module, _OptionalConnection(connection), resource, full, {"config": single})
 
 
+# Lines owned by each resource; anything else in the input (e.g. a whole running
+# config passed to state parsed) is ignored rather than read as an instance.
+_PREFIXES = {
+    "ngpon2_channel_groups": "configure channel-group id ",
+    "epon_interfaces": "configure epon interface ",
+    "channel_pair_pm": "configure channel-pair interface ",
+}
+
 _ARGSPECS = {
     "ngpon2_channel_groups": Ngpon2_channel_groupsArgs.argument_spec,
     "epon_interfaces": Epon_interfacesArgs.argument_spec,
@@ -76,7 +84,7 @@ def _parse_lines(data, resource):
     records = {}
     for raw_line in unwrap_response(data).splitlines():
         line = raw_line.strip()
-        if not line.startswith("configure "):
+        if not line.startswith(_PREFIXES[resource]):
             continue
         tokens = line.split()
         if resource == "epon_interfaces" and len(tokens) >= 6:

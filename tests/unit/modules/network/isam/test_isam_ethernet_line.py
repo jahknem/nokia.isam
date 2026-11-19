@@ -183,6 +183,7 @@ class TestIsamEthernetLineModule(TestIsamModule):
             dict(
                 if_index="1/1/8/1",
                 port_type="uni",
+                admin_up=True,
                 mau=[
                     dict(
                         index=1,
@@ -226,6 +227,7 @@ class TestIsamEthernetLineModule(TestIsamModule):
             dict(
                 if_index="1/1/8/1",
                 port_type="uni",
+                admin_up=True,
                 mau=[
                     dict(
                         index=1,
@@ -237,6 +239,7 @@ class TestIsamEthernetLineModule(TestIsamModule):
             dict(
                 if_index="1/1/8/2",
                 port_type="uni",
+                admin_up=True,
                 mau=[
                     dict(
                         index=1,
@@ -336,19 +339,35 @@ class TestIsamEthernetLineModule(TestIsamModule):
             ),
             ignore_provider_arg,
         )
-        commands = [
-            "configure ethernet line 1/1/8/2 port-type uni",
-            "configure ethernet line 1/1/8/2 mau 1 type 1000basebx10d power up",
-        ]
+        # 1/1/8/2 loses its unnamed admin-up; the unlisted 1/1/8/1 is reset as well. port-type and
+        # the MAU type/power have no "no" form and are kept.
         result = self.execute_module(changed=True)
-        self.assertEqual(set(result["commands"]), set(commands))
+        self.assertEqual(result["commands"], ["configure ethernet line 1/1/8/1 no admin-up",
+                                              "configure ethernet line 1/1/8/2 no admin-up"])
+
+    def test_isam_ethernet_line_overridden_sends_only_differences(self):
+        self.get_config.return_value = dedent("""configure ethernet
+        line 1/1/8/2
+          port-type uni
+          mau 1
+            type 1000basebx10d
+            power up
+          exit
+        exit
+        """)
+        set_module_args(
+            dict(
+                config=[dict(if_index="1/1/8/2", port_type="uni", mau=[dict(index=1, mau_type="1000basebx10d", power="down")])],
+                state="overridden",
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=True)
+        self.assertEqual(result["commands"], ["configure ethernet line 1/1/8/2 mau 1 power down"])
 
     def test_isam_ethernet_line_replaced(self):
-        # test replaced: omitted port_type is negated; unmentioned ports stay untouched.
-        # NOTE: admin_up omission cannot be tested here — admin-up is present in the raw
-        # config but does NOT appear in the parsed ``have`` data due to a template parser
-        # limitation (the ``admin_up`` key is never populated).  Once that parser issue is
-        # fixed, a negation test for admin_up can be added.
+        # test replaced: the omitted admin-up is reset; port-type has no "no" form and is kept
+        # ("configure ethernet no line ... port-type" does not exist); unmentioned ports stay.
         self.get_config.return_value = dedent("""configure ethernet
         #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         echo "ethernet"
@@ -390,11 +409,11 @@ class TestIsamEthernetLineModule(TestIsamModule):
             ignore_provider_arg,
         )
         commands = [
-            "configure ethernet no line 1/1/8/2 port-type uni",
+            "configure ethernet line 1/1/8/2 no admin-up",
             "configure ethernet line 1/1/8/2 mau 1 type 10gbaser",
         ]
         result = self.execute_module(changed=True)
-        self.assertEqual(set(result["commands"]), set(commands))
+        self.assertEqual(result["commands"], commands)
 
     def test_isam_ethernet_line_deleted(self):
         # test deleted
@@ -431,8 +450,9 @@ class TestIsamEthernetLineModule(TestIsamModule):
             ),
             ignore_provider_arg,
         )
-        result = self.execute_module(changed=False)
-        self.assertEqual(result["commands"], [])
+        # the identity resets that line only (removable settings; type/power are kept)
+        result = self.execute_module(changed=True)
+        self.assertEqual(result["commands"], ["configure ethernet line 1/1/8/1 no admin-up"])
 
     def test_isam_ethernet_line_gathered_empty(self):
         # test parsed

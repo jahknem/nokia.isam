@@ -1,4 +1,5 @@
 from copy import deepcopy
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import requested_sections
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.cfm.cfm import CfmFacts
@@ -20,6 +21,8 @@ class Cfm(ResourceModule):
     def generate_commands(self):
         want = deepcopy(self.want or {})
         have = deepcopy(self.have or {})
+        if self.state != "deleted":
+            self._validate_domains(want, have)
         if self.state == "merged":
             target = want
         elif self.state == "deleted":
@@ -44,10 +47,31 @@ class Cfm(ResourceModule):
 
     @staticmethod
     def _identity(kind, item):
-        return (kind, item.get("domain_index"), item.get("association_index"), item.get("mepid"), item.get("session_id"), item.get("rmepid"), item.get("active_remote_mepid"), item.get("name"))
+        return (kind, item.get("domain_index"), item.get("association_index"), item.get("mepid"), item.get("session_id"), item.get("rmepid"), item.get("active_remote_mepid"))
+
+    def _validate_domains(self, want, have):
+        """A domain's name and level are immutable; never invent a destructive recreate."""
+        current = {item["domain_index"]: item for item in have.get("domains", [])}
+        for domain in want.get("domains", []):
+            existing = current.get(domain["domain_index"])
+            if existing:
+                changed = [field for field in ("name", "level") if domain.get(field) is not None and domain[field] != existing.get(field)]
+                if changed:
+                    self._module.fail_json(msg="CFM domain %s: %s cannot be modified; remove and recreate the domain explicitly."
+                                           % (domain["domain_index"], ", ".join(changed)))
+            elif any(domain.get(field) is not None for field in ("name", "level")):
+                if any(domain.get(field) is None for field in ("name", "level")):
+                    self._module.fail_json(msg="Creating CFM domain %s requires both name and level." % domain["domain_index"])
 
     def _delete_missing(self, have, want):
         # CFM has explicit no forms only for indexed objects; omitted options are left alone.
+        requested = requested_sections(self._module) if self.state in ("replaced", "deleted") else set()
+        have_slm = (have.get("slm") or {}).get("inactivity_time")
+        if have_slm is not None and (not requested or "slm" in requested):
+            if self.state == "deleted" or (want.get("slm") or {}).get("inactivity_time") is None:
+                self.commands.append("configure cfm slm no inactivity-time")
+        if requested and "domains" not in requested:
+            return
         if self.state == "deleted":
             requested = {x.get("domain_index") for x in want.get("domains", [])}
             for domain in have.get("domains", []):
@@ -71,12 +95,20 @@ class Cfm(ResourceModule):
                     current_mep = next((x for x in current_association.get("meps", []) if x.get("mepid") == mep.get("mepid")), {})
                     self._command(mp, mep, tuple(CfmTemplate.OPTIONS.values()), current_mep)
                     if mep.get("y1731ais") is not None: self._command(mp + " y1731ais", mep["y1731ais"], tuple(CfmTemplate.OPTIONS.values()), current_mep.get("y1731ais", {}))
-                    for remote in mep.get("active_remote_meps", []): self.commands.append(mp + " active-remote-mep " + str(remote))
-                for remote in association.get("remote_meps", []): self.commands.append(prefix + " remote-mep " + str(remote))
-        if config.get("slm", {}).get("inactivity_time") is not None: self.commands.append("configure cfm slm inactivity-time " + str(config["slm"]["inactivity_time"]))
+                    for remote in mep.get("active_remote_meps", []):
+                        if remote not in current_mep.get("active_remote_meps", []):
+                            self.commands.append(mp + " active-remote-mep " + str(remote))
+                for remote in association.get("remote_meps", []):
+                    if remote not in current_association.get("remote_meps", []):
+                        self.commands.append(prefix + " remote-mep " + str(remote))
+        wanted_slm = (config.get("slm") or {}).get("inactivity_time")
+        if wanted_slm is not None and wanted_slm != (have.get("slm") or {}).get("inactivity_time"):
+            self.commands.append("configure cfm slm inactivity-time " + str(wanted_slm))
         for pm in config.get("y1731pm", []):
             prefix = "configure cfm y1731pm domain {0} association {1} mep {2} session-id {3}".format(pm["domain_index"], pm["association"], pm["mep"], pm["session_id"])
-            self._command(prefix, pm, ("type", "target_mac", "priority", "admin_up", "interval", "size", "measurement_intvl"), {})
+            identity = ("domain_index", "association", "mep", "session_id")
+            current = next((entry for entry in have.get("y1731pm", []) if all(entry.get(key) == pm.get(key) for key in identity)), {})
+            self._command(prefix, pm, ("type", "target_mac", "priority", "admin_up", "interval", "size", "measurement_intvl"), current)
 
     def _command(self, prefix, item, fields, have):
         parts = [prefix]

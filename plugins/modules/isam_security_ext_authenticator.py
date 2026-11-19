@@ -18,7 +18,7 @@ options:
         type: str
         required: true
       clear_statistics:
-        description: Clear the port's authentication statistics.
+        description: Clear the port's authentication statistics. Must be true; a bare port is not an operation.
         type: bool
         default: false
 """

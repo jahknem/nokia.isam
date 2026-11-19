@@ -11,6 +11,45 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 )
 
 
+# Device defaults: what 'no <attr>' means. 'info ... detail' prints the attribute as
+# 'no <attr>' (parsed to this value); the plain read omits it. One table for the
+# parsers below and for the config comparison (config/pon_interfaces).
+PON_DEFAULTS = {
+    "ber_calc_period": 10, "polling_period": 100, "sig_degrade_th": 9, "sig_fail_th": 5,
+    "raman_reduct": "disable", "closest_ont": 0, "diff_reach": 20, "pon_tag": "0000000000000000",
+    "pon_id": "00000000", "mcast_encrypt": "disable", "auth_method": "sn-slid", "ponid_odn": "auto",
+    "max_ranging_onts": 128, "pon_speed": "nominal", "burst_overhead": "robust", "onu_prov_mode": "semi-auto",
+    "ponid_interval": 0, "ponid_identifier": "00000000000000",
+}
+# Defaults that depend on the PON technology (the interface name prefix).
+TEN_G_PREFIXES = ("x-pon:", "25g-pon:")
+NAME_DEPENDENT_DEFAULTS = {"fec_dn": ("enable", "disable"), "tconts_per_frame": (44, 64)}  # (10G, other)
+
+
+def pon_default(field, name):
+    """The device default of a PON interface attribute, or None if it has none here."""
+    if field in NAME_DEPENDENT_DEFAULTS:
+        ten_g, other = NAME_DEPENDENT_DEFAULTS[field]
+        return ten_g if str(name).startswith(TEN_G_PREFIXES) else other
+    return PON_DEFAULTS.get(field)
+
+
+def _jinja_literal(value):
+    """A Jinja expression for value. Digit strings are built by slicing so the template
+    engine keeps them strings ('0000' would otherwise become the number 0)."""
+    if isinstance(value, int):
+        return str(value)
+    if value.isdigit():
+        return "('x%s')[1:]" % value
+    return "'%s'" % value
+
+
+def _jinja_name_default(field):
+    ten_g, other = NAME_DEPENDENT_DEFAULTS[field]
+    test = " or ".join("name.startswith('%s')" % prefix for prefix in TEN_G_PREFIXES)
+    return "(%s if (%s) else %s)" % (_jinja_literal(ten_g), test, _jinja_literal(other))
+
+
 class Pon_interfacesTemplate(NetworkTemplate):
     def __init__(self, lines=None, module=None):
         super(Pon_interfacesTemplate, self).__init__(lines=lines, tmplt=self, module=module)
@@ -45,7 +84,7 @@ class Pon_interfacesTemplate(NetworkTemplate):
             "result": {
                 "{{ name }}": {
                     "name": "{{ name }}",
-                    "fec_dn": "{{ ('enable' if (name.startswith('x-pon:') or name.startswith('25g-pon:')) else 'disable') if negate is defined else fec_dn }}",
+                    "fec_dn": "{{ " + _jinja_name_default("fec_dn") + " if negate is defined else fec_dn }}",
                 },
             },
         },
@@ -61,7 +100,7 @@ class Pon_interfacesTemplate(NetworkTemplate):
             "result": {
                 "{{ name }}": {
                     "name": "{{ name }}",
-                    "ponid_interval": "{{ 0 if negate is defined else ponid_interval }}",
+                    "ponid_interval": "{{ " + _jinja_literal(PON_DEFAULTS["ponid_interval"]) + " if negate is defined else ponid_interval }}",
                 },
             },
         },
@@ -77,7 +116,7 @@ class Pon_interfacesTemplate(NetworkTemplate):
             "result": {
                 "{{ name }}": {
                     "name": "{{ name }}",
-                    "ponid_identifier": "{{ ('x00000000000000')[1:] if negate is defined else ponid_identifier }}",
+                    "ponid_identifier": "{{ " + _jinja_literal(PON_DEFAULTS["ponid_identifier"]) + " if negate is defined else ponid_identifier }}",
                 },
             },
         },
@@ -93,7 +132,7 @@ class Pon_interfacesTemplate(NetworkTemplate):
             "result": {
                 "{{ name }}": {
                     "name": "{{ name }}",
-                    "tconts_per_frame": "{{ (44 if (name.startswith('x-pon:') or name.startswith('25g-pon:')) else 64) if negate is defined else tconts_per_frame }}",
+                    "tconts_per_frame": "{{ " + _jinja_name_default("tconts_per_frame") + " if negate is defined else tconts_per_frame }}",
                 },
             },
         },
@@ -154,8 +193,9 @@ class Pon_interfacesTemplate(NetworkTemplate):
     # fmt: on
 
 
-def _value_parser(field, cli_name, value_pattern=r"\S+", value_filter="", default_value="''"):
-    """Build a parser for one packed PON-interface command word."""
+def _value_parser(field, cli_name, value_pattern=r"\S+", value_filter=""):
+    """Build a parser for one packed PON-interface command word ('no <attr>' -> PON_DEFAULTS)."""
+    default_value = _jinja_literal(PON_DEFAULTS[field])
     value = "{{ " + default_value + value_filter + " if negate is defined else " + field + value_filter + " }}"
     return {
         "name": "interface." + field,
@@ -179,22 +219,22 @@ def _value_parser(field, cli_name, value_pattern=r"\S+", value_filter="", defaul
 
 Pon_interfacesTemplate.PARSERS.extend(
     [
-        _value_parser("ber_calc_period", "ber-calc-period", r"\d+", "|int", "10"),
-        _value_parser("polling_period", "polling-period", r"\d+", "|int", "100"),
-        _value_parser("sig_degrade_th", "sig-degrade-th", r"\d+", "|int", "9"),
-        _value_parser("sig_fail_th", "sig-fail-th", r"\d+", "|int", "5"),
-        _value_parser("raman_reduct", "raman-reduct", r"\S+", "", "'disable'"),
-        _value_parser("closest_ont", "closest-ont", r"\d+", "|int", "0"),
-        _value_parser("diff_reach", "diff-reach", r"\d+", "|int", "20"),
-        _value_parser("pon_tag", "pon-tag", r"\S+", "", "('x0000000000000000')[1:]"),
-        _value_parser("pon_id", "pon-id", r"\S+", "", "('x00000000')[1:]"),
-        _value_parser("mcast_encrypt", "mcast-encrypt", r"\S+", "", "'disable'"),
-        _value_parser("auth_method", "auth-method", r"\S+", "", "'sn-slid'"),
-        _value_parser("ponid_odn", "ponid-odn", r"\S+", "", "'auto'"),
-        _value_parser("max_ranging_onts", "max-ranging-onts", r"\d+", "|int", "128"),
-        _value_parser("pon_speed", "pon-speed", r"\S+", "", "'nominal'"),
-        _value_parser("burst_overhead", "burst-overhead", r"\S+", "", "'robust'"),
-        _value_parser("onu_prov_mode", "onu-prov-mode", r"\S+", "", "'semi-auto'"),
+        _value_parser("ber_calc_period", "ber-calc-period", r"\d+", "|int"),
+        _value_parser("polling_period", "polling-period", r"\d+", "|int"),
+        _value_parser("sig_degrade_th", "sig-degrade-th", r"\d+", "|int"),
+        _value_parser("sig_fail_th", "sig-fail-th", r"\d+", "|int"),
+        _value_parser("raman_reduct", "raman-reduct", r"\S+", ""),
+        _value_parser("closest_ont", "closest-ont", r"\d+", "|int"),
+        _value_parser("diff_reach", "diff-reach", r"\d+", "|int"),
+        _value_parser("pon_tag", "pon-tag", r"\S+", ""),
+        _value_parser("pon_id", "pon-id", r"\S+", ""),
+        _value_parser("mcast_encrypt", "mcast-encrypt", r"\S+", ""),
+        _value_parser("auth_method", "auth-method", r"\S+", ""),
+        _value_parser("ponid_odn", "ponid-odn", r"\S+", ""),
+        _value_parser("max_ranging_onts", "max-ranging-onts", r"\d+", "|int"),
+        _value_parser("pon_speed", "pon-speed", r"\S+", ""),
+        _value_parser("burst_overhead", "burst-overhead", r"\S+", ""),
+        _value_parser("onu_prov_mode", "onu-prov-mode", r"\S+", ""),
     ]
 )
 

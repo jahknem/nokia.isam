@@ -259,6 +259,7 @@ class TestIsamQosInterfacesModule(TestIsamModule):
             ),
             ignore_provider_arg,
         )
-        result = self.execute_module(changed=True)
-        self.assertTrue(any("no scheduler-node" in command for command in result["commands"]))
-        self.assertFalse(any("queue " in command for command in result["commands"]))
+        # The device refuses to remove the scheduler node of an interface with
+        # queues (QOS MGT error 52, lab ISAM): it is kept, with a warning.
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["commands"], [])

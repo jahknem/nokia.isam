@@ -127,6 +127,7 @@ def test_gathered_full_entry_is_idempotent_and_can_be_deleted(monkeypatch, famil
     if family == "equipment_onts":
         assert deleted["commands"] == [
             "configure equipment ont interface %s admin-state down" % ONT,
+            "configure equipment ont slot %s/1 admin-state down" % ONT,
             "configure equipment ont no slot %s/1" % ONT,
             "configure equipment ont no interface %s" % ONT,
         ]
@@ -145,7 +146,8 @@ def test_gathered_full_entry_is_idempotent_and_can_be_deleted(monkeypatch, famil
         assert deleted["commands"] == ["configure ntp no ont %s" % ONT]
     elif family == "qos_interfaces":
         commands = deleted["commands"]
-        assert "configure qos interface %s no scheduler-node" % UNI in commands
+        # a UNI with queues keeps its scheduler node (the device refuses to remove it)
+        assert "configure qos interface %s no scheduler-node" % UNI not in commands
         assert "configure qos interface %s upstream-queue 0 no weight" % UNI in commands
         assert "configure qos interface %s upstream-queue 0 no bandwidth-profile" % UNI in commands
         assert "configure qos interface %s ds-rem-queue 0 no priority" % UNI in commands
@@ -190,7 +192,7 @@ def test_qos_partial_delete_never_sets_values_or_touches_queue_siblings(monkeypa
 
 def test_qos_identity_deletion_clears_removable_fields(monkeypatch):
     result = call_module(monkeypatch, "qos_interfaces", [{"name": UNI}], "deleted")
-    assert "configure qos interface %s no scheduler-node" % UNI in result["commands"]
+    assert "configure qos interface %s no scheduler-node" % UNI not in result["commands"]
     assert "configure qos interface %s upstream-queue 1 no weight" % UNI in result["commands"]
     assert all(" no " in command for command in result["commands"])
 

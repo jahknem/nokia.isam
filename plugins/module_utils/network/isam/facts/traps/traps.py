@@ -32,13 +32,15 @@ class Isam_trapsFacts(object):
         """The whole resource, or only the instances named in config (targeted gathering).
 
         Like the whole-resource read, single instances are read hierarchically
-        (without flat); _flatten_config handles both.
+        (definitions without flat); _flatten_config handles both.
         """
+        # Managers are read flat: one with only default settings answers its single read
+        # with a header alone; the flat detail re-check finds it (lab ISAM).
         return get_targeted_config(self._module, connection, "isam_traps", "info configure trap", {
             "definitions": "info configure trap definition %s",
-            "managers": "info configure trap manager %s",
-            "v6managers": "info configure trap v6manager %s",
-        })
+            "managers": "info configure trap manager %s flat",
+            "v6managers": "info configure trap v6manager %s flat",
+        }, bare_sections=("managers", "v6managers"))
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}

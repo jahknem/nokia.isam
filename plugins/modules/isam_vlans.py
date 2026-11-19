@@ -62,7 +62,6 @@ options:
         - inherit
         - enable
         - disable
-        default: inherit
       protocol-filter:
         type: str
         description: Control protocol group filters
@@ -75,7 +74,6 @@ options:
         - pass-pppoe-ipv6oe
         - pass-ipoe-ipv6oe
         - pass-pppoe-ipoe-ipv6oe
-        default: pass-all
       pppoe-relay-tag:
         type: str
         description:
@@ -88,7 +86,6 @@ options:
         description:
         - Enable DHCP(v4/v6) server transparency at the user side when DHCP(v4/v6) relay is enabled. Only applicable for CC forwarder
         type: bool
-        default: false
       dhcp-opt82-ext:
         description:
         - Configure DHCP option 82 handling for subscriber-side DHCP frames.

@@ -14,6 +14,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.link_agg import (
     Link_aggTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import deleted_targets, requested_sections
 
 
 class Link_agg(ResourceModule):
@@ -55,8 +56,12 @@ class Link_agg(ResourceModule):
         want = self._normalize_config(self.want)
         have = self._normalize_config(self.have)
 
-        self._generate_port_commands(want.get("ports", []), have.get("ports", []))
-        self._generate_group_commands(want.get("groups", []), have.get("groups", []))
+        # deleted with config acts on the named sections only
+        requested = requested_sections(self._module) if self.state == "deleted" else set()
+        if not requested or "ports" in requested:
+            self._generate_port_commands(want.get("ports", []), have.get("ports", []))
+        if not requested or "groups" in requested:
+            self._generate_group_commands(want.get("groups", []), have.get("groups", []))
 
     def _normalize_config(self, config):
         config = deepcopy(config or {})
@@ -93,10 +98,11 @@ class Link_agg(ResourceModule):
                 wantd[key] = merged
 
         if self.state == "deleted":
-            haved = {k: v for k, v in iteritems(haved) if k in wantd or not wantd}
-            wantd = {}
+            for target, have in deleted_targets(wantd, haved, ("id", "name")):
+                self._delete_port(have, keep=target)
+            return
 
-        if self.state in ["overridden", "deleted"]:
+        if self.state == "overridden":
             for key, have in iteritems(haved):
                 if key not in wantd:
                     self._delete_port(have)
@@ -150,13 +156,17 @@ class Link_agg(ResourceModule):
             elif have.get("actor_port_prio") is not None:
                 self.commands.append("configure link-agg port {0} no actor-port-prio".format(port_id))
 
-    def _delete_port(self, have):
+    def _delete_port(self, have, keep=None):
+        """Reset the port's settings, except those in keep (named-field deletion)."""
         port_id = have["id"]
-        if have.get("passive_lacp") is not None:
+        keep = keep or {}
+        lacp_kept = "passive_lacp" in keep or "lacp_mode" in keep
+        timeout_kept = "short_timeout" in keep or "timeout" in keep
+        if have.get("passive_lacp") is not None and not lacp_kept:
             self.commands.append("configure link-agg port {0} no passive-lacp".format(port_id))
-        if have.get("short_timeout") is not None:
+        if have.get("short_timeout") is not None and not timeout_kept:
             self.commands.append("configure link-agg port {0} no short-timeout".format(port_id))
-        if have.get("actor_port_prio") is not None:
+        if have.get("actor_port_prio") is not None and "actor_port_prio" not in keep:
             self.commands.append("configure link-agg port {0} no actor-port-prio".format(port_id))
 
     def _compare_group(self, want, have):
@@ -176,7 +186,7 @@ class Link_agg(ResourceModule):
         if self.state == "merged":
             remove_ports = set()
         else:
-            remove_ports = have_ports - want_ports
+            remove_ports = self._removable(group_id, have_ports - want_ports)
         add_ports = want_ports - have_ports
 
         for port in sorted(remove_ports):
@@ -184,9 +194,15 @@ class Link_agg(ResourceModule):
         for port in sorted(add_ports):
             self.commands.append("configure link-agg group {0} port {1}".format(group_id, port))
 
+    @staticmethod
+    def _removable(group_id, ports):
+        """A port always belongs to the group of its own id, its default aggregator; the
+        device refuses to remove it (LINK AGG error 22, lab ISAM)."""
+        return set(port for port in ports if port != group_id)
+
     def _delete_group(self, have):
         group_id = have["id"]
-        for port in sorted(have.get("ports", [])):
+        for port in sorted(self._removable(group_id, have.get("ports", []))):
             self.commands.append("configure link-agg group {0} no port {1}".format(group_id, port))
         for field in self.GROUP_FIELDS:
             self._delete_group_field(group_id, field, have)

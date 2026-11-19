@@ -485,7 +485,7 @@ def test_generic_pon_live_flat_fixture_is_parseable():
 
 def test_ethernet_line_live_flat_fixture_is_parseable():
     descriptor, output = fixture_bundle("ethernet_line", "r6.2.04m")
-    lines = Ethernet_lineFacts._compact_lines(
+    lines = Ethernet_lineFacts._split_attributes(
         output.splitlines(), "configure ethernet line "
     )
     parsed = Ethernet_lineTemplate(lines=lines).parse()

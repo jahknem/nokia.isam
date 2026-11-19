@@ -19,6 +19,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
     Facts,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    deleted_targets,
     normalize_resource_keys,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_lines import (
@@ -108,10 +109,11 @@ class Xdsl_lines(ResourceModule):
             wantd = dict_merge(haved, wantd)
 
         if self.state == "deleted":
-            haved = {k: v for k, v in iteritems(haved) if k in wantd or not wantd}
-            wantd = {}
+            for target, have in deleted_targets(wantd, haved, ("name", "if_index")):
+                self._compare(want=target, have=have)
+            return
 
-        if self.state in ["overridden", "deleted"]:
+        if self.state == "overridden":
             for k, have in iteritems(haved):
                 if k not in wantd:
                     self._compare(want={}, have=have)

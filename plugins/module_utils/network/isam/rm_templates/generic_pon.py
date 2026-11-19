@@ -70,7 +70,7 @@ class Generic_ponTemplate(NetworkTemplate):
                 r"^configure\sgeneric-pon\sdpinteg-threshold\s(?P<dpinteg_threshold>\S+)(?:\s+.*)?$"
             ),
             "setval": "configure generic-pon dpinteg-threshold {{ dpinteg_threshold }}",
-            "remval": "configure generic-pon no dpinteg-threshold",
+            "no_remval": True,
             "result": {
                 "dpinteg_threshold": "{{ dpinteg_threshold }}",
             },

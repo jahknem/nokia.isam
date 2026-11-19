@@ -18,7 +18,7 @@ created.
 """
 
 from ansible.module_utils.six import iteritems
-from ansible.module_utils.six.moves import shlex_quote
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import quote_cli_value
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
 )
@@ -29,8 +29,18 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
     Facts,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.vlans import (
+    VLAN_DEFAULTS,
     VlansTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import covers_entry, deleted_targets
+
+
+def _without_defaults(entry):
+    return {key: value for key, value in entry.items() if value is not None and VLAN_DEFAULTS.get(key) != value}
+
+
+def _quote_name(value):
+    return quote_cli_value(value)
 
 
 class Vlans(ResourceModule):
@@ -97,13 +107,13 @@ class Vlans(ResourceModule):
             "circuit-id-dhcp",
             "remote-id-dhcp",
             "relay-id-dhcp",
-            "linerates",
-            "l2-encaps",
-            "vlanaware",
+            "dhcp-linerate", "pppoe-linerate", "dhcpv6-linerate",
+            "pppoe-l2-encaps", "dhcp-l2-encaps", "dhcpv6-l2-encaps", "l2-encaps1",
+            "pppoer-vlanaware", "dhcpr-vlanaware", "dhcpv6r-vlanaware",
             "circuit-id-pppoe",
             "remote-id-pppoe",
-            "dhcpv6-identifiers",
-            "dhcpv6-flags",
+            "dhcpv6-itf-id", "dhcpv6-remote-id",
+            "dhcpv6-relay-id", "dhcpv6-trst-port",
             "enterprise-number",
             "icmpv6-sec-fltr",
             "vmac-translation",
@@ -175,13 +185,15 @@ class Vlans(ResourceModule):
     def _render_vlan_config(self, config):
         commands = []
         for vlan in config or []:
+            if not vlan.get("mode"):
+                self._module.fail_json(msg="Creating a VLAN requires mode.")
             prefix = "configure vlan id {0}".format(vlan["id"])
             for field in self.parsers:
                 if field in ("id", "id_with_mode") or vlan.get(field) is None:
                     continue
                 value = vlan[field]
                 if field == "name":
-                    value = shlex_quote(str(value))
+                    value = _quote_name(value)
                 if value is False:
                     commands.append("{0} no {1}".format(prefix, field))
                 elif value is True:
@@ -191,13 +203,19 @@ class Vlans(ResourceModule):
         return commands
 
     def _generate_vlan_state_commands(self):
-        want = {str(item["id"]): item for item in self.want or []}
-        have = {str(item["id"]): item for item in self.have or []}
+        want = {str(item["id"]): _without_defaults(item) for item in self.want or []}
+        have = {str(item["id"]): _without_defaults(item) for item in self.have or []}
         commands = []
 
         if self.state == "deleted":
-            targets = want.keys() if want else have.keys()
-            return ["configure vlan no id {0}".format(vlan_id) for vlan_id in targets]
+            for target, current in deleted_targets(want, have, ("id",)):
+                vlan_id = str(current["id"])
+                if covers_entry(want.get(vlan_id, {}), current, ("id",)):
+                    commands.append("configure vlan no id {0}".format(vlan_id))
+                    continue
+                for field in sorted(set(current) - set(target)):
+                    commands.append("configure vlan id {0} no {1}".format(vlan_id, field))
+            return commands
 
         if self.state == "overridden":
             for vlan_id in have:
@@ -206,9 +224,11 @@ class Vlans(ResourceModule):
 
         for vlan_id, desired in want.items():
             current = have.get(vlan_id, {})
+            if not current and not desired.get("mode"):
+                self._module.fail_json(msg="Creating a VLAN requires mode.")
             if self.state == "replaced":
                 for field in current:
-                    if field not in desired and field != "id":
+                    if field not in desired and field not in ("id", "mode"):
                         commands.append("configure vlan id {0} no {1}".format(vlan_id, field))
             elif self.state == "merged":
                 desired = dict(current, **desired)
@@ -223,6 +243,6 @@ class Vlans(ResourceModule):
                 elif value is True:
                     commands.append("configure vlan id {0} {1}".format(vlan_id, field))
                 else:
-                    rendered = shlex_quote(str(value)) if field == "name" else value
+                    rendered = _quote_name(value) if field == "name" else value
                     commands.append("configure vlan id {0} {1} {2}".format(vlan_id, field, rendered))
         return commands

@@ -4,13 +4,15 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+import re
+
 from copy import deepcopy
 
 from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
     ResourceModule,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import is_masked_secret
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import covers_entry, is_masked_secret
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.equipment_onts import (
     Equipment_ontsTemplate,
@@ -21,7 +23,7 @@ class Equipment_onts(ResourceModule):
     """The isam_equipment_onts config class."""
 
     COMPACT_COMMAND_SCOPES = (
-        r"^(?P<scope>configure equipment ont interface \S+) (?P<suffix>(?!tc-layer(?:\s|$)|tc-layer-threshold(?:\s|$)|mcast-tc-layer(?:\s|$)|fec-tc-layer(?:\s|$)|ethernet(?:\s|$)|xg-tc-layer(?:\s|$)|phy-layer(?:\s|$)|delay-act(?:\s|$)|cpu-load(?:\s|$)|memory-usage(?:\s|$)).+)$",
+        r"^(?P<scope>configure equipment ont interface \S+) (?P<suffix>(?!admin-state(?:\s|$)|tc-layer(?:\s|$)|tc-layer-threshold(?:\s|$)|mcast-tc-layer(?:\s|$)|fec-tc-layer(?:\s|$)|ethernet(?:\s|$)|xg-tc-layer(?:\s|$)|phy-layer(?:\s|$)|delay-act(?:\s|$)|cpu-load(?:\s|$)|memory-usage(?:\s|$)).+)$",
         r"^(?P<scope>configure equipment ont interface \S+ (?:tc-layer|tc-layer-threshold|mcast-tc-layer|fec-tc-layer|ethernet|xg-tc-layer|phy-layer|delay-act|cpu-load|memory-usage)) (?P<suffix>.+)$",
         r"^(?P<scope>configure equipment ont slot \S+) (?P<suffix>.+)$",
         r"^(?P<scope>configure equipment ont sw-ctrl \S+) (?P<suffix>(?!delay-act(?:\s|$)).+)$",
@@ -109,7 +111,7 @@ class Equipment_onts(ResourceModule):
     def generate_commands(self):
         want = self.want or {"interfaces": [], "slots": [], "sw_ctrls": []}
         have = self.have or {"interfaces": [], "slots": [], "sw_ctrls": []}
-        delete_all = self.state == "deleted" and not self.want
+        delete_all = self.state == "deleted" and not any(want.values())
 
         sections = [
             ("interfaces", "ont_idx", "interface", self.INTERFACE_FIELDS),
@@ -118,12 +120,7 @@ class Equipment_onts(ResourceModule):
         # An ONT is built interface first, then its slots; it is removed the other way
         # round (the device refuses to delete an ONT that still has slots).
         if self.state == "deleted":
-            requested = {item["ont_idx"] for item in want.get("interfaces") or []}
-            for interface in have.get("interfaces") or []:
-                if (delete_all or interface["ont_idx"] in requested) and interface.get("admin_state") != "down":
-                    self.commands.append(
-                        "configure equipment ont interface %s admin-state down" % interface["ont_idx"]
-                    )
+            self._shut_down_before_delete(want, have, delete_all)
             sections.reverse()
         for section, key, parser_prefix, fields in sections:
             self._compare_section(
@@ -143,6 +140,15 @@ class Equipment_onts(ResourceModule):
             delete_all or bool(want.get("sw_ctrls")),
         )
 
+    def _shut_down_before_delete(self, want, have, delete_all):
+        """ONTs and slots must be admin-down before the device permits deletion."""
+        for section, key, node in (("interfaces", "ont_idx", "interface"), ("slots", "ont_slot_idx", "slot")):
+            named = {entry[key]: entry for entry in want.get(section) or []}
+            for entry in have.get(section) or []:
+                removed = delete_all or (entry[key] in named and covers_entry(named[entry[key]], entry, (key,)))
+                if removed and entry.get("admin_state") != "down":
+                    self.commands.append("configure equipment ont %s %s admin-state down" % (node, entry[key]))
+
     def _compare_section(self, want_list, have_list, key, parser_prefix, fields, requested=True):
         wantd = {entry[key]: entry for entry in want_list}
         haved = {entry[key]: entry for entry in have_list}
@@ -151,8 +157,16 @@ class Equipment_onts(ResourceModule):
             if not requested:
                 return
             for item_key, have in iteritems(haved):
-                if not wantd or item_key in wantd:
+                if wantd and item_key not in wantd:
+                    continue
+                want = wantd.get(item_key, {})
+                if covers_entry(want, have, (key,)):
                     self.addcmd(have, parser_prefix, negate=True)
+                    continue
+                # named settings only: reset them, the ONT / slot stays
+                for field in fields:
+                    if want.get(field) is not None and have.get(field) is not None:
+                        self.addcmd(have, "%s.%s" % (parser_prefix, field), negate=True)
             return
 
         if self.state == "overridden":
@@ -187,9 +201,11 @@ class Equipment_onts(ResourceModule):
         for field in fields:
             inw = want.get(field)
             inh = have.get(field)
-            if field in self.SECRET_FIELDS and is_masked_secret(inw):
+            if field in self.SECRET_FIELDS and (is_masked_secret(inw) or (inw is None and is_masked_secret(inh))):
                 # The device only ever shows passwords masked; a masked value read
                 # back (e.g. copied from another ONT) is not the password.
+                continue
+            if parser_prefix == "interface" and field == "subslocid" and inh == "WILDCARD" and inw is None:
                 continue
             if inw is not None and inw != inh:
                 self.addcmd(want, "%s.%s" % (parser_prefix, field))
