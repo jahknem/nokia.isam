@@ -64,7 +64,7 @@ traffic-free object with its own name (`zztest`, `192.0.2.1`, unused ids).
 | `isam_traps` | verified (part) | test manager `192.0.2.1:162`: create, priority change, delete | definitions (global) |
 | `isam_trouble_shooting_pon` | verified | card 6 PON 1/1/6/2: statistics interface, threshold, deleted | interval (global) |
 | `isam_uni_onts` | verified | PON 7/16: TC-layer PM set/deleted | – |
-| `isam_vlans` | verified | VLANs 3990/3991: create, change, replaced reset, delete | – |
+| `isam_vlans` | verified | VLANs 3990/3991: create, change, replaced reset, delete; rename keeps unnamed settings, named-setting delete, absent VLAN skipped | – |
 | `isam_xdsl_boards` | verified (part) | card 6 as xDSL: DPBO profile set/change, deleted (reset; a board cannot be removed) | VCE profile (not on NDLT-F), VP boards (active card 1) |
 | `isam_xdsl_inm` | verified | card 6 as xDSL: near/far end sensor set, change, deleted (needs the line's impulse noise sensor) | – |
 | `isam_xdsl_lines` | verified | card 6 as xDSL: profiles, admin, TCA, impulse noise sensor, deleted | vectoring profile (needs the VP board link on active card 1) |
@@ -79,7 +79,7 @@ traffic-free object with its own name (`zztest`, `192.0.2.1`, unused ids).
 | `isam_dhcp_relay` | accepted on a DSL VLAN port (`vlan:<port>:<vlan>`; `vlan-port:` is refused), shown in no read: not verifiable |
 | `isam_ipv6_antispoofing_slot` | "not supported on this board" (FGLT-B) |
 | `isam_qos_global` | line card settings need a plugged board (error 84) |
-| `isam_dist_service` | every service type invalid (no MPLS/drouter). **Open bug:** a refused create still leaves a bare `configure dist-service <id>`; the device removes it with `configure no dist-service <id>` (verified), but `deleted` only resets attributes and the parser ignores the bare line |
+| `isam_dist_service` | every service type invalid (no MPLS/drouter); a bare service (create, targeted read, idempotent, `no dist-service` delete) is verified |
 | `isam_xdsl_onts` | DPBO profiles not active; needs an xDSL ONT |
 | `isam_xdsl_bonding` | "Bonding is not configured yet" without global bonding profiles |
 | `isam_nat` | needs the CWMP platform enabled |
