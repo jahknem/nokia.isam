@@ -153,6 +153,18 @@
   - `isam_system`: id `system_40gkr4`/`periph_mgnt_ctrl`, sync-if-timing
     `ais_sensitivity`, external-leds `status`, auto-switch `xdsl_stepup_delay` (int),
     pon-ont `sw_ver_mis_block`/`sn_autounlock`; their device defaults count as unset.
+  - `isam_voice_sip` rebuilt on one grammar table (`VOICE_SIP_NODES`) that generates the
+    argspec and documentation and drives the facts and config (436 -> ~150 config lines).
+    ~70 options modelled as on/off flags are values per the CLI guide (e.g. vsp `ta4`,
+    `tinfo`, `digit_send_mode`, register/redundancy timers and modes, statistics
+    `stats_5min_config`/`cdr_config`, cas `version_nbr`/`outg_from_no_cgpn`); a set value
+    was read as `true` and `true` rendered a bare, incomplete keyword. Device defaults
+    count as unset; `deleted` naming an instance removes it, naming attributes resets only
+    those with a removal form; creating a vsp/cas profile requires its mandatory values.
+    **Breaking schema fixes:** `system.session_timer` (the node name, never settable) is
+    now the `enable` flag; `redundancy_cmd.geo_fail_over` (a value of `fail_x_type`, not a
+    field) is removed and `start_time`/`end_time` are ints. Parse -> render -> parse of the
+    lab capture round-trips; merged/replaced of the gathered facts send nothing.
 - Device defaults out of the argspecs (they were injected into every request):
   `isam_vlans` merged renaming a VLAN reset `protocol-filter`, `new-broadcast` and
   `drly-srv-usr-side`; `deleted` naming a setting deleted the whole VLAN and sent

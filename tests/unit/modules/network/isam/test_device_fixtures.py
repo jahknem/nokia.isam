@@ -226,7 +226,15 @@ def test_voice_fixture_is_parseable():
     descriptor, output = fixture_bundle("voice_sip", "r6.2.04m")
     parsed = Isam_voice_sipTemplate(lines=output.splitlines()).parse()
     assert descriptor["software_version"] == "R6.2.04m"
-    assert any(entry["name"] == "vsp1" for entry in parsed["vsp"])
+    vsp = next(entry for entry in parsed["vsp"] if entry["name"] == "vsp1")
+    # value attributes at default read as unset (None), timers as ints (not bool)
+    assert vsp["ta4"] is None and vsp["admin_status"] is None
+    assert vsp["timer_b"] == 32000 and vsp["timer_t1"] == 500
+    assert parsed["redundancy_cmd"][0]["fail_x_type"] == "geo-fail-over"
+    assert parsed["statistics"]["per_line"] is True and parsed["statistics"]["out_any_rsp"] is True
+    assert parsed["statistics"]["stats_5min_config"] is None
+    cas = parsed["cas_nsm_prof"][0]
+    assert cas["international_prefix"] == "#" and cas["outg_cpn_length"] == 0
 
 
 def test_software_fixture_is_parseable():

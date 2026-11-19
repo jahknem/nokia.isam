@@ -440,3 +440,84 @@ def test_system_value_options_are_read_and_written_as_values(monkeypatch):
     rendered = run_module(monkeypatch, "isam_system", {"state": "rendered", "config": {
         "external_leds": {"status": "disable"}, "auto_switch": {"xdsl_stepup_delay": 1800}}})["rendered"]
     assert rendered == ["configure system external-leds status disable", "configure system auto-switch xdsl-stepup-delay 1800"]
+
+
+# --- isam_voice_sip: rebuilt on one grammar table (value options were bool flags) ---
+
+VSIP_LAB = (
+    'configure voice sip lineid-syn-prof profile1 isdn-syntax ""\n'
+    "configure voice sip vsp vsp1 domain-name DomainName.com no ta4 timer-b 32000 timer-t1 500\n"
+    "configure voice sip register vsp1 no register-intv\n"
+    "configure voice sip redundancy vsp1 no support-redun\n"
+    "configure voice sip system session-timer no status no se-time\n"
+    "configure voice sip redundancy-cmd vsp1 fail-x-type geo-fail-over\n"
+    "configure voice sip statistics no cdr-config\n"
+    "configure voice sip statistics stats-config per-line no out-180-rsp\n"
+    'configure voice sip cas-nsm-prof common-cas-profile international-prefix "#" country-code "#" outg-cpn-length 0\n'
+)
+
+
+def _vsip(monkeypatch, state, config=None, running=VSIP_LAB):
+    args = {"state": state} if config is None else {"state": state, "config": config}
+    return run_module(monkeypatch, "isam_voice_sip", args, running)
+
+
+def test_voice_sip_value_options_are_read_as_values(monkeypatch):
+    """Data loss before: ta4 5000 and digit-send-mode overlap-invite were read as True."""
+    running = "configure voice sip vsp vsp1 domain-name d ta4 5000 digit-send-mode overlap-invite\n"
+    vsp = _vsip(monkeypatch, "gathered", running=running)["gathered"]["vsp"][0]
+    assert vsp["ta4"] == 5000 and vsp["digit_send_mode"] == "overlap-invite"
+    assert _vsip(monkeypatch, "merged", {"vsp": [{"name": "vsp1", "ta4": 6000}]}, running=running)["commands"] == [
+        "configure voice sip vsp vsp1 ta4 6000"]
+    # a value equal to the device default counts as unset
+    assert _vsip(monkeypatch, "merged", {"vsp": [{"name": "vsp1", "ta4": 4000}]}, running=running)["commands"] == []
+
+
+def test_voice_sip_gathered_is_idempotent_and_round_trips(monkeypatch):
+    gathered = _vsip(monkeypatch, "gathered")["gathered"]
+    assert _vsip(monkeypatch, "merged", gathered)["commands"] == []
+    assert _vsip(monkeypatch, "replaced", gathered)["commands"] == []
+    rendered = _vsip(monkeypatch, "rendered", gathered)["rendered"]
+    reparsed = run_module(monkeypatch, "isam_voice_sip",
+                          {"state": "parsed", "running_config": "\n".join(rendered)})["parsed"]
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.voice_sip import without_defaults
+    assert without_defaults(reparsed) == gathered
+
+
+def test_voice_sip_deleted_scoping(monkeypatch):
+    running = "configure voice sip vsp vsp1 domain-name d ta4 5000\nconfigure voice sip register vsp1 no register-intv\n"
+    # naming an attribute resets only it; naming the instance removes the whole instance
+    assert _vsip(monkeypatch, "deleted", {"vsp": [{"name": "vsp1", "ta4": 5000}]}, running=running)["commands"] == [
+        "configure voice sip vsp vsp1 no ta4"]
+    assert _vsip(monkeypatch, "deleted", {"vsp": [{"name": "vsp1"}]}, running=running)["commands"] == [
+        "configure voice sip no vsp vsp1"]
+    # naming one section never touches another
+    assert _vsip(monkeypatch, "deleted", {"register": [{"name": "vsp1"}]}, running=running)["commands"] == [
+        "configure voice sip no register vsp1"]
+
+
+def test_voice_sip_creation_requires_mandatory_values(monkeypatch):
+    res = _vsip(monkeypatch, "merged", {"vsp": [{"name": "new"}]}, running="")
+    assert res.get("failed") and "domain_name" in res["msg"]
+    res = _vsip(monkeypatch, "merged", {"cas_nsm_prof": [{"name": "c"}]}, running="")
+    assert res.get("failed") and "international_prefix" in res["msg"]
+
+
+def test_voice_sip_table_argspec_and_documentation_agree():
+    import yaml
+
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.voice_sip.voice_sip import Isam_voice_sipArgs
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.voice_sip import VOICE_SIP_NODES, is_int
+    from ansible_collections.nokia.isam.plugins.modules import isam_voice_sip
+
+    spec = Isam_voice_sipArgs.argument_spec["config"]["options"]
+    docs = yaml.safe_load(isam_voice_sip.DOCUMENTATION)["options"]["config"]["suboptions"]
+    for node in VOICE_SIP_NODES:
+        s, d = spec[node["key"]]["options"], docs[node["key"]]["suboptions"]
+        attrs = set(a[0] for a in node["attrs"]) | ({node["identity"]} if node["identity"] else set())
+        assert set(s) == set(d) == attrs, node["key"]
+        for option, _cli, kind, _default, choices, _sub in node["attrs"]:
+            want_type = "bool" if kind == "flag" else ("int" if is_int(kind) else "str")
+            assert s[option]["type"] == d[option]["type"] == want_type, (node["key"], option)
+            if choices:
+                assert s[option]["choices"] == d[option]["choices"] == choices, (node["key"], option)

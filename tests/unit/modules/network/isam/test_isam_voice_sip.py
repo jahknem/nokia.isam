@@ -1,7 +1,6 @@
 from textwrap import dedent
 
 from ansible_collections.nokia.isam.plugins.modules import isam_voice_sip
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.voice_sip.voice_sip import Isam_voice_sipFacts
 from ansible_collections.nokia.isam.tests.unit.compat.mock import patch
 
 from .isam_module import TestIsamModule, set_module_args
@@ -214,32 +213,28 @@ class TestIsamVoiceSipModule(TestIsamModule):
         self.assertEqual(result["commands"], ["configure voice sip no vsp vsp1"])
 
     def test_isam_voice_sip_statistics_positive_and_negative_parse(self):
-        parsed = Isam_voice_sipFacts._parse_voice_sip([
-            "configure voice sip statistics stats-5min-config",
-            "configure voice sip statistics cdr-config",
-            "configure voice sip statistics stats-config no per-line per-board",
-        ])
-        self.assertTrue(parsed["statistics"]["stats_5min_config"])
-        self.assertTrue(parsed["statistics"]["cdr_config"])
+        from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.voice_sip import parse_lines
+
+        parsed = parse_lines(
+            "configure voice sip statistics stats-5min-config enable cdr-config enable\n"
+            "configure voice sip statistics stats-config no per-line per-board\n"
+        )
+        # stats-5min-config/cdr-config are values (enable/disable), the counters are flags
+        self.assertEqual(parsed["statistics"]["stats_5min_config"], "enable")
+        self.assertEqual(parsed["statistics"]["cdr_config"], "enable")
         self.assertFalse(parsed["statistics"]["per_line"])
         self.assertTrue(parsed["statistics"]["per_board"])
 
     def test_isam_voice_sip_parses_all_detail_flat_vsp_words(self):
-        vsp_words = (
-            "no dmpm-intdgt-expid no dial-start-timer no dial-long-timer "
-            "no dial-short-timer no uri-type no rfc2833-pl-type no rfc2833-process "
-            "no min-data-jitter no init-data-jitter no max-data-jitter no release-mode "
-            "no dyn-pt-nego-type no vbd-g711a-pl-type no vbd-g711u-pl-type no vbd-mode "
-            "no warmline-dl-timer no reg-sub no dtmf-sip-info no sub-period "
-            "no sub-head-start no t38-same-udp no dhcp-option82 no sspprofile "
-            "no signaling-ipmode no tls-cafile no media-ipmode"
-        )
+        # 'no <kw>' is the device default for a value attribute: read as unset (absent),
+        # not as False; a set value is read as the value (data loss before: ta4 5000 -> True).
         set_module_args(
             dict(
                 state="parsed",
                 running_config=(
                     "configure voice sip vsp vsp1 domain-name DomainName.com "
-                    + vsp_words
+                    "no dmpm-intdgt-expid dial-start-timer 15 rfc2833-process rfc2833 "
+                    "no min-data-jitter media-ipmode ipv6"
                 ),
             ),
             ignore_provider_arg,
@@ -248,10 +243,11 @@ class TestIsamVoiceSipModule(TestIsamModule):
         result = self.execute_module(changed=False)
         parsed_vsp = result["parsed"]["vsp"][0]
 
-        assert parsed_vsp["dmpm_intdgt_expid"] is False
-        assert parsed_vsp["dial_start_timer"] is False
-        assert parsed_vsp["rfc2833_process"] is False
-        assert parsed_vsp["media_ipmode"] is False
+        assert "dmpm_intdgt_expid" not in parsed_vsp
+        assert "min_data_jitter" not in parsed_vsp
+        assert parsed_vsp["dial_start_timer"] == 15
+        assert parsed_vsp["rfc2833_process"] == "rfc2833"
+        assert parsed_vsp["media_ipmode"] == "ipv6"
 
     def test_isam_voice_sip_parses_all_detail_flat_redundancy_words(self):
         set_module_args(
@@ -259,10 +255,8 @@ class TestIsamVoiceSipModule(TestIsamModule):
                 state="parsed",
                 running_config=(
                     "configure voice sip redundancy vsp1 no auto-server-fo "
-                    "no auto-server-fb no auto-sos-fo no auto-sos-fb "
-                    "no rtry-after-thrsh no options-max-fwd no dns-redun-mode "
-                    "no fail-obs-timer no fg-intv-503 no time-thrsh-503 "
-                    "no nbr-thrsh-503 no auto-srv-fo-timer"
+                    "dns-purge-timer 7200 fg-monitor-method options-method "
+                    "no fail-obs-timer auto-srv-fo-timer 43200"
                 ),
             ),
             ignore_provider_arg,
@@ -271,6 +265,8 @@ class TestIsamVoiceSipModule(TestIsamModule):
         result = self.execute_module(changed=False)
         parsed_redundancy = result["parsed"]["redundancy"][0]
 
-        assert parsed_redundancy["auto_server_fo"] is False
-        assert parsed_redundancy["dns_redun_mode"] is False
-        assert parsed_redundancy["auto_srv_fo_timer"] is False
+        assert "auto_server_fo" not in parsed_redundancy
+        assert "fail_obs_timer" not in parsed_redundancy
+        assert parsed_redundancy["dns_purge_timer"] == 7200
+        assert parsed_redundancy["fg_monitor_method"] == "options-method"
+        assert parsed_redundancy["auto_srv_fo_timer"] == 43200
