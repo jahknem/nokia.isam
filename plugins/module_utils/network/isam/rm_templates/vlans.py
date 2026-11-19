@@ -26,7 +26,10 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
     NetworkTemplate,
 )
 
-# (option, CLI keyword, kind, device default) in the device's order.
+# (option, CLI keyword, kind, device default) in the device's order. Kinds and defaults
+# follow the CLI guide's syntax ("[ [ no ] kw ]" is a flag, "[ no kw | kw <type> ]" a
+# value); the value kinds were confirmed on the lab ISAM (a bare value keyword is "not
+# complete"). "dhcp-opt-82" is not modelled: the device stores it as dhcp-opt82-ext enable.
 # kind: "flag" ([no] <kw>), "value" (<kw> <value> / no <kw>), "int" (value as int),
 # "set_only" (<kw> <value>, no removal form). A device default equals an unset value.
 VLAN_ATTRS = (
@@ -38,7 +41,7 @@ VLAN_ATTRS = (
     ("new_broadcast", "new-broadcast", "value", "inherit"),
     ("protocol_filter", "protocol-filter", "value", "pass-all"),
     ("pppoe_relay_tag", "pppoe-relay-tag", "value", None),
-    ("drly_srv_usr_side", "drly-srv-usr-side", "flag", False),
+    ("drly_srv_usr_side", "drly-srv-usr-side", "value", "disable"),
     ("new_secure_fwd", "new-secure-fwd", "value", None),
     ("aging_time", "aging-time", "int", None),
     ("l2cp_transparent", "l2cp-transparent", "flag", False),
@@ -60,30 +63,37 @@ VLAN_ATTRS = (
     ("vmac_translation", "vmac-translation", "flag", False),
     ("vmac_dnstr_filter", "vmac-dnstr-filter", "flag", False),
     ("dhcp_opt82_ext", "dhcp-opt82-ext", "value", None),
-    ("dhcp_opt82_nni", "dhcp-opt82-nni", "flag", False),
-    ("dhcp_opt82_uplink", "dhcp-opt82-uplink", "flag", False),
+    ("dhcp_opt82_nni", "dhcp-opt82-nni", "value", "disable"),
+    ("dhcp_opt82_uplink", "dhcp-opt82-uplink", "value", "disable"),
     ("circuit_id_dhcp", "circuit-id-dhcp", "value", None),
     ("remote_id_dhcp", "remote-id-dhcp", "value", None),
-    ("relay_id_dhcp", "relay-id-dhcp", "flag", False),
-    ("dhcp_linerate", "dhcp-linerate", "flag", False),
-    ("pppoe_linerate", "pppoe-linerate", "flag", False),
-    ("dhcpv6_linerate", "dhcpv6-linerate", "flag", False),
-    ("pppoe_l2_encaps", "pppoe-l2-encaps", "flag", False),
-    ("dhcp_l2_encaps", "dhcp-l2-encaps", "flag", False),
-    ("dhcpv6_l2_encaps", "dhcpv6-l2-encaps", "flag", False),
-    ("l2_encaps1", "l2-encaps1", "flag", False),
-    ("pppoer_vlanaware", "pppoer-vlanaware", "flag", False),
-    ("dhcpr_vlanaware", "dhcpr-vlanaware", "flag", False),
-    ("dhcpv6r_vlanaware", "dhcpv6r-vlanaware", "flag", False),
+    ("relay_id_dhcp", "relay-id-dhcp", "value", "disable"),
+    ("dhcp_linerate", "dhcp-linerate", "value", "notadd"),
+    ("pppoe_linerate", "pppoe-linerate", "value", "notadd"),
+    ("dhcpv6_linerate", "dhcpv6-linerate", "value", "notadd"),
+    ("pppoe_l2_encaps", "pppoe-l2-encaps", "value", "notadd"),
+    ("dhcp_l2_encaps", "dhcp-l2-encaps", "value", "notadd"),
+    ("dhcpv6_l2_encaps", "dhcpv6-l2-encaps", "value", "notadd"),
+    ("l2_encaps1", "l2-encaps1", "value", "not-applicable"),
+    ("pppoer_vlanaware", "pppoer-vlanaware", "value", "system-default"),
+    ("dhcpr_vlanaware", "dhcpr-vlanaware", "value", "system-default"),
+    ("dhcpv6r_vlanaware", "dhcpv6r-vlanaware", "value", "system-default"),
     ("circuit_id_pppoe", "circuit-id-pppoe", "value", None),
     ("remote_id_pppoe", "remote-id-pppoe", "value", None),
     ("dhcpv6_itf_id", "dhcpv6-itf-id", "value", None),
     ("dhcpv6_remote_id", "dhcpv6-remote-id", "value", None),
-    ("dhcpv6_relay_id", "dhcpv6-relay-id", "flag", False),
-    ("dhcpv6_trst_port", "dhcpv6-trst-port", "flag", False),
+    ("dhcpv6_relay_id", "dhcpv6-relay-id", "value", "disable"),
+    ("dhcpv6_trst_port", "dhcpv6-trst-port", "value", "untrusted"),
     ("enterprise_number", "enterprise-number", "int", None),
     ("icmpv6_sec_fltr", "icmpv6-sec-fltr", "flag", False),
 )
+
+# The device prints a VLAN as two lines; the second starts with this attribute. Commands
+# are packed the same way (COMPACT_COMMAND_SCOPES of the config class).
+VLAN_SECOND_LINE_START = "vmac_translation"
+_SPLIT = [option for option, _cli, _kind, _default in VLAN_ATTRS].index(VLAN_SECOND_LINE_START)
+VLAN_LINE_KEYWORDS = (tuple(cli for _o, cli, _k, _d in VLAN_ATTRS[:_SPLIT]),
+                      tuple(cli for _o, cli, _k, _d in VLAN_ATTRS[_SPLIT:]))
 
 VLAN_DEFAULTS = dict((option, default) for option, _cli, _kind, default in VLAN_ATTRS if default is not None)
 VLAN_FLAG_KEYWORDS = tuple(cli for _option, cli, kind, _default in VLAN_ATTRS if kind == "flag")

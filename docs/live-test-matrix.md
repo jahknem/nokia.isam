@@ -64,7 +64,7 @@ traffic-free object with its own name (`zztest`, `192.0.2.1`, unused ids).
 | `isam_traps` | verified (part) | test manager `192.0.2.1:162`: create, priority change, delete | definitions (global) |
 | `isam_trouble_shooting_pon` | verified | card 6 PON 1/1/6/2: statistics interface, threshold, deleted | interval (global) |
 | `isam_uni_onts` | verified | PON 7/16: TC-layer PM set/deleted | – |
-| `isam_vlans` | verified | VLANs 3990/3991: create, change, replaced reset, delete; rename keeps unnamed settings, named-setting delete, absent VLAN skipped | – |
+| `isam_vlans` | verified | VLANs 3990/3991: create, change, replaced reset, delete; rename keeps unnamed settings, named-setting delete, absent VLAN skipped; aliases, quoted names, DHCP option 82 (nni/uplink with dependency, error 657), the value options (relay-id, linerate, l2-encaps, l2-encaps1, dhcpv6 relay/trust), drly-srv-usr-side on a cross-connect VLAN | pppoer-vlanaware (not in residential-bridge mode), dhcpr/dhcpv6r-vlanaware values |
 | `isam_xdsl_boards` | verified (part) | card 6 as xDSL: DPBO profile set/change, deleted (reset; a board cannot be removed) | VCE profile (not on NDLT-F), VP boards (active card 1) |
 | `isam_xdsl_inm` | verified | card 6 as xDSL: near/far end sensor set, change, deleted (needs the line's impulse noise sensor) | – |
 | `isam_xdsl_lines` | verified | card 6 as xDSL: profiles, admin, TCA, impulse noise sensor, deleted | vectoring profile (needs the VP board link on active card 1) |

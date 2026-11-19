@@ -129,6 +129,13 @@
   `no mode` (mode is mandatory, no removal form); a new VLAN without `mode` now fails
   before sending. Parse -> render of all 47 lab VLANs reproduces the device's lines
   exactly (fixture `vlans/r6.2.04m-all-vlans`).
+  Attribute kinds taken from the CLI guide and probed on the device: 15 options modelled
+  as on/off flags are value options (the bare keyword is "not complete"):
+  `dhcp_opt82_nni`, `dhcp_opt82_uplink`, `relay_id_dhcp`, the `*_linerate`,
+  `*_l2_encaps`, `l2_encaps1`, `*_vlanaware`, `drly_srv_usr_side`, `dhcpv6_relay_id`,
+  `dhcpv6_trst_port` -- they are now strings with the guide's choices and defaults
+  (setting any of them never worked before). Commands are packed like the device's two
+  printed lines; a bare flag at the end of a command was sent separately before.
 - Device defaults out of the argspecs (they were injected into every request):
   `isam_vlans` merged renaming a VLAN reset `protocol-filter`, `new-broadcast` and
   `drly-srv-usr-side`; `deleted` naming a setting deleted the whole VLAN and sent

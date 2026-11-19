@@ -45,9 +45,9 @@ class TestIsamVlansModule(TestIsamModule):
               new-broadcast enable
               protocol-filter pass-pppoe-ipoe
               dhcp-opt82-ext enable
-              relay-id-dhcp
-              dhcp-linerate
-              pppoe-l2-encaps
+              relay-id-dhcp relay-id
+              dhcp-linerate addactuallinerate
+              pppoe-l2-encaps add
               in-qos-prof-name qprof1
             """
         )
@@ -68,9 +68,10 @@ class TestIsamVlansModule(TestIsamModule):
         self.assertEqual(v.get("name"), "HomeNet")
         self.assertEqual(v.get("new_broadcast"), "enable")
         self.assertEqual(v.get("protocol_filter"), "pass-pppoe-ipoe")
-        self.assertTrue(v.get("relay_id_dhcp"))
-        self.assertTrue(v.get("dhcp_linerate"))
-        self.assertTrue(v.get("pppoe_l2_encaps"))
+        # values, not flags (CLI guide; lab ISAM)
+        self.assertEqual(v.get("relay_id_dhcp"), "relay-id")
+        self.assertEqual(v.get("dhcp_linerate"), "addactuallinerate")
+        self.assertEqual(v.get("pppoe_l2_encaps"), "add")
         self.assertEqual(v.get("in_qos_prof_name"), "qprof1")
 
     def test_isam_vlans_gathered_empty(self):
@@ -89,7 +90,7 @@ class TestIsamVlansModule(TestIsamModule):
         running = dedent(
             """
             configure vlan id 100 mode residential-bridge name Home priority 5 new-secure-fwd enable aging-time 60000 in-qos-prof-name name:Default_TC0 sntp-proxy vmac-not-in-opt61
-            configure vlan id 100 dhcp-opt82-ext add-or-forward circuit-id-dhcp physical-id remote-id-dhcp customer-id relay-id-dhcp dhcpv6-itf-id physical-id dhcpv6-remote-id customer-id
+            configure vlan id 100 dhcp-opt82-ext add-or-forward circuit-id-dhcp physical-id remote-id-dhcp customer-id relay-id-dhcp relay-id dhcpv6-itf-id physical-id dhcpv6-remote-id customer-id
             configure vlan id stacked:552:2 mode cross-connect name Stacked pppoe-relay-tag configurable circuit-id-pppoe physical-id remote-id-pppoe customer-id
             """
         )
@@ -102,7 +103,7 @@ class TestIsamVlansModule(TestIsamModule):
         self.assertTrue(vlans["100"]["sntp_proxy"])
         self.assertTrue(vlans["100"]["vmac_not_in_opt61"])
         self.assertEqual(vlans["100"]["dhcp_opt82_ext"], "add-or-forward")
-        self.assertTrue(vlans["100"]["relay_id_dhcp"])
+        self.assertEqual(vlans["100"]["relay_id_dhcp"], "relay-id")
         self.assertEqual(vlans["100"]["dhcpv6_itf_id"], "physical-id")
         self.assertEqual(vlans["100"]["dhcpv6_remote_id"], "customer-id")
         self.assertEqual(vlans["stacked:552:2"]["pppoe_relay_tag"], "configurable")
