@@ -91,29 +91,29 @@ configure system security welcome-banner "not read here"
 
 # the same node with non-default values everywhere
 SYSTEM_SET = """\
-configure system id NODE-1 name NODE-1 access-oper-id op1 system-40gkr4 contact-person Ops en-snmp-auth-trap periph-mgnt-vlan 30 periph-mgnt-ctrl port-num-in-proto position-based ont-trc-dbg-vlan 31 ntr-ssmout-vlan 32 ntr-ptp-vlan 33 customer-id cust-1 voiceoswp sip scalingmode mode-a arp-polling-inter 20 bsnap-state enable bsnap-server-ip 192.0.2.5 bsnap-server-port 4000 arp-tca-threshold 50
-configure system external-leds status
+configure system id NODE-1 name NODE-1 access-oper-id op1 system-40gkr4 enable contact-person Ops en-snmp-auth-trap periph-mgnt-vlan 30 periph-mgnt-ctrl enable port-num-in-proto position-based ont-trc-dbg-vlan 31 ntr-ssmout-vlan 32 ntr-ptp-vlan 33 customer-id cust-1 voiceoswp sip scalingmode mode-a arp-polling-inter 20 bsnap-state enable bsnap-server-ip 192.0.2.5 bsnap-server-port 4000 arp-tca-threshold 50
+configure system external-leds status disable
 configure system sntp server-ip-addr 192.0.2.57 server-port 1123 polling-rate 60 enable timezone-offset 60
 configure system transaction time-out-value 900 log-full-action wrap
 configure system syslog version rfc5424 time-format utc
 configure system syslog destination ams type udp:192.0.2.10:514:unlimited disable upload-rotate persist-enable persist-timer 15
 configure system syslog route ams msg-type all facility local4 syslog-vlan 100 emergency no debug
-configure system pon-ont slid-mode ascii pwrbrst-mode enable sn-bundle-timer 5 sw-ver-mis-block sn-autounlock
+configure system pon-ont slid-mode ascii pwrbrst-mode enable sn-bundle-timer 5 sw-ver-mis-block disable sn-autounlock enable
 configure system auto-laser-shutdown action enable
-configure system auto-switch xdsl-atm-ptm xdsl-stepup-delay
+configure system auto-switch xdsl-atm-ptm xdsl-stepup-delay 1800
 configure system zero-touch-provision action enable
 configure system nt-sftp write-enable
 """
 
 SYSTEM_SET_PARSED = {
     "id": {
-        "node_id": "NODE-1", "name": "NODE-1", "contact": "Ops", "access_oper_id": "op1", "system_40gkr4": True,
-        "en_snmp_auth_trap": True, "periph_mgnt_vlan": 30, "periph_mgnt_ctrl": True, "port_num_in_proto": "position-based",
+        "node_id": "NODE-1", "name": "NODE-1", "contact": "Ops", "access_oper_id": "op1", "system_40gkr4": "enable",
+        "en_snmp_auth_trap": True, "periph_mgnt_vlan": 30, "periph_mgnt_ctrl": "enable", "port_num_in_proto": "position-based",
         "ont_trc_dbg_vlan": 31, "ntr_ssmout_vlan": 32, "ntr_ptp_vlan": 33, "customer_id": "cust-1", "voiceoswp": "sip",
         "scalingmode": "mode-a", "arp_polling_inter": 20, "bsnap_state": "enable", "bsnap_server_ip": "192.0.2.5",
         "bsnap_server_port": 4000, "arp_tca_threshold": 50,
     },
-    "external_leds": {"status": True},
+    "external_leds": {"status": "disable"},
     "sntp": {"server_ip_addr": "192.0.2.57", "server_port": 1123, "polling_rate": 60, "enabled": True, "timezone_offset": 60},
     "transaction": {"time_out_value": 900, "log_full_action": "wrap"},
     "syslog": {
@@ -122,9 +122,9 @@ SYSTEM_SET_PARSED = {
                           "persist_enable": True, "persist_timer": 15}],
         "routes": [{"destination": "ams", "msg_type": "all", "facility": "local4", "severities": ["emergency"], "syslog_vlan": 100}],
     },
-    "pon_ont": {"slid_mode": "ascii", "pwrbrst_mode": "enable", "sn_bundle_timer": 5, "sw_ver_mis_block": True, "sn_autounlock": True},
+    "pon_ont": {"slid_mode": "ascii", "pwrbrst_mode": "enable", "sn_bundle_timer": 5, "sw_ver_mis_block": "disable", "sn_autounlock": "enable"},
     "auto_laser_shutdown": {"action": "enable"},
-    "auto_switch": {"xdsl_atm_ptm": True, "xdsl_stepup_delay": True},
+    "auto_switch": {"xdsl_atm_ptm": True, "xdsl_stepup_delay": 1800},
     "zero_touch_provision": {"action": "enable"},
     "nt_sftp": {"write_enable": True},
 }
@@ -148,7 +148,7 @@ SYSTEM_NEW = {
 }
 
 SYSTEM_RENDERED = [
-    "configure system id NODE-1 access-oper-id op1 system-40gkr4 en-snmp-auth-trap periph-mgnt-vlan 30 periph-mgnt-ctrl "
+    "configure system id NODE-1 access-oper-id op1 system-40gkr4 enable en-snmp-auth-trap periph-mgnt-vlan 30 periph-mgnt-ctrl enable "
     "port-num-in-proto position-based ont-trc-dbg-vlan 31 ntr-ssmout-vlan 32 ntr-ptp-vlan 33 customer-id cust-1 voiceoswp sip "
     "scalingmode mode-a arp-polling-inter 20 bsnap-state enable bsnap-server-ip 192.0.2.5 bsnap-server-port 4000 arp-tca-threshold 50",
     "configure system sntp server-port 1123",
@@ -156,11 +156,11 @@ SYSTEM_RENDERED = [
     "configure system syslog destination ams disable upload-rotate persist-enable persist-timer 15",
     "configure system syslog route ams syslog-vlan 100",
     "configure system transaction time-out-value 900",
-    "configure system external-leds status",
+    "configure system external-leds status disable",
     "configure system auto-laser-shutdown action enable",
-    "configure system auto-switch xdsl-atm-ptm xdsl-stepup-delay",
+    "configure system auto-switch xdsl-atm-ptm xdsl-stepup-delay 1800",
     "configure system zero-touch-provision action enable",
-    "configure system pon-ont slid-mode ascii pwrbrst-mode enable sn-bundle-timer 5 sw-ver-mis-block sn-autounlock",
+    "configure system pon-ont slid-mode ascii pwrbrst-mode enable sn-bundle-timer 5 sw-ver-mis-block disable sn-autounlock enable",
     "configure system nt-sftp write-enable",
 ]
 
@@ -201,9 +201,9 @@ class TestSystemGaps(_Base):
 
     def test_unknown_and_non_numeric_tokens_never_fail(self):
         parsed = self.run_state("parsed", False, running_config=(
-            "configure system pon-ont sn-bundle-timer soon future-knob 3 sn-autounlock\n"
+            "configure system pon-ont sn-bundle-timer soon future-knob 3 sn-autounlock enable\n"
             "configure system nt-sftp write-enable read-enable\n"))["parsed"]
-        assert parsed["pon_ont"] == {"sn_autounlock": True}
+        assert parsed["pon_ont"] == {"sn_autounlock": "enable"}
         assert parsed["nt_sftp"] == {"write_enable": True}
 
     def test_rendered_and_round_trip(self):
@@ -216,9 +216,9 @@ class TestSystemGaps(_Base):
         self.device(SYSTEM_SET)
         result = self.run_state("merged", False, config=SYSTEM_SET_PARSED)
         assert result["commands"] == []
-        # a False flag equals the device default: nothing to send against the detail capture
+        # a False flag or a value equal to the device default: nothing to send against the detail capture
         self.device(SYSTEM_DETAIL)
-        assert self.run_state("merged", False, config={"nt_sftp": {"write_enable": False}, "id": {"system_40gkr4": False}})["commands"] == []
+        assert self.run_state("merged", False, config={"nt_sftp": {"write_enable": False}, "id": {"system_40gkr4": "disable"}, "auto_switch": {"xdsl_stepup_delay": 3600}})["commands"] == []
 
     def test_merged_changes(self):
         self.device(SYSTEM_DETAIL)
@@ -259,7 +259,7 @@ class TestSystemGaps(_Base):
 
     def test_overridden_resets_omitted_sections(self):
         self.device(SYSTEM_SET)
-        commands = self.run_state("overridden", True, config=dict(SYSTEM_SET_PARSED, nt_sftp=None, pon_ont={"sn_autounlock": True}))["commands"]
+        commands = self.run_state("overridden", True, config=dict(SYSTEM_SET_PARSED, nt_sftp=None, pon_ont={"sn_autounlock": "enable"}))["commands"]
         assert commands == [
             "configure system pon-ont no slid-mode no pwrbrst-mode no sn-bundle-timer no sw-ver-mis-block",
             "configure system nt-sftp no write-enable",

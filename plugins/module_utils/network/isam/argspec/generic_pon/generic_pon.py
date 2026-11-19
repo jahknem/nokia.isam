@@ -16,8 +16,8 @@ class Generic_ponArgs(object):  # pylint: disable=R0903
                 "utilization": {
                     "type": "dict",
                     "options": {
-                        "pon_pmcollect": {"type": "bool"},
-                        "ont_pmcollect": {"type": "bool"},
+                        "pon_pmcollect": {"type": "str", "choices": ["none", "pm-enable", "tca-enable"]},
+                        "ont_pmcollect": {"type": "str", "choices": ["enable", "disable"]},
                         "threshold": {
                             "type": "dict",
                             "options": {
@@ -40,16 +40,16 @@ class Generic_ponArgs(object):  # pylint: disable=R0903
                 "ont": {
                     "type": "dict",
                     "options": {
-                        "slid_mode": {"type": "bool"},
-                        "sn_bundle_timer": {"type": "bool"},
-                        "sw_ver_mis_block": {"type": "bool"},
-                        "sn_autounlock": {"type": "bool"},
+                        "slid_mode": {"type": "str", "choices": ["ascii", "hexa-dec"]},
+                        "sn_bundle_timer": {"type": "int"},
+                        "sw_ver_mis_block": {"type": "str", "choices": ["enable", "disable"]},
+                        "sn_autounlock": {"type": "str", "choices": ["enable", "disable"]},
                     },
                 },
                 "alarmflag": {
                     "type": "dict",
                     "options": {
-                        "ponlos_alarm_ctrl": {"type": "bool"},
+                        "ponlos_alarm_ctrl": {"type": "str", "choices": ["enable", "disable"]},
                     },
                 },
             },

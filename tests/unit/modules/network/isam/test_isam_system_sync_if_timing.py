@@ -23,7 +23,7 @@ PREFIX = "configure system sync-if-timing"
 
 # non-default lines covering every node
 DEVICE = [
-    PREFIX + " revert wait-time 300 output-ql-thresh clk-ql-dnu ssmout-en-bits ssmout-ceiling clk-ql-prc ais-sensitivity",
+    PREFIX + " revert wait-time 300 output-ql-thresh clk-ql-dnu ssmout-en-bits ssmout-ceiling clk-ql-prc ais-sensitivity enable",
     PREFIX + " bits e1",
     PREFIX + " bits-bind bits-a-bind nt-a bits-b-bind nt-b",
     PREFIX + " force-reference synce-1",
@@ -49,7 +49,7 @@ def _parse(lines):
 def test_parse_every_node():
     sync, unknown = _parse(DEVICE)
     assert unknown == []
-    assert sync["revert"] is True and sync["wait_time"] == 300 and sync["ais_sensitivity"] is True
+    assert sync["revert"] is True and sync["wait_time"] == 300 and sync["ais_sensitivity"] == "enable"
     assert sync["bits"] == "e1"
     assert sync["bits_bind"] == {"bits_a_bind": "nt-a", "bits_b_bind": "nt-b"}
     assert sync["force_reference"] == "synce-1"
@@ -132,7 +132,7 @@ class TestIsamSystemSyncIfTiming(TestIsamModule):
     def test_replaced_resets_unwanted(self):
         result = self._run("replaced", {"sync_if_timing": {
             "revert": True, "wait_time": 300, "output_ql_thresh": "clk-ql-dnu", "ssmout_en_bits": True,
-            "ssmout_ceiling": "clk-ql-prc", "ais_sensitivity": True, "bits": "e1",
+            "ssmout_ceiling": "clk-ql-prc", "ais_sensitivity": "enable", "bits": "e1",
             "bits_bind": {"bits_a_bind": "nt-a"},
             "ref_order": {"prio1": "synce-1"},
             "ssm": [{"reference": "bits-a", "ssmenable": True, "default_ql": "clk-ql-ssu-a", "target_ql": "clk-ql-dnu"}],

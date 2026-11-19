@@ -6,6 +6,8 @@ __metaclass__ = type
 
 import re
 
+from copy import deepcopy
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (
     NetworkTemplate,
 )
@@ -331,7 +333,7 @@ Isam_systemTemplate.PARSERS.extend(
 # configure system sync-if-timing (structure from real 'info configure detail flat')
 #
 #   configure system sync-if-timing [no] revert [no] wait-time <n> output-ql-thresh <ql>
-#       [no] ssmout-en-bits ssmout-ceiling <ql> [no] ais-sensitivity
+#       [no] ssmout-en-bits ssmout-ceiling <ql> [no] ais-sensitivity <v>
 #   configure system sync-if-timing bits <mode>
 #   configure system sync-if-timing bits-bind [no] bits-a-bind <x> [no] bits-b-bind <x>
 #   configure system sync-if-timing force-reference <ref>|none
@@ -351,7 +353,7 @@ SYNC_TOP_FIELDS = {
     "output_ql_thresh": "str",
     "ssmout_en_bits": "bool",
     "ssmout_ceiling": "str",
-    "ais_sensitivity": "bool",
+    "ais_sensitivity": "str",
 }
 SYNC_BITS_BIND_FIELDS = {"bits_a_bind": "str", "bits_b_bind": "str"}
 SYNC_SSM_FIELDS = {"ssmenable": "bool", "default_ql": "str", "target_ql": "str"}
@@ -489,11 +491,13 @@ def render_sync_if_timing(values, reset=False):
 
 
 # ---------------------------------------------------------------------------
-# Settings attributes from the real 'info configure detail flat' (no CLI help is
-# available for 'configure system'; flag vs. value is inferred from the keyword
-# and the detail output, set/reset forms are NOT verified on a device):
+# Settings attributes from the real 'info configure detail flat'; flag vs. value
+# follows the CLI guide's syntax ("[ [ no ] kw ]" flag, "[ no kw | kw <value> ]"
+# value). Set/reset forms of these global settings are not verified on a device.
+# Device defaults of the value attributes are in SYSTEM_DEFAULTS (a value equal to
+# its default is printed as 'no <kw>' and counts as unset).
 #
-#   configure system id <node-id> name <n> location <l> [no] access-oper-id <v> [no] system-40gkr4
+#   configure system id <node-id> name <n> location <l> [no] access-oper-id <v> [no] system-40gkr4 <v>
 #       contact-person <c> [no] en-snmp-auth-trap nt-intercon-vlan <v> [no] periph-mgnt-vlan <v> ...
 #   configure system sntp server-ip-addr <ip> [no] server-port <p> polling-rate <n> [no] enable ...
 #   configure system syslog [no] version <v> [no] time-format <v>
@@ -501,12 +505,12 @@ def render_sync_if_timing(values, reset=False):
 #       [no] persist-enable [no] persist-timer <n>
 #   configure system syslog route <dest> msg-type <t> facility <f> [no] syslog-vlan <v> [no] <severity>...
 #   configure system transaction [no] time-out-value <n> log-full-action <a>
-#   configure system external-leds [no] status
+#   configure system external-leds [no] status <v>
 #   configure system auto-laser-shutdown [no] action <v>
-#   configure system auto-switch [no] xdsl-atm-ptm [no] xdsl-stepup-delay
+#   configure system auto-switch [no] xdsl-atm-ptm [no] xdsl-stepup-delay <n>
 #   configure system zero-touch-provision [no] action <v>
 #   configure system pon-ont [no] slid-mode <v> [no] pwrbrst-mode <v> [no] sn-bundle-timer <n>
-#       [no] sw-ver-mis-block [no] sn-autounlock
+#       [no] sw-ver-mis-block <v> [no] sn-autounlock <v>
 #   configure system nt-sftp [no] write-enable
 #
 # 'no <kw>' is the device default and is not reported (flags included: only a set
@@ -517,10 +521,10 @@ def render_sync_if_timing(values, reset=False):
 # (option, CLI keyword, kind "str" | "int" | "bool")
 ID_ATTRS = (
     ("access_oper_id", "access-oper-id", "str"),
-    ("system_40gkr4", "system-40gkr4", "bool"),
+    ("system_40gkr4", "system-40gkr4", "str"),
     ("en_snmp_auth_trap", "en-snmp-auth-trap", "bool"),
     ("periph_mgnt_vlan", "periph-mgnt-vlan", "int"),
-    ("periph_mgnt_ctrl", "periph-mgnt-ctrl", "bool"),
+    ("periph_mgnt_ctrl", "periph-mgnt-ctrl", "str"),
     ("port_num_in_proto", "port-num-in-proto", "str"),
     ("ont_trc_dbg_vlan", "ont-trc-dbg-vlan", "int"),
     ("ntr_ssmout_vlan", "ntr-ssmout-vlan", "int"),
@@ -555,17 +559,17 @@ SETTINGS = {
              ("server-ip-addr", "polling-rate", "enable", "timezone-offset")),
     "syslog": ("syslog", (("version", "version", "str"), ("time_format", "time-format", "str")), ()),
     "transaction": ("transaction", (("time_out_value", "time-out-value", "int"),), ("log-full-action",)),
-    "external_leds": ("external-leds", (("status", "status", "bool"),), ()),
+    "external_leds": ("external-leds", (("status", "status", "str"),), ()),
     "auto_laser_shutdown": ("auto-laser-shutdown", (("action", "action", "str"),), ()),
     "auto_switch": ("auto-switch", (("xdsl_atm_ptm", "xdsl-atm-ptm", "bool"),
-                                    ("xdsl_stepup_delay", "xdsl-stepup-delay", "bool")), ()),
+                                    ("xdsl_stepup_delay", "xdsl-stepup-delay", "int")), ()),
     "zero_touch_provision": ("zero-touch-provision", (("action", "action", "str"),), ()),
     "pon_ont": ("pon-ont", (
         ("slid_mode", "slid-mode", "str"),
         ("pwrbrst_mode", "pwrbrst-mode", "str"),
         ("sn_bundle_timer", "sn-bundle-timer", "int"),
-        ("sw_ver_mis_block", "sw-ver-mis-block", "bool"),
-        ("sn_autounlock", "sn-autounlock", "bool"),
+        ("sw_ver_mis_block", "sw-ver-mis-block", "str"),
+        ("sn_autounlock", "sn-autounlock", "str"),
     ), ()),
     "nt_sftp": ("nt-sftp", (("write_enable", "write-enable", "bool"),), ()),
 }
@@ -658,3 +662,28 @@ def render_settings_commands(values, reset=False, node_id=None):
                     commands.append("configure system {0} {1} {2}".format(
                         node, _setting_quote(entry[ident]), " ".join(parts)))
     return commands
+
+
+# Device defaults (CLI guide) of value attributes the device prints as 'no <kw>' when
+# at default: a configured default counts as unset, so merged/replaced stay idempotent.
+SYSTEM_DEFAULTS = {
+    ("id", "system_40gkr4"): "disable",
+    ("id", "periph_mgnt_ctrl"): "disable",
+    ("sync_if_timing", "ais_sensitivity"): "disable",
+    ("external_leds", "status"): "enable",
+    ("auto_switch", "xdsl_stepup_delay"): 3600,
+    ("pon_ont", "sw_ver_mis_block"): "enable",
+    ("pon_ont", "sn_autounlock"): "disable",
+}
+
+
+def without_defaults(config):
+    """A copy of config without the SYSTEM_DEFAULTS values (sections left empty are dropped)."""
+    config = deepcopy(config or {})
+    for (section, option), default in SYSTEM_DEFAULTS.items():
+        values = config.get(section)
+        if isinstance(values, dict) and values.get(option) == default:
+            del values[option]
+            if not values:
+                del config[section]
+    return config

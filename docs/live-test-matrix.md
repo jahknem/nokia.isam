@@ -94,6 +94,11 @@ explicit decision per family: `isam_cwmp_plt`, `isam_dhcp_server`,
 `isam_software_mngt`, `isam_system`, `isam_vlan_global`, `isam_voice_sip`,
 `isam_xdsl_system`, `isam_xstp`, `isam_iphost`, `isam_linetest`.
 
+Read-only check after the flag -> value fixes (2026-11-19): `isam_generic_pon`,
+`isam_system_security`, `isam_system` gathered; merged and replaced of the gathered
+facts in check mode send nothing (system_security only differs on SNMP communities,
+whose names the gathered output redacts, unchanged by the fix).
+
 Tested on card 6 replanned as xDSL (NDLT-F) and Ethernet (NELT-B) board instead of
 the active cards 3 and 8; see the rows above and the offline scenarios in
 `tests/fixtures/live_scenarios/`.

@@ -136,15 +136,15 @@ CONFIGURED = CAPTURE.parent / "root-flat.txt"
 SLICE2 = [
     'configure system security oper-policy-prio local-radius login-banner "hello world" welcome-banner "Slot\\tKVz\\n1/1/1" unauth-fwd',
     'configure system security default-profile prompt "%n>" terminal-timeout 30 liadmin none liuser read ai read no aaa',
-    'configure system security password min-length 8 min-num-numeric-char 1 min-num-special-char 2 mixed-case',
+    'configure system security password min-length 8 min-num-numeric-char 1 min-num-special-char 2 mixed-case mandatory',
     'configure system security ssh server-profile server-retries 3 idle-timeout 600 dis-hmac-md5 dis-des-56 server-host-key rsa',
-    'configure system security ssh access protocol sftp cli ssh tl1 none debug',
+    'configure system security ssh access protocol sftp cli ssh tl1 none debug ssh',
     'configure system security ssh sftp-user sftpuser password encrypted:00:11 auth-type password',
     'configure system security tacacs auth-super-user name:TacPol operator-policy name:TacPol',
     'configure system security li separate',
     'configure system security slot nt-a debug-usb',
     'configure system security domain Dom1 authenticator radius:RADPol vlan-id 100 sess-timeout 3600 admin-down',
-    'configure system security filetransfer protocol sftp tftp-rollovr',
+    'configure system security filetransfer protocol sftp tftp-rollovr 3',
     'configure system security filetransfer server 10.0.0.9 user-name ftpuser password encrypted:22:33 key-type rsa',
     'configure system security snmp notify-view everything subtree * type include',
     'configure system security snmp notify-view everything subtree snmpUsmMIB type exclude',
@@ -199,9 +199,9 @@ def test_slice2_parses_every_node():
                               "welcome_banner": "Slot\\tKVz\\n1/1/1", "unauth_fwd": True}
     assert got["default_profile"] == {"prompt": "%n>", "terminal_timeout": "30",
                                       "permissions": {"liadmin": "none", "liuser": "read", "ai": "read"}}
-    assert got["password"] == {"min_length": 8, "min_num_numeric_char": 1, "min_num_special_char": 2, "mixed_case": True}
+    assert got["password"] == {"min_length": 8, "min_num_numeric_char": 1, "min_num_special_char": 2, "mixed_case": "mandatory"}
     assert got["ssh"]["server_profile"]["dis_hmac_md5"] is True
-    assert got["ssh"]["access"] == {"protocol": "sftp", "cli": "ssh", "tl1": "none", "debug": True}
+    assert got["ssh"]["access"] == {"protocol": "sftp", "cli": "ssh", "tl1": "none", "debug": "ssh"}
     assert got["ssh"]["sftp_users"][0]["name"] == "sftpuser"
     assert got["tacacs"]["operator_policy"] == "name:TacPol"
     assert got["li"] == {"separate": True}
@@ -314,7 +314,7 @@ class TestIsamSystemSecuritySlice2(TestIsamModule):
 
     def test_merged_renders_only_changes(self):
         result = self._run("merged", {
-            "password": {"min_length": 10, "mixed_case": True},
+            "password": {"min_length": 10, "mixed_case": "mandatory"},
             "pae": {"ports": [{"port": "1/1/4/19", "authenticator": {"quiet_period": 60, "re_auth_enabled": True}},
                               {"port": "1/1/4/20", "ext_authenticator": {"authentication": True}}]},
             "peripheral_mgnt": {"mac_filters": [{"index": 4, "filter": "00:11:22:33:44:66"}]},

@@ -168,7 +168,7 @@ class Isam_system_securityArgs(object):
                     "min_length": {"type": "int"},
                     "min_num_numeric_char": {"type": "int"},
                     "min_num_special_char": {"type": "int"},
-                    "mixed_case": {"type": "bool"},
+                    "mixed_case": {"type": "str", "choices": ["mandatory", "not-mandatory"]},
                 }),
                 "ssh": _dct({
                     "server_profile": _ssh_server_profile(),
@@ -176,8 +176,8 @@ class Isam_system_securityArgs(object):
                         "protocol": {"type": "str"},
                         "cli": {"type": "str"},
                         "tl1": {"type": "str"},
-                        "debug": {"type": "bool"},
-                        "debugkernel": {"type": "bool"},
+                        "debug": {"type": "str", "choices": ["none", "ssh", "udp", "udp-ssh"]},
+                        "debugkernel": {"type": "str", "choices": ["none", "ssh"]},
                     }),
                     "sftp_users": _lst({
                         "name": {"type": "str", "required": True},
@@ -211,7 +211,7 @@ class Isam_system_securityArgs(object):
                 }),
                 "filetransfer": _dct({
                     "protocol": {"type": "str"},
-                    "tftp_rollovr": {"type": "bool"},
+                    "tftp_rollovr": {"type": "int"},
                     "servers": _lst({
                         "server": {"type": "str", "required": True},
                         "user_name": {"type": "str"},

@@ -7,9 +7,11 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 module: isam_generic_pon
-short_description: Manage generic PON data path integrity threshold.
+short_description: Manage the global generic PON settings.
 description:
-  - Manages C(configure generic-pon dpinteg-threshold) configuration.
+  - Manages C(configure generic-pon) dpinteg-threshold, utilization (incl. thresholds), ont and alarmflag settings.
+  - A value equal to the device default counts as unset; facts do not report defaults.
+  - C(deleted) resets the named sections, and within a section only the named settings; without I(config) every setting.
 version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:
@@ -18,8 +20,132 @@ options:
     type: dict
     suboptions:
       dpinteg_threshold:
-        description: Data path integrity threshold value (0-100).
-        type: str
+        description: Data path integrity threshold (C(configure generic-pon dpinteg-threshold)); mandatory value without removal form, only set when given.
+        type: int
+      utilization:
+        description: PON utilization PM collection (C(configure generic-pon utilization)).
+        type: dict
+        suboptions:
+          pon_pmcollect:
+            description: C(configure generic-pon utilization pon-pmcollect); device default C(none).
+            type: str
+            choices: [none, pm-enable, tca-enable]
+          ont_pmcollect:
+            description: C(configure generic-pon utilization ont-pmcollect); device default C(disable).
+            type: str
+            choices: [enable, disable]
+          threshold:
+            description: PON utilization TCA thresholds (C(configure generic-pon utilization threshold)), C(disabled) or a value.
+            type: dict
+            suboptions:
+              txmcutilhi:
+                description: C(configure generic-pon utilization threshold txmcutilhi); device default C(disabled).
+                type: str
+              txmcutilmd:
+                description: C(configure generic-pon utilization threshold txmcutilmd); device default C(disabled).
+                type: str
+              txmcutillo:
+                description: C(configure generic-pon utilization threshold txmcutillo); device default C(disabled).
+                type: str
+              txtotutilhi:
+                description: C(configure generic-pon utilization threshold txtotutilhi); device default C(disabled).
+                type: str
+              txtotutilmd:
+                description: C(configure generic-pon utilization threshold txtotutilmd); device default C(disabled).
+                type: str
+              txtotutillo:
+                description: C(configure generic-pon utilization threshold txtotutillo); device default C(disabled).
+                type: str
+              rxtotutilhi:
+                description: C(configure generic-pon utilization threshold rxtotutilhi); device default C(disabled).
+                type: str
+              rxtotutilmd:
+                description: C(configure generic-pon utilization threshold rxtotutilmd); device default C(disabled).
+                type: str
+              rxtotutillo:
+                description: C(configure generic-pon utilization threshold rxtotutillo); device default C(disabled).
+                type: str
+              dbacongperiodhi:
+                description: C(configure generic-pon utilization threshold dbacongperiodhi); device default C(disabled).
+                type: str
+              dbacongperiodmd:
+                description: C(configure generic-pon utilization threshold dbacongperiodmd); device default C(disabled).
+                type: str
+              dbacongperiodlo:
+                description: C(configure generic-pon utilization threshold dbacongperiodlo); device default C(disabled).
+                type: str
+              txucdropfrmhi:
+                description: C(configure generic-pon utilization threshold txucdropfrmhi); device default C(disabled).
+                type: str
+              txucdropfrmmd:
+                description: C(configure generic-pon utilization threshold txucdropfrmmd); device default C(disabled).
+                type: str
+              txucdropfrmlo:
+                description: C(configure generic-pon utilization threshold txucdropfrmlo); device default C(disabled).
+                type: str
+              txmcdropfrmhi:
+                description: C(configure generic-pon utilization threshold txmcdropfrmhi); device default C(disabled).
+                type: str
+              txmcdropfrmmd:
+                description: C(configure generic-pon utilization threshold txmcdropfrmmd); device default C(disabled).
+                type: str
+              txmcdropfrmlo:
+                description: C(configure generic-pon utilization threshold txmcdropfrmlo); device default C(disabled).
+                type: str
+              txbcdropfrmhi:
+                description: C(configure generic-pon utilization threshold txbcdropfrmhi); device default C(disabled).
+                type: str
+              txbcdropfrmmd:
+                description: C(configure generic-pon utilization threshold txbcdropfrmmd); device default C(disabled).
+                type: str
+              txbcdropfrmlo:
+                description: C(configure generic-pon utilization threshold txbcdropfrmlo); device default C(disabled).
+                type: str
+              rxtotdropfrmhi:
+                description: C(configure generic-pon utilization threshold rxtotdropfrmhi); device default C(disabled).
+                type: str
+              rxtotdropfrmmd:
+                description: C(configure generic-pon utilization threshold rxtotdropfrmmd); device default C(disabled).
+                type: str
+              rxtotdropfrmlo:
+                description: C(configure generic-pon utilization threshold rxtotdropfrmlo); device default C(disabled).
+                type: str
+              numtcint:
+                description: C(configure generic-pon utilization threshold numtcint); device default C(disabled).
+                type: str
+              numtcintdba:
+                description: C(configure generic-pon utilization threshold numtcintdba); device default C(disabled).
+                type: str
+              dbacongthresh:
+                description: C(configure generic-pon utilization threshold dbacongthresh); device default C(disabled).
+                type: str
+      ont:
+        description: ONT settings (C(configure generic-pon ont)).
+        type: dict
+        suboptions:
+          slid_mode:
+            description: C(configure generic-pon ont slid-mode); device default C(ascii).
+            type: str
+            choices: [ascii, hexa-dec]
+          sn_bundle_timer:
+            description: C(configure generic-pon ont sn-bundle-timer); device default C(24).
+            type: int
+          sw_ver_mis_block:
+            description: C(configure generic-pon ont sw-ver-mis-block); device default C(enable).
+            type: str
+            choices: [enable, disable]
+          sn_autounlock:
+            description: C(configure generic-pon ont sn-autounlock); device default C(disable).
+            type: str
+            choices: [enable, disable]
+      alarmflag:
+        description: Alarm flags (C(configure generic-pon alarmflag)).
+        type: dict
+        suboptions:
+          ponlos_alarm_ctrl:
+            description: C(configure generic-pon alarmflag ponlos-alarm-ctrl); device default C(disable).
+            type: str
+            choices: [enable, disable]
   running_config:
     description: Device native configuration to parse.
     type: str

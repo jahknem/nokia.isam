@@ -59,8 +59,9 @@ options:
             type: str
           system_40gkr4:
             description:
-              - 40G KR4 system mode flag (C(configure system id <node-id> system-40gkr4)).
-            type: bool
+              - 40G KR4 system mode (C(configure system id <node-id> system-40gkr4)); device default C(disable).
+            type: str
+            choices: [disable, enable]
           en_snmp_auth_trap:
             description:
               - Send SNMP authentication failure traps (flag) (C(configure system id <node-id> en-snmp-auth-trap)).
@@ -71,8 +72,9 @@ options:
             type: int
           periph_mgnt_ctrl:
             description:
-              - Peripheral management control (flag) (C(configure system id <node-id> periph-mgnt-ctrl)).
-            type: bool
+              - Peripheral management control (C(configure system id <node-id> periph-mgnt-ctrl)); device default C(disable).
+            type: str
+            choices: [enable, disable]
           port_num_in_proto:
             description:
               - Port numbering used in protocols, for example C(type-based) (C(configure system id <node-id> port-num-in-proto)).
@@ -293,9 +295,10 @@ options:
             type: str
           ais_sensitivity:
             description:
-              - Treat AIS on a reference as a failure (C(ais-sensitivity)).
+              - Treat AIS on a reference as a failure (C(ais-sensitivity)); device default C(disable).
               - Removal resets it with C(no ais-sensitivity).
-            type: bool
+            type: str
+            choices: [enable, disable]
           bits:
             description:
               - BITS interface mode (C(sync-if-timing bits <mode>)), for example C(autoselect).
@@ -398,7 +401,7 @@ options:
         description: External LEDs (C(configure system external-leds)).
         type: dict
         suboptions:
-          status: {description: External LED status flag (C(status)), type: bool}
+          status: {description: External LED status (C(status)); device default C(enable), type: str, choices: [disable, enable]}
       auto_laser_shutdown:
         description: Automatic laser shutdown (C(configure system auto-laser-shutdown)).
         type: dict
@@ -409,7 +412,7 @@ options:
         type: dict
         suboptions:
           xdsl_atm_ptm: {description: Automatic ATM/PTM switching flag (C(xdsl-atm-ptm)), type: bool}
-          xdsl_stepup_delay: {description: xDSL step-up delay flag (C(xdsl-stepup-delay)), type: bool}
+          xdsl_stepup_delay: {description: xDSL step-up delay in seconds (C(xdsl-stepup-delay)) 0-65535; device default 3600, type: int}
       zero_touch_provision:
         description: Zero touch provisioning (C(configure system zero-touch-provision)).
         type: dict
@@ -422,8 +425,8 @@ options:
           slid_mode: {description: SLID mode (C(slid-mode)), type: str}
           pwrbrst_mode: {description: Power burst mode (C(pwrbrst-mode)), type: str}
           sn_bundle_timer: {description: Serial number bundle timer (C(sn-bundle-timer)), type: int}
-          sw_ver_mis_block: {description: Block ONTs on software version mismatch flag (C(sw-ver-mis-block)), type: bool}
-          sn_autounlock: {description: Serial number auto unlock flag (C(sn-autounlock)), type: bool}
+          sw_ver_mis_block: {description: Block ONTs on software version mismatch (C(sw-ver-mis-block)); device default C(enable), type: str, choices: [enable, disable]}
+          sn_autounlock: {description: Serial number auto unlock (C(sn-autounlock)); device default C(disable), type: str, choices: [disable, enable]}
       nt_sftp:
         description: NT SFTP access (C(configure system nt-sftp)).
         type: dict

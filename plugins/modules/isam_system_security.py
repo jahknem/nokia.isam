@@ -426,7 +426,8 @@ options:
             type: int
             description: Minimum number of special characters (C(min-num-special-char)).
           mixed_case:
-            type: bool
+            type: str
+            choices: [mandatory, not-mandatory]
             description: Require upper and lower case characters (C(mixed-case)).
       ssh:
         type: dict
@@ -521,10 +522,12 @@ options:
                 type: str
                 description: TL1 access protocol, for example C(none) or C(ssh).
               debug:
-                type: bool
+                type: str
+                choices: [none, ssh, udp, udp-ssh]
                 description: Debug access (C(debug)).
               debugkernel:
-                type: bool
+                type: str
+                choices: [none, ssh]
                 description: Kernel debug access (C(debugkernel)).
           sftp_users:
             type: list
@@ -627,7 +630,7 @@ options:
             type: str
             description: File transfer protocol, for example C(ftp), C(tftp) or C(sftp).
           tftp_rollovr:
-            type: bool
+            type: int
             description: TFTP block number roll-over (C(tftp-rollovr)).
           servers:
             type: list

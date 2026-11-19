@@ -410,3 +410,33 @@ def test_ipv6_antispoofing_merged_keeps_and_replaced_resets_only_named_slots(mon
     assert commands("merged", [{"name": "1/1/6"}]) == []
     assert commands("replaced", [{"name": "1/1/6"}]) == ["configure ipv6-antispoofing slot 1/1/6 no bit-len"]
     assert commands("overridden", [{"name": "1/1/6", "bit_len": 128}]) == ["configure ipv6-antispoofing slot 1/1/7 no bit-len"]
+
+
+def test_system_security_value_options_are_read_and_written_as_values(monkeypatch):
+    """CLI guide: mixed-case, ssh access debug/debugkernel and tftp-rollovr take values; they were bool."""
+    text = ("configure system security password min-length 6 mixed-case mandatory\n"
+            "configure system security ssh access protocol ftp debug udp-ssh debugkernel ssh\n"
+            "configure system security filetransfer protocol ftp tftp-rollovr 5\n")
+    gathered = run_module(monkeypatch, "isam_system_security", {"state": "gathered"}, text)["gathered"]
+    assert gathered["password"]["mixed_case"] == "mandatory"
+    assert gathered["ssh"]["access"]["debug"] == "udp-ssh" and gathered["ssh"]["access"]["debugkernel"] == "ssh"
+    assert gathered["filetransfer"]["tftp_rollovr"] == 5
+    rendered = run_module(monkeypatch, "isam_system_security", {"state": "rendered", "config": {"password": {"mixed_case": "mandatory"}}})
+    assert rendered["rendered"] == ["configure system security password mixed-case mandatory"]
+
+
+def test_system_value_options_are_read_and_written_as_values(monkeypatch):
+    """CLI guide: these were modelled as flags; values were lost on read and rendered bare."""
+    text = ("configure system id DS name x location y system-40gkr4 enable periph-mgnt-ctrl enable\n"
+            "configure system external-leds status disable\n"
+            "configure system auto-switch xdsl-stepup-delay 1800\n"
+            "configure system pon-ont sw-ver-mis-block disable sn-autounlock enable\n"
+            "configure system sync-if-timing ais-sensitivity enable\n")
+    got = run_module(monkeypatch, "isam_system", {"state": "gathered"}, text)["gathered"]
+    assert got["id"]["system_40gkr4"] == "enable" and got["id"]["periph_mgnt_ctrl"] == "enable"
+    assert got["external_leds"] == {"status": "disable"} and got["auto_switch"] == {"xdsl_stepup_delay": 1800}
+    assert got["pon_ont"] == {"sw_ver_mis_block": "disable", "sn_autounlock": "enable"}
+    assert got["sync_if_timing"]["ais_sensitivity"] == "enable"
+    rendered = run_module(monkeypatch, "isam_system", {"state": "rendered", "config": {
+        "external_leds": {"status": "disable"}, "auto_switch": {"xdsl_stepup_delay": 1800}}})["rendered"]
+    assert rendered == ["configure system external-leds status disable", "configure system auto-switch xdsl-stepup-delay 1800"]
