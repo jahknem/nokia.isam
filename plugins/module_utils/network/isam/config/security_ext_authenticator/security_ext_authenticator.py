@@ -27,5 +27,6 @@ class Isam_security_ext_authenticator(IsamActionModule):
                     "port and performs no action.",
                     port=entry.get("port"),
                 )
-            commands.append("admin security ext-authenticator %s clear-statistics" % entry["port"])
+            port = self.validate_identifier(entry["port"], "port")
+            commands.append("admin security ext-authenticator %s clear-statistics" % port)
         return commands
