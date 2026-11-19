@@ -23,10 +23,10 @@ class Isam_systemArgs(object):  # pylint: disable=R0903
                         "internal_nw_vlan": {"type": "int"},
                         "system_mac": {"type": "str"},
                         "access_oper_id": {"type": "str"},
-                        "system_40gkr4": {"type": "bool"},
+                        "system_40gkr4": {"type": "str", "choices": ["disable", "enable"]},
                         "en_snmp_auth_trap": {"type": "bool"},
                         "periph_mgnt_vlan": {"type": "int"},
-                        "periph_mgnt_ctrl": {"type": "bool"},
+                        "periph_mgnt_ctrl": {"type": "str", "choices": ["enable", "disable"]},
                         "port_num_in_proto": {"type": "str"},
                         "ont_trc_dbg_vlan": {"type": "int"},
                         "ntr_ssmout_vlan": {"type": "int"},
@@ -114,7 +114,7 @@ class Isam_systemArgs(object):  # pylint: disable=R0903
                         "output_ql_thresh": {"type": "str"},
                         "ssmout_en_bits": {"type": "bool"},
                         "ssmout_ceiling": {"type": "str"},
-                        "ais_sensitivity": {"type": "bool"},
+                        "ais_sensitivity": {"type": "str", "choices": ["enable", "disable"]},
                         "bits": {"type": "str"},
                         "bits_bind": {
                             "type": "dict",
@@ -187,7 +187,7 @@ class Isam_systemArgs(object):  # pylint: disable=R0903
                 "max_lt_link_speed": {"type": "str"},
                 "external_leds": {
                     "type": "dict",
-                    "options": {"status": {"type": "bool"}},
+                    "options": {"status": {"type": "str", "choices": ["disable", "enable"]}},
                 },
                 "auto_laser_shutdown": {
                     "type": "dict",
@@ -197,7 +197,7 @@ class Isam_systemArgs(object):  # pylint: disable=R0903
                     "type": "dict",
                     "options": {
                         "xdsl_atm_ptm": {"type": "bool"},
-                        "xdsl_stepup_delay": {"type": "bool"},
+                        "xdsl_stepup_delay": {"type": "int"},
                     },
                 },
                 "zero_touch_provision": {
@@ -210,8 +210,8 @@ class Isam_systemArgs(object):  # pylint: disable=R0903
                         "slid_mode": {"type": "str"},
                         "pwrbrst_mode": {"type": "str"},
                         "sn_bundle_timer": {"type": "int"},
-                        "sw_ver_mis_block": {"type": "bool"},
-                        "sn_autounlock": {"type": "bool"},
+                        "sw_ver_mis_block": {"type": "str", "choices": ["enable", "disable"]},
+                        "sn_autounlock": {"type": "str", "choices": ["disable", "enable"]},
                     },
                 },
                 "nt_sftp": {

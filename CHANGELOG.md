@@ -136,6 +136,23 @@
   `dhcpv6_trst_port` -- they are now strings with the guide's choices and defaults
   (setting any of them never worked before). Commands are packed like the device's two
   printed lines; a bare flag at the end of a command was sent separately before.
+- Global families: options modelled as on/off flags that take values per the CLI guide
+  (`[ no kw | kw <value> ]`) are now values with the guide's choices; before, a set
+  value was read as `true` (data loss) and `true` rendered a bare, incomplete keyword.
+  **Breaking for playbooks using `true`/`false` on these options** (now rejected with a
+  clear message). Checked read-only on the lab ISAM: gathered, then merged/replaced of
+  the gathered facts send nothing; the writes are not verified (global settings).
+  - `isam_generic_pon` rebuilt on one table (`GENERIC_PON_NODES`) like `isam_vlans`:
+    `utilization` pon/ont-pmcollect, the 27 utilization thresholds, `ont` slid-mode,
+    sn-bundle-timer (int), sw-ver-mis-block, sn-autounlock, `alarmflag`
+    ponlos-alarm-ctrl. Device defaults count as unset; `dpinteg_threshold` is an int
+    and only set when given (no removal form); `deleted` resets only the named sections
+    and settings. The module documentation covered only `dpinteg_threshold`.
+  - `isam_system_security`: password `mixed_case`, ssh access `debug`/`debugkernel`,
+    filetransfer `tftp_rollovr` (int).
+  - `isam_system`: id `system_40gkr4`/`periph_mgnt_ctrl`, sync-if-timing
+    `ais_sensitivity`, external-leds `status`, auto-switch `xdsl_stepup_delay` (int),
+    pon-ont `sw_ver_mis_block`/`sn_autounlock`; their device defaults count as unset.
 - Device defaults out of the argspecs (they were injected into every request):
   `isam_vlans` merged renaming a VLAN reset `protocol-filter`, `new-broadcast` and
   `drly-srv-usr-side`; `deleted` naming a setting deleted the whole VLAN and sent

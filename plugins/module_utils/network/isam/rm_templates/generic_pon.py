@@ -4,198 +4,117 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+"""
+Parser templates for the isam_generic_pon resource (global PON settings).
+
+The device prints each node as one packed line ('flat detail', lab ISAM)::
+
+    configure generic-pon dpinteg-threshold 0
+    configure generic-pon utilization no pon-pmcollect no ont-pmcollect
+    configure generic-pon utilization threshold no txmcutilhi ... no dbacongthresh
+    configure generic-pon ont no slid-mode no sn-bundle-timer no sw-ver-mis-block no sn-autounlock
+    configure generic-pon alarmflag no ponlos-alarm-ctrl
+
+GENERIC_PON_NODES is the single description of that grammar (from the CLI guide): the
+facts split packed lines with it, the parsers are generated from it, the config class
+takes the device defaults from it. Every attribute is "[ no kw | kw <value> ]".
+"""
+
 import re
-from typing import Any, Dict
+
+from copy import deepcopy
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (
     NetworkTemplate,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
-    parse_cli_fields,
-    parse_cli_key_values,
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import remove_empties
+
+_THRESHOLDS = (
+    "txmcutilhi", "txmcutilmd", "txmcutillo", "txtotutilhi", "txtotutilmd", "txtotutillo",
+    "rxtotutilhi", "rxtotutilmd", "rxtotutillo", "dbacongperiodhi", "dbacongperiodmd", "dbacongperiodlo",
+    "txucdropfrmhi", "txucdropfrmmd", "txucdropfrmlo", "txmcdropfrmhi", "txmcdropfrmmd", "txmcdropfrmlo",
+    "txbcdropfrmhi", "txbcdropfrmmd", "txbcdropfrmlo", "rxtotdropfrmhi", "rxtotdropfrmmd", "rxtotdropfrmlo",
+    "numtcint", "numtcintdba", "dbacongthresh",
+)
+
+# (path in the config, CLI node after "configure generic-pon", attributes); an attribute
+# is (option, CLI keyword, kind "value"|"int", device default).
+GENERIC_PON_NODES = (
+    (("utilization",), "utilization", (
+        ("pon_pmcollect", "pon-pmcollect", "value", "none"),
+        ("ont_pmcollect", "ont-pmcollect", "value", "disable"),
+    )),
+    (("utilization", "threshold"), "utilization threshold",
+     tuple((name, name, "value", "disabled") for name in _THRESHOLDS)),
+    (("ont",), "ont", (
+        ("slid_mode", "slid-mode", "value", "ascii"),
+        ("sn_bundle_timer", "sn-bundle-timer", "int", 24),
+        ("sw_ver_mis_block", "sw-ver-mis-block", "value", "enable"),
+        ("sn_autounlock", "sn-autounlock", "value", "disable"),
+    )),
+    (("alarmflag",), "alarmflag", (
+        ("ponlos_alarm_ctrl", "ponlos-alarm-ctrl", "value", "disable"),
+    )),
 )
 
 
-GENERIC_PON_FLAG_FIELDS = (
-    "pon-pmcollect",
-    "ont-pmcollect",
-    "ontbulk-pmcollect",
-    "slid-mode",
-    "sn-bundle-timer",
-    "sw-ver-mis-block",
-    "sn-autounlock",
-    "ponlos-alarm-ctrl",
-)
+def section(config, path):
+    """The settings dict at path ({} when absent)."""
+    for key in path:
+        config = config.get(key) if isinstance(config, dict) else None
+    return config if isinstance(config, dict) else {}
+
+
+def without_defaults(config):
+    """A copy of config without values equal to their device default (defaults count as unset)."""
+    config = deepcopy(config or {})
+    for path, _node, attrs in GENERIC_PON_NODES:
+        values = section(config, path)
+        for option, _cli, _kind, default in attrs:
+            if option in values and values[option] == default:
+                del values[option]
+    return remove_empties(config)
+
+
+def parser_name(path, option):
+    return ".".join(path + (option,))
+
+
+def _nested(path, leaf):
+    for key in reversed(path):
+        leaf = {key: leaf}
+    return leaf
+
+
+def _attribute_parser(path, node, option, cli, kind):
+    scope = "configure generic-pon " + node
+    words = r"\s".join(re.escape(word) for word in node.split())
+    return {
+        "name": parser_name(path, option),
+        "compval": option,
+        "getval": re.compile(r"^configure\sgeneric-pon\s" + words + r"\s(?:(?P<negate>no\s)" + re.escape(cli)
+                             + r"|" + re.escape(cli) + r"\s(?P<value>\S+))$"),
+        "setval": scope + " " + cli + " {{ " + option + " }}",
+        "remval": scope + " no " + cli,
+        "result": _nested(path, {option: "{{ none if negate is defined else value" + ("|int" if kind == "int" else "") + " }}"}),
+    }
+
+
+PARSERS = [{
+    # mandatory value without removal form (CLI guide); the device prints it also at 0
+    "name": "dpinteg_threshold",
+    "compval": "dpinteg_threshold",
+    "getval": re.compile(r"^configure\sgeneric-pon\sdpinteg-threshold\s(?P<value>\d+)$"),
+    "setval": "configure generic-pon dpinteg-threshold {{ dpinteg_threshold }}",
+    "no_remval": True,
+    "result": {"dpinteg_threshold": "{{ value|int }}"},
+}]
+for _path, _node, _attrs in GENERIC_PON_NODES:
+    PARSERS.extend(_attribute_parser(_path, _node, option, cli, kind) for option, cli, kind, _default in _attrs)
 
 
 class Generic_ponTemplate(NetworkTemplate):
     def __init__(self, lines=None, module=None):
         super(Generic_ponTemplate, self).__init__(lines=lines, tmplt=self, module=module)
 
-    def parse(self):
-        result: Dict[str, Any] = {}
-        for raw_line in self._lines or []:
-            tokens = raw_line.strip().split()
-            if tokens[:3] == ["configure", "generic-pon", "dpinteg-threshold"] and len(tokens) >= 4:
-                result["dpinteg_threshold"] = int(tokens[3])
-            elif tokens[:3] == ["configure", "generic-pon", "utilization"] and len(tokens) >= 4:
-                section = result.setdefault("utilization", {})
-                if tokens[3] == "threshold":
-                    threshold = section.setdefault("threshold", {})
-                    self._parse_pairs(tokens[4:], threshold)
-                else:
-                    self._parse_flags(tokens[3:], section)
-            elif tokens[:3] == ["configure", "generic-pon", "ont"]:
-                ont = result.setdefault("ont", {})
-                self._parse_flags(tokens[3:], ont)
-            elif tokens[:3] == ["configure", "generic-pon", "alarmflag"]:
-                alarmflag = result.setdefault("alarmflag", {})
-                self._parse_flags(tokens[3:], alarmflag)
-        return result
-
-    @staticmethod
-    def _parse_pairs(tokens, target):
-        target.update(parse_cli_key_values(tokens, negated_value=""))
-
-    @classmethod
-    def _parse_flags(cls, tokens, target):
-        target.update(parse_cli_fields(tokens, bool_fields=GENERIC_PON_FLAG_FIELDS))
-
-    # fmt: off
-    PARSERS = [
-        {
-            "name": "dpinteg_threshold",
-            "compval": "dpinteg_threshold",
-            "getval": re.compile(
-                r"^configure\sgeneric-pon\sdpinteg-threshold\s(?P<dpinteg_threshold>\S+)(?:\s+.*)?$"
-            ),
-            "setval": "configure generic-pon dpinteg-threshold {{ dpinteg_threshold }}",
-            "remval": "configure generic-pon no dpinteg-threshold",
-            "result": {
-                "dpinteg_threshold": "{{ dpinteg_threshold }}",
-            },
-        },
-        {
-            "name": "utilization.pon_pmcollect",
-            "compval": "pon_pmcollect",
-            "getval": re.compile(
-                r"^configure\sgeneric-pon\sutilization\s(?P<negate>no\s)?(?P<pon_pmcollect>pon-pmcollect)(?:\s+.*)?$"
-            ),
-            "setval": "configure generic-pon utilization {{ 'no ' if pon_pmcollect == false else '' }}pon-pmcollect",
-            "result": {
-                "utilization": {
-                    "pon_pmcollect": "{{ False if negate else True }}",
-                },
-            },
-        },
-        {
-            "name": "utilization.ont_pmcollect",
-            "compval": "ont_pmcollect",
-            "getval": re.compile(
-                r"^configure\sgeneric-pon\sutilization\s(?P<negate>no\s)?(?P<ont_pmcollect>ont-pmcollect)(?:\s+.*)?$"
-            ),
-            "setval": "configure generic-pon utilization {{ 'no ' if ont_pmcollect == false else '' }}ont-pmcollect",
-            "result": {
-                "utilization": {
-                    "ont_pmcollect": "{{ False if negate else True }}",
-                },
-            },
-        },
-        {
-            "name": "ont.slid_mode",
-            "compval": "slid_mode",
-            "getval": re.compile(
-                r"^configure\sgeneric-pon\sont\s(?P<negate>no\s)?(?P<slid_mode>slid-mode)(?:\s+.*)?$"
-            ),
-            "setval": "configure generic-pon ont {{ 'no ' if slid_mode == false else '' }}slid-mode",
-            "result": {
-                "ont": {
-                    "slid_mode": "{{ False if negate else True }}",
-                },
-            },
-        },
-        {
-            "name": "ont.sn_bundle_timer",
-            "compval": "sn_bundle_timer",
-            "getval": re.compile(
-                r"^configure\sgeneric-pon\sont\s(?P<negate>no\s)?(?P<sn_bundle_timer>sn-bundle-timer)(?:\s+.*)?$"
-            ),
-            "setval": "configure generic-pon ont {{ 'no ' if sn_bundle_timer == false else '' }}sn-bundle-timer",
-            "result": {
-                "ont": {
-                    "sn_bundle_timer": "{{ False if negate else True }}",
-                },
-            },
-        },
-        {
-            "name": "ont.sw_ver_mis_block",
-            "compval": "sw_ver_mis_block",
-            "getval": re.compile(
-                r"^configure\sgeneric-pon\sont\s(?P<negate>no\s)?(?P<sw_ver_mis_block>sw-ver-mis-block)(?:\s+.*)?$"
-            ),
-            "setval": "configure generic-pon ont {{ 'no ' if sw_ver_mis_block == false else '' }}sw-ver-mis-block",
-            "result": {
-                "ont": {
-                    "sw_ver_mis_block": "{{ False if negate else True }}",
-                },
-            },
-        },
-        {
-            "name": "ont.sn_autounlock",
-            "compval": "sn_autounlock",
-            "getval": re.compile(
-                r"^configure\sgeneric-pon\sont\s(?P<negate>no\s)?(?P<sn_autounlock>sn-autounlock)(?:\s+.*)?$"
-            ),
-            "setval": "configure generic-pon ont {{ 'no ' if sn_autounlock == false else '' }}sn-autounlock",
-            "result": {
-                "ont": {
-                    "sn_autounlock": "{{ False if negate else True }}",
-                },
-            },
-        },
-        {
-            "name": "alarmflag.ponlos_alarm_ctrl",
-            "compval": "ponlos_alarm_ctrl",
-            "getval": re.compile(
-                r"^configure\sgeneric-pon\salarmflag\s(?P<negate>no\s)?(?P<ponlos_alarm_ctrl>ponlos-alarm-ctrl)(?:\s+.*)?$"
-            ),
-            "setval": "configure generic-pon alarmflag {{ 'no ' if ponlos_alarm_ctrl == false else '' }}ponlos-alarm-ctrl",
-            "result": {
-                "alarmflag": {
-                    "ponlos_alarm_ctrl": "{{ False if negate else True }}",
-                },
-            },
-        },
-    ]
-    # fmt: on
-
-
-def _threshold_parser(field):
-    return {
-        "name": "utilization.threshold." + field,
-        "compval": field,
-        "getval": re.compile(
-            r"^configure\sgeneric-pon\sutilization\sthreshold\s"
-            r"(?:(?P<negate>no\s+)" + field + r"|" + field + r"\s+(?P<value>\S+))$"
-        ),
-        "setval": "configure generic-pon utilization threshold {{ 'no " + field + "' if " + field + " is none else '" + field + " ' + " + field + " }}",
-        "remval": "configure generic-pon utilization threshold no " + field,
-        "result": {
-            "utilization": {
-                "threshold": {
-                    field: "{{ '' if negate is defined else value }}",
-                }
-            }
-        },
-    }
-
-
-for _field in (
-    "txmcutilhi", "txmcutilmd", "txmcutillo", "txtotutilhi", "txtotutilmd",
-    "txtotutillo", "rxtotutilhi", "rxtotutilmd", "rxtotutillo", "dbacongperiodhi",
-    "dbacongperiodmd", "dbacongperiodlo", "txucdropfrmhi", "txucdropfrmmd",
-    "txucdropfrmlo", "txmcdropfrmhi", "txmcdropfrmmd", "txmcdropfrmlo",
-    "txbcdropfrmhi", "txbcdropfrmmd", "txbcdropfrmlo", "rxtotdropfrmhi",
-    "rxtotdropfrmmd", "rxtotdropfrmlo", "numtcint", "numtcintdba", "dbacongthresh",
-):
-    Generic_ponTemplate.PARSERS.append(_threshold_parser(_field))
+    PARSERS = PARSERS

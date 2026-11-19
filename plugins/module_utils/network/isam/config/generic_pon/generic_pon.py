@@ -4,21 +4,23 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-from copy import deepcopy
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    dict_merge,
-)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.generic_pon import (
+    GENERIC_PON_NODES,
     Generic_ponTemplate,
+    parser_name,
+    section,
+    without_defaults,
 )
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import remove_empties
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import requested_sections
 
 
 class Generic_pon(IsamResourceModule):
-    """The isam_generic_pon config class."""
+    """The isam_generic_pon config class (global settings: nothing is created or removed)."""
 
     COMPACT_COMMAND_SCOPES = (
         r"^(?P<scope>configure generic-pon utilization threshold) (?P<suffix>.+)$",
@@ -43,95 +45,36 @@ class Generic_pon(IsamResourceModule):
             self.run_commands()
         return self.result
 
-    def addcmd(self, data, tmplt, negate=False):
-        if negate:
-            parser = self._tmplt.get_parser(tmplt)
-            if parser.get("remval"):
-                command = self._tmplt._template(
-                    value=parser["remval"], variables=data, fail_on_undefined=False
-                )
-                if command:
-                    self.commands.extend(command if isinstance(command, list) else [command])
-                return
-        super(Generic_pon, self).addcmd(data, tmplt, negate)
-
     def generate_commands(self):
-        want = self._normalize(self.want)
-        have = self._normalize(self.have)
+        rendering = self.state == "rendered"
+        want = (self.want or {}) if rendering else without_defaults(self.want)
+        have = without_defaults(self.have)
+        # deleted with config touches only the named sections, and in a section only the
+        # named attributes (a section named without attributes is reset as a whole)
+        requested = requested_sections(self._module) if self.state == "deleted" else set()
+        given = remove_empties(self._module.params.get("config") or {})
 
-        if self.state == "merged":
-            want = dict_merge(have, want)
+        if self.state != "deleted" and want.get("dpinteg_threshold") is not None:
+            # mandatory value without removal form: only set when given
+            self.compare(parsers=["dpinteg_threshold"], want=want, have=have)
+        for path, _node, attrs in GENERIC_PON_NODES:
+            if requested and (path[0] not in requested or not _named(path, given)):
+                continue
+            wanted, current = section(want, path), section(have, path)
+            values = dict((k, v) for k, v in wanted.items() if not isinstance(v, dict))
+            current = dict((k, v) for k, v in current.items() if not isinstance(v, dict))
+            if self.state == "merged":
+                values = dict(current, **values)
+            elif self.state == "deleted":
+                values = dict((k, v) for k, v in current.items() if values and k not in values)
+            self.compare(parsers=[parser_name(path, option) for option, _cli, _kind, _default in attrs],
+                         want=values, have=current)
 
-        if self.state == "deleted":
-            want = {}
 
-        self._compare_dpinteg_threshold(want, have)
-        self._compare_utilization(want, have)
-        self._compare_ont(want, have)
-        self._compare_alarmflag(want, have)
-
-    def _compare_dpinteg_threshold(self, want, have):
-        wk = want.get("dpinteg_threshold")
-        hk = have.get("dpinteg_threshold")
-        if wk is not None and wk != hk:
-            self.addcmd({"dpinteg_threshold": wk}, "dpinteg_threshold")
-        elif (
-            self.state in ["replaced", "overridden", "deleted"]
-            and wk is None
-            and hk is not None
-        ):
-            self.addcmd({"dpinteg_threshold": None}, "dpinteg_threshold", negate=True)
-
-    def _compare_utilization(self, want, have):
-        wsec = want.get("utilization", {})
-        hsec = have.get("utilization", {})
-        self._compare_section("utilization", wsec, hsec,
-                              ["pon_pmcollect", "ont_pmcollect"])
-        threshold_fields = sorted(
-            set(wsec.get("threshold", {}).keys()) | set(hsec.get("threshold", {}).keys())
-        )
-        self._compare_section(
-            "utilization.threshold",
-            wsec.get("threshold", {}),
-            hsec.get("threshold", {}),
-            threshold_fields,
-        )
-
-    def _compare_ont(self, want, have):
-        wsec = want.get("ont", {})
-        hsec = have.get("ont", {})
-        self._compare_section("ont", wsec, hsec,
-                              ["slid_mode", "sn_bundle_timer", "sw_ver_mis_block", "sn_autounlock"])
-
-    def _compare_alarmflag(self, want, have):
-        wsec = want.get("alarmflag", {})
-        hsec = have.get("alarmflag", {})
-        self._compare_section("alarmflag", wsec, hsec,
-                              ["ponlos_alarm_ctrl"])
-
-    def _compare_section(self, section, want, have, fields):
-        for field in fields:
-            wv = want.get(field)
-            hv = have.get(field)
-            if wv is not None and wv != hv:
-                self.addcmd(self._field_data(section, field, wv), section + "." + field)
-            elif (
-                self.state in ["replaced", "overridden", "deleted"]
-                and hv is not None
-                and wv is None
-            ):
-                # Negate: field present in have but absent from want
-                self.addcmd(self._field_data(section, field, False), section + "." + field)
-
-    @staticmethod
-    def _field_data(section, field, value):
-        parts = section.split(".")
-        data = {field: value}
-        for part in reversed(parts):
-            data = {part: data}
-        return data
-
-    def _normalize(self, data):
-        if not data:
-            return {}
-        return deepcopy(data)
+def _named(path, given):
+    """deleted: whether a section is named -- itself, or through its top section given
+    without any content ('utilization: {}' resets utilization and its threshold). The
+    caller has already checked that path[0] is among the requested sections."""
+    if not given.get(path[0]):
+        return True
+    return len(path) == 1 or bool(section(given, path))

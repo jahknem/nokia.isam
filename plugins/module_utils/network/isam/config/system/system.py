@@ -18,6 +18,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
     SYNC_LISTS,
     Isam_systemTemplate,
     render_sync_if_timing,
+    without_defaults,
 )
 
 
@@ -339,4 +340,7 @@ class Isam_system(IsamResourceModule):
         self.compare(parsers=parsers, want=want, have=have)
 
     def _normalize_config(self, config):
-        return deepcopy(config or {})
+        # rendered renders what is given; otherwise a device default counts as unset
+        if self._module.params.get("state") == "rendered":
+            return deepcopy(config or {})
+        return without_defaults(config)
