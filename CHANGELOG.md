@@ -177,6 +177,14 @@
     a silent no-op, and is a no-op when the device is already at default (`isam_generic_pon`,
     `isam_voice_sip`, `isam_software_mngt`). Previously the default was stripped from the
     request, so e.g. turning `auto-verify` back to `disabled` did nothing.
+- `isam_linetest` migrated onto `IsamResourceModule` (the last resource module still on a
+  plain `object` base), so it shares the standard facts gathering, check-mode write path
+  and before/after result. Its device rules are unchanged and now pinned by tests across
+  every state: sessions are destroyed with `session-cmd destroy` (never rendered as
+  configuration), parameters have no delete command (delete their session), and
+  `group-opt`/`busy-overwrite`/`force-measure` reset with a trailing `no`. Read-only on the
+  lab ISAM (no LineTest configured): gathered returns the empty structure, rendered emits
+  declarative commands only.
 - Device defaults out of the argspecs (they were injected into every request):
   `isam_vlans` merged renaming a VLAN reset `protocol-filter`, `new-broadcast` and
   `drly-srv-usr-side`; `deleted` naming a setting deleted the whole VLAN and sent

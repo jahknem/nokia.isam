@@ -2,52 +2,58 @@
 
 from __future__ import absolute_import, division, print_function
 
-from ansible.module_utils.common.text.converters import to_text
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.linetest import LinetestTemplate
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base import (
-    get_resource_connection,
+__metaclass__ = type
+
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
+    Facts,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.linetest import (
+    LinetestTemplate,
 )
 
 
-class Linetest(object):
-    """Resource implementation for safe LineTest configuration states."""
+class Linetest(IsamResourceModule):
+    """The isam_linetest config class (declarative single LineTest sessions/parameters).
+
+    LineTest is not an ordinary settings resource: sessions are created/destroyed with
+    the action command ``session-cmd create|destroy`` (never rendered as configuration),
+    parameters have no delete command of their own (delete their session instead), and
+    ``group-opt``/``busy-overwrite``/``force-measure`` reset with a trailing ``no``
+    (``... group-opt no``). The command rules below are therefore explicit device code;
+    parsing/rendering of the declarative fields lives in LinetestTemplate.
+    """
 
     def __init__(self, module):
-        self.module = module
-        self.template = LinetestTemplate()
+        super(Linetest, self).__init__(
+            empty_fact_val={"sessions": [], "parameters": []},
+            facts_module=Facts(module),
+            module=module,
+            resource="linetest",
+            tmplt=LinetestTemplate(),
+        )
 
     def execute_module(self):
-        state = self.module.params["state"]
-        result = {"changed": False}
-        if state == "rendered":
-            result["rendered"] = self.template.render(self.module.params.get("config") or {})
-        elif state == "parsed":
-            result["parsed"] = self.template.parse(self.module.params.get("running_config"))
-        elif state == "gathered":
-            from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.linetest.linetest import LinetestFacts
+        if self.state == "rendered":
+            self.generate_commands()
+        elif self.state not in ["parsed", "gathered"]:
+            self.generate_commands()
+            self.run_commands()
+        return self.result
 
-            try:
-                facts = LinetestFacts(self.module).populate_facts(
-                    get_resource_connection(self.module), {"ansible_network_resources": {}}
-                )
-            except Exception as exc:  # like netcommon's facts: a clear failure, no traceback
-                self.module.fail_json(msg=to_text(exc))
-            result["gathered"] = facts["ansible_network_resources"]["linetest"]
-        else:
-            from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.linetest.linetest import LinetestFacts
+    def generate_commands(self):
+        # The raw config (not self.want) is used on purpose: Ansible fills omitted
+        # options with None, and the template renders None for group-opt/busy-overwrite/
+        # force-measure as their trailing-no reset form. remove_empties would drop those.
+        config = self._module.params.get("config") or {}
+        if self.state == "rendered":
+            self.commands = self.template.render(config)
+            return
+        self.commands = self._commands(self.state, config, self.have)
 
-            connection = get_resource_connection(self.module)
-            current = LinetestFacts(self.module).populate_facts(
-                connection, {"ansible_network_resources": {}}
-            )["ansible_network_resources"]["linetest"]
-            desired = self.module.params.get("config") or {}
-            commands = self._commands(state, desired, current)
-            result["commands"] = commands
-            if commands:
-                if not self.module.check_mode:
-                    connection.edit_config(candidate=commands)
-                result["changed"] = True
-        return result
+    @property
+    def template(self):
+        return self._tmplt
 
     def _commands(self, state, desired, current):
         current_sessions = {item["session_id"]: item for item in current.get("sessions", [])}
@@ -58,8 +64,9 @@ class Linetest(object):
 
         if state == "deleted":
             targets = desired or current
+            # A parameter has no delete command; only its session can be destroyed.
             if targets.get("parameters") and not targets.get("sessions"):
-                self.module.fail_json(msg="LineTest parameters have no supported delete command; delete their session instead")
+                self._module.fail_json(msg="LineTest parameters have no supported delete command; delete their session instead")
             return [
                 "configure linetest single ltsession %s session-cmd destroy" % item["session_id"]
                 for item in targets.get("sessions") or []
@@ -89,8 +96,8 @@ class Linetest(object):
                 if session_id not in desired_sessions
             )
             if any(key in current_parameters for key in set(current_parameters) - desired_parameters):
-                self.module.fail_json(msg="LineTest parameters have no supported delete command; delete their session instead")
-        else:
+                self._module.fail_json(msg="LineTest parameters have no supported delete command; delete their session instead")
+        else:  # replaced
             commands.extend(
                 self.template.render({"parameters": [item]})[0]
                 for item in desired.get("parameters") or []
