@@ -7,6 +7,14 @@ validation records do not imply authorization to run disruptive actions.
 
 ### Lab validation
 
+- Fresh approved isolated write test after cleanup: PON troubleshooting statistics
+  interface and thresholds on traffic-free `1/1/6/2` set, changed, read back, checked
+  for merged/replaced idempotence and removed/reset. Every write was dry-run allow-listed;
+  full root flat/detail captures returned exactly to baseline. Added a sanitized live
+  fixture and reconciliation regressions. CFM domain creation was refused because a
+  VMAC HostID must first be configured; that global prerequisite was left untouched,
+  and fresh captures confirmed no CFM domain or other configuration change remained.
+
 - Live write verification on the lab ISAM (approved scope: traffic-free test objects;
   every change read back, reverted and read back; before/after captures identical).
   Verified set and reset/delete forms: QoS shaper profiles (create, two-rate EIR,

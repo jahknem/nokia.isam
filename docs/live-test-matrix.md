@@ -149,14 +149,27 @@ was changed. The mixed-transport test harness timed out collecting post-attempt 
 output; its cleanup dry run and apply returned no commands. Lingering local read workers
 were stopped, then a fresh read-only session confirmed domain 200 absent and full root
 flat and detail configuration identical to preflight (zero differing configuration lines).
-The approved card-6 troubleshooting write test is paused while source-review fixes are
-addressed. No LineTest action or PPPoX global timer change has been attempted.
+The card-6 troubleshooting test was paused for source-review fixes, then completed as
+recorded below. No LineTest action or PPPoX global timer change has been attempted.
 
 Review corrections (2026-11-19): fresh read-only gathered and merged/replaced check-mode
 runs passed for generic-PON, voice-SIP and software management after the parser and
 table-state fixes; all returned empty command lists, `changed=0`, and no failures.
 Action failure/verification behavior and LineTest session-with-parameters removal are
 covered offline; no operational actions or LineTest sessions were executed for this review.
+
+Fresh approved troubleshooting write verification (2026-11-19): card 6 was planned
+GPON with no installed board; PON `1/1/6/2` had no ONTs or operational traffic. Created
+its statistics interface and thresholds (`bw-th-up 100000`, `bw-th-dn 200000`), read
+back exactly, verified merged/replaced no-ops, changed downstream threshold to 250000,
+read back and repeated idempotence checks. Deleted only that statistics interface and
+reset only its two thresholds. Every write matched its check-mode dry-run allow-list;
+full root flat/detail diffs after each step were confined to the test target. Final
+full root flat AND detail configuration matched preflight with zero differing lines.
+No global detection interval, PON operating setting, VMAC prerequisite, VLAN/MEP or
+subscriber configuration was changed. The separate capture/operation sessions completed
+without the earlier harness timeout. Sanitized configured resource lines are pinned in
+`tests/fixtures/trouble_shooting_pon/isolated-write-r6.2.04m/`.
 
 Read-only CLI help confirms CFM domain name/level are immutable and required at
 creation, and confirms EFM OAM, L2CP, PPPoE-client and PPPoE-L2 synthetic fixture grammar.

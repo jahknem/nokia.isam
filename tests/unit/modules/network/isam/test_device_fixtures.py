@@ -824,6 +824,32 @@ def test_voice_sip_unknown_leading_attributes_preserve_known_values():
     }
 
 
+def test_trouble_shooting_pon_isolated_write_fixture_is_parseable():
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.trouble_shooting_pon.trouble_shooting_pon import to_config
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.trouble_shooting_pon import Trouble_shooting_ponTemplate
+
+    descriptor, output = fixture_bundle("trouble_shooting_pon", "isolated-write-r6.2.04m")
+    assert descriptor["source"] == "sanitized-live-capture"
+    assert to_config(Trouble_shooting_ponTemplate(lines=output.splitlines()).parse()) == {
+        "interfaces": [{"name": "1/1/6/2"}],
+        "threshold": {"interfaces": [{"name": "1/1/6/2", "bw_th_up": 100000, "bw_th_dn": 250000}]},
+    }
+
+
+@pytest.mark.parametrize("state", ["merged", "replaced", "deleted"])
+def test_trouble_shooting_pon_isolated_write_reconciliation(monkeypatch, state):
+    from .module_runner import run_module
+
+    _descriptor, output = fixture_bundle("trouble_shooting_pon", "isolated-write-r6.2.04m")
+    config = {"interfaces": [{"name": "1/1/6/2"}],
+              "threshold": {"interfaces": [{"name": "1/1/6/2", "bw_th_up": 100000, "bw_th_dn": 250000}]}}
+    result = run_module(monkeypatch, "isam_trouble_shooting_pon", {"state": state, "config": config}, output)
+    assert not result.get("failed"), result.get("msg")
+    assert result["commands"] == ([] if state != "deleted" else [
+        "configure trouble-shooting pon statistics no interface 1/1/6/2",
+        "configure trouble-shooting pon statistics threshold interface 1/1/6/2 no bw-th-up no bw-th-dn"])
+
+
 def test_channel_pair_pm_synthetic_fixture_is_parseable():
     descriptor, output = fixture_bundle("channel_pair_pm", "r6.2.04m")
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.pon_variants.pon_variants import Channel_pair_pmFacts
