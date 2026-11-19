@@ -85,7 +85,22 @@ class IsamActionModule(object):
         if commands and not self._module.check_mode:
             response = self.run_commands(commands)
             result["response"] = response
-            self.verify(commands, response)
+            try:
+                self.verify(commands, response)
+            except Exception as exc:
+                self._module.fail_json(
+                    msg="ISAM action verification failed: %s. Commands were sent and accepted, "
+                    "but completion is unknown; do not blindly retry the operation." % to_text(exc),
+                    changed=True,
+                    failure_phase="verification",
+                    completion_status="unknown",
+                    commands=commands,
+                    accepted=commands,
+                    completed=[],
+                    failed_command=None,
+                    pending=[],
+                    response=response,
+                )
         return result
 
     def build_commands(self):
@@ -118,7 +133,7 @@ class IsamActionModule(object):
         """Send the commands one per transaction; return the device responses.
 
         On failure, report partial execution: ``completed`` (confirmed sent before the
-        failure), ``failed`` (the command that errored -- outcome unknown) and ``pending``
+        failure), ``failed_command`` (the command that errored -- outcome unknown) and ``pending``
         (never sent). Connection-acquisition and execution errors are both formatted.
         """
         connection = self._connect(commands)
@@ -134,7 +149,7 @@ class IsamActionModule(object):
                     % (index + 1, len(commands), command, to_text(exc), completed, commands[index + 1:]),
                     commands=commands,
                     completed=completed,
-                    failed=command,
+                    failed_command=command,
                     pending=commands[index + 1:],
                     response=responses,
                 )

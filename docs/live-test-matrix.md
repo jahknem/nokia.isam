@@ -37,7 +37,7 @@ traffic-free object with its own name (`zztest`, `192.0.2.1`, unused ids).
 | `isam_alarm` | verified (part) | custom profile create/delete | entries, filters, log (global) |
 | `isam_ani_onts` | verified | card 6 / PON 7/16: entry create/delete | – |
 | `isam_bridges` | verified | card 6: port with 4 VLANs, PVID, L2 forwarders; partial merged; replaced removing/adding a VLAN; deleted | `ageing_time` (global) |
-| `isam_cfm` | verified (part) | SLM timer set/reset | domains |
+| `isam_cfm` | verified (part) | SLM timer set/reset | domain create refused: VMAC HostID prerequisite; not enabled for testing |
 | `isam_equipment` | verified (part) | card 6: slot lock/unlock, replaced restore, unplan (`no planned-type` only) and plan as NDLT-F/NELT-B/FGLT-B | diagnostics SFP, protection elements |
 | `isam_equipment_onts` | verified | card 6: interface, slot, loops, sw-ctrl (test id 200), admin down/up, delete with shutdown | `pm_collects` (XGS ONTs only), sw-ctrl config files (need a real file) |
 | `isam_ethernet_onts` | verified | card 6: UNI settings, phy/l2/cfm sub-nodes, identity and named-field deleted | – |
@@ -140,6 +140,23 @@ eight empty lab resources noted above. These tests exposed and now pin fixes for
 LineTest's redundant replaced-parameter commands and unset-option resets. Their
 configured live write verification remains unavailable without approved changes to
 the lab; offline configured coverage and live empty gathering are distinct claims.
+
+Approved isolated CFM domain attempt (2026-11-19): preflight found no CFM configuration
+and confirmed domain 200 / `string:zztest` unused. Exact dry-run allow-list passed for
+`configure cfm domain 200 name string:zztest level 3`; the device refused it with
+`CFM error 16: VMAC HostID must be configured before configuring CFM`. No VMAC setting
+was changed. The mixed-transport test harness timed out collecting post-attempt detail
+output; its cleanup dry run and apply returned no commands. Lingering local read workers
+were stopped, then a fresh read-only session confirmed domain 200 absent and full root
+flat and detail configuration identical to preflight (zero differing configuration lines).
+The approved card-6 troubleshooting write test is paused while source-review fixes are
+addressed. No LineTest action or PPPoX global timer change has been attempted.
+
+Review corrections (2026-11-19): fresh read-only gathered and merged/replaced check-mode
+runs passed for generic-PON, voice-SIP and software management after the parser and
+table-state fixes; all returned empty command lists, `changed=0`, and no failures.
+Action failure/verification behavior and LineTest session-with-parameters removal are
+covered offline; no operational actions or LineTest sessions were executed for this review.
 
 Read-only CLI help confirms CFM domain name/level are immutable and required at
 creation, and confirms EFM OAM, L2CP, PPPoE-client and PPPoE-L2 synthetic fixture grammar.

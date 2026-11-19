@@ -92,6 +92,14 @@ def test_lt_overridden_unrequested_parameters_fail(monkeypatch):
     assert res.get("failed") and "no supported delete command" in res["msg"]
 
 
+def test_lt_overridden_session_removal_also_removes_its_parameters(monkeypatch):
+    # Parameters under omitted session 1 disappear with it. Session 2 remains;
+    # no standalone parameter deletion (or test action) should be attempted.
+    result = _lt(monkeypatch, "overridden", {"sessions": [{"session_id": "2", "timeout_period": "90"}]})
+    assert not result.get("failed"), result.get("msg")
+    assert result["commands"] == ["configure linetest single ltsession 1 session-cmd destroy"]
+
+
 def test_lt_rendered_is_configuration_only(monkeypatch):
     # Ansible-injected None options are omissions, not reset requests.
     rendered = _lt(monkeypatch, "rendered", {"sessions": [{"session_id": "1", "timeout_period": "120"}]})["rendered"]

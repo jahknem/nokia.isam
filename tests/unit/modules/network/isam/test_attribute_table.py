@@ -66,9 +66,19 @@ def test_parse_raw():
 
 
 def test_parse_keeps_sibling_nodes_out():
-    # the first clause must be a keyword of the node; a later known keyword is not enough
+    # Parent/root groups remain ambiguous: a later keyword alone is not enough.
     assert TABLE.parse("configure demo stats unknown-word cdr enable\n") == {}
     assert TABLE.parse("configure demo profile-list x mode manual\n") == {}
+    assert TABLE.parse("configure demo unknown-node threshold 10\n") == {}
+    assert TABLE.parse("configure demo util unknown-node collect all\n") == {}
+
+
+def test_unknown_leading_attributes_on_explicit_leaf_nodes_keep_known_values():
+    assert TABLE.parse("configure demo profile p1 future-mode active timer 60 domain example.org\n") == {
+        "profile": [{"name": "p1", "timer": 60, "domain": "example.org"}]}
+    assert TABLE.parse("configure demo db future-mode active auto-intvl 48\n") == {"db": {"interval": 48}}
+    assert TABLE.parse("configure demo stats config future-flag per-line\n") == {"stats": {"per_line": True}}
+    assert TABLE.parse("configure demo util limits no future-threshold hi 80\n") == {"util": {"limits": {"hi": "80"}}}
 
 
 def test_parse_drops_comments_outside_quotes():

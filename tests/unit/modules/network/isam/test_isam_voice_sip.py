@@ -179,7 +179,7 @@ class TestIsamVoiceSipModule(TestIsamModule):
         result = self.execute_module(changed=False)
         self.assertEqual(result.get("commands", []), [])
 
-    def test_isam_voice_sip_replaced_removes_unrequested_vsp(self):
+    def test_isam_voice_sip_replaced_preserves_unrequested_vsp(self):
         self.get_config.return_value = dedent(
             """\
             configure voice sip vsp vsp1 domain-name DomainName.com
@@ -193,9 +193,8 @@ class TestIsamVoiceSipModule(TestIsamModule):
             ),
             ignore_provider_arg,
         )
-        result = self.execute_module(changed=True)
-        self.assertIn("configure voice sip no vsp vsp2", result["commands"])
-        self.assertNotIn("configure voice sip no vsp vsp1", result["commands"])
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["commands"], [])
 
     def test_isam_voice_sip_deleted_targets_only_requested_vsp(self):
         self.get_config.return_value = dedent(

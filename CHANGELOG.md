@@ -108,6 +108,19 @@ validation records do not imply authorization to run disruptive actions.
     document that R6.2.04m shows the setting in no read.
 ### Shared infrastructure, state semantics and safety
 
+- Review fixes: operational partial failures now use `failed_command`, not Ansible's
+  reserved `failed` boolean; regression tests exercise the real module entrypoint and
+  JSON failure serialization. Verification exceptions retain commands/responses and
+  distinguish accepted operations from unknown completion, without retrying anything.
+- Table-driven `replaced` preserves unnamed list instances (including SIP VSPs and
+  software OSWPs); only `overridden` removes them. Named-instance omitted attributes
+  still reset where the device supports it. LineTest `overridden` now permits removing
+  a session together with its parameters, while rejecting unsupported parameter-only
+  deletion on retained sessions.
+- Attribute-table parsing retains known clauses after unknown leading attributes on
+  explicit leaf nodes. Ambiguous root/parent groups keep sibling-node protection;
+  a synthetic forward-compatibility fixture and parser regressions pin both cases.
+
 - Fixed redacted gathered-facts replay in `system_security`: device masks and Ansible's
   `VALUE_SPECIFIED_IN_NO_LOG_PARAMETER` preserve existing secrets rather than generating
   placeholder credential commands. Masked credentials are omitted from unrelated updates
@@ -261,7 +274,7 @@ validation records do not imply authorization to run disruptive actions.
   in `docs/development-style.md`. The cliconf now resets the CLI context (`exit all`) before
   `admin` commands as well as `configure` commands (both are absolute paths from the root).
 - Hardened `IsamActionModule` execution safety: commands are sent one per transaction so a
-  failure reports partial execution (`completed` / `failed` with unknown outcome / `pending`),
+  failure reports partial execution (`completed` / `failed_command` with unknown outcome / `pending`),
   preventing blind retries of non-idempotent operations; connection-acquisition errors are
   formatted like execution errors; a `send_command` hook handles expected transport loss
   (reboot) and interactive prompts during execution (before `verify`); `validate_identifier`

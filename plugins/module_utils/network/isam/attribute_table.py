@@ -227,6 +227,12 @@ class AttributeTable(object):
                 path = attr.node or node.cli
                 groups.setdefault((path, id(node)), (path.split(), node, []))[2].append(attr)
         self._groups = sorted(groups.values(), key=lambda group: -len(group[0]))
+        paths = [tuple(words) for words, _node, _attrs in self._groups]
+        # An explicit leaf path identifies its node even when a new firmware
+        # keyword precedes the attributes we know. Prefix-only/root and parent
+        # groups still need a known first clause to avoid consuming sibling nodes.
+        self._leaf_paths = {path for path in paths if path and not any(
+            len(other) > len(path) and other[:len(path)] == path for other in paths)}
 
     def node(self, key):
         """The node whose path ends in key (a name or a path tuple)."""
@@ -253,7 +259,7 @@ class AttributeTable(object):
                     if not rest:
                         break
                     name, rest = rest[0], rest[1:]
-                if not self._belongs(rest, attrs):
+                if tuple(words) not in self._leaf_paths and not self._belongs(rest, attrs):
                     continue
                 values = self._parse_values(rest, attrs)
                 if node.is_list:
@@ -271,9 +277,12 @@ class AttributeTable(object):
 
     @staticmethod
     def _belongs(rest, attrs):
-        """A line belongs to a parse group when it is bare or starts with one of its
-        keywords (keeps sibling nodes out: 'configure pon interface ...' is not a
-        'configure pon' settings line)."""
+        """Guard ambiguous root/parent groups with a known first clause or bare line.
+
+        Explicit leaf paths bypass this guard. A later known keyword alone cannot
+        prove an ambiguous line belongs to its parent ('configure pon interface ...'
+        is not a 'configure pon' settings line).
+        """
         if not rest:
             return True
         first = rest[1] if rest[0] == "no" and len(rest) > 1 else rest[0]

@@ -126,7 +126,7 @@ def test_partial_execution_reports_completed_failed_pending():
                     check_mode=False).execute_module()
     kw = exc.value.kwargs
     assert kw["completed"] == [_cmd("1/1/1/1")]
-    assert kw["failed"] == _cmd("1/1/1/2")
+    assert kw["failed_command"] == _cmd("1/1/1/2")
     assert kw["pending"] == [_cmd("1/1/1/3")]
     assert kw["response"] == ["ok"]  # only the first command answered
     assert "unknown" in kw["msg"] and "do not blindly retry" in kw["msg"]
@@ -168,8 +168,15 @@ def test_failed_verification_propagates():
             raise RuntimeError("operation did not complete")
 
     with patch(CONNECTION, return_value=FakeConnection()):
-        with pytest.raises(RuntimeError, match="did not complete"):
+        with pytest.raises(FakeFail) as exc:
             Action(FakeModule([], check_mode=False)).execute_module()
+    failure = exc.value.kwargs
+    assert "did not complete" in failure["msg"]
+    assert failure["failure_phase"] == "verification"
+    assert failure["completion_status"] == "unknown"
+    assert failure["commands"] == failure["accepted"] == ["admin demo clear"]
+    assert failure["response"] == ["ok"]
+    assert failure["completed"] == failure["pending"] == []
 
 
 def test_expected_disconnect_handled_in_send_command_then_verified():

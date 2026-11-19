@@ -416,6 +416,21 @@ options:
           outg_cpn_length:
             description: Mandatory value C(configure voice sip cas-nsm-prof outg-cpn-length) (no removal form).
             type: int
+  running_config:
+    description: Device-native configuration to parse with C(parsed).
+    type: str
+  state:
+    description:
+      - The desired state of the resource.
+      - C(replaced) reconciles named instances and leaves unnamed instances untouched;
+        only C(overridden) removes instances absent from the requested configuration.
+      - C(deleted) with configuration touches only named sections and instances.
+        Without configuration it removes instances and resets removable settings.
+      - C(gathered) with configuration reads only the named instances; without it,
+        the whole resource is read. C(parsed) and C(rendered) do not write to the device.
+    type: str
+    choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
+    default: merged
 """
 
 EXAMPLES = """

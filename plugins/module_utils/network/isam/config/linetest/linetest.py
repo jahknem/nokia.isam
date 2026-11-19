@@ -88,7 +88,9 @@ class Linetest(IsamResourceModule):
                 for session_id in current_sessions
                 if session_id not in desired_sessions
             )
-            if any(key in current_parameters for key in set(current_parameters) - desired_parameters):
+            # Destroying a session also removes its parameters. Only parameters
+            # omitted from a retained session would need an unsupported deletion.
+            if any(key[0] in desired_sessions for key in set(current_parameters) - desired_parameters):
                 self._module.fail_json(msg="LineTest parameters have no supported delete command; delete their session instead")
         return commands + self._diff_commands(current, desired)
 
