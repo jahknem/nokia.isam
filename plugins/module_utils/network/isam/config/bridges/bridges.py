@@ -189,7 +189,7 @@ class Bridges(IsamResourceModule):
         sit next to the full one and replace it (its omitted attributes removed).
         """
         merged = {}
-        for key in set(haved) | set(wantd):
+        for key in dict.fromkeys(list(haved) + list(wantd)):
             have, want = haved.get(key, {}), wantd.get(key)
             if want is None:
                 merged[key] = have

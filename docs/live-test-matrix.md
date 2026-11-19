@@ -1,9 +1,38 @@
 # Live test matrix
 
-What has been verified on the lab ISAM `DS-LIN-TEST-01` (R6.2.04m) and what remains.
+What has been verified on the sanitized lab ISAM (R6.2.04m) and what remains.
 Update this file with every live run; tests listed as verified are not repeated unless
 the module's write path changes. Details and device behaviour:
 `live-validation-2026-11-18.md`.
+
+## 1.0 preparation versus published 0.3.14
+
+The entries below record historical feature-branch evidence. They are retained
+for provenance, not represented as fresh verification of a 1.0 artifact. No device
+writes are part of this major-version integration, no new global operations are
+authorized, and NOC is unchanged. The 1.0 tag and release remain unpublished.
+
+The published 0.3.14 patch was isolated from 0.3.13; its exact boundary is retained
+in [the patch audit](release-0.3.14-audit.md). Its CI on `2807ce22` passed 1,376
+tests, 58 skipped and 2 subtests, plus lint/typecheck/docs and the devcontainer
+build. Its archive/checksum were downloaded and verified after publication.
+Those patch results must not be counted as 1.0 validation.
+
+### Major-preparation gates (2026-11-19)
+
+- Full unit tree, including connection plugins and offline private-capture replay:
+  **2,864 passed, 14 skipped, 247 subtests passed**. `ISAM_ROOT_CAPTURES` selects
+  the private capture directory explicitly; captures and logs stay outside the
+  distributable collection. This run performs no live device operations.
+- All 54 migration/inherited-safety regressions passed, including real Ansible
+  action-failure serialization, identifier newline rejection, scoped replacement,
+  special-character VLAN names and the documented breaking-schema examples.
+- Lint, type checking and all module/connection documentation checks passed.
+- The 1.0 candidate archive passed version, content-scope and per-file checksum
+  checks. An isolated install validated documentation for all 72 modules and real
+  check-mode entrypoints for generic PON, SIP, VLANs and Ethernet statistics.
+- Tox now isolates collection/dependency layouts per environment, and release
+  branches run CI without requiring a tag or publication.
 
 ## Reads (all families, 2026-11-18)
 

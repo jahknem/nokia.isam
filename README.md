@@ -6,6 +6,10 @@ This Ansible Collection contains modules to manage Nokia ISAM FTTN 7330 devices.
 
 ## Available Modules
 
+**1.0 upgrade preparation:** this branch includes intentional schema changes from
+0.3.14. Read [Upgrading to 1.0](docs/upgrade-1.0.0.md) before changing inventories,
+playbooks or fact consumers. The 1.0 tag/artifact has not been published yet.
+
 For copying ONT configurations, full-entry deletion and check-mode limitations,
 see [ONT configuration change sets](docs/ont-change-sets.md).
 
@@ -31,6 +35,40 @@ see [ONT configuration change sets](docs/ont-change-sets.md).
 | Module | Description |
 | --- | --- |
 | `isam_facts` | Collects facts and structured network resources from all registered modules |
+
+The major-version line adds an opt-in lossless root configuration tree:
+
+```yaml
+- name: Inspect the root configuration tree without applying changes
+  nokia.isam.isam_facts:
+    gather_subset:
+      - "!all"
+      - config_tree
+```
+
+`config_tree_detail: true` includes device defaults. Root-tree diagnostics are not
+a configuration replay format, and unknown syntax can defeat heuristic redaction;
+review diagnostic output privately before sharing it.
+
+Additional resource modules cover system security, QoS global/TCA settings,
+CWMP, error logging, NAT, PON global settings, PPPoX global sessions, PON
+troubleshooting, xDSL INM/ONT/system settings and L2UNI/UNI ONTs. Consult
+`ansible-doc nokia.isam.<module>` for their complete option/state contracts and
+the [live-test matrix](docs/live-test-matrix.md) for verification limits.
+
+### Operational Action Modules
+
+| Module | Explicit operation |
+| --- | --- |
+| `isam_security_ext_authenticator` | `clear_statistics` |
+| `isam_ethernet_statistics` | `clear_stats` |
+| `isam_dhcp_relay_port_stats` | `clear_statistics` |
+| `isam_bridge_learned_mac` | `delete` |
+
+Actions are one-shot events, not desired-state convergence. Check mode reports
+commands without connecting; it does not authorize execution. On partial or
+verification failure, inspect accepted/completed/failed_command/pending command context
+and do not blindly retry operations with an unknown outcome.
 
 The facts module also provides opt-in shared configuration gathering. It reads
 the complete flat configuration with one `info configure flat` request and

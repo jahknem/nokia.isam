@@ -62,9 +62,10 @@ def test_command_format_and_identifier_validation(cls, flag, ident, template):
     for port in ("1/1/6/1", "lt:1/1/6", "lt-link:1/1/6/1", "vlan:1/1/6/1:3990"):
         action = cls(FakeModule([{ident: port, flag: True}]))
         assert action.build_commands() == [template % port]
-    with pytest.raises(FakeFail) as exc:
-        cls(FakeModule([{ident: "1/1/6/1 reboot", flag: True}])).build_commands()
-    assert "Invalid port" in exc.value.kwargs["msg"]
+    for unsafe in ("1/1/6/1 reboot", "1/1/6/1\n", "1/1/6/1\r", "1/1/6/1;exit"):
+        with pytest.raises(FakeFail) as exc:
+            cls(FakeModule([{ident: unsafe, flag: True}])).build_commands()
+        assert "Invalid port" in exc.value.kwargs["msg"]
 
 
 @pytest.mark.parametrize("cls,flag,ident,template", PORT_MODULES)
@@ -107,7 +108,7 @@ def test_bridge_operation_is_required():
 
 
 @pytest.mark.parametrize("mac", ["aa:bb:cc:dd:ee", "aa:bb:cc:dd:ee:ff:00", "zz:bb:cc:dd:ee:ff",
-                                 "aabb.ccdd.eeff", "aa bb cc dd ee ff", "", "aa:bb:cc:dd:ee:gg"])
+                                 "aabb.ccdd.eeff", "aa bb cc dd ee ff", "", "aa:bb:cc:dd:ee:gg", "aa:bb:cc:dd:ee:ff\n"])
 def test_bridge_invalid_mac_rejected(mac):
     with pytest.raises(FakeFail) as exc:
         Isam_bridge_learned_mac(FakeModule([_mac_entry(mac=mac)])).build_commands()

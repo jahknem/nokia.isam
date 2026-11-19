@@ -26,6 +26,14 @@
         "sw_ctrls": {
           "type": "array",
           "items": {"$ref": "#/$defs/resource"}
+        },
+        "loops": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/resource"}
+        },
+        "pm_collects": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/resource"}
         }
       },
       "additionalProperties": false
