@@ -53,6 +53,31 @@ def _offline_config(resource):
     return resource.state in getattr(resource, "ACTION_STATES", ()) and bool(params.get("running_config"))
 
 
+def _offline_unknown_fields(value, spec, path="config"):
+    """Field paths in a canonical running_config that the config argspec does not know.
+
+    Without this check a wrong or renamed field silently yields zero removal commands;
+    here it is reported so the caller can fix the snapshot instead of deleting nothing.
+    """
+    unknown = []
+    kind = spec.get("type", "str")
+    if kind == "dict" and isinstance(value, dict):
+        options = spec.get("options") or {}
+        valid = set(options)
+        for sub in options.values():
+            valid.update(sub.get("aliases") or [])
+        for key, item in value.items():
+            if key not in valid:
+                unknown.append("%s.%s" % (path, key))
+            elif key in options:
+                unknown += _offline_unknown_fields(item, options[key], "%s.%s" % (path, key))
+    elif kind == "list" and isinstance(value, list):
+        element = {"type": spec.get("elements", "str"), "options": spec.get("options")}
+        for index, item in enumerate(value):
+            unknown += _offline_unknown_fields(item, element, "%s[%d]" % (path, index))
+    return unknown
+
+
 class IsamResourceModule(ResourceModule):
     """ResourceModule for ISAM CLI resources (see the module docstring)."""
 
@@ -68,7 +93,14 @@ class IsamResourceModule(ResourceModule):
         if _offline_config(self):
             running_config = self._module.params["running_config"]
             if running_config.strip()[:1] in ("{", "["):
-                return deepcopy(json.loads(running_config))
+                parsed = json.loads(running_config)
+                spec = (getattr(self._module, "argument_spec", None) or {}).get("config") or {}
+                unknown = _offline_unknown_fields(parsed, spec)
+                if unknown:
+                    self._module.fail_json(
+                        msg="running_config contains fields unknown to the argspec: %s" % ", ".join(sorted(set(unknown)))
+                    )
+                return deepcopy(parsed)
             return deepcopy(self.get_facts(self._empty_fact_val, data=running_config))
         return super(IsamResourceModule, self).gather_current()
 
@@ -131,7 +163,7 @@ class IsamResourceModule(ResourceModule):
             emit_warnings(self._module, result)
             result["commands"] = self.commands
             result["before"] = self.before
-            result["changed"] = bool(self.commands)
+            result["changed"] = False
             return result
         return super(IsamResourceModule, self).result
 
