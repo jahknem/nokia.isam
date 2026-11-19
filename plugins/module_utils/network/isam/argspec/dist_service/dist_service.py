@@ -17,9 +17,8 @@ class Isam_dist_serviceArgs(object):
                 "service_type": {
                     "type": "str",
                     "choices": ["unknown", "epipe", "p3pipe", "tls", "vprn", "ies", "mirror", "apipe", "fpipe", "ipipe", "cpipe"],
-                    "default": "apipe",
                 },
-                "qos_profile": {"type": "str", "default": "none"},
+                "qos_profile": {"type": "str"},
             },
         },
         "running_config": {"type": "str"},

@@ -11,7 +11,7 @@ class Isam_ipv6_antispoofing_slotArgs(object):
             "options": {
                 "name": {"type": "str", "required": True},
                 # Range 64..128 (device type ipv6::bitLength) is enforced by the config class.
-                "bit_len": {"type": "int", "default": 64},
+                "bit_len": {"type": "int"},
             },
         },
         "running_config": {"type": "str"},

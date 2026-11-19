@@ -117,6 +117,15 @@
   one of its settings was named; `isam_vlan_global` deleting a priority-regen entry also
   reset broadcast-frames and tpid. All now use the shared `deleted_targets` /
   `covers_entry` rules. `isam_dhcp_server` sent `no lease-time` twice in merged.
+- Device defaults out of the argspecs (they were injected into every request):
+  `isam_vlans` merged renaming a VLAN reset `protocol-filter`, `new-broadcast` and
+  `drly-srv-usr-side`; `deleted` naming a setting deleted the whole VLAN and sent
+  `no id` for VLANs that do not exist (verified on the device with VLAN 3990).
+  `isam_dist_service` merged reset the service type to apipe; `deleted` left the service
+  (now `configure no dist-service <id>`, verified), the bare service line was not read.
+  `isam_l2cp` and `isam_ipv6_antispoofing_slot` merged reset an unnamed setting;
+  `isam_ipv6_antispoofing_slot` replaced reset unlisted slots. Facts of these families
+  no longer report device defaults.
 - Live verification on the lab ISAM (read-only / check mode). Every resource module's
   live `gathered` matches the parse of a fresh capture; 57 targeted reads and 102
   check-mode merged/replaced/overridden runs with the gathered facts as config. Fixed:

@@ -22,7 +22,7 @@ class Isam_dist_serviceFacts(object):
         """The whole resource, or only the services named in config (targeted gathering)."""
         return get_targeted_config(self._module, connection, "isam_dist_service", "info configure dist-service flat", {
             "config": "info configure dist-service %s flat",
-        })
+        }, bare_sections=("config",))  # a service with only defaults answers its single read with a header (lab ISAM)
 
     def populate_facts(self, connection, ansible_facts, data=None):
         data = unwrap_response(data if data else self.get_config(connection))

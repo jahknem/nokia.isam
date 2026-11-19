@@ -372,3 +372,41 @@ def test_dhcp_server_lease_time_reset_is_sent_once(monkeypatch):
     result = run_module(monkeypatch, "isam_dhcp_server", {"state": "merged", "config": {"lease_time_enabled": False}},
                         "configure dhcp-server lease-time 3600\n")
     assert result["commands"].count("configure dhcp-server no lease-time") == 1, result["commands"]
+
+
+VLAN_110 = ("configure vlan id 110 mode residential-bridge name Internet new-broadcast enable protocol-filter pass-pppoe "
+            "drly-srv-usr-side\n")
+
+
+def test_vlan_merged_does_not_reset_unnamed_settings(monkeypatch):
+    """Argspec defaults were injected: renaming a VLAN reset protocol-filter pass-pppoe to pass-all."""
+    commands = run_module(monkeypatch, "isam_vlans", {"state": "merged", "config": [{"id": 110, "name": "Internet2"}]},
+                          VLAN_110)["commands"]
+    assert commands == ["configure vlan id 110 name Internet2"]
+
+
+def test_vlan_deleted_named_setting_keeps_the_vlan_and_absent_vlans_are_skipped(monkeypatch):
+    def deleted(config):
+        return run_module(monkeypatch, "isam_vlans", {"state": "deleted", "config": config}, VLAN_110)["commands"]
+
+    assert deleted([{"id": 110, "protocol-filter": "pass-pppoe"}]) == ["configure vlan id 110 no protocol-filter"]
+    assert deleted([{"id": 110}]) == ["configure vlan no id 110"]
+    assert deleted([{"id": 3999}]) == []
+
+
+def test_l2cp_merged_without_partition_type_keeps_it(monkeypatch):
+    running = "configure l2cp partition-type fixed-assigned\n"
+    assert run_module(monkeypatch, "isam_l2cp", {"state": "merged", "config": [{"name": "l2cp"}]}, running)["commands"] == []
+    assert run_module(monkeypatch, "isam_l2cp", {"state": "replaced", "config": [{"name": "l2cp"}]}, running)["commands"] == [
+        "configure l2cp no partition-type"]
+
+
+def test_ipv6_antispoofing_merged_keeps_and_replaced_resets_only_named_slots(monkeypatch):
+    running = "configure ipv6-antispoofing slot 1/1/6 bit-len 128\nconfigure ipv6-antispoofing slot 1/1/7 bit-len 96\n"
+
+    def commands(state, config):
+        return run_module(monkeypatch, "isam_ipv6_antispoofing_slot", {"state": state, "config": config}, running)["commands"]
+
+    assert commands("merged", [{"name": "1/1/6"}]) == []
+    assert commands("replaced", [{"name": "1/1/6"}]) == ["configure ipv6-antispoofing slot 1/1/6 no bit-len"]
+    assert commands("overridden", [{"name": "1/1/6", "bit_len": 128}]) == ["configure ipv6-antispoofing slot 1/1/7 no bit-len"]
