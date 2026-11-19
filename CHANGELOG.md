@@ -185,6 +185,17 @@
   `group-opt`/`busy-overwrite`/`force-measure` reset with a trailing `no`. Read-only on the
   lab ISAM (no LineTest configured): gathered returns the empty structure, rendered emits
   declarative commands only.
+- New `IsamActionModule` base (`module_utils/network/isam/action_module.py`) for operational
+  action modules -- one-shot device operations (`admin ...`) that write but have no desired
+  state, distinct from both Ansible action plugins (controller-side) and `IsamResourceModule`
+  (persistent config). The base handles check mode, sending, responses and failure
+  propagation; modules require an explicit operation and may verify completion.
+  `isam_security_ext_authenticator` now uses it. **Bug fix:** with `clear_statistics: false`
+  it sent the bare resource path `admin security ext-authenticator <port>` (which only
+  navigates the admin hierarchy, CLI guide global commands) and reported `changed: true`;
+  it now rejects an entry without the `clear-statistics` operation. Documented the category
+  in `docs/development-style.md`. The cliconf now resets the CLI context (`exit all`) before
+  `admin` commands as well as `configure` commands (both are absolute paths from the root).
 - Device defaults out of the argspecs (they were injected into every request):
   `isam_vlans` merged renaming a VLAN reset `protocol-filter`, `new-broadcast` and
   `drly-srv-usr-side`; `deleted` naming a setting deleted the whole VLAN and sent

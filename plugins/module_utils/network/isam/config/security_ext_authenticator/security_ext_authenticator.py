@@ -1,23 +1,31 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import absolute_import, division, print_function
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base import (
-    get_resource_connection,
-)
+__metaclass__ = type
+
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.action_module import IsamActionModule
 
 
-class Isam_security_ext_authenticator(object):
-    """Execute the documented, non-persistent 802.1X administrative action."""
+class Isam_security_ext_authenticator(IsamActionModule):
+    """Run the 802.1X port authentication administrative action (CLI guide 227.2).
 
-    def __init__(self, module):
-        self.module = module
+    ``admin security ext-authenticator <port> clear-statistics`` clears the port's
+    non-accounting authentication statistics. ``clear-statistics`` is the operation:
+    a bare ``admin security ext-authenticator <port>`` only navigates to the port in
+    the admin hierarchy and performs no action, so it is rejected rather than reported
+    as a change.
+    """
 
-    def execute_module(self):
+    def build_commands(self):
         commands = []
-        for entry in self.module.params.get("config") or []:
-            command = "admin security ext-authenticator %s" % entry["port"]
-            if entry.get("clear_statistics"):
-                command += " clear-statistics"
-            commands.append(command)
-        if commands and not self.module.check_mode:
-            get_resource_connection(self.module).edit_config(candidate=commands)
-        return {"changed": bool(commands), "commands": commands}
+        for entry in self._module.params.get("config") or []:
+            if not entry.get("clear_statistics"):
+                self._module.fail_json(
+                    msg="An explicit operation is required: clear_statistics must be true. "
+                    "A bare admin security ext-authenticator <port> only navigates to the "
+                    "port and performs no action.",
+                    port=entry.get("port"),
+                )
+            commands.append("admin security ext-authenticator %s clear-statistics" % entry["port"])
+        return commands
