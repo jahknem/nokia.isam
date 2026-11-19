@@ -23,12 +23,18 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
     dict_merge,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import covers_entry, deleted_targets
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.vlans import (
+    VLAN_DEFAULTS,
     VlansTemplate,
 )
+
+
+def _without_defaults(entry):
+    return dict((key, value) for key, value in entry.items() if value is not None and VLAN_DEFAULTS.get(key) != value)
 
 
 class Vlans(IsamResourceModule):
@@ -189,13 +195,21 @@ class Vlans(IsamResourceModule):
         return commands
 
     def _generate_vlan_state_commands(self):
-        want = {str(item["id"]): item for item in self.want or []}
-        have = {str(item["id"]): item for item in self.have or []}
+        want = dict((str(item["id"]), _without_defaults(item)) for item in self.want or [])
+        have = dict((str(item["id"]), _without_defaults(item)) for item in self.have or [])
         commands = []
 
         if self.state == "deleted":
-            targets = want.keys() if want else have.keys()
-            return ["configure vlan no id {0}".format(vlan_id) for vlan_id in targets]
+            # an identity (or a full entry) removes the VLAN; named settings reset only
+            # themselves (naming "name" must not delete the VLAN); absent VLANs are skipped
+            for target, current in deleted_targets(want, have, ("id",)):
+                vlan_id = str(current["id"])
+                if covers_entry(want.get(vlan_id, {}), current, ("id",)):
+                    commands.append("configure vlan no id {0}".format(vlan_id))
+                    continue
+                for field in sorted(set(current) - set(target)):
+                    commands.append("configure vlan id {0} no {1}".format(vlan_id, field))
+            return commands
 
         if self.state == "overridden":
             for vlan_id in have:

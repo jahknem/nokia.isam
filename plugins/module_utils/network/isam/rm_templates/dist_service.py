@@ -13,12 +13,20 @@ class Isam_dist_serviceTemplate(NetworkTemplate):
 
     PARSERS = [
         {
+            # a service without attributes (all at their default) is printed bare
+            "name": "service",
+            "getval": re.compile(r"^configure\s+dist-service\s+(?P<name>\S+)$"),
+            "setval": "configure dist-service {{ name }}",
+            "remval": "configure no dist-service {{ name }}",
+            "result": {"{{ name }}": {"name": "{{ name }}"}},
+        },
+        {
             "name": "service_type",
             "compval": "service_type",
             "getval": re.compile(r"^configure\s+dist-service\s+(?P<name>\S+)\s+(?P<negate>no\s+)?service-type(?:\s+(?P<service_type>\S+))?$"),
             "setval": "configure dist-service {{ name }} service-type {{ service_type }}",
             "remval": "configure dist-service {{ name }} no service-type",
-            "result": {"{{ name }}": {"name": "{{ name }}", "service_type": "{{ 'apipe' if negate is defined else service_type }}"}},
+            "result": {"{{ name }}": {"name": "{{ name }}", "service_type": "{{ none if negate is defined else service_type }}"}},
         },
         {
             "name": "qos_profile",
@@ -26,6 +34,6 @@ class Isam_dist_serviceTemplate(NetworkTemplate):
             "getval": re.compile(r"^configure\s+dist-service\s+(?P<name>\S+)\s+(?P<negate>no\s+)?qos-profile(?:\s+(?P<qos_profile>\S+))?$"),
             "setval": "configure dist-service {{ name }} qos-profile {{ qos_profile }}",
             "remval": "configure dist-service {{ name }} no qos-profile",
-            "result": {"{{ name }}": {"name": "{{ name }}", "qos_profile": "{{ 'none' if negate is defined else qos_profile }}"}},
+            "result": {"{{ name }}": {"name": "{{ name }}", "qos_profile": "{{ none if negate is defined else qos_profile }}"}},
         },
     ]

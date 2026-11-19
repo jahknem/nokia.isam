@@ -9,6 +9,8 @@ import os
 
 import pytest
 
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.vlans import VLAN_DEFAULTS
+
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.vlans.vlans import (
     VlansArgs,
 )
@@ -52,13 +54,14 @@ def test_detail_values_match_configured_read():
     configured = _facts(CONFIGURED)["99"]
     # Detail adds explicit False for the "no <flag>" defaults; values agree otherwise.
     assert {k: v for k, v in detail.items() if v is not False} == {k: v for k, v in configured.items() if v is not False}
-    assert detail["new-broadcast"] == "inherit"
-    assert detail["protocol-filter"] == "pass-all"
+    # device defaults are not reported (detail prints them explicitly, flat omits them)
+    assert "new-broadcast" not in detail and "protocol-filter" not in detail
 
 
 def test_explicit_new_broadcast_values_still_parse():
-    for value in ("enable", "disable", "inherit"):
+    for value in ("enable", "disable"):
         assert _facts("configure vlan id 5 new-broadcast %s" % value)["5"]["new-broadcast"] == value
+    assert "new-broadcast" not in _facts("configure vlan id 5 new-broadcast inherit")["5"]  # the default
 
 
 class TestVlansGaps(_Base):
@@ -136,13 +139,16 @@ def test_capture_every_token_is_modelled_and_read_into_its_field(name):
             key = tokens[i + 1] if negated else tokens[i]
             assert key in spec, (line, key)
             if key in _VLAN_BOOLEAN_FIELDS:
-                assert entry.get(key) is (not negated), (line, key)
+                expected = None if VLAN_DEFAULTS.get(key) is (not negated) else (not negated)
+                assert entry.get(key) is expected, (line, key)
                 i += 2 if negated else 1
             elif negated:
                 assert entry.get(key) in (None, spec[key].get("default")), (line, key, entry.get(key))
                 i += 2
             else:
                 expected = int(tokens[i + 1]) if spec[key]["type"] == "int" else tokens[i + 1]
+                if VLAN_DEFAULTS.get(key) == expected:
+                    expected = None  # a device default is not reported
                 assert entry.get(key) == expected, (line, key, entry.get(key))
                 i += 2
             checked += 1

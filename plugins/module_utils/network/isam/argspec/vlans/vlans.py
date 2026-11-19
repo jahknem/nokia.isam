@@ -54,7 +54,6 @@ class VlansArgs(object):  # pylint: disable=R0903
                 "new-broadcast": {
                     "type": "str",
                     "choices": ["inherit", "enable", "disable"],
-                    "default": "inherit",
                 },
                 "protocol-filter": {
                     "type": "str",
@@ -68,13 +67,12 @@ class VlansArgs(object):  # pylint: disable=R0903
                         "pass-ipoe-ipv6oe",
                         "pass-pppoe-ipoe-ipv6oe",
                     ],
-                    "default": "pass-all",
                 },
                 "pppoe-relay-tag": {
                     "type": "str",
                     "choices": ["true", "false", "configurable"],
                 },
-                "drly-srv-usr-side": {"type": "bool", "default": False},
+                "drly-srv-usr-side": {"type": "bool"},
                 "dhcp-opt82-ext": {
                     "type": "str",
                     "choices": ["enable", "add-or-forward"],
