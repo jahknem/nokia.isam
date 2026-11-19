@@ -92,15 +92,6 @@ class Xdsl_lines(IsamResourceModule):
         self.parsers.append("tca_line_threshold.enable")
         self.parsers.extend("tca_line_threshold." + field for field in XDSL_TCA_FIELDS)
 
-    def execute_module(self):
-        """Execute the module."""
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     def generate_commands(self):
         """Generate configuration commands from want, have and state."""
         wantd = self._index_by_id(self.want)

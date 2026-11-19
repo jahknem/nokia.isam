@@ -136,7 +136,7 @@ class Isam_systemFacts(object):
                 # 'configure system id <node-id> name ...'; the legacy block form
                 # ('id' / 'name X') has no node id
                 if values[0] not in ("name", "location", "contact", "no") + SETTINGS["id"][2] + tuple(
-                        cli for _o, cli, _k in SETTINGS["id"][1]):
+                        attr.cli for attr in SETTINGS["id"][1]):
                     id_section["node_id"] = values[0]
                 self._copy_token_value(values, "name", id_section, "name")
                 self._copy_token_value(values, "location", id_section, "location")

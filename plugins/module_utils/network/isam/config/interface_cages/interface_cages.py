@@ -50,19 +50,6 @@ class InterfaceCages(IsamResourceModule):
             "cage.apply_qos",
         ]
 
-    def execute_module(self):
-        """ Execute the module
-
-        :rtype: A dictionary
-        :returns: The result from module execution
-        """
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     def generate_commands(self):
         """ Generate configuration commands to send based on
             want, have and desired state.

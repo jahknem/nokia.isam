@@ -1,1 +1,1 @@
-configure cfm domain 1 level 0
+configure cfm domain 1 name string fixture level 0

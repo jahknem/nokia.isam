@@ -58,10 +58,9 @@ class Isam_traps(IsamResourceModule):
     def _render_commands(self):
         for entry in (self.want or {}).get("definitions", []):
             self._render_definition(entry)
-        for entry in (self.want or {}).get("managers", []):
-            self._render_manager(entry)
-        for entry in (self.want or {}).get("v6managers", []):
-            self._render_v6manager(entry)
+        for section, identity, prefix in (("managers", "address", "manager"), ("v6managers", "ipv6address", "v6manager")):
+            for entry in (self.want or {}).get(section, []):
+                self._render_manager(entry, prefix, identity)
 
     def _render_definition(self, entry):
         name = entry.get("name")
@@ -74,31 +73,11 @@ class Isam_traps(IsamResourceModule):
         else:
             self.commands.append("configure trap definition %s" % name)
 
-    def _render_manager(self, entry):
-        address = entry.get("address")
+    def _render_manager(self, entry, prefix="manager", identity="address"):
+        address = entry.get(identity)
         if not address:
             return
-        parts = ["configure trap manager %s" % address]
-        if "priority" in entry and entry["priority"]:
-            parts.append("priority %s" % entry["priority"])
-        for cli_name in TRAP_TYPE_NAMES:
-            field = canonical_key(cli_name)
-            val = entry.get(field)
-            if val is True:
-                parts.append(cli_name)
-            elif val is False:
-                parts.append("no %s" % cli_name)
-        for field, cli_name in SHAPING_FIELDS:
-            val = entry.get(field)
-            if val is not None and val != "":
-                parts.append("%s %s" % (cli_name, val))
-        self.commands.append(" ".join(parts))
-
-    def _render_v6manager(self, entry):
-        address = entry.get("ipv6address")
-        if not address:
-            return
-        parts = ["configure trap v6manager %s" % address]
+        parts = ["configure trap %s %s" % (prefix, address)]
         if "priority" in entry and entry["priority"]:
             parts.append("priority %s" % entry["priority"])
         for cli_name in TRAP_TYPE_NAMES:
@@ -157,14 +136,14 @@ class Isam_traps(IsamResourceModule):
                 have_entry = h_map.get(key, {})
                 if have_entry:
                     self._reset_omitted_trap_types(
-                        want_entry, have_entry, section, key_field
+                        want_entry, have_entry, section
                     )
 
         for key, want_entry in iteritems(w_map):
             have_entry = h_map.pop(key, {})
             self._compare_entry(want_entry, have_entry, section, key_field)
 
-    def _reset_omitted_trap_types(self, want, have, section, key_field):
+    def _reset_omitted_trap_types(self, want, have, section):
         """Set omitted trap-type bools in want to False so that
         _compare_manager_fields emits the appropriate 'no' commands.
 
@@ -197,9 +176,9 @@ class Isam_traps(IsamResourceModule):
         if section == "definitions":
             self._compare_definition_fields(name=key, want=want, have=have)
         elif section == "managers":
-            self._compare_manager_fields(address=key, want=want, have=have, prefix="manager", key_field="address")
+            self._compare_manager_fields(address=key, want=want, have=have, prefix="manager")
         elif section == "v6managers":
-            self._compare_manager_fields(address=key, want=want, have=have, prefix="v6manager", key_field="ipv6address")
+            self._compare_manager_fields(address=key, want=want, have=have, prefix="v6manager")
 
     def _compare_definition_fields(self, name, want, have):
         w_prio = want.get("priority")
@@ -214,7 +193,7 @@ class Isam_traps(IsamResourceModule):
                     "configure trap definition %s no priority" % name
                 )
 
-    def _compare_manager_fields(self, address, want, have, prefix, key_field):
+    def _compare_manager_fields(self, address, want, have, prefix):
         w_prio = want.get("priority")
         h_prio = have.get("priority")
         if w_prio != h_prio:

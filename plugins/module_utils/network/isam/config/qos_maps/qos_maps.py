@@ -17,6 +17,9 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 class Qos_maps(IsamResourceModule):
     """The isam_qos_maps config class."""
 
+    IDENTITIES = {"tc_map_dot1p": "dot1p", "dscp_map_dot1p": "dscp",
+                  "up_ctrl_pkt": "protocol", "dn_ctrl_pkt": "protocol"}
+
     def __init__(self, module):
         super(Qos_maps, self).__init__(
             empty_fact_val={},
@@ -26,46 +29,28 @@ class Qos_maps(IsamResourceModule):
             tmplt=Qos_mapsTemplate(),
         )
 
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
-    @staticmethod
-    def _key(entry, field):
-        if field == "tc_map_dot1p":
-            return entry.get("dot1p")
-        if field == "dscp_map_dot1p":
-            return entry.get("dscp")
-        return entry.get("protocol")
+    @classmethod
+    def _key(cls, entry, field):
+        return entry.get(cls.IDENTITIES[field])
 
     def _add_commands(self, entries, field):
-        for entry in entries or []:
-            if field == "tc_map_dot1p":
-                self.commands.append(Qos_mapsTemplate._render_tc_map_dot1p(entry))
-            elif field == "dscp_map_dot1p":
-                self.commands.append(Qos_mapsTemplate._render_dscp_map_dot1p(entry))
-            elif field == "up_ctrl_pkt":
-                self.commands.append(Qos_mapsTemplate._render_up_ctrl_pkt(entry))
-            elif field == "dn_ctrl_pkt":
-                self.commands.append(Qos_mapsTemplate._render_dn_ctrl_pkt(entry))
+        self._map_commands(entries, field)
 
     def _del_commands(self, entries, field):
+        self._map_commands(entries, field, remove=True)
+
+    def _map_commands(self, entries, field, remove=False):
+        # The four map families have the same identity/diff mechanics; their
+        # different CLI forms remain in the template's explicit renderers.
+        if field not in self.IDENTITIES:
+            raise ValueError("unknown QoS map: %s" % field)
+        renderer = getattr(Qos_mapsTemplate, "_render_%s%s" % ("no_" if remove else "", field))
         for entry in entries or []:
-            if field == "tc_map_dot1p":
-                self.commands.append(Qos_mapsTemplate._render_no_tc_map_dot1p(entry))
-            elif field == "dscp_map_dot1p":
-                self.commands.append(Qos_mapsTemplate._render_no_dscp_map_dot1p(entry))
-            elif field == "up_ctrl_pkt":
-                self.commands.append(Qos_mapsTemplate._render_no_up_ctrl_pkt(entry))
-            elif field == "dn_ctrl_pkt":
-                self.commands.append(Qos_mapsTemplate._render_no_dn_ctrl_pkt(entry))
+            self.commands.append(renderer(entry))
 
     def generate_commands(self):
-        wantd = self.want or {}
+        # Reconciliation builds merged entries without modifying the user's request.
+        wantd = dict(self.want or {})
         haved = self.have or {}
 
         # merged: merge want into have so unmentioned entries/fields are preserved
@@ -91,13 +76,13 @@ class Qos_maps(IsamResourceModule):
             self.commands = list(dict.fromkeys(self.commands))
             return
 
-        # overridden/deleted: remove entire fields present in have but absent from want
-        if self.state in ["overridden", "deleted"]:
+        # overridden: remove entire fields present in have but absent from want
+        if self.state == "overridden":
             for field in haved:
                 if field not in wantd:
                     self._del_commands(haved.get(field), field)
 
-        # replaced/overridden/deleted: for each field in want, delete sub-entries
+        # replaced/overridden: for each field in want, delete sub-entries
         # present in have but absent from want, then add/update entries to match want.
         # For merged the dict_merge above already copied all have entries into wantd
         # so the deletion branch below is a no-op for that state.
@@ -110,7 +95,7 @@ class Qos_maps(IsamResourceModule):
             have_list = haved.get(field) or []
             want_keys = {self._key(e, field) for e in want_list}
 
-            if self.state in ("replaced", "overridden", "deleted"):
+            if self.state in ("replaced", "overridden"):
                 for entry in have_list:
                     if self._key(entry, field) not in want_keys:
                         self._del_commands([entry], field)

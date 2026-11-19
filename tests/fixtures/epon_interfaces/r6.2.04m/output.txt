@@ -1,1 +1,1 @@
-configure epon interface 1/1/1/1 name epon1
+configure epon interface 1/1/6/1 polling-period 2000

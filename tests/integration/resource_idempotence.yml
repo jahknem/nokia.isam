@@ -1,0 +1,30 @@
+---
+# Read-only: writable states ALWAYS run in check mode. No action modules.
+# ansible-playbook -i <inventory> resource_idempotence.yml -e isam_test_hosts=<lab-host>
+- name: Check gathered resource configurations without writing
+  hosts: "{{ isam_test_hosts }}"
+  gather_facts: false
+  tasks:
+    - name: Check each configuration resource
+      ansible.builtin.include_tasks: resource_idempotence_tasks.yml
+      loop: "{{ isam_test_resources | default(default_resources) }}"
+      loop_control:
+        loop_var: resource_module
+  vars:
+    default_resources:
+      - nokia.isam.isam_alarm
+      - nokia.isam.isam_traps
+      - nokia.isam.isam_link_agg
+      - nokia.isam.isam_qos_maps
+      - nokia.isam.isam_cfm
+      - nokia.isam.isam_equipment_onts
+      - nokia.isam.isam_system_security
+      - nokia.isam.isam_system
+      - nokia.isam.isam_linetest
+      - nokia.isam.isam_nat
+      - nokia.isam.isam_error
+      - nokia.isam.isam_cwmp_plt
+      - nokia.isam.isam_pon_global
+      - nokia.isam.isam_pppox_relay_global
+      - nokia.isam.isam_mcast_general
+      - nokia.isam.isam_trouble_shooting_pon

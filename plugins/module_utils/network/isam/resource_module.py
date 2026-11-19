@@ -39,6 +39,14 @@ class IsamResourceModule(ResourceModule):
     # Regexes with named groups ``scope`` and ``suffix`` (see compact_cli_commands).
     COMPACT_COMMAND_SCOPES = ()
 
+    def execute_module(self):
+        """Common lifecycle; families override only for a different execution path."""
+        if self.state not in ("parsed", "gathered"):
+            self.generate_commands()
+            if self.state != "rendered":
+                self.run_commands()
+        return self.result
+
     def compare(self, parsers, want=None, have=None):
         if self.state != "rendered":
             return super(IsamResourceModule, self).compare(parsers, want=want, have=have)
@@ -112,14 +120,6 @@ class TableResourceModule(IsamResourceModule):
     """
 
     TABLE = None
-
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
 
     def generate_commands(self):
         want = self.want or {}

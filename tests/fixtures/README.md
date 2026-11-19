@@ -28,6 +28,13 @@ source: sanitized-live-capture
 Use `source: synthetic-regression` when the fixture is assembled from known
 device grammar rather than copied from a device.
 
+The CFM, EFM OAM, L2CP, PPPoE-client and PPPoE-L2 synthetic bundles were corrected
+against lab CLI help on 2026-11-19. The channel-pair PM, EPON and NG-PON2 channel-group
+bundles use the matching CLI guide grammar (sections 68.9, 69.2 and 57.2/57.3):
+those features are unavailable in the lab platform's help tree, so these are **not**
+live-verified captures. Tests must assert actual parsed identities and attributes;
+`len(parsed) >= 0` does not test parsing and must not be used.
+
 ## Live write scenarios
 
 `live_scenarios/<bundle>/` pins write behaviour from live device tests (lab ISAM,

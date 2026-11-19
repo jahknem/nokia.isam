@@ -30,14 +30,6 @@ class Interface_alarms(IsamResourceModule):
         )
         self.parsers = ["default_severity"]
 
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     def generate_commands(self):
         wantd = self._index_by_id(self.want)
         haved = self._index_by_id(self.have)

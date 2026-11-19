@@ -1,1 +1,1 @@
-configure l2cp protocol stp admin-state enable
+configure l2cp partition-type fixed-assigned

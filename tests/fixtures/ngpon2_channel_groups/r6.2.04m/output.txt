@@ -1,1 +1,1 @@
-configure ngpon2 channel-groups 1 channel 1
+configure channel-group id 1 channel-pair 1/1/6/1

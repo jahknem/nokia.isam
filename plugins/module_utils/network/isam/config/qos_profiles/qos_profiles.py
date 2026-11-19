@@ -34,14 +34,6 @@ class Qos_profiles(IsamResourceModule):
         )
         self.parsers = list(Qos_profilesTemplate._FIELDS)
 
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     @staticmethod
     def _key(entry):
         return "{0}:{1}".format(entry["profile_type"], entry["name"])

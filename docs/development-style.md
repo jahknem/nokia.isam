@@ -89,6 +89,13 @@ in front of an attribute table.
 
 ## Config classes
 
+Ordinary config classes inherit `execute_module()` from `IsamResourceModule`: parsed
+and gathered do not generate commands, rendered generates without sending, and writable
+states generate then use the check-mode-aware `run_commands()`. Override only when a
+family genuinely needs another execution path; do not copy the lifecycle into each class.
+Recursive structured comparisons use `changed_values` and `omitted_values` from
+`common.py`; lists with identities must be indexed before that comparison.
+
 Use `TableResourceModule` for attribute-table families: it implements list identity,
 mandatory-at-creation checks and section-scoped state handling. Other families use
 `compare(parsers=...)` where its field comparison fits, and explicit code where it
@@ -105,6 +112,10 @@ accepted only at creation (fail early with a clear message), objects without a r
 command (reset their attributes), values shown for unset (`none`, `not-applicable`).
 
 Compare typed values (ints as ints); do not paper over type differences with `str()`.
+
+`system`'s uniform settings use shared `Attr` definitions and clause helpers too, but
+retain their explicit orchestration: node-id prefixes, syslog instance attributes and
+sync-if-timing's bindings/references do not share the simple table-family state model.
 
 ## Action modules (operational commands)
 

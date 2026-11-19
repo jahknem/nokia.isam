@@ -1,1 +1,1 @@
-configure pppoe-client interface 1/1/2/1/1/1/1 max-sessions 10
+configure pppoe-client interface 1/1/6/1/1/1/1 client-id 1 profile-name prof1 username example password example-password

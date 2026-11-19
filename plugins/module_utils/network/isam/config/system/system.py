@@ -10,6 +10,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.targeted import TARGETED_GATHER
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import changed_values, omitted_values
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.system import (
     SETTINGS,
     SETTINGS_LISTS,
@@ -43,36 +44,6 @@ def _sync_values(section):
     return out
 
 
-def _sync_diff(want, have):
-    out = {}
-    for key, value in want.items():
-        if value is None:
-            continue
-        current = have.get(key)
-        if isinstance(value, dict):
-            sub = _sync_diff(value, current if isinstance(current, dict) else {})
-            if sub:
-                out[key] = sub
-        elif value != current:
-            out[key] = value
-    return out
-
-
-def _sync_absent(want, have):
-    out = {}
-    for key, value in have.items():
-        if value is None:
-            continue
-        wanted = want.get(key)
-        if isinstance(value, dict):
-            sub = _sync_absent(wanted if isinstance(wanted, dict) else {}, value)
-            if sub:
-                out[key] = sub
-        elif wanted is None:
-            out[key] = value
-    return out
-
-
 def _sync_lists(values):
     """Back from identity-indexed lists to lists, each entry carrying its identity."""
     out = dict(values)
@@ -83,11 +54,11 @@ def _sync_lists(values):
 
 
 def _settings_kinds(section):
-    return dict((option, kind) for option, _cli, kind in SETTINGS[section][1])
+    return dict((attr.option, attr.kind) for attr in SETTINGS[section][1])
 
 
 def _settings_lists(section):
-    return dict((key, (ident, dict((o, k) for o, _c, k in attrs)))
+    return dict((key, (ident, dict((attr.option, attr.kind) for attr in attrs)))
                 for (sec, key), (_node, ident, attrs, _other) in SETTINGS_LISTS.items() if sec == section)
 
 
@@ -116,7 +87,7 @@ def _settings_values(config):
 
 
 def _settings_same(kind, want, have):
-    if kind == "bool":
+    if kind == "flag":
         return bool(want) == bool(have)
     return want == have
 
@@ -128,7 +99,7 @@ def _settings_changed(kinds, want, have):
 def _settings_absent(kinds, want, have):
     # have holds non-defaults only; a False flag needs no reset
     return dict((o, v) for o, v in have.items() if o in kinds and want.get(o) is None
-                and not (kinds[o] == "bool" and not v))
+                and not (kinds[o] == "flag" and not v))
 
 
 class Isam_system(IsamResourceModule):
@@ -169,14 +140,6 @@ class Isam_system(IsamResourceModule):
         self.want = self._normalize_config(self.want)
         self.have = self._normalize_config(self.have)
         self.before = deepcopy(self.have)
-
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
 
     def generate_commands(self):
         want = self.want or {}
@@ -294,10 +257,10 @@ class Isam_system(IsamResourceModule):
             reset = havev
             changed = {}
         else:
-            changed = _sync_diff(wantv, havev)
+            changed = changed_values(wantv, havev)
             reset = {}
             if self.state in ("replaced", "overridden"):
-                reset = _sync_absent(wantv, havev)
+                reset = omitted_values(wantv, havev)
         # list entries keep only the attributes to render; identity is re-added below
         for key, (_cli, ident) in SYNC_LISTS.items():
             for values in (changed, reset):

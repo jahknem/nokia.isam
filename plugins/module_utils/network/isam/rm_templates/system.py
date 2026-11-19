@@ -14,6 +14,12 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
     canonical_key,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.attribute_table import (
+    Attr,
+    change,
+    parse_clauses,
+    quote_value,
+)
 
 
 class Isam_systemTemplate(NetworkTemplate):
@@ -518,60 +524,61 @@ def render_sync_if_timing(values, reset=False):
 # not numeric are ignored (never fail the read); unknown tokens are ignored.
 # ---------------------------------------------------------------------------
 
-# (option, CLI keyword, kind "str" | "int" | "bool")
+# Shared Attr grammar; the surrounding system nodes retain their irregular
+# identities, nested lists and legacy PARSERS rather than pretending to be uniform.
 ID_ATTRS = (
-    ("access_oper_id", "access-oper-id", "str"),
-    ("system_40gkr4", "system-40gkr4", "str"),
-    ("en_snmp_auth_trap", "en-snmp-auth-trap", "bool"),
-    ("periph_mgnt_vlan", "periph-mgnt-vlan", "int"),
-    ("periph_mgnt_ctrl", "periph-mgnt-ctrl", "str"),
-    ("port_num_in_proto", "port-num-in-proto", "str"),
-    ("ont_trc_dbg_vlan", "ont-trc-dbg-vlan", "int"),
-    ("ntr_ssmout_vlan", "ntr-ssmout-vlan", "int"),
-    ("ntr_ptp_vlan", "ntr-ptp-vlan", "int"),
-    ("customer_id", "customer-id", "str"),
-    ("voiceoswp", "voiceoswp", "str"),
-    ("scalingmode", "scalingmode", "str"),
-    ("arp_polling_inter", "arp-polling-inter", "int"),
-    ("bsnap_state", "bsnap-state", "str"),
-    ("bsnap_server_ip", "bsnap-server-ip", "str"),
-    ("bsnap_server_port", "bsnap-server-port", "int"),
-    ("arp_tca_threshold", "arp-tca-threshold", "int"),
+    Attr("access_oper_id", "access-oper-id", "str"),
+    Attr("system_40gkr4", "system-40gkr4", "str", "disable"),
+    Attr("en_snmp_auth_trap", "en-snmp-auth-trap", "flag"),
+    Attr("periph_mgnt_vlan", "periph-mgnt-vlan", "int"),
+    Attr("periph_mgnt_ctrl", "periph-mgnt-ctrl", "str", "disable"),
+    Attr("port_num_in_proto", "port-num-in-proto", "str"),
+    Attr("ont_trc_dbg_vlan", "ont-trc-dbg-vlan", "int"),
+    Attr("ntr_ssmout_vlan", "ntr-ssmout-vlan", "int"),
+    Attr("ntr_ptp_vlan", "ntr-ptp-vlan", "int"),
+    Attr("customer_id", "customer-id", "str"),
+    Attr("voiceoswp", "voiceoswp", "str"),
+    Attr("scalingmode", "scalingmode", "str"),
+    Attr("arp_polling_inter", "arp-polling-inter", "int"),
+    Attr("bsnap_state", "bsnap-state", "str"),
+    Attr("bsnap_server_ip", "bsnap-server-ip", "str"),
+    Attr("bsnap_server_port", "bsnap-server-port", "int"),
+    Attr("arp_tca_threshold", "arp-tca-threshold", "int"),
 )
 # keywords of the id line handled elsewhere (never consumed as a value)
 ID_OTHER_KEYWORDS = ("name", "location", "contact-person", "nt-intercon-vlan", "internal-nw-vlan", "system-mac")
 
 SYSLOG_DEST_ATTRS = (
-    ("disable", "disable", "bool"),
-    ("upload_rotate", "upload-rotate", "bool"),
-    ("persist_enable", "persist-enable", "bool"),
-    ("persist_timer", "persist-timer", "int"),
+    Attr("disable", "disable", "flag"),
+    Attr("upload_rotate", "upload-rotate", "flag"),
+    Attr("persist_enable", "persist-enable", "flag"),
+    Attr("persist_timer", "persist-timer", "int"),
 )
 SYSLOG_ROUTE_ATTRS = (
-    ("syslog_vlan", "syslog-vlan", "int"),
+    Attr("syslog_vlan", "syslog-vlan", "int"),
 )
 SYSLOG_SEVERITIES = ("emergency", "alert", "critical", "error", "warning", "notice", "information", "debug")
 
 # section -> (CLI node after 'configure system', attrs, other keywords of the node)
 SETTINGS = {
     "id": ("id", ID_ATTRS, ID_OTHER_KEYWORDS),
-    "sntp": ("sntp", (("server_port", "server-port", "int"),),
+    "sntp": ("sntp", (Attr("server_port", "server-port", "int"),),
              ("server-ip-addr", "polling-rate", "enable", "timezone-offset")),
-    "syslog": ("syslog", (("version", "version", "str"), ("time_format", "time-format", "str")), ()),
-    "transaction": ("transaction", (("time_out_value", "time-out-value", "int"),), ("log-full-action",)),
-    "external_leds": ("external-leds", (("status", "status", "str"),), ()),
-    "auto_laser_shutdown": ("auto-laser-shutdown", (("action", "action", "str"),), ()),
-    "auto_switch": ("auto-switch", (("xdsl_atm_ptm", "xdsl-atm-ptm", "bool"),
-                                    ("xdsl_stepup_delay", "xdsl-stepup-delay", "int")), ()),
-    "zero_touch_provision": ("zero-touch-provision", (("action", "action", "str"),), ()),
+    "syslog": ("syslog", (Attr("version", "version", "str"), Attr("time_format", "time-format", "str")), ()),
+    "transaction": ("transaction", (Attr("time_out_value", "time-out-value", "int"),), ("log-full-action",)),
+    "external_leds": ("external-leds", (Attr("status", "status", "str", "enable"),), ()),
+    "auto_laser_shutdown": ("auto-laser-shutdown", (Attr("action", "action", "str"),), ()),
+    "auto_switch": ("auto-switch", (Attr("xdsl_atm_ptm", "xdsl-atm-ptm", "flag"),
+                                    Attr("xdsl_stepup_delay", "xdsl-stepup-delay", "int", 3600)), ()),
+    "zero_touch_provision": ("zero-touch-provision", (Attr("action", "action", "str"),), ()),
     "pon_ont": ("pon-ont", (
-        ("slid_mode", "slid-mode", "str"),
-        ("pwrbrst_mode", "pwrbrst-mode", "str"),
-        ("sn_bundle_timer", "sn-bundle-timer", "int"),
-        ("sw_ver_mis_block", "sw-ver-mis-block", "str"),
-        ("sn_autounlock", "sn-autounlock", "str"),
+        Attr("slid_mode", "slid-mode", "str"),
+        Attr("pwrbrst_mode", "pwrbrst-mode", "str"),
+        Attr("sn_bundle_timer", "sn-bundle-timer", "int"),
+        Attr("sw_ver_mis_block", "sw-ver-mis-block", "str", "enable"),
+        Attr("sn_autounlock", "sn-autounlock", "str", "disable"),
     ), ()),
-    "nt_sftp": ("nt-sftp", (("write_enable", "write-enable", "bool"),), ()),
+    "nt_sftp": ("nt-sftp", (Attr("write_enable", "write-enable", "flag"),), ()),
 }
 # (section, list option) -> (CLI node, identity option, attrs, other keywords)
 SETTINGS_LISTS = {
@@ -586,50 +593,36 @@ SETTINGS_NODES = dict((node, section) for section, (node, _a, _o) in SETTINGS.it
 
 def parse_settings(tokens, attrs, target, other_keywords=()):
     """Apply packed '[no] <kw> [<value>]' tokens of attrs to target (see block comment)."""
-    cli = dict((c, (option, kind)) for option, c, kind in attrs)
-    keywords = set(cli) | set(other_keywords)
-    i = 0
-    while i < len(tokens):
-        negate = tokens[i] == "no" and i + 1 < len(tokens) and tokens[i + 1] in keywords
-        key = tokens[i + 1] if negate else tokens[i]
-        i += 2 if negate else 1
-        if key not in cli:
+    # Other portions of the same CLI node are parsed elsewhere. Reserve their
+    # keywords so a missing value never consumes one as a settings value.
+    reserved = tuple(Attr(keyword, keyword, "str") for keyword in other_keywords)
+    raw = parse_clauses(tokens, tuple(attrs) + reserved)
+    for attr in attrs:
+        if attr.option not in raw:
             continue
-        option, kind = cli[key]
-        if negate:
-            target.pop(option, None)
-        elif kind == "bool":
-            target[option] = True
-        elif i < len(tokens) and tokens[i] not in keywords and tokens[i] != "no":
-            value = tokens[i].strip('"')
-            i += 1
-            if kind == "int":
-                if not value.lstrip("-").isdigit():
-                    target.pop(option, None)
-                    continue
-                value = int(value)
-            target[option] = value
+        value = raw[attr.option]
+        if value is None or (attr.kind == "flag" and not value) or (attr.kind == "int" and not isinstance(value, int)):
+            target.pop(attr.option, None)
+        else:
+            target[attr.option] = value
     return target
 
 
 def _setting_quote(value):
-    value = str(value)
-    return '"' + value + '"' if value == "" or re.search(r"\s", value) else value
+    return quote_value(value)
 
 
 def render_settings(attrs, values, reset=False):
     """'[no] <kw> [<value>]' clauses of the given values (reset=True: 'no <kw>')."""
     parts = []
-    for option, cli, kind in attrs:
-        value = values.get(option)
+    for attr in attrs:
+        value = values.get(attr.option)
         if value is None:
             continue
-        if reset or (kind == "bool" and not value):
-            parts.append("no " + cli)
-        elif kind == "bool":
-            parts.append(cli)
+        if reset:
+            parts.append("no " + attr.cli)
         else:
-            parts.append("{0} {1}".format(cli, _setting_quote(value)))
+            parts.append(" ".join(change(attr, value, None, "rendered")))
     return parts
 
 
@@ -666,15 +659,14 @@ def render_settings_commands(values, reset=False, node_id=None):
 
 # Device defaults (CLI guide) of value attributes the device prints as 'no <kw>' when
 # at default: a configured default counts as unset, so merged/replaced stay idempotent.
-SYSTEM_DEFAULTS = {
-    ("id", "system_40gkr4"): "disable",
-    ("id", "periph_mgnt_ctrl"): "disable",
-    ("sync_if_timing", "ais_sensitivity"): "disable",
-    ("external_leds", "status"): "enable",
-    ("auto_switch", "xdsl_stepup_delay"): 3600,
-    ("pon_ont", "sw_ver_mis_block"): "enable",
-    ("pon_ont", "sn_autounlock"): "disable",
-}
+SYSTEM_DEFAULTS = dict(
+    ((section, attr.option), attr.default)
+    for section, (_node, attrs, _other) in SETTINGS.items()
+    for attr in attrs if attr.kind != "flag" and attr.default is not None
+)
+# The sync-if-timing grammar includes BITS bindings and reference lists; its own
+# renderer remains explicit. Its value default participates in the same cleanup.
+SYSTEM_DEFAULTS[("sync_if_timing", "ais_sensitivity")] = "disable"
 
 
 def without_defaults(config):

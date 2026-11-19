@@ -120,14 +120,6 @@ class Multicast(IsamResourceModule):
             "mcast_control.max_sources",
         ]
 
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     def generate_commands(self):
         raw_want, raw_have = self.want or {}, self.have or {}
         targeted = any(names_blocks(raw_want.get(r)) for r in ("igmp", "mcast_control"))
