@@ -66,6 +66,7 @@ RESOURCE_MODULES = (
     "isam_xstp",
     "isam_qos_tca",
     "isam_system_security",
+    "isam_software_mngt",
     "isam_l2uni_onts",
     "isam_uni_onts",
     "isam_xdsl_inm",
