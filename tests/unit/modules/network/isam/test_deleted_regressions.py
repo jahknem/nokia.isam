@@ -374,8 +374,8 @@ def test_dhcp_server_lease_time_reset_is_sent_once(monkeypatch):
     assert result["commands"].count("configure dhcp-server no lease-time") == 1, result["commands"]
 
 
-VLAN_110 = ("configure vlan id 110 mode residential-bridge name Internet new-broadcast enable protocol-filter pass-pppoe "
-            "drly-srv-usr-side\n")
+VLAN_110 = ("configure vlan id 110 mode cross-connect name Internet new-broadcast enable protocol-filter pass-pppoe "
+            "drly-srv-usr-side enable\n")
 
 
 def test_vlan_merged_does_not_reset_unnamed_settings(monkeypatch):

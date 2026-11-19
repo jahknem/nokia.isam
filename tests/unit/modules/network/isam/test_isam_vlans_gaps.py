@@ -206,3 +206,33 @@ def test_a_name_with_spaces_is_sent_in_double_quotes(monkeypatch):
         {"id": 3991, "mode": "residential-bridge", "name": "zztest 3991"}, {"id": 3990, "mode": "residential-bridge", "name": "a-b_c"}]})["rendered"]
     assert rendered == ['configure vlan id 3991 mode residential-bridge name "zztest 3991"',
                         "configure vlan id 3990 mode residential-bridge name a-b_c"]
+
+
+def test_dhcp_opt82_nni_and_uplink_are_values_sent_with_their_dependency(monkeypatch):
+    """Lab ISAM: the bare keyword is 'not complete'; enable/add-or-* need circuit-id-dhcp,
+    remote-id-dhcp or relay-id-dhcp in the same command (error 657); not settable at creation."""
+    from .module_runner import run_module
+
+    running = "configure vlan id 3990 mode residential-bridge name zztest\n"
+    want = [{"id": 3990, "dhcp_opt82_nni": "add-or-forward", "dhcp_opt82_uplink": "add-or-replace", "circuit_id_dhcp": "physical-id"}]
+    assert run_module(monkeypatch, "isam_vlans", {"state": "merged", "config": want}, running)["commands"] == [
+        "configure vlan id 3990 dhcp-opt82-nni add-or-forward dhcp-opt82-uplink add-or-replace circuit-id-dhcp physical-id"]
+    configured = running + "configure vlan id 3990 dhcp-opt82-nni transparent\n"
+    assert run_module(monkeypatch, "isam_vlans", {"state": "gathered"}, configured)["gathered"][0]["dhcp_opt82_nni"] == "transparent"
+    created = run_module(monkeypatch, "isam_vlans", {"state": "merged", "config": [
+        {"id": 3991, "mode": "residential-bridge", "dhcp_opt82_nni": "enable", "relay_id_dhcp": "relay-id"}]}, "")["commands"]
+    assert created == ["configure vlan id 3991 mode residential-bridge", "configure vlan id 3991 dhcp-opt82-nni enable relay-id-dhcp relay-id"]
+
+
+def test_commands_are_packed_like_the_two_printed_lines(monkeypatch):
+    """The device prints line 1 (mode .. mac-unauth) and line 2 (vmac-translation ..
+    icmpv6-sec-fltr); DHCP and PPPoE ids and l2-encaps1 all belong to line 2."""
+    from .module_runner import run_module
+
+    config = [{"id": 3990, "mode": "residential-bridge", "name": "x", "priority": 3, "dhcp_opt82_ext": "enable",
+               "circuit_id_dhcp": "physical-id", "l2_encaps1": "single-tagged", "circuit_id_pppoe": "physical-id",
+               "dhcpv6_trst_port": "trusted"}]
+    assert run_module(monkeypatch, "isam_vlans", {"state": "rendered", "config": config})["rendered"] == [
+        "configure vlan id 3990 mode residential-bridge name x priority 3",
+        "configure vlan id 3990 dhcp-opt82-ext enable circuit-id-dhcp physical-id l2-encaps1 single-tagged "
+        "circuit-id-pppoe physical-id dhcpv6-trst-port trusted"]

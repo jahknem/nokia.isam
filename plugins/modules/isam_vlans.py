@@ -91,7 +91,8 @@ options:
         aliases: [drly-srv-usr-side]
         description:
         - Enable DHCP(v4/v6) server transparency at the user side when DHCP(v4/v6) relay is enabled. Only applicable for CC forwarder
-        type: bool
+        type: str
+        choices: [enable, disable]
       dhcp_opt82_ext:
         aliases: [dhcp-opt82-ext]
         description:
@@ -102,14 +103,22 @@ options:
         - add-or-forward
       dhcp_opt82_nni:
         aliases: [dhcp-opt82-nni]
+        type: str
+        choices: [enable, disable, transparent, add-or-replace, add-or-forward]
         description:
-        - Enable DHCP option 82 processing on the network-to-network interface.
-        type: bool
+        - DHCP option 82 handling on the NNI interface (C(dhcp-opt82-nni)); C(disable) is the device default.
+        - With C(enable), C(add-or-replace) or C(add-or-forward) at least one of I(circuit_id_dhcp), I(remote_id_dhcp)
+          or I(relay_id_dhcp) must be set (the device refuses it otherwise, VLAN MGT error 657); the module sends
+          them in one command. Not settable in the command that creates the VLAN; sent as a separate command.
       dhcp_opt82_uplink:
         aliases: [dhcp-opt82-uplink]
+        type: str
+        choices: [enable, disable, transparent, add-or-replace, add-or-forward]
         description:
-        - Enable DHCP option 82 processing on uplink DHCP traffic.
-        type: bool
+        - DHCP option 82 handling on the uplink interface (C(dhcp-opt82-uplink)); C(disable) is the device default.
+        - With C(enable), C(add-or-replace) or C(add-or-forward) at least one of I(circuit_id_dhcp), I(remote_id_dhcp)
+          or I(relay_id_dhcp) must be set (the device refuses it otherwise, VLAN MGT error 657); the module sends
+          them in one command. Not settable in the command that creates the VLAN; sent as a separate command.
       circuit_id_dhcp:
         aliases: [circuit-id-dhcp]
         description:
@@ -128,57 +137,67 @@ options:
         aliases: [relay-id-dhcp]
         description:
         - Enable DHCP relay-id insertion.
-        type: bool
+        type: str
+        choices: [relay-id, disable]
       dhcp_linerate:
         aliases: [dhcp-linerate]
         description:
         - Enable DHCP line-rate information insertion.
-        type: bool
+        type: str
+        choices: [notadd, addactuallinerate, addalllineparameters]
       pppoe_linerate:
         aliases: [pppoe-linerate]
         description:
         - Enable PPPoE line-rate information insertion.
-        type: bool
+        type: str
+        choices: [notadd, addactuallinerate, addalllineparameters]
       dhcpv6_linerate:
         aliases: [dhcpv6-linerate]
         description:
         - Enable DHCPv6 line-rate information insertion.
-        type: bool
+        type: str
+        choices: [notadd, addactuallinerate, addalllineparameters]
       pppoe_l2_encaps:
         aliases: [pppoe-l2-encaps]
         description:
         - Enable PPPoE Layer 2 encapsulation information insertion.
-        type: bool
+        type: str
+        choices: [notadd, add]
       dhcp_l2_encaps:
         aliases: [dhcp-l2-encaps]
         description:
         - Enable DHCP Layer 2 encapsulation information insertion.
-        type: bool
+        type: str
+        choices: [notadd, add]
       dhcpv6_l2_encaps:
         aliases: [dhcpv6-l2-encaps]
         description:
         - Enable DHCPv6 Layer 2 encapsulation information insertion.
-        type: bool
+        type: str
+        choices: [notadd, add]
       l2_encaps1:
         aliases: [l2-encaps1]
         description:
         - Enable first Layer 2 encapsulation information insertion.
-        type: bool
+        type: str
+        choices: [not-applicable, untagged, single-tagged, dual-tagged]
       pppoer_vlanaware:
         aliases: [pppoer-vlanaware]
         description:
         - Enable VLAN-aware PPPoE relay behavior.
-        type: bool
+        type: str
       dhcpr_vlanaware:
         aliases: [dhcpr-vlanaware]
         description:
         - Enable VLAN-aware DHCP relay behavior.
-        type: bool
+        type: str
+        choices: [upto-1-uservlan, upto-2-uservlans, upto-untag-uservlan, system-default]
       dhcpv6r_vlanaware:
         aliases: [dhcpv6r-vlanaware]
         description:
         - Enable VLAN-aware DHCPv6 relay behavior.
-        type: bool
+        type: str
+        choices: [upto-1-uservlan, upto-2-uservlans, upto-untag-uservlan, system-default]
       circuit_id_pppoe:
         aliases: [circuit-id-pppoe]
         description:
@@ -211,12 +230,14 @@ options:
         aliases: [dhcpv6-relay-id]
         description:
         - Enable DHCPv6 relay-id insertion.
-        type: bool
+        type: str
+        choices: [disable, duid-ll]
       dhcpv6_trst_port:
         aliases: [dhcpv6-trst-port]
         description:
         - Enable DHCPv6 trusted-port behavior.
-        type: bool
+        type: str
+        choices: [trusted, untrusted]
       enterprise_number:
         aliases: [enterprise-number]
         description:
