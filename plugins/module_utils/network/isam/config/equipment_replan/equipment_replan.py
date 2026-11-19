@@ -26,14 +26,6 @@ class Equipment_replan(IsamResourceModule):
         )
         self.parsers = ["board_auto_replan"]
 
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     def generate_commands(self):
         want = self.want or {}
         have = self.have or {}

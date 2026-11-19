@@ -96,8 +96,9 @@ explicit decision per family: `isam_cwmp_plt`, `isam_dhcp_server`,
 
 Read-only check after the flag -> value fixes (2026-11-19): `isam_generic_pon`,
 `isam_system_security`, `isam_system`, `isam_voice_sip`, `isam_software_mngt` gathered;
-merged and replaced of the gathered facts in check mode send nothing (system_security only
-differs on SNMP communities, whose names the gathered output redacts, unchanged by the fix).
+merged and replaced of the gathered facts in check mode send nothing except for
+system_security's redacted-value replay differences. The sanitation follow-up below
+corrects the earlier attribution of those differences to SNMP communities alone.
 
 Shared attribute-table refactor (2026-11-19): offline differential checks against the
 previous implementation agree on the lab captures for `software_mngt`, `voice_sip` and
@@ -107,7 +108,27 @@ replaced of the gathered configuration in check mode both returned empty command
 (`changed=0`, no failures). No configuration writes were sent. The earlier attempt had
 matched no hosts because NetBox did not resolve; the successful retry clears that blocker.
 The `settings_block` compatibility wrapper is checked offline against the previous
-implementation and by unit tests; no new live verification is claimed for its users.
+implementation and by unit tests; subsequent read-only checks of its users are
+recorded below, with empty-resource limitations made explicit.
+
+Sanitation follow-up (2026-11-19), read-only using
+`tests/integration/resource_idempotence.yml`: gathered succeeded for all 16 reviewed
+resources. Alarm, traps, link aggregation, QoS maps, equipment ONTs, system and mcast
+general returned no merged/replaced commands in check mode. System-security returned
+15 masked-value commands in each comparison (not configuration writes). A fresh
+pre-cleanup checkout of `9b449c2a` generated the identical 15-command merged list;
+all 15 commands contain masked values. This affects SNMP communities/notify profiles,
+RADIUS, operators, SSH and filetransfer, not just community identities as the earlier
+note suggested. CFM, LineTest, NAT, error, CWMP platform,
+PON global, PPPoX relay global and trouble-shooting PON were empty: their comparisons
+were skipped, so only their gathering was verified. No configuration writes or action
+operations were executed. The integration check reports counts only, suppresses values,
+and rejects reconciliation commands outside the verified masked-security exception.
+
+Read-only CLI help confirms CFM domain name/level are immutable and required at
+creation, and confirms EFM OAM, L2CP, PPPoE-client and PPPoE-L2 synthetic fixture grammar.
+Channel-pair, EPON and channel-group help is unsupported on this lab platform; their
+corrected synthetic fixtures follow the CLI guide and do not claim live verification.
 
 `isam_linetest` migrated to `IsamResourceModule` (2026-11-19); read-only on the lab ISAM
 (no LineTest configured): gathered returns `{sessions: [], parameters: []}`, rendered emits

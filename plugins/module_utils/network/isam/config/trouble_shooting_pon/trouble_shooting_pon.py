@@ -52,15 +52,6 @@ class Trouble_shooting_pon(IsamResourceModule):
             tmplt=Trouble_shooting_ponTemplate(),
         )
 
-    def execute_module(self):
-        """Execute the module."""
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     def generate_commands(self):
         """Generate configuration commands from want, have and state."""
         want = self.want or {}

@@ -28,6 +28,7 @@ leaves them on the device.
 """
 
 from copy import deepcopy
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.attribute_table import quote_value
 
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
@@ -66,8 +67,7 @@ PROFILE_FIELDS = tuple(
 
 
 def _quote(value):
-    value = str(value)
-    return '"%s"' % value if (not value or any(c.isspace() for c in value)) else value
+    return quote_value(value)
 
 
 def _cli_value(field, value):
@@ -92,14 +92,6 @@ class Alarm(IsamResourceModule):
             tmplt=AlarmTemplate(),
         )
         self.parsers = []
-
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
 
     # ------------------------------------------------------------------ driver
 

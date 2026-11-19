@@ -27,6 +27,9 @@ options:
         description:
           - Maintenance domains, keyed by C(domain_index), with C(name), C(level) and C(associations)
             (each keyed by C(association_index), with C(meps) and C(remote_meps)).
+          - Creating a domain with attributes requires both C(name) and C(level).
+            The device does not permit changing either on an existing domain; explicitly
+            remove and recreate it if needed. The module never does that implicitly.
         type: list
         elements: dict
       slm:
@@ -52,6 +55,10 @@ options:
   state:
     description:
       - The state the configuration should be left in.
+      - With C(replaced), only named top-level sections are reconciled. Domains are
+        identified by C(domain_index), not their configurable name.
+      - With C(deleted) and I(config), only named sections are touched; without I(config),
+        all configured domains are removed and the SLM inactivity timer is reset.
       - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(domains[].domain_index) and C(y1731pm[].domain_index), C(y1731pm[].association), C(y1731pm[].mep) and C(y1731pm[].session_id) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole resource is read.
     type: str
     choices:

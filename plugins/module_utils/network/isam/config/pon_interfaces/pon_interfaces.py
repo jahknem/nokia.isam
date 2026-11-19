@@ -121,14 +121,6 @@ class Pon_interfaces(IsamResourceModule):
                 for field in ("high", "high_clr", "low", "low_clr")
             )
 
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     def generate_commands(self):
         haved = {entry["name"]: _without_defaults(entry) for entry in self.have}
         wantd = {}

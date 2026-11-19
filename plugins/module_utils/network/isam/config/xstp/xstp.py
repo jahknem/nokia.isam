@@ -46,14 +46,6 @@ class Xstp(IsamResourceModule):
         self.parsers.extend("ports." + field for field in XSTP_PORT_FIELDS)
         self.parsers.extend("ports." + field for field in XSTP_PORT_FLAGS)
 
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     def generate_commands(self):
         want = self._normalize(self.want)
         have = self._normalize(self.have)

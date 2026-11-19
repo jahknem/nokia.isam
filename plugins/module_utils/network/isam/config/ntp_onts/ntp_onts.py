@@ -54,15 +54,6 @@ class Ntp_onts(IsamResourceModule):
             "ntp_ont.key",
         ]
 
-    def execute_module(self):
-        """Execute the module."""
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     def generate_commands(self):
         """Generate configuration commands to send based on want, have and state."""
         wantd = self._index_by_ont_id(self.want)

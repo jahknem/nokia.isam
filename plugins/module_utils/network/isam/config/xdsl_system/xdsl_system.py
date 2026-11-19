@@ -38,15 +38,6 @@ class Xdsl_system(IsamResourceModule):
             tmplt=Xdsl_systemTemplate(),
         )
 
-    def execute_module(self):
-        """Execute the module."""
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     def _reset(self, node, attr, have_value):
         default = _DEFAULTS.get((node, attr))
         if have_value is not None and have_value != default:

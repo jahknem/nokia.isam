@@ -2,6 +2,11 @@
 
 ## 0.3.14
 
+Unreleased. Schema changes are called out in the relevant entries below; live
+validation records do not imply authorization to run disruptive actions.
+
+### Lab validation
+
 - Live write verification on the lab ISAM (approved scope: traffic-free test objects;
   every change read back, reverted and read back; before/after captures identical).
   Verified set and reset/delete forms: QoS shaper profiles (create, two-rate EIR,
@@ -101,6 +106,31 @@
   - `isam_dhcp_relay` documented the `vlan-port:` form, which the device refuses for
     port statistics; `isam_dhcp_relay`, `isam_arp_relay` and `isam_pppoel2_statistics`
     document that R6.2.04m shows the setting in no read.
+### Shared infrastructure, state semantics and safety
+
+- Maintainability sweep: the common resource execution lifecycle now lives in
+  `IsamResourceModule`, replacing copied implementations across the collection;
+  custom execution paths remain explicit. Recursive changed/omitted-value comparison
+  is shared by `system` and `system_security`. Simplified link-aggregation merge logic,
+  IPv4/IPv6 trap rendering, QoS-map dispatch and equipment-ONT slot field rendering.
+  Removed unused CFM merge code and the unreachable ext-authenticator facts/template
+  (and its synthetic command-as-facts fixture); ext-authenticator remains action-only.
+- `system` settings now use the shared `Attr` grammar, clause parser and renderer;
+  defaults live with their attributes. Existing node-id, syslog and sync-if-timing
+  orchestration remains explicit. String quoting now safely handles leading `#`
+  and embedded double quotes in these settings and alarm descriptions.
+- CFM safety/idempotence fixes found during cleanup: deleting only SLM settings no
+  longer deletes domains; replacing domains leaves SLM alone and vice versa. Domain
+  identity is its index, not its configurable name. Device help confirms name/level
+  are immutable: attempts to change them fail early rather than deleting the domain
+  or issuing an invalid update; creating one with attributes requires both values.
+  Unchanged remote-MEP and Y.1731 PM settings no longer emit redundant commands.
+  These changes are covered by regression tests; no live configuration writes.
+- Focused LineTest parser tests cover hierarchical/scoped output, duplicate identities,
+  every declared session/parameter field and reset round-trips. Fixed trailing-`no`
+  resets (`group-opt no`, `busy-overwrite no`, `force-measure no`) parsing as the string
+  `"no"` instead of unset. No LineTest action is invoked by parsing or rendering.
+
 - `docs/development-style.md`: the collection's module style: netcommon layout, one
   state contract for every family, templates chosen by grammar (explicit parsers,
   small factories, or the shared settings block), scenario and contract tests.
@@ -243,6 +273,15 @@
   `isam_l2cp` and `isam_ipv6_antispoofing_slot` merged reset an unnamed setting;
   `isam_ipv6_antispoofing_slot` replaced reset unlisted slots. Facts of these families
   no longer report device defaults.
+### Regression coverage and reconciliation fixes
+
+- Fixture audit replaces nine always-true `len(parsed) >= 0` assertions with concrete
+  identity/value checks. Corrected the synthetic CFM, channel-pair PM, EFM OAM, EPON,
+  L2CP, NG-PON2 channel-group, PPPoE-client and PPPoE-L2 fixtures and two read-command
+  descriptors. Grammar was checked against live help where supported and the CLI guide
+  for the unsupported lab features; synthetic data is not represented as live validation.
+  Removed an unused xDSL-profile keyword helper found by the reference scan.
+
 - Live verification on the lab ISAM (read-only / check mode). Every resource module's
   live `gathered` matches the parse of a fresh capture; 57 targeted reads and 102
   check-mode merged/replaced/overridden runs with the gathered facts as config. Fixed:
@@ -292,6 +331,8 @@
   the whole resource instead of silently doing nothing. Interfaces are shut down,
   slots removed before interfaces, and loop/PM settings are not reset after their
   ONT is removed. Explicitly named sections remain scoped.
+### Root config tree
+
 - Root-tree nesting uses resource-backed CLI metadata for missing security,
   timing, syslog, xDSL profile, trap-manager and multicast nodes. Lowercase names,
   composite SNMP identities and indexed RADIUS/PSD entries no longer depend on
@@ -319,6 +360,8 @@
 - `config_tree.gap_report` shows what the root contains that the families do not model:
   unclaimed nodes (no family) and unmodelled attributes per family. CLI-spelled option
   names and aliases count as modelled; value-like tokens are counted, not printed.
+### Expanded resource coverage
+
 - Attribute cleanup: `xdsl_profiles` models service/spectrum/DPBO/vectoring/VCE
   attributes and indexed PSD/PBO sub-nodes; detail defaults no longer land in
   `commands`, and false flags are idempotent. Existing raw `commands` remain accepted.

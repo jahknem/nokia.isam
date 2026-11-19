@@ -1,4 +1,5 @@
 from textwrap import dedent
+import pytest
 
 from ansible_collections.nokia.isam.plugins.modules import isam_cfm
 from ansible_collections.nokia.isam.tests.unit.compat.mock import patch
@@ -59,3 +60,63 @@ def test_y1731pm_short_lines_do_not_raise():
         "domain_index": 1, "association": 2, "mep": 3, "session_id": 4,
         "type": "dmm", "target_mac": "00:11:22:33:44:55", "priority": 5,
     }]
+
+
+CFM_CONFIG = {"domains": [{"domain_index": 1, "name": "string operator", "level": 3},
+                          {"domain_index": 2, "name": "string other", "level": 4}],
+              "slm": {"inactivity_time": 60}, "y1731pm": []}
+
+
+def _cfm(monkeypatch, state, config, have=None):
+    from copy import deepcopy
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.cfm.cfm import CfmFacts
+    from .module_runner import run_module
+
+    monkeypatch.setattr(CfmFacts, "get_facts", lambda *args, **kwargs:
+                        ({"ansible_network_resources": {"isam_cfm": deepcopy(CFM_CONFIG if have is None else have)}}, []))
+    return run_module(monkeypatch, "isam_cfm", {"state": state, "config": config})
+
+
+def test_deleted_slm_never_deletes_domains(monkeypatch):
+    assert _cfm(monkeypatch, "deleted", {"slm": {}})["commands"] == ["configure cfm slm no inactivity-time"]
+
+
+def test_replaced_slm_never_deletes_domains(monkeypatch):
+    assert _cfm(monkeypatch, "replaced", {"slm": {"inactivity_time": 90}})["commands"] == [
+        "configure cfm slm inactivity-time 90"]
+
+
+@pytest.mark.parametrize("state", ["merged", "replaced"])
+def test_domain_name_change_fails_without_implicitly_deleting_the_domain(monkeypatch, state):
+    result = _cfm(monkeypatch, state, {"domains": [
+        {"domain_index": 1, "name": "string renamed", "level": 3}, CFM_CONFIG["domains"][1]]})
+    assert result.get("failed") and "cannot be modified" in result["msg"]
+
+
+def test_domain_index_is_the_identity_when_only_selecting_existing_domains(monkeypatch):
+    assert _cfm(monkeypatch, "replaced", {"domains": [{"domain_index": 1}, {"domain_index": 2}]})["commands"] == []
+
+
+def test_domain_creation_requires_name_and_level(monkeypatch):
+    result = _cfm(monkeypatch, "merged", {"domains": [{"domain_index": 3, "level": 2}]})
+    assert result.get("failed") and "requires both name and level" in result["msg"]
+
+
+def test_deleted_domain_preserves_slm_and_other_domains(monkeypatch):
+    assert _cfm(monkeypatch, "deleted", {"domains": [{"domain_index": 1}]})["commands"] == [
+        "configure cfm no domain 1"]
+
+
+def test_remote_mep_and_pm_configuration_is_idempotent(monkeypatch):
+    config = {"domains": [{"domain_index": 1, "associations": [{"association_index": 2,
+               "remote_meps": [7], "meps": [{"mepid": 3, "active_remote_meps": [8]}]}]}],
+              "y1731pm": [{"domain_index": 1, "association": 2, "mep": 3, "session_id": 200,
+                           "type": "dmm", "target_mac": "00:11:22:33:44:55", "priority": 5}]}
+    assert _cfm(monkeypatch, "merged", config, have=config)["commands"] == []
+
+
+def test_pm_identity_includes_session_id(monkeypatch):
+    have = {"y1731pm": [{"domain_index": 1, "association": 2, "mep": 3, "session_id": 200, "priority": 5}]}
+    want = {"y1731pm": [{"domain_index": 1, "association": 2, "mep": 3, "session_id": 201, "priority": 5}]}
+    assert _cfm(monkeypatch, "merged", want, have=have)["commands"] == [
+        "configure cfm y1731pm domain 1 association 2 mep 3 session-id 201 priority 5"]

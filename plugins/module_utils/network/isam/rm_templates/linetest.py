@@ -17,6 +17,7 @@ PARAMETER_FIELDS = [
     "value1", "value2", "value3", "value4", "value5", "min-threshold",
     "max-threshold", "min-threshold2", "max-threshold2", "ltstrvalue1",
 ]
+RESET_FIELDS = ("group-opt", "busy-overwrite", "force-measure")
 
 
 class LinetestTemplate(object):
@@ -86,16 +87,31 @@ class LinetestTemplate(object):
         commands = []
         for field in fields:
             key = canonical_key(field)
-            if key in item and item.get(key) is None and field in ("group-opt", "busy-overwrite", "force-measure"):
+            if key in item and item.get(key) is None and field in RESET_FIELDS:
                 commands.append("%s %s %s no" % (prefix, " ".join(values), field))
             elif item.get(key) is not None:
                 commands.append("%s %s %s %s" % (prefix, " ".join(values), field, item[key]))
         return commands
 
     def _fields(self, item, parts, fields):
+        # These options reset with a trailing 'no' (CLI guide), not 'no <kw>'.
+        # Normalize that grammar before using the shared clause parser so rendered
+        # reset commands parse back to unset, never the literal string "no".
+        tokens = []
+        index = 0
+        while index < len(parts):
+            if parts[index] == "no" and index + 1 < len(parts) and parts[index + 1] in fields:
+                tokens.extend(parts[index:index + 2])
+                index += 2
+            elif parts[index] in RESET_FIELDS and index + 1 < len(parts) and parts[index + 1] == "no":
+                tokens.extend(("no", parts[index]))
+                index += 2
+            else:
+                tokens.append(parts[index])
+                index += 1
         item.update(
             parse_cli_fields(
-                parts,
+                tokens,
                 value_fields={field: "str" for field in fields},
                 none_for_negated_values=True,
             )

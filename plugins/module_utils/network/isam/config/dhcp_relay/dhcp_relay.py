@@ -43,14 +43,6 @@ class Isam_dhcp_relay(IsamResourceModule):
         self.parsers = ["port_stats", "v6_port_stats"]
         self.before = deepcopy(self.have)
 
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     def generate_commands(self):
         wantd = {entry["name"]: entry for entry in (self.want or [])}
         haved = {entry["name"]: entry for entry in (self.have or [])}

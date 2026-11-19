@@ -62,15 +62,6 @@ class Vlans(IsamResourceModule):
         )
         self.parsers = [option for option, _cli, _kind, _default in VLAN_ATTRS]
 
-    def execute_module(self):
-        """Execute the module."""
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     def generate_commands(self):
         """Generate the commands that bring the VLANs from have to want."""
         rendering = self.state == "rendered"

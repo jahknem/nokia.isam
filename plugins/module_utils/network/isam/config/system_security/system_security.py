@@ -10,7 +10,9 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
     Facts,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    changed_values,
     is_masked_secret,
+    omitted_values,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.system_security import (
     LISTS,
@@ -72,38 +74,6 @@ def _named(key, wanted):
     return False
 
 
-def _diff(want, have):
-    """Attributes of want that differ from have (recursing into dicts)."""
-    out = {}
-    for key, value in want.items():
-        if value is None:
-            continue
-        current = have.get(key)
-        if isinstance(value, dict):
-            sub = _diff(value, current if isinstance(current, dict) else {})
-            if sub:
-                out[key] = sub
-        elif current != value:
-            out[key] = value
-    return out
-
-
-def _absent(want, have):
-    """Attributes of have that want does not set (recursing into dicts)."""
-    out = {}
-    for key, value in have.items():
-        if value is None:
-            continue
-        wanted = want.get(key, _MISSING)
-        if isinstance(value, dict):
-            sub = _absent(wanted if isinstance(wanted, dict) else {}, value)
-            if sub:
-                out[key] = sub
-        elif wanted is _MISSING or wanted is None:
-            out[key] = value
-    return out
-
-
 class Isam_system_security(IsamResourceModule):
     """The isam_system_security config class."""
 
@@ -116,14 +86,6 @@ class Isam_system_security(IsamResourceModule):
             tmplt=Isam_system_securityTemplate(),
         )
         register_embedded_secrets(module, self.want)
-
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
 
     @staticmethod
     def _index(section, entries):
@@ -191,7 +153,7 @@ class Isam_system_security(IsamResourceModule):
                 entry = normalize_policy(entry)
             entry, nested_want = _split_nested(section, entry)
             current, nested_have = _split_nested(section, current)
-            changed = _diff(entry, current)
+            changed = changed_values(entry, current)
             identity = dict((f, entry.get(f)) for f in ident)
             nested_changed, nested_remove, nested_reset = self._nested_commands(
                 section, identity, nested_want, nested_have)
@@ -205,7 +167,7 @@ class Isam_system_security(IsamResourceModule):
                     self.commands.extend(tmplt.render_entry(section, changed))
             self.commands.extend(nested_reset)
             if self.state in ("replaced", "overridden") and current:
-                stale = _absent(entry, current)
+                stale = omitted_values(entry, current)
                 for field in ident:
                     stale.pop(field, None)
                 if stale:
@@ -236,13 +198,13 @@ class Isam_system_security(IsamResourceModule):
             out = []
             for index, child in wanted.items():
                 current = have.get(index)
-                diff = _diff(child, current or {})
+                diff = changed_values(child, current or {})
                 diff.pop(id_field, None)
                 if diff or current is None:
                     diff[id_field] = index
                     out.append(diff)
                 if replace and current:
-                    stale = _absent(child, current)
+                    stale = omitted_values(child, current)
                     stale.pop(id_field, None)
                     if stale:
                         stale[id_field] = index
@@ -263,10 +225,10 @@ class Isam_system_security(IsamResourceModule):
             return
         if not wantd:
             return
-        changed = _diff(wantd, haved)
+        changed = changed_values(wantd, haved)
         if changed:
             self.commands.extend(tmplt.render_entry(section, changed))
         if self.state in ("replaced", "overridden"):
-            stale = _absent(wantd, haved)
+            stale = omitted_values(wantd, haved)
             if stale:
                 self.commands.extend(tmplt.render_reset(section, stale))

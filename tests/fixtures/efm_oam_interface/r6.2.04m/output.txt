@@ -1,1 +1,1 @@
-configure efm-oam interface 1/1/8/1 admin-state up
+configure efm-oam interface 1/1/6/1 admin-up

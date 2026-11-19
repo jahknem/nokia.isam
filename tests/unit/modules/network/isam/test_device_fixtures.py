@@ -809,7 +809,7 @@ def test_cfm_synthetic_fixture_is_parseable():
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.cfm import CfmTemplate
     parsed = CfmTemplate(lines=output.splitlines()).parse()
     assert descriptor["command"] == "info configure cfm flat"
-    assert len(parsed) >= 0
+    assert parsed["domains"] == [{"domain_index": 1, "name": "string fixture", "level": 0, "associations": []}]
 
 
 def test_channel_pair_pm_synthetic_fixture_is_parseable():
@@ -817,8 +817,8 @@ def test_channel_pair_pm_synthetic_fixture_is_parseable():
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.pon_variants.pon_variants import Channel_pair_pmFacts
     facts = Channel_pair_pmFacts(module=None)
     parsed = facts.populate_facts(None, {"ansible_network_resources": {}}, data=output)["ansible_network_resources"]["channel_pair_pm"]
-    assert descriptor["command"] == "info configure channel-pair pm flat"
-    assert len(parsed) >= 0
+    assert descriptor["command"] == "info configure channel-pair interface flat"
+    assert parsed == [{"name": "1/1/6/1", "fec_tc_layer": "enable"}]
 
 
 def test_dist_service_synthetic_fixture_is_parseable():
@@ -834,7 +834,7 @@ def test_efm_oam_interface_synthetic_fixture_is_parseable():
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.efm_oam import EfmOamTemplate
     parsed = EfmOamTemplate().parse(output)
     assert descriptor["command"] == "info configure efm-oam interface flat"
-    assert len(parsed) >= 0
+    assert parsed == [{"name": "1/1/6/1", "admin_up": True}]
 
 
 def test_epon_interfaces_synthetic_fixture_is_parseable():
@@ -843,7 +843,7 @@ def test_epon_interfaces_synthetic_fixture_is_parseable():
     facts = Epon_interfacesFacts(module=None)
     parsed = facts.populate_facts(None, {"ansible_network_resources": {}}, data=output)["ansible_network_resources"]["epon_interfaces"]
     assert descriptor["command"] == "info configure epon interface flat"
-    assert len(parsed) >= 0
+    assert parsed == [{"name": "1/1/6/1", "polling_period": 2000}]
 
 
 def test_iphost_synthetic_fixture_is_parseable():
@@ -867,7 +867,7 @@ def test_l2cp_synthetic_fixture_is_parseable():
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.l2cp import L2cpTemplate
     parsed = L2cpTemplate().parse(output)
     assert descriptor["command"] == "info configure l2cp flat"
-    assert len(parsed) >= 0
+    assert parsed == [{"name": "l2cp", "partition_type": "fixed-assigned"}]
 
 
 def test_l2cp_session_synthetic_fixture_is_parseable():
@@ -891,8 +891,8 @@ def test_ngpon2_channel_groups_synthetic_fixture_is_parseable():
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.pon_variants.pon_variants import Ngpon2_channel_groupsFacts
     facts = Ngpon2_channel_groupsFacts(module=None)
     parsed = facts.populate_facts(None, {"ansible_network_resources": {}}, data=output)["ansible_network_resources"]["ngpon2_channel_groups"]
-    assert descriptor["command"] == "info configure ngpon2 channel-groups flat"
-    assert len(parsed) >= 0
+    assert descriptor["command"] == "info configure channel-group flat"
+    assert parsed == [{"id": 1, "channel_pairs": ["1/1/6/1"]}]
 
 
 def test_pppoe_client_interface_synthetic_fixture_is_parseable():
@@ -900,7 +900,8 @@ def test_pppoe_client_interface_synthetic_fixture_is_parseable():
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.pppoe_client import PppoeClientTemplate
     parsed = PppoeClientTemplate(kind="interface").parse(output)
     assert descriptor["command"] == "info configure pppoe-client interface flat"
-    assert len(parsed) >= 0
+    assert parsed == [{"name": "1/1/6/1/1/1/1", "client_id": 1, "profile_name": "prof1",
+                       "username": "example", "password": "example-password"}]
 
 
 def test_pppoe_client_ppp_profile_synthetic_fixture_is_parseable():
@@ -908,7 +909,7 @@ def test_pppoe_client_ppp_profile_synthetic_fixture_is_parseable():
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.pppoe_client import PppoeClientTemplate
     parsed = PppoeClientTemplate(kind="profile").parse(output)
     assert descriptor["command"] == "info configure pppoe-client ppp-profile flat"
-    assert len(parsed) >= 0
+    assert parsed == [{"name": "prof1", "authproto": "pap"}]
 
 
 def test_pppoel2_statistics_synthetic_fixture_is_parseable():
@@ -916,15 +917,7 @@ def test_pppoel2_statistics_synthetic_fixture_is_parseable():
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.pppoe_client import Pppoel2StatisticsTemplate
     parsed = Pppoel2StatisticsTemplate().parse(output)
     assert descriptor["command"] == "info configure pppoel2 statistics flat"
-    assert len(parsed) >= 0
-
-
-def test_security_ext_authenticator_synthetic_fixture_is_parseable():
-    descriptor, output = fixture_bundle("security_ext_authenticator", "r6.2.04m")
-    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.security_ext_authenticator import Isam_security_ext_authenticatorTemplate
-    parsed = Isam_security_ext_authenticatorTemplate(lines=output.splitlines()).parse()
-    assert descriptor["command"] == "admin security ext-authenticator"
-    assert any(item.get("port") == "1/1/2/1" for item in parsed.get("config", []))
+    assert parsed == [{"name": "1/1/6/1/1/1/1", "enabled": True}]
 
 
 def test_linetest_fixture_is_parseable():

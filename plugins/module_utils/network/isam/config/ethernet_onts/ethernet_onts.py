@@ -70,15 +70,6 @@ class Ethernet_onts(IsamResourceModule):
         ]
         self.parsers.extend("ont." + path + "." + field for path, field, _default in _SUBNODE_DEFAULTS)
 
-    def execute_module(self):
-        """Execute the module."""
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     def generate_commands(self):
         """Generate configuration commands to send based on want, have and state."""
         wantd = self._index_by_uni_idx(self.want)

@@ -33,14 +33,6 @@ class Qos_tca(IsamResourceModule):
             tmplt=Qos_tcaTemplate(),
         )
 
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     def _index(self, data):
         return {(e["name"], e["queue"]): e for e in data or [] if e.get("name") is not None and e.get("queue") is not None}
 

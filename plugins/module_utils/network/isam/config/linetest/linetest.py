@@ -33,14 +33,6 @@ class Linetest(IsamResourceModule):
             tmplt=LinetestTemplate(),
         )
 
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     def generate_commands(self):
         # The raw config (not self.want) is used on purpose: Ansible fills omitted
         # options with None, and the template renders None for group-opt/busy-overwrite/

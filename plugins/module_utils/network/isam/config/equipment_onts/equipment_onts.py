@@ -134,14 +134,6 @@ class Equipment_onts(IsamResourceModule):
             tmplt=Equipment_ontsTemplate(),
         )
 
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     def generate_commands(self):
         want = self.want or deepcopy(EMPTY)
         have = self.have or deepcopy(EMPTY)
@@ -273,17 +265,9 @@ class Equipment_onts(IsamResourceModule):
                 desired.update(want)
             if parser_prefix == "slot" and not have and self.state in ("merged", "rendered"):
                 command = "configure equipment ont slot %s" % item_key
-                for field, cli_name in (
-                    ("planned_card_type", "planned-card-type"),
-                    ("plndnumdataports", "plndnumdataports"),
-                    ("plndnumvoiceports", "plndnumvoiceports"),
-                    ("port_type", "port-type"),
-                    ("transp_mode_rem", "transp-mode-rem"),
-                    ("no_mcast_control", "no-mcast-control"),
-                    ("admin_state", "admin-state"),
-                ):
+                for field in self.SLOT_FIELDS:
                     if desired.get(field) is not None:
-                        command += " %s %s" % (cli_name, desired[field])
+                        command += " %s %s" % (field.replace("_", "-"), desired[field])
                 self.commands.append(command)
                 continue
             self._compare_entry(desired, have, parser_prefix, fields)

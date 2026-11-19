@@ -182,10 +182,6 @@ SCHEMAS = {
 ACTIVE = ("active", "active", FLAG)
 
 
-def _keywords(schema):
-    return set(keyword for _o, keyword, _k in schema["attrs"] + schema["nodes"] + schema["lists"])
-
-
 def _to_int(value):
     text = str(value)
     return int(text) if text.lstrip("-").isdigit() else value

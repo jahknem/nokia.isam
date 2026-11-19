@@ -288,7 +288,9 @@ class TestCfmSlm(_Base):
 
     def test_replaced_and_deleted_reset(self):
         self.device("configure cfm slm inactivity-time 30\n")
-        assert self.run_state("replaced", True, config={"domains": [{"domain_index": 1}]})["commands"] == ["configure cfm slm no inactivity-time"]
+        assert self.run_state("replaced", False, config={"domains": [{"domain_index": 1}]})["commands"] == []
+        assert self.run_state("replaced", True, config={"domains": [{"domain_index": 1}], "slm": {}})["commands"] == [
+            "configure cfm slm no inactivity-time"]
         assert self.run_state("deleted", True)["commands"] == ["configure cfm slm no inactivity-time"]
         self.device("configure cfm slm no inactivity-time\n")
         assert self.run_state("deleted", False)["commands"] == []

@@ -6,7 +6,6 @@ __metaclass__ = type
 
 from copy import deepcopy
 
-from ansible.module_utils.six import iteritems
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.link_agg import (
@@ -41,14 +40,6 @@ class Link_agg(IsamResourceModule):
             resource="link_agg",
             tmplt=Link_aggTemplate(),
         )
-
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
 
     def generate_commands(self):
         want = self._normalize_config(self.want)
@@ -89,47 +80,33 @@ class Link_agg(IsamResourceModule):
         wantd = self._index_by_id(want_ports)
         haved = self._index_by_id(have_ports)
 
-        if self.state == "merged":
-            for key, have in iteritems(haved):
-                merged = deepcopy(have)
-                merged.update(wantd.get(key, {}))
-                wantd[key] = merged
-
         if self.state == "deleted":
             for target, have in deleted_targets(wantd, haved, ("id", "name")):
                 self._delete_port(have, keep=target)
             return
 
         if self.state == "overridden":
-            for key, have in iteritems(haved):
+            for key, have in haved.items():
                 if key not in wantd:
                     self._delete_port(have)
 
-        for key, want in iteritems(wantd):
+        for key, want in wantd.items():
             self._compare_port(want, haved.get(key, {}))
 
     def _generate_group_commands(self, want_groups, have_groups):
         wantd = self._index_by_id(want_groups)
         haved = self._index_by_id(have_groups)
 
-        if self.state == "merged":
-            for key, have in iteritems(haved):
-                merged = deepcopy(have)
-                if key in wantd:
-                    merged.update(wantd[key])
-                    merged["ports"] = sorted(set(have.get("ports", [])) | set(wantd[key].get("ports", [])))
-                wantd[key] = merged
-
         if self.state == "deleted":
-            haved = {k: v for k, v in iteritems(haved) if k in wantd or not wantd}
+            haved = {k: v for k, v in haved.items() if k in wantd or not wantd}
             wantd = {}
 
         if self.state in ["overridden", "deleted"]:
-            for key, have in iteritems(haved):
+            for key, have in haved.items():
                 if key not in wantd:
                     self._delete_group(have)
 
-        for key, want in iteritems(wantd):
+        for key, want in wantd.items():
             self._compare_group(want, haved.get(key, {}))
 
     def _compare_port(self, want, have):
@@ -151,7 +128,7 @@ class Link_agg(IsamResourceModule):
                         port_id, want["actor_port_prio"]
                     )
                 )
-            elif have.get("actor_port_prio") is not None:
+            elif have.get("actor_port_prio") is not None and self.state in ("replaced", "overridden"):
                 self.commands.append("configure link-agg port {0} no actor-port-prio".format(port_id))
 
     def _delete_port(self, have, keep=None):
@@ -212,5 +189,6 @@ class Link_agg(IsamResourceModule):
         if field in ["max_active_port", "swo_threshold", "priority"]:
             self.commands.append("configure link-agg group {0} no {1}".format(group_id, field.replace("_", "-")))
 
-    def _index_by_id(self, data):
+    @staticmethod
+    def _index_by_id(data):
         return {entry["id"]: entry for entry in data or [] if entry.get("id")}

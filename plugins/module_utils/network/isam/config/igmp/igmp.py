@@ -43,11 +43,3 @@ class Igmp(IsamResourceModule):
                     "igmp_querier", "query_interval", "query_response_interval", "robustness_count"):
             if key in want["igmp"] and want["igmp"].get(key) != have["igmp"].get(key):
                 self.addcmd({"igmp": {key: want["igmp"].get(key)}}, "igmp." + key)
-
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
