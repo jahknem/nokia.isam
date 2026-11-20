@@ -63,8 +63,12 @@ class BridgesFacts(object):
         config = self._module.params.get("config") or {}
         ports = config.get("port", []) if isinstance(config, dict) else config
         ports = ports or []
+        # A gathered read must match the complete read's compact form: 'flat detail' also
+        # prints every default ("no <attr>"), which the complete read omits, so the two would
+        # parse into different configurations. Writes keep the detail form.
+        suffix = "flat" if self._module.params.get("state") == "gathered" else "flat detail"
         commands = [
-            "info configure bridge port %s flat detail" % (item.get("port") or item.get("id"))
+            "info configure bridge port %s %s" % (item.get("port") or item.get("id"), suffix)
             for item in ports
             if item.get("port") or item.get("id")
         ]

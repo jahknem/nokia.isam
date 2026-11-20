@@ -8,6 +8,21 @@ intentional: read [the 1.0 upgrade guide](docs/upgrade-1.0.0.md) before upgradin
 Historical live-validation records do not authorize disruptive actions or certify
 this new artifact. NOC remains unchanged.
 
+### Targeted gathering consistency
+
+- A `gathered` read of a bridge port or interface port now uses the same compact `flat`
+  form as the complete read, not `flat detail`. Detail also prints every default
+  (`no <attr>`), which the complete read omits, so the two parsed into different
+  configurations; a targeted read must equal the complete read of the same instances.
+  Write states keep the detail form. Verified live (DS-LIN-TEST-01): targeted and complete
+  reads of an ONT's bridges/interfaces/qos now select identical instances.
+- A missing dhcp-relay/arp-relay port answers "The interface index cannot be calculated";
+  this is now classified as an absent instance (like "instance does not exist"), so a
+  targeted read reports it missing instead of failing.
+- For `gathered` reads, a node the firmware does not know ("invalid token" — e.g.
+  dhcp-relay `v6-port-stats`, or an interface index form it does not accept) is treated as
+  "nothing configured here" and skipped, not raised. Write states still surface the error.
+
 ### Major-release integration
 
 - Keep `IsamResourceModule`, `IsamActionModule` and `AttributeTable`, including all
