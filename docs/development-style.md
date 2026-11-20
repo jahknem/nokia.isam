@@ -34,6 +34,14 @@ explicit `False` in `rendered`, and packing commands per node
 | `rendered` | Renders exactly what is given, an explicit `False` as its `no` form. No device. |
 | `parsed`, `gathered` | Facts; unset/default values are not reported. |
 
+An action state (`merged`/`replaced`/`overridden`/`deleted`) given `running_config`
+renders against that configuration as the current state instead of reading the device,
+and never sends commands. `running_config` is the canonical resource JSON or CLI text
+(as for `parsed`). `deleted` with `running_config` and no `config` renders the removal of
+everything in it — the offline counterpart of `rendered` for deletions (NOC move/copy/delete
+previews). `config` and `running_config` remain mutually exclusive, so the offline form
+used in practice is `deleted` + `running_config`.
+
 Shared helpers implement these rules; use them instead of local variants:
 `deleted_targets` (what an instance keeps on `deleted`), `covers_entry` (whether a
 removable object is removed as a whole), `requested_sections`.
