@@ -272,7 +272,16 @@ def unwrap_response(data):
 def _is_absent_error(text):
     text = text.lower()
     return ("instance does not exist" in text or "specified instance does not exist" in text
-            or "lower-interface does not exist" in text)
+            or "lower-interface does not exist" in text
+            # dhcp-relay/arp-relay answer a port with no such relay interface this way.
+            or "interface index cannot be calculated" in text)
+
+
+def _is_unsupported_node(text):
+    """The firmware does not know this node at all (e.g. dhcp-relay v6-port-stats, or an
+    interface index form it does not accept). For a read that means 'nothing configured here',
+    not a failure; a write must still surface it."""
+    return "invalid token" in text.lower()
 
 
 def _bare_instance(connection, command, silent=False):
@@ -326,14 +335,15 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
     if not commands or state not in safe_states:
         return connection.get(fallback_command)
     scoped_results = []
+    reading = state == "gathered"
     for command in list(dict.fromkeys(commands)):
         try:
             response = connection.get(command)
         except Exception as exc:  # connection plugins surface device errors here
-            if _is_absent_error(str(exc)):
+            if _is_absent_error(str(exc)) or (reading and _is_unsupported_node(str(exc))):
                 continue
             raise
-        if _is_absent_error(response):
+        if _is_absent_error(response) or (reading and _is_unsupported_node(response)):
             continue
         reply = _targeted_reply(command, response)
         if not reply.strip() and (command in bare_commands or command in silent_bare_commands):
