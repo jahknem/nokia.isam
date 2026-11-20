@@ -89,8 +89,10 @@ class InterfacesFacts(object):
 
     def get_config(self, connection):
         config = self._module.params.get("config") or []
+        # Gathered reads use the complete read's compact form (no detail defaults); see bridges.
+        suffix = "flat" if self._module.params.get("state") == "gathered" else "detail flat"
         commands = [
-            "info configure interface port %s detail flat" % item["name"]
+            "info configure interface port %s %s" % (item["name"], suffix)
             for item in config
         ]
         return get_scoped_config(
