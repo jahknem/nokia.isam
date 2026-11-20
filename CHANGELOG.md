@@ -8,6 +8,28 @@ intentional: read [the 1.0 upgrade guide](docs/upgrade-1.0.0.md) before upgradin
 Historical live-validation records do not authorize disruptive actions or certify
 this new artifact. NOC remains unchanged.
 
+### Offline action-state rendering
+
+- An action state given `running_config` renders against that configuration as the
+  current state instead of reading the device, and never sends commands. `running_config`
+  is the canonical resource JSON or CLI text. `deleted` with `running_config` and no
+  `config` renders the removal of everything in it — the offline counterpart of `rendered`
+  for deletions, so a move/copy/delete preview (NOC) needs no device access for either
+  half. Implemented once in `IsamResourceModule` (`_offline_config`, `gather_current`,
+  `_get_connection`, `execute_module`, `run_commands`, `result`); covers families that
+  override `execute_module` too. Covered by `test_offline_action_states.py` on Core
+  2.19.12 and 2.21.6.
+- The resource modules now route to the `nokia.isam.isam` action plugin
+  (`meta/runtime.yml` `plugin_routing.action`), so they run by direct execution. The
+  action plugin executes an offline action state in-process (`_run_offline`) without
+  opening the persistent connection — netcommon's normal path reads
+  `self._connection.socket_path` and would start the SSH session before the module runs.
+  Verified by `test_offline_playbook_integration.py`, which runs real `ansible-playbook`
+  against an unreachable TEST-NET host and asserts the removal renders with no connection.
+- A canonical JSON `running_config` is validated against the config argspec; an unknown
+  or renamed field fails with the offending paths instead of silently rendering zero
+  removal commands. The offline preview reports `changed: false` (like `rendered`).
+
 ### Major-release integration
 
 - Keep `IsamResourceModule`, `IsamActionModule` and `AttributeTable`, including all
