@@ -43,7 +43,7 @@ AUTO_CREATED_DEFAULTS = {
         "identity": "name",
         "types": [
             {"prefix": "ont:", "default": {"admin_up": True, "link_updown_trap": True}},
-            {"prefix": "vlan-port:", "default": {"admin_up": True, "severity": "no-value"}},
+            {"prefix": "vlan-port:", "default": {"admin_up": True, "link_updown_trap": False, "severity": "no-value"}},
         ],
     },
     "qos_interfaces": {
@@ -58,28 +58,19 @@ AUTO_CREATED_DEFAULTS = {
 }
 
 # Partial auto-creation: an instance that IS needed (so it is not skipped whole) but carries
-# attributes / sub-objects the device creates on its own. Only the exact default parts are
-# stripped; the configured rest (and any customized part) stays. The UNI QoS keeps its
-# configured upstream queues, but the device auto-assigns the default scheduler-node /
-# cac-profile and creates the downstream queues. Verified live on DS-LIN-TEST-01: these are
-# identical across ONTs and appear when only the upstream queues are configured.
+# attributes / sub-objects the device creates on its own (e.g. the UNI QoS scheduler-node /
+# cac-profile / downstream queues). Only exact default parts may be stripped; the configured
+# rest (and any customized part) stays.
+#
+# IMPORTANT: these default values are device/card-specific and must NOT be hardcoded. They have
+# to come from the device itself (its default template, or a captured reference). On the lab
+# firmware the ONU provisioning template is not supported and no readable default template was
+# found, so this is intentionally EMPTY: such parts are copied, never guessed (fail-safe). Populate
+# it only from a trustworthy per-device source.
 #
 # family -> {identity, types: [{not_prefix, attrs, lists}]}
 #   not_prefix: applies to instance names NOT starting with any of these (the bare UNI).
 #   attrs: {attribute: default value} stripped only on an exact match.
 #   lists: {sub-object list: [default entries]} each entry stripped only on an exact match
 #          (operational fields ignored); the list is dropped when every entry was a default.
-AUTO_CREATED_PARTS = {
-    "qos_interfaces": {
-        "identity": "name",
-        "types": [
-            {"not_prefix": ["ont:", "vlan:"],
-             "attrs": {"scheduler_node": "name:NGLT_Default", "cac_profile": "name:FD_ONTUniVideo"},
-             "lists": {"queue": [
-                 {"id": 0, "priority": 6, "weight": 34, "queue_profile": "name:NGLT_Default", "shaper_profile": "none"},
-                 {"id": 1, "priority": 6, "weight": 66, "queue_profile": "name:NGLT_Default", "shaper_profile": "none"},
-                 {"id": 2, "priority": 7, "weight": 0, "queue_profile": "name:NGLT_Default", "shaper_profile": "none"},
-                 {"id": 3, "priority": 8, "weight": 0, "queue_profile": "name:NGLT_Default", "shaper_profile": "none"}]}},
-        ],
-    },
-}
+AUTO_CREATED_PARTS = {}
