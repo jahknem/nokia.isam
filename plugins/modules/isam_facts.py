@@ -61,16 +61,19 @@ options:
   config_tree_detail:
     description:
       - With the C(config_tree) subset, read C(info configure detail flat) instead of
-        C(info configure flat). Detail also prints unset defaults, so the tree is
-        complete but several times larger. Use it to survey the full configurable
-        surface; the default (non-detail) is the configured content.
+        C(info configure flat). Detail also prints unset defaults and is several
+        times larger. This expands the raw snapshot, not proven modeled coverage.
+        The default (non-detail) is the configured content.
       - The root tree masks secret values and strips C(encrypted:) credentials from
         paths, attributes and stored CLI lines. Only device-masked placeholders such
         as C(plain:******) are retained. Leaves contain C(attrs), C(lines), C(node)
         and C(source); this view is lossless except for credential redaction.
         C(source) is C(grammar), C(resource) (resource-backed CLI metadata), or
-        C(heuristic). Unknown syntax retains its redacted CLI lines even when
-        the inferred nesting is approximate.
+        C(unclassified). Unknown paths are retained under C(__unclassified__)
+        without guessed nesting. Unknown attribute tails are preserved in
+         C(unparsed); they are never inferred as fields or child nodes.
+      - C(ansible_net_config_tree_source) records the flat source and its known IHUB
+        omissions. Lossless input parsing is not a whole-device completeness claim.
     required: false
     default: false
     type: bool

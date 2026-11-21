@@ -1,5 +1,6 @@
 """Root config tree: lossless nested parse of 'info configure [detail] flat'."""
 import importlib.util
+import os
 import pathlib
 
 import pytest
@@ -21,7 +22,8 @@ def redacted_source(text):
 
 REPO = pathlib.Path(__file__).resolve().parents[5]
 CAPTURE = REPO / "local_captures/DS-LIN-TEST-01/info_configure_flat.txt"
-ROOT_CAPTURES = [REPO.parent / "pon-migration-planner/.local" / name for name in ("root-flat.txt", "root-detail-flat.txt")]
+CAPTURE_ROOT = pathlib.Path(os.environ.get("ISAM_ROOT_CAPTURES", REPO.parent / "pon-migration-planner/.local"))
+ROOT_CAPTURES = [CAPTURE_ROOT / name for name in ("root-flat.txt", "root-detail-flat.txt")]
 
 SAMPLE = "\n".join([
     "configure equipment ont interface 1/1/5/1/3 sw-ver-pland auto admin-state up log-auth-pwd plain:******",
@@ -115,7 +117,7 @@ def test_resource_schema_nests_lowercase_identity_and_stays_lossless():
     assert leaf["node"] == "system security operator"
 
 
-def test_learned_subnodes_nest_below_their_parent():
+def test_explicit_resource_subnodes_nest_below_their_parent():
     text = "\n".join([
         "configure equipment ont interface 1/1/2/1/1 sw-ver-pland disabled no desc1",
         "configure equipment ont interface 1/1/2/1/1 tc-layer no olt-pm-collect no ont-pm-collect",
@@ -162,9 +164,35 @@ def test_gap_report_families_and_unclaimed():
     prefixes = {"qos_tca": ("configure qos tca ",), "bridges": ("configure bridge ",)}
     report = gap_report(parse_config_tree(text), argspec_names=argspecs, prefixes=prefixes, excludes={})
     assert report["families"]["qos_tca"] == {"argspec": True, "lines": 1, "unmodelled": {}, "value_like": 0}
-    assert report["families"]["bridges"]["unmodelled"] == {"bridge port": ["brand-new-knob"]}
+    assert report["families"]["bridges"]["unmodelled"] == {}
+    assert report["unparsed"]["bridge port"] == 1
     assert report["unclaimed"]["qos global"] == 1
     assert "system security snmp community host-address" in report["unclaimed"]
+
+
+def test_unknown_paths_are_quarantined_without_guessed_identities_or_attributes():
+    text = "\n".join([
+        "configure future lowercasename password encrypted:aa:bb no knob",
+        "configure future lowercasename child 1 setting value",
+        "configure future lowercasename child 2 setting value",
+    ])
+    tree = parse_config_tree(text)
+    assert set(tree) == {"__unclassified__"}
+    assert len(leaves(tree)) == 3
+    assert all(leaf["source"] == "unclassified" and leaf["attrs"] == {} for leaf in leaves(tree))
+    assert "encrypted:aa:bb" not in str(tree)
+    assert gap_report(tree)["unparsed"] == {"unclassified": 3}
+
+
+def test_unknown_subnode_never_learns_structure_from_neighboring_lines():
+    one = "configure qos interface 1/1/5/1/1/1/1 future-node 1 no setting"
+    two = "configure qos interface 1/1/5/1/1/1/1 future-node 2 no setting"
+    leaf = parse_config_tree(one)["qos"]["interface"]["1/1/5/1/1/1/1"]["__config__"]
+    combined = parse_config_tree(one + "\n" + two)["qos"]["interface"]["1/1/5/1/1/1/1"]
+    assert set(combined) == {"__config__"}
+    assert leaf["attrs"] == combined["__config__"]["attrs"] == {}
+    assert leaf["unparsed"] == [one]
+    assert combined["__config__"]["unparsed"] == [one, two]
 
 
 def test_gap_report_defaults_load_collection_argspecs():
@@ -194,6 +222,8 @@ def test_root_captures_are_lossless(capture):
     stats = nesting_stats(text)
     assert sum(stats.values()) == len(kept)
     assert stats.get("grammar", 0) > 0
+    assert set(stats) <= {"grammar", "resource", "unclassified"}
+    assert sum(gap_report(tree)["unparsed"].values()) == sum(len(leaf.get("unparsed", [])) for leaf in leaves(tree))
 
 
 def _compiler():
@@ -408,7 +438,8 @@ def test_gap_report_mappings_are_node_scoped_and_require_an_option():
     future = parse_config_tree("configure cwmp plt future-setting new-value")
     report = gap_report(future, argspec_names={"cwmp_plt": {"admin_state"}},
                         prefixes={"cwmp_plt": ("configure cwmp ",)}, excludes={})
-    assert report["families"]["cwmp_plt"]["unmodelled"] == {"cwmp plt": ["future-setting"]}
+    assert report["families"]["cwmp_plt"]["unmodelled"] == {}
+    assert report["unparsed"] == {"cwmp plt": 1}
 
 
 @pytest.mark.parametrize("capture", ROOT_CAPTURES, ids=lambda p: p.name)

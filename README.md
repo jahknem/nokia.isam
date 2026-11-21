@@ -36,7 +36,7 @@ see [ONT configuration change sets](docs/ont-change-sets.md).
 | --- | --- |
 | `isam_facts` | Collects facts and structured network resources from all registered modules |
 
-The major-version line adds an opt-in lossless root configuration tree:
+The major-version line adds an opt-in lossless tree of the captured flat root:
 
 ```yaml
 - name: Inspect the root configuration tree without applying changes
@@ -49,6 +49,10 @@ The major-version line adds an opt-in lossless root configuration tree:
 `config_tree_detail: true` includes device defaults. Root-tree diagnostics are not
 a configuration replay format, and unknown syntax can defeat heuristic redaction;
 review diagnostic output privately before sharing it.
+
+The tree uses only declared grammar/resource paths: unknown paths are retained
+under `__unclassified__`, and unknown attribute tails are reported as `unparsed`,
+not guessed into nodes or fields. Check those gaps before claiming coverage.
 
 Additional resource modules cover system security, QoS global/TCA settings,
 CWMP, error logging, NAT, PON global settings, PPPoX global sessions, PON

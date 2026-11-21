@@ -2,7 +2,7 @@
 
 Use the resource schemas as the authority for fields; do not infer identities from
 their spelling (lowercase names are valid identities too). This supplements, not
-edits, the generated grammar. Unknown nodes still use the lossless fallback.
+edits, the generated grammar. Unknown nodes are retained without guessed structure.
 """
 from functools import lru_cache
 
@@ -19,6 +19,10 @@ def resource_grammar():
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.mcast_general.mcast_general import Mcast_generalArgs
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.traps.traps import Isam_trapsArgs
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_profiles import PROFILE_TYPES, SCHEMAS
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.equipment_onts import INTERFACE_SUBNODES, SW_CTRL_SUBNODES
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.qos_interfaces.qos_interfaces import Qos_interfacesArgs
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.l2uni_onts.l2uni_onts import L2uni_ontsArgs
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.xdsl_lines.xdsl_lines import Xdsl_linesArgs
 
     records = []
 
@@ -82,6 +86,23 @@ def resource_grammar():
 
     for section, cli in PROFILE_TYPES.items():
         profile("xdsl " + cli + " {}", SCHEMAS[section])
+
+    # Explicit subnodes formerly guessed from repeated lines. Reuse their
+    # resource schemas/CLI mappings so a single line parses identically to a
+    # full capture and lowercase identities never change the result.
+    for node, subnodes in (("interface", INTERFACE_SUBNODES), ("sw-ctrl", SW_CTRL_SUBNODES)):
+        for _key, cli, fields in subnodes:
+            add("equipment ont " + node + " {} " + cli, {},
+                {attr: {"value": True} for _field, attr in fields})
+    qos = Qos_interfacesArgs.argument_spec["config"]["options"]
+    for key in ("queue", "upstream_queue", "ds_rem_queue"):
+        add("qos interface {} " + key.replace("_", "-") + " {}",
+            {k: v for k, v in qos[key]["options"].items() if k != "id"})
+    pm = L2uni_ontsArgs.argument_spec["config"]["options"]["performance_monitor"]["options"]
+    add("l2uni ont performance-monitor {} pm-collect-ext", pm["pm_collect_ext"]["options"])
+    xdsl_line = Xdsl_linesArgs.argument_spec["config"]["options"]
+    add("xdsl line {}", {k: v for k, v in xdsl_line.items() if k != "name"})
+    add("xdsl line {} tca-line-threshold", xdsl_line["tca_line_threshold"]["options"])
 
     # Prefer the deepest exact match; a missing optional compound identity falls
     # back to the parent node without discarding its original CLI line.

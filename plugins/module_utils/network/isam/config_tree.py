@@ -1,23 +1,13 @@
 # -*- coding: utf-8 -*-
 # GNU General Public License v3.0+
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-"""Parse a whole ISAM configuration ('info configure [detail] flat') into a nested tree.
+"""Parse the access-side flat root ('info configure [detail] flat') into a tree.
 
-Lossless: every configure line is kept (raw, secrets masked) at the leaf of its CLI path.
-The path/attribute split works in three layers:
-
-1. Grammar: nodes compiled from the CLI help (config_grammar.py) give the exact path
-   structure (keywords, identity slots) and the attribute keywords.
-2. Heuristic frame: lines without a grammar node are split at the first identity token
-   (an index such as 1/1/3/1, a number, a quoted string) or the first 'no'.
-Resource schemas supplement missing grammar for security, profiles and timing nodes;
-their explicit identity slots also cover lowercase names and compound identities.
-
-3. Learned sub-nodes: a keyword after the node identity that the grammar does not know
-   and that is followed by 'no <attr>' or by an index, on a line that is not the first
-   line of its node (or that repeats per node, e.g. 'queue 0', 'queue 1'), is a sub-node
-   (e.g. 'equipment ont interface <id> tc-layer', 'qos interface <id> queue <n>').
-   The decision is learned per node type across the whole capture, so it is consistent.
+Lossless: every configure line is kept (raw, secrets masked). Paths and attributes
+come ONLY from compiled CLI grammar or explicit resource metadata. Unknown paths
+are quarantined under __unclassified__; unknown tails are retained as unparsed
+lines on the known node. Neither names nor subnodes are guessed or learned from
+neighboring lines. The semantic object graph lives separately in topology/.
 
 Secrets are masked in the tokens *before* any structuring, so neither path keys, nor
 attribute values, nor stored lines can carry a cleartext secret or encrypted
@@ -54,61 +44,10 @@ _SECRET_ENDINGS = ("-pwd", "-password", "-passwd", "-secret")
 def _is_secret(word):
     word = str(word).lower()
     return word in _SECRET_WORDS or word.endswith(_SECRET_ENDINGS)
-_INDEX = re.compile(r"^[\d/:.\-]+$|^\d")
-_WORD = re.compile(r"^[a-z][a-z0-9_/-]*$")
-_MASKED = ("plain:", "encrypted:")
-_MAX_SUBNODE_DEPTH = 4
-_MAX_WORD_PATH = 4
 
 
 def _tokens(line):
     return _TOKEN_RE.findall(line)
-
-
-def _is_identity(token):
-    return token.startswith('"') or bool(_INDEX.match(token)) or token == REDACTED
-
-
-def _looks_like_identity(token):
-    """Identity for the heuristic frame: an index/number/quoted/masked token, a mixed-case
-    name ('RADPol') or an index with a type prefix ('stacked:552:0', 'lt:1/1/2')."""
-    if token == "no":
-        return False
-    return (_is_identity(token) or token.lower() != token
-            or (":" in token and any(c.isdigit() for c in token) and not token.startswith(_MASKED)))
-
-
-def _is_word(token):
-    return token != "no" and bool(_WORD.match(token))
-
-
-def _node_for(keywords):
-    """Longest grammar node whose keyword path prefixes the line's leading keywords."""
-    best = None
-    for node in CONFIG_GRAMMAR:
-        n = len(node)
-        if n <= len(keywords) and tuple(keywords[:n]) == node:
-            if best is None or n > len(best):
-                best = node
-    return best
-
-
-def _leading_keywords(tokens):
-    out = []
-    for t in tokens:
-        if t == "no" or _is_identity(t):
-            break
-        out.append(t)
-    return out
-
-
-def _split(tokens, attrs):
-    """Split tokens into (path, attribute tokens) at the first known attribute keyword."""
-    names = set(attrs)
-    for i, t in enumerate(tokens):
-        if t in names or (t == "no" and i + 1 < len(tokens) and tokens[i + 1] in names):
-            return tokens[:i], tokens[i:]
-    return tokens, []
 
 
 def _consume_path(tokens, structure):
@@ -132,61 +71,31 @@ def _consume_path(tokens, structure):
     return path, tokens[i:], tuple(shape)
 
 
-def _heuristic_frame(tokens):
-    """(path, rest, shape) for a line without a grammar node.
+def _parse_attrs(tokens, attrs):
+    """Parse only declared fields; return (attributes, unconsumed tail).
 
-    The path runs over the leading keywords and the first identity token; keyword +
-    identity pairs after it are left to the sub-node learning. A line with no identity
-    at all is split before a secret keyword / 'no' / its last 'name value' pair, but
-    after at most _MAX_WORD_PATH keywords.
-    """
-    kws = []
-    i = 0
-    while i < len(tokens) and tokens[i] != "no" and not _looks_like_identity(tokens[i]):
-        if i >= 2 and _is_secret(tokens[i]) and tokens[i] != "community" and i + 1 < len(tokens):
-            break  # 'operator x password encrypted:..': password is an attribute
-        kws.append(tokens[i])
-        i += 1
-    if i < len(tokens) and kws and _looks_like_identity(tokens[i]):
-        return kws + [tokens[i]], tokens[i + 1:], tuple(kws)
-    if i == len(tokens) and len(kws) >= 2:
-        cut = max(1, min(len(kws) - 2, _MAX_WORD_PATH))
-        return kws[:cut], tokens[cut:], tuple(kws[:cut])
-    if not kws:
-        return tokens[:1], tokens[1:], tuple(tokens[:1])
-    cut = min(len(kws), _MAX_WORD_PATH)
-    return kws[:cut], tokens[cut:], tuple(kws[:cut])
-
-
-def _parse_attrs(tokens, attrs, names=None):
-    """Attribute tokens -> {name: value}. 'no X' -> False; bare flag -> True; else value.
-
-    attrs: grammar metadata (exact); names: further tokens known to be attribute names
-    for this node type (learned from 'no <name>' in the capture), never taken as values.
+    Stop at the first unknown token. Skipping it could mistake an unknown value
+    for a known attribute and fabricate configuration.
     """
     out = {}
     i = 0
-    names = set(attrs) | set(names or ())
     while i < len(tokens):
         t = tokens[i]
-        if t == "no" and i + 1 < len(tokens):
+        if t == "no" and i + 1 < len(tokens) and tokens[i + 1] in attrs:
             out[tokens[i + 1]] = False
             i += 2
             continue
-        nxt = tokens[i + 1] if i + 1 < len(tokens) else None
-        if t in attrs:
-            takes_value = attrs[t].get("value", False)
-        else:
-            # Unknown attribute: infer a value unless the next token starts another
-            # attribute (a known/learned name or 'no'). Raw line is kept regardless.
-            takes_value = nxt is not None
-        if takes_value and nxt is not None and nxt not in names and nxt != "no":
-            out[t] = _unquote(nxt)
+        if t not in attrs:
+            break
+        if attrs[t].get("value", False):
+            if i + 1 >= len(tokens):
+                break
+            out[t] = _unquote(tokens[i + 1])
             i += 2
         else:
             out[t] = True
             i += 1
-    return out
+    return out, tokens[i:]
 
 
 def _unquote(v):
@@ -283,117 +192,42 @@ class _Line(object):
 
 
 def _frame(order, tokens, stored):
+    candidates = []
     for metadata in resource_grammar():
         consumed = _consume_path(tokens, metadata["path"])
         if consumed is not None:
             path, rest, shape = consumed
             if path == ["system", "security"] and rest and rest[0] != "no" and rest[0] not in metadata["attrs"]:
-                continue  # unknown security child: retain heuristic nesting
+                continue
             if shape == ("system", "id") and len(path) == 3 and path[-1] in metadata["attrs"]:
                 continue  # legacy 'system id name X' has no node-id identity
             if metadata["positionals"] and rest:
                 rest = [metadata["positionals"][0], rest[0]] + rest[1:]
-            return _Line(order, stored, list(path), list(rest), tuple(shape), metadata["attrs"], "resource")
-    node = _node_for(_leading_keywords(tokens))
-    if node:
-        attrs = CONFIG_GRAMMAR[node]["attrs"]
-        consumed = _consume_path(tokens, CONFIG_GRAMMAR[node]["path"])
-        if consumed is None:
-            path, rest = _split(tokens, attrs)
-            shape = node
-        else:
+            candidates.append(_Line(order, stored, list(path), list(rest), tuple(shape), metadata["attrs"], "resource"))
+    for node, metadata in CONFIG_GRAMMAR.items():
+        consumed = _consume_path(tokens, metadata["path"])
+        if consumed is not None:
             path, rest, shape = consumed
-        return _Line(order, stored, list(path), list(rest), tuple(shape), attrs, "grammar")
-    path, rest, shape = _heuristic_frame(tokens)
-    return _Line(order, stored, list(path), list(rest), tuple(shape), {}, "heuristic")
+            candidates.append(_Line(order, stored, list(path), list(rest), tuple(shape), metadata["attrs"], "grammar"))
+    if candidates:
+        # Deepest declared path wins. Explicit resource metadata wins equal
+        # paths, but never invents a deeper child from neighboring output.
+        return max(candidates, key=lambda line: (len(line.path), line.source == "resource"))
+    return _Line(order, stored, ["__unclassified__", str(order)], [], ("unclassified",), {}, "unclassified")
 
 
-def _negated_names(lines):
-    """{shape: names seen as 'no <name>'} -- attribute names, never sub-nodes or values."""
-    names = {}
-    for line in lines:
-        bucket = names.setdefault(line.shape, set(line.attrs))
-        rest = line.rest
-        for i in range(len(rest) - 1):
-            if rest[i] == "no":
-                bucket.add(rest[i + 1])
-    return names
-
-
-def _learn_subnodes(lines, names):
-    """Per shape: {keyword: takes_identity} for keywords that open a sub-node."""
-    groups = {}
-    for line in lines:
-        groups.setdefault((line.shape, tuple(line.path)), []).append(line)
-    learned = {}
-    for (shape, _path), members in groups.items():
-        first = min(m.order for m in members)
-        seen = {}
-        for m in members:
-            rest = m.rest
-            if not rest:
-                continue
-            k = rest[0]
-            if not _is_word(k) or k in m.attrs or k in names.get(shape, ()):
-                continue
-            nxt = rest[1] if len(rest) > 1 else None
-            seen.setdefault(k, set()).add(nxt)
-            if m.order == first:
-                continue
-            if nxt == "no":
-                learned.setdefault(shape, {}).setdefault(k, False)
-            elif nxt is not None and _is_identity(nxt):
-                learned.setdefault(shape, {})[k] = True
-            elif nxt is not None and _is_word(nxt) and len(rest) > 2 and rest[2] == "no" \
-                    and nxt not in names.get(shape, ()):
-                learned.setdefault(shape, {}).setdefault(k, False)  # 'utilization threshold no x'
-        for k, followers in seen.items():
-            followers.discard("no")
-            followers.discard(None)
-            if len(followers) >= 2:  # repeated per node: a list sub-node ('queue 0', 'queue 1')
-                learned.setdefault(shape, {})[k] = True
-    return learned
-
-
-def _structure(lines):
-    """Extend line frames by learned sub-nodes, level by level."""
-    active = list(lines)
-    for _depth in range(_MAX_SUBNODE_DEPTH):
-        names = _negated_names(active)
-        learned = _learn_subnodes(active, names)
-        if not learned:
-            break
-        changed = []
-        for line in active:
-            subs = learned.get(line.shape)
-            if not subs or not line.rest or line.rest[0] not in subs:
-                continue
-            k = line.rest[0]
-            line.path.append(k)
-            line.rest = line.rest[1:]
-            if subs[k] and line.rest and line.rest[0] != "no" and (_is_identity(line.rest[0]) or _is_word(line.rest[0])):
-                line.path.append(line.rest[0])
-                line.rest = line.rest[1:]
-            line.shape = line.shape + (k,)
-            line.attrs = {}
-            line.source += "+subnode"
-            changed.append(line)
-        if not changed:
-            break
-        active = changed
-    return _negated_names(lines)
-
-
-def _nest(tree, line, names):
+def _nest(tree, line):
     node = tree
     for token in line.path:
         node = node.setdefault(token, {})
     leaf = node.setdefault("__config__", {"attrs": {}, "lines": [], "node": " ".join(line.shape),
                                           "source": line.source.split("+")[0]})
-    attributes = _parse_attrs(line.rest, line.attrs, names.get(line.shape))
+    attributes, unparsed = _parse_attrs(line.rest, line.attrs)
     for k, v in attributes.items():
         leaf["attrs"][k] = _redact(k, v)
     leaf["lines"].append(line.stored)
+    if unparsed or line.source == "unclassified":
+        leaf.setdefault("unparsed", []).append(line.stored)
 
 
 def _parsed_lines(text):
@@ -409,20 +243,19 @@ def parse_config_tree(text):
     """Nested tree of the whole flat configuration. Lossless (raw lines kept, masked).
 
     Leaves are {"__config__": {"attrs": {...}, "lines": [...], "node": "<keyword path>",
-    "source": "grammar" | "resource" | "heuristic"}} under the CLI path (keywords and identities).
+    "source": "grammar" | "resource" | "unclassified"}} under declared CLI paths.
+    Unknown syntax remains redacted in lines/unparsed, never guessed into attrs.
     """
     lines = _parsed_lines(text)
-    names = _structure(lines)
     tree = {}
     for line in lines:
-        _nest(tree, line, names)
+        _nest(tree, line)
     return tree
 
 
 def nesting_stats(text):
-    """Line counts by how the path was found (grammar / heuristic, with learned sub-nodes)."""
+    """Line counts by declared path source (grammar / resource / unclassified)."""
     lines = _parsed_lines(text)
-    _structure(lines)
     stats = {}
     for line in lines:
         stats[line.source] = stats.get(line.source, 0) + 1
@@ -517,15 +350,16 @@ def gap_report(tree, argspec_names=None, prefixes=None, excludes=None):
 
         {"families": {family: {"argspec": bool, "lines": n,
                                "unmodelled": {node: [attr, ...]}}},
-         "unclaimed": {node: n_lines}}
+         "unclaimed": {node: n_lines},
+         "unparsed": {node: n_lines}}
 
     'node' is the leaf's keyword path (e.g. 'qos interface queue'); an attribute is
     unmodelled when its snake_case name is not an option anywhere in the family argspec.
     Only keyword-shaped names leave the report. A token that is not
     (a value the tree parsed into a name position) is counted per family under
     "value_like" and never shown; path parts of that kind become "<value>".
-    Heuristic nodes may still mistake an unknown lowercase identity/value for a
-    keyword. This is a diagnostic, not a general-purpose anonymisation guarantee.
+    Unknown tokens are never interpreted as attribute names. Their redacted
+    lines are counted separately in unparsed, without exposing unknown values.
     """
     if prefixes is None or excludes is None:
         from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
@@ -540,6 +374,7 @@ def gap_report(tree, argspec_names=None, prefixes=None, excludes=None):
 
     families = {}
     unclaimed = {}
+    unparsed = {}
 
     def walk(node):
         for key, value in node.items():
@@ -550,6 +385,8 @@ def gap_report(tree, argspec_names=None, prefixes=None, excludes=None):
             if not lines:
                 continue
             node_name = _safe_node(value.get("node", ""))
+            if value.get("unparsed"):
+                unparsed[node_name] = unparsed.get(node_name, 0) + len(value["unparsed"])
             owner = _owner(lines[0] + " ", prefixes, excludes)
             if owner is None:
                 unclaimed[node_name] = unclaimed.get(node_name, 0) + len(lines)
@@ -567,4 +404,4 @@ def gap_report(tree, argspec_names=None, prefixes=None, excludes=None):
                 entry["unmodelled"][node_name] = sorted(set(bucket) | set(missing))
 
     walk(tree)
-    return {"families": families, "unclaimed": unclaimed}
+    return {"families": families, "unclaimed": unclaimed, "unparsed": unparsed}

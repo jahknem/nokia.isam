@@ -4,9 +4,8 @@
 Usage (the collection must be importable, e.g. the tree tox builds):
     PYTHONPATH=.tox/collections python tools/gap_report.py <info-configure-flat.txt> [--json] [--top N]
 
-Prints CLI keyword/attribute names and counts, with known credentials redacted and
-non-keyword-shaped tokens suppressed. Review before sharing: unknown syntax can
-cause a lowercase identity or value to be mistaken for a keyword.
+Prints declared CLI keyword/attribute names and counts, with known credentials
+redacted. Unknown paths/tails are counted as unparsed, not guessed into fields.
 """
 from __future__ import absolute_import, division, print_function
 
@@ -50,6 +49,7 @@ def main(argv=None):
     print("unclaimed: %d nodes, %d lines" % (len(unclaimed), sum(n for _k, n in unclaimed)))
     for node, n in unclaimed[:args.top]:
         print("  %6d  %s" % (n, node))
+    print("unparsed: %d lines (not evidence of typed coverage)" % sum(report["unparsed"].values()))
     return 0
 
 
