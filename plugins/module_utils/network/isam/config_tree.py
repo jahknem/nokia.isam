@@ -8,6 +8,9 @@ come ONLY from compiled CLI grammar or explicit resource metadata. Unknown paths
 are quarantined under __unclassified__; unknown tails are retained as unparsed
 lines on the known node. Neither names nor subnodes are guessed or learned from
 neighboring lines. The semantic object graph lives separately in topology/.
+Losslessness concerns the input, not device capture completeness: the flat source
+omits evidenced IHUB port/LAG/service sections. Their read-only typed projections
+live in ihub_config.py and use separately declared hierarchical sources.
 
 Secrets are masked in the tokens *before* any structuring, so neither path keys, nor
 attribute values, nor stored lines can carry a cleartext secret or encrypted

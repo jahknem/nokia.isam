@@ -1,0 +1,1 @@
+"""IHUB port configuration schema."""

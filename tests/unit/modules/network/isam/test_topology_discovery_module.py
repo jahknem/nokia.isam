@@ -1,4 +1,5 @@
 """isam_topology_discovery module: read outcomes must never become false absence."""
+from pathlib import Path
 from ansible_collections.nokia.isam.plugins.modules import isam_topology_discovery
 from ansible_collections.nokia.isam.tests.unit.compat.mock import patch
 
@@ -189,3 +190,41 @@ class TestTopologyDiscoveryModule(TestIsamModule):
         disc = self.execute_module(changed=False)["discovery"]
         self.assertEqual(disc["status"], "unsupported")
         self.assertEqual(disc["children"], [])
+
+    def test_ihub_optical_ports_require_permission_before_connection(self):
+        set_module_args(dict(kind="card", identity="nt-a", child_kind="uplink"), ignore_provider=True)
+        disc = self.execute_module(changed=False)["discovery"]
+        self.assertEqual(disc["error"], "broad_enumeration_requires_allow_broad_read")
+        self.assertEqual(disc["command"], "show port")
+        self.get_conn.assert_not_called()
+
+    def test_ihub_optical_ports_use_separate_ihub_command(self):
+        table = (Path(__file__).parents[4] / "fixtures/ihub_ports/multisection/output.txt").read_text()
+        commands = []
+
+        class Conn:
+            def get(self, command):
+                commands.append(command)
+                return table
+
+        self.get_conn.return_value = Conn()
+        set_module_args(dict(kind="card", identity="nt-a", child_kind="uplink", allow_broad_read=True),
+                        ignore_provider=True)
+        disc = self.execute_module(changed=False)["discovery"]
+        self.assertEqual(disc["status"], "ok")
+        self.assertEqual(disc["children"], ["nt-a:xfp:1", "nt-a:xfp:2"])
+        self.assertEqual(disc["read_scope"], "device")
+        self.assertEqual(commands, ["show port"])
+
+    def test_malformed_ihub_inventory_is_not_an_empty_discovery(self):
+        self._conn(reply="Ports on NT-A\ntruncated")
+        set_module_args(dict(kind="card", identity="nt-a", child_kind="uplink", allow_broad_read=True),
+                        ignore_provider=True)
+        self.failed()
+
+    def test_unsupported_ihub_command_does_not_confirm_absence(self):
+        self._conn(reply="invalid token")
+        set_module_args(dict(kind="card", identity="nt-a", child_kind="uplink", allow_broad_read=True),
+                        ignore_provider=True)
+        disc = self.execute_module(changed=False)["discovery"]
+        self.assertEqual(disc["status"], "unsupported")

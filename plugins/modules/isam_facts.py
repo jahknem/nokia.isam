@@ -52,8 +52,10 @@ options:
     version_added: "2.9"
   gather_configuration:
     description:
-      - Read the complete flat configuration once and pass it to each selected
+      - Read the access-side flat configuration once and pass it to each selected
         resource parser. This avoids one device request per resource.
+      - On evidenced firmware this source omits IHUB port, LAG and service configuration.
+        The explicit read-only IHUB family modules use separate hierarchical sources.
     required: false
     default: false
     type: bool

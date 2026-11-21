@@ -21,7 +21,7 @@ DISCOVERY = {
     "applique": {"children": ["transceiver", "uplink"], "status": "unimplemented"},
     "rack": {"children": ["shelf"], "status": "unimplemented"},
     "shelf": {"children": ["card"], "status": "unimplemented"},
-    "card": {"children": ["pon", "xdsl_line", "ethernet_port", "uplink", "cage", "transceiver", "bonding_group", "lag",
+    "card": {"children": ["pon", "xdsl_line", "ethernet_port", "uplink", "ihub_port", "cage", "transceiver", "bonding_group", "lag",
                           "channel_pair"],
              "status": "unimplemented"},
     "ont": {"children": ["ont_slot"], "status": "unimplemented"},

@@ -50,9 +50,56 @@ The major-version line adds an opt-in lossless tree of the captured flat root:
 a configuration replay format, and unknown syntax can defeat heuristic redaction;
 review diagnostic output privately before sharing it.
 
+**Capture boundary:** on evidenced firmware, `info configure [detail] flat`
+omits IHUB ports, LAGs and services. Lossless parsing does not make that source a
+whole-device configuration capture. `ansible_net_config_tree_source` exposes
+these known omissions. The hierarchical `info configure` source includes IHUB.
+
 The tree uses only declared grammar/resource paths: unknown paths are retained
 under `__unclassified__`, and unknown attribute tails are reported as `unparsed`,
 not guessed into nodes or fields. Check those gaps before claiming coverage.
+
+### Read-only IHUB configuration resources (experimental)
+
+| Module | Verified source | Actual read scope |
+| --- | --- | --- |
+| `isam_ihub_ports` | `info configure`, Port Configuration section | device |
+| `isam_ihub_lags` | `info configure`, LAG Configuration section | device |
+| `isam_ihub_services` | `info configure service` | family |
+
+These modules support **`gathered` and `parsed` only**, not mutation or rendering.
+They return canonical resources `ihub_ports`, `ihub_lags`, `ihub_services` and
+projection coverage. Unknown options/types remain coverage gaps; this is not
+exhaustive IHUB support. Ports include internal and virtual ports as well as
+optical positions. IHUB LAGs are not access-side `link-agg` groups, and service
+SAPs are not access-side bridge/VLAN-port layers.
+
+```yaml
+- name: Read IHUB ports through their verified device-wide source
+  nokia.isam.isam_ihub_ports:
+    state: gathered
+    allow_broad_read: true
+
+- name: Explicitly read the whole IHUB service family
+  nokia.isam.isam_ihub_services:
+    state: gathered
+```
+
+The device-wide port/LAG sources require explicit `allow_broad_read: true`.
+Instance selections in `config` also require that flag: they filter a whole
+source, **not** a scoped CLI read. Without selections, explicitly requesting the
+service family already selects that family-wide scope and needs no extra flag.
+The modules are not implicitly added to `isam_facts: all` or shared-flat parsing;
+existing read breadth is unchanged. See [IHUB configuration](docs/ihub-configuration.md).
+
+### Semantic object graph (experimental)
+The experimental [semantic object graph](docs/resource-topology.md) relates
+physical descendants, resource instances and shared-profile references across CLI
+branches. Its offline filters reuse the collection's targeted-read identities;
+known-read requirements are **not yet executable recursive refresh plans**.
+`isam_topology_discovery` performs one read-only direct-neighbor enumeration at a
+time; whole-source reads require explicit `allow_broad_read: true`, and an
+unsupported or failed enumeration is never reported as an empty child list.
 
 Additional resource modules cover system security, QoS global/TCA settings,
 CWMP, error logging, NAT, PON global settings, PPPoX global sessions, PON
@@ -75,7 +122,7 @@ verification failure, inspect accepted/completed/failed_command/pending command 
 and do not blindly retry operations with an unknown outcome.
 
 The facts module also provides opt-in shared configuration gathering. It reads
-the complete flat configuration with one `info configure flat` request and
+the access-side flat configuration with one `info configure flat` request and
 passes that response to each selected resource parser:
 
 ```yaml

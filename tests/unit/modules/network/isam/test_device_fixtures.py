@@ -191,6 +191,29 @@ def fixture_bundle(resource, name):
     return descriptor, output
 
 
+def test_ihub_optical_port_fixture():
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.ihub import optical_ports
+
+    metadata, output = fixture_bundle("ihub_ports", "multisection")
+    assert metadata["command"] == "show port"
+    assert optical_ports(output) == ["nt-a:xfp:1", "nt-a:xfp:2", "nt-b:xfp:1", "ntio-1:sfp:2"]
+
+
+def test_ihub_configuration_fixture():
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.ihub_config import parse_ihub_config
+    metadata, output = fixture_bundle("ihub_configuration", "observed-shapes")
+    assert metadata["command"] == "info configure"
+    ports = parse_ihub_config(output, "ihub_ports")
+    assert len(ports["config"]) == 5 and ports["coverage"]["complete"]
+    assert ports["config"][0]["ethernet"]["lldp"][0]["admin_status"] == "tx-rx"
+    lags = parse_ihub_config(output, "ihub_lags")
+    assert lags["config"][0]["ports"] == ["nt-a:xfp:1", "nt-a:xfp:2"]
+    services = parse_ihub_config(output, "ihub_services")
+    assert services["config"]["services"][1]["vlan_id"] == 200
+    assert len(services["config"]["services"][1]["saps"]) == 4
+    assert services["coverage"]["complete"]
+
+
 def test_every_fixture_has_a_device_descriptor():
     descriptors = sorted(FIXTURE_ROOT.glob("*/**/fixture.yml"))
     assert descriptors

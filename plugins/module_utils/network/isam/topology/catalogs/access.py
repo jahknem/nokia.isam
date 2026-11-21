@@ -48,8 +48,8 @@ DISCOVERY = {
     "ethernet_port": {"children": ["bridge_port"], "status": "unimplemented"},
     # IHUB optical faceplate ports, not an assertion about their configured role.
     # Access bridge/VLAN layers do not establish IHUB service relationships.
-    "uplink": {"children": [], "status": "leaf", "configuration_status": "unmodeled",
-               "limitation": "ihub_port_identity_and_discovery_need_evidence_separate_from_access_interface_cli"},
+    "uplink": {"children": [], "status": "leaf", "configuration_status": "partial",
+               "limitation": "ihub_configuration_is_read_only_whole_source_projection_not_complete_recursive_coverage"},
     # Live stack evidence: bonding groups never carry bridge ports (their stack
     # lower is no-interface), so they have no VLAN-port descendants either.
     "bonding_group": {"children": [], "status": "leaf"},

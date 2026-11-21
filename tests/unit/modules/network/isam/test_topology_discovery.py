@@ -210,9 +210,11 @@ def test_unknown_child_kind_has_no_source():
         enumerate_children("card", "lt:1/1/2", "not_a_child", "")
 
 
-def test_unimplemented_relation_is_a_capability_gap_not_missing_read():
-    # Controller-port discovery still needs live evidence; line/bonding/LAG
-    # VLAN-port discovery is blocked by the bare-address attribution question.
+def test_unimplemented_relation_is_a_capability_gap_not_missing_read(monkeypatch):
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.discovery import SOURCES
+    # A declared relation with no adapter is a capability gap, not an unread
+    # source. Simulate one without tying the test to today's capability gaps.
+    monkeypatch.delitem(SOURCES, "uplink")
     g = build_graph({"isam_equipment": {"slots": [{"id": "lt:1/1/2"}]}}, "M")
     manifest = coverage(g, "card", "lt:1/1/2")
     assert manifest["complete"] is False

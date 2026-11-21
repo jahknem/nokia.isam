@@ -1,0 +1,7 @@
+schema_version: 1
+resource: ihub_ports
+device_type: 7360-isam-fx-8
+software_version: r6-2-04m
+command: show port
+captured_at: 2026-11-21
+source: synthetic-regression

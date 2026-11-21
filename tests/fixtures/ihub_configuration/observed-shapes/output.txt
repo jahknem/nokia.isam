@@ -1,0 +1,83 @@
+#--------------------------------------------------
+echo "Port Configuration"
+#--------------------------------------------------
+    port nt-a:xfp:1
+        description "LAB optical port"
+        ethernet
+            lldp
+                dest-mac nearest-bridge
+                    admin-status tx-rx
+                    tx-tlvs port-desc sys-name sys-desc sys-cap
+                exit
+            exit
+        exit
+        no shutdown
+    exit
+    port nt-a:xfp:2
+        shutdown
+        ethernet
+            speed 1000
+        exit
+    exit
+    port nt-a:eth:1
+        ethernet
+        exit
+        no shutdown
+    exit
+    port lt:1/1/7
+        ethernet
+        exit
+        no shutdown
+    exit
+    port nt:vp:1
+        no shutdown
+    exit
+#--------------------------------------------------
+echo "LAG Configuration"
+#--------------------------------------------------
+    lag 7
+        description "LAB aggregation"
+        port nt-a:xfp:1
+        port nt-a:xfp:2
+        lacp active administrative-key 32768
+        no shutdown
+    exit
+    lag 8
+        shutdown
+    exit
+#--------------------------------------------------
+echo "Service Configuration"
+#--------------------------------------------------
+    service
+        customer 10 create
+            description "LAB customer"
+        exit
+        ies 20 customer 10 create
+            interface "LAB management" create
+                address 192.0.2.5/24
+                sap nt:vp:1:190 create
+                exit
+            exit
+            no shutdown
+        exit
+        vpls 200 customer 10 v-vpls vlan 200 create
+            description "LAB service"
+            stp
+                shutdown
+            exit
+            sap nt-a:eth:1:200 create
+                no shutdown
+            exit
+            sap nt-a:xfp:1:200 create
+                no shutdown
+            exit
+            sap lt:1/1/7:200 create
+                no shutdown
+            exit
+            sap lag-7:200 create
+                no shutdown
+            exit
+            no shutdown
+        exit
+    exit
+----------------------------------------------

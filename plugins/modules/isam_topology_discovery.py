@@ -18,7 +18,7 @@ description:
   - This module never writes configuration.
   - The ISAM has no scoped "list children of X" command for most of these
     relations, so enumeration reads the smallest whole source that contains the
-    children (device-wide ONT index, transceiver inventory or interface stack,
+     children (device-wide ONT index, transceiver inventory, IHUB port inventory or interface stack,
     family-wide ONT, equipment or interface configuration) and filters by the
     parent identity. The true breadth is recorded in C(read_scope); this is the
     documented enumeration method, not a hidden widening of a scoped request.
@@ -49,7 +49,7 @@ options:
     type: str
     required: true
     choices: [rack, shelf, card, applique, ont, ont_slot, uni, pon, xdsl_line, ethernet_port, cage, bonding_group, lag,
-              channel_pair, transceiver, bridge_port, vlan_port]
+              channel_pair, transceiver, bridge_port, vlan_port, uplink]
   allow_broad_read:
     description:
       - Explicitly permit the device/family-wide enumeration source declared
@@ -108,6 +108,14 @@ EXAMPLES = """
     child_kind: bridge_port
     allow_broad_read: true
   register: uni_bridge
+
+- name: Enumerate the IHUB optical ports of one controller card
+  nokia.isam.isam_topology_discovery:
+    kind: card
+    identity: nt-a
+    child_kind: uplink
+    allow_broad_read: true
+  register: nt_ports
 
 - name: Enumerate the VLAN ports of one bridge port
   nokia.isam.isam_topology_discovery:

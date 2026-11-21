@@ -8,6 +8,7 @@ from copy import deepcopy
 
 from ..targeted import TARGETED_GATHER
 from .catalogs import access, equipment, profiles, scopes, services
+from .catalogs import ihub as ihub_catalog
 
 SCHEMA_VERSION = 1
 
@@ -19,7 +20,8 @@ def export_catalog():
         for resource, section, decoder in domain.BINDINGS:
             bindings.append({"resource": resource, "section": section,
                              "identity": TARGETED_GATHER[resource][section], "decoder": decoder})
-    objects = deepcopy(dict(equipment.DISCOVERY, **access.DISCOVERY))
+    bindings.extend(deepcopy(ihub_catalog.BINDINGS))
+    objects = deepcopy(dict(equipment.DISCOVERY, **dict(access.DISCOVERY, **ihub_catalog.DISCOVERY)))
     for obj in objects.values():
         obj["parents"] = []
     for kind, obj in objects.items():
@@ -72,7 +74,9 @@ def export_catalog():
             # TARGETED_GATHER covers access-side resource families, not every
             # configuration namespace supported by the device's separate CLI
             # parsers. Fully binding its sections does not close these domains.
-            "unmodeled_configuration_domains": ["ihub_ports", "ihub_lags", "ihub_services"],
+            "unmodeled_configuration_domains": ["ihub_router", "ihub_qos", "ihub_system_security", "ihub_other_domains"],
+            "partial_configuration_domains": ["ihub_ports", "ihub_lags", "ihub_services"],
+            "configuration_read_capabilities": deepcopy(ihub_catalog.READ_CAPABILITIES),
             "profile_references": deepcopy(services.PROFILE_REFERENCES),
             "typed_references": [{"resource": resource, "section": section, "field": field,
                                   "target_resource": target, "target_section": target_section}

@@ -82,7 +82,7 @@ def build_graph(resources, msan):
             parent = parent_of(kind, identity)
             if parent:
                 edges.add((obj(*parent), "contains", key))
-            elif kind in ("qos_profile", "shared_profile", "device_settings"):
+            elif kind in ("qos_profile", "shared_profile", "device_settings", "ihub_virtual_port", "ihub_lag", "ihub_service", "ihub_customer"):
                 # Device ownership is not physical containment. Shared catalogs
                 # must not become child-enumeration requirements of the chassis.
                 edges.add((node_key("msan", ""), "owns", key))
@@ -114,7 +114,7 @@ def build_graph(resources, msan):
                 gaps.append({"reason": "invalid_identity", "resource": resource, "section": section})
                 continue
             identity = values if len(fields) > 1 else values[0]
-            key = config_node(resource, section, identity)
+            key = config_node(resource, section, identity, binding.get("read_scope"))
             records.append((binding, row, identity, key))
 
     # Typed primary resources first; ambiguous bare service ports can only use
@@ -158,6 +158,29 @@ def build_graph(resources, msan):
                              "section": binding["section"], "node": key})
         if owner is not None:
             edges.add((key, "configures", obj(owner[0], owner[1], observed=True)))
+            if binding["resource"] in ("ihub_lags", "ihub_services"):
+                from .catalogs.ihub import sap_endpoint
+                if binding["resource"] == "ihub_lags":
+                    for member in row.get("ports") or []:
+                        try:
+                            member_owner = decode("ihub_port", member)
+                            edges.add((obj(*member_owner), "member_of", obj(*owner)))
+                        except UnknownIdentity:
+                            gaps.append({"reason": "unknown_member", "node": key})
+                elif binding["section"] == "services":
+                    try:
+                        customer = decode("ihub_customer", row.get("customer_id"))
+                        edges.add((key, "references", obj(*customer)))
+                    except UnknownIdentity:
+                        gaps.append({"reason": "unknown_reference", "node": key, "field": "customer_id"})
+                    saps = list(row.get("saps") or [])
+                    for interface in row.get("interfaces") or []:
+                        saps.extend(interface.get("saps") or [])
+                    for sap in saps:
+                        try:
+                            edges.add((key, "references", obj(*sap_endpoint(sap.get("id")))))
+                        except UnknownIdentity:
+                            gaps.append({"reason": "unknown_reference", "node": key, "field": "saps.id"})
             # VLAN membership is explicit data on a bridge instance, not inferred
             # from an arbitrary nested field or string suffix.
             if binding["resource"] == "bridges":
@@ -212,6 +235,8 @@ def build_graph(resources, msan):
     for resource, data in resources.items():
         sections = TARGETED_GATHER.get(resource)
         if sections is None:
+            if resource in {binding["resource"] for binding in catalog["bindings"]}:
+                continue  # explicit whole-family bindings outside TARGETED_GATHER
             if resource in catalog.get("global_resources", []):
                 global_config(resource)
             else:
@@ -319,6 +344,9 @@ def plan_known_reads(graph, kind, identity):
     gaps += [{"node": key, "reason": "configuration_coverage_unmodeled"}
              for key in sorted(selected)
              if nodes[key]["kind"] in unmodeled]
+    partial = {kind for kind, spec in catalog["objects"].items() if spec.get("configuration_status") == "partial"}
+    gaps += [{"node": key, "reason": "configuration_coverage_partial"}
+             for key in sorted(selected) if nodes[key]["kind"] in partial]
     if kind == "msan":
         gaps += [{"domain": domain, "reason": "configuration_domain_unmodeled"}
                  for domain in catalog.get("unmodeled_configuration_domains", [])]

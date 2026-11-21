@@ -264,6 +264,12 @@ SOURCES = {
         "column": "index",
         "count_label": "transceiver-inventory count",
     },
+    "uplink": {
+        "parents": ("card", "applique"),
+        "command": "show port",
+        "read_scope": "device",
+        "kind": "ihub_optical_ports",
+    },
     # Bridge ports and VLAN ports are interface-stack layers. The device's own
     # stack table gives typed higher/lower pairs, so attachment is evidenced,
     # not guessed: bridge-port:X stacks on la-group:X / ethernet-line:X / uni:X,
@@ -289,9 +295,12 @@ SOURCES = {
 # adapter MUST be listed as documented until it is live-verified. This is
 # metadata about adapter validation, not about a particular read: a fresh
 # successful read is real evidence regardless of prior verification.
-_DOCUMENTED_ONLY_SOURCES = {"channel_pair"}
+_LIVE_VERIFIED_SOURCES = {
+    "uni", "pon", "xdsl_line", "ethernet_port", "cage", "bonding_group", "lag",
+    "rack", "shelf", "card", "applique", "transceiver", "bridge_port", "vlan_port", "uplink",
+}
 for _name, _source in SOURCES.items():
-    _source["evidence"] = "documented" if _name in _DOCUMENTED_ONLY_SOURCES else "live_verified"
+    _source["evidence"] = "live_verified" if _name in _LIVE_VERIFIED_SOURCES else "documented"
 
 
 def _validate_parent(kind, identity):
@@ -462,6 +471,9 @@ def enumerate_children(kind, identity, child_kind, output):
     if source["kind"] == "table":
         identities = _table_identities(output, source, child_kind)
         children = [i for i in identities if parent_of(child_kind, i) == (kind, identity)]
+    elif source["kind"] == "ihub_optical_ports":
+        from .ihub import optical_ports
+        children = [i for i in optical_ports(output, owner=identity) if parent_of(child_kind, i) == (kind, identity)]
     elif source["kind"] in ("stack_bridge", "stack_vlans"):
         pairs = _stack_pairs(output)
         if source["kind"] == "stack_bridge":

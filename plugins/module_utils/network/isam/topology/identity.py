@@ -15,6 +15,11 @@ DEPTHS = {"rack": 1, "shelf": 2, "pon": 4, "ont": 5, "ont_slot": 6,
 # inventory / diagnostics sfp position syntax).
 CAGE_TYPES = ("sfp", "xfp", "qsfp", "cfp", "sfp1", "sfp2", "xfp1", "xfp2")
 
+# Optical IHUB port forms observed through `show port` on FANT-F/FANT-G.
+# This is a different namespace from access-side `show interface port`, even
+# when an equipment transceiver position has exactly the same spelling.
+IHUB_OPTICAL_TYPES = ("sfp", "xfp")
+
 
 def _valid_vlan(value):
     return re.fullmatch(r"[0-9]+", value) is not None and 1 <= int(value) <= 4094
@@ -113,6 +118,23 @@ def decode(decoder, value, known_ports=()):
         # platform identities without a fixed physical owner here; they stay gaps.
         if re.fullmatch(r"(?:lt:[0-9]+/[0-9]+/[0-9]+|nt-[ab]|ntio-[12]):(?:%s):[0-9]+" % "|".join(CAGE_TYPES), value):
             return "transceiver", value
+    elif decoder == "uplink" and isinstance(value, str):
+        if re.fullmatch(r"(?:nt-[ab]|ntio-[12]):(?:%s):[0-9]+" % "|".join(IHUB_OPTICAL_TYPES), value):
+            return "uplink", value
+    elif decoder == "ihub_port" and isinstance(value, str):
+        try:
+            return decode("uplink", value)
+        except UnknownIdentity:
+            pass
+        if re.fullmatch(r"nt:(?:vp|mc):[0-9]+", value):
+            return "ihub_virtual_port", value
+        if re.fullmatch(r"lt:[0-9]+/[0-9]+/[0-9]+|nt-[ab]:(?:eth|AI):[0-9]+", value):
+            return "ihub_port", value
+    elif decoder in ("ihub_lag", "ihub_customer") and isinstance(value, str) and value.isascii() and value.isdigit():
+        return decoder, value
+    elif decoder == "ihub_service" and isinstance(value, (list, tuple)) and len(value) == 2:
+        if value[0] in ("vpls", "ies") and isinstance(value[1], str) and value[1].isascii() and value[1].isdigit():
+            return decoder, tuple(value)
     elif decoder == "applique" and isinstance(value, str):
         if re.fullmatch(r"ntio-[0-9]+", value):
             return "applique", value
@@ -201,7 +223,7 @@ def parent_of(kind, identity):
         return "card", "lt:" + identity.rsplit("/", 1)[0]
     if kind == "cage":
         return "card", identity.split(":cage:", 1)[0]
-    if kind == "transceiver":
+    if kind in ("transceiver", "uplink"):
         owner = identity.split(":", 1)[0]
         if owner == "lt":
             return "card", "lt:" + identity.split(":")[1]

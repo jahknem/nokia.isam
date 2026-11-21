@@ -1,0 +1,7 @@
+schema_version: 1
+resource: ihub_configuration
+device_type: 7330-isam-fttn
+software_version: r6-2-04m
+command: info configure
+captured_at: 2026-11-21
+source: synthetic-regression

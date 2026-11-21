@@ -35,7 +35,11 @@ def test_catalog_reuses_targeted_identities_and_only_stores_direct_neighbors():
     catalog = export_catalog()
     assert "parents" not in equipment.DISCOVERY["ont"]
     for binding in catalog["bindings"]:
-        assert binding["identity"] == TARGETED_GATHER[binding["resource"]][binding["section"]]
+        if binding["resource"] in TARGETED_GATHER:
+            assert binding["identity"] == TARGETED_GATHER[binding["resource"]][binding["section"]]
+        else:
+            assert binding["read_scope"] == "all"
+            assert binding["resource"] in catalog["configuration_read_capabilities"]
     assert catalog["objects"]["pon"]["children"] == ["ont"]
     assert catalog["objects"]["ont_slot"]["parents"] == ["ont"]
     assert "ont_slot" not in catalog["objects"]["pon"]["children"]
@@ -224,6 +228,7 @@ def test_every_targeted_section_has_an_explicit_scope():
     assert catalog["unclassified_sections"] == []
     assert set(scopes.values()) <= {"object_owned", "device_global", "shared_profile"}
     expected = {"%s.%s" % (resource, section) for resource, sections in TARGETED_GATHER.items() for section in sections}
+    expected |= {"%s.%s" % (b["resource"], b["section"]) for b in catalog["bindings"] if b["resource"] not in TARGETED_GATHER}
     assert set(catalog["section_models"]) == expected
     assert set(catalog["unbound_object_sections"]) == {key for key, value in catalog["section_models"].items()
                                                      if value["model"] == "unimplemented"}
@@ -536,9 +541,9 @@ def test_discovery_evidence_separates_live_verified_from_documented():
     assert card["discovery_evidence"]["pon"] == "live_verified"
     assert catalog["objects"]["pon"]["discovery_evidence"]["ont"] == "live_verified"
     assert catalog["objects"]["uni"]["discovery_evidence"]["bridge_port"] == "live_verified"
-    # Unimplemented relations carry no evidence claim.
-    assert "uplink" not in card["discovery_evidence"]
+    assert card["discovery_evidence"]["uplink"] == "live_verified"
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.discovery import evidence_for
-    assert evidence_for("card", "uplink") is None
+    # Invalid/unimplemented relations carry no evidence claim.
+    assert evidence_for("ont", "uplink") is None
     assert evidence_for("card", "channel_pair") == "documented"
     assert evidence_for("bridge_port", "vlan_port") == "live_verified"
