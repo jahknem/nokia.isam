@@ -133,6 +133,7 @@ EXAMPLES = """
 """
 
 RETURN = """
+extends_documentation_fragment: nokia.isam.read_outcomes
 before:
   description: The configuration as structured data before module invocation.
   returned: when I(state) is C(merged), C(replaced), C(overridden), or C(deleted)

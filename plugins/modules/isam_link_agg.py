@@ -135,6 +135,7 @@ EXAMPLES = """
 """
 
 RETURN = """
+extends_documentation_fragment: nokia.isam.read_outcomes
 before:
   description: The configuration prior to module execution.
   returned: when state is merged, replaced, overridden, or deleted

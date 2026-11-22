@@ -31,6 +31,22 @@ see [ONT configuration change sets](docs/ont-change-sets.md).
 | `isam_xstp` | `configure xstp` | gathered, parsed, rendered, merged, replaced, overridden, deleted |
 | `isam_equipment` | `configure equipment` (shelf, slot, applique, protection-group) | gathered, parsed, rendered, merged, replaced, overridden, deleted |
 
+All configuration resource modules support **targeted gathering**: with
+`state: gathered` and `config` naming instances, only those instances are
+read from the device, one scoped read per instance. Each addressed instance
+is reported in `read_outcomes`, per config section and selector, as
+`present`, `confirmed_absent` (the device's explicit "instance does not
+exist" signal about that instance, aggregated only when every read of the
+instance confirmed it) or `unknown` (header-only reply, `invalid token`
+rejection, a missing dependency, or a failed read — never absence). The
+outcomes are sanitized to stable enums, the section, the selector, and an
+error class; raw device text is never recorded. An explicit request that
+cannot be read in full (an empty identity, no read command) fails rather
+than silently widening to the whole-family read or serving a subset. Without
+`config` the whole resource is read, as before, and write states are
+unchanged. See [targeted gathering and
+read outcomes](docs/targeted-gathering.md).
+
 ### Facts Module
 | Module | Description |
 | --- | --- |
@@ -92,11 +108,17 @@ service family already selects that family-wide scope and needs no extra flag.
 The modules are not implicitly added to `isam_facts: all` or shared-flat parsing;
 existing read breadth is unchanged. See [IHUB configuration](docs/ihub-configuration.md).
 
-### Semantic object graph (experimental)
-The experimental [semantic object graph](docs/resource-topology.md) relates
-physical descendants, resource instances and shared-profile references across CLI
-branches. Its offline filters reuse the collection's targeted-read identities;
-known-read requirements are **not yet executable recursive refresh plans**.
+### Semantic object graph
+
+The **public** filters `isam_topology` and `isam_topology_read_requirements`
+build and query the [semantic object graph](docs/resource-topology.md) from
+already-gathered resources: they relate physical descendants, resource
+instances and shared-profile references across CLI branches, entirely offline.
+They reuse the collection's targeted-read identities, and
+`isam_topology_read_requirements` reports what reads a recursive refresh would
+need — including its gaps. **Executable recursive refresh is not part of that
+contract**: the filters are stable for offline planning, while running a
+planned refresh against a device remains experimental and uncertified.
 `isam_topology_discovery` performs one read-only direct-neighbor enumeration at a
 time; whole-source reads require explicit `allow_broad_read: true`, and an
 unsupported or failed enumeration is never reported as an empty child list.

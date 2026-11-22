@@ -79,7 +79,11 @@ options:
         threshold ports not named are reset to the defaults.
       - C(deleted) without I(config) disables all counters and resets the interval and all thresholds;
         with I(config) only the named counter interfaces and threshold ports (and the interval when given).
-      - C(gathered) with I(config) reads only the named counter interfaces and threshold ports.
+      - With C(gathered) and I(config), only the instances named in I(config) are read from the device,
+        selected by C(interfaces[].name) and C(threshold.interfaces[].name) (targeted gathering).
+        Other fields are ignored and absent instances are not returned; an instance with nothing
+        configured answers like an absent one and is not returned either. Without I(config) the whole
+        resource is read.
     type: str
     choices:
       - merged
@@ -133,6 +137,7 @@ EXAMPLES = """
 """
 
 RETURN = """
+extends_documentation_fragment: nokia.isam.read_outcomes
 before:
   description: The configuration prior to module execution.
   returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)

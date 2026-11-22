@@ -426,8 +426,13 @@ options:
         only C(overridden) removes instances absent from the requested configuration.
       - C(deleted) with configuration touches only named sections and instances.
         Without configuration it removes instances and resets removable settings.
-      - C(gathered) with configuration reads only the named instances; without it,
-        the whole resource is read. C(parsed) and C(rendered) do not write to the device.
+      - With C(gathered) and I(config), only the instances named in I(config) are read from the device,
+        selected by C(cas_nsm_prof[].name), C(lineid_syn_prof[].name), C(redundancy[].name),
+        C(redundancy_cmd[].name), C(register[].name) and C(vsp[].name) (targeted gathering).
+        Other fields are ignored and absent instances are not returned; an instance with nothing
+        configured answers like an absent one and is not returned either. Without I(config) the whole
+        resource is read.
+      - C(parsed) and C(rendered) do not write to the device.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -499,6 +504,7 @@ EXAMPLES = """
 """
 
 RETURN = """
+extends_documentation_fragment: nokia.isam.read_outcomes
 before:
   description: Configuration prior to module execution.
   returned: when state is merged, replaced, overridden, or deleted

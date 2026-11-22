@@ -152,6 +152,7 @@ EXAMPLES = r'''
 '''
 
 RETURN = r'''
+extends_documentation_fragment: nokia.isam.read_outcomes
 commands:
   description: The set of commands pushed to the remote device.
   returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)

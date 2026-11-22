@@ -939,6 +939,7 @@ EXAMPLES = """
 """
 
 RETURN = """
+extends_documentation_fragment: nokia.isam.read_outcomes
 commands:
   description: Commands sent to the device.
   returned: when changed

@@ -317,7 +317,13 @@ options:
     description: Device native configuration to parse.
     type: str
   state:
-    description: The state of the configuration after module completion.
+    description:
+      - The state of the configuration after module completion.
+      - With C(gathered) and I(config), only the instances named in I(config) are read from the device,
+        selected by C(igmp.packages[].index) and C(mcast_control.packages[].index) (targeted gathering).
+        Other fields are ignored and absent instances are not returned; an instance with nothing
+        configured answers like an absent one and is not returned either. Without I(config) the whole
+        resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -344,6 +350,7 @@ EXAMPLES = """
 """
 
 RETURN = """
+extends_documentation_fragment: nokia.isam.read_outcomes
 before:
   description: The configuration as structured data before module invocation.
   returned: when I(state) is C(merged), C(replaced), C(overridden), or C(deleted)

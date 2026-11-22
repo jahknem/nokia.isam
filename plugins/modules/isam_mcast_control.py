@@ -163,10 +163,33 @@ options:
     description: Device-native configuration to parse.
     type: str
   state:
-    description: Desired state of the configuration.
+    description:
+      - Desired state of the configuration.
+      - With C(gathered) and I(config), only the instances named in I(config) are read from the device,
+        selected by C(packages[].index) (targeted gathering). Other fields are ignored and absent
+        instances are not returned; an instance with nothing configured answers like an absent one
+        and is not returned either. Without I(config) the whole resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
+"""
+
+EXAMPLES = r"""
+- name: Gather multicast-control configuration from the device
+  nokia.isam.isam_mcast_control:
+    state: gathered
+
+- name: Read only the named packages (targeted gathering)
+  nokia.isam.isam_mcast_control:
+    state: gathered
+    config:
+      packages:
+        - index: 5
+        - index: 42
+"""
+
+RETURN = """
+extends_documentation_fragment: nokia.isam.read_outcomes
 """
 
 
