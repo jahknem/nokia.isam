@@ -27,6 +27,9 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common imp
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
     get_scoped_config,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.read_outcomes import (
+    ReadOutcomeCollector,
+)
 
 
 PORT_BOOL_KEYS = {
@@ -67,17 +70,29 @@ class BridgesFacts(object):
         # prints every default ("no <attr>"), which the complete read omits, so the two would
         # parse into different configurations. Writes keep the detail form.
         suffix = "flat" if self._module.params.get("state") == "gathered" else "flat detail"
-        commands = [
-            "info configure bridge port %s %s" % (item.get("port") or item.get("id"), suffix)
-            for item in ports
-            if item.get("port") or item.get("id")
-        ]
+        commands = []
+        selectors = {}
+        for item in ports:
+            port_id = item.get("port") or item.get("id")
+            if port_id:
+                command = "info configure bridge port %s %s" % (port_id, suffix)
+                commands.append(command)
+                selectors[command] = port_id
+        collector = None
+        if self._module.params.get("state") == "gathered":
+            collector = ReadOutcomeCollector("bridges")
         data = get_scoped_config(
             self._module,
             connection,
             config,
             "info configure bridge flat",
             commands,
+            outcomes=collector,
+            selectors=selectors,
+            # A gathered read that names port entries is explicitly targeted: if none of
+            # them can become a read command, fail rather than silently widen to the whole
+            # family.
+            require_targeted=bool(ports),
         )
         if commands:
             data = "\n".join(
@@ -85,6 +100,12 @@ class BridgesFacts(object):
                 if not line.startswith("configure bridge ageing-time ")
                 and not line.startswith("configure bridge no ageing-time")
             )
+        if collector is not None:
+            # _parse_bridge_config processes lines independently and silently skips lines it
+            # does not recognize, and the read is combined across ports; it cannot demonstrate
+            # full coverage of the owned lines, so the parse outcome is unverified.
+            collector.record_parse("unverified")
+            self._module._isam_read_outcomes = collector.to_result()
         return data
 
     def populate_facts(self, connection, ansible_facts, data=None):

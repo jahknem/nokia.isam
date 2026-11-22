@@ -1,3 +1,5 @@
+import json
+
 from ansible_collections.nokia.isam.plugins.modules import isam_bridges
 from ansible_collections.nokia.isam.tests.unit.compat.mock import patch
 
@@ -526,6 +528,43 @@ class TestIsamBridgesModule(TestIsamModule):
             ["configure bridge port 1/1/8/1 no pvid"],
         )
         self.assertFalse(any("vlan-id" in command for command in result["commands"]))
+
+    def test_isam_bridges_gathered_emits_read_outcomes(self):
+        # A targeted read records a sanitized outcome per selector: present,
+        # confirmed_absent (explicit), and rejected (invalid token -> unknown).
+        class FakeConn:
+            def get(self, cmd):
+                if cmd.endswith("1/1/8/1 flat"):
+                    return "configure bridge port 1/1/8/1 pvid 10"
+                if cmd.endswith("1/1/8/2 flat"):
+                    raise Exception("specified instance does not exist")
+                if cmd.endswith("1/1/8/3 flat"):
+                    return "invalid token"
+                return ""
+
+        self.get_resource_connection_facts.return_value = FakeConn()
+        set_module_args(
+            dict(
+                config={"port": [{"port": "1/1/8/1"}, {"port": "1/1/8/2"}, {"port": "1/1/8/3"}]},
+                state="gathered",
+            ),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        outcomes = result["read_outcomes"]
+        self.assertEqual(outcomes["resource"], "bridges")
+        self.assertEqual(outcomes["parse"], "unverified")
+        by_selector = {o["selector"]: o for o in outcomes["outcomes"]}
+        self.assertEqual(by_selector["1/1/8/1"]["existence"], "present")
+        self.assertEqual(by_selector["1/1/8/2"]["command"], "ok")
+        self.assertEqual(by_selector["1/1/8/2"]["existence"], "confirmed_absent")
+        self.assertEqual(by_selector["1/1/8/3"]["command"], "rejected")
+        self.assertEqual(by_selector["1/1/8/3"]["existence"], "unknown")
+        # gathered still carries only the present instance
+        dumped = json.dumps(result["gathered"])
+        self.assertIn("1/1/8/1", dumped)
+        self.assertNotIn("1/1/8/2", dumped)
+        self.assertNotIn("1/1/8/3", dumped)
 
 
 ONT_UNI_BRIDGE = """configure bridge port 1/1/6/1/1/1/1 max-unicast-mac 5

@@ -520,6 +520,18 @@ gathered:
   sample: >
     This output will always be in the same format as the
     module argspec.
+read_outcomes:
+  description:
+  - Sanitized per-selector read outcomes for a targeted read (I(state) is C(gathered) with I(config)).
+  - Each outcome records the command axis (ok/rejected/failed) and the instance-existence axis
+    (present/confirmed_absent/unknown) for one selector. Only C(confirmed_absent) -- the device's
+    explicit "instance does not exist" signal about that instance -- is evidence the instance is
+    gone; C(unknown) (header-only, invalid-token rejection, a missing dependency, or a failed read)
+    is never treated as absence.
+  - The parse axis (complete/partial/failed/unverified) is reported at resource level under C(parse).
+  - The output is sanitized to stable enums, the selector, and an error class, never raw device text.
+  returned: when I(state) is C(gathered) and the read is targeted
+  type: dict
 parsed:
   description: The device native config provided in I(running_config) option parsed into structured data as per module argspec.
   returned: when I(state) is C(parsed)

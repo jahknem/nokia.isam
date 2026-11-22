@@ -13,6 +13,9 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (
     NetworkTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.read_outcomes import (
+    error_class,
+)
 
 
 RESOURCE_CONFIG_PREFIXES = {
@@ -269,18 +272,34 @@ def unwrap_response(data):
     return data
 
 
-def _is_absent_error(text):
+def _is_instance_absent(text):
+    """The device says the ADDRESSED instance does not exist -- a confirmed absence of
+    that instance. (dhcp-relay/arp-relay answer a port with no such relay interface this
+    way; that is the relay instance itself, not a dependency.)"""
     text = text.lower()
     return ("instance does not exist" in text or "specified instance does not exist" in text
-            or "lower-interface does not exist" in text
-            # dhcp-relay/arp-relay answer a port with no such relay interface this way.
             or "interface index cannot be calculated" in text)
 
 
+def _is_dependency_absent(text):
+    """The device reports a MISSING DEPENDENCY (e.g. a lower-interface). The addressed
+    instance's own existence is NOT established by this reply: it stays unknown, never
+    confirmed absent."""
+    return "lower-interface does not exist" in text.lower()
+
+
+def _is_absent_error(text):
+    """Union of the two absence signals, kept for the read control flow (a reply matching
+    either is dropped from the gathered output). Do not use this to label an instance
+    absent: use _is_instance_absent / _is_dependency_absent for that distinction."""
+    return _is_instance_absent(text) or _is_dependency_absent(text)
+
+
 def _is_unsupported_node(text):
-    """The firmware does not know this node at all (e.g. dhcp-relay v6-port-stats, or an
-    interface index form it does not accept). For a read that means 'nothing configured here',
-    not a failure; a write must still surface it."""
+    """The device rejected the addressed node/selector ("invalid token"). The cause is not
+    disambiguated: the firmware may not know the node, or the selector/command may be
+    invalid. For a read that means 'nothing configured here' (existence unknown), not a
+    failure; a write must still surface it."""
     return "invalid token" in text.lower()
 
 
@@ -314,7 +333,8 @@ def _bare_instance(connection, command, silent=False):
 
 
 def get_scoped_config(module, connection, config, fallback_command, commands, safe_states=None,
-                      bare_commands=(), silent_bare_commands=()):
+                      bare_commands=(), silent_bare_commands=(), outcomes=None, selectors=None,
+                      require_targeted=False):
     """Read only explicitly addressed resource identities when it is safe.
 
     Resource modules can compare merged/replaced/explicitly deleted entries
@@ -326,28 +346,67 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
     re-checked with 'flat detail' (see _bare_instance); silent_bare_commands likewise,
     for nodes whose detail read prints nothing either.
     Identical commands are sent once (several identities can share one read).
+
+    outcomes: an optional ReadOutcomeCollector; when given, each read records its
+    command/existence outcome (sanitized). The returned string is unchanged, so
+    existing callers that pass no collector are byte-for-byte unaffected.
+    selectors: optional {command: selector} to label each recorded outcome with the
+    instance identity the command addresses.
+    require_targeted: when True, a targeted read that produces no targeted commands
+    raises instead of silently widening to the whole-family fallback read.
     """
     if module is None:
         return connection.get(fallback_command)
     state = module.params.get("state", "merged")
     # gathered: config selects the instances to read (targeted gathering, targeted.py).
     safe_states = safe_states or ("merged", "replaced", "deleted", "gathered")
-    if not commands or state not in safe_states:
+    if not commands:
+        if require_targeted:
+            raise RuntimeError(
+                "targeted read requested but no targeted commands could be generated; "
+                "refusing to widen to a whole-family read")
         return connection.get(fallback_command)
+    if state not in safe_states:
+        return connection.get(fallback_command)
+    selectors = selectors or {}
     scoped_results = []
     reading = state == "gathered"
     for command in list(dict.fromkeys(commands)):
+        selector = selectors.get(command)
         try:
             response = connection.get(command)
         except Exception as exc:  # connection plugins surface device errors here
-            if _is_absent_error(str(exc)) or (reading and _is_unsupported_node(str(exc))):
+            text = str(exc)
+            if _is_absent_error(text):
+                if outcomes is not None:
+                    if _is_instance_absent(text):
+                        outcomes.record(selector, "ok", "confirmed_absent")
+                    else:
+                        outcomes.record(selector, "ok", "unknown", dependency_gap="lower-interface")
                 continue
+            if reading and _is_unsupported_node(text):
+                if outcomes is not None:
+                    outcomes.record(selector, "rejected", "unknown")
+                continue
+            if outcomes is not None:
+                outcomes.record(selector, "failed", "unknown", error_class_value=error_class(text))
             raise
-        if _is_absent_error(response) or (reading and _is_unsupported_node(response)):
+        if _is_absent_error(response):
+            if outcomes is not None:
+                if _is_instance_absent(response):
+                    outcomes.record(selector, "ok", "confirmed_absent")
+                else:
+                    outcomes.record(selector, "ok", "unknown", dependency_gap="lower-interface")
+            continue
+        if reading and _is_unsupported_node(response):
+            if outcomes is not None:
+                outcomes.record(selector, "rejected", "unknown")
             continue
         reply = _targeted_reply(command, response)
         if not reply.strip() and (command in bare_commands or command in silent_bare_commands):
             reply = _bare_instance(connection, command, silent=command in silent_bare_commands)
+        if outcomes is not None:
+            outcomes.record(selector, "ok", "present" if reply.strip() else "unknown")
         scoped_results.append(reply)
     return "\n".join(scoped_results)
 
