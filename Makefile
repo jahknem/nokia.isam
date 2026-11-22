@@ -1,4 +1,4 @@
-.PHONY: test lint compile doc clean setup typecheck coverage check check-all gather-all
+.PHONY: test lint compile doc clean setup typecheck coverage check check-all gather-all bridges-outcomes
 
 COLLECTIONS_PATH ?= /tmp/opencode
 COLLECTION_LINK := $(COLLECTIONS_PATH)/ansible_collections/nokia/isam
@@ -55,6 +55,12 @@ gather-all:
 		if [ $$rc -eq 0 ]; then printf '  OK %s\n' "$$m"; \
 		else printf '  FAIL %s (rc=%s)\n' "$$m" $$rc; failed=1; fi; \
 	done; exit $$failed
+
+bridges-outcomes: setup
+	@echo "Run the live bridges read-outcome regression (read-only). Requires live MSAN access."
+	@ANSIBLE_COLLECTIONS_PATH=$(COLLECTIONS_PATH) $(ANSIBLE) -i $(INVENTORY) -l $(TARGET) \
+		-e isam_test_hosts=$(TARGET) --vault-password-file $(VAULT_PASS) \
+		-playbook tests/integration/bridges_read_outcomes.yml
 
 check:
 	@echo "Run check-mode mutating states per module. Requires live MSAN access."

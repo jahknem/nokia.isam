@@ -1,0 +1,13 @@
+schema_version: 1
+resource: bridges
+device_type: Nokia ISAM 7330 FTTN
+software_version: R6.2.04m
+command: info configure bridge port 1/1/3/1 flat
+captured_at: 2026-11-22
+source: sanitized-live-capture
+host: DS-LIN-TEST-01
+note: >-
+  Raw reply of a targeted single-port read on DS-LIN-TEST-01. The trailing
+  '#---' line is part of the genuine reply (the flat-read header terminator);
+  the read path must clean it before parsing. The reply carries no hostname,
+  IP or serial, so it is used as captured.

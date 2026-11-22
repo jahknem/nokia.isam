@@ -1,0 +1,17 @@
+schema_version: 1
+resource: bridges
+device_type: Nokia ISAM 7330 FTTN
+software_version: R6.2.04m
+command: info configure bridge port 1/1/9/9 flat
+captured_at: 2026-11-22
+source: synthetic-regression
+host: DS-LIN-TEST-01
+surface: raised
+note: >-
+  Pins the rejection phrasing the device answers for an unknown parent (slot
+  9 is unused on DS-LIN-TEST-01). The phrasing was confirmed live on
+  2026-11-22: the module classified the read rejected/unknown, which requires
+  this text. As for targeted-absent, the raw reply could not be captured in
+  this environment (netcommon paramiko transport gettimeout crash); the
+  production module path raises the device text, which this fixture
+  reproduces.

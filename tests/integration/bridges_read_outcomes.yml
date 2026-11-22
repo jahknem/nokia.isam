@@ -1,0 +1,136 @@
+---
+# Read-only regression test for the targeted bridges read-outcome contract:
+# every addressed selector is classified on the command/existence/parse axes,
+# and only the device's explicit "instance does not exist" about the addressed
+# instance is a confirmed absence (a gap on a real card); an unknown parent is
+# rejected/unknown, never absent. Selectors are derived from a current
+# whole-family read, so the test is state-independent; a case that cannot be
+# derived on the device is skipped with a warning, never faked.
+# ansible-playbook -i <inventory> bridges_read_outcomes.yml -e isam_test_hosts=<lab-host>
+- name: Verify targeted bridges read-outcome classification
+  hosts: "{{ isam_test_hosts }}"
+  gather_facts: false
+  tasks:
+    - name: Read the complete bridges family once (single command)
+      nokia.isam.isam_bridges:
+        state: gathered
+      register: full_bridges
+      no_log: true
+
+    - name: Collect the plain four-segment bridge ports
+      ansible.builtin.set_fact:
+        plain_ports: >-
+          {{ full_bridges.gathered.port | map(attribute='port')
+             | select('match', '^\d+/\d+/\d+/\d+$') | list }}
+
+    - name: Require at least one plain bridge port
+      ansible.builtin.assert:
+        that:
+          - plain_ports | length > 0
+        fail_msg: no four-segment bridge ports on the device; cannot run the read-outcome regression
+        quiet: true
+
+    - name: Derive the present selector (first plain port)
+      ansible.builtin.set_fact:
+        present_port: "{{ plain_ports | first }}"
+
+    - name: Group the plain ports by card (for gap and slot derivation)
+      ansible.builtin.set_fact:
+        by_card: >-
+          {%- set ns = namespace(by_card={}) -%}
+          {%- for p in plain_ports -%}
+            {%- set segs = p.split('/') -%}
+            {%- set card = segs[0] ~ '/' ~ segs[1] ~ '/' ~ segs[2] -%}
+            {%- set num = segs[3] | int -%}
+            {%- if card in ns.by_card -%}
+              {%- set ns.by_card = ns.by_card | combine({card: ns.by_card[card] + [num]}) -%}
+            {%- else -%}
+              {%- set ns.by_card = ns.by_card | combine({card: [num]}) -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {{- ns.by_card -}}
+
+    - name: Derive the absent selector (smallest gap on a real card)
+      ansible.builtin.set_fact:
+        absent_port: >-
+          {%- set result = namespace(port='') -%}
+          {%- for card in by_card -%}
+            {%- if result.port == '' -%}
+              {%- set nums = by_card[card] -%}
+              {%- set miss = namespace(list=[]) -%}
+              {%- for n in range(1, (nums | max) + 1) -%}
+                {%- if n not in nums -%}
+                  {%- set miss.list = miss.list + [n] -%}
+                {%- endif -%}
+              {%- endfor -%}
+              {%- if miss.list | length > 0 -%}
+                {%- set result.port = card ~ '/' ~ (miss.list | first) -%}
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {{- result.port -}}
+
+    - name: Derive the unknown selector (one card slot beyond the highest in use)
+      ansible.builtin.set_fact:
+        unknown_port: >-
+          {%- set head = (plain_ports | first).split('/')[0:2] | join('/') -%}
+          {%- set ns = namespace(slots=[]) -%}
+          {%- for card in by_card -%}
+            {%- set slot = card.split('/')[2] | int -%}
+            {%- if slot not in ns.slots -%}
+              {%- set ns.slots = ns.slots + [slot] -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {{- head ~ '/' ~ ((ns.slots | max) + 1) ~ '/9' -}}
+
+    - name: Compose the targeted read (only derivable cases)
+      ansible.builtin.set_fact:
+        targeted_ids: "{{ ([{'port': present_port}] + ([{'port': absent_port}] if absent_port | length > 0 else []) + ([{'port': unknown_port}] if unknown_port | length > 0 else [])) }}"
+
+    - name: Targeted read of the derived selectors (read-only)
+      nokia.isam.isam_bridges:
+        state: gathered
+        config:
+          port: "{{ targeted_ids }}"
+      register: targeted_bridges
+      no_log: true
+
+    - name: Verify the present selector is classified present and is the only returned port
+      ansible.builtin.assert:
+        that:
+          - targeted_bridges.gathered.port | map(attribute='port') | list == [present_port]
+          - (targeted_bridges.read_outcomes.outcomes | selectattr('selector', 'equalto', present_port) | first).command == 'ok'
+          - (targeted_bridges.read_outcomes.outcomes | selectattr('selector', 'equalto', present_port) | first).existence == 'present'
+          - targeted_bridges.read_outcomes.parse is defined
+        quiet: true
+
+    - name: Verify the absent gap is classified confirmed_absent
+      ansible.builtin.assert:
+        that:
+          - (targeted_bridges.read_outcomes.outcomes | selectattr('selector', 'equalto', absent_port) | first).command == 'ok'
+          - (targeted_bridges.read_outcomes.outcomes | selectattr('selector', 'equalto', absent_port) | first).existence == 'confirmed_absent'
+        quiet: true
+      when: absent_port | length > 0
+
+    - name: Verify the unknown parent is classified rejected and unknown, never absent
+      ansible.builtin.assert:
+        that:
+          - (targeted_bridges.read_outcomes.outcomes | selectattr('selector', 'equalto', unknown_port) | first).command == 'rejected'
+          - (targeted_bridges.read_outcomes.outcomes | selectattr('selector', 'equalto', unknown_port) | first).existence == 'unknown'
+        quiet: true
+      when: unknown_port | length > 0
+
+    - name: Confirm the whole-family read carries no selector outcomes
+      ansible.builtin.assert:
+        that:
+          - full_bridges.read_outcomes is not defined
+        quiet: true
+
+    - name: Warn when the absent case could not be derived (skipped, not faked)
+      ansible.builtin.debug:
+        msg: no card gap found on this device; the confirmed_absent case was skipped
+      when: absent_port | length == 0
+
+    - name: Report the derived selectors and classifications (sanitized, no configuration)
+      ansible.builtin.debug:
+        msg: "{{ {'present': present_port, 'absent': absent_port, 'unknown': unknown_port, 'outcomes': targeted_bridges.read_outcomes.outcomes, 'parse': targeted_bridges.read_outcomes.parse} }}"

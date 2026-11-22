@@ -1,0 +1,7 @@
+configure bridge port 1/1/3/1 max-unicast-mac 5
+configure bridge port 1/1/3/1 vlan-id 10 tag single-tagged l2fwder-vlan 110 vlan-scope local
+configure bridge port 1/1/3/1 vlan-id 20 tag single-tagged l2fwder-vlan 120 vlan-scope local qos priority:5
+configure bridge port 1/1/3/1 vlan-id 30 tag single-tagged l2fwder-vlan 731 vlan-scope local qos priority:4
+configure bridge port 1/1/3/1 vlan-id 99
+configure bridge port 1/1/3/1 pvid 99
+#-------------------------------------------------------------------------------

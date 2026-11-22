@@ -3,6 +3,12 @@ from pathlib import Path
 import pytest
 import yaml
 
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_scoped_config,
+)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.read_outcomes import (
+    ReadOutcomeCollector,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.pon_variants import (
     Epon_interfacesTemplate,
 )
@@ -285,6 +291,114 @@ def test_bridge_live_flat_fixture_is_parseable():
     assert port["pvid"] == 99
     assert vlans["20"]["l2fwder_vlan"] == "720"
     assert vlans["20"]["qos"] == "priority:5"
+
+
+class _GatheredModule(object):
+    """Minimal module state for a targeted (gathered) read."""
+
+    def __init__(self):
+        self.params = {"state": "gathered"}
+
+
+class _FixtureConn(object):
+    """command -> (reply, raised) pairs served to get_scoped_config.
+
+    ``raised`` reproduces how the production module path receives device
+    errors: as a raised exception carrying the device text.
+    """
+
+    def __init__(self, replies):
+        self.replies = replies
+        self.commands = []
+
+    def get(self, command):
+        self.commands.append(command)
+        reply, raised = self.replies[command]
+        if raised:
+            raise Exception(reply)
+        return reply
+
+
+def _fixture_read(descriptor, output, selector, raised):
+    command = descriptor["command"]
+    conn = _FixtureConn({command: (output, raised)})
+    collector = ReadOutcomeCollector("bridges")
+    data = get_scoped_config(
+        _GatheredModule(), conn, {}, "FALLBACK", [command],
+        outcomes=collector, selectors={command: selector},
+    )
+    return data, collector.to_result(), conn
+
+
+def test_bridges_targeted_present_fixture_is_present_and_parses():
+    descriptor, output = fixture_bundle("bridges", "targeted-present")
+    selector = "1/1/3/1"
+    data, result, conn = _fixture_read(descriptor, output, selector, raised=False)
+
+    assert descriptor["source"] == "sanitized-live-capture"
+    assert conn.commands == [descriptor["command"]]
+    assert result["outcomes"] == [
+        {"resource": "bridges", "selector": selector, "command": "ok", "existence": "present"},
+    ]
+    # The live reply (header line included) cleans down to the port's config...
+    assert "configure bridge port 1/1/3/1 pvid 99" in data
+    assert "#" not in data
+    # ...and still parses as a real bridge port.
+    parsed = BridgesFacts(module=None)._parse_bridge_config(data)
+    assert parsed["port"][0]["port"] == selector
+    assert parsed["port"][0]["pvid"] == 99
+
+
+def test_bridges_targeted_absent_fixture_is_confirmed_absent():
+    descriptor, output = fixture_bundle("bridges", "targeted-absent")
+    selector = "1/1/8/6"
+    data, result, _ = _fixture_read(descriptor, output, selector, raised=True)
+
+    assert descriptor["source"] == "synthetic-regression"
+    assert data == ""  # dropped from the gathered output, as before
+    assert result["outcomes"] == [
+        {"resource": "bridges", "selector": selector, "command": "ok", "existence": "confirmed_absent"},
+    ]
+
+
+def test_bridges_targeted_rejected_fixture_is_unknown_not_absent():
+    descriptor, output = fixture_bundle("bridges", "targeted-rejected")
+    selector = "1/1/9/9"
+    data, result, _ = _fixture_read(descriptor, output, selector, raised=True)
+
+    assert data == ""
+    outcome = result["outcomes"][0]
+    assert outcome["selector"] == selector
+    assert outcome["command"] == "rejected"
+    assert outcome["existence"] == "unknown"  # never confirmed absence
+    assert "error_class" not in outcome
+    assert "dependency_gap" not in outcome
+
+
+def test_bridges_targeted_fixture_mixed_read_returns_only_present():
+    present_descriptor, present_output = fixture_bundle("bridges", "targeted-present")
+    absent_descriptor, absent_output = fixture_bundle("bridges", "targeted-absent")
+    conn = _FixtureConn({
+        present_descriptor["command"]: (present_output, False),
+        absent_descriptor["command"]: (absent_output, True),
+    })
+    collector = ReadOutcomeCollector("bridges")
+    data = get_scoped_config(
+        _GatheredModule(), conn, {}, "FALLBACK",
+        [present_descriptor["command"], absent_descriptor["command"]],
+        outcomes=collector,
+        selectors={
+            present_descriptor["command"]: "1/1/3/1",
+            absent_descriptor["command"]: "1/1/8/6",
+        },
+    )
+    result = collector.to_result()
+
+    assert "configure bridge port 1/1/3/1 pvid 99" in data
+    assert "1/1/8/6" not in data
+    by_selector = {o["selector"]: o for o in result["outcomes"]}
+    assert by_selector["1/1/3/1"]["existence"] == "present"
+    assert by_selector["1/1/8/6"]["existence"] == "confirmed_absent"
 
 
 def test_vlan_live_flat_fixture_is_parseable():
