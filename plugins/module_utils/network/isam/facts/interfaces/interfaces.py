@@ -29,6 +29,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common imp
     normalize_resource_keys,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    assert_targeted_request,
     finish_targeted_outcomes,
     get_scoped_config,
     selector_key,
@@ -96,6 +97,7 @@ class InterfacesFacts(object):
         config = self._module.params.get("config") or []
         # Gathered reads use the complete read's compact form (no detail defaults); see bridges.
         suffix = "flat" if self._module.params.get("state") == "gathered" else "detail flat"
+        assert_targeted_request(self._module, "interfaces", ("config",))
         collector = targeted_outcomes(self._module, "interfaces")
         commands = []
         selectors = {}
@@ -103,7 +105,7 @@ class InterfacesFacts(object):
             name = item["name"]
             command = "info configure interface port %s %s" % (name, suffix)
             commands.append(command)
-            selectors[command] = selector_key(name)
+            selectors[command] = ("config", selector_key(name))
         data = get_scoped_config(
             self._module,
             connection,

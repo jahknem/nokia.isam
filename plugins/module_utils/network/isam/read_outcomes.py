@@ -15,9 +15,14 @@ treated as evidence an instance is gone. ``unknown`` (a header-only reply, an
 ``invalid token`` rejection, a missing-dependency reply, or a failed read) is
 NEVER absence. Consumers must keep, not remove, configuration for ``unknown``.
 
-Output is sanitized: stable enums, the selector, and an error *class*. Raw
-device text is never recorded, so the result is safe to publish in a module
-result or a NOC artifact (it mirrors ``noc_safe_warnings`` on the NOC side).
+Outcomes are per (config section, instance): two sections can name the same
+identity value (e.g. an equipment-ont interface and loop), and those are
+different instances that are never merged.
+
+Output is sanitized: stable enums, the section, the selector, and an error
+*class*. Raw device text is never recorded, so the result is safe to publish
+in a module result or a NOC artifact (it mirrors ``noc_safe_warnings`` on the
+NOC side).
 """
 
 from __future__ import absolute_import, division, print_function
@@ -54,47 +59,40 @@ def error_class(text):
     return "device_error"
 
 
-# When one selector is addressed by several commands (a dhcp-relay port is read on
-# port-stats and v6-port-stats; duplicate identities share one read), the strongest
-# signal wins: a failed read is stronger than presence, presence is stronger than a
-# rejection, a rejection stronger than an explicit absence, all stronger than unknown.
-_OUTCOME_PRIORITY = (
-    (("failed", "unknown"), 4),
-    (("ok", "present"), 3),
-    (("rejected", "unknown"), 2),
-    (("ok", "confirmed_absent"), 1),
-)
-
-
-def _outcome_priority(command_status, existence):
-    for (command, ex), priority in _OUTCOME_PRIORITY:
-        if command_status == command and existence == ex:
-            return priority
-    return 0  # ok/unknown (header-only reply, missing dependency, ...)
-
-
 class ReadOutcomeCollector(object):
-    """Accumulates per-selector command/existence outcomes and the parse outcome.
+    """Accumulates per-(section, selector) command/existence outcomes and the parse
+    outcome.
 
     A collector is created by a facts class for one targeted read and threaded
     into the shared read helpers. It is stateless with respect to the device:
     it only records what one read observed, and is consumed once by the module
     to build the sanitized result.
+
+    When one instance is addressed by several reads (a dhcp-relay port is read on
+    port-stats and v6-port-stats), the collector keeps one *conservative*
+    aggregate: a failed read dominates (the module fails and the read proves
+    nothing), a single present read proves presence, ``confirmed_absent`` holds
+    only when *every* read of the instance confirmed absence, and anything less
+    is ``unknown``. ``confirmed_absent`` is the one outcome consumers act on, so
+    it must never be aggregated from a mix of absence and inconclusive reads.
     """
 
     def __init__(self, resource):
         self._resource = resource
-        self._by_selector = {}
+        self._entries = {}
         self._parse = {}
 
-    def record(self, selector, command_status, existence, error_class_value=None,
+    def record(self, section, selector, command_status, existence, error_class_value=None,
                dependency_gap=None):
-        """Record the command/existence outcome for one selector.
+        """Record the command/existence outcome of one read of one instance.
 
-        ``selector`` is the instance identity the read addressed (``None`` for a
-        whole-family read). ``dependency_gap`` notes that a *dependency* (e.g. a
-        lower-interface) was reported missing, which leaves the addressed
-        instance's own existence unknown -- it is not a confirmed absence.
+        ``section`` is the config section that named the instance (a
+        TARGETED_GATHER section, e.g. ``config``); instances in different
+        sections are never merged. ``selector`` is the instance identity the
+        read addressed (``None`` for a whole-family read). ``dependency_gap``
+        notes that a *dependency* (e.g. a lower-interface) was reported missing,
+        which leaves the addressed instance's own existence unknown -- it is not
+        a confirmed absence.
         """
         record = {
             "resource": self._resource,
@@ -102,18 +100,49 @@ class ReadOutcomeCollector(object):
             "command": command_status,
             "existence": existence,
         }
+        if section is not None:
+            record["section"] = section
         if error_class_value:
             record["error_class"] = error_class_value
         if dependency_gap:
             record["dependency_gap"] = dependency_gap
-        key = selector if selector is not None else _WHOLE
-        previous = self._by_selector.get(key)
-        if previous is not None and _outcome_priority(previous["command"], previous["existence"]) >= _outcome_priority(
-                command_status, existence):
-            # A stronger (or equally strong, recorded first) outcome for this selector
-            # already stands: keep it.
-            return
-        self._by_selector[key] = record
+        key = (section, selector if selector is not None else _WHOLE)
+        entry = self._entries.get(key)
+        if entry is None:
+            entry = self._entries[key] = {
+                "failed": None,
+                "present": None,
+                "absent": None,
+                "inconclusive": None,
+                "n_absent": 0,
+                "n_total": 0,
+            }
+        entry["n_total"] += 1
+        if command_status == COMMAND_FAILED:
+            if entry["failed"] is None:
+                entry["failed"] = record
+        elif existence == EXISTENCE_PRESENT:
+            if entry["present"] is None:
+                entry["present"] = record
+        elif existence == EXISTENCE_CONFIRMED_ABSENT:
+            entry["n_absent"] += 1
+            if entry["absent"] is None:
+                entry["absent"] = record
+        elif entry["inconclusive"] is None:
+            # ok/unknown (header-only reply, missing dependency) or rejected:
+            # the first one stands, so a dependency gap is not lost.
+            entry["inconclusive"] = record
+
+    @staticmethod
+    def _resolve(entry):
+        """The conservative aggregate of one instance's reads (see the class docstring)."""
+        if entry["failed"] is not None:
+            return entry["failed"]
+        if entry["present"] is not None:
+            return entry["present"]
+        if entry["n_absent"] == entry["n_total"]:
+            return entry["absent"]
+        return entry["inconclusive"]
 
     def record_parse(self, parse_status, section=None):
         """Record the parse outcome at resource level (``section=None``) or per section."""
@@ -126,12 +155,12 @@ class ReadOutcomeCollector(object):
     def to_result(self):
         """Sanitized, JSON-safe result: ``{resource, outcomes, parse?}``.
 
-        ``outcomes`` is ordered by selector (whole-read outcome, if any, first)
-        so it is deterministic artifact-to-artifact.
+        ``outcomes`` is ordered by (section, selector) -- a whole-read outcome,
+        if any, first -- so it is deterministic artifact-to-artifact.
         """
-        outcomes = [self._by_selector[_WHOLE]] if _WHOLE in self._by_selector else []
-        outcomes += [self._by_selector[key] for key in sorted(
-            (key for key in self._by_selector if key != _WHOLE), key=lambda v: (v is None, v))]
+        outcomes = [self._resolve(entry) for entry in
+                    (self._entries[key] for key in sorted(
+                        self._entries, key=lambda key: (key[1] is not None, key[0] or "", key[1] or "")))]
         result = {"resource": self._resource, "outcomes": outcomes}
         if self._parse:
             if len(self._parse) == 1 and _RESOURCE in self._parse:

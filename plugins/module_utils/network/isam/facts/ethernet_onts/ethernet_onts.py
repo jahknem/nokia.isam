@@ -17,6 +17,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
     utils,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    assert_targeted_request,
     finish_targeted_outcomes,
     get_scoped_config,
     selector_key,
@@ -54,6 +55,7 @@ class Ethernet_ontsFacts(object):
     def get_config(self, connection):
         """The whole resource, or only the ONTs named in config (targeted gathering)."""
         config = self._module.params.get("config") or []
+        assert_targeted_request(self._module, "ethernet_onts", ("config",))
         collector = targeted_outcomes(self._module, "ethernet_onts")
         commands = []
         selectors = {}
@@ -61,7 +63,7 @@ class Ethernet_ontsFacts(object):
             uni_idx = item["uni_idx"]
             command = "info configure ethernet ont %s flat detail" % uni_idx
             commands.append(command)
-            selectors[command] = selector_key(uni_idx)
+            selectors[command] = ("config", selector_key(uni_idx))
         data = get_scoped_config(
             self._module,
             connection,

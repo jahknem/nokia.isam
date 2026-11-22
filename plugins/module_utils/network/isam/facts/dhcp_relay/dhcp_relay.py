@@ -7,6 +7,7 @@ __metaclass__ = type
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.dhcp_relay.dhcp_relay import Isam_dhcp_relayArgs
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    assert_targeted_request,
     finish_targeted_outcomes,
     get_scoped_config,
     requested_identities,
@@ -27,6 +28,7 @@ class Isam_dhcp_relayFacts(object):
 
     def get_config(self, connection):
         """The whole resource, or only the ports named in config (targeted gathering)."""
+        assert_targeted_request(self._module, "isam_dhcp_relay", ("config",))
         collector = targeted_outcomes(self._module, "isam_dhcp_relay")
         commands = []
         selectors = {}
@@ -36,7 +38,7 @@ class Isam_dhcp_relayFacts(object):
             for node in ("port-stats", "v6-port-stats"):
                 command = "info configure dhcp-relay %s %s flat" % (node, port)
                 commands.append(command)
-                selectors[command] = selector_key(port)
+                selectors[command] = ("config", selector_key(port))
         data = get_scoped_config(
             self._module,
             connection,

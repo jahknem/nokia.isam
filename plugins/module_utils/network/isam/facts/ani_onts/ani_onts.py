@@ -8,6 +8,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
     utils,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    assert_targeted_request,
     finish_targeted_outcomes,
     get_scoped_config,
     requested_identities,
@@ -33,13 +34,14 @@ class Ani_ontsFacts(object):
 
     def get_config(self, connection):
         """The whole resource, or only the ONT thresholds named in config (targeted gathering)."""
+        assert_targeted_request(self._module, "ani_onts", ("config",))
         collector = targeted_outcomes(self._module, "ani_onts")
         commands = []
         selectors = {}
         for ont in requested_identities(self._module, "ani_onts"):
             command = "info configure ani ont tca-thresh %s flat" % ont
             commands.append(command)
-            selectors[command] = selector_key(ont)
+            selectors[command] = ("config", selector_key(ont))
         data = get_scoped_config(
             self._module,
             connection,

@@ -325,7 +325,7 @@ def _fixture_read(descriptor, output, selector, raised):
     collector = ReadOutcomeCollector("bridges")
     data = get_scoped_config(
         _GatheredModule(), conn, {}, "FALLBACK", [command],
-        outcomes=collector, selectors={command: selector},
+        outcomes=collector, selectors={command: ("port", selector)},
     )
     return data, collector.to_result(), conn
 
@@ -338,7 +338,8 @@ def test_bridges_targeted_present_fixture_is_present_and_parses():
     assert descriptor["source"] == "sanitized-live-capture"
     assert conn.commands == [descriptor["command"]]
     assert result["outcomes"] == [
-        {"resource": "bridges", "selector": selector, "command": "ok", "existence": "present"},
+        {"resource": "bridges", "section": "port", "selector": selector,
+         "command": "ok", "existence": "present"},
     ]
     # The live reply (header line included) cleans down to the port's config...
     assert "configure bridge port 1/1/3/1 pvid 99" in data
@@ -357,7 +358,8 @@ def test_bridges_targeted_absent_fixture_is_confirmed_absent():
     assert descriptor["source"] == "synthetic-regression"
     assert data == ""  # dropped from the gathered output, as before
     assert result["outcomes"] == [
-        {"resource": "bridges", "selector": selector, "command": "ok", "existence": "confirmed_absent"},
+        {"resource": "bridges", "section": "port", "selector": selector,
+         "command": "ok", "existence": "confirmed_absent"},
     ]
 
 
@@ -369,6 +371,7 @@ def test_bridges_targeted_rejected_fixture_is_unknown_not_absent():
     assert data == ""
     outcome = result["outcomes"][0]
     assert outcome["selector"] == selector
+    assert outcome["section"] == "port"
     assert outcome["command"] == "rejected"
     assert outcome["existence"] == "unknown"  # never confirmed absence
     assert "error_class" not in outcome
@@ -388,8 +391,8 @@ def test_bridges_targeted_fixture_mixed_read_returns_only_present():
         [present_descriptor["command"], absent_descriptor["command"]],
         outcomes=collector,
         selectors={
-            present_descriptor["command"]: "1/1/3/1",
-            absent_descriptor["command"]: "1/1/8/6",
+            present_descriptor["command"]: ("port", "1/1/3/1"),
+            absent_descriptor["command"]: ("port", "1/1/8/6"),
         },
     )
     result = collector.to_result()
@@ -399,6 +402,7 @@ def test_bridges_targeted_fixture_mixed_read_returns_only_present():
     by_selector = {o["selector"]: o for o in result["outcomes"]}
     assert by_selector["1/1/3/1"]["existence"] == "present"
     assert by_selector["1/1/8/6"]["existence"] == "confirmed_absent"
+    assert all(o["section"] == "port" for o in result["outcomes"])
 
 
 def test_vlan_live_flat_fixture_is_parseable():

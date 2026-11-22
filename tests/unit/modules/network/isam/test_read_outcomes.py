@@ -69,16 +69,17 @@ CMD = "info configure bridge port {0} flat"
 
 def test_present_instance_is_present():
     cmd = CMD.format("1/1/5/1/3/1/1")
-    data, result, _ = _read({cmd: "configure bridge port 1/1/5/1/3/1/1 pvid 100"}, {cmd: "1/1/5/1/3/1/1"})
+    data, result, _ = _read({cmd: "configure bridge port 1/1/5/1/3/1/1 pvid 100"}, {cmd: ("config", "1/1/5/1/3/1/1")})
     assert "configure bridge port 1/1/5/1/3/1/1 pvid 100" in data
     assert result["outcomes"] == [
-        {"resource": "bridges", "selector": "1/1/5/1/3/1/1", "command": "ok", "existence": "present"}
+        {"resource": "bridges", "section": "config", "selector": "1/1/5/1/3/1/1",
+         "command": "ok", "existence": "present"}
     ]
 
 
 def test_confirmed_absent_via_exception():
     cmd = CMD.format("1/1/5/1/3/1/9")
-    data, result, _ = _read({cmd: Exception("specified instance does not exist")}, {cmd: "1/1/5/1/3/1/9"})
+    data, result, _ = _read({cmd: Exception("specified instance does not exist")}, {cmd: ("config", "1/1/5/1/3/1/9")})
     assert data == ""  # dropped from the gathered output, as before
     assert result["outcomes"][0]["command"] == "ok"
     assert result["outcomes"][0]["existence"] == "confirmed_absent"
@@ -86,13 +87,13 @@ def test_confirmed_absent_via_exception():
 
 def test_confirmed_absent_via_response_text():
     cmd = CMD.format("1/1/5/1/3/1/9")
-    _, result, _ = _read({cmd: "specified instance does not exist"}, {cmd: "1/1/5/1/3/1/9"})
+    _, result, _ = _read({cmd: "specified instance does not exist"}, {cmd: ("config", "1/1/5/1/3/1/9")})
     assert result["outcomes"][0]["existence"] == "confirmed_absent"
 
 
 def test_lower_interface_is_a_dependency_gap_not_absence():
     cmd = CMD.format("1/1/5/1/3/1/2")
-    data, result, _ = _read({cmd: "lower-interface does not exist"}, {cmd: "1/1/5/1/3/1/2"})
+    data, result, _ = _read({cmd: "lower-interface does not exist"}, {cmd: ("config", "1/1/5/1/3/1/2")})
     assert data == ""
     outcome = result["outcomes"][0]
     assert outcome["existence"] == "unknown"
@@ -102,7 +103,7 @@ def test_lower_interface_is_a_dependency_gap_not_absence():
 
 def test_invalid_token_is_rejected_not_incompatible():
     cmd = CMD.format("1/1/5/1/3/1/3")
-    _, result, _ = _read({cmd: "invalid token"}, {cmd: "1/1/5/1/3/1/3"})
+    _, result, _ = _read({cmd: "invalid token"}, {cmd: ("config", "1/1/5/1/3/1/3")})
     outcome = result["outcomes"][0]
     assert outcome["command"] == "rejected"
     assert outcome["existence"] == "unknown"
@@ -118,7 +119,8 @@ def test_failed_read_fails_the_module_carrying_outcomes():
     collector = ReadOutcomeCollector("bridges")
     module = FakeModule()
     try:
-        get_scoped_config(module, conn, {}, "FALLBACK", [cmd], outcomes=collector, selectors={cmd: "1/1/5/1/3/1/4"})
+        get_scoped_config(module, conn, {}, "FALLBACK", [cmd], outcomes=collector,
+                          selectors={cmd: ("config", "1/1/5/1/3/1/4")})
         assert False, "expected the failed read to fail the module"
     except SystemExit:
         pass
@@ -130,6 +132,32 @@ def test_failed_read_fails_the_module_carrying_outcomes():
     assert outcome["existence"] == "unknown"
     assert outcome["error_class"] == "timeout"
     assert fail["read_outcomes"]["parse"] == "unverified"
+
+
+def test_failed_bare_instance_probe_reports_failed_outcome():
+    # The bare-instance re-check ('flat detail') is a read like any other: a failure
+    # there must be recorded as a failed outcome and fail the module carrying the
+    # outcomes (regression: the probe's exception used to bypass the failure handling).
+    cmd = CMD.format("1/1/5/1/3/1/6")
+    probe = cmd + " detail"
+    conn = FakeConn({cmd: "#---\necho " + cmd, probe: Exception("connection to the device was lost")})
+    collector = ReadOutcomeCollector("bridges")
+    module = FakeModule()
+    try:
+        get_scoped_config(module, conn, {}, "FALLBACK", [cmd], bare_commands=(cmd,),
+                          outcomes=collector, selectors={cmd: ("config", "1/1/5/1/3/1/6")})
+        assert False, "expected the failed detail probe to fail the module"
+    except SystemExit:
+        pass
+    fail = module._fail_kwargs
+    assert fail is not None
+    assert "connection to the device was lost" in fail["msg"]
+    outcome = fail["read_outcomes"]["outcomes"][0]
+    assert outcome["selector"] == "1/1/5/1/3/1/6"
+    assert outcome["command"] == "failed"
+    assert outcome["existence"] == "unknown"
+    assert outcome["error_class"] == "connection_error"
+    assert conn.commands == [cmd, probe]  # the probe ran, then the module failed
 
 
 def test_failed_read_without_collector_still_raises():
@@ -150,7 +178,7 @@ def test_failed_read_without_collector_still_raises():
 def test_header_only_reply_is_unknown_not_absent():
     cmd = CMD.format("1/1/5/1/3/1/5")
     data, result, _ = _read({cmd: "#---\necho info configure bridge port 1/1/5/1/3/1/5 flat"},
-                            {cmd: "1/1/5/1/3/1/5"})
+                            {cmd: ("config", "1/1/5/1/3/1/5")})
     assert data == ""
     outcome = result["outcomes"][0]
     assert outcome["command"] == "ok"
@@ -163,7 +191,7 @@ def test_mixed_read_keeps_only_present_lines():
     data, result, _ = _read(
         {present: "configure bridge port 1/1/5/1/3/1/1 pvid 100",
          absent: "specified instance does not exist"},
-        {present: "1/1/5/1/3/1/1", absent: "1/1/5/1/3/1/9"},
+        {present: ("config", "1/1/5/1/3/1/1"), absent: ("config", "1/1/5/1/3/1/9")},
     )
     assert "configure bridge port 1/1/5/1/3/1/1 pvid 100" in data
     assert "1/1/5/1/3/1/9" not in data
@@ -205,44 +233,83 @@ def test_no_collector_leaves_the_string_contract_unchanged():
 
 def test_collector_result_is_sanitized_and_deterministically_ordered():
     collector = ReadOutcomeCollector("bridges")
-    collector.record("b", "ok", "present")
-    collector.record("a", "rejected", "unknown")
-    collector.record(None, "ok", "unknown")
+    collector.record("config", "b", "ok", "present")
+    collector.record("config", "a", "rejected", "unknown")
+    collector.record(None, None, "ok", "unknown")
     collector.record_parse("unverified")
     result = collector.to_result()
     assert result["resource"] == "bridges"
     assert result["parse"] == "unverified"
-    # whole-read outcome first, then selectors sorted
+    # whole-read outcome first, then (section, selector) sorted
     assert [o["selector"] for o in result["outcomes"]] == [None, "a", "b"]
+    assert "section" not in result["outcomes"][0]  # whole-read outcome has no section
+    assert result["outcomes"][1]["section"] == "config"
     # no raw device text anywhere in the result
     import json
     assert "does not exist" not in json.dumps(result)
 
 
-def test_several_commands_for_one_selector_keep_the_strongest_outcome():
-    # One instance addressed by several reads (a dhcp-relay port on port-stats and
-    # v6-port-stats) yields one outcome per selector, the strongest signal winning:
-    # failed > present > rejected > confirmed_absent > unknown.
+def test_several_reads_for_one_instance_merge_conservatively():
+    # One instance addressed by several reads (a dhcp-relay port is read on
+    # port-stats and v6-port-stats) keeps one outcome. confirmed_absent is the only
+    # outcome consumers may act on (it may remove configuration), so it holds only
+    # when EVERY read of the instance confirmed absence; anything less is unknown.
+    # absence + inconclusive -> unknown (regression: it used to aggregate to
+    # confirmed_absent)
     collector = ReadOutcomeCollector("isam_dhcp_relay")
-    collector.record("1/1/1/1:10", "ok", "present")
-    collector.record("1/1/1/1:10", "ok", "confirmed_absent")  # the v6 read found nothing
+    collector.record("config", "p:10", "ok", "confirmed_absent")
+    collector.record("config", "p:10", "ok", "unknown")  # the v6 read answered header-only
     outcome = collector.to_result()["outcomes"][0]
-    assert outcome["selector"] == "1/1/1/1:10"
-    assert outcome["existence"] == "present"
+    assert outcome["selector"] == "p:10"
+    assert outcome["existence"] == "unknown"
 
-    collector2 = ReadOutcomeCollector("isam_dhcp_relay")
-    collector2.record("1/1/1/1:10", "ok", "confirmed_absent")
-    collector2.record("1/1/1/1:10", "failed", "unknown", error_class_value="connection_error")
-    outcome2 = collector2.to_result()["outcomes"][0]
-    assert outcome2["command"] == "failed"
-    assert outcome2["error_class"] == "connection_error"
+    # absence + rejection -> the rejection stands, existence unknown
+    collector = ReadOutcomeCollector("isam_dhcp_relay")
+    collector.record("config", "p:10", "ok", "confirmed_absent")
+    collector.record("config", "p:10", "rejected", "unknown")
+    outcome = collector.to_result()["outcomes"][0]
+    assert outcome["command"] == "rejected"
+    assert outcome["existence"] == "unknown"
 
-    # an equally strong outcome recorded first is kept
-    collector3 = ReadOutcomeCollector("isam_dhcp_relay")
-    collector3.record("1/1/1/1:10", "ok", "unknown", dependency_gap="lower-interface")
-    collector3.record("1/1/1/1:10", "ok", "unknown")
-    outcome3 = collector3.to_result()["outcomes"][0]
-    assert outcome3["dependency_gap"] == "lower-interface"
+    # every read confirmed absence -> confirmed_absent
+    collector = ReadOutcomeCollector("isam_dhcp_relay")
+    collector.record("config", "p:10", "ok", "confirmed_absent")
+    collector.record("config", "p:10", "ok", "confirmed_absent")
+    assert collector.to_result()["outcomes"][0]["existence"] == "confirmed_absent"
+
+    # a single present read proves presence
+    collector = ReadOutcomeCollector("isam_dhcp_relay")
+    collector.record("config", "p:10", "ok", "confirmed_absent")  # the v6 read found nothing
+    collector.record("config", "p:10", "ok", "present")
+    assert collector.to_result()["outcomes"][0]["existence"] == "present"
+
+    # a failed read dominates: the module fails, the read proves nothing
+    collector = ReadOutcomeCollector("isam_dhcp_relay")
+    collector.record("config", "p:10", "ok", "present")
+    collector.record("config", "p:10", "failed", "unknown", error_class_value="connection_error")
+    outcome = collector.to_result()["outcomes"][0]
+    assert outcome["command"] == "failed"
+    assert outcome["error_class"] == "connection_error"
+
+    # among unknowns the first recorded one stands, so a dependency gap is not lost
+    collector = ReadOutcomeCollector("isam_dhcp_relay")
+    collector.record("config", "p:10", "ok", "unknown", dependency_gap="lower-interface")
+    collector.record("config", "p:10", "ok", "unknown")
+    assert collector.to_result()["outcomes"][0]["dependency_gap"] == "lower-interface"
+
+
+def test_same_selector_in_different_sections_is_not_merged():
+    # Equipment-ont interfaces and loops can carry the same ONT id; they are different
+    # instances and must be reported separately (regression: their outcomes used to be
+    # merged under one selector, hiding the unsuccessful read).
+    collector = ReadOutcomeCollector("equipment_onts")
+    collector.record("interfaces", "1/1/1/1", "ok", "present")
+    collector.record("loops", "1/1/1/1", "rejected", "unknown")
+    by_key = dict(((o["section"], o["selector"]), o) for o in collector.to_result()["outcomes"])
+    assert set(by_key) == {("interfaces", "1/1/1/1"), ("loops", "1/1/1/1")}
+    assert by_key[("interfaces", "1/1/1/1")]["existence"] == "present"
+    assert by_key[("loops", "1/1/1/1")]["command"] == "rejected"
+    assert by_key[("loops", "1/1/1/1")]["existence"] == "unknown"
 
 
 # ---------------------------------------------------------------------------
@@ -264,7 +331,7 @@ def test_targeted_outcomes_only_for_gathered():
 def test_finalize_collector_records_default_parse():
     assert _finalize_collector(None) is None
     collector = ReadOutcomeCollector("vlans")
-    collector.record("100", "ok", "present")
+    collector.record("config", "100", "ok", "present")
     result = _finalize_collector(collector)
     assert result["parse"] == "unverified"
     # an explicitly recorded parse is preserved
@@ -276,7 +343,7 @@ def test_finalize_collector_records_default_parse():
 def test_finish_targeted_outcomes_stashes_on_module():
     module = FakeModule("gathered")
     collector = ReadOutcomeCollector("vlans")
-    collector.record("100", "ok", "present")
+    collector.record("config", "100", "ok", "present")
     result = finish_targeted_outcomes(module, collector)
     assert result == module._isam_read_outcomes
     assert result["outcomes"][0]["selector"] == "100"
@@ -291,8 +358,8 @@ def test_has_targeted_entries_and_selectors():
     formats = {"config": VLAN}
     assert _has_targeted_entries(module, "vlans", formats) is True
     assert _targeted_selectors(module, "vlans", formats) == {
-        "info configure vlan id 100 flat": "100",
-        "info configure vlan id 200 flat": "200",
+        "info configure vlan id 100 flat": ("config", "100"),
+        "info configure vlan id 200 flat": ("config", "200"),
     }
     # a named entry with an empty identity is still "explicit" but yields no selector
     module2 = FakeModule("gathered", [{"id": ""}])
@@ -322,10 +389,51 @@ def test_get_targeted_config_explicit_without_commands_refuses_to_widen():
     conn = FakeConn({}, fallback="FALLBACK_REPLY")
     try:
         get_targeted_config(module, conn, "vlans", VLAN_FALLBACK, {"config": VLAN})
-        assert False, "expected an explicit targeted read with no commands to raise"
+        assert False, "expected an explicit targeted read with a gap to raise"
     except RuntimeError as exc:
-        assert "refusing to widen" in str(exc)
+        assert "config[0]" in str(exc)
+        assert "id" in str(exc)
+        assert "refusing" in str(exc)
     assert conn.commands == []  # the whole-family fallback read was never sent
+
+
+def test_get_targeted_config_partial_identity_request_refuses():
+    # One of several named instances has no identity: an explicit request is never
+    # served partially -- the read fails, and nothing is sent (regression: the valid
+    # instance used to be read while the invalid one was silently dropped).
+    module = FakeModule("gathered", [{"id": "100"}, {"id": ""}])
+    conn = FakeConn({"info configure vlan id 100 flat": "configure vlan id 100"},
+                    fallback="FALLBACK_REPLY")
+    try:
+        get_targeted_config(module, conn, "vlans", VLAN_FALLBACK, {"config": VLAN})
+        assert False, "expected an explicit targeted read with a gap to raise"
+    except RuntimeError as exc:
+        assert "config[1]" in str(exc)
+        assert "refusing" in str(exc)
+    assert conn.commands == []  # not even the valid instance's read was sent
+
+
+def test_get_targeted_config_non_mapping_entry_is_a_gap():
+    module = FakeModule("gathered", [{"id": "100"}, "bogus"])
+    conn = FakeConn({}, fallback="FALLBACK_REPLY")
+    try:
+        get_targeted_config(module, conn, "vlans", VLAN_FALLBACK, {"config": VLAN})
+        assert False, "expected an explicit targeted read with a gap to raise"
+    except RuntimeError as exc:
+        assert "config[1]" in str(exc)
+        assert "refusing" in str(exc)
+    assert conn.commands == []
+
+
+def test_get_targeted_config_write_state_with_gap_keeps_legacy_behavior():
+    # Write states are not explicit targeted reads: an entry without an identity is
+    # skipped, as before, and the whole family is read for the comparison.
+    module = FakeModule("merged", [{"id": ""}])
+    conn = FakeConn({}, fallback="WHOLE_FAMILY")
+    data = get_targeted_config(module, conn, "vlans", VLAN_FALLBACK, {"config": VLAN}, write_states=True)
+    assert data == "WHOLE_FAMILY"
+    assert conn.commands == [VLAN_FALLBACK]
+    assert not hasattr(module, "_isam_read_outcomes")  # write states carry no outcomes
 
 
 def test_get_targeted_config_without_config_widens_to_whole_family():

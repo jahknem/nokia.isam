@@ -555,6 +555,7 @@ class TestIsamBridgesModule(TestIsamModule):
         self.assertEqual(outcomes["resource"], "bridges")
         self.assertEqual(outcomes["parse"], "unverified")
         by_selector = {o["selector"]: o for o in outcomes["outcomes"]}
+        self.assertEqual(by_selector["1/1/8/1"]["section"], "port")
         self.assertEqual(by_selector["1/1/8/1"]["existence"], "present")
         self.assertEqual(by_selector["1/1/8/2"]["command"], "ok")
         self.assertEqual(by_selector["1/1/8/2"]["existence"], "confirmed_absent")

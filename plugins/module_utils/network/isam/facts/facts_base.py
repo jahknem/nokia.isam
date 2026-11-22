@@ -351,8 +351,8 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
     outcomes: an optional ReadOutcomeCollector; when given, each read records its
     command/existence outcome (sanitized). The returned string is unchanged, so
     existing callers that pass no collector are byte-for-byte unaffected.
-    selectors: optional {command: selector} to label each recorded outcome with the
-    instance identity the command addresses.
+    selectors: optional {command: (section, selector)} to label each recorded
+    outcome with the config section and instance identity the command addresses.
     require_targeted: when True, a targeted read that produces no targeted commands
     raises instead of silently widening to the whole-family fallback read.
     """
@@ -373,7 +373,7 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
     scoped_results = []
     reading = state == "gathered"
     for command in list(dict.fromkeys(commands)):
-        selector = selectors.get(command)
+        section, selector = selectors.get(command, (None, None))
         try:
             response = connection.get(command)
         except Exception as exc:  # connection plugins surface device errors here
@@ -381,16 +381,16 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
             if _is_absent_error(text):
                 if outcomes is not None:
                     if _is_instance_absent(text):
-                        outcomes.record(selector, "ok", "confirmed_absent")
+                        outcomes.record(section, selector, "ok", "confirmed_absent")
                     else:
-                        outcomes.record(selector, "ok", "unknown", dependency_gap="lower-interface")
+                        outcomes.record(section, selector, "ok", "unknown", dependency_gap="lower-interface")
                 continue
             if reading and _is_unsupported_node(text):
                 if outcomes is not None:
-                    outcomes.record(selector, "rejected", "unknown")
+                    outcomes.record(section, selector, "rejected", "unknown")
                 continue
             if outcomes is not None:
-                outcomes.record(selector, "failed", "unknown", error_class_value=error_class(text))
+                outcomes.record(section, selector, "failed", "unknown", error_class_value=error_class(text))
                 # A recorded failure must not be silently lost: fail the module carrying the
                 # sanitized per-selector outcomes. fail_json raises SystemExit, which no
                 # `except Exception` in a facts get_facts can swallow, so the outcomes reach
@@ -400,19 +400,29 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
         if _is_absent_error(response):
             if outcomes is not None:
                 if _is_instance_absent(response):
-                    outcomes.record(selector, "ok", "confirmed_absent")
+                    outcomes.record(section, selector, "ok", "confirmed_absent")
                 else:
-                    outcomes.record(selector, "ok", "unknown", dependency_gap="lower-interface")
+                    outcomes.record(section, selector, "ok", "unknown", dependency_gap="lower-interface")
             continue
         if reading and _is_unsupported_node(response):
             if outcomes is not None:
-                outcomes.record(selector, "rejected", "unknown")
+                outcomes.record(section, selector, "rejected", "unknown")
             continue
         reply = _targeted_reply(command, response)
         if not reply.strip() and (command in bare_commands or command in silent_bare_commands):
-            reply = _bare_instance(connection, command, silent=command in silent_bare_commands)
+            try:
+                reply = _bare_instance(connection, command, silent=command in silent_bare_commands)
+            except Exception as exc:
+                # The bare-instance detail probe is a read like any other: a failure
+                # there must be recorded and fail the module carrying the outcomes, not
+                # bypass the failure-outcome handling.
+                if outcomes is not None:
+                    outcomes.record(section, selector, "failed", "unknown",
+                                    error_class_value=error_class(str(exc)))
+                    module.fail_json(msg=str(exc), read_outcomes=_finalize_collector(outcomes))
+                raise
         if outcomes is not None:
-            outcomes.record(selector, "ok", "present" if reply.strip() else "unknown")
+            outcomes.record(section, selector, "ok", "present" if reply.strip() else "unknown")
         scoped_results.append(reply)
     return "\n".join(scoped_results)
 
@@ -576,6 +586,61 @@ def _has_targeted_entries(module, resource, formats):
     return any(targeted_explicit(module, section) for section in formats)
 
 
+def targeted_read_gaps(module, resource, sections):
+    """Config entries of an explicit gathered request that cannot be read.
+
+    An entry is a gap when it is not a mapping, or any of its identity fields
+    (TARGETED_GATHER) is missing or empty: no read command can be built for it.
+    Returns one (section, index, missing fields or None) per gap; empty for
+    write states and for requests without entries.
+    """
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.targeted import TARGETED_GATHER
+
+    params = getattr(module, "params", None) or {}
+    if params.get("state") != "gathered":
+        return []
+    config = params.get("config")
+    gaps = []  # type: list
+    for section in sections:
+        field = (TARGETED_GATHER.get(resource) or {}).get(section)
+        if not field:
+            continue
+        fields = [field] if isinstance(field, str) else list(field)
+        for index, item in enumerate(_section_items(config, section)):
+            if not isinstance(item, dict):
+                gaps.append((section, index, None))
+                continue
+            missing = [name for name in fields if item.get(name) in (None, "")]
+            if missing:
+                gaps.append((section, index, missing))
+    return gaps
+
+
+def assert_targeted_request(module, resource, sections):
+    """Fail (RuntimeError, surfaced as module fail_json) when an explicit gathered
+    request names instances that cannot be read.
+
+    An explicit targeted request is never served partially and never silently
+    widens to the whole-family read: when any named instance lacks a full
+    identity, the whole read fails and no command is sent. A no-op for write
+    states and for requests without entries.
+    """
+    gaps = targeted_read_gaps(module, resource, sections)
+    if not gaps:
+        return
+    parts = []
+    for section, index, missing in gaps:
+        if missing:
+            parts.append("%s[%d] has no value for identity field%s %s" % (
+                section, index, "s" if len(missing) > 1 else "",
+                ", ".join("'%s'" % name for name in missing)))
+        else:
+            parts.append("%s[%d] is not an instance mapping" % (section, index))
+    raise RuntimeError(
+        "targeted read of %s: %s; refusing to proceed with a partial targeted read"
+        % (resource, "; ".join(parts)))
+
+
 def selector_key(identity):
     """The sanitized selector for one identity: a composite identity (a tuple or list
     of fields) joined by '/', a single identity rendered as-is."""
@@ -583,18 +648,18 @@ def selector_key(identity):
 
 
 def _targeted_selectors(module, resource, formats):
-    """A {command: selector} map labeling each targeted read command with the instance
-    identity it addresses."""
+    """A {command: (section, selector)} map labeling each targeted read command with
+    the config section and instance identity it addresses."""
     selectors = {}
     for section, form in formats.items():
         for identity in requested_identities(module, resource, section):
             key = selector_key(identity)
             if callable(form):
                 for command in form(identity):
-                    selectors[command] = key
+                    selectors[command] = (section, key)
             else:
                 command = form % (identity if isinstance(identity, tuple) else (identity,))
-                selectors[command] = key
+                selectors[command] = (section, key)
     return selectors
 
 
@@ -612,8 +677,9 @@ def get_targeted_config(module, connection, resource, fallback, formats, write_s
     A targeted gathered read reports sanitized per-selector read outcomes: a collector
     is created for gathered reads, threaded into the read, and stashed on the module for
     the resource module to surface (see finish_targeted_outcomes). An explicit targeted
-    request (config names instances) that yields no read command fails rather than
-    silently widening to the whole-family read.
+    request (config names instances) is never served partially: a named instance without
+    a full identity, or a request that yields no read command, fails the read before
+    anything is sent, rather than silently widening to the whole-family read.
     """
     states = ("merged", "replaced", "deleted", "gathered") if write_states else ("gathered",)
     if module is None:
@@ -623,6 +689,8 @@ def get_targeted_config(module, connection, resource, fallback, formats, write_s
         return fallback(connection) if callable(fallback) else connection.get(fallback)
     commands = targeted_commands(module, resource, formats)
     explicit = state == "gathered" and _has_targeted_entries(module, resource, formats)
+    if explicit:
+        assert_targeted_request(module, resource, list(formats))
     if not commands and not explicit:
         # No instances named: the whole resource is read, as before.
         return fallback(connection) if callable(fallback) else connection.get(fallback)

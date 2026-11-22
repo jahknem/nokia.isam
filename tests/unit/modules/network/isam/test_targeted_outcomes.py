@@ -14,7 +14,10 @@ Behaviors: present, confirmed absent, unknown (header-only reply), failed (comma
 error: the module fails carrying ``read_outcomes``), rejected (the device rejects the
 selector, "invalid token"). Backward compatibility: whole-family reads carry no
 outcomes, the gathered string contract is unchanged, and an explicit request that
-yields no read command fails rather than silently widening to the whole family.
+cannot be read in full fails rather than silently widening to the whole family or
+serving a subset. The final section pins the review-finding regressions: the
+conservative multi-read merge, per-section attribution of shared identity values,
+partial requests, and failed bare-instance detail probes.
 """
 import json
 
@@ -23,10 +26,12 @@ import pytest
 from . import targeted_harness as harness
 from .targeted_cases_a import CASES as _CASES_A
 from .targeted_cases_c import CASES as _CASES_C
+from .targeted_cases_core import CASES as _CASES_CORE
 
 CASES = {}
 CASES.update(_CASES_A)
 CASES.update(_CASES_C)
+CASES.update(_CASES_CORE)
 
 # (case name, target selector, sibling selector, targeted read command sent)
 REPRESENTATIVE = [
@@ -164,6 +169,63 @@ def test_explicit_request_without_commands_fails(monkeypatch):
     device = harness.Device([], full=harness._AllFull())
     result = harness.gathered(monkeypatch, case, [{"id": ""}], device)
     assert result.get("failed"), result
-    assert "refusing to widen" in result["msg"]
+    assert "config[0]" in result["msg"] and "refusing" in result["msg"], result["msg"]
     assert device.commands == []
     assert "read_outcomes" not in result
+
+
+# ---------------------------------------------------------------------------
+# Review findings: conservative merge, section attribution, partial requests,
+# and failed bare-instance probes
+# ---------------------------------------------------------------------------
+
+
+def test_partial_identity_request_fails_without_commands(monkeypatch):
+    # One of several named instances has no identity: an explicit request is never
+    # served partially -- the module fails before sending anything (regression: the
+    # valid instance used to be read while the invalid one was silently dropped).
+    case = CASES["vlans"]
+    device = harness.Device([], full=harness._AllFull())
+    result = harness.gathered(monkeypatch, case, [{"id": "100"}, {"id": ""}], device)
+    assert result.get("failed"), result
+    assert "config[1]" in result["msg"] and "refusing" in result["msg"], result["msg"]
+    assert device.commands == []  # not even the valid instance's read was sent
+    assert "read_outcomes" not in result
+
+
+def test_same_identity_in_two_sections_is_reported_separately(monkeypatch):
+    # equipment_onts: the same ONT id can name an interface and a loop -- different
+    # instances that must be reported separately, each with its section (regression:
+    # their outcomes used to be merged under one selector, hiding the absent read).
+    case = CASES["equipment_onts:interfaces"]
+    full = harness.full_commands(monkeypatch, case)
+    device = harness.Device(case["lines"] + case["sibling"], full=full)
+    config = harness.merge(case["config"], {"loops": [{"ont_idx": "1/1/5/1/3"}]})
+    result = harness.gathered(monkeypatch, case, config, device)
+    assert not result.get("failed"), result
+    by_key = dict(((o["section"], o["selector"]), o) for o in harness.outcomes(result))
+    assert set(by_key) == {("interfaces", "1/1/5/1/3"), ("loops", "1/1/5/1/3")}, by_key
+    assert by_key[("interfaces", "1/1/5/1/3")]["existence"] == "present"
+    assert by_key[("loops", "1/1/5/1/3")]["command"] == "ok"
+    assert by_key[("loops", "1/1/5/1/3")]["existence"] == "confirmed_absent"
+
+
+def test_failed_bare_detail_probe_fails_carrying_outcomes(monkeypatch):
+    # An attribute-free instance is re-checked with 'flat detail'; if that probe
+    # fails, the failure must be reported like any other failed read (regression:
+    # the probe's exception used to bypass the failure-outcome handling).
+    case = CASES["isam_traps:managers"]
+    full = harness.full_commands(monkeypatch, case)
+    probe = "info configure trap manager 10.0.0.1:162 flat detail"
+    device = harness.Device([], full=full, header=True, fail_commands=(probe,))
+    result = harness.gathered(monkeypatch, case, case["config"], device)
+    assert result.get("failed"), result
+    assert "connection to the device was lost" in result["msg"], result["msg"]
+    outcomes = harness.outcome_by_selector(result)
+    assert set(outcomes) == {"10.0.0.1:162"}, result.get("read_outcomes")
+    outcome = outcomes["10.0.0.1:162"]
+    assert outcome["section"] == "managers"
+    assert outcome["command"] == "failed"
+    assert outcome["existence"] == "unknown"
+    assert outcome["error_class"] == "connection_error"
+    assert probe in device.commands  # the probe ran, then the module failed

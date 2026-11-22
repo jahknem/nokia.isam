@@ -49,23 +49,26 @@ class Device:
     A command without matching lines is an absent instance ("instance does not
     exist"), except the whole-resource commands in ``full``, which are just empty.
 
-    ``fail`` makes every command raise a connection error; ``reject`` makes the
-    targeted commands raise the device's selector rejection ("Error : invalid
-    token"); ``header`` makes the targeted commands answer with only the header
-    (echo + '#---'), like an instance without configured attributes. Whole-resource
-    commands in ``full`` are unaffected by reject/header.
+    ``fail`` makes every command raise a connection error; ``fail_commands`` raises a
+    connection error for the named commands only (e.g. the 'flat detail' probe);
+    ``reject`` makes the targeted commands raise the device's selector rejection
+    ("Error : invalid token"); ``header`` makes the targeted commands answer with only
+    the header (echo + '#---'), like an instance without configured attributes.
+    Whole-resource commands in ``full`` are unaffected by reject/header.
 
     For output that is not flat, a case gives ``answer(command, lines)``: the reply
     text, or None for "nothing matches" (then the same absent/empty rule applies).
     """
 
-    def __init__(self, lines, full=(), fail=False, answer=None, reject=False, header=False):
+    def __init__(self, lines, full=(), fail=False, answer=None, reject=False, header=False,
+                 fail_commands=()):
         self.lines, self.full, self.fail, self.answer, self.commands = lines, full, fail, answer, []
         self.reject, self.header = reject, header
+        self.fail_commands = frozenset(fail_commands)
 
     def get(self, command, *args, **kwargs):
         self.commands.append(command)
-        if self.fail:
+        if self.fail or command in self.fail_commands:
             raise Exception("Error : connection to the device was lost")
         if self.reject and command not in self.full:
             raise Exception("Error : invalid token")

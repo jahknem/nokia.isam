@@ -25,6 +25,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common imp
     parse_cli_key_values,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    assert_targeted_request,
     finish_targeted_outcomes,
     get_scoped_config,
     targeted_outcomes,
@@ -65,6 +66,7 @@ class BridgesFacts(object):
         config = self._module.params.get("config") or {}
         ports = config.get("port", []) if isinstance(config, dict) else config
         ports = ports or []
+        assert_targeted_request(self._module, "bridges", ("port",))
         # A gathered read must match the complete read's compact form: 'flat detail' also
         # prints every default ("no <attr>"), which the complete read omits, so the two would
         # parse into different configurations. Writes keep the detail form.
@@ -76,7 +78,7 @@ class BridgesFacts(object):
             if port_id:
                 command = "info configure bridge port %s %s" % (port_id, suffix)
                 commands.append(command)
-                selectors[command] = port_id
+                selectors[command] = ("port", port_id)
         collector = targeted_outcomes(self._module, "bridges")
         data = get_scoped_config(
             self._module,

@@ -7,6 +7,7 @@ __metaclass__ = type
 from anytree import Node
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    assert_targeted_request,
     finish_targeted_outcomes,
     get_scoped_config,
     selector_key,
@@ -103,6 +104,7 @@ class Pon_interfacesFacts(object):
     def get_config(self, connection):
         """The whole resource, or only the PON interfaces named in config (targeted gathering)."""
         config = self._module.params.get("config") or []
+        assert_targeted_request(self._module, "pon_interfaces", ("config",))
         collector = targeted_outcomes(self._module, "pon_interfaces")
         commands = []
         selectors = {}
@@ -110,7 +112,7 @@ class Pon_interfacesFacts(object):
             name = item["name"]
             command = "info configure pon interface %s flat detail" % name
             commands.append(command)
-            selectors[command] = selector_key(name)
+            selectors[command] = ("config", selector_key(name))
         data = get_scoped_config(
             self._module,
             connection,
