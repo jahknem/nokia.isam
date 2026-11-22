@@ -24,8 +24,21 @@ import pytest
 from ansible.module_utils import basic
 
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.targeted import TARGETED_GATHER
-from ansible_collections.nokia.isam.tests.unit.modules.utils import AnsibleExitJson
 from .isam_module import set_module_args
+
+
+class _ModuleDone(BaseException):
+    """Raised by the patched exit_json/fail_json.
+
+    It inherits BaseException (like the real AnsibleModule.exit_json/fail_json, which
+    raise SystemExit) so it is NOT swallowed by an ``except Exception`` in the read path
+    -- a module that has already failed (e.g. a targeted read carrying read_outcomes)
+    must not be re-wrapped by a downstream handler.
+    """
+
+    def __init__(self, result):
+        super(_ModuleDone, self).__init__()
+        self.result = result
 
 _COMMAND = re.compile(r"^info configure (.*?)(?:\s+detail)?(?:\s+flat)?(?:\s+detail)?$")
 
@@ -36,17 +49,28 @@ class Device:
     A command without matching lines is an absent instance ("instance does not
     exist"), except the whole-resource commands in ``full``, which are just empty.
 
+    ``fail`` makes every command raise a connection error; ``reject`` makes the
+    targeted commands raise the device's selector rejection ("Error : invalid
+    token"); ``header`` makes the targeted commands answer with only the header
+    (echo + '#---'), like an instance without configured attributes. Whole-resource
+    commands in ``full`` are unaffected by reject/header.
+
     For output that is not flat, a case gives ``answer(command, lines)``: the reply
     text, or None for "nothing matches" (then the same absent/empty rule applies).
     """
 
-    def __init__(self, lines, full=(), fail=False, answer=None):
+    def __init__(self, lines, full=(), fail=False, answer=None, reject=False, header=False):
         self.lines, self.full, self.fail, self.answer, self.commands = lines, full, fail, answer, []
+        self.reject, self.header = reject, header
 
     def get(self, command, *args, **kwargs):
         self.commands.append(command)
         if self.fail:
             raise Exception("Error : connection to the device was lost")
+        if self.reject and command not in self.full:
+            raise Exception("Error : invalid token")
+        if self.header and command not in self.full:
+            return "echo %s\n#----------------------------------------\n" % command
         if self.answer is not None:
             reply = self.answer(command, self.lines)
             if reply is None and command not in self.full:
@@ -69,10 +93,10 @@ def gathered(monkeypatch, case, config, device):
     importlib.import_module("ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts")
 
     def exit_json(self, **result):
-        raise AnsibleExitJson(result)
+        raise _ModuleDone(result)
 
     def fail_json(self, **result):
-        raise AnsibleExitJson(dict(result, failed=True))
+        raise _ModuleDone(dict(result, failed=True))
 
     with monkeypatch.context() as patch:
         for name, loaded in tuple(sys.modules.items()):
@@ -84,9 +108,9 @@ def gathered(monkeypatch, case, config, device):
         if config is not None:
             args["config"] = config
         set_module_args(args, True)
-        with pytest.raises(AnsibleExitJson) as result:
+        with pytest.raises(_ModuleDone) as result:
             module.main()
-        return result.value.args[0]
+        return result.value.result
 
 
 def merge(first, second):
@@ -139,6 +163,27 @@ class _AllFull(set):
 
 def text(result):
     return repr(result.get("gathered"))
+
+
+def outcomes(result):
+    """The sanitized per-selector read_outcomes of a targeted gathered read ([] if none)."""
+    return (result.get("read_outcomes") or {}).get("outcomes") or []
+
+
+def outcome_by_selector(result):
+    """The read_outcomes of a result keyed by selector ({} if the result has none)."""
+    return dict((o.get("selector"), o) for o in outcomes(result))
+
+
+def assert_outcomes(result, axis, value):
+    """A targeted gathered read reports one outcome per addressed instance, on ``axis``
+    (existence or command), all classified as ``value``."""
+    got = outcomes(result)
+    assert got, "expected read_outcomes for a targeted gathered read: %r" % result
+    assert all(o.get(axis) == value for o in got), result.get("read_outcomes")
+    # sanitized: no raw device text in any outcome
+    import json
+    assert "does not exist" not in json.dumps(result.get("read_outcomes"))
 
 
 def run_only_named(monkeypatch, case):
