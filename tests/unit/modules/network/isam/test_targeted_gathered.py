@@ -25,12 +25,23 @@ def test_every_instance_list_has_a_case():
 
 @pytest.mark.parametrize("name", NAMES)
 def test_gathered_with_config_reads_only_the_named_instances(monkeypatch, name):
-    harness.run_only_named(monkeypatch, CASES[name])
+    case = CASES[name]
+    if case.get("whole_node"):
+        # Whole-node catalog family: one whole read, per-instance outcomes from the
+        # parsed catalog, the gathered string stays the full catalog.
+        harness.run_whole_node(monkeypatch, case)
+    else:
+        harness.run_only_named(monkeypatch, case)
 
 
 @pytest.mark.parametrize("name", NAMES)
 def test_several_named_instances_are_read_together(monkeypatch, name):
-    harness.run_group(monkeypatch, CASES[name])
+    case = CASES[name]
+    if case.get("whole_node"):
+        harness.run_whole_node(monkeypatch, case,
+                               config=harness.merge(case["config"], case["sibling_config"]))
+    else:
+        harness.run_group(monkeypatch, case)
 
 
 @pytest.mark.parametrize("name", NAMES)

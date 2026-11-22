@@ -211,6 +211,24 @@ def run_group(monkeypatch, case):
     assert_outcomes(result, "existence", "present")
 
 
+def run_whole_node(monkeypatch, case, config=None):
+    """Whole-node catalog family: the device only exposes the whole node, so a
+    targeted request reads it once and reports per-instance outcomes from the
+    parsed catalog. The gathered string is the full catalog (the documented
+    exception to the scoped-read contract)."""
+    full = full_commands(monkeypatch, case)
+    if config is None:
+        config = case["config"]
+    device = Device(case["lines"] + case["sibling"], full=full, answer=case.get("answer"))
+    result = gathered(monkeypatch, case, config, device)
+    assert not result.get("failed"), result
+    # One whole-node read: exactly the whole command, nothing per-instance.
+    assert set(device.commands) == full and len(device.commands) == 1, (device.commands, full)
+    # The gathered string is the full catalog: target and sibling are both in it.
+    assert case["marker"] in text(result) and case["sibling_marker"] in text(result), result
+    assert_outcomes(result, "existence", "present")
+
+
 def run_absent(monkeypatch, case):
     full = full_commands(monkeypatch, case)
     result = gathered(monkeypatch, case, case["config"], Device([], full=full, answer=case.get("answer")))

@@ -44,7 +44,11 @@ error class; raw device text is never recorded. An explicit request that
 cannot be read in full (an empty identity, no read command) fails rather
 than silently widening to the whole-family read or serving a subset. Without
 `config` the whole resource is read, as before, and write states are
-unchanged. See [targeted gathering and
+unchanged. Two families (`isam_interface_alarms`, `isam_vlan_global`) have no
+single-instance read on the device: their targeted request reads the whole
+node once and reports each named instance from the parsed catalog, with
+`gathered` staying the full catalog — the documented exception to the
+scoped-read contract. See [targeted gathering and
 read outcomes](docs/targeted-gathering.md).
 
 ### Facts Module

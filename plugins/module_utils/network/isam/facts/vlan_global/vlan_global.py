@@ -6,6 +6,7 @@ __metaclass__ = type
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_whole_node_targeted,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.vlan_global.vlan_global import (
@@ -24,19 +25,22 @@ class Isam_vlan_globalFacts(object):
         self.argument_spec = Isam_vlan_globalArgs.argument_spec
 
     def get_config(self, connection):
-        """The whole resource, or only the priority-regen profiles named in config (targeted gathering).
+        """The whole vlan node, read once; per-profile outcomes for a targeted request.
 
-        The device lists them as 'configure vlan priority-regen <id> profile-name ...';
-        the parser takes <id> as priority_regen[].id.
+        The device has no single-instance read for priority-regen profiles
+        ("invalid token"); it only answers the whole 'info configure vlan' node.
+        An explicit targeted request (state gathered, config names profiles)
+        reads the node once and reports per-profile read_outcomes from the
+        parsed catalog (get_whole_node_targeted); the gathered string stays the
+        full catalog, unfiltered.
         """
-        # The device has no single-instance read for priority-regen profiles ("invalid token").
-        return connection.get("info configure vlan flat")
+        return get_whole_node_targeted(
+            self._module, connection, "isam_vlan_global", "info configure vlan flat",
+            ("priority_regen",), lambda data: self._parse_config(data)[0],
+        )
 
-    def populate_facts(self, connection, ansible_facts, data=None):
-        facts = {}
-
-        if not data:
-            data = self.get_config(connection)
+    def _parse_config(self, data):
+        """The parsed full catalog: (the vlan dict, its parser)."""
         data = unwrap_response(data)
 
         data = self._flatten_config(data)
@@ -71,6 +75,16 @@ class Isam_vlan_globalFacts(object):
             elif "host_id" in vmac_address_format:
                 vmac_address_format["host_id"] = int(vmac_address_format["host_id"])
             objs["vmac_address_format"] = vmac_address_format
+
+        return objs, parser
+
+    def populate_facts(self, connection, ansible_facts, data=None):
+        facts = {}
+
+        if not data:
+            data = self.get_config(connection)
+
+        objs, parser = self._parse_config(data)
 
         ansible_facts["ansible_network_resources"].pop("isam_vlan_global", None)
         params = utils.remove_empties(

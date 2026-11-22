@@ -99,8 +99,11 @@ options:
   state:
     description:
       - Desired resource state.
-      - C(gathered) always reads the whole resource; the device has no single-instance read for the
-        priority-regen profiles (targeted gathering is not available here).
+      - With C(gathered) and I(config), the device exposes no single-instance read for the
+        priority-regen profiles, so the whole vlan node is read once and each named profile is
+        reported in C(read_outcomes) as C(present) or C(confirmed_absent) (or C(unknown) when the
+        read was rejected or failed); I(gathered) stays the full catalog. Without I(config) the
+        whole resource is read, as before.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -110,6 +113,13 @@ EXAMPLES = """
 - name: Gather VLAN global config
   nokia.isam.isam_vlan_global:
     state: gathered
+
+- name: Read only the named priority-regen profiles (targeted gathering)
+  nokia.isam.isam_vlan_global:
+    state: gathered
+    config:
+      priority_regen:
+        - id: 11
 
 - name: Render VLAN global config
   nokia.isam.isam_vlan_global:
@@ -144,6 +154,7 @@ EXAMPLES = """
 """
 
 RETURN = """
+extends_documentation_fragment: nokia.isam.read_outcomes
 before:
   description: Configuration prior to module execution.
   returned: when state is merged, replaced, overridden, or deleted

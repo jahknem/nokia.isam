@@ -9,12 +9,14 @@ is never confirmed absence, and the returned string (and therefore existing
 parsing) is unchanged for callers that pass no collector.
 """
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    _catalog_contains,
     _finalize_collector,
     _has_targeted_entries,
     _targeted_selectors,
     finish_targeted_outcomes,
     get_scoped_config,
     get_targeted_config,
+    get_whole_node_targeted,
     targeted_outcomes,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.read_outcomes import (
@@ -470,3 +472,168 @@ def test_get_targeted_config_failed_read_fails_carrying_all_outcomes():
     assert outcomes["100"]["existence"] == "present"
     assert outcomes["200"]["command"] == "failed"
     assert outcomes["200"]["error_class"] == "connection_error"
+
+
+# ---------------------------------------------------------------------------
+# Whole-node catalog families (get_whole_node_targeted)
+# ---------------------------------------------------------------------------
+
+ALARM_CMD = "info configure interface alarm"
+ALARM_CATALOG = (
+    "configure interface alarm epon default-severity indeterminate\n"
+    "configure interface alarm eont default-severity major\n"
+)
+
+
+def _alarm_catalog(data):
+    """Stand-in for Interface_alarmsFacts._parse_catalog: one entry per alarm line."""
+    entries = []
+    for line in (data or "").splitlines():
+        parts = line.strip().split()
+        if parts[:3] == ["configure", "interface", "alarm"] and len(parts) > 3:
+            entry = {"name": parts[3]}
+            if len(parts) > 5 and parts[4] == "default-severity":
+                entry["default_severity"] = parts[5]
+            entries.append(entry)
+    return entries
+
+
+def _whole_node(responses, config, resource="interface_alarms", command=ALARM_CMD,
+                sections=("config",), parse=_alarm_catalog, state="gathered"):
+    module = FakeModule(state, config)
+    conn = FakeConn(responses)
+    data = get_whole_node_targeted(module, conn, resource, command, sections, parse)
+    return data, module, conn
+
+
+def test_whole_node_present_and_confirmed_absent_from_catalog():
+    data, module, conn = _whole_node(
+        {ALARM_CMD: ALARM_CATALOG}, [{"name": "epon"}, {"name": "nope"}])
+    assert data == ALARM_CATALOG  # the full catalog, unfiltered
+    assert conn.commands == [ALARM_CMD]  # one whole read, no per-instance commands
+    outcomes = {o["selector"]: o for o in module._isam_read_outcomes["outcomes"]}
+    assert outcomes["epon"] == {"resource": "interface_alarms", "section": "config",
+                                "selector": "epon", "command": "ok", "existence": "present"}
+    assert outcomes["nope"]["command"] == "ok"
+    assert outcomes["nope"]["existence"] == "confirmed_absent"
+    assert module._isam_read_outcomes["parse"] == "unverified"
+
+
+def test_whole_node_empty_catalog_is_confirmed_absent():
+    # A successful full-catalog read that lists nothing proves the node is empty.
+    data, module, _ = _whole_node({ALARM_CMD: ""}, [{"name": "epon"}, {"name": "eont"}])
+    assert data == ""
+    outcomes = module._isam_read_outcomes["outcomes"]
+    assert sorted(o["selector"] for o in outcomes) == ["eont", "epon"]
+    assert all(o["existence"] == "confirmed_absent" for o in outcomes)
+
+
+def test_whole_node_without_config_reads_plainly_without_outcomes():
+    data, module, conn = _whole_node({ALARM_CMD: ALARM_CATALOG}, None)
+    assert data == ALARM_CATALOG
+    assert conn.commands == [ALARM_CMD]
+    assert not hasattr(module, "_isam_read_outcomes")
+
+
+def test_whole_node_moduleless_read_reads_plainly():
+    conn = FakeConn({ALARM_CMD: ALARM_CATALOG})
+    data = get_whole_node_targeted(None, conn, "interface_alarms", ALARM_CMD, ("config",), _alarm_catalog)
+    assert data == ALARM_CATALOG
+    assert conn.commands == [ALARM_CMD]
+
+
+def test_whole_node_write_state_reads_plainly_without_outcomes():
+    data, module, conn = _whole_node({ALARM_CMD: ALARM_CATALOG}, [{"name": "epon"}], state="merged")
+    assert data == ALARM_CATALOG
+    assert conn.commands == [ALARM_CMD]
+    assert not hasattr(module, "_isam_read_outcomes")
+
+
+def test_whole_node_partial_request_refuses_before_sending():
+    # An explicit request is never served partially: nothing is sent.
+    conn = FakeConn({ALARM_CMD: ALARM_CATALOG})
+    module = FakeModule("gathered", [{"name": "epon"}, {"name": ""}])
+    try:
+        get_whole_node_targeted(module, conn, "interface_alarms", ALARM_CMD, ("config",), _alarm_catalog)
+        assert False, "expected an explicit targeted read with a gap to raise"
+    except RuntimeError as exc:
+        assert "config[1]" in str(exc)
+        assert "'name'" in str(exc)
+        assert "refusing" in str(exc)
+    assert conn.commands == []
+
+
+def test_whole_node_rejected_read_is_unknown_not_absent():
+    data, module, _ = _whole_node({ALARM_CMD: Exception("Error : invalid token")}, [{"name": "epon"}])
+    assert data == ""
+    outcome = module._isam_read_outcomes["outcomes"][0]
+    assert outcome["command"] == "rejected"
+    assert outcome["existence"] == "unknown"
+
+
+def test_whole_node_node_absent_error_confirms_absence():
+    data, module, _ = _whole_node(
+        {ALARM_CMD: Exception("Error : instance does not exist")}, [{"name": "epon"}, {"name": "eont"}])
+    assert data == ""
+    assert all(o["existence"] == "confirmed_absent" for o in module._isam_read_outcomes["outcomes"])
+
+
+def test_whole_node_dependency_gap_is_unknown():
+    data, module, _ = _whole_node(
+        {ALARM_CMD: "lower-interface does not exist"}, [{"name": "epon"}])
+    assert data == ""
+    outcome = module._isam_read_outcomes["outcomes"][0]
+    assert outcome["command"] == "ok"
+    assert outcome["existence"] == "unknown"
+    assert outcome["dependency_gap"] == "lower-interface"
+
+
+def test_whole_node_failed_read_fails_carrying_all_outcomes():
+    module = FakeModule("gathered", [{"name": "epon"}, {"name": "eont"}])
+    conn = FakeConn({ALARM_CMD: Exception("socket timeout")})
+    try:
+        get_whole_node_targeted(module, conn, "interface_alarms", ALARM_CMD, ("config",), _alarm_catalog)
+        assert False, "expected the failed read to fail the module"
+    except SystemExit:
+        pass
+    assert module._fail_kwargs is not None
+    assert "socket timeout" in module._fail_kwargs["msg"]
+    outcomes = {o["selector"]: o for o in module._fail_kwargs["read_outcomes"]["outcomes"]}
+    assert set(outcomes) == {"epon", "eont"}
+    assert all(o["command"] == "failed" for o in outcomes.values())
+    assert all(o["error_class"] == "timeout" for o in outcomes.values())
+
+
+def test_whole_node_nested_section_identity_is_str_normalized():
+    # isam_vlan_global: a nested section, an int identity end-to-end (requested int,
+    # parsed int; a string request compares equal, too).
+    vlan_cmd = "info configure vlan flat"
+    catalog = {"priority_regen": [{"id": 100, "profile_name": "ProfileA"},
+                                  {"id": 200, "profile_name": "ProfileB"}]}
+
+    def parse(_data):
+        return catalog
+
+    for requested in (100, "100"):
+        data, module, conn = _whole_node(
+            {vlan_cmd: "ignored"}, {"priority_regen": [{"id": requested}, {"id": 999}]},
+            resource="isam_vlan_global", command=vlan_cmd, sections=("priority_regen",), parse=parse)
+        assert data == "ignored"  # the raw reply passes through for the family's own parse
+        assert conn.commands == [vlan_cmd]
+        outcomes = {o["selector"]: o for o in module._isam_read_outcomes["outcomes"]}
+        assert str(requested) in outcomes
+        assert outcomes[str(requested)]["existence"] == "present"
+        assert outcomes["999"]["existence"] == "confirmed_absent"
+
+
+def test_catalog_contains_list_and_nested_sections():
+    assert _catalog_contains([{"name": "epon"}], "interface_alarms", "config", "epon")
+    assert not _catalog_contains([{"name": "epon"}], "interface_alarms", "config", "eont")
+    nested = {"priority_regen": [{"id": 100}]}
+    assert _catalog_contains(nested, "isam_vlan_global", "priority_regen", 100)
+    assert _catalog_contains(nested, "isam_vlan_global", "priority_regen", "100")
+    assert not _catalog_contains(nested, "isam_vlan_global", "priority_regen", 999)
+    # a resource/section without a registry entry lists nothing
+    assert not _catalog_contains([{"name": "epon"}], "vlans", "config", "epon")
+    # non-mapping entries are skipped
+    assert not _catalog_contains(["bogus"], "interface_alarms", "config", "bogus")

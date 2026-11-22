@@ -4,7 +4,10 @@ Every configuration resource module in this collection supports **targeted
 gathering**: with `state: gathered` and `config` naming instances, the module
 reads only those instances from the device, one scoped CLI read per instance,
 instead of the whole resource family. Without `config`, the whole resource is
-read, exactly as before.
+read, exactly as before. A few instance lists have no single-instance read on
+the device; for them the targeted request reads the whole node once and reports
+each named instance from the parsed catalog (see
+[Whole-node reads](#whole-node-reads)).
 
 ```yaml
 - name: Read only the named instances (targeted gathering)
@@ -92,7 +95,8 @@ configuration text is byte-for-byte the legacy read for all of them.
 
 ## Supported families
 
-51 resource families support targeted gathering
+53 resource families support targeted gathering: 51 with one scoped read per
+instance, and 2 as whole-node catalog reads (see below).
 (`plugins/module_utils/network/isam/targeted.py` is the machine-readable
 registry). Identity: the field(s) in `config` that select the instance.
 
@@ -108,6 +112,7 @@ registry). Identity: the field(s) in `config` that select the instance.
 | ethernet_line | `isam_ethernet_line` | `config[].if_index` |
 | ethernet_onts | `isam_ethernet_onts` | `config[].uni_idx` |
 | igmp | `isam_igmp` | `packages[].index` |
+| interface_alarms | `isam_interface_alarms` | `config[].name` (whole-node read) |
 | interface_cages | `isam_interface_cages` | `config[].id` |
 | interfaces | `isam_interfaces` | `config[].name` |
 | isam_arp_relay | `isam_arp_relay` | `config[].name` |
@@ -118,6 +123,7 @@ registry). Identity: the field(s) in `config` that select the instance.
 | isam_ipv6_antispoofing_slot | `isam_ipv6_antispoofing_slot` | `config[].name` |
 | isam_system_security | `isam_system_security` | `operators[].name`, `profiles[].name`, `snmp_communities[].name`, `snmp_views[].name`, `snmp_managers[].name`, `snmp_notify_profiles[].name`, `radius_auth_servers[].name`, `radius_policies[].name`, `radius_dyn_auth_clients[].name`, `snmp_notify_views[].name`, `domains[].name`, `slots[].slot`, `ssh.sftp_users[].name`, `filetransfer.servers[].server`, `peripheral_mgnt.mac_filters[].index`, `pae.ports[].port` |
 | isam_traps | `isam_traps` | `definitions[].name`, `managers[].address`, `v6managers[].ipv6address` |
+| isam_vlan_global | `isam_vlan_global` | `priority_regen[].id` (whole-node read) |
 | l2cp_session | `isam_l2cp_session` | `config[].name` |
 | l2cp_user_port | `isam_l2cp_user_port` | `config[].name` |
 | l2uni_onts | `isam_l2uni_onts` | `performance_monitor[].uni_idx`, `tc_layer_threshold[].uni_idx` |
@@ -150,6 +156,36 @@ registry). Identity: the field(s) in `config` that select the instance.
 | xdsl_profiles | `isam_xdsl_profiles` | `dpbo_profiles[].id`, `service_profiles[].id`, `spectrum_profiles[].id`, `vce_profiles[].id`, `vect_profiles[].id` |
 | xstp | `isam_xstp` | `ports[].port` |
 
+## Whole-node reads
+
+Two families have instance lists the firmware exposes **without a
+single-instance read**: `interface_alarms` (per-interface alarm severity) and
+`isam_vlan_global` (the `priority_regen` profiles, which answer `invalid token`
+when addressed individually). For them `state: gathered` with `config` naming
+instances reads the **whole node once** — the only read the device offers — and
+reports each named instance in `read_outcomes` from the parsed catalog:
+
+* `present` — the catalog lists the instance;
+* `confirmed_absent` — a successful full-catalog read does not list it. Unlike
+  a scoped read, a full-catalog read leaves no ambiguity between "configured
+  without attributes" and "non-existing": the catalog lists every configured
+  instance, so a named instance it does not list is gone;
+* `unknown` — the node read was rejected (`invalid token`) or a dependency is
+  missing. A failed node read fails the module carrying the outcomes, as for
+  any targeted read.
+
+This is the documented exception to the scoped-read contract: no per-instance
+command is sent, and `gathered` is the **full catalog, unfiltered** — siblings
+of the named instances are in it. An explicit request that cannot be read in
+full (a named instance without an identity) still fails before anything is
+sent, and a whole-node read without `config` carries no outcomes, as before.
+
+Resources without instance lists at all (`cwmp_plt`, `dhcp_server`,
+`equipment_replan`, `generic_pon`, `iphost`, `l2cp`, `li_vlan`,
+`mcast_general`, `nat`, `pon_global`, `pppox_relay_global`, `xdsl_system`,
+...) are single settings blocks: the whole read **is** the instance, and
+targeted gathering does not apply to them.
+
 ## Behavior notes
 
 * **Attribute-free instances.** An instance without configured attributes
@@ -181,3 +217,8 @@ registry). Identity: the field(s) in `config` that select the instance.
   outcomes, and `confirmed_absent` is only as good as the device's existence
   signal for that read (verified on R6.2.04m lab devices; see
   [live-test matrix](live-test-matrix.md)).
+* For whole-node reads, `confirmed_absent` is derived from the parsed catalog
+  of a successful full-catalog read, not from a per-instance device signal: it
+  is as good as the family parser's coverage of the reply (see the parse axis
+  above; the parsers of the two whole-node families are the same ones that
+  serve every whole read and write-state comparison of those families).

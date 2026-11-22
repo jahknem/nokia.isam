@@ -717,6 +717,107 @@ def get_targeted_config(module, connection, resource, fallback, formats, write_s
     return data
 
 
+def _catalog_contains(catalog, resource, section, identity):
+    """Whether one parsed full catalog lists the addressed instance.
+
+    catalog: the family's parsed structure -- the instance list itself for a
+    "config" section, the nested list for a dotted section. Identity
+    comparison is str()-normalized, so parsed ints compare equal to requested
+    ints (or strings): the vlan priority-regen ids are ints end-to-end.
+    """
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.targeted import TARGETED_GATHER
+
+    field = (TARGETED_GATHER.get(resource) or {}).get(section)
+    if not field:
+        return False
+    fields = [field] if isinstance(field, str) else list(field)
+    wanted = tuple(str(value) for value in identity) if isinstance(identity, (tuple, list)) else (str(identity),)
+    for item in _section_items(catalog, section):
+        if not isinstance(item, dict):
+            continue
+        if tuple(str(item.get(name)) for name in fields) == wanted:
+            return True
+    return False
+
+
+def get_whole_node_targeted(module, connection, resource, command, sections, parse):
+    """The whole node, read once, with per-instance outcomes for a targeted request.
+
+    Some instance lists have no single-instance read: the device only exposes the
+    whole node (interface_alarms; the vlan priority-regen profiles). For an
+    explicit targeted request (state gathered, config names instances) the node is
+    read once -- the only read the device exposes -- and each requested instance is
+    reported from the parsed catalog: present when the catalog lists it,
+    confirmed_absent when a successful full-catalog read does not. This is the
+    documented exception to the scoped-read contract: no per-instance command is
+    sent, and the returned string is the full catalog, unfiltered.
+
+    The read's error taxonomy is the scoped read's: an explicit node absence
+    confirms absence of every requested instance; an invalid-token rejection and
+    a missing dependency leave them unknown; any other failure fails the module
+    carrying the sanitized outcomes. parse is the family's catalog parser (raw
+    reply -> parsed catalog); its exceptions propagate, as a parse failure does
+    for a whole-family read. No outcomes for module-less reads (isam_facts,
+    parsing), write states, or requests without named instances: those read the
+    node plainly, as before.
+    """
+    if module is None or (module.params or {}).get("state") != "gathered":
+        return connection.get(command)
+    if not _has_targeted_entries(module, resource, sections):
+        # No instances named: the whole node is read, as before, with no outcomes.
+        return connection.get(command)
+    assert_targeted_request(module, resource, sections)
+    collector = targeted_outcomes(module, resource)
+    requested = [(section, identity)
+                 for section in sections
+                 for identity in requested_identities(module, resource, section)]
+
+    def record_all(command_status, existence, **kwargs):
+        for section, identity in requested:
+            collector.record(section, selector_key(identity), command_status, existence, **kwargs)
+
+    try:
+        try:
+            response = unwrap_response(connection.get(command)) or ""
+        except Exception as exc:  # connection plugins surface device errors here
+            text = str(exc)
+            if _is_instance_absent(text):
+                # The device says the node does not exist: nothing under it can be.
+                record_all("ok", "confirmed_absent")
+                return ""
+            if _is_dependency_absent(text):
+                record_all("ok", "unknown", dependency_gap="lower-interface")
+                return ""
+            if _is_unsupported_node(text):
+                record_all("rejected", "unknown")
+                return ""
+            record_all("failed", "unknown", error_class_value=error_class(text))
+            # A recorded failure must not be silently lost: fail the module carrying
+            # the sanitized per-selector outcomes (see get_scoped_config).
+            module.fail_json(msg=str(exc), read_outcomes=_finalize_collector(collector))
+        if _is_instance_absent(response):
+            record_all("ok", "confirmed_absent")
+            return ""
+        if _is_dependency_absent(response):
+            record_all("ok", "unknown", dependency_gap="lower-interface")
+            return ""
+        if _is_unsupported_node(response):
+            record_all("rejected", "unknown")
+            return ""
+        catalog = parse(response)
+        # A successful full-catalog read lists every configured instance: a named
+        # instance it does not list is confirmed absent (the node read, unlike a
+        # scoped read, leaves no ambiguity between unset and non-existing).
+        for section, identity in requested:
+            if _catalog_contains(catalog, resource, section, identity):
+                collector.record(section, selector_key(identity), "ok", "present")
+            else:
+                collector.record(section, selector_key(identity), "ok", "confirmed_absent")
+        return response
+    finally:
+        finish_targeted_outcomes(module, collector)
+
+
 def count_indent(line):
     """Return the number of leading space characters in a line."""
     return len(line) - len(line.lstrip(" "))

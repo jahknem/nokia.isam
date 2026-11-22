@@ -36,7 +36,10 @@ options:
   state:
     description:
       - The state the configuration should be left in.
-      - C(gathered) always reads the whole resource; the device has no single-instance read for interface alarms.
+      - With C(gathered) and I(config), the device exposes no single-instance read for interface
+        alarms, so the whole node is read once and each named alarm is reported in C(read_outcomes)
+        as C(present) or C(confirmed_absent) (or C(unknown) when the read was rejected or failed);
+        I(gathered) stays the full catalog. Without I(config) the whole resource is read, as before.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
@@ -48,6 +51,13 @@ EXAMPLES = """
     state: gathered
 
 
+- name: Read only the named alarms (targeted gathering)
+  nokia.isam.isam_interface_alarms:
+    state: gathered
+    config:
+      - name: "6"
+
+
 - name: Set default severity for Ethernet interface alarm
   nokia.isam.isam_interface_alarms:
     config:
@@ -57,6 +67,7 @@ EXAMPLES = """
 """
 
 RETURN = """
+extends_documentation_fragment: nokia.isam.read_outcomes
 commands:
   description: The set of commands pushed to the remote device.
   returned: when state is merged, replaced, overridden, or deleted

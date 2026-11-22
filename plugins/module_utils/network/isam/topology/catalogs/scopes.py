@@ -25,6 +25,10 @@ DEVICE_GLOBAL = {
     "alarm": ("custom_profiles", "entries", "filters", "hgutr069_custs"),
     "equipment_onts": ("sw_ctrls",),
     "igmp": ("packages",),
+    # Whole-node catalog families: per-instance, but the firmware exposes no
+    # single-instance read, so the targeted read is the whole node (device-wide
+    # settings either way; no physical owner).
+    "interface_alarms": ("config",),
     "isam_cfm": ("domains", "y1731pm"),
     "isam_dist_service": ("config",),
     "isam_equipment": ("protection_groups",
@@ -35,6 +39,7 @@ DEVICE_GLOBAL = {
                              "domains", "ssh.sftp_users", "filetransfer.servers",
                              "peripheral_mgnt.mac_filters"),
     "isam_traps": ("definitions", "managers", "v6managers"),
+    "isam_vlan_global": ("priority_regen",),
     "l2cp_session": ("config",),
     "linetest": ("parameters", "sessions"),
     "mcast_control": ("packages",),
@@ -65,9 +70,11 @@ OBJECT_OWNED_PENDING = {}
 
 # Singleton/global resources registered in facts.py but not TARGETED_GATHER.
 # This is explicit ownership, not a default for unrecognized families.
+# (interface_alarms and isam_vlan_global moved to TARGETED_GATHER as whole-node
+# catalog families; their device_global sections are listed above.)
 GLOBAL_RESOURCES = (
     "cwmp_plt", "dhcp_server", "equipment_replan", "error", "generic_pon",
-    "interface_alarms", "iphost", "isam_vlan_global", "l2cp", "li_vlan",
+    "iphost", "l2cp", "li_vlan",
     "mcast_general", "nat", "pon_global", "pppox_relay_global", "xdsl_system",
 )
 

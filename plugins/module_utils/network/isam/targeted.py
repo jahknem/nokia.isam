@@ -19,6 +19,13 @@ Resources without instance lists (dhcp_server, generic_pon, l2cp, ...) are singl
 settings blocks and always read completely. Resources not read through the facts
 registry (pppoe_client_*, pppoel2_statistics) are keyed by their module name.
 
+Whole-node catalog families: a few instance lists have no single-instance read --
+the device only exposes the whole node (interface_alarms; the vlan priority-regen
+profiles). For them a targeted request reads the node once and reports each named
+instance from the parsed catalog (present / confirmed_absent / unknown); the
+gathered string stays the full catalog. That is the documented exception to the
+scoped-read contract (see docs/targeted-gathering.md, "Whole-node reads").
+
 TARGETED_WRITES: resources whose merged/replaced/deleted also compare against only
 the named instances (resources made of instance lists, where that is exact).
 """
@@ -48,6 +55,7 @@ TARGETED_GATHER = {
     "trouble_shooting_pon": {"interfaces": "name", "threshold.interfaces": "name"},
     "ethernet_line": {"config": "if_index"},
     "ethernet_onts": {"config": "uni_idx"},
+    "interface_alarms": {"config": "name"},
     "interface_cages": {"config": "id"},
     "interfaces": {"config": "name"},
     "isam_arp_relay": {"config": "name"},
@@ -59,6 +67,7 @@ TARGETED_GATHER = {
                        "external_link_assigns": "id", "external_link_hosts": "id"},
     "isam_ipv6_antispoofing_slot": {"config": "name"},
     "isam_traps": {"definitions": "name", "managers": "address", "v6managers": "ipv6address"},
+    "isam_vlan_global": {"priority_regen": "id"},
     "l2cp_session": {"config": "name"},
     "l2cp_user_port": {"config": "name"},
     "link_agg": {"groups": "id", "ports": "id"},
