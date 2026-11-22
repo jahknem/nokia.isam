@@ -1,7 +1,12 @@
-"""Shared return documentation for the sanitized read_outcomes of a targeted read.
+"""Canonical source for the read_outcomes return documentation.
 
-Extended by every resource module that supports targeted gathering (state gathered
-with config naming instances), so the read-outcome contract is documented once.
+Every targeted-gathering module carries this text in its RETURN block, between
+the sync markers written by tools/sync_read_outcomes_docs.py, so the
+read-outcome contract is documented once. It is intentionally not referenced
+with ``extends_documentation_fragment``: return-section doc fragments only
+work on ansible-core 2.20+, and this collection supports older releases (where
+such a reference crashes ``ansible-doc``). The sync is enforced by
+tests/unit/modules/network/isam/test_read_outcomes_docs.py.
 """
 
 
