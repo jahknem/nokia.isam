@@ -33,7 +33,8 @@ class Interface_alarmsFacts(object):
         'configure interface' header + 'alarm <name>' blocks). An explicit
         targeted request (state gathered, config names alarms) reads the node
         once and reports per-instance read_outcomes from the parsed catalog
-        (get_whole_node_targeted); the gathered string stays the full catalog,
+        (get_whole_node_targeted): present when the catalog lists the alarm,
+        unknown when it does not. The gathered string stays the full catalog,
         unfiltered.
         """
         return get_whole_node_targeted(

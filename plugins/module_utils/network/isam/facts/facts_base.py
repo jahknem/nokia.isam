@@ -747,19 +747,24 @@ def get_whole_node_targeted(module, connection, resource, command, sections, par
     whole node (interface_alarms; the vlan priority-regen profiles). For an
     explicit targeted request (state gathered, config names instances) the node is
     read once -- the only read the device exposes -- and each requested instance is
-    reported from the parsed catalog: present when the catalog lists it,
-    confirmed_absent when a successful full-catalog read does not. This is the
-    documented exception to the scoped-read contract: no per-instance command is
-    sent, and the returned string is the full catalog, unfiltered.
+    reported from the parsed catalog: present when the catalog lists it, unknown
+    when it does not. Absence from the catalog is NOT established absence: the
+    parser's catalog completeness is unverified (the parse axis stays 'unverified'),
+    and a reply line the parser does not recognize would make a configured
+    instance vanish from the catalog. Only the device's own node-absence signal
+    confirms absence, as in scoped reads. This is the documented exception to the
+    scoped-read contract: no per-instance command is sent, and the returned
+    string is the full catalog, unfiltered.
 
     The read's error taxonomy is the scoped read's: an explicit node absence
     confirms absence of every requested instance; an invalid-token rejection and
     a missing dependency leave them unknown; any other failure fails the module
     carrying the sanitized outcomes. parse is the family's catalog parser (raw
-    reply -> parsed catalog); its exceptions propagate, as a parse failure does
-    for a whole-family read. No outcomes for module-less reads (isam_facts,
-    parsing), write states, or requests without named instances: those read the
-    node plainly, as before.
+    reply -> parsed catalog); a reply it cannot process is classified before the
+    module fails (parse axis 'failed', every requested instance unknown), and the
+    failure then propagates, as a parse failure does for a whole-family read.
+    No outcomes for module-less reads (isam_facts, parsing), write states, or
+    requests without named instances: those read the node plainly, as before.
     """
     if module is None or (module.params or {}).get("state") != "gathered":
         return connection.get(command)
@@ -804,15 +809,31 @@ def get_whole_node_targeted(module, connection, resource, command, sections, par
         if _is_unsupported_node(response):
             record_all("rejected", "unknown")
             return ""
-        catalog = parse(response)
-        # A successful full-catalog read lists every configured instance: a named
-        # instance it does not list is confirmed absent (the node read, unlike a
-        # scoped read, leaves no ambiguity between unset and non-existing).
+        try:
+            catalog = parse(response)
+        except Exception as exc:
+            # The reply arrived but the family's parser could not process it:
+            # classify the parse failure (parse axis 'failed', existence unknown
+            # for every requested instance -- an unparseable reply establishes
+            # no absence) before propagating it, as a parse failure does for a
+            # whole-family read.
+            collector.record_parse("failed")
+            record_all("ok", "unknown")
+            detail = str(exc).split("\n")[0] or "the parser raised"
+            module.fail_json(
+                msg="whole-node read of %s: the device replied but the catalog "
+                    "could not be parsed: %s" % (resource, detail),
+                read_outcomes=_finalize_collector(collector))
         for section, identity in requested:
             if _catalog_contains(catalog, resource, section, identity):
                 collector.record(section, selector_key(identity), "ok", "present")
             else:
-                collector.record(section, selector_key(identity), "ok", "confirmed_absent")
+                # Absence from the parsed catalog is not established absence:
+                # the parser's catalog completeness is unverified, and a reply
+                # line it does not recognize would make a configured instance
+                # vanish from the catalog. Only the device's own node-absence
+                # signal above confirms absence.
+                collector.record(section, selector_key(identity), "ok", "unknown")
         return response
     finally:
         finish_targeted_outcomes(module, collector)

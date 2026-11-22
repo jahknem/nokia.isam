@@ -46,9 +46,14 @@ than silently widening to the whole-family read or serving a subset. Without
 `config` the whole resource is read, as before, and write states are
 unchanged. Two families (`isam_interface_alarms`, `isam_vlan_global`) have no
 single-instance read on the device: their targeted request reads the whole
-node once and reports each named instance from the parsed catalog, with
-`gathered` staying the full catalog — the documented exception to the
-scoped-read contract. See [targeted gathering and
+node once and reports each named instance in `read_outcomes` from the parsed
+catalog — `present` when the catalog lists it, `unknown` when it does not
+(never `confirmed_absent`, because the parser's catalog completeness is
+unverified; `confirmed_absent` only for the device's own node-absence signal) —
+with `gathered` staying the full catalog. The per-resource read scope is
+machine-readable in `TARGETED_READ_SCOPE` (`whole_node` for these two,
+`instance` for the rest) — the documented exception to the scoped-read
+contract. See [targeted gathering and
 read outcomes](docs/targeted-gathering.md).
 
 ### Facts Module

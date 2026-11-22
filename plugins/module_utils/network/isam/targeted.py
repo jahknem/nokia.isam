@@ -22,8 +22,11 @@ registry (pppoe_client_*, pppoel2_statistics) are keyed by their module name.
 Whole-node catalog families: a few instance lists have no single-instance read --
 the device only exposes the whole node (interface_alarms; the vlan priority-regen
 profiles). For them a targeted request reads the node once and reports each named
-instance from the parsed catalog (present / confirmed_absent / unknown); the
-gathered string stays the full catalog. That is the documented exception to the
+instance from the parsed catalog (present, or unknown -- absence from the catalog
+is not established absence, because the parser's catalog completeness is
+unverified); the gathered string stays the full catalog. The read scope of every
+targeted resource is machine-readable in TARGETED_READ_SCOPE ('whole_node' for
+these families, 'instance' otherwise). That is the documented exception to the
 scoped-read contract (see docs/targeted-gathering.md, "Whole-node reads").
 
 TARGETED_WRITES: resources whose merged/replaced/deleted also compare against only
@@ -99,6 +102,35 @@ TARGETED_GATHER = {
                       "vect_profiles": "id"},
     "xstp": {"ports": "port"},
 }
+
+# Read scope per targeted resource: what an explicit request (state gathered,
+# config names instances) actually sends to the device. Derived from the read
+# commands the facts classes send, not from the topology ownership scope
+# (device_global describes ownership, not CLI read scope).
+#   "instance"   -- one scoped command per requested instance (the scoped-read
+#                   contract; the default for every TARGETED_GATHER resource not
+#                   listed here).
+#   "whole_node" -- the firmware exposes no single-instance read: one whole-node
+#                   command serves all requested instances, and each instance is
+#                   reported from the parsed catalog (present / unknown; see
+#                   docs/targeted-gathering.md, "Whole-node reads").
+# Keep in sync with the facts classes that call facts_base.get_whole_node_targeted
+# (tests/unit/modules/network/isam/test_targeted_gathered.py asserts both
+# directions).
+TARGETED_READ_SCOPE = {
+    "interface_alarms": "whole_node",
+    "isam_vlan_global": "whole_node",
+}
+
+
+def read_scope(resource):
+    """The read scope an explicit targeted request for ``resource`` triggers.
+
+    'whole_node' for the catalog families with no single-instance read,
+    'instance' for every other targeted resource.
+    """
+    return TARGETED_READ_SCOPE.get(resource, "instance")
+
 
 TARGETED_WRITES = (
     "ani_onts", "bridges", "efm_oam_interface", "equipment_onts", "ethernet_onts", "interfaces",

@@ -98,7 +98,9 @@ configuration text is byte-for-byte the legacy read for all of them.
 53 resource families support targeted gathering: 51 with one scoped read per
 instance, and 2 as whole-node catalog reads (see below).
 (`plugins/module_utils/network/isam/targeted.py` is the machine-readable
-registry). Identity: the field(s) in `config` that select the instance.
+registry: `TARGETED_GATHER` the per-section identities, and `TARGETED_READ_SCOPE`
+the read scope of every resource — `whole_node` for the two catalog families,
+`instance` for the rest). Identity: the field(s) in `config` that select the instance.
 
 | Resource | Module | Targeted sections (identity) |
 | --- | --- | --- |
@@ -166,13 +168,20 @@ instances reads the **whole node once** — the only read the device offers — 
 reports each named instance in `read_outcomes` from the parsed catalog:
 
 * `present` — the catalog lists the instance;
-* `confirmed_absent` — a successful full-catalog read does not list it. Unlike
-  a scoped read, a full-catalog read leaves no ambiguity between "configured
-  without attributes" and "non-existing": the catalog lists every configured
-  instance, so a named instance it does not list is gone;
-* `unknown` — the node read was rejected (`invalid token`) or a dependency is
-  missing. A failed node read fails the module carrying the outcomes, as for
-  any targeted read.
+* `unknown` — the catalog does not list it, or the node read was rejected
+  (`invalid token`), or a dependency is missing. A named instance the parsed
+  catalog does not list is **never** `confirmed_absent`: the parser's catalog
+  completeness is unverified (the parse axis stays `unverified`), and a reply
+  line the parser does not recognize would make a configured instance vanish
+  from the catalog. Absence of a whole-node instance is therefore not
+  established by a read;
+* `confirmed_absent` — only the device's own node-absence signal about the node
+  read (nothing under a non-existing node can be configured), the same signal a
+  scoped read uses for an instance.
+
+A failed node read fails the module carrying the outcomes, as for any targeted
+read; a reply the family parser cannot process is classified the same way with
+`parse: failed` (every requested instance `unknown`).
 
 This is the documented exception to the scoped-read contract: no per-instance
 command is sent, and `gathered` is the **full catalog, unfiltered** — siblings
@@ -217,8 +226,9 @@ targeted gathering does not apply to them.
   outcomes, and `confirmed_absent` is only as good as the device's existence
   signal for that read (verified on R6.2.04m lab devices; see
   [live-test matrix](live-test-matrix.md)).
-* For whole-node reads, `confirmed_absent` is derived from the parsed catalog
-  of a successful full-catalog read, not from a per-instance device signal: it
-  is as good as the family parser's coverage of the reply (see the parse axis
-  above; the parsers of the two whole-node families are the same ones that
-  serve every whole read and write-state comparison of those families).
+* For whole-node reads, `confirmed_absent` comes only from the device's
+  node-absence signal, never from the parsed catalog: an instance the catalog
+  does not list is `unknown`, because the parser's coverage of the reply is
+  unverified (see the parse axis above; the parsers of the two whole-node
+  families are the same ones that serve every whole read and write-state
+  comparison of those families).

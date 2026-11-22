@@ -38,7 +38,8 @@ options:
       - The state the configuration should be left in.
       - With C(gathered) and I(config), the device exposes no single-instance read for interface
         alarms, so the whole node is read once and each named alarm is reported in C(read_outcomes)
-        as C(present) or C(confirmed_absent) (or C(unknown) when the read was rejected or failed);
+        as C(present) when the parsed catalog lists it and C(unknown) when it does not
+        (C(confirmed_absent) only when the device says the node itself does not exist);
         I(gathered) stays the full catalog. Without I(config) the whole resource is read, as before.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]

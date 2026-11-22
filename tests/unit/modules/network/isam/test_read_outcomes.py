@@ -506,7 +506,10 @@ def _whole_node(responses, config, resource="interface_alarms", command=ALARM_CM
     return data, module, conn
 
 
-def test_whole_node_present_and_confirmed_absent_from_catalog():
+def test_whole_node_present_and_unknown_from_catalog():
+    # Absence from the parsed catalog is not established absence: the parser's
+    # catalog completeness is unverified, so a name the catalog does not list is
+    # unknown, never confirmed_absent.
     data, module, conn = _whole_node(
         {ALARM_CMD: ALARM_CATALOG}, [{"name": "epon"}, {"name": "nope"}])
     assert data == ALARM_CATALOG  # the full catalog, unfiltered
@@ -515,17 +518,72 @@ def test_whole_node_present_and_confirmed_absent_from_catalog():
     assert outcomes["epon"] == {"resource": "interface_alarms", "section": "config",
                                 "selector": "epon", "command": "ok", "existence": "present"}
     assert outcomes["nope"]["command"] == "ok"
-    assert outcomes["nope"]["existence"] == "confirmed_absent"
+    assert outcomes["nope"]["existence"] == "unknown"
     assert module._isam_read_outcomes["parse"] == "unverified"
 
 
-def test_whole_node_empty_catalog_is_confirmed_absent():
-    # A successful full-catalog read that lists nothing proves the node is empty.
+def test_whole_node_empty_catalog_is_unknown():
+    # A successful full-catalog read that lists nothing does not prove the node is
+    # empty: the parser's completeness is unverified, so every requested instance
+    # stays unknown.
     data, module, _ = _whole_node({ALARM_CMD: ""}, [{"name": "epon"}, {"name": "eont"}])
     assert data == ""
     outcomes = module._isam_read_outcomes["outcomes"]
     assert sorted(o["selector"] for o in outcomes) == ["eont", "epon"]
-    assert all(o["existence"] == "confirmed_absent" for o in outcomes)
+    assert all(o["existence"] == "unknown" for o in outcomes)
+
+
+def test_whole_node_unrecognized_line_leaves_instance_unknown():
+    # Regression (PR review): a successful reply that contains an existing instance
+    # the parser cannot recognize. The strict parser drops the line with the
+    # unfamiliar attribute, so the instance vanishes from the catalog; the outcome
+    # must be unknown, not confirmed_absent. The recognized sibling stays present.
+    strict_catalog = (
+        "configure interface alarm epon default-severity indeterminate\n"
+        "configure interface alarm eont default-severity major unknown-attribute 5\n"
+    )
+
+    def strict_parse(data):
+        entries = []
+        for line in (data or "").splitlines():
+            parts = line.strip().split()
+            if (len(parts) == 6 and parts[:3] == ["configure", "interface", "alarm"]
+                    and parts[4] == "default-severity"):
+                entries.append({"name": parts[3], "default_severity": parts[5]})
+        return entries
+
+    data, module, _ = _whole_node(
+        {ALARM_CMD: strict_catalog}, [{"name": "epon"}, {"name": "eont"}], parse=strict_parse)
+    assert data == strict_catalog
+    outcomes = {o["selector"]: o for o in module._isam_read_outcomes["outcomes"]}
+    assert outcomes["epon"]["existence"] == "present"
+    assert outcomes["eont"]["command"] == "ok"
+    assert outcomes["eont"]["existence"] == "unknown"
+
+
+def test_whole_node_parse_failure_is_classified_before_the_module_fails():
+    # Regression (PR review): a reply the parser cannot process must be classified
+    # (parse axis 'failed', existence unknown for every requested instance) before
+    # the module fails carrying the outcomes.
+    def broken_parse(_data):
+        raise ValueError("catalog shape changed")
+
+    module = FakeModule("gathered", [{"name": "epon"}, {"name": "eont"}])
+    conn = FakeConn({ALARM_CMD: ALARM_CATALOG})
+    try:
+        get_whole_node_targeted(module, conn, "interface_alarms", ALARM_CMD, ("config",), broken_parse)
+        assert False, "expected an unparseable reply to fail the module"
+    except SystemExit:
+        pass
+    assert module._fail_kwargs is not None
+    assert "could not be parsed" in module._fail_kwargs["msg"]
+    assert "catalog shape changed" in module._fail_kwargs["msg"]
+    result = module._fail_kwargs["read_outcomes"]
+    assert result["parse"] == "failed"
+    outcomes = {o["selector"]: o for o in result["outcomes"]}
+    assert set(outcomes) == {"epon", "eont"}
+    assert all(o["command"] == "ok" for o in outcomes.values())
+    assert all(o["existence"] == "unknown" for o in outcomes.values())
 
 
 def test_whole_node_without_config_reads_plainly_without_outcomes():
@@ -623,7 +681,7 @@ def test_whole_node_nested_section_identity_is_str_normalized():
         outcomes = {o["selector"]: o for o in module._isam_read_outcomes["outcomes"]}
         assert str(requested) in outcomes
         assert outcomes[str(requested)]["existence"] == "present"
-        assert outcomes["999"]["existence"] == "confirmed_absent"
+        assert outcomes["999"]["existence"] == "unknown"  # not in the catalog: unknown, never confirmed_absent
 
 
 def test_catalog_contains_list_and_nested_sections():

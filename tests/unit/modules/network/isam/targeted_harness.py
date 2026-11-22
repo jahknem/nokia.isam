@@ -229,6 +229,21 @@ def run_whole_node(monkeypatch, case, config=None):
     assert_outcomes(result, "existence", "present")
 
 
+def run_whole_node_absent(monkeypatch, case):
+    """Whole-node catalog family on an empty node: an instance the parsed catalog
+    does not list is unknown, NOT confirmed absent -- the parser's catalog
+    completeness is unverified, so only the device's own node-absence signal
+    establishes absence (the review regression: an unrecognized reply line must
+    never surface as confirmed_absent)."""
+    full = full_commands(monkeypatch, case)
+    device = Device([], full=full, answer=case.get("answer"))
+    result = gathered(monkeypatch, case, case["config"], device)
+    assert not result.get("failed"), result
+    assert set(device.commands) == full and len(device.commands) == 1, (device.commands, full)
+    assert case["marker"] not in text(result), result
+    assert_outcomes(result, "existence", "unknown")
+
+
 def run_absent(monkeypatch, case):
     full = full_commands(monkeypatch, case)
     result = gathered(monkeypatch, case, case["config"], Device([], full=full, answer=case.get("answer")))

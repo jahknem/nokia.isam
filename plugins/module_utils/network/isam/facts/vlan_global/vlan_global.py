@@ -31,8 +31,9 @@ class Isam_vlan_globalFacts(object):
         ("invalid token"); it only answers the whole 'info configure vlan' node.
         An explicit targeted request (state gathered, config names profiles)
         reads the node once and reports per-profile read_outcomes from the
-        parsed catalog (get_whole_node_targeted); the gathered string stays the
-        full catalog, unfiltered.
+        parsed catalog (get_whole_node_targeted): present when the catalog
+        lists the profile, unknown when it does not. The gathered string stays
+        the full catalog, unfiltered.
         """
         return get_whole_node_targeted(
             self._module, connection, "isam_vlan_global", "info configure vlan flat",
