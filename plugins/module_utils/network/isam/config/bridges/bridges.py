@@ -139,15 +139,9 @@ class Bridges(IsamResourceModule):
                     self.run_commands()
         except ValueError as exc:
             self._module.fail_json(msg=str(exc))
-        result = self.result
-        if self.state == "gathered":
-            # Targeted reads record sanitized per-selector read outcomes (stashed by the
-            # facts class during gathering). Whole-family reads name no selectors and
-            # carry no outcomes.
-            outcomes = getattr(self._module, "_isam_read_outcomes", None)
-            if outcomes and outcomes.get("outcomes"):
-                result["read_outcomes"] = outcomes
-        return result
+        # read_outcomes (targeted gathered reads) is attached centrally by the base
+        # result property; whole-family reads carry none.
+        return self.result
 
     def generate_commands(self):
         """ Generate configuration commands to send based on

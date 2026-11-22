@@ -14,6 +14,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
     NetworkTemplate,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.read_outcomes import (
+    ReadOutcomeCollector,
     error_class,
 )
 
@@ -390,6 +391,11 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
                 continue
             if outcomes is not None:
                 outcomes.record(selector, "failed", "unknown", error_class_value=error_class(text))
+                # A recorded failure must not be silently lost: fail the module carrying the
+                # sanitized per-selector outcomes. fail_json raises SystemExit, which no
+                # `except Exception` in a facts get_facts can swallow, so the outcomes reach
+                # the result even when a family has its own exception handling.
+                module.fail_json(msg=str(exc), read_outcomes=_finalize_collector(outcomes))
             raise
         if _is_absent_error(response):
             if outcomes is not None:
@@ -514,6 +520,75 @@ def targeted_commands(module, resource, formats):
     return commands
 
 
+def _finalize_collector(collector):
+    """The collector's sanitized result, recording the default parse outcome if the
+    parser recorded none. Returns None for a whole-family (non-targeted) read."""
+    if collector is None:
+        return None
+    if not collector.has_parse():
+        collector.record_parse("unverified")
+    return collector.to_result()
+
+
+def targeted_outcomes(module, resource):
+    """A ReadOutcomeCollector for a targeted gathered read, else None.
+
+    Only ``state: gathered`` reads report per-selector outcomes; write-state reads
+    (merged/replaced/deleted), whole-family reads, and reads with no module (isam_facts,
+    offline parsing) carry none, exactly as before.
+    """
+    if module is None:
+        return None
+    if (module.params or {}).get("state") != "gathered":
+        return None
+    return ReadOutcomeCollector(resource)
+
+
+def finish_targeted_outcomes(module, collector):
+    """Finalize a targeted read's collector and stash it on the module for the result.
+
+    Records the default parse outcome (unverified) when the parser recorded none, and
+    stashes the sanitized result on ``module._isam_read_outcomes`` (surfaced centrally by
+    the resource module's result). A no-op when there is no collector (whole-family or
+    non-gathered read). Returns the sanitized result, or None.
+    """
+    result = _finalize_collector(collector)
+    if module is not None and result is not None:
+        module._isam_read_outcomes = result
+    return result
+
+
+def _has_targeted_entries(module, resource, formats):
+    """Whether config names at least one instance in a targeted section -- an explicit
+    targeted request -- regardless of whether the identities became read commands."""
+    params = getattr(module, "params", None) or {}
+    config = params.get("config")
+    if not config:
+        return False
+    for section in formats:
+        if _section_items(config, section):
+            return True
+    return False
+
+
+def _targeted_selectors(module, resource, formats):
+    """A {command: selector} map labeling each targeted read command with the instance
+    identity it addresses (a single identity as-is, a composite identity joined by '/')."""
+    selectors = {}
+    for section, form in formats.items():
+        for identity in requested_identities(module, resource, section):
+            # A composite identity is a tuple (joined by '/'); a single identity is a
+            # scalar (or, rarely, a list value) rendered as-is.
+            key = "/".join(str(value) for value in identity) if isinstance(identity, (tuple, list)) else str(identity)
+            if callable(form):
+                for command in form(identity):
+                    selectors[command] = key
+            else:
+                command = form % (identity if isinstance(identity, tuple) else (identity,))
+                selectors[command] = key
+    return selectors
+
+
 def get_targeted_config(module, connection, resource, fallback, formats, write_states=False, bare_sections=(),
                         silent_bare_sections=()):
     """The whole resource, or only the instances named in config with state gathered.
@@ -524,17 +599,45 @@ def get_targeted_config(module, connection, resource, fallback, formats, write_s
     bare_sections: lists whose whole read shows unconfigured instances as their bare
     path (see get_scoped_config bare_commands); silent_bare_sections likewise, for
     nodes whose detail read prints nothing either (silent_bare_commands).
+
+    A targeted gathered read reports sanitized per-selector read outcomes: a collector
+    is created for gathered reads, threaded into the read, and stashed on the module for
+    the resource module to surface (see finish_targeted_outcomes). An explicit targeted
+    request (config names instances) that yields no read command fails rather than
+    silently widening to the whole-family read.
     """
     states = ("merged", "replaced", "deleted", "gathered") if write_states else ("gathered",)
-    commands = targeted_commands(module, resource, formats) if module is not None else []
-    state = module.params.get("state", "merged") if module is not None else None
-    if commands and state in states:
-        def section_commands(sections):
-            return targeted_commands(module, resource, dict((s, formats[s]) for s in sections if s in formats))
-        return get_scoped_config(module, connection, None, None, commands, safe_states=states,
+    if module is None:
+        return fallback(connection) if callable(fallback) else connection.get(fallback)
+    state = module.params.get("state", "merged")
+    if state not in states:
+        return fallback(connection) if callable(fallback) else connection.get(fallback)
+    commands = targeted_commands(module, resource, formats)
+    explicit = state == "gathered" and _has_targeted_entries(module, resource, formats)
+    if not commands and not explicit:
+        # No instances named: the whole resource is read, as before.
+        return fallback(connection) if callable(fallback) else connection.get(fallback)
+    if not commands:
+        # Instances were explicitly named but none became a read command: refuse to
+        # silently widen to a whole-family read.
+        raise RuntimeError(
+            "targeted read requested but no targeted commands could be generated; "
+            "refusing to widen to a whole-family read")
+
+    def section_commands(sections):
+        return targeted_commands(module, resource, dict((s, formats[s]) for s in sections if s in formats))
+
+    collector = targeted_outcomes(module, resource)
+    try:
+        data = get_scoped_config(module, connection, None, None, commands, safe_states=states,
                                  bare_commands=section_commands(bare_sections),
-                                 silent_bare_commands=section_commands(silent_bare_sections))
-    return fallback(connection) if callable(fallback) else connection.get(fallback)
+                                 silent_bare_commands=section_commands(silent_bare_sections),
+                                 outcomes=collector,
+                                 selectors=_targeted_selectors(module, resource, formats),
+                                 require_targeted=explicit)
+    finally:
+        finish_targeted_outcomes(module, collector)
+    return data
 
 
 def count_indent(line):

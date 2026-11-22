@@ -25,10 +25,9 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common imp
     parse_cli_key_values,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    finish_targeted_outcomes,
     get_scoped_config,
-)
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.read_outcomes import (
-    ReadOutcomeCollector,
+    targeted_outcomes,
 )
 
 
@@ -78,9 +77,7 @@ class BridgesFacts(object):
                 command = "info configure bridge port %s %s" % (port_id, suffix)
                 commands.append(command)
                 selectors[command] = port_id
-        collector = None
-        if self._module.params.get("state") == "gathered":
-            collector = ReadOutcomeCollector("bridges")
+        collector = targeted_outcomes(self._module, "bridges")
         data = get_scoped_config(
             self._module,
             connection,
@@ -100,12 +97,11 @@ class BridgesFacts(object):
                 if not line.startswith("configure bridge ageing-time ")
                 and not line.startswith("configure bridge no ageing-time")
             )
-        if collector is not None:
-            # _parse_bridge_config processes lines independently and silently skips lines it
-            # does not recognize, and the read is combined across ports; it cannot demonstrate
-            # full coverage of the owned lines, so the parse outcome is unverified.
-            collector.record_parse("unverified")
-            self._module._isam_read_outcomes = collector.to_result()
+        # _parse_bridge_config processes lines independently and silently skips lines it
+        # does not recognize, and the read is combined across ports; it cannot demonstrate
+        # full coverage of the owned lines, so the parse outcome is unverified (the default
+        # finish_targeted_outcomes records).
+        finish_targeted_outcomes(self._module, collector)
         return data
 
     def populate_facts(self, connection, ansible_facts, data=None):

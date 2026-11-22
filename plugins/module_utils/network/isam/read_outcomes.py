@@ -93,6 +93,10 @@ class ReadOutcomeCollector(object):
         """Record the parse outcome at resource level (``section=None``) or per section."""
         self._parse[section or _RESOURCE] = parse_status
 
+    def has_parse(self):
+        """Whether any parse outcome has been recorded (resource level or per section)."""
+        return bool(self._parse)
+
     def to_result(self):
         """Sanitized, JSON-safe result: ``{resource, outcomes, parse?}``.
 

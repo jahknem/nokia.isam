@@ -165,7 +165,22 @@ class IsamResourceModule(ResourceModule):
             result["before"] = self.before
             result["changed"] = False
             return result
-        return super(IsamResourceModule, self).result
+        result = super(IsamResourceModule, self).result
+        self._attach_read_outcomes(result)
+        return result
+
+    def _attach_read_outcomes(self, result):
+        """Attach sanitized read_outcomes for a targeted gathered read (central).
+
+        The facts class stashes the outcomes on the module during gathering (see
+        finish_targeted_outcomes); whole-family and write-state reads stash none, so only
+        an explicit targeted C(gathered) read surfaces them here.
+        """
+        if self.state != "gathered":
+            return
+        outcomes = getattr(self._module, "_isam_read_outcomes", None)
+        if outcomes and outcomes.get("outcomes"):
+            result["read_outcomes"] = outcomes
 
     def run_commands(self):
         self._compact()
