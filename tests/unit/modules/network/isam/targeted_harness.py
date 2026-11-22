@@ -195,6 +195,7 @@ def run_only_named(monkeypatch, case):
     assert case["marker"] in text(result), result
     assert case["sibling_marker"] not in text(result), result
     assert not any(case["sibling_marker"] in command for command in device.commands), device.commands
+    assert_outcomes(result, "existence", "present")
 
 
 def run_group(monkeypatch, case):
@@ -204,6 +205,7 @@ def run_group(monkeypatch, case):
     assert not result.get("failed"), result
     assert not set(device.commands) & full, device.commands
     assert case["marker"] in text(result) and case["sibling_marker"] in text(result), result
+    assert_outcomes(result, "existence", "present")
 
 
 def run_absent(monkeypatch, case):
@@ -211,11 +213,13 @@ def run_absent(monkeypatch, case):
     result = gathered(monkeypatch, case, case["config"], Device([], full=full, answer=case.get("answer")))
     assert not result.get("failed"), result
     assert case["marker"] not in text(result), result
+    assert_outcomes(result, "existence", "confirmed_absent")
 
 
 def run_errors_fail(monkeypatch, case):
     result = gathered(monkeypatch, case, case["config"], Device([], fail=True, answer=case.get("answer")))
     assert result.get("failed"), result
+    assert_outcomes(result, "command", "failed")
 
 
 def run_whole(monkeypatch, case):
@@ -225,3 +229,5 @@ def run_whole(monkeypatch, case):
     assert not result.get("failed"), result
     assert set(device.commands) <= full, device.commands
     assert case["marker"] in text(result) and case["sibling_marker"] in text(result), result
+    # backward compatibility: a whole-family read carries no read_outcomes at all
+    assert "read_outcomes" not in result, result

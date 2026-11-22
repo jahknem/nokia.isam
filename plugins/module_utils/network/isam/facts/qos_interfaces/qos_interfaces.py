@@ -9,7 +9,11 @@ __metaclass__ = type
 from anytree import Node
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    finish_targeted_outcomes,
     get_scoped_config,
+    selector_key,
+    targeted_explicit,
+    targeted_outcomes,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.qos_interfaces.qos_interfaces import Qos_interfacesArgs
@@ -24,18 +28,30 @@ class Qos_interfacesFacts(object):
         self.argument_spec = Qos_interfacesArgs.argument_spec
 
     def get_config(self, connection):
+        """The whole resource, or only the interfaces named in config (targeted gathering)."""
         config = self._module.params.get("config") or []
-        commands = [
-            "info configure qos interface %s flat" % item["name"]
-            for item in config
-        ]
-        return get_scoped_config(
+        collector = targeted_outcomes(self._module, "qos_interfaces")
+        commands = []
+        selectors = {}
+        for item in config:
+            name = item["name"]
+            command = "info configure qos interface %s flat" % name
+            commands.append(command)
+            selectors[command] = selector_key(name)
+        data = get_scoped_config(
             self._module,
             connection,
             config,
             "info configure qos interface flat",
             commands,
+            outcomes=collector,
+            selectors=selectors,
+            # An explicit gathered request that names instances must not silently widen
+            # to the whole-family read when none of them became a read command.
+            require_targeted=targeted_explicit(self._module, "config"),
         )
+        finish_targeted_outcomes(self._module, collector)
+        return data
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}

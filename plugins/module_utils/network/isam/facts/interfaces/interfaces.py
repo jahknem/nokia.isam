@@ -29,7 +29,11 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common imp
     normalize_resource_keys,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    finish_targeted_outcomes,
     get_scoped_config,
+    selector_key,
+    targeted_explicit,
+    targeted_outcomes,
     unwrap_response,
 )
 
@@ -88,20 +92,32 @@ class InterfacesFacts(object):
         return entry
 
     def get_config(self, connection):
+        """The whole resource, or only the ports named in config (targeted gathering)."""
         config = self._module.params.get("config") or []
         # Gathered reads use the complete read's compact form (no detail defaults); see bridges.
         suffix = "flat" if self._module.params.get("state") == "gathered" else "detail flat"
-        commands = [
-            "info configure interface port %s %s" % (item["name"], suffix)
-            for item in config
-        ]
-        return get_scoped_config(
+        collector = targeted_outcomes(self._module, "interfaces")
+        commands = []
+        selectors = {}
+        for item in config:
+            name = item["name"]
+            command = "info configure interface port %s %s" % (name, suffix)
+            commands.append(command)
+            selectors[command] = selector_key(name)
+        data = get_scoped_config(
             self._module,
             connection,
             config,
             "info configure interface port flat",
             commands,
+            outcomes=collector,
+            selectors=selectors,
+            # An explicit gathered request that names instances must not silently widen
+            # to the whole-family read when none of them became a read command.
+            require_targeted=targeted_explicit(self._module, "config"),
         )
+        finish_targeted_outcomes(self._module, collector)
+        return data
 
     def populate_facts(self, connection, ansible_facts, data=None):
         """ Populate the facts for Interfaces network resource
