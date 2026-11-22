@@ -54,6 +54,25 @@ def error_class(text):
     return "device_error"
 
 
+# When one selector is addressed by several commands (a dhcp-relay port is read on
+# port-stats and v6-port-stats; duplicate identities share one read), the strongest
+# signal wins: a failed read is stronger than presence, presence is stronger than a
+# rejection, a rejection stronger than an explicit absence, all stronger than unknown.
+_OUTCOME_PRIORITY = (
+    (("failed", "unknown"), 4),
+    (("ok", "present"), 3),
+    (("rejected", "unknown"), 2),
+    (("ok", "confirmed_absent"), 1),
+)
+
+
+def _outcome_priority(command_status, existence):
+    for (command, ex), priority in _OUTCOME_PRIORITY:
+        if command_status == command and existence == ex:
+            return priority
+    return 0  # ok/unknown (header-only reply, missing dependency, ...)
+
+
 class ReadOutcomeCollector(object):
     """Accumulates per-selector command/existence outcomes and the parse outcome.
 
@@ -87,7 +106,14 @@ class ReadOutcomeCollector(object):
             record["error_class"] = error_class_value
         if dependency_gap:
             record["dependency_gap"] = dependency_gap
-        self._by_selector[selector if selector is not None else _WHOLE] = record
+        key = selector if selector is not None else _WHOLE
+        previous = self._by_selector.get(key)
+        if previous is not None and _outcome_priority(previous["command"], previous["existence"]) >= _outcome_priority(
+                command_status, existence):
+            # A stronger (or equally strong, recorded first) outcome for this selector
+            # already stands: keep it.
+            return
+        self._by_selector[key] = record
 
     def record_parse(self, parse_status, section=None):
         """Record the parse outcome at resource level (``section=None``) or per section."""

@@ -5,8 +5,12 @@ from __future__ import absolute_import, division, print_function
 from ansible.module_utils.common.text.converters import to_text
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.facts.facts import get_resource_connection
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    finish_targeted_outcomes,
     get_scoped_config,
     requested_identities,
+    selector_key,
+    targeted_explicit,
+    targeted_outcomes,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.arp_relay import Isam_arp_relayTemplate
@@ -21,8 +25,27 @@ class Isam_arp_relayFacts(object):
 
     def get_config(self, connection):
         """The whole resource, or only the ports named in config (targeted gathering)."""
-        commands = ["info configure arp-relay statistics %s flat" % port for port in requested_identities(self._module, "isam_arp_relay")]
-        return get_scoped_config(self._module, connection, None, "info configure arp-relay flat", commands)
+        collector = targeted_outcomes(self._module, "isam_arp_relay")
+        commands = []
+        selectors = {}
+        for port in requested_identities(self._module, "isam_arp_relay"):
+            command = "info configure arp-relay statistics %s flat" % port
+            commands.append(command)
+            selectors[command] = selector_key(port)
+        data = get_scoped_config(
+            self._module,
+            connection,
+            None,
+            "info configure arp-relay flat",
+            commands,
+            outcomes=collector,
+            selectors=selectors,
+            # An explicit gathered request that names instances must not silently widen
+            # to the whole-family read when none of them became a read command.
+            require_targeted=targeted_explicit(self._module, "config"),
+        )
+        finish_targeted_outcomes(self._module, collector)
+        return data
 
     def populate_facts(self, connection, ansible_facts, data=None):
         if data is None:

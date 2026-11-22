@@ -558,28 +558,37 @@ def finish_targeted_outcomes(module, collector):
     return result
 
 
+def targeted_explicit(module, section="config"):
+    """Whether a gathered read's config names at least one instance in ``section`` --
+    an explicit targeted request -- regardless of whether the identities became read
+    commands. False for write states and for reads with no module (isam_facts, parsing)."""
+    if module is None:
+        return False
+    params = getattr(module, "params", None) or {}
+    if params.get("state") != "gathered":
+        return False
+    return bool(_section_items(params.get("config"), section))
+
+
 def _has_targeted_entries(module, resource, formats):
     """Whether config names at least one instance in a targeted section -- an explicit
     targeted request -- regardless of whether the identities became read commands."""
-    params = getattr(module, "params", None) or {}
-    config = params.get("config")
-    if not config:
-        return False
-    for section in formats:
-        if _section_items(config, section):
-            return True
-    return False
+    return any(targeted_explicit(module, section) for section in formats)
+
+
+def selector_key(identity):
+    """The sanitized selector for one identity: a composite identity (a tuple or list
+    of fields) joined by '/', a single identity rendered as-is."""
+    return "/".join(str(value) for value in identity) if isinstance(identity, (tuple, list)) else str(identity)
 
 
 def _targeted_selectors(module, resource, formats):
     """A {command: selector} map labeling each targeted read command with the instance
-    identity it addresses (a single identity as-is, a composite identity joined by '/')."""
+    identity it addresses."""
     selectors = {}
     for section, form in formats.items():
         for identity in requested_identities(module, resource, section):
-            # A composite identity is a tuple (joined by '/'); a single identity is a
-            # scalar (or, rarely, a list value) rendered as-is.
-            key = "/".join(str(value) for value in identity) if isinstance(identity, (tuple, list)) else str(identity)
+            key = selector_key(identity)
             if callable(form):
                 for command in form(identity):
                     selectors[command] = key

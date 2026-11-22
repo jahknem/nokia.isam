@@ -8,9 +8,13 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
     utils,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    finish_targeted_outcomes,
     get_scoped_config,
     requested_identities,
+    selector_key,
     strip_noise_lines,
+    targeted_explicit,
+    targeted_outcomes,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.ani_onts.ani_onts import (
     Ani_ontsArgs,
@@ -29,8 +33,28 @@ class Ani_ontsFacts(object):
 
     def get_config(self, connection):
         """The whole resource, or only the ONT thresholds named in config (targeted gathering)."""
-        commands = ["info configure ani ont tca-thresh %s flat" % ont for ont in requested_identities(self._module, "ani_onts")]
-        return get_scoped_config(self._module, connection, None, "info configure ani ont flat", commands, bare_commands=commands)
+        collector = targeted_outcomes(self._module, "ani_onts")
+        commands = []
+        selectors = {}
+        for ont in requested_identities(self._module, "ani_onts"):
+            command = "info configure ani ont tca-thresh %s flat" % ont
+            commands.append(command)
+            selectors[command] = selector_key(ont)
+        data = get_scoped_config(
+            self._module,
+            connection,
+            None,
+            "info configure ani ont flat",
+            commands,
+            bare_commands=commands,
+            outcomes=collector,
+            selectors=selectors,
+            # An explicit gathered request that names instances must not silently widen
+            # to the whole-family read when none of them became a read command.
+            require_targeted=targeted_explicit(self._module, "config"),
+        )
+        finish_targeted_outcomes(self._module, collector)
+        return data
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}

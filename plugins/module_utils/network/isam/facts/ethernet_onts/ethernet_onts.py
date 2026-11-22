@@ -17,7 +17,11 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
     utils,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    finish_targeted_outcomes,
     get_scoped_config,
+    selector_key,
+    targeted_explicit,
+    targeted_outcomes,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.ethernet_onts.ethernet_onts import (
@@ -48,19 +52,30 @@ class Ethernet_ontsFacts(object):
         self.argument_spec = Ethernet_ontsArgs.argument_spec
 
     def get_config(self, connection):
-        """Wrapper method for `connection.get()`."""
+        """The whole resource, or only the ONTs named in config (targeted gathering)."""
         config = self._module.params.get("config") or []
-        commands = [
-            "info configure ethernet ont %s flat detail" % item["uni_idx"]
-            for item in config
-        ]
-        return get_scoped_config(
+        collector = targeted_outcomes(self._module, "ethernet_onts")
+        commands = []
+        selectors = {}
+        for item in config:
+            uni_idx = item["uni_idx"]
+            command = "info configure ethernet ont %s flat detail" % uni_idx
+            commands.append(command)
+            selectors[command] = selector_key(uni_idx)
+        data = get_scoped_config(
             self._module,
             connection,
             config,
             "info configure ethernet ont flat",
             commands,
+            outcomes=collector,
+            selectors=selectors,
+            # An explicit gathered request that names instances must not silently widen
+            # to the whole-family read when none of them became a read command.
+            require_targeted=targeted_explicit(self._module, "config"),
         )
+        finish_targeted_outcomes(self._module, collector)
+        return data
 
     def populate_facts(self, connection, ansible_facts, data=None):
         """Populate the facts for Ethernet_onts network resource."""

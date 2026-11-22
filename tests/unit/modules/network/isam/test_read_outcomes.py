@@ -219,6 +219,32 @@ def test_collector_result_is_sanitized_and_deterministically_ordered():
     assert "does not exist" not in json.dumps(result)
 
 
+def test_several_commands_for_one_selector_keep_the_strongest_outcome():
+    # One instance addressed by several reads (a dhcp-relay port on port-stats and
+    # v6-port-stats) yields one outcome per selector, the strongest signal winning:
+    # failed > present > rejected > confirmed_absent > unknown.
+    collector = ReadOutcomeCollector("isam_dhcp_relay")
+    collector.record("1/1/1/1:10", "ok", "present")
+    collector.record("1/1/1/1:10", "ok", "confirmed_absent")  # the v6 read found nothing
+    outcome = collector.to_result()["outcomes"][0]
+    assert outcome["selector"] == "1/1/1/1:10"
+    assert outcome["existence"] == "present"
+
+    collector2 = ReadOutcomeCollector("isam_dhcp_relay")
+    collector2.record("1/1/1/1:10", "ok", "confirmed_absent")
+    collector2.record("1/1/1/1:10", "failed", "unknown", error_class_value="connection_error")
+    outcome2 = collector2.to_result()["outcomes"][0]
+    assert outcome2["command"] == "failed"
+    assert outcome2["error_class"] == "connection_error"
+
+    # an equally strong outcome recorded first is kept
+    collector3 = ReadOutcomeCollector("isam_dhcp_relay")
+    collector3.record("1/1/1/1:10", "ok", "unknown", dependency_gap="lower-interface")
+    collector3.record("1/1/1/1:10", "ok", "unknown")
+    outcome3 = collector3.to_result()["outcomes"][0]
+    assert outcome3["dependency_gap"] == "lower-interface"
+
+
 # ---------------------------------------------------------------------------
 # Central helpers and the get_targeted_config contract
 # ---------------------------------------------------------------------------
