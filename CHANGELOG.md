@@ -1,5 +1,75 @@
 # Changelog
 
+## 1.1.0 (unreleased)
+
+Builds on the 1.0.0 line and completes targeted gathering for every
+configuration resource family. No schema changes to `gathered`, write states,
+or whole-family reads: without `config` a read does exactly what 1.0.0 does,
+and write states are unchanged. The only addition is the `read_outcomes`
+return value on targeted reads.
+
+### Read outcomes (`read_outcomes`)
+
+- Every targeted read (`state: gathered` with `config` naming instances) now
+  reports `read_outcomes`: one sanitized outcome per addressed instance naming
+  the config section, the selector (composite identities joined by `/`), the
+  command axis (`ok`, `rejected`, `failed`) and the instance-existence axis
+  (`present`, `confirmed_absent`, `unknown`), plus the resource-level parse
+  axis (`complete`, `partial`, `failed`, `unverified`). Outcomes are stable
+  enums — raw device text is never recorded.
+- `confirmed_absent` is the only outcome consumers may act on: it is the
+  device's explicit "instance does not exist" signal about that instance.
+  `unknown` (a header-only reply, an invalid-token rejection, a missing
+  dependency, or a failed read) is never treated as absence — keep, do not
+  remove, configuration for `unknown` instances.
+- An explicit targeted request is never served partially or silently widened:
+  a request that cannot be read in full (a named instance without an identity,
+  or a family gap) fails before any command is sent, and a failed read fails
+  the module carrying the sanitized outcomes.
+- The logic is central (`facts_base.get_scoped_config` /
+  `get_targeted_config`, attached once in `IsamResourceModule.result`); there
+  is no per-family outcome code. Whole reads, write states and `isam_facts`
+  carry no `read_outcomes`, as before.
+- The 53 targeted families and their per-section identity fields are
+  machine-readable in `plugins/module_utils/network/isam/targeted.py`
+  (`TARGETED_GATHER`), so consumers can derive targeting capability without
+  parsing docs.
+
+### Whole-node reads
+
+- Two instance lists have no single-instance read on the firmware
+  (`interface_alarms`; the `isam_vlan_global` priority-regen profiles, which
+  answer "invalid token" when addressed individually). For them a targeted
+  request reads the whole node once — the only read the device exposes — and
+  reports each named instance from the parsed catalog: `present` when the
+  catalog lists it, `unknown` when it does not. Catalog absence is never
+  `confirmed_absent` (the parser's catalog completeness is unverified, and an
+  unrecognized reply line would make a configured instance vanish from the
+  catalog); only the device's own node-absence signal confirms absence.
+  `gathered` stays the full catalog, unfiltered — the documented exception to
+  the scoped-read contract.
+- The per-resource read scope is machine-readable in `TARGETED_READ_SCOPE`
+  (`whole_node` for these two families, `instance` for the rest), derived from
+  the read commands the facts classes send; a test pins it against the facts
+  classes that call the whole-node read path, in both directions.
+- A reply the family parser cannot process is classified before the module
+  fails: parse axis `failed`, every requested instance `unknown`.
+
+### Regression coverage
+
+- Fixture-driven integration tests drive the real modules through
+  `state: gathered` against sanitized live captures (r6.2.04m, 7330 FTTN):
+  the two whole-node families end to end (25 tests, including the parse-failure
+  and unrecognized-line regressions), and 41 scoped families in a three-phase
+  round trip (whole-read parity and exact command set, per-instance scoping of
+  a real fixture instance, `confirmed_absent` for an identity the fixture does
+  not have). The remaining 10 scoped families without config fixtures stay
+  covered by the synthetic e2e suite (561 cases).
+- Verified live (DS-LIN-TEST-01, read-only): a targeted read classifies a
+  real alarm/profile `present` and an absent name `unknown` (never
+  `confirmed_absent` from the catalog), `gathered` matches the full baseline,
+  and a partial request fails before any read.
+
 ## 1.0.0 (unreleased)
 
 Major-version preparation, not a published release. This line incorporates the
