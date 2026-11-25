@@ -79,6 +79,17 @@ return value on targeted reads.
 - `export_catalog()` additionally returns `creates`, `created_with` and
   `requires`.
 
+### Dependency graph (`isam_dependency_graph`)
+
+- New filter `nokia.isam.isam_dependency_graph(families)` and
+  `topology.dependencies.dependency_graph`: which part of a family must be
+  configured before which, and why (`creates`, `contains`, `references`,
+  `requires` with its evidence). Derived from the family relations; instances
+  that cannot be placed are listed, not guessed. `to_mermaid` renders it.
+- `isam_write_steps` is now a topological order of that graph. Its result is
+  unchanged, except that a bare port address is placed when the same
+  configuration identifies the object at that address.
+
 ### Regression coverage
 
 - Fixture-driven integration tests drive the real modules through

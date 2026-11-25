@@ -137,27 +137,137 @@ overwrite an existing artifact. NOC's schema exporter includes the catalog when
 the selected collection contains it. Older EEs export no `topology` field: absence
 is an unsupported capability, not an invitation to synthesize a model in NOC.
 
+## Dependency graph (`topology/dependencies.py`)
+
+`dependency_graph(families)` (filter `nokia.isam.isam_dependency_graph`) answers
+"what must be configured before what, and why" for a concrete configuration: a
+change set, or everything read from an MSAN.
+
+A node is a *family part*: the instances of one family section that address one
+kind of object. `interfaces.config:ont` is the `ont:` entries of the interfaces
+family, `interfaces.config:vlan_port` its `vlan-port:` entries. Each node has a
+role: `creates` (its command creates the object), `created_with` (the device
+creates the entry itself with the object), `configures`, `definition` or
+`device_settings`.
+
+An edge `before -> after` carries its reason:
+
+| Reason | Meaning | Comes from |
+| --- | --- | --- |
+| `creates` | `before` creates the object `after` configures | `"creates"` in the family file |
+| `contains` | `after` addresses an object inside the one `before` addresses; the inner object is entered through its creating part | `objects.py` |
+| `references` | `after` names definitions of `before` | `"references"`, `"profile_references"` |
+| `requires` | a declared requirement, with its evidence on the edge | `"requires"` |
+
+Instances that cannot be placed are listed in `unplaced` with the reason, never
+guessed. A bare port address shared by several kinds of object (line, Ethernet
+port, bonding group, LAG) is placed only from an object the same configuration
+identifies unambiguously, by the live-verified attachment rule the graph of an
+MSAN uses. `to_mermaid(graph)` renders the graph.
+
+The graph of DS-LIN-TEST-01, from the 14 families read on 2026-11-24/25 (thick
+arrows: containment between objects, thin: the creating part first, dotted:
+references and requirements). 135 instances are unplaced: 132 QoS entries on
+bare port addresses (line or bonding group, Ethernet port or LAG) and three
+device-wide sections without order evidence.
+
+```mermaid
+flowchart TD
+  subgraph device_settings["device settings"]
+    n0["vlans.config"]
+  end
+  subgraph definition["definition"]
+    n1["qos_profiles.config"]
+  end
+  subgraph applique["applique"]
+    n2["isam_equipment.appliques"]
+  end
+  subgraph shelf["shelf"]
+    n3["isam_equipment.shelves"]
+  end
+  subgraph card["card"]
+    n4["isam_equipment.slots"]
+  end
+  subgraph bonding_group["bonding group"]
+    n5["interfaces.config"]
+  end
+  subgraph ethernet_port["ethernet port"]
+    n6["interfaces.config"]
+    n11["link_agg.ports"]
+  end
+  subgraph lag["lag"]
+    n7["interfaces.config"]
+    n10["link_agg.groups"]
+  end
+  subgraph pon["pon"]
+    n8["interfaces.config"]
+    n12["pon_interfaces.config"]
+    n13["qos_interfaces.config"]
+  end
+  subgraph xdsl_line["xdsl line"]
+    n9["interfaces.config"]
+  end
+  subgraph ont["ont"]
+    n14["equipment_onts.interfaces (creates it)"]
+    n15["ani_onts.config (created by the device)"]
+    n16["interfaces.config (created by the device)"]
+    n17["ntp_onts.config (created by the device)"]
+    n18["qos_interfaces.config"]
+  end
+  subgraph ont_slot["ont slot"]
+    n19["equipment_onts.slots (creates it)"]
+  end
+  subgraph uni["uni"]
+    n20["ethernet_onts.config"]
+    n21["interfaces.config"]
+    n22["qos_interfaces.config"]
+  end
+  subgraph bridge_port["bridge port"]
+    n23["bridges.port (creates it)"]
+  end
+  subgraph vlan_port["vlan port"]
+    n24["interfaces.config (created by the device)"]
+    n25["qos_interfaces.config (created by the device)"]
+  end
+  n14 --> n15
+  n14 --> n16
+  n14 --> n17
+  n14 --> n18
+  pon ==> ont
+  ethernet_port ==> bridge_port
+  lag ==> bridge_port
+  uni ==> bridge_port
+  xdsl_line ==> bridge_port
+  ont ==> ont_slot
+  ont_slot ==> uni
+  card ==> bonding_group
+  card ==> ethernet_port
+  card ==> lag
+  card ==> pon
+  bridge_port ==> vlan_port
+  card ==> xdsl_line
+  shelf ==> card
+  n1 -. references .-> n18
+  n1 -. references .-> n13
+  n1 -. references .-> n22
+  n1 -. references .-> n25
+  n0 -. requires .-> n23
+  n22 -. requires .-> n23
+```
+
 ## Write order (`topology/write_order.py`)
 
 Module calls cannot reorder each other, so a caller writing several families
 needs their order. `write_steps(families, phase)` (filter
 `nokia.isam.isam_write_steps`) returns the module calls in device order. The
-order is derived from the catalog, not hand-maintained:
+order is one topological order of the dependency graph above: every family
+part comes after all parts it depends on. Among parts no edge orders,
+device-wide settings come first, then definitions, then objects from the outside
+in, the creating part first. Within `qos_profiles` a referenced profile comes
+before its referrer; reference cycles are refused.
 
-1. **Containment.** Each instance's object kind is decoded from its identity
-   (`ont:…` → ONT, `vlan:…:10` → VLAN port). An instance is created after every
-   kind above it: PON → ONT → ONT slot → UNI → bridge port → VLAN port.
-2. **References.** Shared definitions (QoS/xDSL profiles) are created before
-   the configuration referencing them, and within `qos_profiles` a referenced
-   profile before its referrer (`profile_references`). Reference cycles are
-   refused.
-3. **Creating family.** Of the families configuring one kind, the one whose
-   command creates the object comes first (`"creates"`: `equipment_onts.interfaces`
-   creates the ONT, `equipment_onts.slots` the ONT slot, `bridges.port` the
-   bridge port).
-4. **Required sections.** A device-wide section another section declares it
-   needs (`"requires"`: `bridges.port` requires `vlans.config`) is placed before
-   all object families. Any other device-wide family is refused.
+A device-wide section is only placed when another section declares it
+requires it (`bridges.port` requires `vlans.config`); any other is refused.
 
 Removal is the exact reverse of creation. Consecutive units of one family form
 one module call. Anything the catalog cannot place — an unknown family, an
@@ -166,8 +276,8 @@ device settings without evidence — raises `UnorderedWrite`; nothing is guessed
 The result carries `exhaustive: false`.
 
 Live evidence: the 2026-11-19 apply on DS-LIN-TEST-01 failed attaching a VLAN
-before the UNI's upstream-queue bandwidth profile existed (error 277). Rule 1
-covers this: the UNI is above its bridge port. Ordering of commands *within* one
+before the UNI's upstream-queue bandwidth profile existed (error 277). This is a
+declared requirement of `bridges.port` with that evidence. Ordering of commands *within* one
 module call (admin-state alone, shutdown before removal) stays in the modules
 (`docs/live-apply-regressions-2026-11-19.md`). A live read of DS-LIN-TEST-01 on
 2026-11-25 supports `vlans` first: all 359 port VLANs resolve to a VLAN of the

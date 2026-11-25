@@ -42,7 +42,9 @@ def test_format_is_closed_and_every_section_is_placed():
                 assert spec["object"] in kinds, where
             for entry in spec.get("created_with", ()):
                 assert set(entry) == {"prefix", "object", "default"} and entry["object"] in kinds, where
-            for target in list(spec.get("references", {}).values()) + list(spec.get("requires", ())):
+            for need in spec.get("requires", ()):
+                assert set(need) <= {"section", "kind", "evidence"} and need["evidence"], where
+            for target in list(spec.get("references", {}).values()) + [need["section"] for need in spec.get("requires", ())]:
                 resource, target_section = target.split(".", 1)
                 assert target_section in FAMILIES[resource]["sections"], (where, target)
         if "profile_references" in family:

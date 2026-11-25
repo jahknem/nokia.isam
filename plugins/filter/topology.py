@@ -2,7 +2,8 @@
 
 from ansible.errors import AnsibleFilterError
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.graph import build_graph, plan_known_reads
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.write_order import UnorderedWrite, write_steps
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.dependencies import UnorderedWrite, dependency_graph
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.write_order import write_steps
 
 
 def isam_topology(resources, msan):
@@ -27,8 +28,17 @@ def isam_write_steps(families, phase="create"):
         raise AnsibleFilterError(str(exc)) from exc
 
 
+def isam_dependency_graph(families):
+    """Which part of these families must be configured before which, and why."""
+    try:
+        return dependency_graph(families)
+    except UnorderedWrite as exc:
+        raise AnsibleFilterError(str(exc)) from exc
+
+
 class FilterModule(object):
     def filters(self):
         return {"isam_topology": isam_topology,
                 "isam_topology_read_requirements": isam_topology_read_requirements,
-                "isam_write_steps": isam_write_steps}
+                "isam_write_steps": isam_write_steps,
+                "isam_dependency_graph": isam_dependency_graph}

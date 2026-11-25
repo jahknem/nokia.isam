@@ -43,7 +43,7 @@ Relations to other things:
 | `"creates": True` | The command creates the object. Every other family addressing that kind configures an existing object and is written after it. At most one section per kind. |
 | `"created_with": [{"prefix", "object", "default"}]` | The device creates the entry itself when the named object is created, at exactly this default. Only an entry equal to the default may be left out of a change set; any other was customized. |
 | `"references": {option: "family.section"}` | The option names an instance of that section. |
-| `"requires": ["family.section"]` | That section must be written first and removed last. |
+| `"requires": [{"section", "kind", "evidence"}]` | That section (optionally only its instances addressing one object kind) must be written first and removed last. The evidence is data: it is shown on the edge of the dependency graph. |
 
 A family without instance lists has `"sections": {}`: one device-wide settings block.
 

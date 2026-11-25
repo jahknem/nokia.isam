@@ -98,12 +98,13 @@ def export_catalog():
                                      "prefix": entry["prefix"], "object": entry["object"],
                                      "default": deepcopy(entry["default"])})
             # Sections that must be written before this one (and removed after it).
-            for target in spec.get("requires", ()):
-                target_resource, target_section = target.split(".", 1)
+            for need in spec.get("requires", ()):
+                target_resource, target_section = need["section"].split(".", 1)
                 if target_section not in FAMILIES[target_resource]["sections"]:
-                    raise ValueError("%s.%s requires the unknown section %s" % (resource, section, target))
+                    raise ValueError("%s.%s requires the unknown section %s" % (resource, section, need["section"]))
                 requires.append({"resource": resource, "section": section,
-                                 "target_resource": target_resource, "target_section": target_section})
+                                 "target_resource": target_resource, "target_section": target_section,
+                                 "target_kind": need.get("kind"), "evidence": need["evidence"]})
     return {"schema_version": SCHEMA_VERSION, "bindings": deepcopy(bindings), "objects": objects,
             "relationships_exhaustive": False,
             # TARGETED_GATHER covers access-side resource families, not every
