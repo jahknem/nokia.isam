@@ -224,7 +224,7 @@ def _edges(parts, catalog):
     for need in catalog["requires"]:
         for after in by_section.get((need["resource"], need["section"]), ()):
             for before in by_section.get((need["target_resource"], need["target_section"]), ()):
-                if need["target_kind"] in (None, before[2]):
+                if need["target_kind"] in (None, before[2]) and need.get("source_kind") in (None, after[2]):
                     edge(before, after, "requires", evidence=need["evidence"])
     return edges
 

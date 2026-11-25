@@ -58,6 +58,57 @@ Each attempt on a fully built ONT (admin-up, slot, bridge port with VLAN 99):
 | `equipment ont slot <slot> admin-state down`, then `no slot` | accepted; removes the UNI's ethernet ont, `uni:` interface and QoS entries |
 | `equipment ont interface <ont> admin-state down`, then `no interface` | accepted; removes slot, UNI, bridge port, VLAN ports and every device-created entry |
 
+## QoS
+
+Two more runs with the scratch ONT, scratch profiles `NOCTEST_*` (removed again)
+and PON `1/1/6/16` on the board-less card 6 (every change reset; read back equal).
+
+**Profiles.** A reference to an absent profile is refused (invalid token): ONT
+scheduler-node, UNI upstream-queue bandwidth profile, scheduler-node to shaper. A
+profile in use cannot be deleted (QOS MGT error 1 for shaper and scheduler-node,
+error 95 for bandwidth); it can be modified in use (all mandatory parameters
+again, otherwise "command is not complete"). A scheduler-node whose shaper has the
+default type `singletokenbucket` is refused on an ONT (error 71, shaper type not
+compatible); the same for a PON's `dsfld-shaper-prof`.
+
+**Settings that must come first, or are frozen later:**
+
+| Setting | Constraint | Error |
+| --- | --- | --- |
+| ONT `ds-queue-sharing` | only before the ONT slot exists; cannot be enabled or disabled after | 58, 59 |
+| ONT `us-queue-sharing` | not while an upstream queue of the ONT is in use | 81 |
+| ONT `us-vlanport-queue` | not once VLANs exist on the ONT; excludes `us-queue-sharing` | 119, 143 |
+| VLAN-port upstream queues | only with the ONT's `us-vlanport-queue` | 117 |
+| UNI `gem-sharing` | not once VLAN ports are attached | 125 |
+
+With `ds-queue-sharing` the downstream queues move from the UNI to the ONT.
+
+**Attributes per interface kind** (accepted: yes, refused: the error; conditional in brackets):
+
+| Attribute | ONT | UNI | VLAN port | PON |
+| --- | --- | --- | --- | --- |
+| scheduler-node | yes | yes | 120 | 49 |
+| cac-profile | 42 | yes | 120 | yes |
+| ds-/us-queue-sharing | (yes, see above) | 46 | 120 | 46 (ds) |
+| us-vlanport-queue | (yes, see above) | 116 | 120 | |
+| ds-num-queue | 45 | 45 | 120 | yes |
+| us-num-queue | yes | 48 | 120 | 48 |
+| gem-sharing | 126 | (yes, before VLANs) | 120 | 126 |
+| mc-/bc-scheduler-node | 174/175 | 174/175 | 120 | (204 unless service-hierarchy mode) |
+| queue-stats-on | (70 without downstream queues) | yes | 120 | (220 unless service-flat mode) |
+| autoschedule | 96 | 96 | 120 | |
+
+A VLAN port's QoS entry takes no top-level attribute at all; it only carries
+upstream queues, and only when the ONT has `us-vlanport-queue`. `not-applicable`
+is accepted where the device shows it (ONT `ds-num-queue`) but refused elsewhere
+(UNI `gem-sharing`, error 17); the module never sends it.
+
+## NTP
+
+The `ntp ont` entry comes and goes with the ONT; its own create and delete forms
+do nothing. Its settings work on an existing ONT: `client-state on` is stored
+(the values are `on`/`off`; `enable` is an invalid token).
+
 ## Read-only findings
 
 * A QoS interface index is "the physical port or la-group of a user-port" (device
@@ -73,7 +124,8 @@ Each attempt on a fully built ONT (admin-up, slot, bridge port with VLAN 99):
 
 ## Where this is recorded
 
-`relations/<family>.py` (`created_with`, `requires` with evidence), the removal
+`relations/<family>.py` (`created_with`, `requires` with evidence, the QoS
+`refuses` table the module enforces before writing), the removal
 facts of ONT, ONT slot and bridge port in `topology/objects.py`, and the bare QoS
 address rule in `topology/identity.py`. The dependency graph and the write order
 follow from them (`docs/resource-topology.md`).

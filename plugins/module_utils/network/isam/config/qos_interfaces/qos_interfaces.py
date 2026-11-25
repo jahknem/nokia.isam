@@ -9,9 +9,28 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.qos_interfaces import Qos_interfacesTemplate
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.relations.qos_interfaces import RELATIONS
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.identity import UnknownIdentity, decode
 
-
+# Attributes each interface kind never accepts (relations/qos_interfaces.py, live-verified).
+REFUSED = RELATIONS["sections"]["config"]["refuses"]
 UNSET_VALUES = ("none", "not-applicable")
+
+
+def refused_settings(name, want, have):
+    """[(field, reason)] for settings of want the device refuses on this kind of interface.
+
+    Only settings that would be written count: unset values (None, False, none,
+    not-applicable) and values equal to have are never sent. A bare port address
+    (line, Ethernet port or LAG) has no recorded refusals.
+    """
+    try:
+        kind = decode("qos_interface", name)[0]
+    except UnknownIdentity:
+        return []
+    refused = REFUSED.get(kind, {})
+    return [(field, refused[field]) for field in sorted(refused)
+            if want.get(field) not in (None, False) + UNSET_VALUES and want.get(field) != have.get(field)]
 
 
 def _without_unset_values(entry):
@@ -130,6 +149,10 @@ class Qos_interfaces(IsamResourceModule):
                         want.pop(key)
                 elif value == "none" and have.get(key) is None:
                     want.pop(key)
+            refused = refused_settings(want.get("name", have.get("name")), want, have)
+            if refused:
+                self._module.fail_json(msg="qos interface %s: the device refuses %s" % (
+                    want.get("name"), "; ".join("%s (%s)" % item for item in refused)))
             self.compare(parsers=self.top_parsers, want=want, have=have)
         for list_name, parsers in iteritems(self.list_parsers):
             self._compare_list(list_name, parsers, want, have)

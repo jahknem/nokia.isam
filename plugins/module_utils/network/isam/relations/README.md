@@ -43,7 +43,8 @@ Relations to other things:
 | `"creates": True` | The command creates the object. Every other family addressing that kind configures an existing object and is written after it. At most one section per kind. |
 | `"created_with": [{"prefix", "object", "default"}]` | The device creates the entry itself with the named object (and removes it with it). An entry applies to the instances addressing that object; `prefix` is their address prefix where they have one. Only an entry equal to `default` may be left out of a change set; any other was customized. `"default": None`: the default is not recorded (e.g. card-specific), so no entry counts as default. |
 | `"references": {option: "family.section"}` | The option names an instance of that section. |
-| `"requires": [{"section", "kind", "evidence"}]` | That section (optionally only its instances addressing one object kind) must be written first and removed last. The evidence is data: it is shown on the edge of the dependency graph. |
+| `"requires": [{"section", "kind", "for", "evidence"}]` | That section must be written first and removed last: optionally only its instances addressing object kind `kind`, and only for this section's instances addressing kind `for`. The evidence is data: it is shown on the edge of the dependency graph. |
+| `"refuses": {kind: {option: reason}}` | Options the device never accepts on instances addressing that kind of object (conditional refusals are not listed). The module refuses them before writing, so check mode reports them. |
 
 A family without instance lists has `"sections": {}`: one device-wide settings block.
 

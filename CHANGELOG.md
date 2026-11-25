@@ -95,6 +95,14 @@ return value on targeted reads.
   Removing an ONT, ONT slot or bridge port removes everything below it (ONT and
   slot need admin-state down); recorded as `removal` on the objects. A bare QoS
   address on a DSL card is the line, not its bonding group.
+- QoS, live-verified the same day: profiles must exist before they are named and
+  cannot be deleted in use; ONT queue sharing, VLAN-port queues and UNI GEM
+  sharing are fixed once the slot, an upstream queue or a VLAN exists (recorded
+  as `requires` with the device errors). `isam_qos_interfaces` now refuses,
+  before writing, attributes an interface kind never accepts (e.g. a CAC profile
+  on an ONT, any attribute on a VLAN port), so check mode reports what the
+  device would refuse. PON and DSL-line QoS entries are recorded as created by
+  the device.
 - `isam_write_steps` is now a topological order of that graph. Its result is
   unchanged, except that a bare port address is placed when the same
   configuration identifies the object at that address.

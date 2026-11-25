@@ -26,7 +26,8 @@ RELATIONS = {
                 {"section": "qos_interfaces.config", "kind": "uni",
                  "evidence": "live writes DS-LIN-TEST-01 2026-11-19 and 2026-11-25: vlan-id before the UNI's "
                              "upstream-queue bandwidth profile is refused with VLAN MGT error 277; removing the "
-                             "profile while the VLAN uses the queue is refused with QOS MGT error 135"},
+                             "profile while the VLAN uses the queue is refused with QOS MGT error 135; "
+                             "gem-sharing of the UNI cannot change once VLAN ports are attached (error 125)"},
             ],
         },
     },

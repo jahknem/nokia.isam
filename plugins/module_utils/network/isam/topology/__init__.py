@@ -104,7 +104,8 @@ def export_catalog():
                     raise ValueError("%s.%s requires the unknown section %s" % (resource, section, need["section"]))
                 requires.append({"resource": resource, "section": section,
                                  "target_resource": target_resource, "target_section": target_section,
-                                 "target_kind": need.get("kind"), "evidence": need["evidence"]})
+                                 "target_kind": need.get("kind"), "source_kind": need.get("for"),
+                                 "evidence": need["evidence"]})
     return {"schema_version": SCHEMA_VERSION, "bindings": deepcopy(bindings), "objects": objects,
             "relationships_exhaustive": False,
             # TARGETED_GATHER covers access-side resource families, not every

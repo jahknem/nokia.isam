@@ -93,9 +93,14 @@ def test_vlans_are_written_before_any_port_joins_them_and_removed_after():
     assert order(write_steps(families)) == [("vlans", ["device_settings"]), ("bridges", ["bridge_port"])]
     assert order(write_steps(families, "delete")) == [("bridges", ["bridge_port"]), ("vlans", ["device_settings"])]
     catalog = export_catalog()
-    assert [(r["resource"], r["section"], r["target_resource"], r["target_section"], r["target_kind"])
-            for r in catalog["requires"]] == [("bridges", "port", "vlans", "config", None),
-                                              ("bridges", "port", "qos_interfaces", "config", "uni")]
+    assert [(r["resource"], r["section"], r["target_resource"], r["target_section"], r["target_kind"], r["source_kind"])
+            for r in catalog["requires"]] == [
+        ("bridges", "port", "vlans", "config", None, None),
+        ("bridges", "port", "qos_interfaces", "config", "uni", None),
+        ("equipment_onts", "slots", "qos_interfaces", "config", "ont", None),
+        ("qos_interfaces", "config", "qos_interfaces", "config", "ont", "vlan_port"),
+        ("qos_interfaces", "config", "qos_interfaces", "config", "ont", "uni"),
+    ]
     assert all(r["evidence"] for r in catalog["requires"])
     assert catalog["section_models"]["vlans.config"]["model"] == "device_settings"
 

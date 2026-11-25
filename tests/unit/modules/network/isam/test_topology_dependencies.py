@@ -54,9 +54,14 @@ def test_every_edge_has_its_reason():
     assert edges(graph, "references") == {("qos_profiles.config:definition", "qos_interfaces.config:%s" % kind)
                                           for kind in ("ont", "uni", "vlan_port")}
     # Declared requirements carry their evidence (device error 277, live 2026-11-19).
-    requires = [e for e in graph["edges"] if e["reason"] == "requires"]
-    assert [(e["before"], e["after"]) for e in requires] == [("qos_interfaces.config:uni", "bridges.port:bridge_port")]
-    assert "277" in requires[0]["evidence"]
+    requires = {(e["before"], e["after"]): e["evidence"] for e in graph["edges"] if e["reason"] == "requires"}
+    assert set(requires) == {
+        ("qos_interfaces.config:uni", "bridges.port:bridge_port"),        # errors 277, 135, 125
+        ("qos_interfaces.config:ont", "equipment_onts.slots:ont_slot"),   # ds-queue-sharing, errors 58/59
+        ("qos_interfaces.config:ont", "qos_interfaces.config:vlan_port"),  # us-vlanport-queue, errors 117/119
+        ("qos_interfaces.config:ont", "qos_interfaces.config:uni"),        # us-queue-sharing, error 81
+    }
+    assert "277" in requires[("qos_interfaces.config:uni", "bridges.port:bridge_port")]
 
 
 def test_the_write_order_is_a_topological_order_of_the_graph():
@@ -115,3 +120,17 @@ def test_mermaid_and_filter():
     assert "  ont ==> ont_slot" in text and "-. requires .->" in text
     with pytest.raises(AnsibleFilterError):
         FilterModule().filters()["isam_dependency_graph"]({})
+
+
+def test_qos_settings_a_kind_never_accepts_are_refused_before_writing():
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.qos_interfaces.qos_interfaces import (
+        refused_settings)
+    # Live 2026-11-25: CAC profile not on an ONT, scheduler-node not on a VLAN port, upstream queue count only on an ONT.
+    assert [f for f, _ in refused_settings("ont:" + ONT, {"cac_profile": "name:X"}, {})] == ["cac_profile"]
+    assert [f for f, _ in refused_settings("vlan:%s:10" % UNI, {"scheduler_node": "name:N"}, {})] == ["scheduler_node"]
+    assert [f for f, _ in refused_settings(UNI, {"us_num_queue": 8, "cac_profile": "name:X"}, {})] == ["us_num_queue"]
+    # Unset values, values already on the device and unknown kinds are never refused.
+    assert refused_settings("vlan:%s:10" % UNI, {"gem_sharing": "not-applicable", "mc_scheduler_node": "none",
+                                                 "ds_queue_sharing": False}, {}) == []
+    assert refused_settings("ont:" + ONT, {"cac_profile": "name:X"}, {"cac_profile": "name:X"}) == []
+    assert refused_settings("1/1/8/6", {"us_num_queue": 8}, {}) == []

@@ -10,7 +10,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.i
 
 FILES = {path.stem: path for path in Path(relations.__file__).parent.glob("*.py") if path.name != "__init__.py"}
 FAMILY_KEYS = {"sections", "targeted_writes", "read_scope", "source", "settings", "profile_references", "reference_fields"}
-SECTION_KEYS = {"identity", "object", "scope", "creates", "created_with", "references", "requires"}
+SECTION_KEYS = {"identity", "object", "scope", "creates", "created_with", "references", "requires", "refuses"}
 
 
 def test_every_family_file_is_loaded_and_every_facts_family_has_one():
@@ -44,7 +44,10 @@ def test_format_is_closed_and_every_section_is_placed():
                 assert set(entry) == {"prefix", "object", "default"} and entry["object"] in kinds, where
                 assert entry["default"] is None or isinstance(entry["default"], dict), where
             for need in spec.get("requires", ()):
-                assert set(need) <= {"section", "kind", "evidence"} and need["evidence"], where
+                assert set(need) <= {"section", "kind", "for", "evidence"} and need["evidence"], where
+                assert all(need.get(key) in (None,) + tuple(kinds) for key in ("kind", "for")), where
+            for kind, options in spec.get("refuses", {}).items():
+                assert kind in kinds and options and all(options.values()), where
             for target in list(spec.get("references", {}).values()) + [need["section"] for need in spec.get("requires", ())]:
                 resource, target_section = target.split(".", 1)
                 assert target_section in FAMILIES[resource]["sections"], (where, target)
@@ -55,11 +58,14 @@ def test_format_is_closed_and_every_section_is_placed():
 def test_what_the_device_creates_itself_is_addressed_to_the_object_that_brings_it():
     catalog = export_catalog()
     bindings = {(b["resource"], b["section"]): b for b in catalog["bindings"]}
-    samples = {"ont": "1/1/5/1/3", "uni": "1/1/5/1/3/1/1", "vlan_port": "1/1/5/1/3/1/1:10", "lag": "1/1/8/1"}
+    samples = {"ont": "1/1/5/1/3", "uni": "1/1/5/1/3/1/1", "vlan_port": "1/1/5/1/3/1/1:10", "lag": "1/1/8/1",
+               "pon": "1/1/5/1", "xdsl_line": "1/1/3/1"}
     seen = set()
     for entry in catalog["created_with"]:
         decoder = bindings[(entry["resource"], entry["section"])]["decoder"]
-        kind = decode(decoder, (entry["prefix"] or "") + samples[entry["object"]])[0]
+        # A bare port address is resolved from the object known at it, as in the graph of an MSAN.
+        known = {(entry["object"], samples[entry["object"]])}
+        kind = decode(decoder, (entry["prefix"] or "") + samples[entry["object"]], known)[0]
         assert kind == entry["object"], entry
         # Such an entry configures an existing object; the family creating the object is another one.
         assert catalog["creates"].get(kind) != {"resource": entry["resource"], "section": entry["section"]}
@@ -67,5 +73,5 @@ def test_what_the_device_creates_itself_is_addressed_to_the_object_that_brings_i
     # Live write DS-LIN-TEST-01 2026-11-25: with the ONT, with the ONT slot (the UNI), with a VLAN on a
     # bridge port; one LAG per Ethernet port.
     assert seen == {("ntp_onts", None), ("ani_onts", None), ("interfaces", "ont:"), ("qos_interfaces", "ont:"),
-                    ("ethernet_onts", None), ("interfaces", "uni:"), ("qos_interfaces", None),
+                    ("ethernet_onts", None), ("interfaces", "uni:"), ("qos_interfaces", None), ("qos_interfaces", "pon:"),
                     ("interfaces", "vlan-port:"), ("qos_interfaces", "vlan:"), ("link_agg", None)}

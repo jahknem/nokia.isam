@@ -204,11 +204,11 @@ flowchart TD
   subgraph pon["pon"]
     n8["interfaces.config"]
     n12["pon_interfaces.config"]
-    n13["qos_interfaces.config"]
+    n13["qos_interfaces.config (created by the device)"]
   end
   subgraph xdsl_line["xdsl line"]
     n9["interfaces.config"]
-    n14["qos_interfaces.config"]
+    n14["qos_interfaces.config (created by the device)"]
   end
   subgraph ont["ont"]
     n15["equipment_onts.interfaces (creates it)"]
@@ -257,6 +257,9 @@ flowchart TD
   n1 -. references .-> n14
   n0 -. requires .-> n24
   n23 -. requires .-> n24
+  n19 -. requires .-> n20
+  n19 -. requires .-> n26
+  n19 -. requires .-> n23
 ```
 
 ## Write order (`topology/write_order.py`)

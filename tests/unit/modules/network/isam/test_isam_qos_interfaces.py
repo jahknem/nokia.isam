@@ -156,6 +156,17 @@ class TestIsamQosInterfacesModule(TestIsamModule):
             ),
         )
 
+    def test_isam_qos_interfaces_refuses_what_the_kind_never_accepts(self):
+        # Live 2026-11-25: QOS MGT error 42, CAC profile cannot be assigned to an ONT interface.
+        # Refused before anything is sent, so rendered and check mode show it too.
+        set_module_args(
+            dict(config=[dict(name="ont:1/1/5/1/3", cac_profile="name:FD_Default")], state="rendered"),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(failed=True)
+        self.assertIn("cac_profile", result["msg"])
+        self.assertIn("error 42", result["msg"])
+
     def test_isam_qos_interfaces_renders_compact_queue_commands(self):
         set_module_args(
             dict(
