@@ -7,7 +7,8 @@ When ``config`` names instances, ``state: gathered`` reads only those instances.
 Without ``config`` the whole resource is read, as before. Only identity fields matter
 for the selection; absent instances are simply missing from the result.
 
-Pure data without imports, so tools outside Ansible can read it.
+The tables are views of relations/<family>.py, the one place a family declares
+its instance lists and identities (pure data; tools outside Ansible read those files).
 
 resource (facts name) -> {instance list: identity}
   instance list: "config" when config itself is the list, else the key in config
@@ -37,70 +38,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.relations import FAMILIES
+
+# IHUB families are whole-source reads and promise no targeted gathering.
 TARGETED_GATHER = {
-    "xdsl_bonding": {"groups": "group_id", "boards": "board_id"},
-    "igmp": {"packages": "index"},
-    "mcast_control": {"packages": "index"},
-    "multicast": {"igmp.packages": "index", "mcast_control.packages": "index"},
-    "xdsl_inm": {"far_end": "name", "near_end": "name"},
-    "xdsl_onts": {"config": "ont_idx"},
-    "l2uni_onts": {"performance_monitor": "uni_idx", "tc_layer_threshold": "uni_idx"},
-    "uni_onts": {"config": "uni_idx"},
-    "alarm": {"custom_profiles": "name", "entries": "index", "filters": ["fltr_type", "filterid"], "hgutr069_custs": "alarm_id"},
-    "ani_onts": {"config": "ont_idx"},
-    "bridges": {"port": "port"},
-    "channel_pair_pm": {"config": "name"},
-    "efm_oam_interface": {"config": "name"},
-    "epon_interfaces": {"config": "name"},
-    "equipment_onts": {"interfaces": "ont_idx", "slots": "ont_slot_idx", "sw_ctrls": "sw_ctrl_id", "loops": "ont_idx",
-                       "pm_collects": "ont_idx"},
-    "qos_global": {"line_cards": "name"},
-    "trouble_shooting_pon": {"interfaces": "name", "threshold.interfaces": "name"},
-    "ethernet_line": {"config": "if_index"},
-    "ethernet_onts": {"config": "uni_idx"},
-    "interface_alarms": {"config": "name"},
-    "interface_cages": {"config": "id"},
-    "interfaces": {"config": "name"},
-    "isam_arp_relay": {"config": "name"},
-    "isam_cfm": {"domains": "domain_index", "y1731pm": ["domain_index", "association", "mep", "session_id"]},
-    "isam_dhcp_relay": {"config": "name"},
-    "isam_dist_service": {"config": "name"},
-    "isam_equipment": {"appliques": "id", "protection_groups": "id", "shelves": "id", "slots": "id",
-                       "diagnostics_sfp": "id", "protection_elements": "id", "racks": "id",
-                       "external_link_assigns": "id", "external_link_hosts": "id"},
-    "isam_ipv6_antispoofing_slot": {"config": "name"},
-    "isam_traps": {"definitions": "name", "managers": "address", "v6managers": "ipv6address"},
-    "isam_vlan_global": {"priority_regen": "id"},
-    "l2cp_session": {"config": "name"},
-    "l2cp_user_port": {"config": "name"},
-    "link_agg": {"groups": "id", "ports": "id"},
-    "linetest": {"parameters": ["session_id", "test_name"], "sessions": "session_id"},
-    "ngpon2_channel_groups": {"config": "id"},
-    "ntp_onts": {"config": "ont_id"},
-    "pon_interfaces": {"config": "name"},
-    "pppoe_client_interface": {"config": "name"},
-    "pppoe_client_ppp_profile": {"config": "name"},
-    "pppoel2_statistics": {"config": "name"},
-    "qos_interfaces": {"config": "name"},
-    "qos_maps": {"dn_ctrl_pkt": "protocol", "dscp_map_dot1p": "dscp", "tc_map_dot1p": "dot1p", "up_ctrl_pkt": "protocol"},
-    "qos_profiles": {"config": ["profile_type", "name"]},
-    "qos_tca": {"config": ["name", "queue"]},
-    "software_mngt": {"oswp": "id"},
-    "system": {"sntp.servers": "ip_address", "syslog.destinations": "name", "syslog.routes": "destination",
-               "sync_if_timing.ssm": "reference", "sync_if_timing.synce": "reference", "sync_if_timing.ssmout_synce": "port"},
-    "isam_system_security": {"operators": "name", "profiles": "name", "snmp_communities": "name", "snmp_views": "name",
-                             "snmp_managers": "name", "snmp_notify_profiles": "name", "radius_auth_servers": "name",
-                             "radius_policies": "name", "radius_dyn_auth_clients": "name",
-                             "snmp_notify_views": "name", "domains": "name", "slots": "slot", "ssh.sftp_users": "name",
-                             "filetransfer.servers": "server", "peripheral_mgnt.mac_filters": "index", "pae.ports": "port"},
-    "vlans": {"config": "id"},
-    "voice_sip": {"cas_nsm_prof": "name", "lineid_syn_prof": "name", "redundancy": "name", "redundancy_cmd": "name",
-                  "register": "name", "vsp": "name"},
-    "xdsl_boards": {"boards": "board_id", "vp_boards": "vp_board_id"},
-    "xdsl_lines": {"config": "name"},
-    "xdsl_profiles": {"dpbo_profiles": "id", "service_profiles": "id", "spectrum_profiles": "id", "vce_profiles": "id",
-                      "vect_profiles": "id"},
-    "xstp": {"ports": "port"},
+    resource: {name: section["identity"] for name, section in family["sections"].items()}
+    for resource, family in FAMILIES.items()
+    if family["sections"] and family.get("source") != "ihub"
 }
 
 # Read scope per targeted resource: what an explicit request (state gathered,
@@ -114,13 +58,10 @@ TARGETED_GATHER = {
 #                   command serves all requested instances, and each instance is
 #                   reported from the parsed catalog (present / unknown; see
 #                   docs/targeted-gathering.md, "Whole-node reads").
-# Keep in sync with the facts classes that call facts_base.get_whole_node_targeted
+# Declared as "read_scope" in relations/<family>.py; keep in sync with the facts classes that call facts_base.get_whole_node_targeted
 # (tests/unit/modules/network/isam/test_targeted_gathered.py asserts both
 # directions).
-TARGETED_READ_SCOPE = {
-    "interface_alarms": "whole_node",
-    "isam_vlan_global": "whole_node",
-}
+TARGETED_READ_SCOPE = {resource: family["read_scope"] for resource, family in FAMILIES.items() if "read_scope" in family}
 
 
 def read_scope(resource):
@@ -132,7 +73,4 @@ def read_scope(resource):
     return TARGETED_READ_SCOPE.get(resource, "instance")
 
 
-TARGETED_WRITES = (
-    "ani_onts", "bridges", "efm_oam_interface", "equipment_onts", "ethernet_onts", "interfaces",
-    "isam_arp_relay", "isam_dhcp_relay", "ntp_onts", "pon_interfaces", "qos_interfaces",
-)
+TARGETED_WRITES = tuple(sorted(resource for resource, family in FAMILIES.items() if family.get("targeted_writes")))

@@ -5,7 +5,8 @@
 `plugins/module_utils/network/isam/topology/` is the collection-owned semantic
 layer. It supplements existing metadata rather than copying it:
 
-* `targeted.py`: canonical instance lists, identity fields and scoped-read support.
+* `relations/<family>.py`: what each family relates to (see below). The one place
+  for these facts; `targeted.py` and the catalog are views of it.
 * Resource argspecs and templates: values, validation, parsing and CLI rendering.
 * `facts/facts_base.py`: CLI-family ownership in a full configuration snapshot.
 * `config_grammar.py` / `config_tree_metadata.py`: explicit CLI syntax paths.
@@ -19,12 +20,30 @@ observed relationships, fresh child enumeration and known instance reads, but
 cannot yet certify a complete recursive configuration refresh. NOC's existing
 refresh jobs, timestamps and plan-read scheduling are not changed by this work.
 
-## Direct-neighbor catalogs
+## Where the relationships are declared
 
-`catalogs/equipment.py`, `catalogs/access.py` and `catalogs/services.py` declare
-direct neighbors and resource-to-object bindings. `export_catalog()` derives
-reverse parent links; do not maintain transitive ancestors/descendants or a second
-copy of identity fields. Resource identity fields are taken from `TARGETED_GATHER`.
+A family is declared in `argspec/`, `config/`, `facts/` and `rm_templates/`. What
+it relates to is declared next to them, in `relations/<family>.py`
+(format: `relations/README.md`): its instance lists and identities, which device
+object each addresses, whether its command creates that object, what the device
+creates itself along with an object, which profiles its options name and which
+other sections must exist first.
+
+The device objects themselves belong to no family (an ONT is configured by five
+families; `interfaces` addresses six kinds of object). `topology/objects.py` lists
+the kinds and what each directly contains. `export_catalog()` derives everything
+else, including reverse parent links; do not maintain transitive
+ancestors/descendants or a second copy of any of this.
+
+| Edge | Between | Declared as |
+| --- | --- | --- |
+| `contains` | object → object | `objects.py` `children` |
+| `member_of` | port → aggregation group | observed in the graph of an MSAN |
+| `configures` | family section → object | `"object"` |
+| `creates` | family section → object | `"creates": True` |
+| `created_with` | family section → object (the device creates the entry itself) | `"created_with"` |
+| `references` | option → shared definition | `"references"`, `"profile_references"` |
+| `requires` | family section → family section | `"requires"` |
 
 `identity.py` implements explicit identity forms and immediate physical parents.
 In particular:
@@ -132,13 +151,13 @@ order is derived from the catalog, not hand-maintained:
    the configuration referencing them, and within `qos_profiles` a referenced
    profile before its referrer (`profile_references`). Reference cycles are
    refused.
-3. **Defining family.** Of the families configuring one kind, the one whose
-   command creates the object comes first (`DEFINES`: `equipment_onts.interfaces`
+3. **Creating family.** Of the families configuring one kind, the one whose
+   command creates the object comes first (`"creates"`: `equipment_onts.interfaces`
    creates the ONT, `equipment_onts.slots` the ONT slot, `bridges.port` the
    bridge port).
-4. **Device settings.** Only device-wide families with recorded evidence
-   (`DEVICE_SETTINGS_FIRST`: `vlans`, documented, not live-applied) are placed
-   before all object families. Any other device-wide family is refused.
+4. **Required sections.** A device-wide section another section declares it
+   needs (`"requires"`: `bridges.port` requires `vlans.config`) is placed before
+   all object families. Any other device-wide family is refused.
 
 Removal is the exact reverse of creation. Consecutive units of one family form
 one module call. Anything the catalog cannot place — an unknown family, an
@@ -150,8 +169,11 @@ Live evidence: the 2026-11-19 apply on DS-LIN-TEST-01 failed attaching a VLAN
 before the UNI's upstream-queue bandwidth profile existed (error 277). Rule 1
 covers this: the UNI is above its bridge port. Ordering of commands *within* one
 module call (admin-state alone, shutdown before removal) stays in the modules
-(`docs/live-apply-regressions-2026-11-19.md`). Not yet live-verified: the
-position of ANI/NTP ONT settings directly after the ONT, and `vlans` first.
+(`docs/live-apply-regressions-2026-11-19.md`). A live read of DS-LIN-TEST-01 on
+2026-11-25 supports `vlans` first: all 359 port VLANs resolve to a VLAN of the
+`vlans` family (the forwarding VLAN `l2fwder_vlan` when the entry names one,
+otherwise the id). Not yet verified by a live write: `vlans` first, and the
+position of ANI/NTP ONT settings directly after the ONT.
 
 ## Fresh child discovery (read-only, experimental)
 
@@ -378,12 +400,12 @@ on the lab; neither is assumed here.
 ## Configuration scope classification
 
 Not all configuration belongs to a physical descendant subtree.
-`catalogs/scopes.py` classifies **every** `TARGETED_GATHER` section into one of
+`topology/scopes.py` (a view of the `"scope"` each section declares) classifies **every** `TARGETED_GATHER` section into one of
 three scopes, exported as `section_scopes`:
 
 | Scope | Meaning | Refresh behavior |
 | --- | --- | --- |
-| `object_owned` | Instance config owned by a physical object (bound via `BINDINGS`) | Read per descendant in a recursive refresh |
+| `object_owned` | Instance config owned by a physical object (its section names an `"object"`) | Read per descendant in a recursive refresh |
 | `device_global` | Device-wide settings, no physical owner (system, security, software, alarms, traps, global QoS maps, VLANs, ...) | Read once for a full-MSAN refresh; a scoped subtree does not claim it |
 | `shared_profile` | Named definitions referenced by object config (xDSL/QoS/voice profiles) | Read once, deduplicated; never pull in other consumers |
 

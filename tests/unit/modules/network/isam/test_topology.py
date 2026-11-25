@@ -4,7 +4,7 @@ import json
 import pytest
 
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology import export_catalog
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.catalogs import equipment
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.objects import OBJECTS
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.graph import build_graph, node_key, plan_known_reads
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.identity import UnknownIdentity, decode
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.targeted import TARGETED_GATHER
@@ -33,7 +33,7 @@ def edge(graph, source, relation, target):
 
 def test_catalog_reuses_targeted_identities_and_only_stores_direct_neighbors():
     catalog = export_catalog()
-    assert "parents" not in equipment.DISCOVERY["ont"]
+    assert "parents" not in OBJECTS["ont"]
     for binding in catalog["bindings"]:
         if binding["resource"] in TARGETED_GATHER:
             assert binding["identity"] == TARGETED_GATHER[binding["resource"]][binding["section"]]
@@ -143,7 +143,7 @@ def test_unmapped_section_mechanism_still_reports_scope(monkeypatch):
     # Every current section is bound; the fail-closed mechanism must still work
     # for any future object-owned section awaiting a decoder.
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam import targeted
-    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.catalogs import scopes
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology import scopes
     monkeypatch.setitem(targeted.TARGETED_GATHER["equipment_onts"], "future_list", "id")
     monkeypatch.setitem(scopes.OBJECT_OWNED_PENDING, "equipment_onts", ("future_list",))
     data = sample()
@@ -249,7 +249,7 @@ def test_bound_sections_are_object_owned_and_global_sections_are_not_objects():
 
 
 def test_scope_conflict_is_a_catalog_error():
-    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.catalogs import scopes
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology import scopes
     bindings = [{"resource": "system", "section": "sntp.servers"}]
     with pytest.raises(ValueError):
         scopes.section_scopes(bindings)

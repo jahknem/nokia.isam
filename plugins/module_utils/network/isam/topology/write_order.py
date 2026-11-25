@@ -4,7 +4,8 @@ The ISAM accepts configuration only once what it attaches to exists (an ONT
 before its slot, a UNI before its bridge port, a bridge port before its VLAN
 ports, a profile before the interface using it) and removes it only in the
 reverse order. One module call cannot reorder another, so callers need this
-order. It is derived, not hand-maintained, from what the catalog already knows:
+order. It is derived from what the families declare in relations/<family>.py
+and from the containment of the objects (objects.py); there is no order table:
 
 1. ``contains``: an instance is written after every object kind above it
    (catalog objects and their parents; the kind is decoded per instance, so a
@@ -12,12 +13,12 @@ order. It is derived, not hand-maintained, from what the catalog already knows:
 2. ``references``: shared definitions (QoS profiles, xDSL profiles, ...) come
    before the configuration referencing them, and inside a definition family
    a referenced definition comes before its referrer.
-3. ``DEFINES``: of the families configuring one object kind, the one whose
+3. ``creates``: of the families configuring one object kind, the one whose
    command creates the object comes first (``equipment ont interface``
    creates the ONT; its ANI, NTP and QoS settings follow) and goes last.
-4. ``DEVICE_SETTINGS_FIRST``: device-wide families that other configuration
-   needs, each listed with its evidence. Any other device-wide family is
-   refused: its position is not known.
+4. ``requires``: a device-wide section another section declares it needs
+   (a bridge port requires the VLANs) comes before every object family. Any
+   other device-wide family is refused: its position is not known.
 
 Removal is the exact reverse of creation. A family, section, instance or
 setting the catalog cannot place is refused, never guessed; the order is only
@@ -35,25 +36,6 @@ from . import export_catalog
 from .identity import UnknownIdentity, decode
 
 PHASES = ("create", "delete")
-
-# Device-wide families other configuration depends on. Written before every
-# object family on create and removed after them.
-DEVICE_SETTINGS_FIRST = {
-    "vlans": {"reason": "a bridge port or VLAN port joins only an existing VLAN",
-              "evidence": "documented: ISAM bridge/VLAN commands; not part of the 2026-11-19 live apply"},
-}
-
-
-# Object kind -> the (resource, section) whose instance creates the object.
-# Other families only configure an existing object. A kind without an entry
-# (UNI, VLAN port: created with their ONT slot / bridge VLAN) has no definer
-# among its own families.
-DEFINES = {
-    "ont": ("equipment_onts", "interfaces"),
-    "ont_slot": ("equipment_onts", "slots"),
-    "bridge_port": ("bridges", "port"),
-}
-
 
 class UnorderedWrite(ValueError):
     """The catalog cannot place this configuration in a write order."""
@@ -135,8 +117,9 @@ def write_steps(families, phase="create", catalog=None):
     depths = _depths(catalog["objects"])
     bindings = {(b["resource"], b["section"]): b for b in catalog["bindings"]}
     models = catalog["section_models"]
+    required = {(r["target_resource"], r["target_section"]) for r in catalog["requires"]}
 
-    units = {}  # (rank, defines, resource, section, kind) -> instances
+    units = {}  # (rank, creator first, resource, section, kind) -> instances
     for resource, config in families.items():
         if resource not in TARGETED_GATHER:
             raise UnorderedWrite("No write order known for family %s" % resource)
@@ -166,7 +149,7 @@ def write_steps(families, phase="create", catalog=None):
                 units[(1, 0, resource, section, "definition")] = ordered
                 continue
             if model.get("model") == "device_settings":
-                if resource not in DEVICE_SETTINGS_FIRST:
+                if (resource, section) not in required:
                     raise UnorderedWrite("No write order evidence for device settings %s" % key)
                 units[(0, 0, resource, section, "device_settings")] = list(instances)
                 continue
@@ -184,8 +167,8 @@ def write_steps(families, phase="create", catalog=None):
                     raise UnorderedWrite("%s %s: %s" % (key, identity, exc)) from None
                 if kind not in depths:
                     raise UnorderedWrite("Object kind %s has no place in the containment tree" % kind)
-                defines = DEFINES.get(kind) == (resource, section)
-                units.setdefault((2 + depths[kind], 0 if defines else 1, resource, section, kind), []).append(instance)
+                creates = catalog["creates"].get(kind) == {"resource": resource, "section": section}
+                units.setdefault((2 + depths[kind], 0 if creates else 1, resource, section, kind), []).append(instance)
 
     ordered = sorted(units)
     if phase == "delete":

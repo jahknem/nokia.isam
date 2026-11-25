@@ -65,6 +65,20 @@ return value on targeted reads.
   cannot place (`UnorderedWrite`) and reports `exhaustive: false`. No device
   access; modules and their write states are unchanged.
 
+### Relations (`relations/<family>.py`)
+
+- What a family relates to is now declared in one file per family, next to its
+  argspec, config, facts and templates: instance lists and identities, the
+  object each addresses, whether its command creates the object, what the
+  device creates itself along with an object (formerly `autocreated.py`),
+  profile references and required sections. `targeted.py`
+  (`TARGETED_GATHER`, `TARGETED_READ_SCOPE`, `TARGETED_WRITES`), the topology
+  catalog, the graph and the write order are derived from these files and
+  unchanged in content. `topology/catalogs/` and `autocreated.py` are removed;
+  the device objects are in `topology/objects.py`.
+- `export_catalog()` additionally returns `creates`, `created_with` and
+  `requires`.
+
 ### Regression coverage
 
 - Fixture-driven integration tests drive the real modules through

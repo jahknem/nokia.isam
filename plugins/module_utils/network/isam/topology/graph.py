@@ -159,7 +159,7 @@ def build_graph(resources, msan):
         if owner is not None:
             edges.add((key, "configures", obj(owner[0], owner[1], observed=True)))
             if binding["resource"] in ("ihub_lags", "ihub_services"):
-                from .catalogs.ihub import sap_endpoint
+                from .ihub import sap_endpoint
                 if binding["resource"] == "ihub_lags":
                     for member in row.get("ports") or []:
                         try:

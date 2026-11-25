@@ -29,12 +29,18 @@ REF = "extends_documentation_fragment: nokia.isam.read_outcomes"
 
 
 def _registry():
-    """The targeted resources from the pure-data registry (no Ansible needed)."""
-    spec = importlib.util.spec_from_file_location(
-        "isam_targeted", ROOT / "plugins" / "module_utils" / "network" / "isam" / "targeted.py")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module.TARGETED_GATHER
+    """The targeted resources from the pure-data family files (no Ansible needed)."""
+    registry = {}
+    for path in sorted((ROOT / "plugins" / "module_utils" / "network" / "isam" / "relations").glob("*.py")):
+        if path.name == "__init__.py":
+            continue
+        spec = importlib.util.spec_from_file_location("isam_relations_" + path.stem, path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        family = module.RELATIONS
+        if family["sections"] and family.get("source") != "ihub":
+            registry[path.stem] = {name: section["identity"] for name, section in family["sections"].items()}
+    return registry
 
 
 def _module_name(resource):

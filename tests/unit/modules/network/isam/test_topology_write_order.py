@@ -5,8 +5,7 @@ from ansible.errors import AnsibleFilterError
 from ansible_collections.nokia.isam.plugins.filter.topology import FilterModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.targeted import TARGETED_GATHER
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology import export_catalog
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.write_order import (
-    DEFINES, DEVICE_SETTINGS_FIRST, UnorderedWrite, write_steps)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.write_order import UnorderedWrite, write_steps
 
 ONT = "1/1/6/7/1"
 UNI = ONT + "/1/1"
@@ -71,9 +70,12 @@ def test_the_family_creating_an_object_comes_first_and_goes_last():
     ont_steps = [step for step in create if step[1] == ["ont"]]
     assert ont_steps[0] == ("equipment_onts", ["ont"])
     assert [step for step in delete if step[1] == ["ont"]][-1] == ("equipment_onts", ["ont"])
-    for kind, (resource, section) in DEFINES.items():
-        assert section in TARGETED_GATHER[resource]
-        assert any(b["resource"] == resource and b["section"] == section for b in export_catalog()["bindings"]), kind
+    creates = export_catalog()["creates"]
+    assert creates["ont"] == {"resource": "equipment_onts", "section": "interfaces"}
+    assert creates["ont_slot"] == {"resource": "equipment_onts", "section": "slots"}
+    assert creates["bridge_port"] == {"resource": "bridges", "section": "port"}
+    # Created with their ONT slot / bridge VLAN: no family creates them.
+    assert "uni" not in creates and "vlan_port" not in creates
 
 
 def test_definitions_come_before_their_referrers_and_cycles_are_refused():
@@ -90,8 +92,10 @@ def test_vlans_are_written_before_any_port_joins_them_and_removed_after():
     families = {"bridges": {"port": [{"port": UNI, "vlan_id": [{"id": "10"}]}]}, "vlans": [{"id": "10", "name": "HSI"}]}
     assert order(write_steps(families)) == [("vlans", ["device_settings"]), ("bridges", ["bridge_port"])]
     assert order(write_steps(families, "delete")) == [("bridges", ["bridge_port"]), ("vlans", ["device_settings"])]
-    for resource in DEVICE_SETTINGS_FIRST:
-        assert export_catalog()["section_models"]["%s.config" % resource]["model"] == "device_settings"
+    catalog = export_catalog()
+    assert catalog["requires"] == [{"resource": "bridges", "section": "port",
+                                    "target_resource": "vlans", "target_section": "config"}]
+    assert catalog["section_models"]["vlans.config"]["model"] == "device_settings"
 
 
 def test_consecutive_units_of_one_family_are_one_module_call():
