@@ -132,6 +132,13 @@ planned refresh against a device remains experimental and uncertified.
 time; whole-source reads require explicit `allow_broad_read: true`, and an
 unsupported or failed enumeration is never reported as an empty child list.
 
+### Several reads in one call
+
+`isam_read` runs a list of reads on one MSAN (whole configuration families,
+operational subsets, or named instances through targeted gathering) and returns
+one isolated, redacted result per read with found, confirmed-absent and
+unverified instances. See [targeted gathering](docs/targeted-gathering.md#several-reads-in-one-call-isam_read).
+
 Additional resource modules cover system security, QoS global/TCA settings,
 CWMP, error logging, NAT, PON global settings, PPPoX global sessions, PON
 troubleshooting, xDSL INM/ONT/system settings and L2UNI/UNI ONTs. Consult

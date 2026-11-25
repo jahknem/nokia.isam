@@ -93,6 +93,34 @@ Whole-family reads, write states (`merged`/`replaced`/`overridden`/`deleted`),
 `parsed`, `rendered` and `isam_facts` carry none, and the returned
 configuration text is byte-for-byte the legacy read for all of them.
 
+## Several reads in one call: `isam_read`
+
+`isam_read` runs a list of reads on one MSAN -- whole configuration families,
+whole operational subsets, or named instances of one instance list -- and returns
+one result per read, in request order. A targeted read is exactly the family
+module's targeted `gathered` read (the same commands and the same data, checked
+against every case of the targeted test suite). Each read is isolated: a failing
+or unsupported read becomes `status: error` and the next read runs.
+
+```yaml
+- name: The ONT status, all PON interfaces and two ONTs
+  nokia.isam.isam_read:
+    reads:
+      - {kind: operational, resource: ont_status}
+      - {resource: pon_interfaces}
+      - {resource: equipment_onts, section: interfaces, ids: [1/1/8/5/1, 1/1/8/5/2]}
+```
+
+`section` is the instance list of the table below (`config` when the family's
+config is itself the list); `ids` are its identity values, a mapping per id for a
+composite identity. From `read_outcomes`, each targeted result reports
+`returned_ids` (in the data), `confirmed_absent_ids` (existence
+`confirmed_absent`) and `unverified_ids` (everything else: a rejected selector,
+a whole-node catalog that does not list it, a failed read). Credentials are
+removed from the data by the family argspec's `no_log` fields (by path, so an
+SNMP community `name` is removed too) and a list of common credential names;
+warnings come back as categories, never as device text.
+
 ## Supported families
 
 53 resource families support targeted gathering: 51 with one scoped read per
