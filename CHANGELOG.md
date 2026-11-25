@@ -103,6 +103,10 @@ return value on targeted reads.
   on an ONT, any attribute on a VLAN port), so check mode reports what the
   device would refuse. PON and DSL-line QoS entries are recorded as created by
   the device.
+- A bare QoS address on an Ethernet card is the LAG the device keeps there, not
+  the Ethernet port (live write: with the port moved into another LAG, QoS on
+  its address is refused with QOS MGT error 216). Every QoS entry of the lab
+  device is now placed in the graph and the write order.
 - `isam_write_steps` is now a topological order of that graph. Its result is
   unchanged, except that a bare port address is placed when the same
   configuration identifies the object at that address.

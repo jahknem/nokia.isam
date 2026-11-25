@@ -44,8 +44,9 @@ def candidate_owners(decoder, value, known_ports=()):
     if decoder == "qos_tca" and isinstance(value, (tuple, list)) and len(value) == 2:
         return candidate_owners("qos_interface", value[0], known_ports)
     if decoder in ("user_port", "qos_interface") and isinstance(value, str) and numeric(value, 4):
-        return sorted((kind, ident) for kind, ident in known_ports
-                      if ident == value and kind in _bare_port_kinds(decoder))
+        candidates = sorted((kind, ident) for kind, ident in known_ports
+                            if ident == value and kind in _bare_port_kinds(decoder))
+        return _qos_owner(candidates) if decoder == "qos_interface" else candidates
     return []
 
 
@@ -55,11 +56,26 @@ def _bare_port_kinds(decoder):
     A QoS interface index is "the physical port or la-group of a user-port" (device help),
     and the device accepts only the bare form for QoS (xdsl-line:, bonding:, la-group: are
     invalid tokens; DS-LIN-TEST-01, 2026-11-25). A bare QoS address is therefore never a
-    bonding group. Other user-port families keep every candidate.
+    bonding group, and where a LAG exists it is the LAG (see _qos_owner). Other user-port
+    families keep every candidate.
     """
     if decoder == "qos_interface":
         return ("xdsl_line", "ethernet_port", "lag")
     return ("xdsl_line", "ethernet_port", "bonding_group", "lag")
+
+
+def _qos_owner(candidates):
+    """The owner of a bare QoS index among the objects known at that address.
+
+    Where a LAG exists at the address, the QoS belongs to the LAG, not to the Ethernet
+    port: live write DS-LIN-TEST-01 2026-11-25, port 1/1/8/6 moved into LAG 1/1/8/5 and
+    back. While it was a member, LAG 1/1/8/5's QoS bandwidth doubled (2 Gbit/s), the entry
+    1/1/8/6 dropped to 0 and a QoS write on 1/1/8/6 was refused with "QOS MGT error 216:
+    QoS cannot be configured on the lag without physical port". The device keeps a LAG
+    for every Ethernet port, so on an Ethernet card the bare QoS index is the LAG.
+    """
+    lags = [candidate for candidate in candidates if candidate[0] == "lag"]
+    return lags if lags else candidates
 
 
 def bridge_owner(value, known_ports=()):
@@ -215,6 +231,8 @@ def decode(decoder, value, known_ports=()):
                 # ambiguous; never prefer one object kind over another.
                 candidates = [(kind, ident) for kind, ident in known_ports
                               if ident == value and kind in _bare_port_kinds(decoder)]
+                if decoder == "qos_interface":
+                    candidates = _qos_owner(candidates)
                 if len(candidates) == 1:
                     return candidates[0]
     raise UnknownIdentity("Unsupported or ambiguous %s identity" % decoder)

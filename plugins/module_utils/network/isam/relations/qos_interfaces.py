@@ -14,7 +14,9 @@ RELATIONS = {
         "config": {
             # The index is the physical port or la-group of a user port (device help); the
             # device accepts only the bare form (xdsl-line:, bonding:, la-group: are invalid
-            # tokens, read 2026-11-25), so a bare DSL address is the line, never its bonding group.
+            # tokens, read 2026-11-25). A bare DSL address is the line, never its bonding group;
+            # a bare Ethernet-card address is the LAG the device keeps there (live write
+            # 2026-11-25, QOS MGT error 216 once the port's LAG has no physical port).
             "identity": "name",
             "object": "qos_interface",
             # The device creates these entries itself; an entry equal to its default was not
@@ -45,6 +47,7 @@ RELATIONS = {
                 },
                 {"prefix": "pon:", "object": "pon", "default": None},
                 {"prefix": None, "object": "xdsl_line", "default": None},
+                {"prefix": None, "object": "lag", "default": None},
             ],
             # Settings that can only be changed while something else does not exist yet, or
             # that need another setting first (live write DS-LIN-TEST-01 2026-11-25, docs/live-validation-2026-11-25.md).

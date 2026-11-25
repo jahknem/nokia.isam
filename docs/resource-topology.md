@@ -169,9 +169,10 @@ The graph of DS-LIN-TEST-01, from the 14 families read on 2026-11-24/25 (thick
 arrows: containment between objects, thin: the creating part first, dotted:
 references and requirements). The creating, device-created and required edges
 were verified by live writes on 2026-11-25 (`docs/live-validation-2026-11-25.md`).
-39 instances are unplaced: 36 QoS entries on bare Ethernet-card addresses (the
-port and the LAG the device keeps at the same index) and three device-wide
-sections without order evidence.
+Three sections are unplaced: device-wide settings without order evidence
+(`equipment_onts.sw_ctrls`, `isam_equipment.protection_groups`, the `igmp`
+settings). Every QoS entry is placed: a bare QoS address is the DSL line on a DSL
+card and the LAG on an Ethernet card.
 
 ```mermaid
 flowchart TD
@@ -200,42 +201,43 @@ flowchart TD
   subgraph lag["lag"]
     n7["interfaces.config"]
     n10["link_agg.groups (created by the device)"]
+    n13["qos_interfaces.config (created by the device)"]
   end
   subgraph pon["pon"]
     n8["interfaces.config"]
     n12["pon_interfaces.config"]
-    n13["qos_interfaces.config (created by the device)"]
+    n14["qos_interfaces.config (created by the device)"]
   end
   subgraph xdsl_line["xdsl line"]
     n9["interfaces.config"]
-    n14["qos_interfaces.config (created by the device)"]
+    n15["qos_interfaces.config (created by the device)"]
   end
   subgraph ont["ont"]
-    n15["equipment_onts.interfaces (creates it)"]
-    n16["ani_onts.config (created by the device)"]
-    n17["interfaces.config (created by the device)"]
-    n18["ntp_onts.config (created by the device)"]
-    n19["qos_interfaces.config (created by the device)"]
+    n16["equipment_onts.interfaces (creates it)"]
+    n17["ani_onts.config (created by the device)"]
+    n18["interfaces.config (created by the device)"]
+    n19["ntp_onts.config (created by the device)"]
+    n20["qos_interfaces.config (created by the device)"]
   end
   subgraph ont_slot["ont slot"]
-    n20["equipment_onts.slots (creates it)"]
+    n21["equipment_onts.slots (creates it)"]
   end
   subgraph uni["uni"]
-    n21["ethernet_onts.config (created by the device)"]
-    n22["interfaces.config (created by the device)"]
-    n23["qos_interfaces.config (created by the device)"]
+    n22["ethernet_onts.config (created by the device)"]
+    n23["interfaces.config (created by the device)"]
+    n24["qos_interfaces.config (created by the device)"]
   end
   subgraph bridge_port["bridge port"]
-    n24["bridges.port (creates it)"]
+    n25["bridges.port (creates it)"]
   end
   subgraph vlan_port["vlan port"]
-    n25["interfaces.config (created by the device)"]
-    n26["qos_interfaces.config (created by the device)"]
+    n26["interfaces.config (created by the device)"]
+    n27["qos_interfaces.config (created by the device)"]
   end
-  n15 --> n16
-  n15 --> n17
-  n15 --> n18
-  n15 --> n19
+  n16 --> n17
+  n16 --> n18
+  n16 --> n19
+  n16 --> n20
   pon ==> ont
   ethernet_port ==> bridge_port
   lag ==> bridge_port
@@ -250,16 +252,17 @@ flowchart TD
   bridge_port ==> vlan_port
   card ==> xdsl_line
   shelf ==> card
-  n1 -. references .-> n19
   n1 -. references .-> n13
-  n1 -. references .-> n23
-  n1 -. references .-> n26
+  n1 -. references .-> n20
   n1 -. references .-> n14
-  n0 -. requires .-> n24
-  n23 -. requires .-> n24
-  n19 -. requires .-> n20
-  n19 -. requires .-> n26
-  n19 -. requires .-> n23
+  n1 -. references .-> n24
+  n1 -. references .-> n27
+  n1 -. references .-> n15
+  n0 -. requires .-> n25
+  n24 -. requires .-> n25
+  n20 -. requires .-> n21
+  n20 -. requires .-> n27
+  n20 -. requires .-> n24
 ```
 
 ## Write order (`topology/write_order.py`)

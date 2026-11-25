@@ -103,6 +103,29 @@ upstream queues, and only when the ONT has `us-vlanport-queue`. `not-applicable`
 is accepted where the device shows it (ONT `ds-num-queue`) but refused elsewhere
 (UNI `gem-sharing`, error 17); the module never sends it.
 
+## QoS on the Ethernet card: the LAG, not the port
+
+The QoS index of an Ethernet-card port names both the port and the LAG the
+device keeps at the same index, and no QoS read path carries a prefix. Prefixed
+read paths exist for the interfaces only (`show interface port la-group:X` /
+`ethernet-line:X`, and `show interface stack`: `la-group:X` above
+`ethernet-line:X`, `bridge-port:X` above `la-group:X`).
+
+Read: on all 36 ports of card 8, `show qos interface-bandwidth X` reports
+1,000,000 kbit/s, the LAG's current bandwidth (1 Gbit/s), while every Ethernet
+line reports 0 (no connector).
+
+Write: port `1/1/8/6` (no bridge port) joined LAG `1/1/8/5` and left it again.
+While it was a member, the stack showed `la-group:1/1/8/5` above both Ethernet
+lines and `la-group:1/1/8/6` above `no-interface`; QoS bandwidth of `1/1/8/5`
+became 2,000,000 kbit/s, that of `1/1/8/6` 0; and `configure qos interface
+1/1/8/6 queue-stats-on` was refused with "QOS MGT error 216: QoS cannot be
+configured on the lag without physical port". Every read of both ports and LAGs
+was identical before and after.
+
+So a bare QoS address on an Ethernet card is the LAG. IHUB does not help here:
+it models the NT's own ports and LAGs (`lag-N`), not the LT's user ports.
+
 ## NTP
 
 The `ntp ont` entry comes and goes with the ONT; its own create and delete forms
@@ -113,9 +136,9 @@ do nothing. Its settings work on an existing ONT: `client-state on` is stored
 
 * A QoS interface index is "the physical port or la-group of a user-port" (device
   help) and only the bare form is accepted (`xdsl-line:`, `bonding:`, `la-group:`
-  are invalid tokens). A bare QoS address on a DSL card is the line, never its
-  bonding group. On an Ethernet card the port and the LAG the device keeps at
-  the same index stay ambiguous.
+  are invalid tokens). The QoS status command (`show qos interface-bandwidth`)
+  is addressed the same way. A bare QoS address on a DSL card is the line, never
+  its bonding group. On an Ethernet card it is the LAG, see below.
 * `link-agg group` has no create/delete form: the device keeps one group per
   Ethernet port at its index (with 2026-11-18: the port is the group's default
   member, `no port` refused with error 22).

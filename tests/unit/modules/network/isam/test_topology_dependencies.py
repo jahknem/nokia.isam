@@ -105,10 +105,11 @@ def test_a_bare_port_address_is_placed_only_from_an_object_the_same_configuratio
     families["qos_interfaces"] = [{"name": "1/1/4/3"}]
     graph = dependency_graph(families)
     assert not graph["unplaced"] and "qos_interfaces.config:xdsl_line" in [node["id"] for node in graph["nodes"]]
-    # ... but an Ethernet port and the LAG the device keeps at its index stay ambiguous.
+    # ... and on an Ethernet card the LAG the device keeps at that index (QOS MGT error 216, live 2026-11-25).
     families = {"link_agg": {"groups": [{"id": "1/1/8/6"}], "ports": [{"id": "1/1/8/6"}]},
                 "qos_interfaces": [{"name": "1/1/8/6"}]}
-    assert [u["resource"] for u in dependency_graph(families)["unplaced"]] == ["qos_interfaces"]
+    graph = dependency_graph(families)
+    assert not graph["unplaced"] and "qos_interfaces.config:lag" in [node["id"] for node in graph["nodes"]]
 
 
 def test_mermaid_and_filter():
