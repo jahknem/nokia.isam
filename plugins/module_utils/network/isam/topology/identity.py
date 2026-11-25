@@ -45,8 +45,21 @@ def candidate_owners(decoder, value, known_ports=()):
         return candidate_owners("qos_interface", value[0], known_ports)
     if decoder in ("user_port", "qos_interface") and isinstance(value, str) and numeric(value, 4):
         return sorted((kind, ident) for kind, ident in known_ports
-                      if ident == value and kind in ("xdsl_line", "ethernet_port", "bonding_group", "lag"))
+                      if ident == value and kind in _bare_port_kinds(decoder))
     return []
+
+
+def _bare_port_kinds(decoder):
+    """Object kinds a bare four-part port address can name for this decoder.
+
+    A QoS interface index is "the physical port or la-group of a user-port" (device help),
+    and the device accepts only the bare form for QoS (xdsl-line:, bonding:, la-group: are
+    invalid tokens; DS-LIN-TEST-01, 2026-11-25). A bare QoS address is therefore never a
+    bonding group. Other user-port families keep every candidate.
+    """
+    if decoder == "qos_interface":
+        return ("xdsl_line", "ethernet_port", "lag")
+    return ("xdsl_line", "ethernet_port", "bonding_group", "lag")
 
 
 def bridge_owner(value, known_ports=()):
@@ -201,7 +214,7 @@ def decode(decoder, value, known_ports=()):
                 # group at the same time. Without typed evidence the owner is
                 # ambiguous; never prefer one object kind over another.
                 candidates = [(kind, ident) for kind, ident in known_ports
-                              if ident == value and kind in ("xdsl_line", "ethernet_port", "bonding_group", "lag")]
+                              if ident == value and kind in _bare_port_kinds(decoder)]
                 if len(candidates) == 1:
                     return candidates[0]
     raise UnknownIdentity("Unsupported or ambiguous %s identity" % decoder)

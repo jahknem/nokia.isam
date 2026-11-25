@@ -10,7 +10,10 @@ __metaclass__ = type
 RELATIONS = {
     "targeted_writes": True,
     "sections": {
-        # Live-verified on DS-LIN-TEST-01 (R6.2): the device creates the entry itself with the ONT.
+        # The device creates the entry with the ONT and removes it with the ONT. Live write
+        # DS-LIN-TEST-01 2026-11-25: 'configure ntp ont <ont>' before the ONT exists is accepted
+        # and does nothing (written too early, it is silently lost); 'configure ntp no ont <ont>'
+        # is accepted and removes nothing.
         "config": {
             "identity": "ont_id", "object": "ont",
             "created_with": [{"prefix": None, "object": "ont", "default": {}}],

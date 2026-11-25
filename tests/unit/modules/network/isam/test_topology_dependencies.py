@@ -25,7 +25,9 @@ def test_nodes_are_family_parts_by_the_object_they_address():
     # The device creates these entries itself with the ONT / with the VLAN joining the bridge port.
     assert roles["ntp_onts.config:ont"] == roles["ani_onts.config:ont"] == "created_with"
     assert roles["interfaces.config:vlan_port"] == roles["qos_interfaces.config:vlan_port"] == "created_with"
-    assert roles["qos_interfaces.config:uni"] == roles["ethernet_onts.config:uni"] == "configures"
+    # The UNI exists with its ONT slot: no part creates it, the device creates its entries.
+    assert roles["qos_interfaces.config:uni"] == roles["ethernet_onts.config:uni"] == "created_with"
+    assert roles["qos_interfaces.config:ont"] == "created_with"
     assert roles["qos_profiles.config:definition"] == "definition"
     assert not graph["unplaced"] and graph["exhaustive"] is False
 
@@ -35,6 +37,9 @@ def test_every_edge_has_its_reason():
     # The creating command before everything else configuring the same object.
     assert edges(graph, "creates") == {("equipment_onts.interfaces:ont", after) for after in (
         "ani_onts.config:ont", "ntp_onts.config:ont", "qos_interfaces.config:ont")}
+    # Removing the ONT, its slot or a bridge port removes everything below (live 2026-11-25).
+    objects = export_catalog()["objects"]
+    assert all(objects[kind]["removal"]["removes_children"] for kind in ("ont", "ont_slot", "bridge_port"))
     # Inside-out containment, entered through the creating part of the inner object.
     contains = edges(graph, "contains")
     assert ("pon_interfaces.config:pon", "equipment_onts.interfaces:ont") not in contains  # not in this change set
@@ -90,9 +95,14 @@ def test_a_bare_port_address_is_placed_only_from_an_object_the_same_configuratio
     graph = dependency_graph(families)
     assert not graph["unplaced"]
     assert ("interfaces.config:xdsl_line", "bridges.port:bridge_port") in edges(graph, "contains")
-    # QoS on the same bare address stays unplaced: a line and its bonding group share it.
+    # QoS on a bare address is the line even where a bonding group shares it (device help, live 2026-11-25) ...
     families["interfaces"].append({"name": "bonding:1/1/4/3"})
     families["qos_interfaces"] = [{"name": "1/1/4/3"}]
+    graph = dependency_graph(families)
+    assert not graph["unplaced"] and "qos_interfaces.config:xdsl_line" in [node["id"] for node in graph["nodes"]]
+    # ... but an Ethernet port and the LAG the device keeps at its index stay ambiguous.
+    families = {"link_agg": {"groups": [{"id": "1/1/8/6"}], "ports": [{"id": "1/1/8/6"}]},
+                "qos_interfaces": [{"name": "1/1/8/6"}]}
     assert [u["resource"] for u in dependency_graph(families)["unplaced"]] == ["qos_interfaces"]
 
 

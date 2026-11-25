@@ -10,6 +10,11 @@ __metaclass__ = type
 RELATIONS = {
     "targeted_writes": True,
     "sections": {
-        "config": {"identity": "uni_idx", "object": "uni"},
+        # The device creates the entry with the ONT slot (live write DS-LIN-TEST-01 2026-11-25,
+        # scratch ONT 1/1/6/7/10); 'configure ethernet ont' before the slot is refused (invalid token).
+        "config": {
+            "identity": "uni_idx", "object": "uni",
+            "created_with": [{"prefix": None, "object": "uni", "default": None}],
+        },
     },
 }

@@ -9,7 +9,13 @@ __metaclass__ = type
 
 RELATIONS = {
     "sections": {
-        "groups": {"identity": "id", "object": "lag"},
+        # 'configure link-agg group' has no create/delete form (device help): the device keeps
+        # one group per Ethernet port, at the port's index, with the port as its default member
+        # ('link-agg group <g> no port <g>' refused with error 22, live 2026-11-18).
+        "groups": {
+            "identity": "id", "object": "lag",
+            "created_with": [{"prefix": None, "object": "lag", "default": None}],
+        },
         "ports": {"identity": "id", "object": "ethernet_port"},
     },
 }

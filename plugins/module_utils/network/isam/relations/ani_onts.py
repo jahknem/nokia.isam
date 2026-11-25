@@ -10,7 +10,8 @@ __metaclass__ = type
 RELATIONS = {
     "targeted_writes": True,
     "sections": {
-        # Live-verified on DS-LIN-TEST-01 (R6.2): the device creates the entry itself with the ONT.
+        # The device creates the entry with the ONT and removes it with the ONT (live write
+        # DS-LIN-TEST-01 2026-11-25). Before the ONT exists the command is refused (invalid token).
         "config": {
             "identity": "ont_idx", "object": "ont",
             "created_with": [{"prefix": None, "object": "ont", "default": {"tca_thresh": True}}],

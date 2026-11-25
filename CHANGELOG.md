@@ -86,6 +86,15 @@ return value on targeted reads.
   configured before which, and why (`creates`, `contains`, `references`,
   `requires` with its evidence). Derived from the family relations; instances
   that cannot be placed are listed, not guessed. `to_mermaid` renders it.
+- Live writes on DS-LIN-TEST-01 (`docs/live-validation-2026-11-25.md`) verified
+  what each command creates and what the device creates with it: the ONT brings
+  its `ntp`, `ani`, `ont:` interface and `ont:` QoS entries, the ONT slot its UNI
+  (`ethernet ont`, `uni:` interface, UNI QoS), a VLAN on a bridge port its VLAN
+  port entries; the device keeps one LAG per Ethernet port. Recorded as
+  `created_with`; card-specific defaults are recorded as `None` (never skipped).
+  Removing an ONT, ONT slot or bridge port removes everything below it (ONT and
+  slot need admin-state down); recorded as `removal` on the objects. A bare QoS
+  address on a DSL card is the line, not its bonding group.
 - `isam_write_steps` is now a topological order of that graph. Its result is
   unchanged, except that a bare port address is placed when the same
   configuration identifies the object at that address.

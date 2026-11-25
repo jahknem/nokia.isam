@@ -167,9 +167,11 @@ MSAN uses. `to_mermaid(graph)` renders the graph.
 
 The graph of DS-LIN-TEST-01, from the 14 families read on 2026-11-24/25 (thick
 arrows: containment between objects, thin: the creating part first, dotted:
-references and requirements). 135 instances are unplaced: 132 QoS entries on
-bare port addresses (line or bonding group, Ethernet port or LAG) and three
-device-wide sections without order evidence.
+references and requirements). The creating, device-created and required edges
+were verified by live writes on 2026-11-25 (`docs/live-validation-2026-11-25.md`).
+39 instances are unplaced: 36 QoS entries on bare Ethernet-card addresses (the
+port and the LAG the device keeps at the same index) and three device-wide
+sections without order evidence.
 
 ```mermaid
 flowchart TD
@@ -197,7 +199,7 @@ flowchart TD
   end
   subgraph lag["lag"]
     n7["interfaces.config"]
-    n10["link_agg.groups"]
+    n10["link_agg.groups (created by the device)"]
   end
   subgraph pon["pon"]
     n8["interfaces.config"]
@@ -206,33 +208,34 @@ flowchart TD
   end
   subgraph xdsl_line["xdsl line"]
     n9["interfaces.config"]
+    n14["qos_interfaces.config"]
   end
   subgraph ont["ont"]
-    n14["equipment_onts.interfaces (creates it)"]
-    n15["ani_onts.config (created by the device)"]
-    n16["interfaces.config (created by the device)"]
-    n17["ntp_onts.config (created by the device)"]
-    n18["qos_interfaces.config"]
+    n15["equipment_onts.interfaces (creates it)"]
+    n16["ani_onts.config (created by the device)"]
+    n17["interfaces.config (created by the device)"]
+    n18["ntp_onts.config (created by the device)"]
+    n19["qos_interfaces.config (created by the device)"]
   end
   subgraph ont_slot["ont slot"]
-    n19["equipment_onts.slots (creates it)"]
+    n20["equipment_onts.slots (creates it)"]
   end
   subgraph uni["uni"]
-    n20["ethernet_onts.config"]
-    n21["interfaces.config"]
-    n22["qos_interfaces.config"]
+    n21["ethernet_onts.config (created by the device)"]
+    n22["interfaces.config (created by the device)"]
+    n23["qos_interfaces.config (created by the device)"]
   end
   subgraph bridge_port["bridge port"]
-    n23["bridges.port (creates it)"]
+    n24["bridges.port (creates it)"]
   end
   subgraph vlan_port["vlan port"]
-    n24["interfaces.config (created by the device)"]
-    n25["qos_interfaces.config (created by the device)"]
+    n25["interfaces.config (created by the device)"]
+    n26["qos_interfaces.config (created by the device)"]
   end
-  n14 --> n15
-  n14 --> n16
-  n14 --> n17
-  n14 --> n18
+  n15 --> n16
+  n15 --> n17
+  n15 --> n18
+  n15 --> n19
   pon ==> ont
   ethernet_port ==> bridge_port
   lag ==> bridge_port
@@ -247,12 +250,13 @@ flowchart TD
   bridge_port ==> vlan_port
   card ==> xdsl_line
   shelf ==> card
-  n1 -. references .-> n18
+  n1 -. references .-> n19
   n1 -. references .-> n13
-  n1 -. references .-> n22
-  n1 -. references .-> n25
-  n0 -. requires .-> n23
-  n22 -. requires .-> n23
+  n1 -. references .-> n23
+  n1 -. references .-> n26
+  n1 -. references .-> n14
+  n0 -. requires .-> n24
+  n23 -. requires .-> n24
 ```
 
 ## Write order (`topology/write_order.py`)
@@ -282,8 +286,9 @@ module call (admin-state alone, shutdown before removal) stays in the modules
 (`docs/live-apply-regressions-2026-11-19.md`). A live read of DS-LIN-TEST-01 on
 2026-11-25 supports `vlans` first: all 359 port VLANs resolve to a VLAN of the
 `vlans` family (the forwarding VLAN `l2fwder_vlan` when the entry names one,
-otherwise the id). Not yet verified by a live write: `vlans` first, and the
-position of ANI/NTP ONT settings directly after the ONT.
+otherwise the id). Live writes the same day verified the creating, device-created
+and required edges, and that removing an ONT, ONT slot or bridge port removes
+everything below it (`docs/live-validation-2026-11-25.md`).
 
 ## Fresh child discovery (read-only, experimental)
 

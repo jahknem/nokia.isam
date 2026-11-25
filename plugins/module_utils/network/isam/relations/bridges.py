@@ -18,13 +18,15 @@ RELATIONS = {
                 # A port joins only an existing VLAN: the forwarding VLAN (l2fwder_vlan) when the
                 # entry names one, otherwise the VLAN id itself.
                 {"section": "vlans.config",
-                 "evidence": "live read DS-LIN-TEST-01 2026-11-25: all 359 port VLANs resolve to a VLAN of the "
-                             "vlans family; not yet verified by a live write"},
+                 "evidence": "live write DS-LIN-TEST-01 2026-11-25: vlan-id of a VLAN the vlans family lacks is "
+                             "refused with VLAN MGT error 81 (L2-forwarder not created yet); live read: all 359 "
+                             "port VLANs resolve to a VLAN of the vlans family"},
                 # The upstream-queue bandwidth profile of the UNI must be set before a VLAN is
                 # attached to its bridge port.
                 {"section": "qos_interfaces.config", "kind": "uni",
-                 "evidence": "live apply DS-LIN-TEST-01 2026-11-19: 'configure bridge port ... vlan-id 99' refused "
-                             "with VLAN MGT error 277 (missing bandwidth profile on queue)"},
+                 "evidence": "live writes DS-LIN-TEST-01 2026-11-19 and 2026-11-25: vlan-id before the UNI's "
+                             "upstream-queue bandwidth profile is refused with VLAN MGT error 277; removing the "
+                             "profile while the VLAN uses the queue is refused with QOS MGT error 135"},
             ],
         },
     },

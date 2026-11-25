@@ -403,14 +403,15 @@ def test_bare_bridge_address_follows_the_verified_attachment_rule():
     gap = next(g for g in graph["gaps"] if g["resource"] == "qos_interfaces")
     assert gap["reason"] == "ambiguous_owner"
     assert {tuple(c) for c in gap["candidates"]} == {("ethernet_port", "1/1/8/1"), ("lag", "1/1/8/1")}
-    # DSL: bonding groups never own bridge ports; a bare QoS name at a bonded
-    # line address is unresolved between the line and the bonding group.
+    # DSL: a QoS index is the physical port or la-group of a user port (device
+    # help; only the bare form is accepted, live 2026-11-25), never a bonding
+    # group. A bare QoS name at a bonded line address belongs to the line.
     data = {"xdsl_lines": [{"name": "1/1/3/1"}],
             "xdsl_bonding": {"groups": [{"group_id": "1/1/3/1"}]},
             "qos_interfaces": [{"name": "1/1/3/1"}]}
-    gap = next(g for g in build_graph(data, "M")["gaps"] if g["resource"] == "qos_interfaces")
-    assert gap["reason"] == "ambiguous_owner"
-    assert {tuple(c) for c in gap["candidates"]} == {("xdsl_line", "1/1/3/1"), ("bonding_group", "1/1/3/1")}
+    graph = build_graph(data, "M")
+    assert not [g for g in graph["gaps"] if g["resource"] == "qos_interfaces"]
+    assert edge(graph, ("configuration", ("qos_interfaces", "config", "1/1/3/1")), "configures", ("xdsl_line", "1/1/3/1"))
 
 
 @pytest.mark.parametrize("value,kind,parent", [
@@ -525,11 +526,12 @@ def test_candidate_owned_qos_is_read_from_either_owner_without_selecting_the_oth
 def test_candidate_owners_helper_only_reports_bare_shared_addresses():
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.identity import candidate_owners
     known = {("xdsl_line", "1/1/3/1"), ("bonding_group", "1/1/3/1"), ("lag", "1/1/8/1")}
-    assert candidate_owners("qos_interface", "1/1/3/1", known) == [("bonding_group", "1/1/3/1"), ("xdsl_line", "1/1/3/1")]
+    assert candidate_owners("qos_interface", "1/1/3/1", known) == [("xdsl_line", "1/1/3/1")]
+    assert candidate_owners("user_port", "1/1/3/1", known) == [("bonding_group", "1/1/3/1"), ("xdsl_line", "1/1/3/1")]
     assert candidate_owners("qos_interface", "1/1/8/1", known) == [("lag", "1/1/8/1")]
     assert candidate_owners("qos_interface", "1/1/5/1/3/1/1", known) == []
     assert candidate_owners("qos_interface", "vlan-port:1/1/3/1:99", known) == []
-    assert candidate_owners("qos_tca", ("1/1/3/1", 0), known) == [("bonding_group", "1/1/3/1"), ("xdsl_line", "1/1/3/1")]
+    assert candidate_owners("qos_tca", ("1/1/3/1", 0), known) == [("xdsl_line", "1/1/3/1")]
 
 
 def test_discovery_evidence_separates_live_verified_from_documented():

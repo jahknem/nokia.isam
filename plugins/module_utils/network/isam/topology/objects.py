@@ -11,6 +11,10 @@ how an address is decoded into kind and parent is in identity.py.
 Pure data without imports.
 
 kind -> {children: the kinds it directly contains, status, ...}
+  removal: what removing the object does on the device, with its evidence:
+    removes_children  removing it removes everything it contains and every entry the
+                      device created with it (no separate removal needed or possible)
+    needs             the state the object must be in to be removed
 """
 
 from __future__ import absolute_import, division, print_function
@@ -27,8 +31,17 @@ OBJECTS = {
     "card": {"children": ["pon", "xdsl_line", "ethernet_port", "uplink", "ihub_port", "cage", "transceiver", "bonding_group", "lag",
                           "channel_pair"],
              "status": "unimplemented"},
-    "ont": {"children": ["ont_slot"], "status": "unimplemented"},
-    "ont_slot": {"children": ["uni"], "status": "unimplemented"},
+    "ont": {"children": ["ont_slot"], "status": "unimplemented",
+            "removal": {"removes_children": True, "needs": "admin-state down",
+                        "evidence": "live write DS-LIN-TEST-01 2026-11-25, scratch ONT 1/1/6/7/10: 'no interface' on an admin-up ONT refused (Not in admin down state "
+                                    "to delete); on an admin-down ONT it removed slot, UNI, bridge port, VLAN "
+                                    "ports and every device-created entry"}},
+    "ont_slot": {"children": ["uni"], "status": "unimplemented",
+                 # The UNIs of a slot exist with the slot: no command creates or removes a UNI.
+                 "removal": {"removes_children": True, "needs": "admin-state down (of the slot itself)",
+                             "evidence": "live write DS-LIN-TEST-01 2026-11-25, scratch ONT 1/1/6/7/10: 'no slot' refused while the slot is admin-up, even on an "
+                                         "admin-down ONT; with the slot admin-down it removed the UNI's "
+                                         "ethernet ont, uni: interface and QoS entries"}},
     "pon": {"children": ["ont"], "status": "unimplemented"},
     "uni": {"children": ["bridge_port"], "status": "unimplemented"},
     "xdsl_line": {"children": ["bridge_port"], "status": "unimplemented"},
@@ -40,8 +53,12 @@ OBJECTS = {
     # Live stack evidence: bonding groups never carry bridge ports (their stack
     # lower is no-interface), so they have no VLAN-port descendants either.
     "bonding_group": {"children": [], "status": "leaf"},
+    # The device keeps one LAG per Ethernet port, at the port's index (see relations/link_agg.py).
     "lag": {"children": ["bridge_port"], "status": "unimplemented"},
-    "bridge_port": {"children": ["vlan_port"], "status": "unimplemented"},
+    "bridge_port": {"children": ["vlan_port"], "status": "unimplemented",
+                    "removal": {"removes_children": True,
+                                "evidence": "live write DS-LIN-TEST-01 2026-11-25, scratch ONT 1/1/6/7/10: 'bridge no port' with a VLAN attached removed the VLAN port's "
+                                            "interface and QoS entries with it"}},
     "channel_pair": {"children": [], "status": "leaf"},
     "cage": {"children": [], "status": "leaf"},
     "transceiver": {"children": [], "status": "leaf"},

@@ -13,12 +13,15 @@ RELATIONS = {
         "config": {
             "identity": "name",
             "object": "interface",
-            # Live-verified on DS-LIN-TEST-01 (R6.2): the device creates these entries itself, at
-            # exactly these defaults, with the ONT and with a VLAN joining a bridge port. A
-            # differing entry was customized. Live read 2026-11-25: 359 of 359 port VLANs have
-            # their vlan-port: entry and no vlan-port: entry exists without one.
+            # The device creates these entries itself: ont: with the ONT, uni: with the ONT slot,
+            # vlan-port: when a VLAN joins a bridge port (live write DS-LIN-TEST-01 2026-11-25,
+            # scratch ONT 1/1/6/7/10). A differing entry was customized. Live read 2026-11-25: 359
+            # of 359 port VLANs have their vlan-port: entry, none exists without one.
             "created_with": [
+                # admin-up follows the ONT's admin state (down at creation, up with it): this
+                # default holds for an admin-up ONT.
                 {"prefix": "ont:", "object": "ont", "default": {"admin_up": True, "link_updown_trap": True}},
+                {"prefix": "uni:", "object": "uni", "default": None},
                 {
                     "prefix": "vlan-port:", "object": "vlan_port",
                     "default": {"admin_up": True, "link_updown_trap": False, "severity": "no-value"},
