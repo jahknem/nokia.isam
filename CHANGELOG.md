@@ -55,6 +55,16 @@ return value on targeted reads.
 - A reply the family parser cannot process is classified before the module
   fails: parse axis `failed`, every requested instance `unknown`.
 
+### Write order (`isam_write_steps`)
+
+- New filter `nokia.isam.isam_write_steps(families, phase)` and
+  `topology.write_order.write_steps`: the module calls that create (or, in
+  exact reverse, remove) a set of families, in device order. Derived from the
+  topology catalog (containment per decoded instance, profile references,
+  the object-defining family), not from a hand-kept list. Refuses what it
+  cannot place (`UnorderedWrite`) and reports `exhaustive: false`. No device
+  access; modules and their write states are unchanged.
+
 ### Regression coverage
 
 - Fixture-driven integration tests drive the real modules through

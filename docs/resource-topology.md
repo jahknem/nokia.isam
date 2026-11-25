@@ -118,6 +118,41 @@ overwrite an existing artifact. NOC's schema exporter includes the catalog when
 the selected collection contains it. Older EEs export no `topology` field: absence
 is an unsupported capability, not an invitation to synthesize a model in NOC.
 
+## Write order (`topology/write_order.py`)
+
+Module calls cannot reorder each other, so a caller writing several families
+needs their order. `write_steps(families, phase)` (filter
+`nokia.isam.isam_write_steps`) returns the module calls in device order. The
+order is derived from the catalog, not hand-maintained:
+
+1. **Containment.** Each instance's object kind is decoded from its identity
+   (`ont:…` → ONT, `vlan:…:10` → VLAN port). An instance is created after every
+   kind above it: PON → ONT → ONT slot → UNI → bridge port → VLAN port.
+2. **References.** Shared definitions (QoS/xDSL profiles) are created before
+   the configuration referencing them, and within `qos_profiles` a referenced
+   profile before its referrer (`profile_references`). Reference cycles are
+   refused.
+3. **Defining family.** Of the families configuring one kind, the one whose
+   command creates the object comes first (`DEFINES`: `equipment_onts.interfaces`
+   creates the ONT, `equipment_onts.slots` the ONT slot, `bridges.port` the
+   bridge port).
+4. **Device settings.** Only device-wide families with recorded evidence
+   (`DEVICE_SETTINGS_FIRST`: `vlans`, documented, not live-applied) are placed
+   before all object families. Any other device-wide family is refused.
+
+Removal is the exact reverse of creation. Consecutive units of one family form
+one module call. Anything the catalog cannot place — an unknown family, an
+ambiguous identity (bare four-component port), settings outside instance lists,
+device settings without evidence — raises `UnorderedWrite`; nothing is guessed.
+The result carries `exhaustive: false`.
+
+Live evidence: the 2026-11-19 apply on DS-LIN-TEST-01 failed attaching a VLAN
+before the UNI's upstream-queue bandwidth profile existed (error 277). Rule 1
+covers this: the UNI is above its bridge port. Ordering of commands *within* one
+module call (admin-state alone, shutdown before removal) stays in the modules
+(`docs/live-apply-regressions-2026-11-19.md`). Not yet live-verified: the
+position of ANI/NTP ONT settings directly after the ONT, and `vlans` first.
+
 ## Fresh child discovery (read-only, experimental)
 
 `topology/discovery.py` and the `isam_topology_discovery` module enumerate the
