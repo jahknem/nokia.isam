@@ -10,25 +10,37 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_m
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.qos_interfaces import Qos_interfacesTemplate
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.relations.qos_interfaces import RELATIONS
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.identity import UnknownIdentity, decode
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.identity import UnknownIdentity, decode, numeric
 
 # Attributes each interface kind never accepts (relations/qos_interfaces.py, live-verified).
 REFUSED = RELATIONS["sections"]["config"]["refuses"]
+READ_ONLY = RELATIONS["sections"]["config"]["read_only"]
 UNSET_VALUES = ("none", "not-applicable")
+
+
+def interface_kind(name):
+    """The object kind a QoS index addresses; "user_port" for a bare port address, else None."""
+    try:
+        return decode("qos_interface", name)[0]
+    except UnknownIdentity:
+        return "user_port" if isinstance(name, str) and numeric(name, 4) else None
+
+
+def without_read_only(name, want):
+    """want without the values the device shows on this kind but refuses to set."""
+    fields = READ_ONLY.get(interface_kind(name), ())
+    return {key: value for key, value in want.items() if key not in fields}
 
 
 def refused_settings(name, want, have):
     """[(field, reason)] for settings of want the device refuses on this kind of interface.
 
     Only settings that would be written count: unset values (None, False, none,
-    not-applicable) and values equal to have are never sent. A bare port address
-    (line, Ethernet port or LAG) has no recorded refusals.
+    not-applicable) and values equal to have are never sent. A bare port address is a
+    DSL line or a LAG; both refuse the same ("user_port").
     """
-    try:
-        kind = decode("qos_interface", name)[0]
-    except UnknownIdentity:
-        return []
-    refused = REFUSED.get(kind, {})
+    want = without_read_only(name, want)
+    refused = REFUSED.get(interface_kind(name), {})
     return [(field, refused[field]) for field in sorted(refused)
             if want.get(field) not in (None, False) + UNSET_VALUES and want.get(field) != have.get(field)]
 
@@ -149,7 +161,9 @@ class Qos_interfaces(IsamResourceModule):
                         want.pop(key)
                 elif value == "none" and have.get(key) is None:
                     want.pop(key)
-            refused = refused_settings(want.get("name", have.get("name")), want, have)
+            name = want.get("name", have.get("name"))
+            want = without_read_only(name, want)
+            refused = refused_settings(name, want, have)
             if refused:
                 self._module.fail_json(msg="qos interface %s: the device refuses %s" % (
                     want.get("name"), "; ".join("%s (%s)" % item for item in refused)))

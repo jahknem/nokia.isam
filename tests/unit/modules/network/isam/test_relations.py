@@ -10,7 +10,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.i
 
 FILES = {path.stem: path for path in Path(relations.__file__).parent.glob("*.py") if path.name != "__init__.py"}
 FAMILY_KEYS = {"sections", "targeted_writes", "read_scope", "source", "settings", "profile_references", "reference_fields"}
-SECTION_KEYS = {"identity", "object", "scope", "creates", "created_with", "references", "requires", "refuses"}
+SECTION_KEYS = {"identity", "object", "scope", "creates", "created_with", "references", "requires", "refuses", "read_only"}
 
 
 def test_every_family_file_is_loaded_and_every_facts_family_has_one():
@@ -47,7 +47,8 @@ def test_format_is_closed_and_every_section_is_placed():
                 assert set(need) <= {"section", "kind", "for", "evidence"} and need["evidence"], where
                 assert all(need.get(key) in (None,) + tuple(kinds) for key in ("kind", "for")), where
             for kind, options in spec.get("refuses", {}).items():
-                assert kind in kinds and options and all(options.values()), where
+                # "user_port": a bare port address (DSL line or LAG, which refuse the same).
+                assert (kind in kinds or kind == "user_port") and options and all(options.values()), where
             for target in list(spec.get("references", {}).values()) + [need["section"] for need in spec.get("requires", ())]:
                 resource, target_section = target.split(".", 1)
                 assert target_section in FAMILIES[resource]["sections"], (where, target)

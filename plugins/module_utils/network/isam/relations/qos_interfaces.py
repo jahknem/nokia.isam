@@ -61,40 +61,104 @@ RELATIONS = {
                  "evidence": "live write DS-LIN-TEST-01 2026-11-25: us-queue-sharing cannot change while an upstream queue of the ONT is in use "
                              "(QOS MGT error 81)"},
             ],
-            # Attributes an interface kind never accepts, whatever else is configured
-            # (live write DS-LIN-TEST-01 2026-11-25, scratch ONT 1/1/6/7/10 and PON 1/1/6/16). Conditional refusals
-            # (scheduler mode, existing VLANs or slots) are not listed. The module refuses these
-            # before writing, so check mode reports what the device would refuse.
+            # Values the device shows in the configuration of a kind but refuses to set there:
+            # never written. Live 2026-11-25: every LAG of card 8 shows ds-num-queue 8, and
+            # replaying it on LAG 1/1/8/6 is refused with QOS MGT error 45 (only per PON).
+            "read_only": {"user_port": ["ds_num_queue"]},
+            # Attributes an interface kind never accepts, whatever else is configured: every
+            # attribute of the device syntax tried on each kind (live write DS-LIN-TEST-01
+            # 2026-11-25: scratch ONT 1/1/6/7/10 with UNI and VLAN port, PON 1/1/6/16, DSL line
+            # 1/1/3/48, LAG 1/1/8/6; configured interfaces restored and read back identical).
+            # Only refusals whose reason is the interface type are listed; those that depend on
+            # state (queues in use, VLANs, scheduler mode) or on a profile's content are not.
+            # "user_port" is a bare port address: the DSL line and the LAG refuse exactly the
+            # same. The module refuses these before writing, so check mode reports them.
             "refuses": {
                 "ont": {
+                    "aggr_dsq_profile": "QOS MGT error 203: The AggrQueuesConfig profile can only be supported on UNI",
+                    "aggr_usq_profile": "QOS MGT error 203: The AggrQueuesConfig profile can only be supported on UNI",
                     "autoschedule": "QOS MGT error 96: AutoSchedule cannot be assigned to this interface type",
-                    "ds_num_queue": "QOS MGT error 45: number of downstream queues only per PON",
-                    "gem_sharing": "QOS MGT error 126: GEM sharing is not applicable for this type of interface",
-                    "mc_scheduler_node": "QOS MGT error 174: multicast scheduler profile not supported",
-                    "bc_scheduler_node": "QOS MGT error 175: broadcast scheduler profile not supported",
-                    "cac_profile": "QOS MGT error 42: CAC profile cannot be assigned to this interface type",
+                    "bandwidth_profile": "QOS MGT error 202: The BW profile/Sharing can only be supported on UNI or US queues",
+                    "bandwidth_sharing": "QOS MGT error 202: The BW profile/Sharing can only be supported on UNI or US queues",
+                    "bc_scheduler_node": "QOS MGT error 175: The interface does not support configure PON Shared Service Broadcast Scheduler Profile",
+                    "cac_profile": "QOS MGT error 42: CAC Profile cannot be assigned to this Interface Type",
+                    "ds_num_queue": "QOS MGT error 45: Number of Downstream Qs per Line can be configured only on a per PON basis",
+                    "ds_schedule_tag": "QOS MGT error 218: The interface does not support configure scheduler tag",
+                    "dsfld_shaper_prof": "QOS MGT error 129: Non Zero DS Flooding shaper profile is only allowed for PON",
+                    "ext_cac": "QOS MGT error 42: CAC Profile cannot be assigned to this Interface Type",
+                    "gem_sharing": "QOS MGT error 126: GEM Sharing is not applicable for this type of interface",
+                    "mc_scheduler_node": "QOS MGT error 174: The interface does not support configure PON Shared Service Multicast Scheduler Profile",
+                    "scheduler_mode": "QOS MGT error 173: The interface does not support configure PON scheduler mode",
                 },
                 "uni": {
-                    "ds_queue_sharing": "QOS MGT error 46: queue sharing only on an ONT",
-                    "us_queue_sharing": "QOS MGT error 46: queue sharing only on an ONT",
                     "autoschedule": "QOS MGT error 96: AutoSchedule cannot be assigned to this interface type",
-                    "us_vlanport_queue": "QOS MGT error 116: us-vlanport-queues only on an ONT interface",
-                    "ds_num_queue": "QOS MGT error 45: number of downstream queues only per PON",
-                    "us_num_queue": "QOS MGT error 48: number of upstream queues only for an ONT",
-                    "mc_scheduler_node": "QOS MGT error 174: multicast scheduler profile not supported",
-                    "bc_scheduler_node": "QOS MGT error 175: broadcast scheduler profile not supported",
+                    "bc_scheduler_node": "QOS MGT error 175: The interface does not support configure PON Shared Service Broadcast Scheduler Profile",
+                    "ds_num_queue": "QOS MGT error 45: Number of Downstream Qs per Line can be configured only on a per PON basis",
+                    "ds_num_rem_queue": "QOS MGT error 114: Number of Downstream Remote Qs per Line can be configured only on a per ONT basis",
+                    "ds_queue_sharing": "QOS MGT error 46: Q Sharing can only be enabled on ONT",
+                    "ds_schedule_tag": "QOS MGT error 218: The interface does not support configure scheduler tag",
+                    "dsfld_shaper_prof": "QOS MGT error 129: Non Zero DS Flooding shaper profile is only allowed for PON",
+                    "ext_cac": "QOS MGT error 42: CAC Profile cannot be assigned to this Interface Type",
+                    "mc_scheduler_node": "QOS MGT error 174: The interface does not support configure PON Shared Service Multicast Scheduler Profile",
+                    "scheduler_mode": "QOS MGT error 173: The interface does not support configure PON scheduler mode",
+                    "us_num_queue": "QOS MGT error 48: Number of Upstream Qs per Uni can be configured only for ONT",
+                    "us_queue_sharing": "QOS MGT error 46: Q Sharing can only be enabled on ONT",
+                    "us_vlanport_queue": "QOS MGT error 116: us-vlanport-queues can only be enabled on an ONT interface",
                 },
                 "vlan_port": {
-                    field: "QOS MGT error 120: attribute not supported for a VLAN port" for field in (
-                        "scheduler_node", "cac_profile", "ds_queue_sharing", "us_queue_sharing", "autoschedule",
-                        "us_vlanport_queue", "queue_stats_on", "ds_num_queue", "us_num_queue", "gem_sharing",
-                        "mc_scheduler_node", "bc_scheduler_node", "bandwidth_profile")
+                    "aggr_dsq_profile": "QOS MGT error 120: Attribute not supported for this interface",
+                    "aggr_usq_profile": "QOS MGT error 120: Attribute not supported for this interface",
+                    "autoschedule": "QOS MGT error 120: Attribute not supported for this interface",
+                    "bandwidth_profile": "QOS MGT error 120: Attribute not supported for this interface",
+                    "bandwidth_sharing": "QOS MGT error 120: Attribute not supported for this interface",
+                    "bc_scheduler_node": "QOS MGT error 120: Attribute not supported for this interface",
+                    "cac_profile": "QOS MGT error 120: Attribute not supported for this interface",
+                    "ds_num_queue": "QOS MGT error 120: Attribute not supported for this interface",
+                    "ds_num_rem_queue": "QOS MGT error 120: Attribute not supported for this interface",
+                    "ds_queue_sharing": "QOS MGT error 120: Attribute not supported for this interface",
+                    "ds_schedule_tag": "QOS MGT error 120: Attribute not supported for this interface",
+                    "dsfld_shaper_prof": "QOS MGT error 120: Attribute not supported for this interface",
+                    "ext_cac": "QOS MGT error 120: Attribute not supported for this interface",
+                    "gem_sharing": "QOS MGT error 120: Attribute not supported for this interface",
+                    "mc_scheduler_node": "QOS MGT error 120: Attribute not supported for this interface",
+                    "queue_stats_on": "QOS MGT error 120: Attribute not supported for this interface",
+                    "scheduler_mode": "QOS MGT error 120: Attribute not supported for this interface",
+                    "scheduler_node": "QOS MGT error 120: Attribute not supported for this interface",
+                    "us_num_queue": "QOS MGT error 120: Attribute not supported for this interface",
+                    "us_queue_sharing": "QOS MGT error 120: Attribute not supported for this interface",
+                    "us_vlanport_queue": "QOS MGT error 120: Attribute not supported for this interface",
                 },
                 "pon": {
-                    "us_num_queue": "QOS MGT error 48: number of upstream queues only for an ONT",
-                    "gem_sharing": "QOS MGT error 126: GEM sharing is not applicable for this type of interface",
-                    "scheduler_node": "QOS MGT error 49: scheduler-node profile only on ONT and UNI interfaces",
-                    "ds_queue_sharing": "QOS MGT error 46: queue sharing only on an ONT",
+                    "aggr_dsq_profile": "QOS MGT error 203: The AggrQueuesConfig profile can only be supported on UNI",
+                    "bandwidth_profile": "QOS MGT error 202: The BW profile/Sharing can only be supported on UNI or US queues",
+                    "bandwidth_sharing": "QOS MGT error 202: The BW profile/Sharing can only be supported on UNI or US queues",
+                    "ds_num_rem_queue": "QOS MGT error 114: Number of Downstream Remote Qs per Line can be configured only on a per ONT basis",
+                    "ds_queue_sharing": "QOS MGT error 46: Q Sharing can only be enabled on ONT",
+                    "ext_cac": "QOS MGT error 42: CAC Profile cannot be assigned to this Interface Type",
+                    "gem_sharing": "QOS MGT error 126: GEM Sharing is not applicable for this type of interface",
+                    "scheduler_node": "QOS MGT error 49: SchedulerNode Profile can be configured on ONT and UNI interfaces only",
+                    "us_num_queue": "QOS MGT error 48: Number of Upstream Qs per Uni can be configured only for ONT",
+                    "us_queue_sharing": "QOS MGT error 46: Q Sharing can only be enabled on ONT",
+                    "us_vlanport_queue": "QOS MGT error 116: us-vlanport-queues can only be enabled on an ONT interface",
+                },
+                "user_port": {
+                    "aggr_dsq_profile": "QOS MGT error 203: The AggrQueuesConfig profile can only be supported on UNI",
+                    "autoschedule": "QOS MGT error 96: AutoSchedule cannot be assigned to this interface type",
+                    "bandwidth_profile": "QOS MGT error 202: The BW profile/Sharing can only be supported on UNI or US queues",
+                    "bandwidth_sharing": "QOS MGT error 202: The BW profile/Sharing can only be supported on UNI or US queues",
+                    "bc_scheduler_node": "QOS MGT error 175: The interface does not support configure PON Shared Service Broadcast Scheduler Profile",
+                    "ds_num_queue": "QOS MGT error 45: Number of Downstream Qs per Line can be configured only on a per PON basis",
+                    "ds_num_rem_queue": "QOS MGT error 114: Number of Downstream Remote Qs per Line can be configured only on a per ONT basis",
+                    "ds_queue_sharing": "QOS MGT error 46: Q Sharing can only be enabled on ONT",
+                    "ds_schedule_tag": "QOS MGT error 218: The interface does not support configure scheduler tag",
+                    "dsfld_shaper_prof": "QOS MGT error 129: Non Zero DS Flooding shaper profile is only allowed for PON",
+                    "ext_cac": "QOS MGT error 42: CAC Profile cannot be assigned to this Interface Type",
+                    "gem_sharing": "QOS MGT error 126: GEM Sharing is not applicable for this type of interface",
+                    "mc_scheduler_node": "QOS MGT error 174: The interface does not support configure PON Shared Service Multicast Scheduler Profile",
+                    "scheduler_mode": "QOS MGT error 173: The interface does not support configure PON scheduler mode",
+                    "us_num_queue": "QOS MGT error 48: Number of Upstream Qs per Uni can be configured only for ONT",
+                    "us_queue_sharing": "QOS MGT error 46: Q Sharing can only be enabled on ONT",
+                    "us_vlanport_queue": "QOS MGT error 116: us-vlanport-queues can only be enabled on an ONT interface",
                 },
             },
         },

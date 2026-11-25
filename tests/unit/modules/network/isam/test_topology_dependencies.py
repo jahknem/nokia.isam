@@ -134,4 +134,13 @@ def test_qos_settings_a_kind_never_accepts_are_refused_before_writing():
     assert refused_settings("vlan:%s:10" % UNI, {"gem_sharing": "not-applicable", "mc_scheduler_node": "none",
                                                  "ds_queue_sharing": False}, {}) == []
     assert refused_settings("ont:" + ONT, {"cac_profile": "name:X"}, {"cac_profile": "name:X"}) == []
-    assert refused_settings("1/1/8/6", {"us_num_queue": 8}, {}) == []
+    # A LAG shows ds-num-queue 8 but refuses to set it (error 45): never sent, never refused.
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.qos_interfaces.qos_interfaces import (
+        without_read_only)
+    assert refused_settings("1/1/8/6", {"ds_num_queue": 8}, {}) == []
+    assert without_read_only("1/1/8/6", {"name": "1/1/8/6", "ds_num_queue": 8}) == {"name": "1/1/8/6"}
+    assert without_read_only("pon:1/1/6/16", {"ds_num_queue": 8}) == {"ds_num_queue": 8}
+    # A bare port address (DSL line or LAG): upstream queue count only on an ONT (error 48).
+    assert [f for f, _ in refused_settings("1/1/8/6", {"us_num_queue": 8}, {})] == ["us_num_queue"]
+    assert refused_settings("1/1/8/6", {"scheduler_node": "name:N", "cac_profile": "name:C"}, {}) == []
+    assert refused_settings("lt:1/1/8", {"us_num_queue": 8}, {}) == []

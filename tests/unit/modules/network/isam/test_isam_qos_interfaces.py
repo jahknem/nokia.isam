@@ -167,6 +167,16 @@ class TestIsamQosInterfacesModule(TestIsamModule):
         self.assertIn("cac_profile", result["msg"])
         self.assertIn("error 42", result["msg"])
 
+    def test_isam_qos_interfaces_never_sends_what_a_lag_only_displays(self):
+        # A LAG shows ds-num-queue 8 but the device refuses to set it (error 45, live 2026-11-25):
+        # copying a gathered LAG entry renders everything else and skips it.
+        set_module_args(
+            dict(config=[dict(name="1/1/8/6", ds_num_queue="8", cac_profile="name:FD_Default")], state="rendered"),
+            ignore_provider_arg,
+        )
+        result = self.execute_module(changed=False)
+        self.assertEqual(result["rendered"], ["configure qos interface 1/1/8/6 cac-profile name:FD_Default"])
+
     def test_isam_qos_interfaces_renders_compact_queue_commands(self):
         set_module_args(
             dict(

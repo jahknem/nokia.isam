@@ -83,20 +83,56 @@ compatible); the same for a PON's `dsfld-shaper-prof`.
 
 With `ds-queue-sharing` the downstream queues move from the UNI to the ONT.
 
-**Attributes per interface kind** (accepted: yes, refused: the error; conditional in brackets):
+**Attributes per interface kind.** Every attribute of the device syntax, set once
+on each kind (a value different from the current one), reset, and at the end the
+interface's saved configuration replayed: scratch ONT `1/1/6/7/10` with its UNI and
+VLAN port 99, PON `1/1/6/16`, DSL line `1/1/3/48`, LAG `1/1/8/6`. PON, DSL line and
+LAG read back identical to before. "yes" = accepted, a number = the QOS MGT error.
 
-| Attribute | ONT | UNI | VLAN port | PON |
-| --- | --- | --- | --- | --- |
-| scheduler-node | yes | yes | 120 | 49 |
-| cac-profile | 42 | yes | 120 | yes |
-| ds-/us-queue-sharing | (yes, see above) | 46 | 120 | 46 (ds) |
-| us-vlanport-queue | (yes, see above) | 116 | 120 | |
-| ds-num-queue | 45 | 45 | 120 | yes |
-| us-num-queue | yes | 48 | 120 | 48 |
-| gem-sharing | 126 | (yes, before VLANs) | 120 | 126 |
-| mc-/bc-scheduler-node | 174/175 | 174/175 | 120 | (204 unless service-hierarchy mode) |
-| queue-stats-on | (70 without downstream queues) | yes | 120 | (220 unless service-flat mode) |
-| autoschedule | 96 | 96 | 120 | |
+| Attribute | ONT | UNI | VLAN port | PON | DSL line | LAG |
+| --- | --- | --- | --- | --- | --- | --- |
+| scheduler-node | yes | 87 | 120 | 49 | 3 | yes |
+| cac-profile | 42 | yes | 120 | 44 | 44 | 44 |
+| ext-cac | 42 | 42 | 120 | 42 | 42 | 42 |
+| ds-queue-sharing | 58 | 46 | 120 | 46 | 46 | 46 |
+| us-queue-sharing | 81 | 46 | 120 | 46 | 46 | 46 |
+| ds-num-queue | 45 | 45 | 120 | yes | 45 | 45 |
+| ds-num-rem-queue | 128 | 114 | 120 | 114 | 114 | 114 |
+| us-num-queue | 82 | 48 | 120 | 48 | 48 | 48 |
+| queue-stats-on | 70 | yes | 120 | 220 | 84 | 84 |
+| autoschedule | 96 | 96 | 120 | yes | 96 | 96 |
+| us-vlanport-queue | 119 | 116 | 120 | 116 | 116 | 116 |
+| dsfld-shaper-prof | 129 | 129 | 120 | 71 | 129 | 129 |
+| bandwidth-profile | 202 | 179 | 120 | 202 | 202 | 202 |
+| bandwidth-sharing | 202 | 184 | 120 | 202 | 202 | 202 |
+| aggr-usq-profile | 203 | 193 | 120 | 186 | 186 | 186 |
+| aggr-dsq-profile | 203 | yes | 120 | 203 | 203 | 203 |
+| gem-sharing | 126 | 125 | 120 | 126 | 126 | 126 |
+| scheduler-mode | 173 | 173 | 120 | yes | 173 | 173 |
+| mc-scheduler-node | 174 | 174 | 120 | 204 | 174 | 174 |
+| bc-scheduler-node | 175 | 175 | 120 | 204 | 175 | 175 |
+| ds-schedule-tag | 218 | 218 | 120 | yes | 218 | 218 |
+
+Unconditional refusals (the reason is the interface type: errors 42, 45, 46, 48,
+49, 96, 114, 116, 120, 126, 129, 173, 174, 175, 202, 203, 218) are recorded as
+`refuses` and checked by the module before writing. The DSL line and the LAG
+refuse exactly the same set. The others depend on state or content and are not:
+
+| Error | Condition |
+| --- | --- |
+| 3 | the scheduler-node profile is not supported by the line card's hardware (`NGLT_Default` on a DSL line) |
+| 44 | the CAC profile's type does not fit the interface (`FD_Default` on a PON; `FD_GponVideo` is accepted) |
+| 58, 59, 81, 82, 119, 128 | ONT queue settings: frozen once the slot, an upstream / remote downstream queue or a VLAN exists |
+| 70, 84, 220 | queue statistics: need downstream queues, free statistics capacity, or the PON in `service-flat` mode |
+| 87 | a UNI's scheduler-node must have the priority of `NGLT_Default` |
+| 179, 184 | a UNI-level bandwidth profile or sharing excludes upstream-queue bandwidth profiles on the same UNI |
+| 186, 193 | upstream aggregation profile / sharing not while an upstream queue is in use |
+| 204 | multicast / broadcast scheduler on a PON only in `service-hierarchy` mode |
+| 125 | UNI GEM sharing frozen once VLAN ports are attached |
+| 71 | the shaper's type does not fit the interface |
+
+The LAG shows `ds-num-queue 8` in its configuration, but replaying it is refused
+(error 45): recorded as `read_only`, never sent.
 
 A VLAN port's QoS entry takes no top-level attribute at all; it only carries
 upstream queues, and only when the ONT has `us-vlanport-queue`. `not-applicable`

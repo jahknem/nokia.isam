@@ -103,6 +103,10 @@ return value on targeted reads.
   on an ONT, any attribute on a VLAN port), so check mode reports what the
   device would refuse. PON and DSL-line QoS entries are recorded as created by
   the device.
+- The QoS refusal check covers every attribute of the device syntax on ONT, UNI,
+  VLAN port, PON, DSL line and LAG (bare port addresses: DSL line and LAG refuse
+  the same). Values a kind shows but refuses to set (a LAG's `ds-num-queue`) are
+  recorded as `read_only` and never sent, so copying a gathered entry still works.
 - A bare QoS address on an Ethernet card is the LAG the device keeps there, not
   the Ethernet port (live write: with the port moved into another LAG, QoS on
   its address is refused with QOS MGT error 216). Every QoS entry of the lab
