@@ -13,12 +13,18 @@ completeness test: ``CONTRACT_MODULES`` must equal the module inventory.
 
 CONTRACT_MODULES = frozenset({
     "isam_ani_onts",
+    "isam_bridge_learned_mac",
     "isam_bridges",
+    "isam_cwmp_plt",
+    "isam_dhcp_relay_port_stats",
     "isam_dist_service",
     "isam_equipment",
     "isam_equipment_onts",
     "isam_equipment_replan",
+    "isam_error",
+    "isam_ethernet_line",
     "isam_ethernet_onts",
+    "isam_ethernet_statistics",
     "isam_generic_pon",
     "isam_interface_alarms",
     "isam_ipv6_antispoofing_slot",
@@ -27,9 +33,11 @@ CONTRACT_MODULES = frozenset({
     "isam_l2cp_user_port",
     "isam_l2uni_onts",
     "isam_linetest",
+    "isam_nat",
     "isam_ntp_onts",
     "isam_pon_global",
     "isam_pon_interfaces",
+    "isam_pppox_relay_global",
     "isam_qos_global",
     "isam_qos_interfaces",
     "isam_qos_maps",
@@ -43,6 +51,12 @@ CONTRACT_MODULES = frozenset({
     "isam_vlan_global",
     "isam_vlans",
     "isam_voice_sip",
+    "isam_xdsl_boards",
+    "isam_xdsl_inm",
+    "isam_xdsl_lines",
+    "isam_xdsl_onts",
+    "isam_xdsl_profiles",
+    "isam_xdsl_system",
 })
 
 

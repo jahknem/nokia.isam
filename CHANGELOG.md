@@ -397,6 +397,25 @@ intentional. This section lists the ONT/access families of that line.
   returns `[]`, and a port-type line without a `mau` block no longer crashes
   the parser.
 
+### New operational action modules
+
+- Tier-1 operational action modules on `IsamActionModule` (one-shot
+  counter/MAC operations, guide-verified syntax, an explicit operation is
+  required, identifiers validated): `isam_ethernet_statistics`
+  (`admin ethernet statistics <index> clear-stats`),
+  `isam_dhcp_relay_port_stats` (`admin dhcp-relay port-stats <vlan-port>
+  clear-statistics`) and `isam_bridge_learned_mac` (`admin bridge
+  learned-unicast-mac <vlan-port> unicast-mac-address <mac> delete`, with
+  MAC-address validation). Check-mode verified on the lab ISAM; the
+  operations themselves are not executed without a per-action decision.
+
+### New global settings resources
+
+- New resources for small global settings: `isam_nat`, `isam_error`,
+  `isam_cwmp_plt` and `isam_pppox_relay_global`, each targeted by its single
+  settings node. Reading and writing `isam_nat` requires the CWMP platform to
+  be enabled on the device.
+
 ### Targeted gathering consistency (Ethernet and xDSL lines)
 
 - A `gathered` read of an Ethernet line uses the same compact `flat` form as
