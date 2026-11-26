@@ -283,3 +283,30 @@ def test_replaced_with_explicit_defaults_is_idempotent(monkeypatch):
         "configure vlan id 100 no sntp-proxy protocol-filter pass-all"]
     assert run_module(monkeypatch, "isam_vlans", {"state": "overridden", "config": config},
                       "configure vlan id 100 mode residential-bridge name foo\n")["commands"] == []
+
+
+@pytest.mark.parametrize("name", ['say "hi"', 'end"', "back\\slash", "it's", 'a"b', "tab#?", "plain"])
+def test_a_name_round_trips_through_render_and_gather(monkeypatch, name):
+    """CLI guide: printable strings with " \\ ? # or spaces are double-quoted, " and \\ escaped."""
+    from .module_runner import run_module
+
+    config = [{"id": "100", "mode": "residential-bridge", "name": name}]
+    rendered = run_module(monkeypatch, "isam_vlans", {"state": "rendered", "config": config})["rendered"]
+    gathered = run_module(monkeypatch, "isam_vlans", {"state": "gathered"}, rendered[0] + "\n")["gathered"]
+    assert gathered == config
+    assert run_module(monkeypatch, "isam_vlans", {"state": "merged", "config": config}, rendered[0] + "\n")["commands"] == []
+
+
+def test_name_quoting_follows_the_cli_guide(monkeypatch):
+    from .module_runner import run_module
+
+    rendered = run_module(monkeypatch, "isam_vlans", {"state": "rendered", "config": [
+        {"id": 1, "name": 'a "b" \\c'}]})["rendered"]
+    assert rendered == ['configure vlan id 1 name "a \\"b\\" \\\\c"']
+    parsed = run_module(monkeypatch, "isam_vlans", {"state": "parsed", "running_config":
+                        'configure vlan id 1 mode residential-bridge name hallo" "world\n'})["parsed"]
+    assert parsed[0]["name"] == "hallo world"
+    # a single quote is no special character for the CLI (shlex refused this line)
+    parsed = run_module(monkeypatch, "isam_vlans", {"state": "parsed", "running_config":
+                        "configure vlan id 1 mode residential-bridge name it's\n"})["parsed"]
+    assert parsed[0]["name"] == "it's"
