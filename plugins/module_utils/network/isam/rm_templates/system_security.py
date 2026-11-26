@@ -221,6 +221,20 @@ def _cast(value, ftype):
     return value
 
 
+def _keyword_as_value(fmap, tokens, i):
+    """Whether tokens[i], spelled like an attribute keyword, is the previous one's value.
+
+    'ssh sftp-user U ... auth-type password' ends with the value 'password', which is
+    also the keyword of the user's password attribute. A value-taking keyword is its
+    own attribute only when a value follows it; at the end of the line or before
+    another keyword/'no' it is the preceding attribute's value.
+    """
+    if fmap[tokens[i]][1] == "bool":
+        return False
+    following = tokens[i + 1] if i + 1 < len(tokens) else None
+    return following is None or following == "no" or following in fmap
+
+
 def _match_node(body):
     for cli, section, ident, sub in NODES:
         if not cli:
@@ -337,7 +351,8 @@ class Isam_system_securityTemplate(NetworkTemplate):
             elif negate:
                 entry.pop(snake, None)
                 i += 2
-            elif i + 1 < len(tokens) and tokens[i + 1] != "no" and tokens[i + 1] not in fmap:
+            elif i + 1 < len(tokens) and tokens[i + 1] != "no" and (
+                    tokens[i + 1] not in fmap or _keyword_as_value(fmap, tokens, i + 1)):
                 entry[snake] = _cast(_unquote(tokens[i + 1]), ftype)
                 i += 2
             else:

@@ -363,12 +363,126 @@ class TestIsamSystemSecuritySlice2(TestIsamModule):
         # sections not named are untouched (operators, views, settings blocks)
 
     def test_deleted_settings_block(self):
+        # named attributes reset only themselves: min_length, not the other three
+        # password settings (the earlier expectation reset the whole block)
         result = self._run("deleted", {"li": {"separate": True}, "password": {"min_length": 8}}, changed=True)
         assert result["commands"] == [
-            "configure system security password no min-length no min-num-numeric-char no min-num-special-char no mixed-case",
+            "configure system security password no min-length",
             "configure system security li no separate",
         ]
 
     def test_rendered_quotes_values_with_spaces(self):
         result = self._run("rendered", {"general": {"login_banner": "hello world"}}, changed=False)
         assert result["rendered"] == ['configure system security login-banner "hello world"']
+
+
+# ------------------------------------------------- state contract (review C2/C3)
+
+STATE_DEVICE = [
+    'configure system security operator isadmin password encrypted:aa:bb profile admin description "default administrator" prompt "%n>"',
+    'configure system security operator noc password encrypted:cc:dd profile admin prompt "noc>"',
+    'configure system security profile admin description "admin group" aaa write',
+    'configure system security profile spare description "unused" aaa read',
+    'configure system security ssh sftp-user sftpuser password encrypted:00:11 auth-type password',
+    'configure system security filetransfer server 10.0.0.9 user-name ftpuser password encrypted:22:33 key-type rsa',
+    'configure system security password min-length 8 min-num-numeric-char 1 min-num-special-char 2 mixed-case mandatory',
+    'configure system security slot nt-a debug-usb',
+    'configure system security pae authenticator 1/1/4/19 controlled-port force-authorized quiet-period 30 re-auth-enabled',
+    'configure system security default-profile prompt "%n>" liadmin none liuser read',
+]
+
+
+class TestIsamSystemSecurityStateContract(TestIsamModule):
+    module = isam_system_security
+
+    def setUp(self):
+        super(TestIsamSystemSecurityStateContract, self).setUp()
+        self.mocks = [patch(target) for target in (
+            "ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base.get_resource_connection",
+            "ansible_collections.ansible.netcommon.plugins.module_utils.network.common.cfg.base.get_resource_connection",
+            "ansible_collections.ansible.netcommon.plugins.module_utils.network.common.facts.facts.get_resource_connection",
+        )]
+        started = [m.start() for m in self.mocks]
+        device = "\n".join(STATE_DEVICE) + "\n"
+
+        class FakeConn:
+            def get(self, cmd):
+                return device
+        started[2].return_value = FakeConn()
+
+    def tearDown(self):
+        super(TestIsamSystemSecurityStateContract, self).tearDown()
+        for mock in self.mocks:
+            mock.stop()
+
+    def _run(self, state, config, changed=True, failed=False):
+        set_module_args(dict(state=state, config=config), ignore_provider_arg)
+        if failed:
+            return self.execute_module(failed=True)
+        return self.execute_module(changed=changed)
+
+    # C2: passwords/secrets are never readable, so omitting one must not reset it.
+    def test_replaced_operator_keeps_unreadable_password(self):
+        result = self._run("replaced", {"operators": [{"name": "noc", "profile": "admin"}]})
+        assert result["commands"] == ["configure system security operator noc no prompt"]
+
+    def test_replaced_sftp_user_and_filetransfer_server_keep_password(self):
+        result = self._run("replaced", {
+            "ssh": {"sftp_users": [{"name": "sftpuser", "auth_type": "password"}]},
+            "filetransfer": {"servers": [{"server": "10.0.0.9", "user_name": "ftpuser"}]},
+        })
+        assert result["commands"] == ["configure system security filetransfer server 10.0.0.9 no key-type"]
+
+    def test_overridden_keeps_unreadable_password_of_kept_operator(self):
+        result = self._run("overridden", {
+            "operators": [{"name": "isadmin", "profile": "admin"}],
+            "profiles": [{"name": "admin", "description": "admin group", "permissions": {"aaa": "write"}}],
+        })
+        assert not any("no password" in cmd for cmd in result["commands"])
+        assert "configure system security operator isadmin no description no prompt" in result["commands"]
+        assert "configure system security no operator noc" in result["commands"]
+        assert "configure system security no profile spare" in result["commands"]
+        assert "configure system security no profile admin" not in result["commands"]
+
+    def test_overridden_refuses_to_remove_profile_of_kept_operator(self):
+        result = self._run("overridden", {"operators": [{"name": "isadmin", "profile": "admin"}]}, failed=True)
+        assert "admin" in result["msg"] and "isadmin" in result["msg"]
+
+    def test_overridden_refuses_profile_kept_operator_inherits_from_device(self):
+        # the operator omits its profile: replaced keeps the device's (no 'no profile' reset
+        # either), so removing that profile would still break the kept operator
+        result = self._run("overridden", {"operators": [{"name": "noc"}], "profiles": [{"name": "spare"}]}, failed=True)
+        assert "admin" in result["msg"] and "noc" in result["msg"]
+
+    # C3: deleted with named attributes resets only those attributes.
+    def test_deleted_identity_only_removes_operator(self):
+        result = self._run("deleted", {"operators": [{"name": "noc"}]})
+        assert result["commands"] == ["configure system security no operator noc"]
+
+    def test_deleted_named_attribute_resets_only_it(self):
+        result = self._run("deleted", {"operators": [{"name": "noc", "prompt": "noc>"}]})
+        assert result["commands"] == ["configure system security operator noc no prompt"]
+
+    def test_deleted_named_attribute_absent_on_device_is_noop(self):
+        self._run("deleted", {"operators": [{"name": "noc", "description": "x"}]}, changed=False)
+
+    def test_deleted_fixed_list_named_attribute(self):
+        result = self._run("deleted", {"pae": {"ports": [{"port": "1/1/4/19", "authenticator": {"quiet_period": 30}}]}})
+        assert result["commands"] == ["configure system security pae authenticator 1/1/4/19 no quiet-period"]
+
+    def test_deleted_settings_block_named_attribute(self):
+        result = self._run("deleted", {"password": {"min_length": 8}})
+        assert result["commands"] == ["configure system security password no min-length"]
+
+    def test_deleted_default_profile_named_permission(self):
+        result = self._run("deleted", {"default_profile": {"permissions": {"liuser": "read"}}})
+        assert result["commands"] == ["configure system security default-profile no liuser"]
+
+    def test_sftp_user_auth_type_value_spelled_like_keyword(self):
+        # 'auth-type password' at the end of the line is a value, not the password keyword
+        self._run("merged", {"ssh": {"sftp_users": [{"name": "sftpuser", "auth_type": "password"}]}}, changed=False)
+
+    def test_deleted_without_config_resets_settings_blocks(self):
+        result = self._run("deleted", None)
+        assert ("configure system security password no min-length no min-num-numeric-char "
+                "no min-num-special-char no mixed-case") in result["commands"]

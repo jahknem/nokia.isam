@@ -75,6 +75,42 @@ def _named(key, wanted):
     return False
 
 
+def _want_for(key, wantd):
+    """The want entry naming an instance key (see _named), or None."""
+    for want_key, entry in wantd.items():
+        if all(w is None or w == h for w, h in zip(want_key, key)):
+            return entry
+    return None
+
+
+def _named_values(want, have):
+    """The part of have that want names: given keys only, recursively through dicts.
+
+    A named sub-dict without any given key (``permissions: {}``) names all of it.
+    """
+    out = {}
+    for key, wanted in (want or {}).items():
+        current = (have or {}).get(key)
+        if wanted is None or current in (None, [], {}):
+            continue
+        if isinstance(wanted, dict) and isinstance(current, dict):
+            sub = _named_values(wanted, current) if any(v is not None for v in wanted.values()) else current
+            if sub:
+                out[key] = sub
+        else:
+            out[key] = current
+    return out
+
+
+def _covers(ident, want, have):
+    """Whether a deleted entry names the whole instance: its identity alone, or every
+    attribute present on the device (e.g. a gathered entry). Unlike common.covers_entry
+    a named sub-dict covers only the keys it gives (pae authenticator settings)."""
+    want = dict((k, v) for k, v in (want or {}).items() if k not in ident and v is not None)
+    have = dict((k, v) for k, v in (have or {}).items() if k not in ident and v not in (None, [], {}))
+    return not want or _named_values(want, have) == have
+
+
 def _masked_identity(section, entry):
     # '*' is a real SNMP subtree identity (the whole view), not a hidden secret.
     return any(is_masked_secret(entry.get(field)) and not
@@ -187,11 +223,22 @@ class Isam_system_security(IsamResourceModule):
             if not self._targets(want, section):
                 return
             for key, entry in haved.items():
-                if not wantd or _named(key, wantd):
+                if not wantd:
                     self._remove(section, entry)
+                    continue
+                wanted = _want_for(key, wantd)
+                if wanted is None:
+                    continue
+                if _covers(ident, wanted, entry):
+                    # an identity alone (or every present attribute) names the object
+                    self._remove(section, entry)
+                else:
+                    self._reset_named(section, ident, wanted, entry)
             return
 
         if self.state == "overridden":
+            if section == "profiles":
+                self._check_profiles_in_use(wantd, haved, want, have)
             for key, entry in haved.items():
                 if not _named(key, wantd):
                     self._remove(section, entry)
@@ -224,11 +271,56 @@ class Isam_system_security(IsamResourceModule):
             self.commands.extend(nested_reset)
             if self.state in ("replaced", "overridden") and current:
                 stale = omitted_values(entry, current)
-                for field in ident:
+                # Secrets are never readable (masked or encrypted in every read), so an
+                # omitted one is "keep as is", never "reset": 'no password' would strip
+                # an operator's or file-transfer user's credentials on every run.
+                for field in tuple(ident) + tuple(SECRET_FIELDS.get(section, ())):
                     stale.pop(field, None)
                 if stale:
                     stale.update(identity)
                     self.commands.extend(tmplt.render_reset(section, stale))
+
+    def _reset_named(self, section, ident, wanted, entry):
+        """deleted naming attributes of an instance: reset only those attributes.
+
+        Named nested entries (radius policy servers) are removed by their index.
+        """
+        tmplt = Isam_system_securityTemplate
+        identity = dict((f, entry.get(f)) for f in ident)
+        wanted, nested_want = _split_nested(section, wanted)
+        entry, nested_have = _split_nested(section, entry)
+        for kw, id_field in NESTED.get(section, {}).items():
+            key = kw.replace("-", "_")
+            present = set(c.get(id_field) for c in nested_have.get(key) or [])
+            for child in nested_want.get(key) or []:
+                if child.get(id_field) in present:
+                    self.commands.append(tmplt.render_nested_remove(section, identity, kw, child[id_field]))
+        reset = _named_values(dict((k, v) for k, v in wanted.items() if k not in ident), entry)
+        if reset:
+            reset.update(identity)
+            self.commands.extend(tmplt.render_reset(section, reset))
+
+    def _check_profiles_in_use(self, wantd, haved, want, have):
+        """overridden must not remove a profile a kept operator still uses.
+
+        Kept operators are the requested ones; one that omits its profile keeps the
+        device's (operators have no profile reset). Removing the profile under it would
+        leave the operator without a valid profile, so refuse instead of guessing an order.
+        """
+        removed = set(key[0] for key in haved if not _named(key, wantd))
+        if not removed:
+            return
+        current = self._index("operators", _get(have, "operators"))
+        in_use = []
+        for key, operator in self._index("operators", self._wanted_entries["operators"]).items():
+            profile = operator.get("profile") or current.get(key, {}).get("profile")
+            if profile in removed:
+                in_use.append("%s (operator %s)" % (profile, key[0]))
+        if in_use:
+            self._module.fail_json(
+                msg="profiles: overridden would remove profile(s) still used by kept operators: %s. "
+                    "Include the profile in config or move the operator to another profile first."
+                    % ", ".join(sorted(in_use)))
 
     def _nested_commands(self, section, identity, nested_want, nested_have):
         """Nested instance lists (radius policy servers) of one list entry.
@@ -274,10 +366,12 @@ class Isam_system_security(IsamResourceModule):
         wantd = _settings_part(section, _get(want, section))
         haved = _settings_part(section, _get(have, section))
         if self.state == "deleted":
-            # a block holding instance lists (filetransfer, pae) is only reset when
-            # config gives one of its own attributes, not for its lists alone
-            if (not want or wantd) and haved:
-                self.commands.extend(tmplt.render_reset(section, haved))
+            # Without config every block is reset; with config only the attributes it
+            # names (a block named only for its instance lists -- filetransfer, pae --
+            # is not reset at all).
+            reset = haved if not want else _named_values(wantd, haved)
+            if reset:
+                self.commands.extend(tmplt.render_reset(section, reset))
             return
         if not wantd:
             return
