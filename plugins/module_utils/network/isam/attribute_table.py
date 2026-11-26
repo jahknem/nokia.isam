@@ -27,8 +27,6 @@ for nodes made of uniform clauses; nodes with irregular grammar keep explicit ne
 ``PARSERS`` (see ``docs/development-style.md``).
 """
 
-import shlex
-
 from collections import namedtuple
 from copy import deepcopy
 
@@ -99,33 +97,71 @@ class Node(object):
         return self.path[-1] if self.path else None
 
 
+# Characters that make the CLI read a printable string differently unless it is in double
+# quotes (CLI guide 1_-_ISAMCLI, "Basic Type Formatting Rules"): " and \ (escape), ? (online
+# help), # (comment) and whitespace (token separator).
+_SPECIAL = frozenset('"\\?#')
+
+
 def quote_value(value):
-    """A value as the device prints it: double quotes when it is empty, contains whitespace
-    or a quote, or starts with ``#`` (single quotes are an invalid token, lab ISAM)."""
+    """A value as the CLI reads it back: in double quotes when it is empty or contains
+    ``" \\ ? #`` or whitespace, with ``"`` and ``\\`` escaped by a backslash (CLI guide
+    1_-_ISAMCLI, "Basic Type Formatting Rules"; single quotes are an invalid token, lab
+    ISAM). :func:`split_cli_tokens` reads it back."""
     text = str(value)
-    if not text or text.startswith("#") or '"' in text or any(char.isspace() for char in text):
-        return '"%s"' % text.replace('"', '\\"')
+    if not text or any(char in _SPECIAL or char.isspace() for char in text):
+        return '"%s"' % text.replace("\\", "\\\\").replace('"', '\\"')
     return text
+
+
+def split_cli_tokens(text):
+    """Split a CLI line into tokens as the CLI guide defines them: whitespace separates,
+    double quotes group (and may appear several times in one token: hallo" "world is one
+    token), a backslash escapes the next character (\\r, \\t, \\n are control characters).
+    Unlike shlex, a single quote is an ordinary character (``it's`` needs no quoting) and
+    an unbalanced quote never fails the read."""
+    tokens, current, quoted, started, index = [], [], False, False, 0
+    escapes = {"r": "\r", "t": "\t", "n": "\n"}
+    while index < len(text):
+        char = text[index]
+        if char == "\\" and index + 1 < len(text):
+            index += 1
+            current.append(escapes.get(text[index], text[index]))
+            started = True
+        elif char == '"':
+            quoted, started = not quoted, True
+        elif char.isspace() and not quoted:
+            if started:
+                tokens.append("".join(current))
+            current, started = [], False
+        else:
+            current.append(char)
+            started = True
+        index += 1
+    if started:
+        tokens.append("".join(current))
+    return tokens
 
 
 def strip_comment(line):
     """line without a trailing ``#`` comment: a ``#`` starting a word outside double
-    quotes (a value starting with ``#`` is printed quoted, see :func:`quote_value`)."""
-    index = line.find(" #")
-    while index != -1:
-        if line[:index].count('"') % 2 == 0:
-            return line[:index]
-        index = line.find(" #", index + 1)
+    quotes (a value containing ``#`` is printed quoted, see :func:`quote_value`)."""
+    quoted, index = False, 0
+    while index < len(line):
+        char = line[index]
+        if char == "\\":
+            index += 1
+        elif char == '"':
+            quoted = not quoted
+        elif char == "#" and not quoted and (index == 0 or line[index - 1].isspace()):
+            return line[:index].rstrip()
+        index += 1
     return line
 
 
 def tokenize(text):
     """Split a CLI line; double-quoted values stay one token, a comment is dropped."""
-    text = strip_comment(text)
-    try:
-        return shlex.split(text)
-    except ValueError:  # unbalanced quotes: fall back to whitespace
-        return text.split()
+    return split_cli_tokens(strip_comment(text))
 
 
 def convert(kind, value):
@@ -143,7 +179,9 @@ def parse_clauses(tokens, attrs):
 
     ``no <kw>`` gives None for a value (the device default) and False for a flag; ``<kw>``
     gives True for a flag. A value token that is itself a keyword (or ``no``) is not taken
-    as the value. Unknown tokens are skipped, never an error.
+    as the value, unless it is one of the attribute's choices: in ``system session-timer
+    enable status enable`` the value ``enable`` of status is also the flag ``enable``.
+    Unknown tokens are skipped, never an error.
     """
     by_cli = dict((attr.cli, attr) for attr in attrs)
     result = {}
@@ -162,10 +200,16 @@ def parse_clauses(tokens, attrs):
             result[attr.option] = not negate
         elif negate:
             result[attr.option] = None
-        elif index < len(tokens) and tokens[index] not in by_cli and tokens[index] != "no":
+        elif index < len(tokens) and _is_value(attr, tokens[index], by_cli):
             result[attr.option] = convert(attr.kind, tokens[index])
             index += 1
     return result
+
+
+def _is_value(attr, token, keywords):
+    if token in keywords:
+        return token in (attr.choices or ())
+    return token != "no"
 
 
 def change(attr, want, have, state):
@@ -335,6 +379,35 @@ class AttributeTable(object):
     def creation_command(self, node, name):
         return self.command(node.cli, name)
 
+    def retained_on_delete(self, want, have):
+        """(node, instance name or None, attr) for every attribute a deleted request names
+        that has no removal form (``removable=False``) and is set in have: it cannot be
+        reset and stays until its instance is removed. Instances removed as a whole (named
+        by their identity alone or as a full entry) retain nothing."""
+        retained = []
+        for node in self.nodes:
+            fixed = [attr for attr in node.attrs if not attr.removable]
+            if not fixed:
+                continue
+            pairs = []  # type: list
+            if node.is_list:
+                haved = dict((str(entry.get(node.identity)), entry) for entry in _entries(have or {}, node))
+                for entry in _entries(want or {}, node):
+                    name = str(entry.get(node.identity))
+                    have_entry = haved.get(name)
+                    if have_entry is None:
+                        continue
+                    named = set(k for k, v in entry.items() if k != node.identity and v is not None)
+                    present = set(k for k, v in have_entry.items() if k != node.identity and v is not None)
+                    if named and not present <= named:  # not removed as a whole
+                        pairs.append((name, entry, have_entry))
+            else:
+                pairs.append((None, get_path(want or {}, node.path), get_path(have or {}, node.path)))
+            for name, want_entry, have_entry in pairs:
+                retained.extend((node, name, attr) for attr in fixed
+                                if want_entry.get(attr.option) is not None and have_entry.get(attr.option) is not None)
+        return retained
+
     # -- argument spec ---------------------------------------------------------------
 
     def argument_spec(self):
@@ -357,6 +430,20 @@ class AttributeTable(object):
                     spec["choices"] = list(attr.choices)
                 target[attr.option] = spec
         return options
+
+
+def warn_retained_on_delete(resource):
+    """For :class:`~...resource_module.TableResourceModule` families, after
+    generate_commands: deleted warns for each named attribute without removal form
+    instead of silently keeping it (as ``IsamResourceModule.addcmd`` does for
+    ``no_remval`` parsers)."""
+    if resource.state != "deleted":
+        return
+    table = resource.TABLE
+    for node, name, attr in table.retained_on_delete(resource.want, table.without_defaults(resource.have)):
+        where = node.cli + (" " + name if name is not None else "")
+        resource._module.warn("%s %s has no removal form in ISAM CLI; it is retained%s"
+                              % (where, attr.cli, " until the instance is removed" if name is not None else ""))
 
 
 class TableTemplate(NetworkTemplate):

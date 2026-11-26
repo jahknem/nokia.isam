@@ -4,6 +4,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.attribute_table import warn_retained_on_delete
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import TableResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
@@ -27,3 +28,7 @@ class Software_mngt(TableResourceModule):
             resource="software_mngt",
             tmplt=Software_mngtTemplate(),
         )
+
+    def generate_commands(self):
+        super(Software_mngt, self).generate_commands()
+        warn_retained_on_delete(self)

@@ -2,7 +2,10 @@ from __future__ import absolute_import, division, print_function
 
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.l2cp_user_port.l2cp_user_port import L2cpUserPortFacts
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.l2cp import L2cpUserPortTemplate
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.l2cp import (
+    L2cpUserPortTemplate,
+    MissingMandatory,
+)
 
 
 class L2cpUserPort(IsamResourceModule):
@@ -15,18 +18,15 @@ class L2cpUserPort(IsamResourceModule):
 
     def __init__(self, module):
         self.template = L2cpUserPortTemplate()
-        super(L2cpUserPort, self).__init__(empty_fact_val=[], facts_module=L2cpUserPortFacts(module), module=module, resource="l2cp_user_port", tmplt=self)
+        super(L2cpUserPort, self).__init__(empty_fact_val=[], facts_module=L2cpUserPortFacts(module), module=module, resource="l2cp_user_port", tmplt=self.template)
 
-    def get_parser(self, name):
-        return {"compval": name}
-
-    def execute_module(self):
-        if self.state == "parsed":
-            return {"parsed": self.template.parse(self._module.params.get("running_config")), "changed": False}
+    def generate_commands(self):
         if self.state == "rendered":
-            return {"rendered": self.template.render(self._module.params.get("config")), "changed": False}
-        if self.state == "gathered":
-            return self.result
+            try:
+                self.commands = self.template.render(self.want)
+            except MissingMandatory as exc:
+                self._module.fail_json(msg=str(exc))
+            return
         desired = self.want or []
         wanted_names = set(item["name"] for item in desired)
         current = {}
@@ -51,9 +51,6 @@ class L2cpUserPort(IsamResourceModule):
                     self.commands.extend(self._remove(item["name"], [pid for pid in partitions if pid != wanted]))
                 if wanted is not None and wanted not in partitions:
                     self.commands.append("configure l2cp user-port %s partition-id %s" % (item["name"], wanted))
-        if self.commands:
-            self.run_commands()
-        return self.result
 
     @staticmethod
     def _remove(name, partitions):

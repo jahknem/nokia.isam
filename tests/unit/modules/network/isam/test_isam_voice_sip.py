@@ -269,3 +269,46 @@ class TestIsamVoiceSipModule(TestIsamModule):
         assert parsed_redundancy["dns_purge_timer"] == 7200
         assert parsed_redundancy["fg_monitor_method"] == "options-method"
         assert parsed_redundancy["auto_srv_fo_timer"] == 43200
+
+
+SESSION_TIMER = "configure voice sip system session-timer enable status enable min-se-time 120\n"
+
+
+def test_session_timer_status_enable_is_not_taken_for_the_enable_flag(monkeypatch):
+    """'enable' is both the session-timer flag and a value of status; after 'status' it
+    is the value (the attribute's choices decide)."""
+    from .module_runner import run_module
+
+    gathered = run_module(monkeypatch, "isam_voice_sip", {"state": "gathered"}, SESSION_TIMER)["gathered"]
+    assert gathered["system"] == {"enable": True, "status": "enable", "min_se_time": 120}
+    config = {"system": {"enable": True, "status": "enable", "min_se_time": 120}}
+    for state in ("merged", "replaced"):
+        assert run_module(monkeypatch, "isam_voice_sip", {"state": state, "config": config}, SESSION_TIMER)["commands"] == []
+    # the flag alone, and a status value followed by the negated flag
+    alone = run_module(monkeypatch, "isam_voice_sip", {"state": "parsed", "running_config":
+                       "configure voice sip system session-timer status enable-uas no enable\n"})["parsed"]
+    assert alone["system"] == {"enable": False, "status": "enable-uas"}
+
+
+def test_parse_clauses_value_tokens():
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.attribute_table import Attr, parse_clauses
+
+    attrs = (Attr("enable", "enable", "flag"), Attr("status", "status", "str", choices=["enable", "disable"]),
+             Attr("name", "name", "str"), Attr("count", "count", "int"))
+    assert parse_clauses("status enable enable".split(), attrs) == {"status": "enable", "enable": True}
+    # a keyword that is not one of the attribute's choices is the next clause, as before
+    assert parse_clauses("name enable count 3".split(), attrs) == {"enable": True, "count": 3}
+    assert parse_clauses("status no enable".split(), attrs) == {"enable": False}
+
+
+def test_deleted_warns_for_named_attributes_without_removal_form(monkeypatch):
+    from .module_runner import run_module
+
+    device = "configure voice sip vsp vsp1 domain-name example.com timer-b 32000 ta4 3000\n"
+    result = run_module(monkeypatch, "isam_voice_sip", {"state": "deleted", "config": {"vsp": [
+        {"name": "vsp1", "timer_b": 32000}]}}, device)
+    assert result["commands"] == []
+    assert any("vsp vsp1 timer-b has no removal form" in warning for warning in result["_warnings"])
+    # a removable sibling is reset, the identity alone removes the instance: no warning
+    result = run_module(monkeypatch, "isam_voice_sip", {"state": "deleted", "config": {"vsp": [{"name": "vsp1"}]}}, device)
+    assert result["commands"] == ["configure voice sip no vsp vsp1"] and not result["_warnings"]

@@ -24,6 +24,12 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common imp
     normalize_bridge_vlan_alias,
     parse_cli_key_values,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.bridges import (
+    PORT_DEFAULTS,
+    PORT_SUBNODE_DEFAULTS,
+    VLAN_DEFAULTS,
+    without_bridge_defaults,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
     get_targeted_config,
     targeted_commands,
@@ -142,6 +148,12 @@ class BridgesFacts(object):
                 port_entry = ports.setdefault(port_id, {"port": port_id, "vlan_id": []})
                 self._apply_port_rest(port_entry, rest)
 
+        # device defaults (flags off included) are not reported: a "flat detail" read
+        # prints them ("no mac-learn-off", "no usacceptframetype"), a "flat" read omits them
+        for port_id, port_entry in ports.items():
+            vlans = [without_bridge_defaults(vlan, VLAN_DEFAULTS) for vlan in port_entry.get("vlan_id") or []]
+            ports[port_id] = without_bridge_defaults(port_entry, PORT_DEFAULTS, PORT_SUBNODE_DEFAULTS)
+            ports[port_id]["vlan_id"] = vlans
         bridge["port"] = sorted(ports.values(), key=lambda item: item.get("port", ""))
         return bridge
 

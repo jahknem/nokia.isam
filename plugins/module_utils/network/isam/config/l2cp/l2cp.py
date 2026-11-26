@@ -8,18 +8,13 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 class L2cp(IsamResourceModule):
     def __init__(self, module):
         self.template = L2cpTemplate()
-        super(L2cp, self).__init__(empty_fact_val=[], facts_module=L2cpFacts(module), module=module, resource="l2cp", tmplt=self)
+        super(L2cp, self).__init__(empty_fact_val=[], facts_module=L2cpFacts(module), module=module, resource="l2cp", tmplt=self.template)
 
-    def get_parser(self, name):
-        return {"compval": name}
-
-    def execute_module(self):
-        if self.state == "parsed":
-            return {"parsed": self.template.parse(self._module.params.get("running_config")), "changed": False}
+    def generate_commands(self):
         if self.state == "rendered":
-            return {"rendered": self.template.render(self._module.params.get("config")), "changed": False}
-        if self.state == "gathered":
-            return self.result
+            # an entry without partition_type renders nothing (never the reset)
+            self.commands = self.template.render([item for item in self.want or [] if item.get("partition_type")])
+            return
         # A single settings block with one attribute: "info configure l2cp flat" omits the default
         # (no-partition), so an empty read means no-partition.
         current = (self.have or [{}])[-1].get("partition_type") or "no-partition"
@@ -31,6 +26,3 @@ class L2cp(IsamResourceModule):
         else:
             target = wanted or "no-partition"  # replaced/overridden: unnamed means the default
         self.commands = [] if target == current else self.template.render([{"partition_type": target}])
-        if self.commands:
-            self.run_commands()
-        return self.result

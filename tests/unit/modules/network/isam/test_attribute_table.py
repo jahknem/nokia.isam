@@ -182,3 +182,32 @@ def test_invalid_definitions_are_rejected():
         Node(("a", "b"), "a b", (), identity="name")
     with pytest.raises(ValueError):
         Node("a", "a", (Attr("x", "x", "flag", node="a sub"),), identity="name")
+
+
+@pytest.mark.parametrize("value, quoted", [
+    ("plain", "plain"),
+    ("a b", '"a b"'),
+    ("why?", '"why?"'),
+    ("x#1", '"x#1"'),
+    ("back\\slash", '"back\\\\slash"'),
+    ('say "hi"', '"say \\"hi\\""'),
+    ("it's", "it's"),
+    ("", '""'),
+])
+def test_values_are_quoted_and_escaped_per_cli_guide_and_round_trip(value, quoted):
+    """CLI guide 1_-_ISAMCLI "Basic Type Formatting Rules": a printable string with
+    " \\ ? # or whitespace is double-quoted; inside, " and \\ are escaped."""
+    assert quote_value(value) == quoted
+    profile = TABLE.node("profile")
+    commands = TABLE.diff_commands(profile, "p1", {"label": value}, {}, "merged")
+    assert commands == ["configure demo profile p1 label " + quoted]
+    assert TABLE.parse(commands[0] + " # a comment") == {"profile": [{"name": "p1", "label": value}]}
+
+
+def test_tokenize_follows_the_cli_guide():
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.attribute_table import tokenize
+
+    assert tokenize('a hallo" "world "x\\"y" # comment') == ["a", "hallo world", 'x"y']
+    assert tokenize('a "b # c" d') == ["a", "b # c", "d"]
+    assert tokenize("label it's") == ["label", "it's"]  # shlex refused the unbalanced quote
+    assert tokenize('a "x\\\\" b') == ["a", "x\\", "b"]

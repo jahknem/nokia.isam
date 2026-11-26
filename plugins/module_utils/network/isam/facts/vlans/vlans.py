@@ -5,8 +5,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import shlex
-
 __metaclass__ = type
 
 """
@@ -27,6 +25,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
     VLAN_FLAG_KEYWORDS,
     VLAN_VALUE_KEYWORDS,
     VlansTemplate,
+    split_cli_tokens,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.vlans.vlans import (
     VlansArgs,
@@ -106,9 +105,8 @@ class VlansFacts(object):
             parts = line.split(None, 4)  # configure vlan id <id> [<attributes>]
             vlan_id, body = parts[3], parts[4] if len(parts) > 4 else ""
             result.append("configure vlan id %s" % vlan_id)
-            for negate, key, value in iter_cli_fields(shlex.split(body), bool_fields=VLAN_FLAG_KEYWORDS,
+            # values are unquoted here once; the parsers take the rest of the line as is
+            for negate, key, value in iter_cli_fields(split_cli_tokens(body), bool_fields=VLAN_FLAG_KEYWORDS,
                                                       value_fields=VLAN_VALUE_KEYWORDS):
-                if value is not None and " " in value:
-                    value = '"%s"' % value
                 result.append(" ".join(w for w in ("configure vlan id", vlan_id, "no" if negate else "", key, value or "") if w))
         return result

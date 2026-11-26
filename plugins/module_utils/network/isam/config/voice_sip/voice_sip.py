@@ -4,6 +4,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.attribute_table import warn_retained_on_delete
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import TableResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
@@ -28,3 +29,7 @@ class Isam_voice_sip(TableResourceModule):
             resource="voice_sip",
             tmplt=Isam_voice_sipTemplate(),
         )
+
+    def generate_commands(self):
+        super(Isam_voice_sip, self).generate_commands()
+        warn_retained_on_delete(self)

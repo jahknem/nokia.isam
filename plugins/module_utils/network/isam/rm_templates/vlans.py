@@ -25,6 +25,9 @@ import re
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (
     NetworkTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.attribute_table import (  # noqa: F401 (facts)
+    split_cli_tokens,
+)
 
 # (option, CLI keyword, kind, device default) in the device's order. Kinds and defaults
 # follow the CLI guide's syntax ("[ [ no ] kw ]" is a flag, "[ no kw | kw <type> ]" a
@@ -120,9 +123,10 @@ def _flag(option, cli):
 def _value(option, cli, kind):
     parser = {
         "name": option,
-        # a value may be quoted by the device ("name \"a b\"")
+        # one attribute per line, already unquoted by the facts' line splitting (split_cli_tokens):
+        # the rest of the line is the value (a name may contain spaces and quotes)
         "getval": re.compile(_ID + r"(?:(?P<negate>no\s)" + re.escape(cli) + r"|" + re.escape(cli)
-                             + r"\s\"?(?P<value>.+?)\"?)$"),
+                             + r"\s(?P<value>.+))$"),
         "setval": _SCOPE + " " + cli + " {{ " + option + " }}",
         "remval": _SCOPE + " no " + cli,
         "result": _result(option, "{{ none if negate is defined else value" + ("|int" if kind == "int" else "") + " }}"),
@@ -133,12 +137,20 @@ def _value(option, cli, kind):
     return parser
 
 
+def quote_cli_string(value):
+    """A printable string as the CLI reads it back: characters beyond letters, digits
+    and _.:- are sent in double quotes, as the device prints such names; single quotes
+    are an invalid token (lab ISAM). Inside the quotes " and \\ are escaped with a
+    backslash as in attribute_table.quote_value (CLI guide 1_-_ISAMCLI, "Basic Type
+    Formatting Rules"), which is how the facts' split_cli_tokens reads them back."""
+    value = str(value)
+    if re.fullmatch(r"[A-Za-z0-9_.:-]+", value):
+        return value
+    return '"%s"' % value.replace("\\", "\\\\").replace('"', '\\"')
+
+
 def _name_setval(data):
-    """A name with characters beyond letters, digits and _.:- is sent in double quotes,
-    as the device prints it; single quotes are an invalid token (lab ISAM)."""
-    name = str(data["name"])
-    value = name if re.fullmatch(r"[A-Za-z0-9_.:-]+", name) else '"%s"' % name.replace('"', '\\"')
-    return "configure vlan id %s name %s" % (data["id"], value)
+    return "configure vlan id %s name %s" % (data["id"], quote_cli_string(data["name"]))
 
 
 PARSERS = [{
