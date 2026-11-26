@@ -132,6 +132,31 @@ def read_scope(resource):
     return TARGETED_READ_SCOPE.get(resource, "instance")
 
 
+# How a single-instance read proves absence (docs/targeted-read-contract.md).
+# Default, for every section not listed: "instance does not exist", or the header
+# only in both 'flat' and 'flat detail', is confirmed absence ('flat detail' prints
+# every existing instance with its defaults: 67 of 67 default-only instances in 35
+# sections, DS-LIN-TEST-01 2026-11-27). Listed sections deviate, each with evidence:
+#   silent        a switch without attributes: present prints nothing, also with
+#                 detail; only "instance does not exist" proves absence
+#   unobservable  every read answers the same whether the setting is on or off:
+#                 existence is never established (neither present nor absent)
+# Family branches add their sections here, as for TARGETED_GATHER.
+ABSENCE_POLICY = {
+    # off: "instance does not exist"; on: header only, also with detail (live write,
+    # DS-LIN-TEST-01 2026-11-26, scratch VLAN ports on card 6 and PON 1/1/7/16).
+    "isam_arp_relay": {"config": "silent"},
+    # switched on and off on a scratch VLAN port: flat, flat detail, the whole read
+    # and 'show dhcp-relay port-stats' answered the same in both states (2026-11-26).
+    "isam_dhcp_relay": {"config": "unobservable"},
+}
+
+
+def absence_policy(resource, section):
+    """None (the default rule), "silent" or "unobservable" for one targeted section."""
+    return (ABSENCE_POLICY.get(resource) or {}).get(section)
+
+
 TARGETED_WRITES = (
     "ani_onts", "bridges", "efm_oam_interface", "equipment_onts", "ethernet_onts", "interfaces",
     "isam_arp_relay", "isam_dhcp_relay", "ntp_onts", "pon_interfaces", "qos_interfaces",

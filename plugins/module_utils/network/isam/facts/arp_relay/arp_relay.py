@@ -5,8 +5,7 @@ from __future__ import absolute_import, division, print_function
 from ansible.module_utils.common.text.converters import to_text
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.facts.facts import get_resource_connection
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
-    get_scoped_config,
-    requested_identities,
+    get_targeted_config,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.arp_relay import Isam_arp_relayTemplate
@@ -21,8 +20,8 @@ class Isam_arp_relayFacts(object):
 
     def get_config(self, connection):
         """The whole resource, or only the ports named in config (targeted gathering)."""
-        commands = ["info configure arp-relay statistics %s flat" % port for port in requested_identities(self._module, "isam_arp_relay")]
-        return get_scoped_config(self._module, connection, None, "info configure arp-relay flat", commands)
+        return get_targeted_config(self._module, connection, "isam_arp_relay", "info configure arp-relay flat",
+                                   {"config": "info configure arp-relay statistics %s flat"}, write_states=True)
 
     def populate_facts(self, connection, ansible_facts, data=None):
         if data is None:

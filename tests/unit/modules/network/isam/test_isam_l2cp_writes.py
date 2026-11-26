@@ -132,7 +132,8 @@ class TestL2cpSessionWrites(_Base):
         set_module_args({"state": "gathered", "config": [{"name": "9", "bras_ip_address": "192.0.2.9"}]}, True)
         result = self.execute_module(changed=False)
         self.assertNotIn("commands", result)
-        self.assertEqual(device.commands, ["info configure l2cp session 9 flat"])
+        self.assertEqual(device.commands, ["info configure l2cp session 9 flat",
+                                           "info configure l2cp session 9 flat detail"])
 
     def test_deleted_named_and_all(self):
         self.commands("deleted", [{"name": "2"}, {"name": "9"}], ["configure l2cp no session 2"])
