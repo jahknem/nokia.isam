@@ -13,6 +13,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (
     NetworkTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.cli_safety import check_cli_commands
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.read_outcomes import (
     ReadOutcomeCollector,
     error_class,
@@ -369,6 +370,7 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
         return connection.get(fallback_command)
     if state not in safe_states:
         return connection.get(fallback_command)
+    check_cli_commands(commands, "scoped read")
     selectors = selectors or {}
     scoped_results = []
     reading = state == "gathered"
@@ -527,7 +529,9 @@ def targeted_commands(module, resource, formats):
                 commands.extend(form(identity))
             else:
                 commands.append(form % (identity if isinstance(identity, tuple) else (identity,)))
-    return commands
+    # An identity with a new line would inject a second CLI command into a read
+    # (UnsafeCliCommandError, a ValueError: the facts layer fails the module).
+    return check_cli_commands(commands, "targeted read of %s" % resource)
 
 
 def _finalize_collector(collector):
