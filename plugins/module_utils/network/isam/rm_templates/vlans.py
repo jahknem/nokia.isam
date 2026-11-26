@@ -25,6 +25,9 @@ import re
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (
     NetworkTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.attribute_table import (  # noqa: F401 (facts)
+    split_cli_tokens,
+)
 
 # (option, CLI keyword, kind, device default) in the device's order. Kinds and defaults
 # follow the CLI guide's syntax ("[ [ no ] kw ]" is a flag, "[ no kw | kw <type> ]" a
@@ -138,40 +141,12 @@ def quote_cli_string(value):
     """A printable string as the CLI reads it back: characters beyond letters, digits
     and _.:- are sent in double quotes, as the device prints such names; single quotes
     are an invalid token (lab ISAM). Inside the quotes " and \\ are escaped with a
-    backslash (CLI guide, 1_-_ISAMCLI "Printable strings"), which is also how the facts'
-    line splitting (split_cli_tokens) reads them, so a name round-trips."""
+    backslash as in attribute_table.quote_value (CLI guide 1_-_ISAMCLI, "Basic Type
+    Formatting Rules"), which is how the facts' split_cli_tokens reads them back."""
     value = str(value)
     if re.fullmatch(r"[A-Za-z0-9_.:-]+", value):
         return value
     return '"%s"' % value.replace("\\", "\\\\").replace('"', '\\"')
-
-
-def split_cli_tokens(text):
-    """Split a CLI line into tokens as the CLI guide defines them: whitespace separates,
-    double quotes group (and may appear several times in one token), a backslash
-    escapes the next character (\\r, \\t, \\n are control characters). Unlike shlex,
-    a single quote is an ordinary character (a name like it's needs no quoting)."""
-    tokens, current, quoted, started, index = [], [], False, False, 0
-    escapes = {"r": "\r", "t": "\t", "n": "\n"}
-    while index < len(text):
-        char = text[index]
-        if char == "\\" and index + 1 < len(text):
-            index += 1
-            current.append(escapes.get(text[index], text[index]))
-            started = True
-        elif char == '"':
-            quoted, started = not quoted, True
-        elif char.isspace() and not quoted:
-            if started:
-                tokens.append("".join(current))
-            current, started = [], False
-        else:
-            current.append(char)
-            started = True
-        index += 1
-    if started:
-        tokens.append("".join(current))
-    return tokens
 
 
 def _name_setval(data):
