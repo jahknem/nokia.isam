@@ -18,10 +18,7 @@ created.
 """
 
 from ansible.module_utils.six import iteritems
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import deleted_targets
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
@@ -47,7 +44,7 @@ def _without_defaults(entry, defaults):
                 if value is not None and not (key in defaults and value == defaults[key]))
 
 
-class Ethernet_line(ResourceModule):
+class Ethernet_line(IsamResourceModule):
     """
     The isam_ethernet_line config class
     """
@@ -68,18 +65,6 @@ class Ethernet_line(ResourceModule):
         )
         self.line_parsers = [parser["name"] for parser in LINE_PARSERS + TCA_PARSERS]
         self.mau_parsers = [parser["name"] for parser in MAU_PARSERS]
-
-    def execute_module(self):
-        """ Execute the module
-        :rtype: A dictionary
-        :returns: The result from module execution
-        """
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
 
     def generate_commands(self):
         """ Generate configuration commands to send based on
@@ -125,10 +110,17 @@ class Ethernet_line(ResourceModule):
             target["tca_line_threshold"] = dict((key, value) for key, value in iteritems(have.get("tca_line_threshold") or {})
                                                 if named_tca and key not in named_tca)
         if "mau" in named:
-            wantd = {entry["index"]: entry for entry in want["mau"]}
-            haved = {entry["index"]: entry for entry in have.get("mau") or []}
-            targets = {entry["index"]: entry for entry, _current in deleted_targets(wantd, haved, ("index",))}
-            target["mau"] = [targets.get(index, entry) for index, entry in haved.items()]
+            # per MAU: an index alone resets that MAU, named fields reset only themselves
+            requested = dict((entry["index"], entry) for entry in want["mau"])
+            target["mau"] = []
+            for entry in have.get("mau") or []:
+                ask = requested.get(entry["index"])
+                if ask is None:
+                    target["mau"].append(entry)
+                    continue
+                fields = [key for key, value in iteritems(ask) if key != "index" and value is not None]
+                if fields:
+                    target["mau"].append(dict((key, value) for key, value in iteritems(entry) if key not in fields))
         return target
 
     def _compare(self, want, have):

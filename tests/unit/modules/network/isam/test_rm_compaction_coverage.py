@@ -71,6 +71,9 @@ UNSCOPED_RMS = {
     "Xdsl_profiles": "profile commands have distinct nested scopes",
     "Xdsl_bonding": "single global option",
     "Uni_onts": "single field per UNI",
+    "Xdsl_inm": "single global option",
+    "Xdsl_onts": "single attribute per ONT",
+    "Xdsl_system": "single global option",
     "Xstp": "global and per-port scopes differ",
 }
 

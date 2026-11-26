@@ -244,3 +244,40 @@ Xdsl_linesTemplate.PARSERS.extend(
         )
     ]
 )
+
+
+# configure xdsl line (if-index) tca-line-threshold [ [ no ] enable ] [ no <attr> | <attr> <value> ] ...
+# Facts split a packed line into one line per attribute; defaults ("no <attr>", "no enable") are not reported.
+XDSL_TCA_FIELDS = (
+    "es_nearend", "ses_nearend", "uas_nearend", "leftr_nearend", "leftr_day_nearend",
+    "es_day_nearend", "ses_day_nearend", "uas_day_nearend", "es_farend", "ses_farend",
+    "uas_farend", "es_day_farend", "ses_day_farend", "uas_day_farend", "leftr_farend",
+    "leftr_day_farend", "reinit", "reinit_day",
+)
+XDSL_TCA_SCOPE = "configure xdsl line {{ name }} tca-line-threshold "
+
+
+def _xdsl_tca_value_parser(field):
+    cli_name = field.replace("_", "-")
+    return {
+        "name": "tca_line_threshold." + field,
+        "getval": re.compile(
+            r"^configure\s+xdsl\s+line\s+(?P<name>\S+)\s+tca-line-threshold\s+"
+            + re.escape(cli_name) + r"\s+(?P<" + field + r">[1-9]\d*)$"
+        ),
+        "setval": XDSL_TCA_SCOPE + cli_name + " {{ tca_line_threshold." + field + " }}",
+        "remval": XDSL_TCA_SCOPE + "no " + cli_name,
+        "result": {"{{ name }}": {"name": "{{ name }}", "tca_line_threshold": {field: "{{ " + field + " }}"}}},
+    }
+
+
+Xdsl_linesTemplate.PARSERS.append(
+    {
+        "name": "tca_line_threshold.enable",
+        "getval": re.compile(r"^configure\s+xdsl\s+line\s+(?P<name>\S+)\s+tca-line-threshold\s+enable$"),
+        "setval": XDSL_TCA_SCOPE + "enable",
+        "remval": XDSL_TCA_SCOPE + "no enable",
+        "result": {"{{ name }}": {"name": "{{ name }}", "tca_line_threshold": {"enable": True}}},
+    }
+)
+Xdsl_linesTemplate.PARSERS.extend(_xdsl_tca_value_parser(_field) for _field in XDSL_TCA_FIELDS)

@@ -8,7 +8,6 @@ from ansible_collections.nokia.isam.tests.unit.modules.network.isam.isam_module 
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ethernet_line.ethernet_line import Ethernet_lineFacts
 from . import lab_captures
 
-CAPTURE = lab_captures.CONFIGURED
 
 
 def parse(text):
@@ -34,10 +33,30 @@ def test_mau_block_keeps_type_and_power():
     assert mau["power"] == "up"
 
 
-@pytest.mark.skipif(not CAPTURE.exists(), reason="lab capture not available")
 def test_capture_ethernet_line_mau_power_present():
-    lines = [l for l in CAPTURE.read_text().splitlines() if l.startswith("configure ethernet line ")]
+    lines = [l for l in lab_captures.configured().splitlines() if l.startswith("configure ethernet line ")]
     got = parse("\n".join(lines))
     with_mau = [e for e in got if e.get("mau")]
     assert with_mau
     assert any(m.get("power") for e in with_mau for m in e["mau"])
+
+
+def _run(monkeypatch, state, config, running=""):
+    from .module_runner import run_module
+
+    return run_module(monkeypatch, "isam_ethernet_line", {"state": state, "config": config}, running)
+
+
+def test_rendered_renders_explicit_false(monkeypatch):
+    result = _run(monkeypatch, "rendered", [{"if_index": "1/1/6/1", "admin_up": False,
+                                             "mau": [{"index": 1, "autonegotiate": False}]}])
+    assert result["rendered"] == ["configure ethernet line 1/1/6/1 no admin-up",
+                                  "configure ethernet line 1/1/6/1 mau 1 no autonegotiate"]
+
+
+def test_deleted_named_mau_field_keeps_its_siblings(monkeypatch):
+    running = "configure ethernet line 1/1/6/1 mau 1 type 1000basebx10d power up autonegotiate cap1000base-xfd\n"
+    result = _run(monkeypatch, "deleted", [{"if_index": "1/1/6/1", "mau": [{"index": 1, "autonegotiate": True}]}], running)
+    assert result["commands"] == ["configure ethernet line 1/1/6/1 mau 1 no autonegotiate"]
+    result = _run(monkeypatch, "deleted", [{"if_index": "1/1/6/1", "mau": [{"index": 1}]}], running)
+    assert result["commands"] == ["configure ethernet line 1/1/6/1 mau 1 no autonegotiate no cap1000base-xfd"]
