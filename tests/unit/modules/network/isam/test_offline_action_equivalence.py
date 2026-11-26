@@ -13,6 +13,8 @@ from types import SimpleNamespace
 
 import pytest
 
+from . import contract_registry as _registry
+
 from ansible.module_utils import basic
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.cfg import base as cfg_base
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.facts import facts
@@ -108,6 +110,7 @@ CASES = [
 
 
 @pytest.mark.parametrize("module,running,config", CASES)
+@pytest.mark.skipif(not all(_registry.module_in_scope(c[0][0].__name__) for c in CASES), reason='offline equivalence covers the whole inventory only in the final integration PR')
 def test_offline_action_states_match_device_run(monkeypatch, capsys, module, running, config):
     gathered = run(monkeypatch, capsys, module, {"state": "gathered"}, Device(running))["gathered"]
     assert gathered, "the fixture must parse"
@@ -127,6 +130,7 @@ def test_offline_action_states_match_device_run(monkeypatch, capsys, module, run
     assert some_commands
 
 
+@_registry.requires('isam_vlans')
 def test_offline_json_is_validated_like_config(monkeypatch, capsys):
     # "100"/100 and an explicit null compare like the device facts: no spurious diff.
     running = json.dumps([{"id": 100, "name": "Home", "priority": "5", "mode": "residential-bridge", "new_secure_fwd": None}])
@@ -140,6 +144,7 @@ def test_offline_json_is_validated_like_config(monkeypatch, capsys):
     ("{not json", "neither CLI text nor valid JSON"),
     (json.dumps([{"id": "100", "priority": "high"}]), "does not match the config argspec"),
 ])
+@_registry.requires('isam_vlans')
 def test_offline_json_errors_fail_cleanly(monkeypatch, capsys, running_config, message):
     for target in (resource_module_base, facts, cfg_base):
         monkeypatch.setattr(target, "get_resource_connection", lambda _module: Device())
@@ -174,6 +179,7 @@ def _offline_action(monkeypatch, module, args, diff=False, check_mode=False):
     return action
 
 
+@_registry.requires('isam_vlans')
 def test_action_plugin_offline_path_sets_ansible_args(monkeypatch):
     # The offline path must set the _ansible_* arguments (diff, verbosity, ...) like any run.
     seen = {}

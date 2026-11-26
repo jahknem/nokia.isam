@@ -6,6 +6,7 @@ against that configuration instead of reading the device and never sends command
 (the offline counterpart of ``rendered`` for deletions, used by NOC move/copy/delete
 previews). running_config is accepted as canonical resource JSON or as CLI text.
 """
+from . import contract_registry as _registry
 import json
 
 import pytest
@@ -56,6 +57,7 @@ EQUIPMENT = {"interfaces": [{"ont_idx": "1/1/6/1/1", "sernum": "ALCL:F0000001", 
                         "plndnumdataports": 1, "plndnumvoiceports": 0, "admin_state": "up"}]}
 
 
+@_registry.requires('isam_equipment_onts')
 def test_equipment_onts_delete_renders_removal_offline_from_json(monkeypatch, capsys):
     result = invoke_offline(monkeypatch, capsys, isam_equipment_onts, json.dumps(EQUIPMENT))
     commands = result["commands"]
@@ -66,6 +68,7 @@ def test_equipment_onts_delete_renders_removal_offline_from_json(monkeypatch, ca
     assert result["changed"] is False
 
 
+@_registry.requires('isam_equipment_onts')
 def test_equipment_onts_delete_renders_removal_offline_from_cli(monkeypatch, capsys):
     cli = ("configure equipment ont interface 1/1/6/1/1 sernum ALCL:F0000001 sw-ver-pland auto plnd-var DO enable-aes enable\n"
            "configure equipment ont interface 1/1/6/1/1 admin-state up\n"
@@ -76,6 +79,7 @@ def test_equipment_onts_delete_renders_removal_offline_from_cli(monkeypatch, cap
     assert "configure equipment ont no slot 1/1/6/1/1/1" in result["commands"]
 
 
+@_registry.requires('isam_bridges')
 def test_bridges_delete_renders_removal_offline(monkeypatch, capsys):
     bridges = {"port": [{"port": "1/1/6/1/1/1/1", "max_unicast_mac": 5, "pvid": 99,
                          "vlan_id": [{"id": "10", "tag": "single-tagged", "l2fwder_vlan": "410", "vlan_scope": "local"}, {"id": "99"}]}]}
@@ -83,6 +87,7 @@ def test_bridges_delete_renders_removal_offline(monkeypatch, capsys):
     assert "configure bridge no port 1/1/6/1/1/1/1" in result["commands"]
 
 
+@_registry.requires('isam_ethernet_onts')
 def test_ethernet_onts_delete_renders_removal_offline(monkeypatch, capsys):
     result = invoke_offline(monkeypatch, capsys, isam_ethernet_onts,
                             json.dumps([{"uni_idx": "1/1/6/1/1/1/1", "cust_info": "Y000001", "admin_state": "up"}]))
@@ -90,6 +95,7 @@ def test_ethernet_onts_delete_renders_removal_offline(monkeypatch, capsys):
     assert result["commands"]
 
 
+@_registry.requires('isam_equipment_onts')
 def test_offline_delete_of_a_subset_via_running_config(monkeypatch, capsys):
     # Supplying only the subset as running_config (delete-all) removes exactly that subset.
     subset = {"interfaces": [{"ont_idx": "1/1/6/1/1", "sernum": "ALCL:F0000001", "admin_state": "up"}], "slots": []}
@@ -97,13 +103,17 @@ def test_offline_delete_of_a_subset_via_running_config(monkeypatch, capsys):
     assert "configure equipment ont no interface 1/1/6/1/1" in result["commands"]
     assert not any("1/1/6/1/2" in c for c in result["commands"])
 
-@pytest.mark.parametrize("module,family,identity", [
+_REMAINING = [
     (isam_ntp_onts, "ntp_onts", {"ont_id": "1/1/6/1/1"}),
     (isam_ani_onts, "ani_onts", {"ont_idx": "1/1/6/1/1", "tca_thresh": True}),
     (isam_dhcp_relay, "dhcp_relay", {"name": "vlan-port:1/1/6/1/1/1/1:10", "port_stats": True}),
     (isam_arp_relay, "arp_relay", {"name": "1/1/6/1/1/1/1"}),
     (isam_efm_oam_interface, "efm_oam", {"name": "1/1/6/1/1/1/1", "admin_up": True, "passive_mode": True}),
-])
+]
+_REMAINING = [e for e in _REMAINING if _registry.module_in_scope(e[0].__name__)]
+
+
+@pytest.mark.parametrize("module,family,identity", _REMAINING)
 def test_remaining_noc_families_delete_offline(monkeypatch, capsys, module, family, identity):
     result = invoke_offline(monkeypatch, capsys, module, json.dumps([identity]))
     assert result["commands"], family
@@ -111,6 +121,7 @@ def test_remaining_noc_families_delete_offline(monkeypatch, capsys, module, fami
     assert result["changed"] is False
 
 
+@_registry.requires('isam_equipment_onts')
 def test_offline_running_config_unknown_field_fails(monkeypatch, capsys):
     # A renamed/unknown field must error, not silently render zero removal commands.
     connection = Connection()

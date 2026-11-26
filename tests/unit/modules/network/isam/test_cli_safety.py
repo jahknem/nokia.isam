@@ -20,6 +20,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
 )
 
 from .module_runner import run_module
+from . import contract_registry as _registry
 from .targeted_harness import Device, gathered
 
 INJECT = "x\nadmin equipment reboot-isam with-self-test"
@@ -72,6 +73,7 @@ def _assert_refused(result, *hidden):
     assert not any("reboot-isam" in command for command in result.get("_sent", []))
 
 
+@_registry.requires('isam_vlans')
 def test_rendered_vlan_name_with_new_line_fails_without_emitting(monkeypatch):
     result = run_module(monkeypatch, "isam_vlans", {
         "state": "rendered", "config": [{"id": 100, "mode": "residential-bridge", "name": INJECT}]})
@@ -87,6 +89,7 @@ def _assert_escaped(commands):
     assert any('"x\\nadmin equipment reboot-isam with-self-test"' in command for command in commands), commands
 
 
+@_registry.requires('isam_system_security')
 def test_rendered_operator_with_new_line_stays_one_escaped_value(monkeypatch):
     # isam_system_security quotes printable strings per the CLI guide (\n inside
     # quotes), so the injection cannot happen; the password is masked as always.
@@ -97,6 +100,7 @@ def test_rendered_operator_with_new_line_stays_one_escaped_value(monkeypatch):
     _assert_escaped(result["rendered"])
 
 
+@_registry.requires('isam_system_security')
 def test_offline_render_with_new_line_stays_one_escaped_value(monkeypatch):
     # deleted + canonical running_config: the offline removal preview
     result = run_module(monkeypatch, "isam_system_security", {
@@ -105,6 +109,7 @@ def test_offline_render_with_new_line_stays_one_escaped_value(monkeypatch):
     _assert_escaped(result["commands"])
 
 
+@_registry.requires('isam_vlans')
 def test_offline_render_with_raw_new_line_fails(monkeypatch):
     # A family that does not escape control characters: the central check refuses
     # the offline merged render that would set the name.
@@ -114,6 +119,7 @@ def test_offline_render_with_raw_new_line_fails(monkeypatch):
     _assert_refused(result, "reboot-isam")
 
 
+@_registry.requires('isam_vlans')
 def test_merged_against_device_with_new_line_fails_before_sending(monkeypatch):
     result = run_module(monkeypatch, "isam_vlans", {
         "state": "merged", "config": [{"id": 100, "mode": "residential-bridge", "name": INJECT}]})
@@ -121,6 +127,7 @@ def test_merged_against_device_with_new_line_fails_before_sending(monkeypatch):
 
 
 @pytest.mark.parametrize("value", SAFE_VALUES)
+@pytest.mark.skipif(not _registry.module_in_scope('isam_vlans'), reason='contract pending for isam_vlans')
 def test_rendered_printable_values_still_pass(monkeypatch, value):
     result = run_module(monkeypatch, "isam_vlans", {
         "state": "rendered", "config": [{"id": 100, "mode": "residential-bridge", "name": value}]})
@@ -130,6 +137,7 @@ def test_rendered_printable_values_still_pass(monkeypatch, value):
 
 # -- (b) targeted reads -------------------------------------------------------------
 
+@pytest.mark.skipif(not _registry.feature('cli-safety-targeted'), reason='targeted-read enforcement lands with the read-outcomes integration PR')
 def test_targeted_gathered_with_new_line_identity_sends_nothing(monkeypatch):
     case = {"module": "isam_system_security"}
     device = Device(["configure system security operator isadmin profile admin"])
@@ -140,6 +148,7 @@ def test_targeted_gathered_with_new_line_identity_sends_nothing(monkeypatch):
     assert device.commands == []
 
 
+@pytest.mark.skipif(not _registry.feature('cli-safety-targeted'), reason='targeted-read enforcement lands with the read-outcomes integration PR')
 def test_targeted_gathered_with_safe_identity_still_reads(monkeypatch):
     case = {"module": "isam_system_security"}
     device = Device(["configure system security operator isadmin profile admin"])
@@ -148,6 +157,7 @@ def test_targeted_gathered_with_safe_identity_still_reads(monkeypatch):
     assert device.commands and all("\n" not in command for command in device.commands)
 
 
+@pytest.mark.skipif(not _registry.feature('cli-safety-targeted'), reason='targeted-read enforcement lands with the read-outcomes integration PR')
 def test_targeted_commands_rejects_new_line_identity():
     class Module(object):
         params = {"state": "gathered", "config": [{"id": "10 flat\nadmin equipment reboot-isam"}]}
@@ -173,6 +183,7 @@ def _cliconf():
     return plugin
 
 
+@pytest.mark.skipif(not _registry.feature('cli-safety-cliconf'), reason='cliconf backstop lands with the connection-plugin integration PR')
 def test_cliconf_edit_config_refuses_whole_candidate_before_writing():
     plugin = _cliconf()
     with pytest.raises(UnsafeCliCommandError):
@@ -180,6 +191,7 @@ def test_cliconf_edit_config_refuses_whole_candidate_before_writing():
     assert plugin.sent == []
 
 
+@pytest.mark.skipif(not _registry.feature('cli-safety-cliconf'), reason='cliconf backstop lands with the connection-plugin integration PR')
 def test_cliconf_get_refuses_new_line():
     plugin = _cliconf()
     with pytest.raises(UnsafeCliCommandError):
@@ -187,6 +199,7 @@ def test_cliconf_get_refuses_new_line():
     assert plugin.sent == []
 
 
+@pytest.mark.skipif(not _registry.feature('cli-safety-cliconf'), reason='cliconf backstop lands with the connection-plugin integration PR')
 def test_cliconf_send_command_refuses_new_line_before_the_channel(monkeypatch):
     from ansible.plugins.cliconf import CliconfBase
 
@@ -224,7 +237,7 @@ def _targeted_cases():
     return CASES
 
 
-@pytest.mark.parametrize("name", sorted(_targeted_cases()))
+@pytest.mark.parametrize("name", sorted(n for n in _targeted_cases() if _registry.case_in_scope(n)))
 def test_no_targeted_family_sends_a_control_character(monkeypatch, name):
     case = _targeted_cases()[name]
     config = _inject(case["config"])

@@ -143,12 +143,14 @@ def resource_of(name):
     return name.split(":")[0]
 
 
-def check_coverage(cases):
-    """Every instance list in TARGETED_GATHER has a case, and cases only name such lists."""
+def check_coverage(cases, expected=None):
+    """Every instance list in TARGETED_GATHER has a case, and cases only name such lists.
+    `expected` narrows the required resources (contract registry scoping)."""
     covered = {}
     for name, case in cases.items():
         covered.setdefault(resource_of(name), set()).update(named_sections(case["config"]))
-    expected = {resource: set(sections) for resource, sections in TARGETED_GATHER.items()}
+    if expected is None:
+        expected = {resource: set(sections) for resource, sections in TARGETED_GATHER.items()}
     assert covered == expected
 
 

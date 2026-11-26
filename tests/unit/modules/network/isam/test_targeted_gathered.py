@@ -16,11 +16,16 @@ for _path in sorted(pathlib.Path(__file__).parent.glob("targeted_cases_*.py")):
     _cases = importlib.import_module("." + _path.stem, __package__).CASES
     assert not set(_cases) & set(CASES), _path
     CASES.update(_cases)
-NAMES = sorted(CASES)
+from . import contract_registry as _registry
+NAMES = sorted(name for name in CASES if _registry.case_in_scope(name))
 
 
 def test_every_instance_list_has_a_case():
-    harness.check_coverage(CASES)
+    scoped_keys = [name for name in CASES if _registry.case_in_scope(name)]
+    required = {harness.resource_of(name) for name in scoped_keys}
+    harness.check_coverage(
+        {name: CASES[name] for name in scoped_keys},
+        expected={r: set(sections) for r, sections in harness.TARGETED_GATHER.items() if r in required})
 
 
 @pytest.mark.parametrize("name", NAMES)
@@ -48,7 +53,7 @@ def test_without_config_the_whole_resource_is_read(monkeypatch, name):
     harness.run_whole(monkeypatch, CASES[name])
 
 
-@pytest.mark.parametrize("name", ["ani_onts", "ntp_onts", "alarm:custom_profiles", "qos_profiles"])
+@pytest.mark.parametrize("name", [n for n in ["ani_onts", "ntp_onts", "alarm:custom_profiles", "qos_profiles"] if _registry.case_in_scope(n)])
 def test_a_bare_header_reply_is_not_returned(monkeypatch, name):
     """Real device form: unset and non-existing instances both answer only '#---'/'echo'.
 

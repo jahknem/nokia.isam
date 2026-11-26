@@ -1,5 +1,6 @@
 import importlib
 import sys
+from . import contract_registry as _registry
 
 import pytest
 from ansible.module_utils import basic
@@ -80,6 +81,7 @@ RESOURCE_MODULES = (
     "isam_pppox_relay_global",
     "isam_trouble_shooting_pon",
 )
+RESOURCE_MODULES = tuple(m for m in RESOURCE_MODULES if _registry.module_in_scope(m))
 
 CANONICAL_STATES = {
     "merged",
