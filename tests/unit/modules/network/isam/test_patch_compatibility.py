@@ -1,4 +1,8 @@
-"""0.3.14 must fix the released APIs, not accidentally publish the feature branch."""
+"""0.3.14 must fix the released APIs, not accidentally publish the feature branch.
+
+The action-module failure serialization through the real module entrypoint lives in
+test_action_failure_entrypoint.py.
+"""
 import hashlib
 import json
 from pathlib import Path
@@ -6,11 +10,8 @@ import runpy
 
 import pytest
 
-from ansible_collections.nokia.isam.plugins.modules import isam_security_ext_authenticator
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.security_ext_authenticator import security_ext_authenticator
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import get_scoped_config, _targeted_reply
 
-from .isam_module import set_module_args
 from .module_runner import run_module
 
 
@@ -196,32 +197,6 @@ def test_targeted_echo_bare_instance_and_duplicate_read_handling():
     result = get_scoped_config(Module(), device, None, "unused", [command, command], bare_commands=[command])
     assert result == "configure ani ont tca-thresh 1/1/2/1/100\n"
     assert device.calls == [command, command + " detail"]
-
-
-def test_action_partial_failure_uses_real_ansible_json_without_retry(monkeypatch, capsys):
-    commands = ["admin security ext-authenticator 1/1/6/%s clear-statistics" % port for port in (1, 2, 3)]
-
-    class Connection:
-        calls = []
-
-        def edit_config(self, candidate):
-            self.calls.append(candidate)
-            if candidate == [commands[1]]:
-                raise RuntimeError("device refused command")
-            return {"response": ["accepted"]}
-
-    connection = Connection()
-    monkeypatch.setattr(security_ext_authenticator, "get_resource_connection", lambda module: connection)
-    set_module_args({"config": [{"port": "1/1/6/%s" % port, "clear_statistics": True} for port in (1, 2, 3)]}, True)
-    with pytest.raises(SystemExit) as exited:
-        isam_security_ext_authenticator.main()
-    assert exited.value.code == 1
-    result = json.loads(capsys.readouterr().out)
-    assert result["failed"] is True and result["changed"] is True
-    assert result["failed_command"] == commands[1]
-    assert result["completed"] == [commands[0]] and result["pending"] == [commands[2]]
-    assert result["response"] == ["accepted"]
-    assert connection.calls == [[commands[0]], [commands[1]]]
 
 
 @pytest.mark.parametrize("entry", [{"port": "1/1/6/1"}, {"port": "1/1/6/1\n", "clear_statistics": True},
