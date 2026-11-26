@@ -1,0 +1,1 @@
+"""IHUB LAG configuration schema."""

@@ -1,0 +1,1 @@
+"""IHUB service configuration schema."""
