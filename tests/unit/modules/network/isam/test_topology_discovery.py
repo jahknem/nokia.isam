@@ -3,6 +3,8 @@ import json
 
 import pytest
 
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology import discovery
+
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.discovery import (
     attach_discovery,
     coverage,
@@ -192,27 +194,56 @@ def test_uni_enumeration_filters_family_source_by_slot():
     assert item["command"] == "info configure ethernet ont flat"
 
 
+def port_table(names, count=None, spin=()):
+    """'show interface port' as the module returns it (the prompt stripped), with the
+    spinner residue the device leaves in front of rows built slowly."""
+    rows = ["%s%-51s up           up        " % ("-\\|/ " if name in spin else "", name) for name in names]
+    return "\n".join(["port table", "=" * 80, "port                                               |admin-status|opr-status",
+                      "-" * 51 + "+" + "-" * 12 + "+" + "-" * 10] + rows
+                     + ["-" * 80, "port count : %d" % (len(names) if count is None else count), "=" * 80])
+
+
+DSL_AND_PON = ["slip", "sw-loopback", "pon:1/1/2/1", "pon:1/1/2/2", "bundle:1/1/2/1", "pon:1/1/3/1",
+               "xdsl-line:1/1/3/1", "xdsl-channel:1/1/3/1", "bonding:1/1/3/1", "ethernet-line:1/1/3/1",
+               "xdsl-line:1/1/4/1", "ethernet-line:1/1/8/1", "la-group:1/1/8/1", "ethernet-line:1/1/9/1",
+               "bridge-port:1/1/3/1", "vlan-port:1/1/3/1:99"]
+
+
 def test_card_children_filter_each_source_by_card():
-    pon_cfg = ("configure pon interface 1/1/2/1 admin-state up\n"
-               "configure pon interface 1/1/2/2 admin-state up\n"
-               "configure pon interface 1/1/3/1 admin-state up\n")
-    assert enumerate_children("card", "lt:1/1/2", "pon", flat(pon_cfg))["children"] == ["1/1/2/1", "1/1/2/2"]
-    xdsl_cfg = "configure xdsl line 1/1/3/1 service-profile 13\nconfigure xdsl line 1/1/4/1 service-profile 13\n"
-    assert enumerate_children("card", "lt:1/1/3", "xdsl_line", flat(xdsl_cfg))["children"] == ["1/1/3/1"]
-    eth_cfg = "configure ethernet line 1/1/8/1 port-type uni\nconfigure ethernet line 1/1/9/1 port-type uni\n"
-    assert enumerate_children("card", "lt:1/1/8", "ethernet_port", flat(eth_cfg))["children"] == ["1/1/8/1"]
+    # The port table lists every port, also those with default values only (flat config
+    # missed 32 of 48 xdsl lines on DS-ALT1-01, 2026-11-26).
+    table = port_table(DSL_AND_PON, spin={"slip", "pon:1/1/2/1", "xdsl-line:1/1/3/1"})
+    assert enumerate_children("card", "lt:1/1/2", "pon", table)["children"] == ["1/1/2/1", "1/1/2/2"]
+    assert enumerate_children("card", "lt:1/1/3", "xdsl_line", table)["children"] == ["1/1/3/1"]
+    assert enumerate_children("card", "lt:1/1/8", "ethernet_port", table)["children"] == ["1/1/8/1"]
+    # ethernet-line:1/1/3/1 is the EFM facet of xdsl-line:1/1/3/1, not an Ethernet port.
+    assert enumerate_children("card", "lt:1/1/3", "ethernet_port", table)["children"] == []
+    assert enumerate_children("card", "lt:1/1/3", "xdsl_line", table)["command"] == "show interface port"
+
+
+def test_a_port_table_whose_count_differs_from_its_rows_is_rejected():
+    with pytest.raises(UnknownIdentity):
+        enumerate_children("card", "lt:1/1/3", "xdsl_line", port_table(DSL_AND_PON, count=len(DSL_AND_PON) + 1))
+
+
+def test_spinner_residue_is_removed_but_separator_lines_are_kept():
+    assert discovery._despin("-\\|/-\\ xdsl-line:1/1/2/1   up\n----+----\n-------\n") == \
+        "xdsl-line:1/1/2/1   up\n----+----\n-------\n"
+
+
+def test_cage_children_filter_by_card():
     cage_cfg = "configure interface cage lt:1/1/2:cage:1 description x\nconfigure interface cage lt:1/1/3:cage:1 description x\n"
     assert enumerate_children("card", "lt:1/1/2", "cage", flat(cage_cfg))["children"] == ["lt:1/1/2:cage:1"]
 
 
 def test_recognized_empty_source_confirms_absence_for_card_child():
-    item = enumerate_children("card", "lt:1/1/2", "pon", TERMINATOR)
+    item = enumerate_children("card", "lt:1/1/2", "pon", port_table(["slip", "sw-loopback"]))
     assert item["status"] == "ok" and item["children"] == []
 
 
 def test_malformed_child_identity_in_source_is_rejected():
     with pytest.raises(UnknownIdentity):
-        enumerate_children("card", "lt:1/1/2", "pon", flat("configure pon interface bad-id admin-state up"))
+        enumerate_children("card", "lt:1/1/2", "pon", port_table(["pon:bad-id"]))
 
 
 def test_unknown_child_kind_has_no_source():
@@ -275,13 +306,9 @@ def test_equipment_hierarchy_uses_explicit_ids_and_implicit_rack_from_shelf():
 
 
 def test_bonding_and_lag_sources_do_not_confuse_underlying_ports():
-    output = ("configure interface port bonding:1/1/3/1 user test\n"
-              "configure interface port xdsl-line:1/1/3/1 admin-up\n"
-              "configure interface port bonding:1/1/4/1 admin-up\n")
-    output = flat(output)
-    assert enumerate_children("card", "lt:1/1/3", "bonding_group", output)["children"] == ["1/1/3/1"]
-    output = flat("configure link-agg group 1/1/8/1 port 1/1/8/2\nconfigure link-agg port 1/1/8/2 passive-lacp")
-    assert enumerate_children("card", "lt:1/1/8", "lag", output)["children"] == ["1/1/8/1"]
+    table = port_table(DSL_AND_PON + ["bonding:1/1/4/1"])
+    assert enumerate_children("card", "lt:1/1/3", "bonding_group", table)["children"] == ["1/1/3/1"]
+    assert enumerate_children("card", "lt:1/1/8", "lag", table)["children"] == ["1/1/8/1"]
 
 
 def test_successful_reenumeration_retires_only_the_current_relation_edges():
@@ -543,24 +570,25 @@ def test_coverage_flags_documented_only_adapters_without_blocking():
 
 # --- Flat replies must be complete --------------------------------------------
 
-PON_LINES = ["configure pon interface 1/1/5/%d admin-state up" % n for n in range(1, 9)]
+# Card -> cage is a flat-configuration source (card ports come from the port table).
+CAGE_LINES = ["configure interface cage lt:1/1/5:cage:%d operational-mode gpon" % n for n in range(1, 9)]
 
 
 @pytest.mark.parametrize("output", [
-    "\n".join(PON_LINES[:3]),                          # truncated after 3 of 8 lines
-    "\n".join(PON_LINES),                              # every line but no terminator
+    "\n".join(CAGE_LINES[:3]),                          # truncated after 3 of 8 lines
+    "\n".join(CAGE_LINES),                              # every line but no terminator
     "# comment only",
-    'echo "pon"',
-    TERMINATOR + "\n" + "\n".join(PON_LINES[:3]),     # header delimiter, body cut short
+    'echo "interface"',
+    TERMINATOR + "\n" + "\n".join(CAGE_LINES[:3]),     # header delimiter, body cut short
     "#-----",                                           # too short to be the delimiter
 ])
 def test_flat_reply_without_terminal_delimiter_is_not_ok(output):
     with pytest.raises(UnknownIdentity, match="terminal delimiter"):
-        enumerate_children("card", "lt:1/1/5", "pon", output)
+        enumerate_children("card", "lt:1/1/5", "cage", output)
 
 
 def test_flat_reply_with_terminal_delimiter_enumerates_every_line():
-    item = enumerate_children("card", "lt:1/1/5", "pon", flat(*PON_LINES) + "\n\n")
+    item = enumerate_children("card", "lt:1/1/5", "cage", flat(*CAGE_LINES) + "\n\n")
     assert item["status"] == "ok" and len(item["children"]) == 8
 
 
@@ -575,3 +603,37 @@ def test_ont_slot_reply_without_terminal_delimiter_cannot_confirm_absence():
 def test_equipment_racks_require_the_terminal_delimiter():
     with pytest.raises(UnknownIdentity, match="terminal delimiter"):
         enumerate_children("msan", "", "rack", "configure equipment shelf 1/1 planned-type nfxs-b")
+
+
+def _card_graph(card, entries):
+    return build_graph({"isam_equipment": {"slots": [{"id": card, "planned_type": "x"}]}, "interfaces": entries}, "M")
+
+
+def test_discovered_ports_resolve_configuration_whose_owner_configuration_alone_cannot_name():
+    # A DSL line whose only entry is its EFM facet's admin-up (32 of 48 NDLT-F lines on
+    # DS-ALT1-01): configuration alone cannot tell an xDSL line from an Ethernet port.
+    g = _card_graph("lt:1/1/3", [{"name": "ethernet-line:1/1/3/2", "admin_up": True}])
+    facet = node_key("configuration", ("interfaces", "config", "ethernet-line:1/1/3/2"))
+    assert [gap["reason"] for gap in g["gaps"] if gap.get("node") == facet] == ["unknown_owner"]
+    table = port_table(DSL_AND_PON + ["xdsl-line:1/1/3/2", "ethernet-line:1/1/3/2"])
+    g = attach_discovery(g, [enumerate_children("card", "lt:1/1/3", "xdsl_line", table)])
+    assert {"source": facet, "relation": "configures", "target": node_key("xdsl_line", "1/1/3/2")} in g["edges"]
+    assert not [gap for gap in g["gaps"] if gap.get("node") == facet]
+
+
+def test_on_an_ethernet_card_the_same_entry_belongs_to_the_ethernet_port():
+    g = _card_graph("lt:1/1/8", [{"name": "ethernet-line:1/1/8/1", "admin_up": True}])
+    g = attach_discovery(g, [enumerate_children("card", "lt:1/1/8", "ethernet_port", port_table(DSL_AND_PON))])
+    facet = node_key("configuration", ("interfaces", "config", "ethernet-line:1/1/8/1"))
+    assert {"source": facet, "relation": "configures", "target": node_key("ethernet_port", "1/1/8/1")} in g["edges"]
+
+
+def test_a_bare_index_two_discovered_objects_share_stays_ambiguous():
+    g = build_graph({"isam_equipment": {"slots": [{"id": "lt:1/1/3", "planned_type": "x"}]},
+                     "efm_oam_interface": [{"name": "1/1/3/1", "admin_up": True}]}, "M")
+    table = port_table(DSL_AND_PON)
+    g = attach_discovery(g, [enumerate_children("card", "lt:1/1/3", "xdsl_line", table),
+                             enumerate_children("card", "lt:1/1/3", "bonding_group", table)])
+    node = node_key("configuration", ("efm_oam_interface", "config", "1/1/3/1"))
+    assert [gap["reason"] for gap in g["gaps"] if gap.get("node") == node] in (["unknown_owner"], ["ambiguous_owner"])
+    assert not [e for e in g["edges"] if e["source"] == node and e["relation"] == "configures"]

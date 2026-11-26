@@ -22,7 +22,7 @@ from datetime import datetime, timezone
 import math
 import re
 
-from . import SCHEMA_VERSION
+from . import SCHEMA_VERSION, export_catalog
 from .graph import node_key
 from .identity import DEPTHS, UnknownIdentity, _vlan_suffix, decode, numeric, parent_of
 
@@ -169,26 +169,33 @@ SOURCES = {
         "kind": "config",
         "prefix": "configure ethernet ont ",
     },
+    # The ports of a card come from the operational port table, which lists every port
+    # the card has, also those with default values only. Flat configuration omits these:
+    # 2026-11-26, DS-ALT1-01 NDLT-F 16 of 48 xdsl lines in 'info configure xdsl line
+    # flat', DS-MKK-RON1-01 47 of 48 lines and 0 of 48 bonding groups in 'interface port'
+    # (port table and config agreed for pon, ethernet-line and la-group on 4 devices).
     "pon": {
         "parents": ("card",),
-        "command": "info configure pon interface flat",
-        "read_scope": "family",
-        "kind": "config",
-        "prefix": "configure pon interface ",
+        "command": "show interface port",
+        "read_scope": "device",
+        "kind": "port_table",
+        "port_prefix": "pon:",
     },
     "xdsl_line": {
         "parents": ("card",),
-        "command": "info configure xdsl line flat",
-        "read_scope": "family",
-        "kind": "config",
-        "prefix": "configure xdsl line ",
+        "command": "show interface port",
+        "read_scope": "device",
+        "kind": "port_table",
+        "port_prefix": "xdsl-line:",
     },
     "ethernet_port": {
         "parents": ("card",),
-        "command": "info configure ethernet line flat",
-        "read_scope": "family",
-        "kind": "config",
-        "prefix": "configure ethernet line ",
+        "command": "show interface port",
+        "read_scope": "device",
+        "kind": "port_table",
+        "port_prefix": "ethernet-line:",
+        # ethernet-line:X is the EFM facet of xdsl-line:X on a DSL card, not a port.
+        "facet_of": "xdsl-line:",
     },
     "cage": {
         "parents": ("card",),
@@ -199,19 +206,17 @@ SOURCES = {
     },
     "bonding_group": {
         "parents": ("card",),
-        "command": "info configure interface port flat",
-        "read_scope": "family",
-        "kind": "config",
-        "prefix": "configure interface port bonding:",
-        "family_prefix": "configure interface port ",
+        "command": "show interface port",
+        "read_scope": "device",
+        "kind": "port_table",
+        "port_prefix": "bonding:",
     },
     "lag": {
         "parents": ("card",),
-        "command": "info configure link-agg flat",
-        "read_scope": "family",
-        "kind": "config",
-        "prefix": "configure link-agg group ",
-        "family_prefix": "configure link-agg ",
+        "command": "show interface port",
+        "read_scope": "device",
+        "kind": "port_table",
+        "port_prefix": "la-group:",
     },
     "rack": {
         "parents": ("msan",),
@@ -381,6 +386,44 @@ def _config_identities(output, prefix, child_kind, family_prefix=None):
     return sorted(identities)
 
 
+# Progress spinner the device draws while it builds a long reply: its frames are
+# overwritten with cursor-back sequences, which the terminal plugin removes, so the
+# characters stay in front of the row ('-\\|/ xdsl-line:1/1/2/1 ...').
+_SPINNER = re.compile(r"^[-\\|/]+ +(?=\S)", re.M)
+
+
+def _despin(output):
+    """The reply without spinner residue at line starts (separator lines keep theirs)."""
+    return _SPINNER.sub("", output) if isinstance(output, str) else output
+
+
+def _port_identities(output, source, child_kind):
+    """Ports of one type from the operational port table, with a matching footer count."""
+    from ansible_collections.nokia.isam.plugins.module_utils.tables import parse_status_table
+
+    output = _despin(output)
+    if not isinstance(output, str) or not any("port" in line and "|" in line for line in output.splitlines()):
+        raise UnknownIdentity("Port table has no recognized header")
+    rows = parse_status_table(output)
+    counts = re.findall(r"(?m)^\s*port count\s*:\s*(\d+)\s*$", output)
+    if len(counts) != 1 or int(counts[0]) != len(rows):
+        raise UnknownIdentity("Port table count does not match parsed rows")
+    names = {row.get("port") for row in rows}
+    if None in names or "" in names:
+        raise UnknownIdentity("Port table row has no port")
+    prefix, facet = source["port_prefix"], source.get("facet_of")
+    identities = set()
+    for name in names:
+        if not name.startswith(prefix):
+            continue
+        identity = name[len(prefix):]
+        if facet and facet + identity in names:
+            continue
+        decode(child_kind, identity)
+        identities.add(identity)
+    return sorted(identities)
+
+
 def _table_identities(output, source, child_kind):
     """Identities from a recognized status table with a matching footer count.
 
@@ -390,6 +433,7 @@ def _table_identities(output, source, child_kind):
     """
     from ansible_collections.nokia.isam.plugins.module_utils.tables import parse_status_table
 
+    output = _despin(output)
     column = source["column"]
     if not isinstance(output, str) or not any(
             column in line and "|" in line for line in output.splitlines()):
@@ -416,6 +460,7 @@ def _stack_pairs(output):
     """
     from ansible_collections.nokia.isam.plugins.module_utils.tables import parse_status_table
 
+    output = _despin(output)
     if not isinstance(output, str) or not any(
             "higher" in line and "lower" in line and "|" in line for line in output.splitlines()):
         raise UnknownIdentity("Interface stack table has no recognized header")
@@ -482,6 +527,9 @@ def enumerate_children(kind, identity, child_kind, output):
     if source["kind"] == "table":
         identities = _table_identities(output, source, child_kind)
         children = [i for i in identities if parent_of(child_kind, i) == (kind, identity)]
+    elif source["kind"] == "port_table":
+        identities = _port_identities(output, source, child_kind)
+        children = [i for i in identities if parent_of(child_kind, i) == (kind, identity)]
     elif source["kind"] == "ihub_optical_ports":
         from .ihub import optical_ports
         children = [i for i in optical_ports(output, owner=identity) if parent_of(child_kind, i) == (kind, identity)]
@@ -539,12 +587,56 @@ def attach_discovery(graph, results):
         for item in ready:
             pending.remove(item)
             _attach_one(item, nodes, edges, evidence, incoming)
+    gaps = _resolve_owners(nodes, edges, evidence, graph.get("gaps", []))
     graph = dict(graph)
+    graph["gaps"] = gaps
     graph["nodes"] = sorted(nodes.values(), key=lambda node: node["key"])
     graph["edges"] = [{"source": source, "relation": relation, "target": target}
                       for source, relation, target in sorted(edges)]
     graph["discovery"] = [evidence[key] for key in sorted(evidence)]
     return graph
+
+
+def _resolve_owners(nodes, edges, evidence, gaps):
+    """Configuration whose owner was unknown or ambiguous, resolved by discovered objects.
+
+    build_graph knows only the objects that configuration names: 'ethernet-line:X'
+    is an xDSL line's EFM facet on a DSL card and an Ethernet port on an Ethernet
+    card, and a line with only that entry cannot be told apart (on DS-ALT1-01, 32 of
+    48 NDLT-F lines). A fresh successful enumeration proves which object exists; the
+    owner is attached only when the decoder then finds exactly one. Everything else
+    stays a gap. Returns the remaining gaps.
+    """
+    known = {(edge_target["kind"], _hashable(edge_target["identity"]))
+             for source, relation, target in edges if relation == "configures"
+             for edge_target in (nodes[target],)}
+    for item in evidence.values():
+        if item.get("status") == "ok":
+            known.update((item["child_kind"], _hashable(child)) for child in item.get("children", ()))
+    decoders = {(b["resource"], b["section"]): b["decoder"] for b in export_catalog()["bindings"]}
+    remaining = []
+    for gap in gaps:
+        node = nodes.get(gap.get("node")) if gap.get("reason") in ("unknown_owner", "ambiguous_owner") else None
+        decoder = decoders.get((node.get("resource"), node.get("section"))) if node else None
+        try:
+            if decoder is None:
+                raise UnknownIdentity("not resolvable")
+            identity = node["identity"]
+            owner = decode(decoder, tuple(identity) if isinstance(identity, list) else identity, known)
+        except UnknownIdentity:
+            remaining.append(gap)
+            continue
+        owner_key = node_key(*owner)
+        if owner_key not in nodes:  # a discovered object (only discovered objects were added to known)
+            remaining.append(gap)
+            continue
+        edges.difference_update({e for e in edges if e[0] == gap["node"] and e[1] == "candidate_owner"})
+        edges.add((gap["node"], "configures", owner_key))
+    return remaining
+
+
+def _hashable(identity):
+    return tuple(identity) if isinstance(identity, list) else identity
 
 
 def _attach_one(item, nodes, edges, evidence, incoming):

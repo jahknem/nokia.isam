@@ -138,18 +138,26 @@ platform/firmware; narrower alternatives still need separate validation.
 | PON → ONT | `show equipment ont interface` | `device` |
 | ONT → ONT slot | `info configure equipment ont flat` | `family` |
 | ONT slot → UNI | `info configure ethernet ont flat` | `family` |
-| Card → PON | `info configure pon interface flat` | `family` |
-| Card → xDSL line | `info configure xdsl line flat` | `family` |
-| Card → Ethernet port | `info configure ethernet line flat` | `family` |
+| Card → PON / xDSL line / Ethernet port / bonding group / LAG | `show interface port` | `device` |
 | Card → cage | `info configure interface cage flat` | `family` |
 | MSAN → rack / controller card / applique | `info configure equipment flat` | `family` |
 | Rack → shelf / shelf → LT or virtual card | `info configure equipment flat` | `family` |
-| Card → bonding-group interface | `info configure interface port flat` | `family` |
-| Card → link-aggregation group | `info configure link-agg flat` | `family` |
 | Card → channel pair (NGPON2) | `info configure channel-pair interface flat` | `family` |
 | Card / applique → transceiver cage | `show equipment transceiver-inventory` | `device` |
 | Controller card / NTIO applique → IHUB optical faceplate port (`uplink`) | `show port` | `device` |
 | Port → bridge port / bridge port → VLAN port | `show interface stack` | `device` |
+
+The ports of a card come from the operational port table (`pon:`, `xdsl-line:`,
+`ethernet-line:`, `bonding:`, `la-group:` rows, matching `port count : N` footer):
+it lists every port the card has, also those with default values only, which flat
+configuration omits (read-only 2026-11-26: DS-ALT1-01 showed 16 of 48 NDLT-F lines
+in `info configure xdsl line flat`, DS-MKK-RON1-01 47 of 48 lines and none of its
+48 bonding groups in `info configure interface port flat`; for `pon:`,
+`ethernet-line:` on Ethernet cards and `la-group:` port table and configuration
+agreed on four devices). On a DSL card `ethernet-line:X` is the EFM facet of
+`xdsl-line:X` (stack `bridge-port -> ethernet-line -> xdsl-channel ->
+xdsl-line`), not an Ethernet port. Table sources drop the progress-spinner residue
+(`-\|/ `) the device leaves in front of rows it builds slowly.
 
 The transceiver source is a physical cage inventory: it lists empty cages too
 (`cage-empty`), so it enumerates hardware positions, not only inserted optics.
@@ -230,7 +238,13 @@ source (`info configure ... flat`) must end with the device's terminal
 it (cut short, or only comments/echo lines) raises instead of reporting `ok`, so
 a truncated reply never yields a partial child list or confirmed absence.
 
-`attach_discovery(graph, results)` attaches fresh evidence; `coverage(graph, kind,
+`attach_discovery(graph, results)` attaches fresh evidence and then resolves
+configuration whose owner was `unknown_owner` or `ambiguous_owner`: configuration
+alone names only the objects it addresses (`ethernet-line:X` with no other entry
+cannot be told apart between an xDSL line's facet and an Ethernet port; 32 of 48
+NDLT-F lines on DS-ALT1-01 have only that entry). An owner is attached when the
+decoder finds exactly one among the configured and freshly discovered objects; a
+bare index two discovered objects share stays a gap. `coverage(graph, kind,
 identity)` returns a recursive certificate. A root is `complete` only when every
 required direct-neighbor relation in its subtree has a successful fresh result.
 The manifest distinguishes `ok`, `failed`, `missing` (adapter exists, not yet
