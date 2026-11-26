@@ -1,5 +1,6 @@
 import importlib
 import sys
+from . import contract_registry as _registry
 
 import pytest
 from ansible.module_utils import basic
@@ -64,7 +65,23 @@ RESOURCE_MODULES = (
     "isam_xdsl_lines",
     "isam_xdsl_profiles",
     "isam_xstp",
+    "isam_qos_tca",
+    "isam_system_security",
+    "isam_software_mngt",
+    "isam_l2uni_onts",
+    "isam_uni_onts",
+    "isam_xdsl_inm",
+    "isam_xdsl_onts",
+    "isam_xdsl_system",
+    "isam_qos_global",
+    "isam_cwmp_plt",
+    "isam_error",
+    "isam_nat",
+    "isam_pon_global",
+    "isam_pppox_relay_global",
+    "isam_trouble_shooting_pon",
 )
+RESOURCE_MODULES = tuple(m for m in RESOURCE_MODULES if _registry.module_in_scope(m))
 
 CANONICAL_STATES = {
     "merged",

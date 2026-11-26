@@ -82,6 +82,39 @@ The default test target is `tests/unit/modules/network/isam`. The connection
 plugin tests in `tests/unit/plugins` are not part of it, so run
 `TESTPATH=tests/unit .venv/bin/tox -e py312` for the whole `tests/unit` tree.
 
+#### Public API baseline
+
+`test_api_baseline.py` freezes the module inventory and every module's
+argument spec, including options, types, defaults, choices, aliases, `no_log`
+and the AnsibleModule constraints, against `api_baseline.json`. An unintended
+API change fails the test. For an intended change, record it in the changelog
+and regenerate the baseline in the same commit:
+
+```bash
+ISAM_UPDATE_API_BASELINE=1 TESTPATH=tests/unit/modules/network/isam/test_api_baseline.py .venv/bin/tox -e py312
+```
+
+#### Lab capture tests
+
+Some tests replay the private captures of the lab ISAM: `root-flat.txt`
+(`info configure flat`) and `root-detail-flat.txt` (`info configure detail flat`).
+They are never committed and are found only through `ISAM_ROOT_CAPTURES`
+(tox passes it through). The single lookup is
+`tests/unit/modules/network/isam/lab_captures.py`:
+
+```bash
+ISAM_ROOT_CAPTURES=/path/to/captures .venv/bin/tox -e py312
+```
+
+- If `ISAM_ROOT_CAPTURES` is unset, every capture test skips, and the reason names the variable.
+- If it is set and a file is missing, the test fails, so a run with the variable set has no capture-related skips.
+- There is no fallback location. Use `lab_captures.read(name)`,
+  `lab_captures.configured()` or `lab_captures.detail()` and never build capture paths in a test.
+- Never copy capture content into the repository. Assertions on capture data
+  may only print counts or booleans, never identities or secrets. Derive
+  device-specific expectations, such as names or MACs, from the capture at run
+  time instead of hard-coding them.
+
 Never create a collections overlay inside the repository to satisfy imports.
 `/.collections-overlay/` is ignored as a safeguard, but the supported layout is
 the one tox builds under `.tox/`.
@@ -131,6 +164,12 @@ Round-trip tests in `test_render_round_trip.py` verify parse → render → pars
 This ensures templates can both read and write configuration correctly.
 
 ### Sanitization Best Practices
+- Real identifiers must not reach the repository, not even inside a "sanitized"
+  fixture: serials become `<VENDOR>:0000000n` or `XXXX:SANIT`; IPs come from
+  192.0.2.0/24, 198.51.100.0/24 or 203.0.113.0/24; MACs from 00:00:5e:00:53:xx;
+  community strings and passwords are synthetic (e.g. `example-ro`); VLAN,
+  profile and operator names that encode a service design, operator brand or
+  partner become generic (`HSI-n`, `VOICE-n`, `IPTV-n`, `MGMT-n`, `TEST-n`).
 - Use regex with length-preserving replacements
 - Test that sanitized output still parses correctly
 - Verify column alignment in fixed-width tables

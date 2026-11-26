@@ -13,9 +13,8 @@ from ansible_collections.nokia.isam.tests.unit.modules.utils import (
 
 
 def set_module_args(args, ignore_provider=None):
-    if "provider" not in args and not ignore_provider:
-        args["provider"] = {"transport": args.get("transport") or "cli"}
-
+    # No module accepts the legacy "provider" option any more; ignore_provider is kept so
+    # existing call sites stay valid.
     return _set_module_args(args)
 
 
