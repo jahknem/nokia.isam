@@ -34,7 +34,10 @@ class Xdsl_inmFacts(object):
         return get_targeted_config(self._module, connection, "xdsl_inm", "info configure xdsl imp-noise-sensor flat", {
             "near_end": "info configure xdsl imp-noise-sensor near-end %s flat",
             "far_end": "info configure xdsl imp-noise-sensor far-end %s flat",
-        })
+        },
+            # A sensor with defaults only answers with the header; 'flat detail' prints its
+            # line (DS-LIN-TEST-01 2026-11-26: near- and far-end of every NDLT-F line).
+            bare_sections=("near_end", "far_end"))
 
     def populate_facts(self, connection, ansible_facts, data=None):
         """Populate facts for the xdsl_inm network resource."""

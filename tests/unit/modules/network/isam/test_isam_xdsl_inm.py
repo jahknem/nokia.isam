@@ -361,3 +361,16 @@ class TestCaptureParsed(_Base):
         self.module = isam_xdsl_system
         system = [line for line in text if line.startswith("configure xdsl system ")]
         assert self.run_state("parsed", False, running_config="\n".join(system))["parsed"] == {"auto_port_reset": {"enable": False}}
+
+
+def test_targeted_sensor_with_defaults_only_is_found_by_its_detail_read(monkeypatch):
+    """DS-LIN-TEST-01 2026-11-26: 'imp-noise-sensor near-end 1/1/3/1 flat' prints the header
+    only; 'flat detail' prints the sensor with its defaults."""
+    from .module_runner import run_module
+
+    line = "configure xdsl imp-noise-sensor near-end 1/1/3/1"
+    device = {"info configure xdsl imp-noise-sensor near-end 1/1/3/1 flat detail": line + " no inm-mode no ins-sensitivity\n"}
+    params = {"state": "gathered", "config": {"near_end": [{"name": "1/1/3/1"}]}}
+    gathered = run_module(monkeypatch, "isam_xdsl_inm", params, device)["gathered"]
+    assert [entry["name"] for entry in gathered["near_end"]] == ["1/1/3/1"]
+    assert not run_module(monkeypatch, "isam_xdsl_inm", params, {})["gathered"].get("near_end")
