@@ -389,9 +389,9 @@ class AttributeTable(object):
             fixed = [attr for attr in node.attrs if not attr.removable]
             if not fixed:
                 continue
+            pairs = []  # type: list
             if node.is_list:
                 haved = dict((str(entry.get(node.identity)), entry) for entry in _entries(have or {}, node))
-                pairs = []
                 for entry in _entries(want or {}, node):
                     name = str(entry.get(node.identity))
                     have_entry = haved.get(name)
@@ -402,7 +402,7 @@ class AttributeTable(object):
                     if named and not present <= named:  # not removed as a whole
                         pairs.append((name, entry, have_entry))
             else:
-                pairs = [(None, get_path(want or {}, node.path), get_path(have or {}, node.path))]
+                pairs.append((None, get_path(want or {}, node.path), get_path(have or {}, node.path)))
             for name, want_entry, have_entry in pairs:
                 retained.extend((node, name, attr) for attr in fixed
                                 if want_entry.get(attr.option) is not None and have_entry.get(attr.option) is not None)
@@ -432,18 +432,17 @@ class AttributeTable(object):
         return options
 
 
-class RetainedOnDeleteWarnings(object):
-    """Mixin for :class:`~...resource_module.TableResourceModule` families: deleted warns
-    for each named attribute without removal form instead of silently keeping it (as
-    ``IsamResourceModule.addcmd`` does for ``no_remval`` parsers)."""
-
-    def generate_commands(self):
-        super(RetainedOnDeleteWarnings, self).generate_commands()
-        if self.state != "deleted":
-            return
-        for node, name, attr in self.TABLE.retained_on_delete(self.want, self.TABLE.without_defaults(self.have)):
-            where = node.cli + (" " + name if name is not None else "")
-            self._module.warn("%s %s has no removal form in ISAM CLI; it is retained%s"
+def warn_retained_on_delete(resource):
+    """For :class:`~...resource_module.TableResourceModule` families, after
+    generate_commands: deleted warns for each named attribute without removal form
+    instead of silently keeping it (as ``IsamResourceModule.addcmd`` does for
+    ``no_remval`` parsers)."""
+    if resource.state != "deleted":
+        return
+    table = resource.TABLE
+    for node, name, attr in table.retained_on_delete(resource.want, table.without_defaults(resource.have)):
+        where = node.cli + (" " + name if name is not None else "")
+        resource._module.warn("%s %s has no removal form in ISAM CLI; it is retained%s"
                               % (where, attr.cli, " until the instance is removed" if name is not None else ""))
 
 
