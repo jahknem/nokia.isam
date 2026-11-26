@@ -35,64 +35,71 @@ options:
       operators:
         type: list
         elements: dict
-        description: Operators.
+        description:
+          - 'Local CLI operators (C(configure system security operator <name>)).'
+          - 'An operator is created with I(profile) and I(password), both mandatory at creation; removal uses C(no operator <name>).'
         suboptions:
           name:
             type: str
             required: true
-            description: Name.
+            description: 'Operator (login) name.'
           password:
             type: str
-            no_log: true
-            description: Password.
+            description:
+              - 'Login password (C(password)), as printed by the device (encrypted) or a new plain value.'
+              - 'A masked or redacted value keeps the device value. Not logged.'
           profile:
             type: str
-            description: Profile.
+            description: 'Operator profile the operator belongs to (C(profile)), see I(profiles); only settable at creation.'
           prompt:
             type: str
-            description: Prompt.
+            description: 'CLI prompt specification of the operator (C(prompt)); device default empty (the profile''s prompt applies).'
           description:
             type: str
-            description: Description.
+            description: 'Free-text description of the operator (C(description)).'
           more:
             type: bool
-            description: More.
+            description: 'Pass CLI output through the C(more) pager (C(more)).'
           confirm_prompt:
             type: bool
-            description: Confirm prompt.
+            description: 'Ask for confirmation before executing a command (C(confirm-prompt)).'
           bgn_time:
             type: str
-            description: Bgn time.
+            description: 'Start of the operator''s validity period (C(bgn-time)), C(YYYY-MM-DD:hh:mm:ss); device default C(1970-01-01:00:00:00).'
           end_time:
             type: str
-            description: End time.
+            description: 'End of the operator''s validity period (C(end-time)), C(YYYY-MM-DD:hh:mm:ss); device default C(2035-12-31:23:59:59).'
       profiles:
         type: list
         elements: dict
-        description: Profiles.
+        description:
+          - 'Operator profiles (C(configure system security profile <name>)): prompt, timeouts and per-area access rights.'
+          - 'Removal uses C(no profile <name>).'
         suboptions:
           name:
             type: str
             required: true
-            description: Name.
+            description: 'Profile name.'
           description:
             type: str
-            description: Description.
+            description: 'Free-text description of the profile (C(description)).'
           slot_numbering:
             type: str
-            description: Slot numbering.
+            description: 'Slot numbering scheme shown to the profile''s operators (C(slot-numbering)): C(type-based), C(position-based) or C(legacy-based) (device default).'
           prompt:
             type: str
-            description: Prompt.
+            description: 'CLI prompt specification (C(prompt)), for example C(%s:%n%d%c ) (the device default).'
           password_timeout:
             type: str
-            description: Password timeout.
+            description: 'Maximum number of days a password may stay unchanged (C(password-timeout), 0-365); device default C(0), no expiry.'
           terminal_timeout:
             type: str
-            description: Terminal timeout.
+            description: 'Terminal inactivity timeout in minutes (C(terminal-timeout), 0-120); device default C(30).'
           permissions:
             type: dict
-            description: Permissions.
+            description:
+              - 'Access right per command area (for example C(aaa), C(alarm), C(equipment), C(security)), value C(read), C(write) or C(none).'
+              - 'Rendered as C(<area> <value>) flags of the profile; C(none) is the device default.'
       snmp_communities:
         type: list
         elements: dict
@@ -103,26 +110,27 @@ options:
           name:
             type: str
             required: true
-            no_log: true
-            description: Name.
+            description:
+              - 'SNMP community string (C(snmp community <name>)).'
+              - 'It is the SNMP access secret, so it is not logged and is redacted in output.'
           host_address:
             type: str
-            description: Host address.
+            description: 'IPv4/IPv6 address and prefix length of the hosts allowed to use the community (C(host-address)), for example C(192.0.2.0/24).'
           context:
             type: str
-            description: Context.
+            description: 'SNMP context the community gives access to (C(context)), for example C(nt) (device default), C(shub), C(ihub) or C(xvps1).'
           privilege:
             type: str
-            description: Privilege.
+            description: 'Access privilege of the community (C(privilege)): C(read-only), C(read-write) (device default) or C(write-only).'
           read_view:
             type: str
-            description: Read view.
+            description: 'SNMP view used for read access (C(read-view)); device default C(everything).'
           write_view:
             type: str
-            description: Write view.
+            description: 'SNMP view used for write access (C(write-view)); device default C(everything).'
           notify_view:
             type: str
-            description: Notify view.
+            description: 'SNMP view filtering the notifications (C(notify-view)); device default C(everything).'
       snmp_views:
         type: list
         elements: dict
@@ -133,113 +141,120 @@ options:
           name:
             type: str
             required: true
-            description: Name.
+            description: 'View name.'
           subtree:
             type: str
-            description: Subtree.
+            description: 'OID subtree of the view entry (name or numeric, for example C(vacmAccessTable.*.7)).'
           type:
             type: str
-            description: Type.
+            description: 'Whether variables matching the subtree are included in or excluded from the view (C(type)): C(include) or C(exclude).'
       snmp_managers:
         type: list
         elements: dict
-        description: Snmp managers.
+        description:
+          - 'SNMP element managers receiving notifications (C(snmp manager <name>)).'
+          - 'I(destination) and I(notify_profile) are mandatory at creation; removal uses C(snmp no manager <name>).'
         suboptions:
           name:
             type: str
             required: true
-            description: Name.
+            description: 'Element manager name.'
           destination:
             type: str
-            description: Destination.
+            description: 'Address of the element manager (C(destination)), C(<ipv4>:<port>) or C(ipv6:<ipv6>/<port>); only settable at creation.'
           notify_profile:
             type: str
-            description: Notify profile.
+            description: 'Notification profile used for this manager (C(notify-profile)), see I(snmp_notify_profiles).'
           nt:
             type: bool
-            description: Nt.
+            description: 'Store notifications for this manager on the NT (C(nt)).'
           shub:
             type: bool
-            description: Shub.
+            description: 'Store notifications for this manager on the SHUB (C(shub)).'
           ihub:
             type: bool
-            description: Ihub.
+            description: 'Store notifications for this manager on the IHUB (C(ihub)).'
           epon:
             type: bool
-            description: Epon.
+            description: 'Store notifications for this manager on the EPON context (C(epon)).'
           vvpsa:
             type: bool
-            description: Vvpsa.
+            description: 'Store notifications for this manager on the VVPSA context (C(vvpsa)).'
           xvps1:
             type: bool
-            description: Xvps1.
+            description: 'Store notifications for this manager on the xVPS1 context (C(xvps1)).'
           xvps2:
             type: bool
-            description: Xvps2.
+            description: 'Store notifications for this manager on the xVPS2 context (C(xvps2)).'
           xvps3:
             type: bool
-            description: Xvps3.
+            description: 'Store notifications for this manager on the xVPS3 context (C(xvps3)).'
           xvps4:
             type: bool
-            description: Xvps4.
+            description: 'Store notifications for this manager on the xVPS4 context (C(xvps4)).'
           xvps5:
             type: bool
-            description: Xvps5.
+            description: 'Store notifications for this manager on the xVPS5 context (C(xvps5)).'
           xvps6:
             type: bool
-            description: Xvps6.
+            description: 'Store notifications for this manager on the xVPS6 context (C(xvps6)).'
           xvps7:
             type: bool
-            description: Xvps7.
+            description: 'Store notifications for this manager on the xVPS7 context (C(xvps7)).'
           xvps8:
             type: bool
-            description: Xvps8.
+            description: 'Store notifications for this manager on the xVPS8 context (C(xvps8)).'
       snmp_notify_profiles:
         type: list
         elements: dict
-        description: Snmp notify profiles.
+        description:
+          - 'SNMP notification profiles (C(snmp notify-profile <name>)).'
+          - 'Removal uses C(snmp no notify-profile <name>).'
         suboptions:
           name:
             type: str
             required: true
-            description: Name.
+            description: 'Notification profile name.'
           snmp_version:
             type: str
-            description: Snmp version.
+            description:
+              - 'SNMP version of the profile (C(snmp-version)): C(v1:<community>), C(v2:<community>) or C(v3:<security name>:<none|authentication|privacy-and-auth>); only settable at creation.'
+              - 'An embedded community string is treated as a secret and redacted in output.'
       radius_auth_servers:
         type: list
         elements: dict
-        description: Radius auth servers.
+        description:
+          - 'RADIUS authentication servers (C(radius auth-server <name> router-instance <router>)).'
+          - 'I(ip_address) and I(secret) are mandatory at creation. A server still used by a RADIUS policy cannot be deleted (device rule).'
         suboptions:
           name:
             type: str
             required: true
-            description: Name.
+            description: 'Name of the RADIUS authentication server.'
           router_instance:
             type: str
-            description: Router instance.
+            description: 'Router instance the server belongs to (C(router-instance)), for example C(base).'
           ip_address:
             type: str
-            description: Ip address.
+            description: 'IP address of the RADIUS authentication server (C(ip-address)).'
           secret:
             type: str
-            no_log: true
-            description: Secret.
+            description: 'Shared secret between the RADIUS server and the ISAM (C(secret)); a masked value keeps the device value. Not logged.'
           port:
             type: int
-            description: Port.
+            description: 'UDP port the authentication requests are sent to (C(port)); device default C(1812).'
           timeout_limit:
             type: int
-            description: Timeout limit.
+            description: 'Seconds between retransmissions to the server (C(timeout-limit)); device default C(3).'
           dead_interval:
             type: int
-            description: Dead interval.
+            description: 'Seconds before the operational state changes from down to unknown (C(dead-interval)); device default C(600).'
           retry_limit:
             type: int
-            description: Retry limit.
+            description: 'Number of attempts before the server is given up (C(retry-limit)); device default C(3).'
           admin_down:
             type: bool
-            description: Admin down.
+            description: 'Administratively disable the server (C(admin-down) / C(no admin-down)).'
       radius_policies:
         type: list
         elements: dict
@@ -251,25 +266,25 @@ options:
           name:
             type: str
             required: true
-            description: Name.
+            description: 'Name of the RADIUS policy.'
           nas_id:
             type: str
-            description: Nas id.
+            description: 'NAS-Identifier sent in messages towards the RADIUS servers (C(nas-id)); mandatory at creation.'
           nas_ip_address:
             type: str
-            description: Nas ip address.
+            description: 'NAS-IP-Address (IPv4) sent in messages towards the RADIUS servers (C(nas-ip-address)); mandatory at creation.'
           keep_domain_name:
             type: bool
-            description: Keep domain name.
+            description: 'Do not strip the domain name from the user name sent to the RADIUS server (C(keep-domain-name)).'
           disable_accnt_msg:
             type: bool
-            description: Disable accnt msg.
+            description: 'Disable RADIUS accounting messages for this policy (C(disable-accnt-msg)).'
           disable_eap:
             type: bool
-            description: Disable eap.
+            description: 'Disable EAP for this policy (C(disable-eap)).'
           acc_interval:
             type: int
-            description: Acc interval.
+            description: 'Interim accounting interval in seconds (C(acc-interval)); device default C(0).'
           auth_server:
             type: str
             description:
@@ -318,33 +333,35 @@ options:
                 description: Priority of the server entry (C(priority)).
       radius_auth_super_user:
         type: dict
-        description: Radius auth super user.
+        description:
+          - 'RADIUS client settings of the bare C(radius) node (C(configure system security radius)).'
         suboptions:
           operator_policy:
             type: str
-            description: Operator policy.
+            description: 'RADIUS policy used to authenticate operators (C(operator-policy)), C(name:<policy>) or C(none) (device default).'
           aut_s_unreach_act:
             type: str
-            description: Aut s unreach act.
+            description: 'Action for 802.1X users when the authentication server is unreachable (C(aut-s-unreach-act)): C(reject-all) (device default) or C(accept-all).'
       radius_dyn_auth_clients:
         type: list
         elements: dict
-        description: Radius dyn auth clients.
+        description:
+          - 'RADIUS dynamic authorization clients (C(radius dyn-auth-client <name> router-instance <router>)).'
+          - 'I(ip_address) and I(secret) are mandatory at creation.'
         suboptions:
           name:
             type: str
             required: true
-            description: Name.
+            description: 'Name of the RADIUS dynamic authorization client.'
           ip_address:
             type: str
-            description: Ip address.
+            description: 'IP address of the dynamic authorization client (C(ip-address)).'
           secret:
             type: str
-            no_log: true
-            description: Secret.
+            description: 'Shared secret between the client and the ISAM (C(secret)); a masked value keeps the device value. Not logged.'
           router_instance:
             type: str
-            description: Router instance.
+            description: 'Router instance the client belongs to (C(router-instance)), for example C(base).'
           admin_down:
             type: bool
             description: Administratively disable the dynamic authorization client (C(admin-down) / C(no admin-down)).
@@ -403,7 +420,7 @@ options:
         suboptions:
           description:
             type: str
-            description: Description.
+            description: 'Free-text description of the default profile (C(description)).'
           slot_numbering:
             type: str
             description: Slot numbering scheme, for example C(type-based).
@@ -550,7 +567,6 @@ options:
                 description: User name.
               password:
                 type: str
-                no_log: true
                 description: Password, as printed by the device (encrypted) or a new plain value. A masked value keeps the device value.
               auth_type:
                 type: str
@@ -656,7 +672,6 @@ options:
                 description: User name (C(user-name)).
               password:
                 type: str
-                no_log: true
                 description: Password, as printed by the device (encrypted) or a new plain value. A masked value keeps the device value.
               auth_type:
                 type: str
