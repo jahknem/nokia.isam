@@ -21,9 +21,12 @@ Those patch results must not be counted as 1.0 validation.
 ### Major-preparation gates (2026-11-19)
 
 - Full unit tree, including connection plugins and offline private-capture replay:
-  **2,864 passed, 14 skipped, 247 subtests passed**. `ISAM_ROOT_CAPTURES` selects
-  the private capture directory explicitly; captures and logs stay outside the
-  distributable collection. This run performs no live device operations.
+  **2,864 passed, 14 skipped, 247 subtests passed** (point-in-time result for the
+  2026-11-19 candidate, `TESTPATH=tests/unit` with `ISAM_ROOT_CAPTURES` set; later
+  commits add tests, and without the private captures their tests skip, so these
+  totals are not expected to reproduce on a later checkout). `ISAM_ROOT_CAPTURES`
+  selects the private capture directory explicitly; captures and logs stay outside
+  the distributable collection. This run performs no live device operations.
 - All 54 migration/inherited-safety regressions passed, including real Ansible
   action-failure serialization, identifier newline rejection, scoped replacement,
   special-character VLAN names and the documented breaking-schema examples.
@@ -46,7 +49,9 @@ or device cleanup were performed; the new shutdown policy still needs separately
 approved live validation. Do not count older evidence below as validation of it.
 
 Final offline gate: Core 2.19.12 and 2.21.6 each passed **2,914 tests, 14 skipped,
-247 subtests**, including private-capture replay and connection plugins. All 50
+247 subtests**, including private-capture replay and connection plugins
+(point-in-time, 2026-11-19, `TESTPATH=tests/unit` with `ISAM_ROOT_CAPTURES` set;
+not expected to reproduce on later commits or without the captures). All 50
 new cases also passed in the existing EE's Python 3.11/Core 2.19.12 runtime with
 changed plugin source mounted read-only and networking disabled. Lint/typecheck/
 docs passed; the local archive passed 610 file checksums/source equality and

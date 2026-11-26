@@ -61,7 +61,8 @@ read outcomes](docs/targeted-gathering.md).
 | --- | --- |
 | `isam_facts` | Collects facts and structured network resources from all registered modules |
 
-The major-version line adds an opt-in lossless tree of the captured flat root:
+The major-version line adds an opt-in, line-complete (masked) tree of the captured
+flat root: every `configure` line is stored once, with secrets masked:
 
 ```yaml
 - name: Inspect the root configuration tree without applying changes
@@ -76,7 +77,7 @@ a configuration replay format, and unknown syntax can defeat heuristic redaction
 review diagnostic output privately before sharing it.
 
 **Capture boundary:** on evidenced firmware, `info configure [detail] flat`
-omits IHUB ports, LAGs and services. Lossless parsing does not make that source a
+omits IHUB ports, LAGs and services. Line-complete parsing does not make that source a
 whole-device configuration capture. `ansible_net_config_tree_source` exposes
 these known omissions. The hierarchical `info configure` source includes IHUB.
 
