@@ -6,3 +6,4 @@ command: info configure vlan id flat (output.txt); info configure vlan id flat d
 captured_at: '2026-11-19'
 source: sanitized-live-capture
 description: All 47 VLANs of the lab ISAM; parse -> render reproduces output.txt exactly.
+  VLAN names are replaced by generic names (HSI-n, VOICE-n, IPTV-n, MGMT-n, TEST-n), consistently in both files.

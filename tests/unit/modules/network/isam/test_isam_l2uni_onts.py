@@ -15,7 +15,6 @@ from . import lab_captures
 
 
 ignore_provider_arg = True
-CAPTURE = lab_captures.DETAIL
 PREFIXES = ("configure l2uni ont performance-monitor ", "configure l2uni ont tc-layer-threshold ")
 UNI = "1/1/2/1/1/1/1"
 UNI2 = "1/1/2/1/100/1/1"
@@ -81,9 +80,8 @@ def test_template_reports_unknown_tokens():
     assert [token for dummy, token in parser.unknown] == ["bogus", "3"]
 
 
-@pytest.mark.skipif(not CAPTURE.exists(), reason="device capture not available")
 def test_every_capture_line_parses():
-    lines = [line.strip() for line in CAPTURE.read_text().splitlines() if line.startswith(PREFIXES)]
+    lines = [line.strip() for line in lab_captures.detail().splitlines() if line.startswith(PREFIXES)]
     assert len(lines) == 146 + 73
     for line in lines:
         parser = L2uni_ontsTemplate(lines=[line])

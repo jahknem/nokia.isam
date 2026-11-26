@@ -123,9 +123,7 @@ def test_qos_maps_deleting_one_entry_by_identity(monkeypatch):
 @pytest.mark.parametrize("module_name", RESOURCE_MODULES)
 def test_deleted_without_config_never_fails_on_a_real_capture(monkeypatch, module_name):
     """No-ops are allowed (context selectors; isam_system by design); failures are not."""
-    if not lab_captures.CONFIGURED.exists():
-        pytest.skip("lab capture not available")
-    result = run_module(monkeypatch, module_name, {"state": "deleted"}, lab_captures.CONFIGURED.read_text(errors="replace"))
+    result = run_module(monkeypatch, module_name, {"state": "deleted"}, lab_captures.configured())
     assert not result.get("failed"), "%s: deleted failed" % module_name  # no message: it may quote config
 
 
@@ -133,7 +131,7 @@ def _lab_instances(monkeypatch):
     """(module, list path, identity) for one instance of every targetable list on the lab device."""
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.targeted import TARGETED_GATHER
 
-    flat = lab_captures.CONFIGURED.read_text(errors="replace")
+    flat = lab_captures.configured()
     instances = []
     for resource, lists in sorted(TARGETED_GATHER.items()):
         name = module_for(resource)

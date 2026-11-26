@@ -3,7 +3,8 @@
 `info configure flat` (configured) and `info configure detail flat` (also defaults)
 of a real ISAM. Each family gets its own slice (select_resource_config) like the
 shared-snapshot read of isam_facts; an unknown keyword must never fail the read.
-Skips when the captures (kept outside the repo) are absent.
+Smoke test only: it checks that no family fails on the captures, not what is read.
+The captures are kept outside the repo; see lab_captures for ISAM_ROOT_CAPTURES.
 """
 import os
 
@@ -14,21 +15,15 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts impo
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import select_resource_config
 from .isam_module import set_module_args
 
-CAPTURES = os.environ.get("ISAM_ROOT_CAPTURES") or os.path.join(
-    os.path.dirname(os.path.realpath(__file__)),
-    *([os.pardir] * 6 + ["pon-migration-planner", ".local"])
-)
-FILES = {"configured": "root-flat.txt", "detail": "root-detail-flat.txt"}
+from . import lab_captures
+
+FILES = {"configured": lab_captures.CONFIGURED_NAME, "detail": lab_captures.DETAIL_NAME}
 _TEXT = {}
 
 
 def capture(kind):
-    path = os.path.join(CAPTURES, FILES[kind])
-    if not os.path.exists(path):
-        pytest.skip("lab capture not available")
     if kind not in _TEXT:
-        with open(path) as handle:
-            _TEXT[kind] = handle.read()
+        _TEXT[kind] = lab_captures.read(FILES[kind])
     return _TEXT[kind]
 
 

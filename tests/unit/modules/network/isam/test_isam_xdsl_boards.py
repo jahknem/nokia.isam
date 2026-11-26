@@ -10,6 +10,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl
 )
 
 from .isam_module import TestIsamModule, set_module_args
+from . import lab_captures
 
 
 class TestIsamXdslBoardsModule(TestIsamModule):
@@ -225,21 +226,11 @@ class TestIsamXdslBoardsModule(TestIsamModule):
         self.assertEqual(self.execute_module(changed=False)["parsed"], config)
 
 
-_CAPTURES = os.path.join(
-    os.path.dirname(os.path.realpath(__file__)), "..", "..", "..", "..", "..", "..",
-    "pon-migration-planner", ".local",
-)
-
-
-@pytest.mark.parametrize("capture", ["root-detail-flat.txt", "root-flat.txt"])
+@pytest.mark.parametrize("capture", lab_captures.NAMES)
 def test_lab_capture_xdsl_board_lines_parse_through_facts(capture):
     """Every xdsl board/vp-board line of the lab captures gathers without failure."""
-    path = os.path.normpath(os.path.join(_CAPTURES, capture))
-    if not os.path.exists(path):
-        pytest.skip("lab capture %s not available" % path)
-    with open(path) as handle:
-        lines = [line.strip() for line in handle
-                 if line.strip().startswith(("configure xdsl board ", "configure xdsl vp-board "))]
+    lines = [line.strip() for line in lab_captures.read(capture).splitlines()
+             if line.strip().startswith(("configure xdsl board ", "configure xdsl vp-board "))]
     assert lines
     facts = Xdsl_boardsFacts(module=None)
     ansible_facts = {"ansible_network_resources": {}}

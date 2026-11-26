@@ -15,7 +15,6 @@ from .isam_module import TestIsamModule, set_module_args
 from . import lab_captures
 
 ignore_provider_arg = True
-CAPTURE = lab_captures.DETAIL
 
 DEVICE = "\n".join([
     "configure igmp mcast-svc-context Default",
@@ -59,9 +58,8 @@ def test_default_packages_are_not_gathered():
     assert not MulticastTemplate(lines=lines, module=None).parse()
 
 
-@pytest.mark.skipif(not CAPTURE.exists(), reason="lab capture not available")
 def test_capture_every_package_and_system_line_is_parsed():
-    lines = [line.strip() for line in CAPTURE.read_text().splitlines()
+    lines = [line.strip() for line in lab_captures.detail().splitlines()
              if line.strip().startswith(("configure igmp ", "configure mcast-control "))]
     packages = [line for line in lines if " package " in line]
     assert len(packages) == 2048

@@ -14,7 +14,6 @@ from .isam_module import TestIsamModule, set_module_args
 from . import lab_captures
 
 ignore_provider_arg = True
-CAPTURE = lab_captures.DETAIL
 
 # realistic 'info configure detail flat' lines (secrets replaced)
 DEVICE = [
@@ -161,9 +160,8 @@ class TestIsamSystemSecurityGaps(TestIsamModule):
         assert result["commands"] == ["configure system security radius no policy RADPol"]
 
 
-@pytest.mark.skipif(not CAPTURE.exists(), reason="lab capture not available")
 def test_capture_policy_servers_parsed():
-    lines = [l for l in CAPTURE.read_text(errors="replace").splitlines() if l.startswith("configure system security radius")]
+    lines = [l for l in lab_captures.detail().splitlines() if l.startswith("configure system security radius")]
     got, unparsed = _parse(lines)
     assert not unparsed
     servers = got["radius_policies"][0]["servers"]
@@ -181,17 +179,15 @@ def test_unknown_attribute_is_skipped_and_counted():
     assert tmplt.skipped == {"radius_dyn_auth_clients": 1}
 
 
-@pytest.mark.skipif(not CAPTURE.exists(), reason="lab capture not available")
-@pytest.mark.parametrize("name", ["root-detail-flat.txt", "root-flat.txt"])
+@pytest.mark.parametrize("name", lab_captures.NAMES)
 def test_capture_no_attribute_token_is_skipped(name):
-    lines = [l for l in (CAPTURE.parent / name).read_text(errors="replace").splitlines()
+    lines = [l for l in lab_captures.read(name).splitlines()
              if l.startswith("configure system security ")]
     tmplt = Isam_system_securityTemplate(lines=lines, module=None)
     tmplt.parse()
     assert tmplt.skipped == {}  # section names and counts only
 
 
-@pytest.mark.skipif(not CAPTURE.exists(), reason="lab capture not available")
 def test_capture_gap_report_only_false_positives():
     """Every name the gap report still lists for the family is modelled under another option.
 
@@ -202,7 +198,7 @@ def test_capture_gap_report_only_false_positives():
         gap_report,
         parse_config_tree,
     )
-    text = CAPTURE.read_text(errors="replace")
+    text = lab_captures.detail()
     report = gap_report(parse_config_tree(text))["families"]["isam_system_security"]["unmodelled"]
     parsed, _unparsed = _parse([l for l in text.splitlines() if l.startswith("configure system security ")])
     profiles = dict((p["name"], p) for p in parsed["profiles"])

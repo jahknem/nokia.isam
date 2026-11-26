@@ -344,6 +344,18 @@ tox               # Run tests
 tox -e lint       # Run linting
 ```
 
+Some unit tests replay the `info configure flat` and `info configure detail flat`
+captures of a real lab ISAM. Those captures are private and never committed.
+Point `ISAM_ROOT_CAPTURES` at the directory that holds `root-flat.txt` and
+`root-detail-flat.txt` to run these tests:
+
+```bash
+ISAM_ROOT_CAPTURES=/path/to/captures tox -e py312
+```
+
+If the variable is unset, the capture tests are skipped and the skip reason
+names the variable. If it is set but a file is missing, the tests fail.
+
 ### Branching Model
 
 Use `git worktree` per feature branch. Each branch creates files in final paths:

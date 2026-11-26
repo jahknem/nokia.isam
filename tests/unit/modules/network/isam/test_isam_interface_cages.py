@@ -113,14 +113,9 @@ class TestIsamInterfaceCagesModule(TestIsamModule):
 
     def test_isam_interface_cages_parsed_capture_lines(self):
         """Every 'configure interface cage' line of the lab capture is parsed, nothing is dropped."""
-        import os
+        from . import lab_captures
 
-        capture = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..",
-                               "local_captures", "DS-LIN-TEST-01", "info_configure_flat.txt")
-        if not os.path.exists(capture):
-            self.skipTest("lab capture not available")
-        with open(capture) as handle:
-            lines = [line.rstrip() for line in handle if line.startswith("configure interface cage ")]
+        lines = [line.rstrip() for line in lab_captures.configured().splitlines() if line.startswith("configure interface cage ")]
         self.assertTrue(lines)
         set_module_args(dict(state="parsed", running_config="\n".join(lines)), ignore_provider_arg)
         result = self.execute_module(changed=False)

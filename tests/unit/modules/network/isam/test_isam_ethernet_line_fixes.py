@@ -8,7 +8,6 @@ from ansible_collections.nokia.isam.tests.unit.modules.network.isam.isam_module 
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ethernet_line.ethernet_line import Ethernet_lineFacts
 from . import lab_captures
 
-CAPTURE = lab_captures.CONFIGURED
 
 
 def parse(text):
@@ -34,9 +33,8 @@ def test_mau_block_keeps_type_and_power():
     assert mau["power"] == "up"
 
 
-@pytest.mark.skipif(not CAPTURE.exists(), reason="lab capture not available")
 def test_capture_ethernet_line_mau_power_present():
-    lines = [l for l in CAPTURE.read_text().splitlines() if l.startswith("configure ethernet line ")]
+    lines = [l for l in lab_captures.configured().splitlines() if l.startswith("configure ethernet line ")]
     got = parse("\n".join(lines))
     with_mau = [e for e in got if e.get("mau")]
     assert with_mau

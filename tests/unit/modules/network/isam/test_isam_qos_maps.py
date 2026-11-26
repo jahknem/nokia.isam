@@ -213,23 +213,17 @@ def test_isam_qos_maps_capture_map_lines_are_parsed():
     up-ctrl-pkt / dn-ctrl-pkt lines are not checked: the device form ('<protocol> [dscp|pbit|tc]')
     does not match the module's queue/profile model (reported separately).
     """
-    import os
-
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.qos_maps import Qos_mapsTemplate
 
-    capture = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..",
-                           "local_captures", "DS-LIN-TEST-01", "info_configure_flat.txt")
-    if not os.path.exists(capture):
-        import pytest
-        pytest.skip("lab capture not available")
-    with open(capture) as handle:
-        tc_lines = []
-        dscp_lines = []
-        for line in handle:
-            if line.startswith("configure qos tc-map-dot1p "):
-                tc_lines.append(line.rstrip())
-            elif line.startswith("configure qos dscp-map-dot1p "):
-                dscp_lines.append(line.rstrip())
+    from . import lab_captures
+
+    tc_lines = []
+    dscp_lines = []
+    for line in lab_captures.configured().splitlines():
+        if line.startswith("configure qos tc-map-dot1p "):
+            tc_lines.append(line.rstrip())
+        elif line.startswith("configure qos dscp-map-dot1p "):
+            dscp_lines.append(line.rstrip())
     parsed = Qos_mapsTemplate(lines=tc_lines + dscp_lines).parse()
     assert len(parsed["tc_map_dot1p"]) == len(tc_lines) == 8
     for line, entry in zip(tc_lines, parsed["tc_map_dot1p"]):

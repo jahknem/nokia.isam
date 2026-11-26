@@ -15,15 +15,15 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_tre
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_grammar import CONFIG_GRAMMAR
 
+from . import lab_captures
+
 
 def redacted_source(text):
     return ["configure " + " ".join(tokens) for tokens in redacted_token_lines(text) if tokens]
 
 
 REPO = pathlib.Path(__file__).resolve().parents[5]
-CAPTURE = REPO / "local_captures/DS-LIN-TEST-01/info_configure_flat.txt"
-CAPTURE_ROOT = pathlib.Path(os.environ.get("ISAM_ROOT_CAPTURES", REPO.parent / "pon-migration-planner/.local"))
-ROOT_CAPTURES = [CAPTURE_ROOT / name for name in ("root-flat.txt", "root-detail-flat.txt")]
+ROOT_CAPTURES = (lab_captures.CONFIGURED_NAME, lab_captures.DETAIL_NAME)
 
 SAMPLE = "\n".join([
     "configure equipment ont interface 1/1/5/1/3 sw-ver-pland auto admin-state up log-auth-pwd plain:******",
@@ -202,18 +202,15 @@ def test_gap_report_defaults_load_collection_argspecs():
     assert not report["unclaimed"]
 
 
-@pytest.mark.skipif(not CAPTURE.exists(), reason="lab capture not available")
 def test_real_capture_is_lossless():
-    text = CAPTURE.read_text()
+    text = lab_captures.configured()
     kept = [line for leaf in leaves(parse_config_tree(text)) for line in leaf["lines"]]
     assert sorted(kept) == sorted(redacted_source(text))
 
 
-@pytest.mark.parametrize("capture", ROOT_CAPTURES, ids=lambda p: p.name)
+@pytest.mark.parametrize("capture", ROOT_CAPTURES)
 def test_root_captures_are_lossless(capture):
-    if not capture.exists():
-        pytest.skip("root capture not available")
-    text = capture.read_text(errors="replace")
+    text = lab_captures.read(capture)
     tree = parse_config_tree(text)
     kept = [line for leaf in leaves(tree) for line in leaf["lines"]]
     assert sorted(kept) == sorted(redacted_source(text))
@@ -442,11 +439,9 @@ def test_gap_report_mappings_are_node_scoped_and_require_an_option():
     assert report["unparsed"] == {"cwmp plt": 1}
 
 
-@pytest.mark.parametrize("capture", ROOT_CAPTURES, ids=lambda p: p.name)
+@pytest.mark.parametrize("capture", ROOT_CAPTURES)
 def test_lab_gap_report_has_no_unclaimed_or_unmodelled_fields(capture):
-    if not capture.exists():
-        pytest.skip("root capture not available")
-    report = gap_report(parse_config_tree(capture.read_text(errors="replace")))
+    report = gap_report(parse_config_tree(lab_captures.read(capture)))
     assert not report["unclaimed"]
     # Counts only: assertion failures must not print identities or credentials.
     assert all(entry["argspec"] and not entry["unmodelled"] for entry in report["families"].values())
@@ -467,14 +462,12 @@ def test_community_embedded_in_snmp_version_is_masked():
     assert '"snmp-version": "v3"' in out  # a plain version stays readable
 
 
-@pytest.mark.parametrize("capture", ROOT_CAPTURES, ids=lambda p: p.name)
+@pytest.mark.parametrize("capture", ROOT_CAPTURES)
 def test_root_capture_tree_contains_no_known_secret(capture):
     """No cleartext secret seen behind a secret keyword survives anywhere in the tree."""
     import json
 
-    if not capture.exists():
-        pytest.skip("root capture not available")
-    text = capture.read_text(errors="replace")
+    text = lab_captures.read(capture)
     known = _known_secrets(_tokens(l.strip())[1:] for l in text.splitlines() if l.strip().startswith("configure "))
     out = json.dumps(parse_config_tree(text))
     leaked = sum(1 for secret in known if secret in out)

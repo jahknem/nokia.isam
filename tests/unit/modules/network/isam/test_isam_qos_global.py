@@ -17,8 +17,6 @@ from . import lab_captures
 
 
 ignore_provider_arg = True
-LOCAL = lab_captures.CAPTURE_DIR
-CAPTURES = [LOCAL / "root-detail-flat.txt", LOCAL / "root-flat.txt"]
 OWNED_HEADS = ("global", "dsl-ctrl-pkt-policer", "nni-ctrl-pkt-policer", "ctrl-pkt-policer",
                "pbit-scheduling", "upstr-prot-dsl", "no", "atm-overhead-fact", "eth-efm-fact",
                "enable-alignment", "cac-mode", "use-dei", "set-dei")
@@ -305,15 +303,13 @@ class TestIsamQosGlobalModule(TestIsamModule):
         assert conn.commands == ["info configure qos global lt:1/1/3 flat"]
 
 
-@pytest.mark.parametrize("capture", CAPTURES, ids=lambda p: p.name)
+@pytest.mark.parametrize("capture", lab_captures.NAMES)
 def test_every_owned_capture_line_parses(capture):
-    if not capture.exists():
-        pytest.skip("lab capture not available")
-    lines = [line.strip() for line in capture.read_text().splitlines() if _owned(line.strip())]
+    lines = [line.strip() for line in lab_captures.read(capture).splitlines() if _owned(line.strip())]
     for line in lines:
         assert _unconsumed(line) == [], line
         assert Qos_globalTemplate(lines=[line]).parse(), line
-    if capture.name == "root-detail-flat.txt":
+    if capture == lab_captures.DETAIL_NAME:
         # 1 general + 2 policers + 7 line cards + pbit-scheduling + upstr-prot-dsl, all defaults
         assert len(lines) == 12
         assert strip_defaults(Qos_globalTemplate(lines=lines).parse()) == {}

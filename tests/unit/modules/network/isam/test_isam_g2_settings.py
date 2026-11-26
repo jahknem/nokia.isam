@@ -43,9 +43,6 @@ from .isam_module import TestIsamModule, set_module_args
 from . import lab_captures
 
 ignore_provider_arg = True
-LOCAL = lab_captures.CAPTURE_DIR
-CAPTURES = [LOCAL / "root-detail-flat.txt", LOCAL / "root-flat.txt"]
-DETAIL = CAPTURES[0]
 
 SETTINGS = {
     # template, module, sample config, rendered set command
@@ -207,12 +204,10 @@ def _clause_rest(line, template):
     return match.group("rest"), template.ATTRS
 
 
-@pytest.mark.parametrize("capture", CAPTURES, ids=lambda p: p.name)
+@pytest.mark.parametrize("capture", lab_captures.NAMES)
 def test_every_capture_line_of_the_regions_parses(capture):
-    if not capture.exists():
-        pytest.skip("lab capture not available")
     counts = dict((prefix, 0) for prefix in PREFIXES)
-    for line in capture.read_text().splitlines():
+    for line in lab_captures.read(capture).splitlines():
         for prefix, template in PREFIXES.items():
             if not line.startswith(prefix):
                 continue
@@ -220,7 +215,7 @@ def test_every_capture_line_of_the_regions_parses(capture):
             rest, attrs = _clause_rest(line, template)
             cli_to_attr = dict((cli, option) for option, cli, _kind, _default in attrs)
             assert parse_attributes(rest, {}, cli_to_attr) == [], line
-    assert counts == EXPECTED_COUNTS[capture.name]
+    assert counts == EXPECTED_COUNTS[capture]
 
 
 def test_detail_lines_are_all_defaults():
@@ -228,12 +223,11 @@ def test_detail_lines_are_all_defaults():
         assert template(lines=[DETAIL_LINES[name][0]]).parse() == {}, name
 
 
-@pytest.mark.skipif(not DETAIL.exists(), reason="lab capture not available")
 def test_capture_lines_are_all_matched_by_the_snapshot_tracker():
     """gather_configuration path: no 'unmatched configuration' warning for these regions."""
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts import facts_base
 
-    data = DETAIL.read_text().splitlines()
+    data = lab_captures.detail().splitlines()
     for template in set(t for t in PREFIXES.values() if t is not None):
         selected = [line for line in data if any(line.startswith(p) for p, t in PREFIXES.items() if t is template)]
         with facts_base.track_network_template_matches() as matched:
@@ -313,9 +307,8 @@ class _ModuleCase(_Base):
         pass
 
 
-@pytest.mark.skipif(not DETAIL.exists(), reason="lab capture not available")
 def test_pon_global_ignores_the_pon_interface_lines_of_the_capture():
-    lines = [line for line in DETAIL.read_text().splitlines() if line.startswith("configure pon ")]
+    lines = [line for line in lab_captures.detail().splitlines() if line.startswith("configure pon ")]
     assert len(lines) > 1
     assert Pon_globalTemplate(lines=lines).parse() == {}
 
@@ -415,9 +408,8 @@ class TestIsamTroubleShootingPon(_Base):
         self.device("configure trouble-shooting pon statistics threshold no interval\n")
         self.run_state("deleted", False)
 
-    @pytest.mark.skipif(not DETAIL.exists(), reason="lab capture not available")
     def test_parsed_capture_is_all_defaults(self):
-        lines = [line for line in DETAIL.read_text().splitlines() if line.startswith("configure trouble-shooting pon ")]
+        lines = [line for line in lab_captures.detail().splitlines() if line.startswith("configure trouble-shooting pon ")]
         assert len(lines) == 65
         assert self.run_state("parsed", False, running_config="\n".join(lines))["parsed"] == {}
         self.device("\n".join(lines))
@@ -447,9 +439,8 @@ class TestIsamMcastGeneralCapacity(_Base):
         assert rendered == ["configure mcast capacity max-num-group 100 max-num-uncfg 10 cfg-res-time 5 uncfg-res-time 7"]
         assert self.run_state("parsed", False, running_config=rendered[0])["parsed"] == config
 
-    @pytest.mark.skipif(not DETAIL.exists(), reason="lab capture not available")
     def test_parsed_capture(self):
-        lines = [line for line in DETAIL.read_text().splitlines() if line.startswith("configure mcast ")]
+        lines = [line for line in lab_captures.detail().splitlines() if line.startswith("configure mcast ")]
         parsed = self.run_state("parsed", False, running_config="\n".join(lines))["parsed"]
         assert "capacity" not in parsed and parsed["fast_change"] is True
 

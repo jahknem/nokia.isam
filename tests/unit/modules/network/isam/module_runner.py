@@ -101,10 +101,7 @@ def capture_device(flat, detail):
 
 
 def lab_capture_device():
-    """capture_device() over the lab captures; skips the test when they are absent."""
+    """capture_device() over the lab captures (skip/fail rules: lab_captures.path)."""
     from . import lab_captures
 
-    if not (os.path.exists(str(lab_captures.CONFIGURED)) and os.path.exists(str(lab_captures.DETAIL))):
-        pytest.skip("lab capture not available")
-    return capture_device(lab_captures.CONFIGURED.read_text(errors="replace"),
-                          lab_captures.DETAIL.read_text(errors="replace"))
+    return capture_device(lab_captures.configured(), lab_captures.detail())

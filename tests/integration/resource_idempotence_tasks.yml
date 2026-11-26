@@ -6,6 +6,15 @@
   register: gathered_resource
   no_log: true
 
+# Dict-config modules gather a mapping of sections, list-config modules
+# (isam_vlans, ...) a list of entries; count the non-empty parts of either.
+- name: Count the gathered configuration parts (dict sections or list entries)
+  ansible.builtin.set_fact:
+    gathered_parts: >-
+      {{ (gathered_resource.gathered.values() if gathered_resource.gathered is mapping
+          else (gathered_resource.gathered | default([], true)))
+         | select | list | length }}
+
 - name: Compare merged configuration without sending it
   action:
     module: "{{ resource_module }}"
@@ -14,7 +23,7 @@
   check_mode: true
   register: merged_resource
   no_log: true
-  when: gathered_resource.gathered.values() | select | list | length > 0
+  when: gathered_parts | int > 0
 
 - name: Compare replaced configuration without sending it
   action:
@@ -24,7 +33,7 @@
   check_mode: true
   register: replaced_resource
   no_log: true
-  when: gathered_resource.gathered.values() | select | list | length > 0
+  when: gathered_parts | int > 0
 
 - name: Report command counts only
   ansible.builtin.debug:
@@ -32,7 +41,7 @@
       {{ resource_module }} gathered successfully;
       merged={{ merged_resource.commands | default([]) | length }}
       replaced={{ replaced_resource.commands | default([]) | length }};
-      empty={{ gathered_resource.gathered.values() | select | list | length == 0 }}
+      empty={{ gathered_parts | int == 0 }}
 
 - name: Assert no unexpected reconciliation commands
   ansible.builtin.assert:

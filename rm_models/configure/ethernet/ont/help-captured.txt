@@ -217,7 +217,8 @@ Parameter                  Description
                            | testing
                            | unknown
                            | dormant
-                           | no-value )
+                           | no-value )
+
 
                            Possible values:
                            - up                    : up,traffic can pass

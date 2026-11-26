@@ -36,13 +36,9 @@ def test_isam_interface_alarms_has_no_dead_module_description():
 
 def test_isam_interface_alarms_capture_lines_are_parsed():
     """Every 'configure interface alarm' line of the lab capture is gathered, nothing is dropped."""
-    capture = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..",
-                           "local_captures", "DS-LIN-TEST-01", "info_configure_flat.txt")
-    if not os.path.exists(capture):
-        import pytest
-        pytest.skip("lab capture not available")
-    with open(capture) as handle:
-        lines = [line.rstrip() for line in handle if line.startswith("configure interface alarm ")]
+    from . import lab_captures
+
+    lines = [line.rstrip() for line in lab_captures.configured().splitlines() if line.startswith("configure interface alarm ")]
     assert lines
     facts = {"ansible_network_resources": {}}
     Interface_alarmsFacts(module=_Module()).populate_facts(None, facts, data="\n".join(lines))

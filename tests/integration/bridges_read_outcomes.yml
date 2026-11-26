@@ -4,8 +4,9 @@
 # and only the device's explicit "instance does not exist" about the addressed
 # instance is a confirmed absence (a gap on a real card); an unknown parent is
 # rejected/unknown, never absent. Selectors are derived from a current
-# whole-family read, so the test is state-independent; a case that cannot be
-# derived on the device is skipped with a warning, never faked.
+# whole-family read, and the unknown parent is a slot number no shelf has, so
+# the test is state-independent; a case that cannot be derived on the device
+# is skipped with a warning, never faked.
 # ansible-playbook -i <inventory> bridges_read_outcomes.yml -e isam_test_hosts=<lab-host>
 - name: Verify targeted bridges read-outcome classification
   hosts: "{{ isam_test_hosts }}"
@@ -70,18 +71,22 @@
           {%- endfor -%}
           {{- result.port -}}
 
-    - name: Derive the unknown selector (one card slot beyond the highest in use)
+    # "Highest slot in use + 1" can be a planned card without bridge ports, which
+    # the device answers with "instance does not exist" (confirmed_absent), so
+    # the unknown parent is a slot number no ISAM shelf has (shelves have well
+    # under 99 slots): it can never be planned, and the device rejects the
+    # parent ("invalid token") whatever the current card plan is.
+    - name: Derive the unknown selector (a slot number beyond any shelf)
       ansible.builtin.set_fact:
         unknown_port: >-
           {%- set head = (plain_ports | first).split('/')[0:2] | join('/') -%}
           {%- set ns = namespace(slots=[]) -%}
           {%- for card in by_card -%}
-            {%- set slot = card.split('/')[2] | int -%}
-            {%- if slot not in ns.slots -%}
-              {%- set ns.slots = ns.slots + [slot] -%}
-            {%- endif -%}
+            {%- set ns.slots = ns.slots + [card.split('/')[2] | int] -%}
           {%- endfor -%}
-          {{- head ~ '/' ~ ((ns.slots | max) + 1) ~ '/9' -}}
+          {%- if 99 not in ns.slots -%}
+            {{- head ~ '/99/9' -}}
+          {%- endif -%}
 
     - name: Compose the targeted read (only derivable cases)
       ansible.builtin.set_fact:

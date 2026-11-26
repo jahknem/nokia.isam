@@ -24,14 +24,10 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_tre
 from ansible_collections.nokia.isam.tests.unit.compat.mock import patch
 
 from .isam_module import TestIsamModule, set_module_args
+from . import lab_captures
 
 ignore_provider_arg = True
 
-CAPTURE = os.path.join(
-    os.environ.get("ISAM_ROOT_CAPTURES") or os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), *([os.pardir] * 6 + ["pon-migration-planner", ".local"])),
-    "root-detail-flat.txt",
-)
 
 
 class _Conn(object):
@@ -382,10 +378,8 @@ FALSE_POSITIVES = {
 SEVERITIES = {"emergency", "alert", "critical", "error", "warning", "notice", "information", "debug"}
 
 
-@pytest.mark.skipif(not os.path.exists(CAPTURE), reason="lab capture not available")
 def test_gap_report_down_to_false_positives():
-    with open(CAPTURE, errors="replace") as handle:
-        report = gap_report(parse_config_tree(handle.read()))["families"]
+    report = gap_report(parse_config_tree(lab_captures.detail()))["families"]
     for family, expected in FALSE_POSITIVES.items():
         unmodelled = report.get(family, {}).get("unmodelled", {})
         assert set(unmodelled) <= set(expected), (family, sorted(set(unmodelled) - set(expected)))
