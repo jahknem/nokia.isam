@@ -143,7 +143,9 @@ def parse_clauses(tokens, attrs):
 
     ``no <kw>`` gives None for a value (the device default) and False for a flag; ``<kw>``
     gives True for a flag. A value token that is itself a keyword (or ``no``) is not taken
-    as the value. Unknown tokens are skipped, never an error.
+    as the value, unless it is one of the attribute's choices: in ``system session-timer
+    enable status enable`` the value ``enable`` of status is also the flag ``enable``.
+    Unknown tokens are skipped, never an error.
     """
     by_cli = dict((attr.cli, attr) for attr in attrs)
     result = {}
@@ -162,10 +164,16 @@ def parse_clauses(tokens, attrs):
             result[attr.option] = not negate
         elif negate:
             result[attr.option] = None
-        elif index < len(tokens) and tokens[index] not in by_cli and tokens[index] != "no":
+        elif index < len(tokens) and _is_value(attr, tokens[index], by_cli):
             result[attr.option] = convert(attr.kind, tokens[index])
             index += 1
     return result
+
+
+def _is_value(attr, token, keywords):
+    if token in keywords:
+        return token in (attr.choices or ())
+    return token != "no"
 
 
 def change(attr, want, have, state):
