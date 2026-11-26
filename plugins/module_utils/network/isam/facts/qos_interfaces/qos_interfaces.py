@@ -24,6 +24,7 @@ class Qos_interfacesFacts(object):
         self.argument_spec = Qos_interfacesArgs.argument_spec
 
     def get_config(self, connection):
+        """The whole resource, or only the interfaces named in config (targeted gathering)."""
         return get_targeted_config(self._module, connection, "qos_interfaces", "info configure qos interface flat", {
             "config": "info configure qos interface %s flat",
         }, write_states=True)
