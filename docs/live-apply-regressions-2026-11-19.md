@@ -30,7 +30,13 @@ not shut down the ONT. An absent entry generates no shutdown or removal.
    Poll at most five rounds, with a one-second settling interval per round.
    Individual connection/read timeouts still follow the connection configuration.
 4. Only after all targets confirm down, send the planned removals: slots before
-   interfaces. Do not automatically include unnamed child slots or other ONTs.
+   interfaces. A removed ONT interface takes its own slots with it (they are shut
+   down and removed first; the device refuses to delete an ONT that still has
+   slots). Other ONTs and their slots are never included.
+
+`state: overridden` removes the ONT interfaces and slots it does not keep through
+the same sequence (shutdown, readback, slots before interfaces); before 2026-11-26
+it sent the bare removals, interface first, which the device refuses.
 
 Only reads are polled. Shutdown and removal commands are sent once, one command
 per transaction. Read errors, readiness exhaustion and write failures stop the

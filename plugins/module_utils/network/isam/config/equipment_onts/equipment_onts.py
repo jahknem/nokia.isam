@@ -154,8 +154,11 @@ class Equipment_onts(IsamResourceModule):
         ]
         # An ONT is built interface first, then its slots; it is removed the other way
         # round (the device refuses to delete an ONT that still has slots).
+        removals = {}
+        if self.state in ("deleted", "overridden"):
+            removals = self._removals(want, have, delete_all)
+            self._remove_onts_and_slots(removals)
         if self.state == "deleted":
-            self._shut_down_before_delete(want, have, delete_all)
             sections.reverse()
         for section, key, parser_prefix, fields in sections:
             self._compare_section(
@@ -165,6 +168,7 @@ class Equipment_onts(IsamResourceModule):
                 parser_prefix,
                 fields,
                 delete_all or bool(want.get(section)),
+                removed=removals.get(section, {}),
             )
         self._compare_section(
             want.get("sw_ctrls") or [],
@@ -193,19 +197,45 @@ class Equipment_onts(IsamResourceModule):
                 removed,
             )
 
-    def _shut_down_before_delete(self, want, have, delete_all):
-        """Admin-down what is about to be removed: the device refuses to delete an ONT
-        or an ONT slot that is not admin down ("Not in admin down state to delete").
-        Reassert even a gathered down state: interface and slot shutdown propagate
-        independently, and a stale/detail read is not proof deletion is ready.
+    def _removals(self, want, have, delete_all):
+        """{section: {identity: have entry}} of the ONT interfaces and slots to remove.
+
+        deleted: every entry without config, else the entries named as a whole.
+        overridden: every entry not in config. A removed ONT takes its slots with it:
+        the device refuses to delete an ONT that still has slots.
         """
-        for section, key, node in (("interfaces", "ont_idx", "interface"), ("slots", "ont_slot_idx", "slot")):
+        out = {}
+        for section, key in (("interfaces", "ont_idx"), ("slots", "ont_slot_idx")):
             named = dict((item[key], item) for item in want.get(section) or [])
+            out[section] = {}
             for entry in have.get(section) or []:
-                removed = delete_all or (entry[key] in named and covers_entry(named[entry[key]], entry, (key,)))
+                if self.state == "overridden":
+                    removed = entry[key] not in named
+                else:
+                    removed = delete_all or (entry[key] in named and covers_entry(named[entry[key]], entry, (key,)))
                 if removed:
-                    self.commands.append("configure equipment ont %s %s admin-state down" % (node, entry[key]))
-                    self._shutdown_targets.append((section, key, node, entry[key]))
+                    out[section][entry[key]] = entry
+        for entry in have.get("slots") or []:
+            if entry["ont_slot_idx"].rsplit("/", 1)[0] in out["interfaces"]:
+                out["slots"].setdefault(entry["ont_slot_idx"], entry)
+        return out
+
+    def _remove_onts_and_slots(self, removals):
+        """Admin-down what is about to be removed, then remove slots before interfaces.
+
+        The device refuses to delete an ONT or an ONT slot that is not admin down ("Not
+        in admin down state to delete"). Reassert even a gathered down state: interface
+        and slot shutdown propagate independently, and a stale/detail read is not proof
+        deletion is ready; run_commands verifies the shutdown before any removal.
+        """
+        nodes = (("interfaces", "ont_idx", "interface"), ("slots", "ont_slot_idx", "slot"))
+        for section, key, node in nodes:
+            for identity in removals[section]:
+                self.commands.append("configure equipment ont %s %s admin-state down" % (node, identity))
+                self._shutdown_targets.append((section, key, node, identity))
+        for section, key, node in reversed(nodes):
+            for entry in removals[section].values():
+                self.addcmd(entry, node, negate=True)
 
     def run_commands(self):
         if not self._shutdown_targets or self._module.check_mode:
@@ -295,9 +325,11 @@ class Equipment_onts(IsamResourceModule):
         for ont_idx, want in iteritems(wantd):
             self._compare_entry(want, haved.get(ont_idx, {"ont_idx": ont_idx}), parser_prefix, fields)
 
-    def _compare_section(self, want_list, have_list, key, parser_prefix, fields, requested=True):
+    def _compare_section(self, want_list, have_list, key, parser_prefix, fields, requested=True, removed=()):
+        """Compare one section; entries in ``removed`` were already removed (with
+        their shutdown prelude) by _remove_onts_and_slots."""
         wantd = {entry[key]: entry for entry in want_list}
-        haved = {entry[key]: entry for entry in have_list}
+        haved = {entry[key]: entry for entry in have_list if entry[key] not in removed}
 
         if self.state == "deleted":
             if not requested:
