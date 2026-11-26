@@ -39,20 +39,23 @@ class Qos_mapsTemplate(NetworkTemplate):
 
     @classmethod
     def _render_dscp_map_dot1p(cls, data):
-        return "configure qos dscp-map-dot1p {0} dot1p {1}".format(data["dscp"], data["dot1p"])
+        return "configure qos dscp-map-dot1p {0} dot1p-value {1}".format(data["dscp"], data["dot1p"])
 
     @classmethod
     def _render_no_dscp_map_dot1p(cls, data):
         return "configure qos no dscp-map-dot1p {0}".format(data["dscp"])
 
     @classmethod
-    def _render_up_ctrl_pkt(cls, data):
-        cmd = "configure qos up-ctrl-pkt {0}".format(data["protocol"])
-        if data.get("queue") is not None:
-            cmd += " queue {0}".format(data["queue"])
-        if data.get("profile"):
-            cmd += " profile {0}".format(data["profile"])
+    def _render_ctrl_pkt(cls, node, data):
+        cmd = "configure qos {0} {1}".format(node, data["protocol"])
+        for attr in ("dscp", "pbit", "tc"):
+            if data.get(attr) is not None:
+                cmd += " {0} {1}".format(attr, data[attr])
         return cmd
+
+    @classmethod
+    def _render_up_ctrl_pkt(cls, data):
+        return cls._render_ctrl_pkt("up-ctrl-pkt", data)
 
     @classmethod
     def _render_no_up_ctrl_pkt(cls, data):
@@ -60,12 +63,7 @@ class Qos_mapsTemplate(NetworkTemplate):
 
     @classmethod
     def _render_dn_ctrl_pkt(cls, data):
-        cmd = "configure qos dn-ctrl-pkt {0}".format(data["protocol"])
-        if data.get("queue") is not None:
-            cmd += " queue {0}".format(data["queue"])
-        if data.get("profile"):
-            cmd += " profile {0}".format(data["profile"])
-        return cmd
+        return cls._render_ctrl_pkt("dn-ctrl-pkt", data)
 
     @classmethod
     def _render_no_dn_ctrl_pkt(cls, data):
@@ -81,8 +79,8 @@ class Qos_mapsTemplate(NetworkTemplate):
 
         tc_re = re.compile(r"^tc-map-dot1p\s+(?P<dot1p>\d+)\s+tc\s+(?P<tc>\d+)(?:\s+dpcolor\s+(?P<dpcolor>\S+))?(?:\s+policer-color\s+(?P<policer_color>\S+))?\s*$")
         dscp_re = re.compile(r"^dscp-map-dot1p\s+(?P<dscp>\S+)\s+(?:dot1p|dot1p-value)\s+(?P<dot1p>\d+)\s*$")
-        up_ctrl_re = re.compile(r"^up-ctrl-pkt\s+(?P<protocol>\S+)(?:\s+queue\s+(?P<queue>\d+))?(?:\s+profile\s+(?P<profile>\S+))?\s*$")
-        dn_ctrl_re = re.compile(r"^dn-ctrl-pkt\s+(?P<protocol>\S+)(?:\s+queue\s+(?P<queue>\d+))?(?:\s+profile\s+(?P<profile>\S+))?\s*$")
+        up_ctrl_re = re.compile(r"^up-ctrl-pkt\s+(?P<protocol>\S+)(?:\s+dscp\s+(?P<dscp>\d+))?(?:\s+pbit\s+(?P<pbit>\d+))?(?:\s+tc\s+(?P<tc>\d+))?\s*$")
+        dn_ctrl_re = re.compile(r"^dn-ctrl-pkt\s+(?P<protocol>\S+)(?:\s+dscp\s+(?P<dscp>\d+))?(?:\s+pbit\s+(?P<pbit>\d+))?(?:\s+tc\s+(?P<tc>\d+))?\s*$")
 
         for raw_line in self._lines:
             stripped = raw_line.strip()
@@ -113,25 +111,19 @@ class Qos_mapsTemplate(NetworkTemplate):
 
             match = up_ctrl_re.match(stripped)
             if match:
-                entry = {
-                    "protocol": match.group("protocol"),
-                }
-                if match.group("queue") is not None:
-                    entry["queue"] = int(match.group("queue"))
-                if match.group("profile"):
-                    entry["profile"] = match.group("profile")
+                entry = {"protocol": match.group("protocol")}
+                for attr in ("dscp", "pbit", "tc"):
+                    if match.group(attr):
+                        entry[attr] = int(match.group(attr))
                 result["up_ctrl_pkt"].append(entry)
                 continue
 
             match = dn_ctrl_re.match(stripped)
             if match:
-                entry = {
-                    "protocol": match.group("protocol"),
-                }
-                if match.group("queue") is not None:
-                    entry["queue"] = int(match.group("queue"))
-                if match.group("profile"):
-                    entry["profile"] = match.group("profile")
+                entry = {"protocol": match.group("protocol")}
+                for attr in ("dscp", "pbit", "tc"):
+                    if match.group(attr):
+                        entry[attr] = int(match.group(attr))
                 result["dn_ctrl_pkt"].append(entry)
                 continue
 
@@ -180,7 +172,7 @@ Qos_mapsTemplate.PARSERS = [
     {
         "name": "up_ctrl_pkt",
         "getval": re.compile(
-            r"""^up-ctrl-pkt\s+(?P<protocol>\S+)\s+queue\s+(?P<queue>\d+)(?:\s+profile\s+(?P<profile>\S+))?\s*$""",
+            r"""^up-ctrl-pkt\s+(?P<protocol>\S+)(?:\s+dscp\s+(?P<dscp>\d+))?(?:\s+pbit\s+(?P<pbit>\d+))?(?:\s+tc\s+(?P<tc>\d+))?\s*$""",
             re.VERBOSE,
         ),
         "setval": Qos_mapsTemplate._render_up_ctrl_pkt,
@@ -189,8 +181,9 @@ Qos_mapsTemplate.PARSERS = [
             "up_ctrl_pkt": [
                 {
                     "protocol": "{{ protocol }}",
-                    "queue": "{{ queue|int }}",
-                    "profile": "{{ profile }}",
+                    "dscp": "{{ dscp }}",
+                    "pbit": "{{ pbit }}",
+                    "tc": "{{ tc }}",
                 }
             ],
         },
@@ -199,7 +192,7 @@ Qos_mapsTemplate.PARSERS = [
     {
         "name": "dn_ctrl_pkt",
         "getval": re.compile(
-            r"""^dn-ctrl-pkt\s+(?P<protocol>\S+)\s+queue\s+(?P<queue>\d+)(?:\s+profile\s+(?P<profile>\S+))?\s*$""",
+            r"""^dn-ctrl-pkt\s+(?P<protocol>\S+)(?:\s+dscp\s+(?P<dscp>\d+))?(?:\s+pbit\s+(?P<pbit>\d+))?(?:\s+tc\s+(?P<tc>\d+))?\s*$""",
             re.VERBOSE,
         ),
         "setval": Qos_mapsTemplate._render_dn_ctrl_pkt,
@@ -208,8 +201,9 @@ Qos_mapsTemplate.PARSERS = [
             "dn_ctrl_pkt": [
                 {
                     "protocol": "{{ protocol }}",
-                    "queue": "{{ queue|int }}",
-                    "profile": "{{ profile }}",
+                    "dscp": "{{ dscp }}",
+                    "pbit": "{{ pbit }}",
+                    "tc": "{{ tc }}",
                 }
             ],
         },
