@@ -78,17 +78,39 @@ def test_rendered_vlan_name_with_new_line_fails_without_emitting(monkeypatch):
     _assert_refused(result, "reboot-isam")
 
 
-def test_rendered_operator_with_new_line_fails_and_hides_password(monkeypatch):
+def _assert_escaped(commands):
+    # The value stays inside one quoted string: the new line is written as the CLI
+    # guide's escape (backslash n), never as a raw control character ending the line.
+    assert commands, commands
+    for command in commands:
+        assert not any(ord(ch) < 0x20 or ord(ch) == 0x7f for ch in command), repr(command)
+    assert any('"x\\nadmin equipment reboot-isam with-self-test"' in command for command in commands), commands
+
+
+def test_rendered_operator_with_new_line_stays_one_escaped_value(monkeypatch):
+    # isam_system_security quotes printable strings per the CLI guide (\n inside
+    # quotes), so the injection cannot happen; the password is masked as always.
     result = run_module(monkeypatch, "isam_system_security", {
         "state": "rendered", "config": {"operators": [
             {"name": INJECT, "password": "plain:Sup3rSecret", "profile": "admin"}]}})
-    _assert_refused(result, "reboot-isam", "Sup3rSecret")
+    assert not result.get("failed"), result
+    _assert_escaped(result["rendered"])
 
 
-def test_offline_render_with_new_line_fails(monkeypatch):
+def test_offline_render_with_new_line_stays_one_escaped_value(monkeypatch):
     # deleted + canonical running_config: the offline removal preview
     result = run_module(monkeypatch, "isam_system_security", {
         "state": "deleted", "running_config": json.dumps({"operators": [{"name": INJECT, "profile": "admin"}]})})
+    assert not result.get("failed"), result
+    _assert_escaped(result["commands"])
+
+
+def test_offline_render_with_raw_new_line_fails(monkeypatch):
+    # A family that does not escape control characters: the central check refuses
+    # the offline merged render that would set the name.
+    result = run_module(monkeypatch, "isam_vlans", {
+        "state": "merged", "config": [{"id": 100, "mode": "residential-bridge", "name": INJECT}],
+        "running_config": json.dumps([{"id": 100, "mode": "residential-bridge"}])})
     _assert_refused(result, "reboot-isam")
 
 
