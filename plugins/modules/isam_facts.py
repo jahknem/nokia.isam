@@ -75,13 +75,14 @@ options:
       - The root tree masks secret values and strips C(encrypted:) credentials from
         paths, attributes and stored CLI lines. Only device-masked placeholders such
         as C(plain:******) are retained. Leaves contain C(attrs), C(lines), C(node)
-        and C(source); this view is lossless except for credential redaction.
+        and C(source); this view is line-complete (masked); every C(configure) line is
+        kept, whitespace is normalised and secret masking is heuristic.
         C(source) is C(grammar), C(resource) (resource-backed CLI metadata), or
         C(unclassified). Unknown paths are retained under C(__unclassified__)
         without guessed nesting. Unknown attribute tails are preserved in
         C(unparsed); they are never inferred as fields or child nodes.
       - C(ansible_net_config_tree_source) records the flat source and its known IHUB
-        omissions. Lossless input parsing is not a whole-device completeness claim.
+        omissions. Line-complete parsing is not a whole-device completeness claim.
     default: false
     type: bool
     version_added: "1.0.0"
@@ -118,7 +119,7 @@ EXAMPLES = """
       - equipment_onts
 
 # Schema-less: every line is kept, including parts no resource family models yet.
-- name: Read the whole configuration as a nested, lossless tree (ansible_net_config_tree)
+- name: Read the whole configuration as a nested, line-complete tree (ansible_net_config_tree)
   nokia.isam.isam_facts:
     gather_subset:
       - "!all"

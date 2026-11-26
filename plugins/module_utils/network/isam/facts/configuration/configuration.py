@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # GNU General Public License v3.0+
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-"""Access-side flat root tree facts (lossless for captured lines, not all IHUB)."""
+"""Access-side flat root tree facts (line-complete, masked, for captured lines; not all IHUB)."""
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
