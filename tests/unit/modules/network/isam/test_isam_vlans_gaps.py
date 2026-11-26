@@ -236,3 +236,50 @@ def test_commands_are_packed_like_the_two_printed_lines(monkeypatch):
         "configure vlan id 3990 mode residential-bridge name x priority 3",
         "configure vlan id 3990 dhcp-opt82-ext enable circuit-id-dhcp physical-id l2-encaps1 single-tagged "
         "circuit-id-pppoe physical-id dhcpv6-trst-port trusted"]
+
+
+# Explicit defaults and False name an attribute (state contract) ------------------------
+
+NAMED_DEVICE = "configure vlan id 100 mode residential-bridge name foo protocol-filter pass-pppoe sntp-proxy\n"
+
+
+@pytest.mark.parametrize("attribute, command", [
+    ({"protocol_filter": "pass-all"}, "configure vlan id 100 no protocol-filter"),
+    ({"sntp_proxy": False}, "configure vlan id 100 no sntp-proxy"),
+])
+def test_deleted_with_a_default_or_false_resets_only_that_attribute(monkeypatch, attribute, command):
+    """Naming an attribute with its default value (or False) resets only it; the VLAN stays."""
+    from .module_runner import run_module
+
+    result = run_module(monkeypatch, "isam_vlans", {"state": "deleted", "config": [dict({"id": 100}, **attribute)]},
+                        NAMED_DEVICE)
+    assert result["commands"] == [command]
+    # already at the default: nothing to reset
+    done = NAMED_DEVICE.replace(" protocol-filter pass-pppoe sntp-proxy", "")
+    assert run_module(monkeypatch, "isam_vlans", {"state": "deleted", "config": [dict({"id": 100}, **attribute)]},
+                      done)["commands"] == []
+
+
+@pytest.mark.parametrize("attribute, command", [
+    ({"protocol_filter": "pass-all"}, "configure vlan id 100 protocol-filter pass-all"),
+    ({"sntp_proxy": False}, "configure vlan id 100 no sntp-proxy"),
+])
+def test_merged_with_a_default_or_false_resets_a_non_default_value(monkeypatch, attribute, command):
+    from .module_runner import run_module
+
+    config = [dict({"id": 100}, **attribute)]
+    assert run_module(monkeypatch, "isam_vlans", {"state": "merged", "config": config}, NAMED_DEVICE)["commands"] == [command]
+    done = NAMED_DEVICE.replace(" protocol-filter pass-pppoe sntp-proxy", "")
+    for state in ("merged", "replaced"):
+        full = [dict({"id": 100, "mode": "residential-bridge", "name": "foo"}, **attribute)]
+        assert run_module(monkeypatch, "isam_vlans", {"state": state, "config": full}, done)["commands"] == [], state
+
+
+def test_replaced_with_explicit_defaults_is_idempotent(monkeypatch):
+    from .module_runner import run_module
+
+    config = [{"id": 100, "mode": "residential-bridge", "name": "foo", "protocol_filter": "pass-all", "sntp_proxy": False}]
+    assert run_module(monkeypatch, "isam_vlans", {"state": "replaced", "config": config}, NAMED_DEVICE)["commands"] == [
+        "configure vlan id 100 no sntp-proxy protocol-filter pass-all"]
+    assert run_module(monkeypatch, "isam_vlans", {"state": "overridden", "config": config},
+                      "configure vlan id 100 mode residential-bridge name foo\n")["commands"] == []

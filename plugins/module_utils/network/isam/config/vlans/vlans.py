@@ -34,10 +34,18 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 SET_ONLY = tuple(option for option, _cli, kind, _default in VLAN_ATTRS if kind == "set_only")
 
 
-def _without_defaults(entry):
+def _is_default(key, value):
     """A device default equals an unset value (flags: off)."""
-    return dict((key, value) for key, value in entry.items()
-                if value is not None and value is not False and VLAN_DEFAULTS.get(key) != value)
+    return value is False or VLAN_DEFAULTS.get(key) == value
+
+
+def _without_defaults(entry):
+    return dict((key, value) for key, value in entry.items() if value is not None and not _is_default(key, value))
+
+
+def _named(entry):
+    """The attributes a request names (explicit defaults and False included)."""
+    return dict((key, value) for key, value in entry.items() if value is not None)
 
 
 class Vlans(IsamResourceModule):
@@ -63,14 +71,19 @@ class Vlans(IsamResourceModule):
         self.parsers = [option for option, _cli, _kind, _default in VLAN_ATTRS]
 
     def generate_commands(self):
-        """Generate the commands that bring the VLANs from have to want."""
-        rendering = self.state == "rendered"
-        wantd = dict((str(entry["id"]), entry if rendering else _without_defaults(entry)) for entry in self.want or [])
+        """Generate the commands that bring the VLANs from have to want.
+
+        want stays raw: an explicit default (or False) names the attribute and means
+        "reset to the default" (merged sets it, deleted resets only it). have has its
+        defaults removed, so a default the device already has sends nothing.
+        """
+        wantd = dict((str(entry["id"]), _named(entry)) for entry in self.want or [])
         haved = dict((str(entry["id"]), _without_defaults(entry)) for entry in self.have or [])
 
         if self.state == "deleted":
             # an identity (or a full entry) removes the VLAN; named settings reset only
-            # themselves (naming "name" must not delete the VLAN); absent VLANs are skipped
+            # themselves (naming "name" or a default must not delete the VLAN); absent
+            # VLANs are skipped
             for target, have in deleted_targets(wantd, haved, ("id",)):
                 if covers_entry(wantd.get(str(have["id"]), {}), have, ("id",)):
                     self.addcmd(have, "id", True)
@@ -83,14 +96,18 @@ class Vlans(IsamResourceModule):
                 if vlan_id not in wantd:
                     self.addcmd(have, "id", True)
 
+        rendering = self.state == "rendered"
         for vlan_id, want in wantd.items():
             have = haved.get(vlan_id, {})
             if not have and not rendering and want.get("mode") is None:
                 # mode is a mandatory parameter of a new VLAN (CLI guide)
                 self._module.fail_json(msg="vlan %s does not exist; mode is required to create it" % vlan_id)
+            if not rendering:
+                # an explicit default the device already has is no change
+                want = dict((key, value) for key, value in want.items() if key in have or not _is_default(key, value))
             if self.state == "merged":
                 want = dict(have, **want)
-            else:
+            elif not rendering:
                 # attributes without removal form (mode) stay when not named
                 want = dict(dict((k, have[k]) for k in SET_ONLY if k in have), **want)
             before = len(self.commands)
