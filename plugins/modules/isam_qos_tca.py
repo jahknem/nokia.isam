@@ -11,6 +11,10 @@ module: isam_qos_tca
 short_description: Manages Nokia ISAM per-queue QoS threshold crossing alarms.
 description:
   - Manages C(configure qos tca <port> queue <n>) attributes on Nokia ISAM.
+  - Queues always exist on the device and are never removed; C(deleted) and C(overridden) reset their
+    attributes. C(deleted) with only C(name) and C(queue) resets every non-default attribute; named
+    attributes reset only themselves.
+  - C(tca_enable=false) is the device default (C(no tca-enable)) and counts as unset when comparing.
 version_added: 0.3.14
 author: Jan Kühnemund (@jahknem)
 options:

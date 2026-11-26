@@ -88,3 +88,63 @@ class TestIsamQosTcaModule(TestIsamModule):
         result = self.execute_module(changed=True)
         assert "configure qos tca 1/1/5/1/3/1/1 queue 0 no tca-enable" in result["commands"]
         assert "configure qos tca 1/1/5/1/3/1/1 queue 0 no load-thresh" in result["commands"]
+
+    # review M4: tca_enable False is the device default ('no tca-enable', printed for
+    # every queue); deleted resets only named attributes and is idempotent.
+    def _device(self, text):
+        class FakeConn:
+            def get(self, cmd):
+                return text
+        self.get_resource_connection_facts.return_value = FakeConn()
+
+    DEFAULT_QUEUES = (
+        "configure qos tca 1/1/6/10 queue 0 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th\n"
+        "configure qos tca 1/1/6/10 queue 1 no tca-enable no load-thresh no dis-frame-th no qpeak-usage-th\n"
+    )
+    CONFIGURED = "configure qos tca 1/1/6/10 queue 0 tca-enable load-thresh 50 dis-frame-th 10 qpeak-usage-th 90\n"
+
+    def test_deleted_all_on_default_queues_is_idempotent(self):
+        self._device(self.DEFAULT_QUEUES)
+        set_module_args(dict(state="deleted"), ignore_provider_arg)
+        self.execute_module(changed=False)
+
+    def test_deleted_identity_on_default_queue_is_idempotent(self):
+        self._device(self.DEFAULT_QUEUES)
+        set_module_args(dict(state="deleted", config=[{"name": "1/1/6/10", "queue": 0}]), ignore_provider_arg)
+        self.execute_module(changed=False)
+
+    def test_deleted_named_attribute_resets_only_it(self):
+        self._device(self.CONFIGURED)
+        set_module_args(dict(state="deleted", config=[{"name": "1/1/6/10", "queue": 0, "load_thresh": 50}]),
+                        ignore_provider_arg)
+        result = self.execute_module(changed=True)
+        assert result["commands"] == ["configure qos tca 1/1/6/10 queue 0 no load-thresh"]
+
+    def test_deleted_identity_resets_all_non_default(self):
+        self._device(self.CONFIGURED)
+        set_module_args(dict(state="deleted", config=[{"name": "1/1/6/10", "queue": 0}]), ignore_provider_arg)
+        result = self.execute_module(changed=True)
+        assert result["commands"] == [
+            "configure qos tca 1/1/6/10 queue 0 no tca-enable",
+            "configure qos tca 1/1/6/10 queue 0 no load-thresh",
+            "configure qos tca 1/1/6/10 queue 0 no dis-frame-th",
+            "configure qos tca 1/1/6/10 queue 0 no qpeak-usage-th",
+        ]
+
+    def test_replaced_and_overridden_default_queues_are_idempotent(self):
+        self._device(self.DEFAULT_QUEUES)
+        for state in ("replaced", "overridden"):
+            set_module_args(dict(state=state, config=[{"name": "1/1/6/10", "queue": 0},
+                                                       {"name": "1/1/6/10", "queue": 1}]), ignore_provider_arg)
+            self.execute_module(changed=False)
+
+    def test_merged_explicit_false_on_default_is_idempotent(self):
+        self._device(self.DEFAULT_QUEUES)
+        set_module_args(dict(state="merged", config=[{"name": "1/1/6/10", "queue": 0, "tca_enable": False}]),
+                        ignore_provider_arg)
+        self.execute_module(changed=False)
+
+    def test_rendered_explicit_false(self):
+        set_module_args(dict(state="rendered", config=[{"name": "1/1/6/10", "queue": 0, "tca_enable": False}]),
+                        ignore_provider_arg)
+        assert self.execute_module(changed=False)["rendered"] == ["configure qos tca 1/1/6/10 queue 0 no tca-enable"]
