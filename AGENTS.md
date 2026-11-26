@@ -82,6 +82,18 @@ The default test target is `tests/unit/modules/network/isam`. The connection
 plugin tests in `tests/unit/plugins` are not part of it, so run
 `TESTPATH=tests/unit .venv/bin/tox -e py312` for the whole `tests/unit` tree.
 
+#### Public API baseline
+
+`test_api_baseline.py` freezes the module inventory and every module's
+argument spec, including options, types, defaults, choices, aliases, `no_log`
+and the AnsibleModule constraints, against `api_baseline.json`. An unintended
+API change fails the test. For an intended change, record it in the changelog
+and regenerate the baseline in the same commit:
+
+```bash
+ISAM_UPDATE_API_BASELINE=1 TESTPATH=tests/unit/modules/network/isam/test_api_baseline.py .venv/bin/tox -e py312
+```
+
 #### Lab capture tests
 
 Some tests replay the private captures of the lab ISAM: `root-flat.txt`

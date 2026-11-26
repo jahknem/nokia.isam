@@ -1,0 +1,769 @@
+{
+ "argspecs": {
+  "cli_config": {
+   "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
+   "options": {
+    "commit": "44c917ff1c39bd853c7b0a280f3c110919e5cf292d35e87318aa7e96b7f006c2",
+    "config": "67b2393e5d1040555fa96db6aee4efc57286e983f5cb5a8863bfbbba40c08f9e",
+    "provider": "7b870453fcf031bc004c5b9b4178a8794582a9776f85e8c9ba7649d9d3ea4631"
+   },
+   "sha256": "c843d4d14e95e5861901ea30683488306217d425177dcf6a92993316c9b794df"
+  },
+  "isam_alarm": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "daeee5f17cc7e68e471c86a080aa46c17eabd2e1d0bb73e3b2b80ca6af3897ce",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "4aee749c124709c15083ee014c775afab9a437c5a1a850cc97f61062fff33835"
+  },
+  "isam_ani_onts": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "01836c789bb9906d1d617d1163de23b07538af6eef0b729fa19edade704acf8e",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "76becc12500a485cc5ec8766860e62a4cf7970ed5d37ad0cda6354abfdf756c4"
+  },
+  "isam_arp_relay": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "9aef2b814f1e511ecf7fac2d51e30b8cf5c3b9057ef9b9b7a9d3decaac58aa2a",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "d7f9d577eedaa3537e28834d55c05782d85050ca029f2f0a97528d029b56a769"
+  },
+  "isam_bridge_learned_mac": {
+   "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
+   "options": {
+    "config": "e0c5a957db41e0b9bb267f51a6a35f21cd493506af15315ff91e2b636c95d204",
+    "provider": "7b870453fcf031bc004c5b9b4178a8794582a9776f85e8c9ba7649d9d3ea4631"
+   },
+   "sha256": "b63b4d155d4aff135932815e26b0a00e67c7f91e760ab90b3672717c29bd7675"
+  },
+  "isam_bridges": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "14db9f31e9406fc8ff37a84689a9dcd85d994705e570f4d8f3523e7c289124b6",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "970419a25d84756eb3cf4db4872b9ddc9fbb20e05fc51a68128c457869f4b143"
+   },
+   "sha256": "8b883e9dfbe142fb7c478a8cddb369059f1f8f0770ab042807d71d939755030e"
+  },
+  "isam_cfm": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "ed9db67e2741b8d8891efffcc694e0ede5ed8f732344ba15d64259036993d4d6",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "5e1c3ccf9e62bfd9b57e6eb2ea051da4a1f556bcef7eccffe4e9192adaa968d4"
+  },
+  "isam_channel_pair_pm": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "f2cd14b9525130c7b0c0f042d09299eea1b3e69d3c95e57e35a65185b087e304",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "49798d979d6ab995a934b0029158f13a2779d464a34dcfc60e1ff4c3983174f9"
+  },
+  "isam_cwmp_plt": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "71a94dc7f858b569eea8a70ad2a85bf993d4945f87e35e67b48f55034e025105",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "7fc4e6d65902608cb3320eed0fc985b7d7946b1bca3a6f3620d36b31b1cdcade"
+  },
+  "isam_dhcp_relay": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "2b2df775deb0da520010db63fb640c1dc1390f229d52618f75d1b85e7d4505bb",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "ebcc54cb6fa23c23940b782030c3b43f0eff2e06afc13446830c1e28c2912624"
+  },
+  "isam_dhcp_relay_port_stats": {
+   "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
+   "options": {
+    "config": "67870dd8658198eb46e3eb358b5728109a77921b8bc175391535b7a4db4bf6df",
+    "provider": "7b870453fcf031bc004c5b9b4178a8794582a9776f85e8c9ba7649d9d3ea4631"
+   },
+   "sha256": "e9e57e08bbb44c3900783a03732921396a5a9143d52ffe0ca0ad4640039f5ba1"
+  },
+  "isam_dhcp_server": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "274d65819148e91fbfc4b31ff39dfaa3e1368f2f04191370746d6bc13d4bfbc9",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "ab5f908a188e765c4ca5112872876662252c26abef7844a556d0d94d732bf263"
+  },
+  "isam_dist_service": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "152423897cb7fa2853e9bd814560cd835309dfb655a89eac6a850d1e1bb31225",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "bbedabe5a632cb92af0295729ebf82be5f2700ef933c9250d5501f3c3754ec3f"
+  },
+  "isam_efm_oam_interface": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "f116720ac3048c70960ca701b2d037eb41b1fb3868a9c228927c9f88efd70db1",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "ac81091a721876d4fc1dbbc62d0aa7b68ede665cb4eb9a807a852bc9d1e847fd"
+  },
+  "isam_epon_interfaces": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "57366bef8bc1270358097fba31c08f33fa7fbe6d0b154abdcfaef6563b9f7032",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "639b3be78c7af0d70986b91d8106a727dbfb6e3c4bc590c4b1871bdf8d946831"
+  },
+  "isam_equipment": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "592a087e4fa0e6b9ae11d8a6f793e628ea07d964276585e38b294eebd6e9d842",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "f61891736ffe656c99e521ff60fa7f45f642b684bd7e950a93eb2088adbc996f"
+  },
+  "isam_equipment_onts": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "d984d2df0e9704f19483dc5d8b65eab05fe497f5621521202b81b9803d922bee",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "3cb397e6daeb924fdf85a2cbae05df348339f3ad771be807bc2a320d504a3853"
+  },
+  "isam_equipment_replan": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "495d28f9c51960aa85b8311810ce5fa9f68097dabede4d47e7cddcab8f7a66c2",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "17bd2c53cbf69a93acfbbb8b9dfde03213fe17cd330f4a893baf4cee5bbd0e49"
+  },
+  "isam_error": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "391316ef7da72c1a7a656886b84c42b86d4c5ca86113f1b5a8b498ee28731dcb",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "ee8f3da4c5d14febc56f962f777f7809c2415879a5067a00d2e6a12d33814d0c"
+  },
+  "isam_ethernet_line": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "0a80e247ffa3263e9ff42bcc91fc9f0f1278b400dc8b9ec8692718dadbb62ce2",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "ec38ea91a5d40e0ea8d4f71d0ea8c527291c968107171b3d80b358c3836f3fdd"
+  },
+  "isam_ethernet_onts": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "c360aa8e23632fdb4dae3452888bb1f47a5ae3e9738c2738a15fce77c0df10b9",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "140fa269b1e2e5f7e26d51d6b8bdc7588637a31cfc7469bdf2f32d4d78704401"
+  },
+  "isam_ethernet_statistics": {
+   "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
+   "options": {
+    "config": "aae4e8d0384a0ec153656709bc444c967f05e01a2e4009e86bc54941f48af0c4",
+    "provider": "7b870453fcf031bc004c5b9b4178a8794582a9776f85e8c9ba7649d9d3ea4631"
+   },
+   "sha256": "1727492ffe9cdb49a6f99fa0502179f3df40a65b103e42781f554e2e809a31ad"
+  },
+  "isam_facts": {
+   "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
+   "options": {
+    "config_tree_detail": "cf06f58d3331bc04a13e32e5552f68731d69fafe14979041cf532675766064ba",
+    "gather_configuration": "cf06f58d3331bc04a13e32e5552f68731d69fafe14979041cf532675766064ba",
+    "gather_network_resources": "5e3e4fb5c674d35062fa4226a62d4c6053e759aa54a652b1616b5d04ed3750a8",
+    "gather_subset": "fc21e8318524ba4e5176800d29658273f88d85301726bb8ccb34b3d81f01b562",
+    "provider": "8a966a4b7c582ee28ad23e9f1315792035e275fb33088bbab9d09550614b56e4"
+   },
+   "sha256": "bcaf5954367c013be4af83faf39df92dfb93abc2f1208bd998d29572d37061bf"
+  },
+  "isam_generic_pon": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "da961664fdb090cb87d6ec3984c0c6a0f4458340794517715ea0278bd93f11cf",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "309f483ad48bb0c27893e10d919b87aa31e6f0615d43c2b0cec585179e8adfb4"
+  },
+  "isam_igmp": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "7dbd0f086b6921a751bb80f130795e52fc5e0f58698e1d10ac3673cf6a4ebd12",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "2f4a7a9efd85592f1b4672c1660a357a316905d9d0688dea02a2aeb66a2196dd"
+  },
+  "isam_ihub_lags": {
+   "constraints": "dc662e510fb27395fea2f7684a64e67bcbfe43447ccd5e485d814aead009ef80",
+   "options": {
+    "allow_broad_read": "cf06f58d3331bc04a13e32e5552f68731d69fafe14979041cf532675766064ba",
+    "config": "b5c9468afbfe982e5aa1366929c8c2074b70edf9f6c47357b5b83807509d50a1",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "e6afb0586c6ca7925a9cf76a91b7afeefff27b294f193ad3841076b7e23d8769"
+   },
+   "sha256": "9e36757e601bc748901bd56b589e4efcb26a047dc3c93a0c0082d63a23c301a7"
+  },
+  "isam_ihub_ports": {
+   "constraints": "dc662e510fb27395fea2f7684a64e67bcbfe43447ccd5e485d814aead009ef80",
+   "options": {
+    "allow_broad_read": "cf06f58d3331bc04a13e32e5552f68731d69fafe14979041cf532675766064ba",
+    "config": "42ffebca3c8862ab302d1a3bfbf8d655188acb6c405904a96f5eaeb33ee4fc57",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "e6afb0586c6ca7925a9cf76a91b7afeefff27b294f193ad3841076b7e23d8769"
+   },
+   "sha256": "b94067edebcdc4193d43d4ac49bf0c86d4ea67864dc3597362bcbb394172211a"
+  },
+  "isam_ihub_services": {
+   "constraints": "dc662e510fb27395fea2f7684a64e67bcbfe43447ccd5e485d814aead009ef80",
+   "options": {
+    "allow_broad_read": "cf06f58d3331bc04a13e32e5552f68731d69fafe14979041cf532675766064ba",
+    "config": "cc930ae1107041f0a1e775e09c8de4c44407c0c15ac4da374a36ef84eb993a89",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "e6afb0586c6ca7925a9cf76a91b7afeefff27b294f193ad3841076b7e23d8769"
+   },
+   "sha256": "15c6e3a499942cb99c4c9cb29906703a15fcac147ae5344d046636fc45c814dc"
+  },
+  "isam_interface_alarms": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "a8fc410bd7903ed1bfcf5bf1fb1fcae9042ffbbf78e06cbe36f15c2f2251c507",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "9fff97422641d98e718408511335c6972f14c66058f60a5d7bdcb0119f703155"
+  },
+  "isam_interface_cages": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "514538ee2bc6ed24947f361bf067f2eb09942bbb4971ee81b4d8a7118e44a5fa",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "b28b712a9ec8b9a000840ed10ea851194389c5cc17a316443ac879c6caa92f78"
+  },
+  "isam_interfaces": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "3703db19a3e59733ec713a98a1605e82dabc455c7c6860bc6bc828b84d8d69b9",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "5e67f4942ad59fa2603d5a7c95556a3ccc9aadf61efdd00af96d27cacb9b542d"
+  },
+  "isam_iphost": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "4414d079b17b6acba69ee1121a10f547f8873687acc6a71e6cc1449d5e421f59",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "89e095dcee0f2c06ae5bd2a54eb9656a807c0dc71d9bc0235adc9c39148fc6ef"
+  },
+  "isam_ipv6_antispoofing_slot": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "79f4a35f3fe3c17d92017937be003571b31cc38b996cbf0bf15fa38021430e55",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "1599badc5023a07f6eb439a897ae0fb8dfc8e9857c9ed73c0eb4777342b583b6"
+  },
+  "isam_l2cp": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "6fbdc15b1774d7bdd79007adcd884633e6a7964e6b56925348f450ac036273a0",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "6dfe16aed02458ab891593d76f4c18ab8fbdea2d45e924ed4a987d4ff5b60c93"
+  },
+  "isam_l2cp_session": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "6740eb269edeb3e1aaea6f9d9899bb4f7969c0a2af32259902962397c6ecf363",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "f866da4a6821978bc5ba0244eb02ff0c759df097bbc9387ab637ff44b7bbf7ed"
+  },
+  "isam_l2cp_user_port": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "0f38e4ef5024e525cd76aee7a5cd1da026a60ad7fff32c08450186c656a37ab1",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "4499933f5bb4b5a2154c7f9b028c889acb47fdf3eb2c31276db32894370a7007"
+  },
+  "isam_l2uni_onts": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "f9b88f164db0698fd94a2e4a46e411303bad5a6e630a5cc5f98943e838a0ad0f",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "dc2d23a6a697b9228b4f92ac0225f54357811ad87bd2bbb7a9313f3fc2ae8be1"
+  },
+  "isam_li_vlan": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "e79200d03afc5639469877195872b8c7290d3e522d58afce44062c26efe56414",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "5783c0f474e058618bc495edcae91e52e020aa5c75017f63798bbdb2a5b739c8"
+  },
+  "isam_linetest": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "a978244d13b63ddeec44e570b78ed510d3aeed8c610ab8ba6787de80b4c9083c",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "a6b6de5b095a86ce2716a588174182e94ef78c928325d3ba744eafd5149181c3"
+  },
+  "isam_link_agg": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "47a5e6f331d58ce3ab8e4811734c82fbc759678bd0c3ac0c3b33e2f6904803d9",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "a4246340614b141a1fa3937245d79d884eca6ef346028d279cf8ffea9d25357a"
+  },
+  "isam_mcast_control": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "066d780a0bd26d5cff7182da45743cb612b8302d090c9ad8c1a6c0ff880c1e68",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "070dcc8fb2950bc3102aab96f2ac754effd39465d2265272d7db33dbfdd2f9ad"
+  },
+  "isam_mcast_general": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "578b432a7326008b5f056d4aac27f7d4451e2fc02208e8feb843b80665dd0832",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "3cecc61d5948aed45111529ce8c94dbbfd82b70d5bcd9e1d79bf0145d9f2b415"
+  },
+  "isam_multicast": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "d52ca72fd6d6d169f9ca7681aaa96cd1ae2340a88fdadf85500459c2e2e6ca1f",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "096d4b9dc9d5a28bb0b3387e88d96f1d4c91904276dde7ea34b72572c20d14bd"
+  },
+  "isam_nat": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "cf82a38367172251ca0cdfdb74281264bec7b827d1467b7c1418d1518170e85f",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "c79fe29209c5c22bcbdf5f7c5b7dad43f91bf8382fef1d6db04270007c290bfd"
+  },
+  "isam_ngpon2_channel_groups": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "a0bde75947ef82c436001dd2abcc4379e7a5a2876ade5eaa7cc75b7fbae0a39a",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "60c1566b4f813ca021832a4371db2fc6950a81f0d1433355c551f54d7ca71770"
+  },
+  "isam_ntp_onts": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "61cdcea00a2ea6b4419f7858ee19a081be22356ed2b7209bc54cd2cabf07c36f",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "4fb878247d8840777fe578803d2d892004127c0872d63b77b0bfc0d6eabe6a3a"
+  },
+  "isam_pon_global": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "3a46b3c4a8647929eafff4e0ab6113dd2a164775c3f49356846a12f8ac31ca48",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "8886ab45660238baf092901c3d3ca13ad6267b9b74857a437b5850bae3917337"
+  },
+  "isam_pon_interfaces": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "c60cc5c9ac35555e278f0b699db17f47d848a76b72099799ee692fc8ab4769fa",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "3e4e5175df3604e6a18c335078e8e85f2aa12ffbadba4928c968c918afb6dfb2"
+  },
+  "isam_pppoe_client_interface": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "56fbe714a3752bbe58c5a5064df287da55b759345b6ecbbcd4140e9b65e4d55f",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "cd739977a5093de97acd9e2f15b531215d4dd7d123d0ef22f26a99bef8eb6a2e"
+  },
+  "isam_pppoe_client_ppp_profile": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "56fbe714a3752bbe58c5a5064df287da55b759345b6ecbbcd4140e9b65e4d55f",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "cd739977a5093de97acd9e2f15b531215d4dd7d123d0ef22f26a99bef8eb6a2e"
+  },
+  "isam_pppoel2_statistics": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "b827ac1a8a7cb58e981bc49ccf2d023df4157ddd9096b1087abc4554878eee9b",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "e3376ad63444ca5b21d9e87d8c1065e5a584a379b58793d606b131009f374ec9"
+  },
+  "isam_pppox_relay_global": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "490cd7487462386776b4f74eb927d45c3839fbbf3b32bc3688889ab970c3dd07",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "1a943d6d8a39a6ca3914a5a9bcea84108978e9bc9f733c6ec8cecf3edd343680"
+  },
+  "isam_qos_global": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "87e5dea5d8dee27b8d9137a0ca359d8c9996f6a1ffc4d2395cc834f75e291a6d",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "ba4a6f329eb5a5b1fb532dd76a0b5f0a64e4df74d41ef24443fe5968344f47aa"
+  },
+  "isam_qos_interfaces": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "3f9223ef67e69668ef7462fd883f59df226732fa8c26cc29d062c7e88cadf9d9",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "68cd29ae97dc1aa74e515cd093cf983737503299e662409f261c621c05a6081a"
+  },
+  "isam_qos_maps": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "5eab12c0112105b17c71462001fb51a32e086548b4ccb0bef3ebbddeeb842db8",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "9015f8eb85b58135bbfc1ce068892721beb1f4a24f1e88f821c99597020675b6"
+  },
+  "isam_qos_profiles": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "e63f4de85625275e3f5d5b134e9a471d268d9c7b9bfa7ad69e807673af0c2851",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "3be182f4164fca3306e67c3e42d3dd68c146e27cd10eaf7ba52fcba6a8570ec7"
+  },
+  "isam_qos_tca": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "73bfb71741e79dbdf9dd458529a332f557dc64f2538df7e18215f46d9aab51e4",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "a30a01a994bedce3b4fd9da2e9aab49cf43b8b0fa78c9b8536eb6612c8e30e30"
+  },
+  "isam_security_ext_authenticator": {
+   "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
+   "options": {
+    "config": "67870dd8658198eb46e3eb358b5728109a77921b8bc175391535b7a4db4bf6df",
+    "provider": "7b870453fcf031bc004c5b9b4178a8794582a9776f85e8c9ba7649d9d3ea4631"
+   },
+   "sha256": "e9e57e08bbb44c3900783a03732921396a5a9143d52ffe0ca0ad4640039f5ba1"
+  },
+  "isam_software_mngt": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "9cec248765f634cb8c7bba01c64fd90f852e39c04286f3dcbd5154a7d4809345",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "21829a3add2fb03b67f63129a66abaa5631ccb57ff2a161f0f4729f8672d666d"
+  },
+  "isam_system": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "cf201c2f8b273ec5ee2382df9d584bbfec73aa54a13a63c10be65556366ce05a",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "8413d17cbc76ccaac19cb208c76ce7c9c4be931073db93b71e89797bbc922b65"
+  },
+  "isam_system_security": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "c38d243b51698d44648df51783dc04376751fd8df0dfaedb47e5f3fa9f742d97",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "18d4b8d991aebb4f0751883b012c772cd321c7e1bb102f9b10d4cf8051910ba3"
+  },
+  "isam_topology_discovery": {
+   "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
+   "options": {
+    "allow_broad_read": "cf06f58d3331bc04a13e32e5552f68731d69fafe14979041cf532675766064ba",
+    "child_kind": "ce79ce696ab1874390821387823f0db46c42f8e964b17691433008a721bbcc44",
+    "identity": "67b2393e5d1040555fa96db6aee4efc57286e983f5cb5a8863bfbbba40c08f9e",
+    "kind": "98da258e388c20a18285cc8e4f40043c05b000cf39f566f0f0648ec870c367f2"
+   },
+   "sha256": "9fc2cb192ef41f8084016971cf368dca10c8d3ea425773787f6c52838af66833"
+  },
+  "isam_traps": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "1d90bd38d497410a388734f1581a73ffb9cdbdc6d849b142dbfd7ad2933dd906",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "11740f15ad1a39e726140abeb58950cc995daaffd109337e7911c49c9d0c01f1"
+  },
+  "isam_trouble_shooting_pon": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "047270c9f702933b7f55317161cef5f35fa6263ce71458ed568a60a41956732c",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "784ca211b9485c8f1b636af363e5abe13c61f470b24e826f79a7dd6e79d71d4c"
+  },
+  "isam_uni_onts": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "1ecd081542b335a4e2c62b2ddc4b5654ddc8f6a19b887e648f852b93e648fc45",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "1bac245b2d27ba41c8bcc6701f59ed9dcb322fc10a47dcc07c1fcd43d45a8de6"
+  },
+  "isam_vlan_global": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "1b2e37359002d3502ce8619860977f60afdfc9d39549c2a2b2fd92670eeb2e36",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "4c1a9daa826261524d5a2797042876ca48efe9daf0c58cfa42a6cce5e6b9fc56"
+  },
+  "isam_vlans": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "5bbbd2a63b74641d69c058d291d1d4fc9d5293c29eb916d6bbdf678de5d84746",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "b9eaccfbed924af8757fb72a7ca563d055c4bd501fef27b8fef7dc5b0ae16725"
+  },
+  "isam_voice_sip": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "4f147c69923ff89bceca3ad0ae1a49238aa05bcf144810848f609018a324e4f8",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "e6413926edc769b2b8b83079ed996d3aff18cca8d19c326c7b1a003babf8b379"
+  },
+  "isam_xdsl_boards": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "7b933e68b715ebc80cd2fe11f7d358fa84788d6e5ee9b87ee9879962576ba617",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "02097c2f6a768aaf1013d370cc81f846134c7d7b852f5aacd86a1cd7fdad1d93"
+  },
+  "isam_xdsl_bonding": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "c9b58a4e54e75690c08297c230f469d75c80e8dfbf5b23ad55b26651fe7352d0",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "6ef691653e048fe373311588be7e3c6e78326965fe6fff0f439563402ab53c18"
+  },
+  "isam_xdsl_inm": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "3e1369cee8d2c913b4d3e4ece4111156de664a2cc9a8501867f6ec7fa8fe0e9e",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "cfefa2a06fe2feb9798a7485122b12d07277909e12fd48fee9d5be35a0d9f8b9"
+  },
+  "isam_xdsl_lines": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "53f5b748f142b384ba1aaa831477311896f7e0cbf05dd21fdfeb732482cdbf30",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "3ff4a0298be6ba420528bc163d5af6417fb7b28fe67844bd0079e13591d088d6"
+  },
+  "isam_xdsl_onts": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "3761ffa73934ecfa6431dcaf522c4b3d75883350508d0812ffcde4074a9c9c21",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "dc455e929ed8c98441054408ae505fa24af1056815a83e7a8f454dfc7e5bffa9"
+  },
+  "isam_xdsl_profiles": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "27f82bd4fe7d8484021e5cc4ea5d5f3db8177ff00f3fe3ee6ada4e891726c73f",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "ef22638c817bda7f220fe1307818b2874477bce5ce471dedea7c056f967af46b"
+  },
+  "isam_xdsl_system": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "5876ff1ca18c2fc358049cd09df37fc9145b04e4c2617d1e4d7d75f024cba955",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "204cd8ca82d93d408ef6b400aa134cc79e4ee30ef8265f113966676c8fb50861"
+  },
+  "isam_xstp": {
+   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "options": {
+    "config": "2e3c8bbebc91f9ee4f1b649e80f93e56a8b6fb26c03a840e442229153d677355",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "4d071a0939831d21ffbc388d6b0b9e3f63907df63ab008c49b115570200dc2a4"
+  }
+ },
+ "comment": "Generated by test_api_baseline.py; regenerate only for an intended API change.",
+ "modules": [
+  "cli_config",
+  "isam_alarm",
+  "isam_ani_onts",
+  "isam_arp_relay",
+  "isam_bridge_learned_mac",
+  "isam_bridges",
+  "isam_cfm",
+  "isam_channel_pair_pm",
+  "isam_cwmp_plt",
+  "isam_dhcp_relay",
+  "isam_dhcp_relay_port_stats",
+  "isam_dhcp_server",
+  "isam_dist_service",
+  "isam_efm_oam_interface",
+  "isam_epon_interfaces",
+  "isam_equipment",
+  "isam_equipment_onts",
+  "isam_equipment_replan",
+  "isam_error",
+  "isam_ethernet_line",
+  "isam_ethernet_onts",
+  "isam_ethernet_statistics",
+  "isam_facts",
+  "isam_generic_pon",
+  "isam_igmp",
+  "isam_ihub_lags",
+  "isam_ihub_ports",
+  "isam_ihub_services",
+  "isam_interface_alarms",
+  "isam_interface_cages",
+  "isam_interfaces",
+  "isam_iphost",
+  "isam_ipv6_antispoofing_slot",
+  "isam_l2cp",
+  "isam_l2cp_session",
+  "isam_l2cp_user_port",
+  "isam_l2uni_onts",
+  "isam_li_vlan",
+  "isam_linetest",
+  "isam_link_agg",
+  "isam_mcast_control",
+  "isam_mcast_general",
+  "isam_multicast",
+  "isam_nat",
+  "isam_ngpon2_channel_groups",
+  "isam_ntp_onts",
+  "isam_pon_global",
+  "isam_pon_interfaces",
+  "isam_pppoe_client_interface",
+  "isam_pppoe_client_ppp_profile",
+  "isam_pppoel2_statistics",
+  "isam_pppox_relay_global",
+  "isam_qos_global",
+  "isam_qos_interfaces",
+  "isam_qos_maps",
+  "isam_qos_profiles",
+  "isam_qos_tca",
+  "isam_security_ext_authenticator",
+  "isam_software_mngt",
+  "isam_system",
+  "isam_system_security",
+  "isam_topology_discovery",
+  "isam_traps",
+  "isam_trouble_shooting_pon",
+  "isam_uni_onts",
+  "isam_vlan_global",
+  "isam_vlans",
+  "isam_voice_sip",
+  "isam_xdsl_boards",
+  "isam_xdsl_bonding",
+  "isam_xdsl_inm",
+  "isam_xdsl_lines",
+  "isam_xdsl_onts",
+  "isam_xdsl_profiles",
+  "isam_xdsl_system",
+  "isam_xstp"
+ ]
+}
