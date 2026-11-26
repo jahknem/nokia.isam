@@ -21,7 +21,10 @@ options:
         description: IP host name.
         type: str
   running_config:
-    description: Device native configuration to parse.
+    description:
+      - 'Device native configuration to parse.'
+      - 'With I(state) C(merged), C(replaced), C(overridden) or C(deleted), the current configuration to render against instead of reading the device (offline preview): this CLI text, or the canonical resource JSON as returned by C(gathered) (validated against the I(config) options).'
+      - 'Offline, no command is sent and nothing is read from the device; the result holds the C(commands) that would be sent and C(before) (the supplied configuration), with C(changed) false.'
     type: str
   state:
     description: The state of the configuration after module completion.
@@ -81,7 +84,6 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.iph
 def main():
     module = AnsibleModule(
         argument_spec=IphostArgs.argument_spec,
-        mutually_exclusive=[["config", "running_config"]],
         required_if=[
             ["state", "merged", ["config"]],
             ["state", "replaced", ["config"]],

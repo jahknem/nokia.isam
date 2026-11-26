@@ -754,8 +754,11 @@ options:
         elements: str
         description: Raw profile subcommands for complex or not-yet-modeled nested values.
   running_config:
+    description:
+      - 'Output from C(info configure qos profiles), used with state C(parsed).'
+      - 'With I(state) C(merged), C(replaced), C(overridden) or C(deleted), the current configuration to render against instead of reading the device (offline preview): this CLI text, or the canonical resource JSON as returned by C(gathered) (validated against the I(config) options).'
+      - 'Offline, no command is sent and nothing is read from the device; the result holds the C(commands) that would be sent and C(before) (the supplied configuration), with C(changed) false.'
     type: str
-    description: Output from C(info configure qos profiles), used with state C(parsed).
   state:
     description:
     - Desired resource state.
@@ -857,7 +860,6 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.qos
 def main():
     module = AnsibleModule(
         argument_spec=Qos_profilesArgs.argument_spec,
-        mutually_exclusive=[["config", "running_config"]],
         required_if=[
             ["state", "merged", ["config"]],
             ["state", "replaced", ["config"]],

@@ -42,7 +42,10 @@ options:
         type: bool
         description: Enable or disable NTP on the ONT.
   running_config:
-    description: The state-parsed running config.
+    description:
+      - 'The state-parsed running config.'
+      - 'With I(state) C(merged), C(replaced), C(overridden) or C(deleted), the current configuration to render against instead of reading the device (offline preview): this CLI text, or the canonical resource JSON as returned by C(gathered) (validated against the I(config) options).'
+      - 'Offline, no command is sent and nothing is read from the device; the result holds the C(commands) that would be sent and C(before) (the supplied configuration), with C(changed) false.'
     type: str
   state:
     description:
@@ -147,7 +150,6 @@ def main():
     """Main entry point for module execution."""
     module = AnsibleModule(
         argument_spec=Ntp_ontsArgs.argument_spec,
-        mutually_exclusive=[["config", "running_config"]],
         required_if=[
             ["state", "merged", ["config"]],
             ["state", "replaced", ["config"]],

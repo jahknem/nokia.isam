@@ -36,11 +36,14 @@ explicit `False` in `rendered`, and packing commands per node
 
 An action state (`merged`/`replaced`/`overridden`/`deleted`) given `running_config`
 renders against that configuration as the current state instead of reading the device,
-and never sends commands. `running_config` is the canonical resource JSON or CLI text
-(as for `parsed`). `deleted` with `running_config` and no `config` renders the removal of
-everything in it — the offline counterpart of `rendered` for deletions (NOC move/copy/delete
-previews). `config` and `running_config` remain mutually exclusive, so the offline form
-used in practice is `deleted` + `running_config`.
+and never sends commands. `running_config` is the canonical resource JSON (as `gathered`
+returns it; validated and type-coerced against the `config` options) or CLI text (as for
+`parsed`). With `config` the request is reconciled against it exactly as against a device
+holding that configuration (`test_offline_action_equivalence.py`). `deleted` with
+`running_config` and no `config` renders the removal of everything in it — the offline
+counterpart of `rendered` for deletions (NOC move/copy/delete previews). `config` and
+`running_config` are therefore not mutually exclusive; every resource module documents the
+offline meaning in its `running_config` option.
 
 Shared helpers implement these rules; use them instead of local variants:
 `deleted_targets` (what an instance keeps on `deleted`), `covers_entry` (whether a

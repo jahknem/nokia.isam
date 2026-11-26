@@ -757,7 +757,10 @@ options:
                     type: bool
                     description: Dynamic VLAN assignment (C(dyn-vlan-assign)).
   running_config:
-    description: Device configuration to parse with I(state=parsed).
+    description:
+      - 'Device configuration to parse with I(state=parsed).'
+      - 'With I(state) C(merged), C(replaced), C(overridden) or C(deleted), the current configuration to render against instead of reading the device (offline preview): this CLI text, or the canonical resource JSON as returned by C(gathered) (validated against the I(config) options).'
+      - 'Offline, no command is sent and nothing is read from the device; the result holds the C(commands) that would be sent and C(before) (the supplied configuration), with C(changed) false.'
     type: str
   state:
     description:
@@ -859,7 +862,6 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.sys
 def main():
     module = AnsibleModule(
         argument_spec=Isam_system_securityArgs.argument_spec,
-        mutually_exclusive=[["config", "running_config"]],
         required_if=[
             ["state", "merged", ["config"]],
             ["state", "replaced", ["config"]],

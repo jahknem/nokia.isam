@@ -52,7 +52,10 @@ options:
         type: str
         choices: [up, down]
   running_config:
-    description: Native C(info configure ... flat) output to parse with I(state=parsed).
+    description:
+      - 'Native C(info configure ... flat) output to parse with I(state=parsed).'
+      - 'With I(state) C(merged), C(replaced), C(overridden) or C(deleted), the current configuration to render against instead of reading the device (offline preview): this CLI text, or the canonical resource JSON as returned by C(gathered) (validated against the I(config) options).'
+      - 'Offline, no command is sent and nothing is read from the device; the result holds the C(commands) that would be sent and C(before) (the supplied configuration), with C(changed) false.'
     type: str
   state:
     description:
@@ -143,7 +146,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.pon
 
 
 def main():
-    module = AnsibleModule(argument_spec=Epon_interfacesArgs.argument_spec, mutually_exclusive=[["config", "running_config"]], required_if=[["state", x, ["config"]] for x in ("merged", "replaced", "overridden", "rendered")] + [["state", "parsed", ["running_config"]]], supports_check_mode=True)
+    module = AnsibleModule(argument_spec=Epon_interfacesArgs.argument_spec, required_if=[["state", x, ["config"]] for x in ("merged", "replaced", "overridden", "rendered")] + [["state", "parsed", ["running_config"]]], supports_check_mode=True)
     module.exit_json(**Epon_interfaces(module).execute_module())
 
 if __name__ == "__main__": main()

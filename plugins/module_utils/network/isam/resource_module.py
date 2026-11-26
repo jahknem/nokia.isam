@@ -30,9 +30,11 @@ from copy import deepcopy
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
     ResourceModule,
 )
+from ansible.module_utils.common.arg_spec import ArgumentSpecValidator
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     emit_warnings,
     get_from_dict,
+    remove_empties,
     to_list,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.attribute_table import get_path
@@ -78,6 +80,22 @@ def _offline_unknown_fields(value, spec, path="config"):
     return unknown
 
 
+def _without_aliases(value, spec):
+    """Drop alias keys the argspec validator keeps next to the canonical option name."""
+    kind = spec.get("type", "str")
+    options = spec.get("options") or {}
+    if kind == "dict" and isinstance(value, dict) and options:
+        aliases = set()
+        for sub in options.values():
+            aliases.update(sub.get("aliases") or [])
+        return dict((key, _without_aliases(item, options[key]) if key in options else item)
+                    for key, item in value.items() if key not in aliases or key in options)
+    if kind == "list" and isinstance(value, list) and options:
+        element = {"type": spec.get("elements", "str"), "options": options}
+        return [_without_aliases(item, element) for item in value]
+    return value
+
+
 class IsamResourceModule(ResourceModule):
     """ResourceModule for ISAM CLI resources (see the module docstring)."""
 
@@ -93,16 +111,38 @@ class IsamResourceModule(ResourceModule):
         if _offline_config(self):
             running_config = self._module.params["running_config"]
             if running_config.strip()[:1] in ("{", "["):
-                parsed = json.loads(running_config)
-                spec = (getattr(self._module, "argument_spec", None) or {}).get("config") or {}
-                unknown = _offline_unknown_fields(parsed, spec)
-                if unknown:
-                    self._module.fail_json(
-                        msg="running_config contains fields unknown to the argspec: %s" % ", ".join(sorted(set(unknown)))
-                    )
-                return deepcopy(parsed)
+                return self._offline_json(running_config)
             return deepcopy(self.get_facts(self._empty_fact_val, data=running_config))
         return super(IsamResourceModule, self).gather_current()
+
+    def _offline_json(self, running_config):
+        """The canonical resource JSON of an offline running_config, validated like config.
+
+        It goes through the config argspec (type coercion, choices, required fields) and
+        remove_empties, so it compares exactly like the facts read from a device: "100"
+        and 100 are the same VLAN, an unset option is absent rather than None.
+        """
+        try:
+            parsed = json.loads(running_config)
+        except ValueError as exc:
+            self._module.fail_json(msg="running_config is neither CLI text nor valid JSON: %s" % exc)
+        spec = (getattr(self._module, "argument_spec", None) or {}).get("config") or {}
+        unknown = _offline_unknown_fields(parsed, spec)
+        if unknown:
+            self._module.fail_json(
+                msg="running_config contains fields unknown to the argspec: %s" % ", ".join(sorted(set(unknown)))
+            )
+        if not spec:
+            return deepcopy(parsed)
+        # Explicit nulls mean "unset" (as in gathered output); the validator would check
+        # them against choices, so they are dropped first.
+        result = ArgumentSpecValidator({"config": spec}).validate(remove_empties({"config": parsed}))
+        if result.error_messages:
+            self._module.fail_json(
+                msg="running_config does not match the config argspec: %s" % "; ".join(result.error_messages)
+            )
+        return remove_empties({"config": _without_aliases(result.validated_parameters.get("config"), spec)}).get(
+            "config", self._empty_fact_val)
 
     def execute_module(self):
         """Common lifecycle; families override only for a different execution path."""

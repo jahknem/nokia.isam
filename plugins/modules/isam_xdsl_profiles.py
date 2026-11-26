@@ -904,8 +904,11 @@ options:
             elements: str
             description: Additional device-native commands for the profile, relative to it (for example C(vdsl2 foo 1)). Commands the options model are folded into them when comparing; facts only return keywords the options do not model.
   running_config:
+    description:
+      - 'Device-native C(info configure xdsl ...) output for parsed state.'
+      - 'With I(state) C(merged), C(replaced), C(overridden) or C(deleted), the current configuration to render against instead of reading the device (offline preview): this CLI text, or the canonical resource JSON as returned by C(gathered) (validated against the I(config) options).'
+      - 'Offline, no command is sent and nothing is read from the device; the result holds the C(commands) that would be sent and C(before) (the supplied configuration), with C(changed) false.'
     type: str
-    description: Device-native C(info configure xdsl ...) output for parsed state.
   state:
     type: str
     description:
@@ -997,7 +1000,6 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.xds
 def main():
     module = AnsibleModule(
         argument_spec=Xdsl_profilesArgs.argument_spec,
-        mutually_exclusive=[["config", "running_config"]],
         required_if=[
             ["state", "merged", ["config"]],
             ["state", "replaced", ["config"]],

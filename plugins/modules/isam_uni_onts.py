@@ -36,8 +36,9 @@ options:
         description: Collection of TC-layer performance monitors (C(pm-collect)); device default C(disable).
   running_config:
     description:
-      - Device configuration to parse with I(state=parsed), as returned by C(info configure uni flat)
-        (with or without C(detail)).
+      - 'Device configuration to parse with I(state=parsed), as returned by C(info configure uni flat) (with or without C(detail)).'
+      - 'With I(state) C(merged), C(replaced), C(overridden) or C(deleted), the current configuration to render against instead of reading the device (offline preview): this CLI text, or the canonical resource JSON as returned by C(gathered) (validated against the I(config) options).'
+      - 'Offline, no command is sent and nothing is read from the device; the result holds the C(commands) that would be sent and C(before) (the supplied configuration), with C(changed) false.'
     type: str
   state:
     description:
@@ -150,7 +151,6 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.uni
 def main():
     module = AnsibleModule(
         argument_spec=Uni_ontsArgs.argument_spec,
-        mutually_exclusive=[["config", "running_config"]],
         required_if=[
             ["state", "merged", ["config"]],
             ["state", "replaced", ["config"]],
