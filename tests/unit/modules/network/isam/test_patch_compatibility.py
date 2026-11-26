@@ -43,13 +43,16 @@ def test_argument_surface_matches_0_3_13_except_device_defaults():
     # re-locked by their PR's api_baseline.json. The integration PR that lands the
     # whole stack replaces this file with test_release_regressions.py, which keeps
     # the 0.3.14 safety regressions without the pre-1.0 lock.
+    # Names are the argspec directories (vlan_global, not isam_vlan_global).
     migrated = {"ani_onts", "equipment_onts", "equipment_replan", "ethernet_onts", "generic_pon",
-                "interface_alarms", "isam_equipment", "isam_vlan_global", "ntp_onts",
-                "pon_interfaces", "pon_global", "trouble_shooting_pon", "l2uni_onts", "uni_onts"}
+                "interface_alarms", "isam_equipment", "vlan_global", "ntp_onts",
+                "pon_interfaces", "pon_global", "trouble_shooting_pon", "l2uni_onts", "uni_onts",
+                "qos_global", "qos_interfaces", "qos_maps", "qos_profiles", "qos_tca"}
     specs = dict((path, spec) for path, spec in specs.items() if path.split("/")[-2] not in migrated)
-    assert len(specs) == 44
+    # The same 40 argspecs computed from tag 0.3.13 give this hash.
+    assert len(specs) == 40
     assert hashlib.sha256(json.dumps(specs, sort_keys=True).encode()).hexdigest() == (
-        "7424069552f5650cfc7c8c0bb21b1f9652a76c2690586d8a1a086ca7bac0deeb")
+        "6cd3b9c07c85d016121edd58c12794175fb4562193809d4d4bfa868d16baa247")
 
 
 def test_module_inventory_matches_0_3_13():
@@ -59,11 +62,13 @@ def test_module_inventory_matches_0_3_13():
     added_by_the_split = {
         "plugins/modules/isam_l2uni_onts.py",
         "plugins/modules/isam_pon_global.py",
+        "plugins/modules/isam_qos_global.py",
+        "plugins/modules/isam_qos_tca.py",
         "plugins/modules/isam_trouble_shooting_pon.py",
         "plugins/modules/isam_uni_onts.py",
     }
     pre_split = [path for path in paths if path not in added_by_the_split]
-    assert len(paths) == len(pre_split) + 4
+    assert len(paths) == len(pre_split) + 6
     assert hashlib.sha256("\n".join(pre_split).encode()).hexdigest() == (
         "88ec8c7f4f4ed973e1ddd0591b2f137aada9331d42e9e633307a7f257b9d8827")
 

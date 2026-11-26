@@ -138,6 +138,45 @@ intentional. This section lists the ONT/access families of that line.
   with only default settings: their detail read prints nothing either; the
   instance exists when that read does not fail with "instance does not exist".
 
+### QoS: new resources
+
+- New resource `isam_qos_tca`: per-port/queue QoS threshold crossing alarms
+  (`configure qos tca <port> queue <n>`), composite identity (`name`, `queue`), targeted
+  gathering, all seven states. Queues always exist on the device and reset in place:
+  `deleted`/`overridden` reset attributes (named attributes only themselves), and
+  `tca_enable=false` equals the device default when comparing.
+- New resource `isam_qos_global`: the bare `configure qos` settings (`general`),
+  per line card `qos global <lt>` (`line_cards`, targeted by name), the
+  DSL/NNI/protocol ctrl-pkt policers, `pbit_scheduling` and `upstr_prot_dsl`. Reading
+  `general` needs `info configure qos flat` (the node has no own `info` path), so it is
+  only read when in scope; per-node reads replace absent nodes with empty settings.
+
+### QoS: profile and map rework
+
+- `isam_qos_profiles` is rebuilt: every parameter of the eleven profile types parses
+  (flat and `detail` forms incl. `no X` defaults), dependent parameters go in one packed
+  command per profile (the device rejects `excess-info-rate` before `type`), changing a
+  shaper's type fails before anything is sent, mandatory parameters are kept instead of
+  invalid `no` resets (warned), profile deletion emits no trailing field resets, and
+  `use-dei` renders as a bare flag. Options keep their historical CLI spelling; the
+  snake_case spelling of every CLI-named option is accepted as an alias, and all options
+  are documented.
+- Breaking: `isam_qos_maps` models `up-ctrl-pkt`/`dn-ctrl-pkt` in the real device form
+  (`<protocol> [dscp <n>] [pbit <n>] [tc <n>]`; was `queue`/`profile`), requires the
+  fields the device needs to set an entry, and renders `dscp-map-dot1p ... dot1p-value`
+  (was `dot1p`). `deleted` removes only the named entries, not whole map families.
+
+### QoS: interfaces
+
+- `isam_qos_interfaces` runs on `IsamResourceModule` (offline action states, command
+  safety). Detail placeholders (`none`, `not-applicable`) no longer become removal
+  commands: `not-applicable` is never sent (a real target value is kept), unset
+  `none`/`not-applicable` top-level and queue settings render no resets, and an explicit
+  `none` still clears a configured profile. `deleted` keeps the `scheduler_node` an
+  interface with downstream queues requires (warned). Facts read targeted (`state:
+  gathered` with `config` reads only the named interfaces); the module documents the
+  QoS-before-bridge prerequisites (QOS MGT error 41, VLAN MGT error 277).
+
 ## 0.3.14 — A slice of π, without the breaking crust
 
 Patch release based on 0.3.13. Existing module names, option names, types,

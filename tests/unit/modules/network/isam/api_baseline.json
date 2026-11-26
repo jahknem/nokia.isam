@@ -379,32 +379,50 @@
    },
    "sha256": "e3376ad63444ca5b21d9e87d8c1065e5a584a379b58793d606b131009f374ec9"
   },
+  "isam_qos_global": {
+   "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
+   "options": {
+    "config": "87e5dea5d8dee27b8d9137a0ca359d8c9996f6a1ffc4d2395cc834f75e291a6d",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "336fb249435b54662de143d8c76c878328a612aa73a141eaa349f6e25f4c143a"
+  },
   "isam_qos_interfaces": {
-   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
    "options": {
     "config": "3f9223ef67e69668ef7462fd883f59df226732fa8c26cc29d062c7e88cadf9d9",
     "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
     "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
    },
-   "sha256": "68cd29ae97dc1aa74e515cd093cf983737503299e662409f261c621c05a6081a"
+   "sha256": "188210a5a8aeacfb966406a7ddf99d5280eec65ec06b1765b3a6580498813b1a"
   },
   "isam_qos_maps": {
-   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
    "options": {
-    "config": "bd0947cfc06fb29597f82536085194f642d9d6438054331a94b46f3c01a1c959",
+    "config": "5eab12c0112105b17c71462001fb51a32e086548b4ccb0bef3ebbddeeb842db8",
     "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
     "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
    },
-   "sha256": "567437be50779dd172a5c0fd1d12ded62b76e6fec911393d6e368c0f86534faf"
+   "sha256": "a3ed51db02a30fa2176b6f3498a1a99294caa18c11129e83522d887574364452"
   },
   "isam_qos_profiles": {
-   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
    "options": {
-    "config": "af131be2abecf14fe13fe570baa40fbf3060992bcffa67d43b215d026726bd86",
+    "config": "e63f4de85625275e3f5d5b134e9a471d268d9c7b9bfa7ad69e807673af0c2851",
     "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
     "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
    },
-   "sha256": "f42eaeb3db4210f32d39073158cfb6f62c2476f950ee3eab45ea887e513d6c6b"
+   "sha256": "b77b665d8877eafcfa14db7431ab9182cfd0aa07384e422959bd06f7501a7132"
+  },
+  "isam_qos_tca": {
+   "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
+   "options": {
+    "config": "73bfb71741e79dbdf9dd458529a332f557dc64f2538df7e18215f46d9aab51e4",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "835eec11b5f8285b323a1b7041808291964305c3988bb265eafff38469fd1449"
   },
   "isam_security_ext_authenticator": {
    "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
@@ -576,9 +594,11 @@
   "isam_pppoe_client_interface",
   "isam_pppoe_client_ppp_profile",
   "isam_pppoel2_statistics",
+  "isam_qos_global",
   "isam_qos_interfaces",
   "isam_qos_maps",
   "isam_qos_profiles",
+  "isam_qos_tca",
   "isam_security_ext_authenticator",
   "isam_software_mngt",
   "isam_system",
