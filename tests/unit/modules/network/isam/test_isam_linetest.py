@@ -111,3 +111,53 @@ def test_lt_rendered_is_configuration_only(monkeypatch):
 def test_lt_parsed_ignores_actions(monkeypatch):
     parsed = _lt(monkeypatch, "parsed", running="configure linetest single ltsession 3 session-cmd create timeout-period 120\n")["parsed"]
     assert parsed["sessions"] == [{"session_id": "3", "timeout_period": "120"}]
+
+
+# --- review M6: destroy only existing sessions; create absent ones (CLI guide 53.5) ---
+
+def test_lt_deleted_absent_session_is_idempotent(monkeypatch):
+    result = _lt(monkeypatch, "deleted", {"sessions": [{"session_id": "9"}]})
+    assert result["commands"] == []
+    assert result["changed"] is False
+
+
+def test_lt_deleted_destroys_only_existing_named_sessions(monkeypatch):
+    cmds = _lt(monkeypatch, "deleted", {"sessions": [{"session_id": "2"}, {"session_id": "9"}]})["commands"]
+    assert cmds == ["configure linetest single ltsession 2 session-cmd destroy"]
+
+
+def test_lt_deleted_without_config_on_empty_device_is_noop(monkeypatch):
+    assert _lt(monkeypatch, "deleted", running="")["commands"] == []
+
+
+def test_lt_deleted_absent_parameters_are_noop(monkeypatch):
+    result = _lt(monkeypatch, "deleted", {"parameters": [{"session_id": "2", "test_name": "resist-tr(ohm)"}]})
+    assert not result.get("failed"), result.get("msg")
+    assert result["commands"] == []
+
+
+def test_lt_merged_new_session_is_created_first(monkeypatch):
+    cmds = _lt(monkeypatch, "merged", {"sessions": [{"session_id": "9", "timeout_period": "120"}]})["commands"]
+    assert cmds == [
+        "configure linetest single ltsession 9 session-cmd create",
+        "configure linetest single ltsession 9 timeout-period 120",
+    ]
+
+
+def test_lt_replaced_new_session_is_created_first(monkeypatch):
+    cmds = _lt(monkeypatch, "replaced", {"sessions": [{"session_id": "9"}]})["commands"]
+    assert cmds == ["configure linetest single ltsession 9 session-cmd create"]
+
+
+def test_lt_merged_parameter_of_absent_session_fails(monkeypatch):
+    res = _lt(monkeypatch, "merged", {"parameters": [{"session_id": "9", "test_name": "resist-tr(ohm)", "value1": "1"}]})
+    assert res.get("failed") and "session 9" in res["msg"]
+
+
+def test_lt_merged_parameter_of_session_created_in_same_run(monkeypatch):
+    cmds = _lt(monkeypatch, "merged", {"sessions": [{"session_id": "9"}],
+                                       "parameters": [{"session_id": "9", "test_name": "resist-tr(ohm)", "value1": "1"}]})["commands"]
+    assert cmds == [
+        "configure linetest single ltsession 9 session-cmd create",
+        "configure linetest single ltparm 9 resist-tr(ohm) value1 1",
+    ]
