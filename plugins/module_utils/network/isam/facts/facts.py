@@ -34,6 +34,10 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.link_agg.link_agg import Link_aggFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xstp.xstp import XstpFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.alarm.alarm import AlarmFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.l2uni_onts.l2uni_onts import L2uni_ontsFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.uni_onts.uni_onts import Uni_ontsFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.pon_global.pon_global import Pon_globalFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.trouble_shooting_pon.trouble_shooting_pon import Trouble_shooting_ponFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ani_onts.ani_onts import Ani_ontsFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.dhcp_server.dhcp_server import Isam_dhcp_serverFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.dhcp_relay.dhcp_relay import Isam_dhcp_relayFacts
@@ -135,6 +139,10 @@ FACT_RESOURCE_SUBSETS = dict(
     multicast=MulticastFacts,
     ntp_onts=Ntp_ontsFacts,
     pon_interfaces=Pon_interfacesFacts,
+    pon_global=Pon_globalFacts,
+    trouble_shooting_pon=Trouble_shooting_ponFacts,
+    l2uni_onts=L2uni_ontsFacts,
+    uni_onts=Uni_ontsFacts,
     qos_interfaces=Qos_interfacesFacts,
     qos_maps=Qos_mapsFacts,
     qos_profiles=Qos_profilesFacts,
