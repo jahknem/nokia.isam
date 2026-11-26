@@ -38,14 +38,33 @@ def test_argument_surface_matches_0_3_13_except_device_defaults():
             name: _without_defaults(cls.argument_spec)
             for name, cls in namespace.items() if isinstance(cls, type) and hasattr(cls, "argument_spec")
         }
-    assert len(specs) == 53
+    # The 1.0 feature split migrates these families intentionally (one family PR
+    # each): their argspecs are excluded from the frozen 0.3.13 surface here and
+    # re-locked by their PR's api_baseline.json. The integration PR that lands the
+    # whole stack replaces this file with test_release_regressions.py, which keeps
+    # the 0.3.14 safety regressions without the pre-1.0 lock.
+    migrated = {"ani_onts", "equipment_onts", "equipment_replan", "ethernet_onts", "generic_pon",
+                "interface_alarms", "isam_equipment", "isam_vlan_global", "ntp_onts",
+                "pon_interfaces", "pon_global", "trouble_shooting_pon", "l2uni_onts", "uni_onts"}
+    specs = dict((path, spec) for path, spec in specs.items() if path.split("/")[-2] not in migrated)
+    assert len(specs) == 44
     assert hashlib.sha256(json.dumps(specs, sort_keys=True).encode()).hexdigest() == (
-        "4799993d1ece01bbb366b83d400e4fa87ab78cba81bbc6fd515e98f3aa947777")
+        "7424069552f5650cfc7c8c0bb21b1f9652a76c2690586d8a1a086ca7bac0deeb")
 
 
 def test_module_inventory_matches_0_3_13():
     paths = sorted(path.relative_to(ROOT).as_posix() for path in (ROOT / "plugins/modules").rglob("*.py"))
-    assert hashlib.sha256("\n".join(paths).encode()).hexdigest() == (
+    # The 1.0 feature split adds modules intentionally (one family PR each): the
+    # released 0.3.13 inventory must survive unchanged (no removals, no renames).
+    added_by_the_split = {
+        "plugins/modules/isam_l2uni_onts.py",
+        "plugins/modules/isam_pon_global.py",
+        "plugins/modules/isam_trouble_shooting_pon.py",
+        "plugins/modules/isam_uni_onts.py",
+    }
+    pre_split = [path for path in paths if path not in added_by_the_split]
+    assert len(paths) == len(pre_split) + 4
+    assert hashlib.sha256("\n".join(pre_split).encode()).hexdigest() == (
         "88ec8c7f4f4ed973e1ddd0591b2f137aada9331d42e9e633307a7f257b9d8827")
 
 
@@ -116,13 +135,13 @@ def test_cfm_slm_and_domain_scope_are_independent(monkeypatch):
 
 
 def test_generic_pon_nested_delete_does_not_reset_parent_or_other_sections(monkeypatch):
-    running = ("configure generic-pon utilization pon-pmcollect\n"
+    running = ("configure generic-pon utilization pon-pmcollect pm-enable\n"
                "configure generic-pon utilization threshold txmcutilhi 10\n"
-               "configure generic-pon ont slid-mode\n")
+               "configure generic-pon ont slid-mode hexa-dec\n")
     config = {"utilization": {"threshold": {"txmcutilhi": "10"}}}
     result = run_module(monkeypatch, "isam_generic_pon", {"state": "deleted", "config": config}, running)
     assert result["commands"] == ["configure generic-pon utilization threshold no txmcutilhi"]
-    result = run_module(monkeypatch, "isam_generic_pon", {"state": "replaced", "config": {"utilization": {"pon_pmcollect": True}}}, running)
+    result = run_module(monkeypatch, "isam_generic_pon", {"state": "replaced", "config": {"utilization": {"pon_pmcollect": "pm-enable"}}}, running)
     assert not any(" ont " in command for command in result["commands"])
 
 

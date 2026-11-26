@@ -23,9 +23,6 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ethe
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ethernet_line.ethernet_line import (
     Ethernet_lineFacts,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.generic_pon.generic_pon import (
-    Generic_ponFacts,
-)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.bridges.bridges import (
     BridgesFacts,
 )
@@ -90,7 +87,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
     Ethernet_lineTemplate,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.generic_pon import (
-    Generic_ponTemplate,
+    TABLE as GENERIC_PON_TABLE,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.isam_equipment import (
     Isam_equipmentTemplate,
@@ -476,8 +473,7 @@ def test_dhcp_server_live_flat_fixture_is_parseable():
 
 def test_generic_pon_live_flat_fixture_is_parseable():
     descriptor, output = fixture_bundle("generic_pon", "r6.2.04m")
-    facts = Generic_ponFacts(module=None)
-    parsed = Generic_ponTemplate(lines=facts._split_packed_lines(output)).parse()
+    parsed = GENERIC_PON_TABLE.parse(output)
 
     assert descriptor["command"] == "info configure generic-pon flat"
     assert parsed["dpinteg_threshold"] == 0
@@ -512,7 +508,8 @@ def test_equipment_live_scoped_compact_slot_fixture_is_parseable():
     parsed = Isam_equipmentTemplate(lines=facts._flatten_config(output)).parse()
 
     assert descriptor["command"] == "info configure equipment slot lt:1/1/5 flat detail"
-    assert parsed == {"slots": {"lt:1/1/5": {"id": "lt:1/1/5", "planned_type": "fglt-b", "unlock": True}}}
+    assert parsed == {"slots": {"lt:1/1/5": {"id": "lt:1/1/5", "planned_type": "fglt-b", "unlock": True,
+                                             "capab_profile": "fttu_lt", "operational_mode": "gpon"}}}
 
 
 def test_equipment_live_scoped_hierarchical_slot_fixture_is_parseable():
@@ -521,7 +518,8 @@ def test_equipment_live_scoped_hierarchical_slot_fixture_is_parseable():
     parsed = Isam_equipmentTemplate(lines=facts._flatten_config(output)).parse()
 
     assert descriptor["command"] == "info configure equipment slot lt:1/1/5 detail"
-    assert parsed == {"slots": {"lt:1/1/5": {"id": "lt:1/1/5", "planned_type": "fglt-b", "unlock": True}}}
+    assert parsed == {"slots": {"lt:1/1/5": {"id": "lt:1/1/5", "planned_type": "fglt-b", "unlock": True,
+                                             "capab_profile": "fttu_lt", "operational_mode": "gpon"}}}
 
 
 def test_ethernet_onts_live_flat_fixture_is_parseable():

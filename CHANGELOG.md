@@ -1,5 +1,126 @@
 # Changelog
 
+## 1.1.0 (unreleased)
+
+Completes targeted gathering for the ONT/access families. No schema changes to
+`gathered`, write states, or whole-family reads: without `config` a read does
+exactly what 1.0.0 does, and write states are unchanged. The only addition is
+the `read_outcomes` return value on targeted reads.
+
+### Read outcomes (`read_outcomes`)
+
+- Every targeted read (`state: gathered` with `config` naming instances) of the
+  ONT/access families now reports `read_outcomes`: one sanitized outcome per
+  addressed instance naming the config section, the selector (composite
+  identities joined by `/`), the command axis (`ok`, `rejected`, `failed`) and
+  the instance-existence axis (`present`, `confirmed_absent`, `unknown`), plus
+  the resource-level parse axis (`failed`, `unverified`). Outcomes are stable
+  enums — raw device text is never recorded, and the failure message of a
+  failed targeted read names only the resource, the selectors and the error
+  class.
+- A named instance the device rejects (`invalid token`) is missing from
+  `gathered` like an absent one; the module warns, naming the rejected
+  selectors, and `read_outcomes` keeps its existence `unknown`.
+- Absence and rejection are recognized only on device message lines, not in
+  configuration text (a description reading "instance does not exist" no
+  longer marks a present instance absent). "The interface index cannot be
+  calculated" is a missing dependency (`dependency_gap: interface-index`,
+  existence `unknown`), not a confirmed absence; write states still drop
+  such a reply, as before.
+- `confirmed_absent` is the only outcome consumers may act on: it is the
+  device's explicit "instance does not exist" signal about that instance.
+  `unknown` (a header-only reply, an invalid-token rejection, a missing
+  dependency, or a failed read) is never treated as absence — keep, do not
+  remove, configuration for `unknown` instances.
+- An explicit targeted request is never served partially or silently widened:
+  a request that cannot be read in full (a named instance without an identity)
+  fails before any command is sent, and a failed read fails the module
+  carrying the sanitized outcomes.
+- The logic is central (`facts_base.get_scoped_config` /
+  `get_targeted_config`, attached once in `IsamResourceModule.result`); there
+  is no per-family outcome code. Whole reads, write states and `isam_facts`
+  carry no `read_outcomes`, as before.
+
+### Whole-node reads
+
+- Two instance lists have no single-instance read on the firmware
+  (`interface_alarms`; the `isam_vlan_global` priority-regen profiles, which
+  answer "invalid token" when addressed individually). For them a targeted
+  request reads the whole node once — the only read the device exposes — and
+  reports each named instance from the parsed catalog: `present` when the
+  catalog lists it, `unknown` when it does not. Catalog absence is never
+  `confirmed_absent` (the parser's catalog completeness is unverified, and an
+  unrecognized reply line would make a configured instance vanish from the
+  catalog); only the device's own node-absence signal confirms absence.
+  `gathered` stays the full catalog, unfiltered — the documented exception to
+  the scoped-read contract.
+- The per-resource read scope is machine-readable in `TARGETED_READ_SCOPE`
+  (`whole_node` for these two families, `instance` for the rest), derived from
+  the read commands the facts classes send; a test pins it against the facts
+  classes that call the whole-node read path, in both directions.
+- A reply the family parser cannot process is classified before the module
+  fails: parse axis `failed`, every requested instance `unknown`.
+
+### Module interfaces and documentation
+
+- Documentation matches the argspec of the ONT/access modules: `isam_ntp_onts`
+  documented options it does not have; `isam_pon_interfaces` and
+  `isam_ani_onts` options were undocumented. The standard resource RETURN
+  values (`before`, `after`, `commands`, `rendered`, `gathered`, `parsed`)
+  carry a generated, argspec-checked doc block in every module.
+
+## 1.0.0 (unreleased)
+
+Major-version preparation, not a published release. Schema changes are
+intentional. This section lists the ONT/access families of that line.
+
+### ONT and access resource coverage
+
+- New resources `isam_l2uni_onts` (UNI performance monitor incl.
+  `pm-collect-ext`, TC-layer thresholds) and `isam_uni_onts` (UNI TC layer),
+  keyed by `uni_idx`; defaults are not reported; removal resets to the default.
+- New resources for small global settings: `isam_pon_global` (burst-burst and
+  ranging mode) and `isam_trouble_shooting_pon` (statistics interfaces and
+  thresholds, targeted by name).
+- `isam_equipment` models more sub-regions: `diagnostics_sfp`,
+  `protection_elements`, `racks`, `external_link_assigns`,
+  `external_link_hosts` (lists, targeted by id) and the `envbox`/`isam`
+  settings blocks. Previously dropped (detail-only on the lab device).
+- Attribute coverage extended for equipment shelf/slot/applique slots read
+  `capab_profile` and `operational_mode`; equipment ONT interface docs include
+  previously undocumented options. VLAN priority-regen profiles
+  (`isam_vlan_global`) and CFM settings extended where ONT access needs them.
+- Detail output: every ONT/access family reads `info configure detail flat`
+  without failing (unknown keywords are dropped, never fail the read). Fixed:
+  `isam_equipment_onts` (sw-ctrl cfgfiles and `delay_act`, ten interface
+  sub-nodes such as `tc_layer`, `ethernet`, `cpu_load`; new `loops` and
+  `pm_collects` lists).
+- `isam_generic_pon` rebuilt on the attribute table: values are read and
+  written as values (a bare node line is the default, not a flag), `deleted`
+  touches only named sections and settings, and naming a subsection keeps the
+  parent attributes.
+
+### ONT write-path fixes (lab-verified)
+
+- `isam_equipment_onts`: `admin-state` is sent on its own line (the device
+  rejects it packed into the ONT creation command). `deleted` admin-downs ONT
+  slots as well as ONTs before removing them, removes the removed ONT's
+  unnamed slots, and keeps sibling ONTs untouched. `replaced` no longer sends
+  `no subslocid` (which does not exist); `WILDCARD` (the device's unset value)
+  counts as unset and a set value is kept. A `log-auth-pwd` shown masked no
+  longer counts as configured.
+- `isam_ethernet_onts` `deleted`: a UNI named by `uni_idx` alone resets the
+  UNI, and a UNI named with settings resets only the named settings.
+- Whole-entry `equipment_onts` deletion reasserts shutdown even for
+  gathered-down interfaces/slots, waits for propagation and verifies each
+  targeted detail read before sending any removal. Readiness checks are
+  bounded; read errors/timeouts stop the operation. No write is retried, and
+  failures report accepted, failed and pending commands with an unknown
+  outcome. Check mode neither waits nor sends shutdown/removal commands.
+- Targeted `gathered` no longer misses `isam_trouble_shooting_pon` interfaces
+  with only default settings: their detail read prints nothing either; the
+  instance exists when that read does not fail with "instance does not exist".
+
 ## 0.3.14 — A slice of π, without the breaking crust
 
 Patch release based on 0.3.13. Existing module names, option names, types,

@@ -9,17 +9,24 @@ SCOPED_RMS = {
     "Equipment_onts",
     "Ethernet_line",
     "Ethernet_onts",
-    "Generic_pon",
     "Interfaces",
     "Isam_traps",
     "Link_agg",
     "Mcast_general",
     "Ngpon2_channel_groups",
+    "Pon_global",
     "Pon_interfaces",
     "Qos_interfaces",
+    "Trouble_shooting_pon",
     "Vlans",
     "Xdsl_boards",
     "Xdsl_lines",
+}
+
+# Table families: the attribute table packs one command per CLI node, so there is
+# nothing left to compact (module_utils/network/isam/attribute_table.py).
+TABLE_RMS = {
+    "Generic_pon": "attribute table packs one line per PON settings scope",
 }
 
 # These RMs have been audited and intentionally have no compactable
@@ -47,6 +54,7 @@ UNSCOPED_RMS = {
     "L2cp": "custom atomic renderer",
     "L2cpSession": "distinct session operations",
     "L2cpUserPort": "distinct user-port operations",
+    "L2uni_onts": "custom renderer already packs one command per UNI scope",
     "Li_vlan": "single VLAN field",
     "Mcast_control": "live output only confirms context selector",
     "Multicast": "live output only confirms context selector",
@@ -58,6 +66,7 @@ UNSCOPED_RMS = {
     "Software_mngt": "database and OSWP renderers already group supported options",
     "Xdsl_profiles": "profile commands have distinct nested scopes",
     "Xdsl_bonding": "single global option",
+    "Uni_onts": "single field per UNI",
     "Xstp": "global and per-port scopes differ",
 }
 
@@ -71,7 +80,7 @@ def _resource_module_classes():
             if not isinstance(node, ast.ClassDef) or node.name.startswith("_"):
                 continue
             if any(
-                (isinstance(base, ast.Name) and base.id in {"ResourceModule", "_Base"})
+                (isinstance(base, ast.Name) and base.id in {"ResourceModule", "IsamResourceModule", "TableResourceModule", "_Base"})
                 for base in node.bases
             ):
                 classes.add(node.name)
@@ -80,5 +89,5 @@ def _resource_module_classes():
 
 def test_every_resource_module_has_an_explicit_compaction_disposition():
     resource_modules = _resource_module_classes()
-    assert resource_modules == SCOPED_RMS | set(UNSCOPED_RMS)
+    assert resource_modules == SCOPED_RMS | set(UNSCOPED_RMS) | set(TABLE_RMS)
     assert all(UNSCOPED_RMS.values())

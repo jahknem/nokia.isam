@@ -11,7 +11,22 @@ The final integration PR of the split replaces the exception with a
 completeness test: ``CONTRACT_MODULES`` must equal the module inventory.
 """
 
-CONTRACT_MODULES = frozenset()
+CONTRACT_MODULES = frozenset({
+    "isam_ani_onts",
+    "isam_equipment",
+    "isam_equipment_onts",
+    "isam_equipment_replan",
+    "isam_ethernet_onts",
+    "isam_generic_pon",
+    "isam_interface_alarms",
+    "isam_l2uni_onts",
+    "isam_ntp_onts",
+    "isam_pon_global",
+    "isam_pon_interfaces",
+    "isam_trouble_shooting_pon",
+    "isam_uni_onts",
+    "isam_vlan_global",
+})
 
 
 def module_in_scope(name):

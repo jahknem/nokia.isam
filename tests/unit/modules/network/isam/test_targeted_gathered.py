@@ -28,19 +28,68 @@ def test_every_instance_list_has_a_case():
         expected={r: set(sections) for r, sections in harness.TARGETED_GATHER.items() if r in required})
 
 
+def test_read_scope_registry_names_exactly_the_whole_node_families():
+    """TARGETED_READ_SCOPE is the machine-readable read-scope capability.
+
+    It must name exactly the facts classes whose read is a whole-node read
+    (they call facts_base.get_whole_node_targeted), stay inside TARGETED_GATHER,
+    and expose 'instance' as the scope of every other targeted resource.
+    """
+    import re
+
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.targeted import (
+        TARGETED_GATHER,
+        TARGETED_READ_SCOPE,
+        read_scope,
+    )
+
+    facts_dir = (pathlib.Path(__file__).resolve().parents[5]
+                 / "plugins" / "module_utils" / "network" / "isam" / "facts")
+    callers = set()
+    for path in facts_dir.glob("*/*.py"):
+        for match in re.finditer(
+                r'get_whole_node_targeted\(\s*\n\s*self\._module, connection, "([^"]+)"',
+                path.read_text()):
+            callers.add(match.group(1))
+    assert callers, "expected whole-node facts classes under plugins/.../facts"
+    assert set(TARGETED_READ_SCOPE) == callers, (set(TARGETED_READ_SCOPE), callers)
+    assert set(TARGETED_READ_SCOPE) <= set(TARGETED_GATHER)
+    assert all(scope == "whole_node" for scope in TARGETED_READ_SCOPE.values())
+    assert read_scope("interface_alarms") == "whole_node"
+    assert read_scope("isam_vlan_global") == "whole_node"
+    assert read_scope("vlans") == "instance"
+
+
 @pytest.mark.parametrize("name", NAMES)
 def test_gathered_with_config_reads_only_the_named_instances(monkeypatch, name):
-    harness.run_only_named(monkeypatch, CASES[name])
+    case = CASES[name]
+    if case.get("whole_node"):
+        # Whole-node catalog family: one whole read, per-instance outcomes from the
+        # parsed catalog, the gathered string stays the full catalog.
+        harness.run_whole_node(monkeypatch, case)
+    else:
+        harness.run_only_named(monkeypatch, case)
 
 
 @pytest.mark.parametrize("name", NAMES)
 def test_several_named_instances_are_read_together(monkeypatch, name):
-    harness.run_group(monkeypatch, CASES[name])
+    case = CASES[name]
+    if case.get("whole_node"):
+        harness.run_whole_node(monkeypatch, case,
+                               config=harness.merge(case["config"], case["sibling_config"]))
+    else:
+        harness.run_group(monkeypatch, case)
 
 
 @pytest.mark.parametrize("name", NAMES)
 def test_absent_instances_are_simply_not_gathered(monkeypatch, name):
-    harness.run_absent(monkeypatch, CASES[name])
+    case = CASES[name]
+    if case.get("whole_node"):
+        # Whole-node catalog family: an instance the parsed catalog does not list is
+        # unknown, never confirmed_absent (the parser's completeness is unverified).
+        harness.run_whole_node_absent(monkeypatch, case)
+    else:
+        harness.run_absent(monkeypatch, case)
 
 
 @pytest.mark.parametrize("name", NAMES)
