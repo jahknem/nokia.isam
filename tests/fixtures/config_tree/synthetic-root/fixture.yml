@@ -1,0 +1,17 @@
+schema_version: 1
+resource: config_tree
+device_type: Nokia ISAM 7330 FTTN
+software_version: R6.2.04m
+command: info configure flat
+captured_at: 2026-11-26
+source: synthetic-regression
+note: >-
+  Handwritten root flat configuration, not derived from any device capture. It
+  carries every secret form the root tree must mask (keyword values, plain: and
+  encrypted: credentials, md5:/sha1:/des:/aes-128: prefixed credentials, fused
+  'keyword=value' and quoted values, SNMP communities also embedded in a notify
+  profile, dashed secret keywords) next to non-secret look-alikes that must stay
+  readable ('password prompt', VLAN names sharing a community, numeric key values,
+  key-type, alarm names ending in -key). Every cleartext secret value contains
+  'Leak' or 'Hash' so tests can prove none survives. Non-configure lines (echo,
+  delimiters, blank) and irregular whitespace are part of the input on purpose.

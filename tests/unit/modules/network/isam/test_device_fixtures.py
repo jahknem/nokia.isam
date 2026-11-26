@@ -220,6 +220,18 @@ def test_ihub_configuration_fixture():
     assert services["coverage"]["complete"]
 
 
+def test_config_tree_synthetic_root_fixture():
+    # Masking and line-completeness are covered in test_config_tree_masking.py.
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_tree import parse_config_tree
+
+    metadata, output = fixture_bundle("config_tree", "synthetic-root")
+    assert metadata["source"] == "synthetic-regression"
+    tree = parse_config_tree(output)
+    assert tree["qos"]["tca"]["1/1/5/1/3/1/1"]["queue"]["0"]["__config__"]["attrs"]["load-thresh"] == "80"
+    assert tree["system"]["security"]["operator"]["noc"]["__config__"]["attrs"] == {"password": "prompt", "prompt": "%n>"}
+    assert "Leak" not in repr(tree)
+
+
 def test_every_fixture_has_a_device_descriptor():
     descriptors = sorted(FIXTURE_ROOT.glob("*/**/fixture.yml"))
     assert descriptors
