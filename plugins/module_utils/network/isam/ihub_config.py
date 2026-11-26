@@ -7,7 +7,6 @@ the hierarchical device-root source; services have a verified family source.
 """
 
 import re
-import shlex
 from datetime import datetime, timezone
 
 
@@ -40,6 +39,19 @@ def _section(text, resource):
     raise ValueError("IHUB configuration has no unique expected family section")
 
 
+# The device's token form (as elsewhere in the collection): a double-quoted value
+# is one token, everything else splits on blanks. Apostrophes and backslashes are
+# literal characters, not shell quoting ('description Bob's' is valid output).
+_TOKEN = re.compile(r'"[^"]*"|\S+')
+
+
+def _tokens(line):
+    """Tokens of one IHUB line, double quotes removed; an unbalanced '"' is malformed."""
+    if line.count('"') % 2:
+        raise ValueError("IHUB configuration has malformed quoting")
+    return [t[1:-1] if len(t) >= 2 and t[0] == t[-1] == '"' else t for t in _TOKEN.findall(line)]
+
+
 def _nodes(lines):
     """Parse native indentation + matching exit delimiters, not guessed CLI paths.
 
@@ -52,10 +64,7 @@ not promoted to modeled fields. A truncated or unbalanced node is an error.
             continue
         if "\t" in line:
             raise ValueError("IHUB configuration contains tab indentation")
-        try:
-            tokens = shlex.split(line.strip())
-        except ValueError as exc:
-            raise ValueError("IHUB configuration has malformed quoting") from exc
+        tokens = _tokens(line.strip())
         records.append((len(line) - len(line.lstrip()), tokens, number))
 
     def sequence(index, closing=None):
