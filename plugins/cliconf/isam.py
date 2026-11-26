@@ -42,12 +42,24 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.c
     NetworkConfig,
     dumps,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.cli_safety import check_cli_commands
 
 
 class Cliconf(CliconfBase):
     def __init__(self, *args, **kwargs):
         super(Cliconf, self).__init__(*args, **kwargs)
         self._device_info = {}
+
+    def send_command(self, command=None, *args, **kwargs):
+        """Backstop: never write a command with a control character to the channel.
+
+        A raw new line would end the command and start another one on the device (CLI
+        injection). Every path (get, edit_config, run_commands, get_config) sends through
+        here; the error names no command text, which may contain secrets.
+        """
+        if command is not None:
+            check_cli_commands([command], "isam cliconf")
+        return super(Cliconf, self).send_command(command, *args, **kwargs)
 
     # These two methods will need to be implemented to support cli_config,
     # which is going to be fairly specific to your device.
@@ -123,9 +135,12 @@ class Cliconf(CliconfBase):
         request = []
 
         if commit:
-            for line in to_list(candidate):
-                if not isinstance(line, str):
-                    raise ValueError("candidate configuration is not a string")
+            lines = to_list(candidate)
+            if any(not isinstance(line, str) for line in lines):
+                raise ValueError("candidate configuration is not a string")
+            # Refuse the whole candidate before the first line is written.
+            check_cli_commands(lines, "isam cliconf edit_config")
+            for line in lines:
                 if line.startswith(("configure ", "admin ")):
                     # ISAM retains nested CLI context between commands. Both the
                     # configure and the admin hierarchies are absolute paths from the
@@ -237,7 +252,9 @@ class Cliconf(CliconfBase):
         :param check_all: Bool value to indicate if all the values in prompt sequence should be matched or any one of
                           given prompt.
         :return: The output from the device after executing the command
-        """ 
+        """
+        if command is not None:
+            check_cli_commands([command], "isam cliconf get")
         return self.send_command(
             command=command,
             prompt=prompt,

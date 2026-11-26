@@ -13,6 +13,9 @@ netcommon's ResourceModule with the ISAM CLI adaptations:
   skips False when there is no device value, i.e. always in ``rendered``.
 * compaction: ``COMPACT_COMMAND_SCOPES`` packs the per-attribute commands of one CLI
   node into one command (the form the device prints), before commands are shown or sent.
+* command safety: before commands are shown (every state, including rendered and the
+  offline renders) or sent, a command containing a control character fails the module
+  (``cli_safety``); a new line in a value would otherwise inject a second CLI command.
 * offline action states: an action state (merged/replaced/overridden/deleted) given
   ``running_config`` renders against that configuration instead of reading the device,
   and never sends commands. ``running_config`` is the current state, either as CLI text
@@ -36,6 +39,10 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
     to_list,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.attribute_table import get_path
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.cli_safety import (
+    UnsafeCliCommandError,
+    check_cli_commands,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
     compact_cli_commands,
     covers_entry,
@@ -153,6 +160,19 @@ class IsamResourceModule(ResourceModule):
     def _compact(self):
         if self.COMPACT_COMMAND_SCOPES:
             self.commands[:] = compact_cli_commands(self.commands, self.COMPACT_COMMAND_SCOPES)
+        # Every path that shows or sends commands passes here (result, run_commands and
+        # family overrides of run_commands), so this is the central safety check.
+        self._check_commands()
+
+    def _check_commands(self):
+        """Fail the module, before any command is shown or sent, when a command contains a
+        control character (a new line in a value would inject a second CLI command; see
+        cli_safety). The message names positions only, never command text (secrets)."""
+        try:
+            check_cli_commands(self.commands, self.__class__.__name__)
+        except UnsafeCliCommandError as exc:
+            del self.commands[:]
+            self._module.fail_json(msg=str(exc))
 
     @property
     def result(self):
