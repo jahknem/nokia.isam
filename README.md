@@ -149,7 +149,8 @@ the [live-test matrix](docs/live-test-matrix.md) for verification limits.
 
 Actions are one-shot events, not desired-state convergence. Check mode reports
 commands without connecting; it does not authorize execution. On partial or
-verification failure, inspect accepted/completed/failed_command/pending command context
+verification failure, inspect sent/accepted/completed/failed_command/pending and
+`failure_phase` (one schema for connection, execution and verification failures)
 and do not blindly retry operations with an unknown outcome.
 
 The facts module also provides opt-in shared configuration gathering. It reads
