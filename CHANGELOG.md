@@ -177,6 +177,131 @@ intentional. This section lists the ONT/access families of that line.
   gathered` with `config` reads only the named interfaces); the module documents the
   QoS-before-bridge prerequisites (QOS MGT error 41, VLAN MGT error 277).
 
+### Grammar-table families: major-release integration
+
+- VLAN facts use snake_case keys (CLI spellings remain option aliases);
+  documented value options in VLANs, SIP and software management replace
+  legacy boolean approximations. Preserve the 0.3.14 safety regressions under
+  the migrated schemas, including escaping embedded quotes in VLAN names.
+
+### Shared infrastructure, state semantics and safety
+
+- The compiled CLI grammar ships
+  (`plugins/module_utils/network/isam/config_grammar.py`, generated from the
+  rm_models syntaxes by `tools/compile_config_grammar.py`; rm_models itself is
+  not shipped. Run the tool after CLI model changes). It records, per CLI
+  node path, the attribute keywords with their value/negatable/required
+  forms; the root config tree consumes it in its own PR.
+- Table-driven `replaced` preserves unnamed list instances (SIP VSPs and
+  software OSWPs); only `overridden` removes them. Named-instance omitted
+  attributes still reset where the device supports it. LineTest `overridden`
+  now permits removing a session together with its parameters, while
+  rejecting unsupported parameter-only deletion on retained sessions.
+- Attribute-table parsing retains known clauses after unknown leading
+  attributes on explicit leaf nodes; a synthetic forward-compatibility fixture
+  (`voice_sip/unknown-leading-attribute`) and parser regressions pin the case.
+- Fixed configured LineTest replay: `replaced` no longer resends an unchanged
+  parameter, and Ansible-injected unset options no longer cause spurious
+  resets in merged/rendered. Replaced/overridden reset supported omitted
+  options only when currently configured.
+- Focused LineTest parser tests cover hierarchical/scoped output, duplicate
+  identities, every declared session/parameter field and reset round-trips.
+  Fixed trailing-`no` resets (`group-opt no`, `busy-overwrite no`,
+  `force-measure no`) parsing as the string `"no"` instead of unset. No
+  LineTest action is invoked by parsing or rendering.
+- `isam_vlans` rebuilt as the collection's reference module: one attribute
+  table (`VLAN_ATTRS`) generates the parsers, drives the facts and holds the
+  device defaults; every state goes through the template and `compare()`.
+  **Facts now use snake_case keys** (`protocol_filter`, `new_broadcast`, ...);
+  the CLI spellings (`protocol-filter`, ...) stay accepted as option aliases.
+  Fixed on the way (verified on the device with VLANs 3990/3991):
+  `rendered`/`merged` dropped `dhcpv6-itf-id` and `dhcpv6-remote-id`; names
+  with spaces were sent in single quotes (invalid token; now double quotes, as
+  the device prints them); `replaced` sent `no mode` (mode is mandatory, no
+  removal form); a new VLAN without `mode` now fails before sending. Parse ->
+  render of all 47 lab VLANs reproduces the device's lines exactly (fixture
+  `vlans/r6.2.04m-all-vlans`). Attribute kinds taken from the CLI guide and
+  probed on the device: 16 options modelled as on/off flags are value options
+  (the bare keyword is "not complete"): `dhcp_opt82_nni`, `dhcp_opt82_uplink`,
+  `relay_id_dhcp`, the `*_linerate`, `*_l2_encaps`, `l2_encaps1`,
+  `*_vlanaware`, `drly_srv_usr_side`, `dhcpv6_relay_id`, `dhcpv6_trst_port` --
+  they are now strings with the guide's choices and defaults (setting any of
+  them never worked before). Commands are packed like the device's two printed
+  lines; a bare flag at the end of a command was sent separately before.
+- `isam_voice_sip` rebuilt on one grammar table (`VOICE_SIP_NODES`) that
+  generates the argspec and documentation and drives the facts and config.
+  ~70 options modelled as on/off flags are values per the CLI guide (e.g. vsp
+  `ta4`, `tinfo`, `digit_send_mode`, register/redundancy timers and modes,
+  statistics `stats_5min_config`/`cdr_config`, cas `version_nbr`/
+  `outg_from_no_cgpn`); a set value was read as `true` and `true` rendered a
+  bare, incomplete keyword. Device defaults count as unset; `deleted` naming
+  an instance removes it, naming attributes resets only those with a removal
+  form; creating a vsp/cas profile requires its mandatory values. **Breaking
+  schema fixes:** `system.session_timer` (the node name, never settable) is
+  now the `enable` flag; `redundancy_cmd.geo_fail_over` (a value of
+  `fail_x_type`, not a field) is removed and `start_time`/`end_time` are ints.
+  Parse -> render -> parse of the lab capture round-trips; merged/replaced of
+  the gathered facts send nothing.
+- `isam_software_mngt` rebuilt on one grammar table (`SOFTWARE_MNGT_NODES`)
+  generating the argspec and documentation and driving facts and config (the
+  hand-written facts parser and the fragile ordered-regex template are gone).
+  oswp `activate`/`auto-verify` (enums), `on-schedule-time` (datetime) and
+  database `activate` are values, not bool flags (a set value was read as
+  `true`); added the missing oswp `download_set`/`autofetch` and database
+  `activate`. Packed attributes share a line; `version`/`url`/`admin-state`
+  and the scalar `sw-replacement-mode` keep their own command forms.
+  `on-schedule-time` and `backup`/`backupv6` are kept as raw string values.
+- Setting a value back to its device default now resets it (`no <kw>`) instead
+  of being a silent no-op, and is a no-op when the device is already at
+  default (`isam_voice_sip`, `isam_software_mngt`). Previously the default was
+  stripped from the request, so e.g. turning `auto-verify` back to `disabled`
+  did nothing.
+- `isam_software_mngt` and `isam_voice_sip` use the shared attribute-table
+  core (`attribute_table.py`) and config base `TableResourceModule`, replacing
+  their per-family copies of the table parser, default stripping, diff/render
+  rules, argspec generator and state handling (they had already drifted:
+  `software_mngt` did not quote `#` values, `voice_sip` lacked the option-name
+  fix). One parsing rule for every table: a line belongs to a node only when
+  it is bare or starts with one of its keywords; a `#` starting a word outside
+  quotes begins a comment. A shared test checks that each table, its argspec
+  and its documentation agree.
+- `isam_linetest` migrated onto `IsamResourceModule`, so it shares the
+  standard facts gathering, check-mode write path and before/after result. Its
+  device rules are unchanged and now pinned by tests across every state:
+  sessions are destroyed with `session-cmd destroy` (never rendered as
+  configuration), parameters have no delete command (delete their session),
+  and `group-opt`/`busy-overwrite`/`force-measure` reset with a trailing `no`.
+  Read-only on the lab ISAM (no LineTest configured): gathered returns the
+  empty structure, rendered emits declarative commands only.
+- Device defaults out of the argspecs (they were injected into every request):
+  `isam_vlans` merged renaming a VLAN reset `protocol-filter`,
+  `new-broadcast` and `drly-srv-usr-side`; `deleted` naming a setting deleted
+  the whole VLAN and sent `no id` for VLANs that do not exist (verified on the
+  device with VLAN 3990). `isam_dist_service` merged reset the service type to
+  apipe; `deleted` left the service (now `configure no dist-service <id>`,
+  verified), the bare service line was not read. `isam_l2cp` and
+  `isam_ipv6_antispoofing_slot` merged reset an unnamed setting;
+  `isam_ipv6_antispoofing_slot` replaced reset unlisted slots. Facts of these
+  families no longer report device defaults.
+
+### Lab validation
+
+- `isam_l2cp_session`: changing an existing session always failed (the full
+  creation command was re-sent; the device only accepts
+  `session <index> alive-timer <value>`), and `merged` overwrote unnamed
+  attributes with argspec defaults (one of them wrong,
+  `dslam-name 00 : 00 : 00`). Defaults are now the device's, kept in the
+  module; creation sends the given attributes, changes use the short form, and
+  attributes the device only accepts at creation fail the module before any
+  change.
+
+### Regression coverage and reconciliation fixes
+
+- Fixture audit: the synthetic L2CP fixture's always-true `len(parsed) >= 0`
+  assertion is replaced with a concrete identity/value check
+  (`partition_type: fixed-assigned`), with the fixture data corrected against
+  the CLI guide.
+
 ## 0.3.14 — A slice of π, without the breaking crust
 
 Patch release based on 0.3.13. Existing module names, option names, types,

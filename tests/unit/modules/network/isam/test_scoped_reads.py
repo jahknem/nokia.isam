@@ -164,3 +164,48 @@ def test_scoped_facts_fall_back_for_unbounded_destructive_states(state):
     Pon_interfacesFacts(module(config, state)).get_config(connection)
 
     assert connection.commands == ["info configure pon interface flat"]
+
+
+def test_scoped_facts_ignore_dhcp_relay_interface_index_error():
+    class MissingConnection(RecordingConnection):
+        def get(self, command):
+            self.commands.append(command)
+            return "Error : The interface index cannot be calculated"
+
+    connection = MissingConnection()
+    result = get_scoped_config(
+        module([{"name": "1/1/5/1/100/1/1"}], "gathered"),
+        connection,
+        [],
+        "info configure dhcp-relay flat",
+        ["info configure dhcp-relay port-stats 1/1/5/1/100/1/1 flat"],
+    )
+    assert result == ""
+
+
+def test_gathered_read_skips_unsupported_node_but_write_surfaces_it():
+    class UnsupportedConnection(RecordingConnection):
+        def get(self, command):
+            self.commands.append(command)
+            raise RuntimeError("invalid token")
+
+    # gathered: an unknown node (dhcp-relay v6-port-stats, an unaccepted index form) means
+    # 'nothing configured here', not a failure.
+    connection = UnsupportedConnection()
+    result = get_scoped_config(
+        module([{"name": "1/1/5/1/100/1/1"}], "gathered"),
+        connection,
+        [],
+        "info configure dhcp-relay flat",
+        ["info configure dhcp-relay v6-port-stats 1/1/5/1/100/1/1 flat"],
+    )
+    assert result == ""
+    # a write must still surface the device error.
+    with pytest.raises(RuntimeError):
+        get_scoped_config(
+            module([{"name": "1/1/5/1/100/1/1"}], "merged"),
+            UnsupportedConnection(),
+            [],
+            "info configure dhcp-relay flat",
+            ["info configure dhcp-relay v6-port-stats 1/1/5/1/100/1/1 flat"],
+        )

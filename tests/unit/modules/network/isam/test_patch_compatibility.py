@@ -47,12 +47,13 @@ def test_argument_surface_matches_0_3_13_except_device_defaults():
     migrated = {"ani_onts", "equipment_onts", "equipment_replan", "ethernet_onts", "generic_pon",
                 "interface_alarms", "isam_equipment", "vlan_global", "ntp_onts",
                 "pon_interfaces", "pon_global", "trouble_shooting_pon", "l2uni_onts", "uni_onts",
-                "qos_global", "qos_interfaces", "qos_maps", "qos_profiles", "qos_tca"}
+                "qos_global", "qos_interfaces", "qos_maps", "qos_profiles", "qos_tca",
+                "software_mngt", "vlans", "voice_sip"}
     specs = dict((path, spec) for path, spec in specs.items() if path.split("/")[-2] not in migrated)
-    # The same 40 argspecs computed from tag 0.3.13 give this hash.
-    assert len(specs) == 40
+    # The same 37 argspecs computed from tag 0.3.13 give this hash.
+    assert len(specs) == 37
     assert hashlib.sha256(json.dumps(specs, sort_keys=True).encode()).hexdigest() == (
-        "6cd3b9c07c85d016121edd58c12794175fb4562193809d4d4bfa868d16baa247")
+        "ffb0022713eab0152a8b8ab73b3cd9c91b3c18c87f0cc1f64ea46c770191b2dc")
 
 
 def test_module_inventory_matches_0_3_13():
@@ -87,7 +88,8 @@ def test_sip_replaced_preserves_unnamed_instances_but_overridden_removes_them(mo
 
 def test_software_replaced_already_preserves_unnamed_oswps(monkeypatch):
     running = "configure software-mngt oswp 1 auto-verify\nconfigure software-mngt oswp 2 auto-verify\n"
-    result = run_module(monkeypatch, "isam_software_mngt", {"state": "replaced", "config": {"oswp": [{"id": "1", "auto_verify": True}]}}, running)
+    # auto-verify is a value option in the rebuilt table schema (disabled/enabled).
+    result = run_module(monkeypatch, "isam_software_mngt", {"state": "replaced", "config": {"oswp": [{"id": "1", "auto_verify": "enabled"}]}}, running)
     assert not result.get("failed"), result.get("msg")
     assert not any("oswp 2" in command for command in result["commands"])
 
@@ -166,7 +168,7 @@ def test_vlan_legacy_keys_render_identifiers_and_double_quoted_names(monkeypatch
     assert 'name "Test VLAN"' in commands
     assert "dhcpv6-itf-id physical-id" in commands and "dhcpv6-remote-id customer-id" in commands
     result = run_module(monkeypatch, "isam_vlans", {"state": "merged", "config": [{"id": "3990", "name": "Test VLAN"}]})
-    assert result["failed"] and "requires mode" in result["msg"]
+    assert result["failed"] and "mode is required to create it" in result["msg"]
 
 
 def test_alarm_description_quotes_hash_and_embedded_quotes(monkeypatch):
