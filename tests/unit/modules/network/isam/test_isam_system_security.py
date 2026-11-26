@@ -196,7 +196,8 @@ def test_slice2_parses_every_node():
     got, unparsed = _parse(SLICE2)
     assert unparsed == []
     assert got["general"] == {"oper_policy_prio": "local-radius", "login_banner": "hello world",
-                              "welcome_banner": "Slot\\tKVz\\n1/1/1", "unauth_fwd": True}
+                              # \t and \n inside quotes are tab and new line (CLI guide)
+                              "welcome_banner": "Slot\tKVz\n1/1/1", "unauth_fwd": True}
     assert got["default_profile"] == {"prompt": "%n>", "terminal_timeout": "30",
                                       "permissions": {"liadmin": "none", "liuser": "read", "ai": "read"}}
     assert got["password"] == {"min_length": 8, "min_num_numeric_char": 1, "min_num_special_char": 2, "mixed_case": "mandatory"}
@@ -486,3 +487,40 @@ class TestIsamSystemSecurityStateContract(TestIsamModule):
         result = self._run("deleted", None)
         assert ("configure system security password no min-length no min-num-numeric-char "
                 "no min-num-special-char no mixed-case") in result["commands"]
+
+
+# ------------------------------------- CLI printable-string quoting (ISAMCLI guide)
+
+@pytest.mark.parametrize("value, field", [
+    ("plain", "plain"),
+    ("hello world", '"hello world"'),
+    ("what?", '"what?"'),
+    ("room#1", '"room#1"'),
+    ('say "hi"', '"say \\"hi\\""'),
+    ("back\\slash", '"back\\\\slash"'),
+    ("tab\there", '"tab\\there"'),
+    ("two\nlines\r", '"two\\nlines\\r"'),
+    ("", '""'),
+])
+def test_quote_follows_cli_formatting_rules_and_round_trips(value, field):
+    cmd = Isam_system_securityTemplate.render_entry("general", {"login_banner": value})[0]
+    assert cmd == "configure system security login-banner " + field
+    assert Isam_system_securityTemplate(lines=[cmd], module=None).parse()["general"]["login_banner"] == value
+
+
+def test_identity_with_special_characters_round_trips():
+    entry = {"name": 'op?#"\\x', "prompt": "a b"}
+    cmd = Isam_system_securityTemplate.render_entry("operators", entry)[0]
+    assert cmd == 'configure system security operator "op?#\\"\\\\x" prompt "a b"'
+    assert Isam_system_securityTemplate(lines=[cmd], module=None).parse()["operators"] == [entry]
+
+
+def test_parse_quoted_segments_and_quoted_keyword_spelling():
+    # 'hallo" "world' is the same field as "hallo world"; a quoted "password" is a
+    # printable string, never the password keyword
+    got = Isam_system_securityTemplate(lines=[
+        'configure system security login-banner hallo" "world welcome-banner "x"',
+        'configure system security ssh sftp-user u auth-type "password" key-type rsa',
+    ], module=None).parse()
+    assert got["general"] == {"login_banner": "hallo world", "welcome_banner": "x"}
+    assert got["ssh"]["sftp_users"] == [{"name": "u", "auth_type": "password", "key_type": "rsa"}]

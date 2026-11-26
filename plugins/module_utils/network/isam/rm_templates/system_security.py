@@ -29,7 +29,9 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.sy
     Isam_system_securityArgs,
 )
 
-_TOKEN = re.compile(r'"[^"]*"|\S+')
+# One CLI field: unquoted characters and quoted segments ("..." with backslash
+# escapes) in any mix -- the CLI guide treats hallo" "world as "hallo world".
+_TOKEN = re.compile(r'(?:"(?:[^"\\]|\\.)*"?|[^\s"])+')
 PREFIX = "configure system security"
 
 # (CLI node after PREFIX, section path, identity fields or None for a settings block,
@@ -204,14 +206,39 @@ def _field_map(section, sub=None):
     return dict((_kebab(k), (k, t)) for k, t in scalar_fields(section, sub).items())
 
 
+# Printable strings (CLI guide "Basic Type Formatting Rules", 1_-_ISAMCLI.pdf):
+# a value containing '"', '\\', '?', '#', a space, tab, CR or LF must be double
+# quoted; inside quotes '"' and '\\' are escaped with a backslash, and \\r, \\t,
+# \\n stand for carriage return, tab and new line (the device prints a banner's
+# tabs/new lines that way). Any other \\<char> is <char>.
+_NEEDS_QUOTES = re.compile(r'[\s"\\?#]')
+_ESCAPES = {"r": "\r", "t": "\t", "n": "\n"}
+_ENCODE = {'"': '\\"', "\\": "\\\\", "\r": "\\r", "\t": "\\t", "\n": "\\n"}
+
+
 def _unquote(value):
-    return value[1:-1] if len(value) >= 2 and value.startswith('"') and value.endswith('"') else value
+    """A field as typed or printed -> its value: quotes removed, escapes resolved."""
+    if '"' not in value and "\\" not in value:
+        return value
+    out = []
+    i = 0
+    while i < len(value):
+        char = value[i]
+        if char == "\\" and i + 1 < len(value):
+            out.append(_ESCAPES.get(value[i + 1], value[i + 1]))
+            i += 2
+            continue
+        if char != '"':  # quotes only delimit segments of the field
+            out.append(char)
+        i += 1
+    return "".join(out)
 
 
 def _quote(value):
+    """A value as a CLI field, quoted and escaped where the CLI requires it."""
     value = str(value)
-    if value == "" or re.search(r'[\s\\"]', value):
-        return '"' + value.replace('"', '\\"') + '"'
+    if value == "" or _NEEDS_QUOTES.search(value):
+        return '"' + "".join(_ENCODE.get(char, char) for char in value) + '"'
     return value
 
 
