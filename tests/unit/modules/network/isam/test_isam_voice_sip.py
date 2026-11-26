@@ -300,3 +300,15 @@ def test_parse_clauses_value_tokens():
     assert parse_clauses("name enable count 3".split(), attrs) == {"enable": True, "count": 3}
     assert parse_clauses("status no enable".split(), attrs) == {"enable": False}
 
+
+def test_deleted_warns_for_named_attributes_without_removal_form(monkeypatch):
+    from .module_runner import run_module
+
+    device = "configure voice sip vsp vsp1 domain-name example.com timer-b 32000 ta4 3000\n"
+    result = run_module(monkeypatch, "isam_voice_sip", {"state": "deleted", "config": {"vsp": [
+        {"name": "vsp1", "timer_b": 32000}]}}, device)
+    assert result["commands"] == []
+    assert any("vsp vsp1 timer-b has no removal form" in warning for warning in result["_warnings"])
+    # a removable sibling is reset, the identity alone removes the instance: no warning
+    result = run_module(monkeypatch, "isam_voice_sip", {"state": "deleted", "config": {"vsp": [{"name": "vsp1"}]}}, device)
+    assert result["commands"] == ["configure voice sip no vsp vsp1"] and not result["_warnings"]

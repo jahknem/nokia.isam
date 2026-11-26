@@ -4,6 +4,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.attribute_table import RetainedOnDeleteWarnings
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import TableResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
@@ -14,7 +15,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 )
 
 
-class Isam_voice_sip(TableResourceModule):
+class Isam_voice_sip(RetainedOnDeleteWarnings, TableResourceModule):
     """The isam_voice_sip config class (global settings: instances are created/removable,
     flat sections are reset)."""
 

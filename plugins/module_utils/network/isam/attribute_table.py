@@ -343,6 +343,35 @@ class AttributeTable(object):
     def creation_command(self, node, name):
         return self.command(node.cli, name)
 
+    def retained_on_delete(self, want, have):
+        """(node, instance name or None, attr) for every attribute a deleted request names
+        that has no removal form (``removable=False``) and is set in have: it cannot be
+        reset and stays until its instance is removed. Instances removed as a whole (named
+        by their identity alone or as a full entry) retain nothing."""
+        retained = []
+        for node in self.nodes:
+            fixed = [attr for attr in node.attrs if not attr.removable]
+            if not fixed:
+                continue
+            if node.is_list:
+                haved = dict((str(entry.get(node.identity)), entry) for entry in _entries(have or {}, node))
+                pairs = []
+                for entry in _entries(want or {}, node):
+                    name = str(entry.get(node.identity))
+                    have_entry = haved.get(name)
+                    if have_entry is None:
+                        continue
+                    named = set(k for k, v in entry.items() if k != node.identity and v is not None)
+                    present = set(k for k, v in have_entry.items() if k != node.identity and v is not None)
+                    if named and not present <= named:  # not removed as a whole
+                        pairs.append((name, entry, have_entry))
+            else:
+                pairs = [(None, get_path(want or {}, node.path), get_path(have or {}, node.path))]
+            for name, want_entry, have_entry in pairs:
+                retained.extend((node, name, attr) for attr in fixed
+                                if want_entry.get(attr.option) is not None and have_entry.get(attr.option) is not None)
+        return retained
+
     # -- argument spec ---------------------------------------------------------------
 
     def argument_spec(self):
@@ -365,6 +394,21 @@ class AttributeTable(object):
                     spec["choices"] = list(attr.choices)
                 target[attr.option] = spec
         return options
+
+
+class RetainedOnDeleteWarnings(object):
+    """Mixin for :class:`~...resource_module.TableResourceModule` families: deleted warns
+    for each named attribute without removal form instead of silently keeping it (as
+    ``IsamResourceModule.addcmd`` does for ``no_remval`` parsers)."""
+
+    def generate_commands(self):
+        super(RetainedOnDeleteWarnings, self).generate_commands()
+        if self.state != "deleted":
+            return
+        for node, name, attr in self.TABLE.retained_on_delete(self.want, self.TABLE.without_defaults(self.have)):
+            where = node.cli + (" " + name if name is not None else "")
+            self._module.warn("%s %s has no removal form in ISAM CLI; it is retained%s"
+                              % (where, attr.cli, " until the instance is removed" if name is not None else ""))
 
 
 class TableTemplate(NetworkTemplate):
