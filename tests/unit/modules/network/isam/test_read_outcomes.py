@@ -128,7 +128,10 @@ def test_failed_read_fails_the_module_carrying_outcomes():
         pass
     fail = module._fail_kwargs
     assert fail is not None
-    assert "socket timeout" in fail["msg"]
+    # The message is sanitized like the outcomes: resource, selector, error class;
+    # never the raw transport/device text.
+    assert "socket timeout" not in fail["msg"]
+    assert fail["msg"] == "targeted read of bridges failed (timeout) for config 1/1/5/1/3/1/4"
     outcome = fail["read_outcomes"]["outcomes"][0]
     assert outcome["command"] == "failed"
     assert outcome["existence"] == "unknown"
@@ -153,7 +156,8 @@ def test_failed_bare_instance_probe_reports_failed_outcome():
         pass
     fail = module._fail_kwargs
     assert fail is not None
-    assert "connection to the device was lost" in fail["msg"]
+    assert "connection to the device was lost" not in fail["msg"]
+    assert "(connection_error)" in fail["msg"] and "1/1/5/1/3/1/6" in fail["msg"]
     outcome = fail["read_outcomes"]["outcomes"][0]
     assert outcome["selector"] == "1/1/5/1/3/1/6"
     assert outcome["command"] == "failed"
@@ -338,8 +342,8 @@ def test_finalize_collector_records_default_parse():
     assert result["parse"] == "unverified"
     # an explicitly recorded parse is preserved
     collector2 = ReadOutcomeCollector("vlans")
-    collector2.record_parse("complete")
-    assert _finalize_collector(collector2)["parse"] == "complete"
+    collector2.record_parse("failed")
+    assert _finalize_collector(collector2)["parse"] == "failed"
 
 
 def test_finish_targeted_outcomes_stashes_on_module():
@@ -358,17 +362,17 @@ def test_finish_targeted_outcomes_stashes_on_module():
 def test_has_targeted_entries_and_selectors():
     module = FakeModule("gathered", [{"id": "100"}, {"id": "200"}])
     formats = {"config": VLAN}
-    assert _has_targeted_entries(module, "vlans", formats) is True
+    assert _has_targeted_entries(module, formats) is True
     assert _targeted_selectors(module, "vlans", formats) == {
-        "info configure vlan id 100 flat": ("config", "100"),
-        "info configure vlan id 200 flat": ("config", "200"),
+        "info configure vlan id 100 flat": [("config", "100")],
+        "info configure vlan id 200 flat": [("config", "200")],
     }
     # a named entry with an empty identity is still "explicit" but yields no selector
     module2 = FakeModule("gathered", [{"id": ""}])
-    assert _has_targeted_entries(module2, "vlans", formats) is True
+    assert _has_targeted_entries(module2, formats) is True
     assert _targeted_selectors(module2, "vlans", formats) == {}
     # no config is not explicit
-    assert _has_targeted_entries(FakeModule("gathered"), "vlans", formats) is False
+    assert _has_targeted_entries(FakeModule("gathered"), formats) is False
 
 
 def test_get_targeted_config_gathered_records_outcomes():
@@ -467,7 +471,8 @@ def test_get_targeted_config_failed_read_fails_carrying_all_outcomes():
     except SystemExit:
         pass
     assert module._fail_kwargs is not None
-    assert "connection reset by peer" in module._fail_kwargs["msg"]
+    assert "connection reset by peer" not in module._fail_kwargs["msg"]
+    assert module._fail_kwargs["msg"] == "targeted read of vlans failed (connection_error) for config 200"
     outcomes = {o["selector"]: o for o in module._fail_kwargs["read_outcomes"]["outcomes"]}
     assert outcomes["100"]["existence"] == "present"
     assert outcomes["200"]["command"] == "failed"
@@ -577,7 +582,9 @@ def test_whole_node_parse_failure_is_classified_before_the_module_fails():
         pass
     assert module._fail_kwargs is not None
     assert "could not be parsed" in module._fail_kwargs["msg"]
-    assert "catalog shape changed" in module._fail_kwargs["msg"]
+    # The parser message may quote reply lines: only its class is named.
+    assert "catalog shape changed" not in module._fail_kwargs["msg"]
+    assert "(ValueError)" in module._fail_kwargs["msg"]
     result = module._fail_kwargs["read_outcomes"]
     assert result["parse"] == "failed"
     outcomes = {o["selector"]: o for o in result["outcomes"]}
@@ -655,7 +662,9 @@ def test_whole_node_failed_read_fails_carrying_all_outcomes():
     except SystemExit:
         pass
     assert module._fail_kwargs is not None
-    assert "socket timeout" in module._fail_kwargs["msg"]
+    assert "socket timeout" not in module._fail_kwargs["msg"]
+    assert module._fail_kwargs["msg"] == (
+        "whole-node read of interface_alarms failed (timeout) for config epon, config eont")
     outcomes = {o["selector"]: o for o in module._fail_kwargs["read_outcomes"]["outcomes"]}
     assert set(outcomes) == {"epon", "eont"}
     assert all(o["command"] == "failed" for o in outcomes.values())
@@ -695,3 +704,156 @@ def test_catalog_contains_list_and_nested_sections():
     assert not _catalog_contains([{"name": "epon"}], "vlans", "config", "epon")
     # non-mapping entries are skipped
     assert not _catalog_contains(["bogus"], "interface_alarms", "config", "bogus")
+
+
+# ---------------------------------------------------------------------------
+# Review-finding regressions (PR #9 core read path)
+# ---------------------------------------------------------------------------
+
+
+class WarningModule(FakeModule):
+    def __init__(self, state="gathered", config=None):
+        super(WarningModule, self).__init__(state, config)
+        self.warnings = []
+
+    def warn(self, message):
+        self.warnings.append(message)
+
+
+def test_shared_command_records_one_outcome_per_selector():
+    # Several identities sharing one read command used to overwrite each other in a
+    # {command: (section, selector)} map: only the last selector got an outcome.
+    module = FakeModule("gathered", {"ssh": {"sftp_users": [{"name": "alice"}, {"name": "ghost"}]}})
+    shared = "info configure system security ssh flat"
+    formats = {"ssh.sftp_users": lambda name: [shared]}
+    assert _targeted_selectors(module, "isam_system_security", formats) == {
+        shared: [("ssh.sftp_users", "alice"), ("ssh.sftp_users", "ghost")],
+    }
+
+
+def test_shared_command_without_check_never_claims_presence():
+    # A non-empty reply to a command serving several instances cannot be attributed
+    # to any one of them: unknown, never present (and never confirmed_absent).
+    cmd = "info configure system security ssh flat"
+    data, result, _ = _read(
+        {cmd: "configure system security ssh sftp-user alice auth-type password"},
+        {cmd: [("ssh.sftp_users", "alice"), ("ssh.sftp_users", "ghost")]})
+    assert "sftp-user alice" in data
+    assert [(o["selector"], o["existence"]) for o in result["outcomes"]] == [
+        ("alice", "unknown"), ("ghost", "unknown")]
+
+
+def test_shared_command_with_instance_checks_decides_per_instance():
+    cmd = "info configure system security ssh flat"
+    reply = "configure system security ssh sftp-user alice auth-type password"
+    module = FakeModule()
+    collector = ReadOutcomeCollector("isam_system_security")
+    get_scoped_config(
+        module, FakeConn({cmd: reply}), {}, "FALLBACK", [cmd], outcomes=collector,
+        selectors={cmd: [("ssh.sftp_users", "alice"), ("ssh.sftp_users", "ghost")]},
+        instance_checks={("ssh.sftp_users", "alice"): lambda r: "sftp-user alice " in r,
+                         ("ssh.sftp_users", "ghost"): lambda r: "sftp-user ghost " in r})
+    by_selector = dict((o["selector"], o) for o in collector.to_result()["outcomes"])
+    assert by_selector["alice"]["existence"] == "present"
+    # absent from the shared reply: unknown, not confirmed_absent (the node read says
+    # nothing explicit about the instance)
+    assert by_selector["ghost"]["existence"] == "unknown"
+
+
+def test_absence_phrase_inside_configuration_is_not_absence():
+    # A present instance whose description reads like a device error must not be
+    # labelled confirmed_absent (or dropped): only device message lines count.
+    cmd = "info configure system security operator op1 flat"
+    reply = 'configure system security operator op1 description "instance does not exist"\n'
+    data, result, _ = _read({cmd: reply}, {cmd: ("operators", "op1")})
+    assert 'description "instance does not exist"' in data
+    assert result["outcomes"][0]["existence"] == "present"
+
+
+def test_rejection_phrase_inside_configuration_is_not_rejection():
+    cmd = "info configure vlan id 100 flat"
+    reply = 'configure vlan id 100 name "invalid token"\n'
+    data, result, _ = _read({cmd: reply}, {cmd: ("config", "100")})
+    assert 'name "invalid token"' in data
+    assert result["outcomes"][0]["command"] == "ok"
+    assert result["outcomes"][0]["existence"] == "present"
+
+
+def test_hierarchical_configuration_lines_are_not_device_messages():
+    cmd = "info configure system security operator op1"
+    reply = ("configure system security\n"
+             "    operator op1\n"
+             "        description instance does not exist\n"
+             "    exit\n")
+    data, result, _ = _read({cmd: reply}, {cmd: ("operators", "op1")})
+    assert result["outcomes"][0]["existence"] == "present"
+
+
+def test_device_error_line_is_still_absence():
+    cmd = CMD.format("1/1/5/1/3/1/9")
+    _, result, _ = _read({cmd: "Error : The specified instance does not exist\n"}, {cmd: ("port", "1/1/5/1/3/1/9")})
+    assert result["outcomes"][0]["existence"] == "confirmed_absent"
+
+
+def test_interface_index_error_is_a_dependency_gap_not_absence():
+    # dhcp-relay/arp-relay answer a port the device cannot resolve this way; the
+    # evidence is about the port, not the relay instance: existence unknown.
+    cmd = "info configure dhcp-relay port-stats 1/1/5/1/100/1/1 flat"
+    data, result, _ = _read({cmd: Exception("Error : The interface index cannot be calculated")},
+                            {cmd: ("config", "1/1/5/1/100/1/1")})
+    assert data == ""
+    outcome = result["outcomes"][0]
+    assert outcome["command"] == "ok"
+    assert outcome["existence"] == "unknown"
+    assert outcome["dependency_gap"] == "interface-index"
+
+
+def test_interface_index_error_still_dropped_by_write_state_reads():
+    # Write-state reads keep their previous behaviour: the reply is dropped.
+    cmd = "info configure dhcp-relay port-stats 1/1/5/1/100/1/1 flat"
+    module = FakeModule("merged")
+    data = get_scoped_config(module, FakeConn({cmd: "Error : The interface index cannot be calculated"}),
+                             {}, "FALLBACK", [cmd])
+    assert data == ""
+
+
+def test_whole_read_outcome_sorts_first_even_with_a_section():
+    # The whole-read outcome is keyed by a sentinel selector; it must sort first even
+    # when its section matches others and a selector sorts below the sentinel.
+    collector = ReadOutcomeCollector("bridges")
+    collector.record("config", "A", "ok", "present")
+    collector.record("config", None, "ok", "unknown")
+    collector.record("config", "b", "ok", "present")
+    assert [o["selector"] for o in collector.to_result()["outcomes"]] == [None, "A", "b"]
+
+
+def test_rejected_named_selectors_warn():
+    # gathered for a rejected selector is indistinguishable from an absent one; a
+    # module warning names the rejected selectors (no device text), the read still
+    # succeeds and read_outcomes keeps existence unknown.
+    module = WarningModule("gathered", [{"id": "100"}, {"id": "200"}])
+    conn = FakeConn({VLAN % "100": Exception("Error : invalid token"),
+                     VLAN % "200": "configure vlan id 200 name x\n"})
+    data = get_targeted_config(module, conn, "vlans", VLAN_FALLBACK, {"config": VLAN})
+    assert "vlan id 200" in data
+    by_selector = dict((o["selector"], o) for o in module._isam_read_outcomes["outcomes"])
+    assert by_selector["100"]["command"] == "rejected"
+    assert by_selector["100"]["existence"] == "unknown"
+    assert len(module.warnings) == 1
+    assert "config 100" in module.warnings[0]
+    assert "200" not in module.warnings[0]
+    assert "Error" not in module.warnings[0]
+
+
+def test_no_warning_without_rejection():
+    module = WarningModule("gathered", [{"id": "100"}])
+    conn = FakeConn({VLAN % "100": Exception("Error : instance does not exist")})
+    get_targeted_config(module, conn, "vlans", VLAN_FALLBACK, {"config": VLAN})
+    assert module.warnings == []
+
+
+def test_whole_node_rejection_warns():
+    module = WarningModule("gathered", [{"name": "epon"}])
+    conn = FakeConn({ALARM_CMD: Exception("Error : invalid token")})
+    assert get_whole_node_targeted(module, conn, "interface_alarms", ALARM_CMD, ("config",), _alarm_catalog) == ""
+    assert len(module.warnings) == 1 and "config epon" in module.warnings[0]

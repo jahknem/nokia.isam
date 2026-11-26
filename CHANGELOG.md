@@ -15,8 +15,21 @@ return value on targeted reads.
   the config section, the selector (composite identities joined by `/`), the
   command axis (`ok`, `rejected`, `failed`) and the instance-existence axis
   (`present`, `confirmed_absent`, `unknown`), plus the resource-level parse
-  axis (`complete`, `partial`, `failed`, `unverified`). Outcomes are stable
-  enums — raw device text is never recorded.
+  axis (`failed`, `unverified`). Outcomes are stable enums — raw device text
+  is never recorded, and the failure message of a failed targeted read names
+  only the resource, the selectors and the error class.
+- A named instance the device rejects (`invalid token`) is missing from
+  `gathered` like an absent one; the module warns, naming the rejected
+  selectors, and `read_outcomes` keeps its existence `unknown`.
+- Absence and rejection are recognized only on device message lines, not in
+  configuration text (a description reading "instance does not exist" no
+  longer marks a present instance absent). "The interface index cannot be
+  calculated" is a missing dependency (`dependency_gap: interface-index`,
+  existence `unknown`), not a confirmed absence; write states still drop
+  such a reply, as before.
+- Instances served by one shared read command (`isam_system_security`
+  `ssh.sftp_users`) get one outcome each, decided from their own line in the
+  reply.
 - `confirmed_absent` is the only outcome consumers may act on: it is the
   device's explicit "instance does not exist" signal about that instance.
   `unknown` (a header-only reply, an invalid-token rejection, a missing

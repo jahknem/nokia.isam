@@ -105,7 +105,9 @@ def test_command_failure_fails_carrying_outcomes(monkeypatch, name, selector, si
     device = harness.Device([], fail=True)
     result = harness.gathered(monkeypatch, case, case["config"], device)
     assert result.get("failed"), result
-    assert "connection to the device was lost" in result["msg"]
+    # Sanitized like the outcomes: the error class and selector, no raw transport text.
+    assert "connection to the device was lost" not in result["msg"]
+    assert "(connection_error)" in result["msg"] and selector in result["msg"], result["msg"]
     outcomes = harness.outcome_by_selector(result)
     assert set(outcomes) == {selector}
     assert outcomes[selector]["command"] == "failed"
@@ -220,7 +222,8 @@ def test_failed_bare_detail_probe_fails_carrying_outcomes(monkeypatch):
     device = harness.Device([], full=full, header=True, fail_commands=(probe,))
     result = harness.gathered(monkeypatch, case, case["config"], device)
     assert result.get("failed"), result
-    assert "connection to the device was lost" in result["msg"], result["msg"]
+    assert "connection to the device was lost" not in result["msg"], result["msg"]
+    assert "(connection_error)" in result["msg"] and "10.0.0.1:162" in result["msg"], result["msg"]
     outcomes = harness.outcome_by_selector(result)
     assert set(outcomes) == {"10.0.0.1:162"}, result.get("read_outcomes")
     outcome = outcomes["10.0.0.1:162"]
@@ -229,3 +232,39 @@ def test_failed_bare_detail_probe_fails_carrying_outcomes(monkeypatch):
     assert outcome["existence"] == "unknown"
     assert outcome["error_class"] == "connection_error"
     assert probe in device.commands  # the probe ran, then the module failed
+
+
+def test_sftp_users_sharing_the_ssh_read_get_one_outcome_each(monkeypatch):
+    # Regression (PR #9 review): every ssh.sftp_users entry is read through the same
+    # ssh node command. The selectors used to overwrite each other and presence was
+    # decided from the reply as a whole: gathering [alice, ghost] with only alice on
+    # the device reported ghost present and no outcome for alice.
+    case = {"module": "isam_system_security"}
+    config = {"ssh": {"sftp_users": [{"name": "alice"}, {"name": "ghost"}]}}
+    device = harness.Device(["configure system security ssh sftp-user alice auth-type password"])
+    result = harness.gathered(monkeypatch, case, config, device)
+    assert not result.get("failed"), result
+    assert device.commands == ["info configure system security ssh flat"]
+    outcomes = harness.outcome_by_selector(result)
+    assert set(outcomes) == {"alice", "ghost"}, result.get("read_outcomes")
+    assert outcomes["alice"]["existence"] == "present"
+    assert outcomes["alice"]["section"] == "ssh.sftp_users"
+    # not on the device: unknown (the shared node read is not the device's explicit
+    # absence signal for the user), never present
+    assert outcomes["ghost"]["existence"] == "unknown"
+    assert outcomes["ghost"]["command"] == "ok"
+    assert [user["name"] for user in result["gathered"]["ssh"]["sftp_users"]] == ["alice"]
+
+
+def test_rejected_selector_warns_in_the_module_result(monkeypatch):
+    # gathered alone cannot tell a rejected selector from an absent one: the module
+    # warns, naming the selector, and does not fail.
+    warnings = []
+    monkeypatch.setattr(harness.basic.AnsibleModule, "warn", lambda self, msg: warnings.append(msg))
+    case = CASES["vlans"]
+    full = harness.full_commands(monkeypatch, case)
+    device = harness.Device(case["lines"], full=full, reject=True)
+    result = harness.gathered(monkeypatch, case, case["config"], device)
+    assert not result.get("failed"), result
+    assert harness.outcome_by_selector(result)["100"]["command"] == "rejected"
+    assert [w for w in warnings if "rejected the read of config 100" in w], warnings

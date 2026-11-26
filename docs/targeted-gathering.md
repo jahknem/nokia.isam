@@ -54,10 +54,16 @@ ONT id), and those are different instances, reported separately via
   * `ok` — the read ran and answered.
   * `rejected` — the device rejected the addressed node/selector
     (`invalid token`). For a read that means "nothing configured here", it is
-    not an error and the module does not fail.
+    not an error and the module does not fail. Because `gathered` alone cannot
+    tell a rejected instance from an absent one, the module also emits a
+    warning naming the rejected selectors (`<section> <selector>`; no device
+    text). Consumers that act on per-instance results use `read_outcomes`,
+    where the existence stays `unknown`.
   * `failed` — the read itself failed (connection lost, timeout, device
     error). The module fails carrying this same sanitized result; the error
-    class (`timeout`, `connection_error`, `device_error`) is recorded.
+    class (`timeout`, `connection_error`, `device_error`) is recorded. The
+    failure message is sanitized the same way: it names the resource, the
+    selectors and the error class, never the raw device or transport text.
 * **Existence axis** — does the addressed instance exist?
   * `present` — the read returned configuration for the instance (including
     the bare instance line for families that re-check attribute-free
@@ -72,9 +78,10 @@ ONT id), and those are different instances, reported separately via
     failed read. `unknown` is **never** absence; consumers must keep, not
     remove, configuration for `unknown` instances.
 * **Parse axis** — reported at resource level under `parse`
-  (`complete` | `partial` | `failed` | `unverified`). `unverified` means the
-  parser did not record its coverage of the reply; it says nothing about the
-  device.
+  (`failed` | `unverified`). `failed` means the family parser could not
+  process the reply (whole-node reads, see below); `unverified` means no
+  parser records its coverage of the reply, so a read never claims a complete
+  parse; it says nothing about the device.
 * **Sanitization** — outcomes contain stable enums, the selector, and an
   error class only. Raw device text is never recorded, so the result is safe
   to publish in an artifact. A composite identity is recorded joined by `/`
@@ -206,9 +213,22 @@ targeted gathering does not apply to them.
   (interfaces). In all other families such an instance is reported
   `unknown` — never `confirmed_absent`, and never `present`.
 * **Dependencies.** If the device reports that a *dependency* of the
-  addressed instance is missing (e.g. a lower-interface), the instance's own
-  existence is `unknown` with `dependency_gap: lower-interface`; the read is
-  not an error.
+  addressed instance is missing, the instance's own existence is `unknown`
+  with a `dependency_gap`; the read is not an error. `lower-interface`: the
+  device says the lower-interface does not exist. `interface-index`:
+  dhcp-relay/arp-relay answer "The interface index cannot be calculated" for a
+  port the device cannot resolve -- evidence about the port, not about the
+  relay instance.
+* **Device messages only.** Absence and rejection are recognized only on the
+  device's own message lines (`Error : ...`), never inside configuration: a
+  present instance whose description reads "instance does not exist" is
+  `present`.
+* **Instances sharing one read.** Where one read command serves several
+  instances (`isam_system_security` `ssh.sftp_users`: the device rejects a
+  single-user read, so the ssh node is read once), each instance gets its own
+  outcome, decided from its own line in the reply: `present` when the user's
+  line is there, else `unknown` (the node read is not the device's absence
+  signal for the user).
 * **Write states are unchanged.** `merged`/`replaced`/`deleted` with `config`
   already compared only the named instances where that is exact; they report
   no `read_outcomes` and their command sets are unchanged.
@@ -221,7 +241,7 @@ targeted gathering does not apply to them.
   node on this platform" from "the selector is malformed"; both are
   `unknown` existence by design.
 * `parse: unverified` is the norm: the parsers do not record their coverage
-  of the reply, so a targeted read never claims `parse: complete` today.
+  of the reply, so a targeted read never claims a complete parse.
 * Outcome evidence is per requested instance. A whole-family read carries no
   outcomes, and `confirmed_absent` is only as good as the device's existence
   signal for that read (verified on R6.2.04m lab devices; see
