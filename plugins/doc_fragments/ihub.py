@@ -25,8 +25,9 @@ options:
     default: false
 notes:
   - These resources are explicit opt-in modules, not implicitly added to C(isam_facts) all-resource or shared-flat gathering.
+  - I(config) is an instance selection, not configuration; it accepts only the identity keys.
   - Unknown commands are reported in C(coverage.unparsed), without their potentially sensitive values.
   - C(coverage.complete) means all syntax in the selected source family was modeled, not that the whole device configuration is covered.
   - Unsupported, blank, malformed or incomplete sources fail rather than confirming an empty family.
-  - Check mode does not read the device; offline parsing remains available.
+  - The modules never change the device, so check mode reads and parses exactly like a normal run.
 """

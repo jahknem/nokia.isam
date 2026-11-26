@@ -62,11 +62,11 @@ EXAMPLES = """
 RETURN = """
 gathered:
   description: Typed customer and service lists with interfaces and SAPs.
-  returned: when state is gathered
+  returned: when I(state) is C(gathered)
   type: dict
 parsed:
   description: The same typed projection from supplied hierarchical output.
-  returned: when state is parsed
+  returned: when I(state) is C(parsed)
   type: dict
 coverage:
   description: Projection coverage and unparsed command locations; not a device completeness certificate.
@@ -77,8 +77,8 @@ source:
   returned: always
   type: dict
 ansible_facts:
-  description: The resource under C(ansible_network_resources.ihub_services).
-  returned: always
+  description: The gathered resource under C(ansible_network_resources.ihub_services); offline C(parsed) output is never published as facts.
+  returned: when I(state) is C(gathered)
   type: dict
 """
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.ihub_services.ihub_services import IhubServicesArgs

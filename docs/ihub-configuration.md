@@ -31,12 +31,14 @@ The argspecs are exported with their actual state choices. These opt-in modules
 do not alter `isam_facts` implicit all-resource reads or silently mix hierarchical
 sources into the existing shared-flat pipeline.
 
-`config` is an optional output selection using canonical identities. It does not
+`config` is an optional output selection using canonical identities: it accepts
+only the identity keys (`id`; services `service_type` and `id`). It does not
 generate targeted CLI commands. All instance selections require
 `allow_broad_read: true`, as do the device-wide port/LAG sources even without
 selections. Explicit whole-family service gathering needs no redundant flag.
 `source` records the command, true read scope and read completion timestamp.
-Check mode does not read; `parsed` is offline.
+The modules never change the device, so check mode reads exactly like a normal
+run. `parsed` is offline and, unlike `gathered`, does not set `ansible_facts`.
 
 ## Parsing and coverage
 

@@ -71,7 +71,8 @@ class TestTopologyDiscoveryModule(TestIsamModule):
         result = self.execute_module(changed=False)
         disc = result["discovery"]
         self.assertEqual(disc["status"], "error")
-        self.assertIn("connection reset", disc["error"])
+        # sanitized: error class and exception type, never the raw exception text
+        self.assertEqual(disc["error"], "connection_error (RuntimeError)")
 
     def test_empty_table_confirms_absence(self):
         self._conn(reply="\n".join(ONT_TABLE.splitlines()[:6] + ["interface count : 0"]))
@@ -81,11 +82,21 @@ class TestTopologyDiscoveryModule(TestIsamModule):
         self.assertEqual(disc["status"], "ok")
         self.assertEqual(disc["children"], [])
 
-    def test_check_mode_does_not_enumerate(self):
+    def test_check_mode_enumerates_like_a_normal_run(self):
+        # read-only: check mode returns the same evidence
         self._conn(reply=ONT_TABLE)
-        set_module_args(dict(kind="pon", identity=PON, child_kind="ont", _ansible_check_mode=True), ignore_provider=True)
+        set_module_args(dict(kind="pon", identity=PON, child_kind="ont", allow_broad_read=True, _ansible_check_mode=True),
+                        ignore_provider=True)
         result = self.execute_module(changed=False)
-        self.assertEqual(result["discovery"]["status"], "unsupported")
+        self.assertEqual(result["discovery"]["status"], "ok")
+        self.assertTrue(result["discovery"]["children"])
+
+    def test_device_text_in_exceptions_is_not_returned(self):
+        self._conn(exc=RuntimeError("configure system security snmp community secret123"))
+        set_module_args(dict(kind="pon", identity=PON, child_kind="ont", allow_broad_read=True), ignore_provider=True)
+        result = self.execute_module(changed=False)
+        self.assertNotIn("secret123", str(result))
+        self.assertEqual(result["discovery"]["error"], "device_error (RuntimeError)")
 
     def test_invalid_parent_identity_fails(self):
         self._conn(reply=ONT_TABLE)

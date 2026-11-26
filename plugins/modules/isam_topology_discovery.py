@@ -15,7 +15,7 @@ short_description: Enumerate direct children of one ISAM object for recursive re
 description:
   - Performs one fresh, read-only child enumeration for a single direct-neighbor
     relation in the semantic topology graph.
-  - This module never writes configuration.
+  - This module never writes configuration; check mode therefore enumerates like a normal run.
   - The ISAM has no scoped "list children of X" command for most of these
     relations, so enumeration reads the smallest whole source that contains the
      children (device-wide ONT index, transceiver inventory, IHUB port inventory or interface stack,
@@ -161,7 +161,12 @@ discovery:
       description: UTC timestamp of the enumeration.
       type: str
     error:
-      description: Failure reason when status is not C(ok).
+      description:
+        - Failure reason when status is not C(ok), a stable token such as
+          C(broad_enumeration_requires_allow_broad_read).
+        - For a failed read, the error class (C(timeout), C(connection_error) or C(device_error))
+          and the exception type, for example C(connection_error (ConnectionError)); raw
+          device or exception text is never returned.
       type: str
     source:
       description: Evidence source.
@@ -180,6 +185,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
     _is_absent_error,
     _is_unsupported_node,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.read_outcomes import error_class
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.discovery import (
     adapter_for,
     _validate_parent,
@@ -249,10 +255,7 @@ def main():
         module.fail_json(msg=str(exc), changed=False)
 
     command, read_scope = adapter["command"], adapter["read_scope"]
-    if module.check_mode:
-        module.exit_json(changed=False, discovery=result(
-            kind, identity, child_kind, "unsupported", command=command,
-            read_scope=read_scope, error="check_mode_does_not_enumerate"))
+    # Read-only: enumeration never changes the device, so check mode reads like a normal run.
     if read_scope in ("device", "family") and not module.params["allow_broad_read"]:
         module.exit_json(changed=False, discovery=result(
             kind, identity, child_kind, "unsupported", command=command, read_scope=read_scope,
@@ -274,7 +277,10 @@ def main():
     except UnknownIdentity as exc:
         module.fail_json(msg=str(exc), changed=False)
     except Exception as exc:
-        discovery = result(kind, identity, child_kind, "error", command=command, read_scope=read_scope, error=str(exc))
+        # The exception text may echo device output (configuration); report only a
+        # stable error class and the exception type, as ihub_config does.
+        discovery = result(kind, identity, child_kind, "error", command=command, read_scope=read_scope,
+                           error="%s (%s)" % (error_class(exc), type(exc).__name__))
     module.exit_json(changed=False, discovery=discovery)
 
 

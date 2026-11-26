@@ -16,7 +16,7 @@ extends_documentation_fragment: nokia.isam.ihub
 options:
   config:
     description:
-      - Optional list of LAG selections, identified by C(id). Other fields do not affect selection.
+      - Optional list of LAG selections, identified by C(id) (the only accepted key).
       - This filters the device-wide source and requires I(allow_broad_read=true); it is not a scoped device read.
     type: list
     elements: dict
@@ -35,12 +35,12 @@ EXAMPLES = """
 RETURN = """
 gathered:
   description: Typed LAG configuration including member ports, LACP and shutdown settings.
-  returned: when state is gathered
+  returned: when I(state) is C(gathered)
   type: list
   elements: dict
 parsed:
   description: The same typed projection from supplied hierarchical output.
-  returned: when state is parsed
+  returned: when I(state) is C(parsed)
   type: list
   elements: dict
 coverage:
@@ -52,8 +52,8 @@ source:
   returned: always
   type: dict
 ansible_facts:
-  description: The resource under C(ansible_network_resources.ihub_lags).
-  returned: always
+  description: The gathered resource under C(ansible_network_resources.ihub_lags); offline C(parsed) output is never published as facts.
+  returned: when I(state) is C(gathered)
   type: dict
 """
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.ihub_lags.ihub_lags import IhubLagsArgs
