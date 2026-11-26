@@ -206,7 +206,8 @@ class Facts(FactsBase):
         if requested is None:
             requested = self._module.params.get("gather_network_resources")
         requested = requested or []
-        all_requested = not requested or "all" in requested
+        # Only exclusions ("!interfaces") mean everything else, as in netcommon's gen_runable.
+        all_requested = "all" in requested or not [item for item in requested if not item.startswith("!")]
         explicitly_requested = {item for item in requested if not item.startswith("!") and item != "all"}
 
         # Several public resources share one parser and one logical fact tree.

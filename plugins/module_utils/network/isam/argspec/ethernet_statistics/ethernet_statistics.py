@@ -3,7 +3,6 @@ from __future__ import absolute_import, division, print_function
 
 class Isam_ethernet_statisticsArgs(object):
     argument_spec = {
-        "provider": {"type": "dict", "required": False},
         "config": {
             "type": "list",
             "required": True,

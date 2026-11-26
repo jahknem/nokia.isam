@@ -7,6 +7,8 @@ DOCUMENTATION = r"""
 ---
 module: cli_config
 short_description: Apply text configuration to Nokia ISAM
+version_added: 1.0.0
+author: Jan Kühnemund (@jahknem)
 description:
   - Sends configuration text through the active Nokia network_cli connection.
   - Nokia ISAM does not expose replace-file or rollback operations through the
@@ -32,6 +34,17 @@ EXAMPLES = r"""
       configure system id name access-node
 """
 
+RETURN = r"""
+commands:
+  description:
+    - The non-empty lines of I(config), in order; sent to the device unless I(commit) is
+      false or the task runs in check mode.
+  returned: always
+  type: list
+  elements: str
+  sample: ['configure system id name access-node']
+"""
+
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base import (
     get_resource_connection,
@@ -43,7 +56,6 @@ def main():
         argument_spec={
             "config": {"type": "str", "required": True},
             "commit": {"type": "bool", "default": True},
-            "provider": {"type": "dict", "required": False},
         },
         supports_check_mode=True,
     )

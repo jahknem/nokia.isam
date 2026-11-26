@@ -688,3 +688,59 @@ def test_dhcp_relay_integration():
     else:
         # For parsers without parse method, just verify they can be instantiated
         assert facts is not None
+
+
+def test_gather_network_resources_documents_every_resource():
+    import yaml
+
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import FACT_RESOURCE_SUBSETS
+
+    doc = yaml.safe_load(isam_facts.DOCUMENTATION)["options"]["gather_network_resources"]["description"]
+    listed = next(line for line in doc if line.startswith("Resources:"))
+    documented = set(part.strip()[2:-1] for part in listed[len("Resources:"):].rstrip(".").split(","))
+    assert documented == set(FACT_RESOURCE_SUBSETS)
+
+
+class TestIsamFactsExclusions(TestIsamModule):
+    module = isam_facts
+
+    def setUp(self):
+        super(TestIsamFactsExclusions, self).setUp()
+        self.mock_connection = patch(
+            "ansible_collections.ansible.netcommon.plugins.module_utils.network.common.facts.facts.get_resource_connection",
+        )
+        connection = self.mock_connection.start()
+
+        class Conn:
+            def get(self, command):
+                return ""
+
+        connection.return_value = Conn()
+
+    def tearDown(self):
+        super(TestIsamFactsExclusions, self).tearDown()
+        self.mock_connection.stop()
+
+    def test_exclusion_only_gathers_every_other_resource(self):
+        set_module_args(dict(gather_network_resources=["!interfaces"]))
+        result = self.execute_module(changed=False)
+        gathered = result["ansible_facts"]["ansible_net_gather_network_resources"]
+        assert "interfaces" not in gathered and "vlans" in gathered
+        resources = result["ansible_facts"]["ansible_network_resources"]
+        assert "interfaces" not in resources and "vlans" in resources
+
+    def test_all_with_exclusion(self):
+        set_module_args(dict(gather_network_resources=["all", "!interfaces", "!vlans"]))
+        result = self.execute_module(changed=False)
+        resources = result["ansible_facts"]["ansible_network_resources"]
+        assert "interfaces" not in resources and "vlans" not in resources and "bridges" in resources
+
+    def test_unknown_resource_fails(self):
+        set_module_args(dict(gather_network_resources=["no_such_resource"]))
+        result = self.execute_module(failed=True)
+        assert "no_such_resource" in result["msg"]
+
+    def test_unknown_excluded_resource_fails(self):
+        set_module_args(dict(gather_network_resources=["!no_such_resource"]))
+        result = self.execute_module(failed=True)
+        assert "no_such_resource" in result["msg"]
