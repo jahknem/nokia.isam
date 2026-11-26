@@ -13,16 +13,52 @@ import re
 BRIDGE_VLAN_SCOPE_ALIASES = {"network": "l2fwder"}
 
 
+def quote_cli_value(value):
+    """Compatibility shim for families not yet on the attribute table: the shared
+    quoting rule of attribute_table.quote_value (quotes and escapes per the CLI
+    guide, so a bare '?' can no longer open the CLI help)."""
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.attribute_table import quote_value
+    return quote_value(value)
+
+
 def canonical_key(key):
     return key.replace("-", "_")
 
 
-def quote_cli_value(value):
-    """ISAM accepts double-quoted values, not shell-style single quotes."""
-    text = str(value)
-    if not text or text.startswith("#") or '"' in text or any(char.isspace() for char in text):
-        return '"%s"' % text.replace('"', '\\"')
-    return text
+def changed_values(want, have):
+    """Requested non-None attributes differing from have, recursively through dicts.
+
+    Lists remain atomic values. Families with identity-keyed lists index them before
+    comparing. Inputs are never modified; False and zero are explicit values.
+    """
+    result = {}
+    for key, value in want.items():
+        if value is None:
+            continue
+        current = have.get(key)
+        if isinstance(value, dict):
+            nested = changed_values(value, current if isinstance(current, dict) else {})
+            if nested:
+                result[key] = nested
+        elif value != current:
+            result[key] = value
+    return result
+
+
+def omitted_values(want, have):
+    """Non-None attributes of have that want omits, recursively through dicts."""
+    result = {}
+    for key, value in have.items():
+        if value is None:
+            continue
+        wanted = want.get(key)
+        if isinstance(value, dict):
+            nested = omitted_values(wanted if isinstance(wanted, dict) else {}, value)
+            if nested:
+                result[key] = nested
+        elif wanted is None:
+            result[key] = value
+    return result
 
 
 def normalize_resource_keys(data, aliases=None):
