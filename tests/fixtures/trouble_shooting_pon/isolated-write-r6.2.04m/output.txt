@@ -1,0 +1,2 @@
+configure trouble-shooting pon statistics interface 1/1/6/2
+configure trouble-shooting pon statistics threshold interface 1/1/6/2 bw-th-up 100000 bw-th-dn 250000
