@@ -3,18 +3,26 @@
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Parse the access-side flat root ('info configure [detail] flat') into a tree.
 
-Lossless: every configure line is kept (raw, secrets masked). Paths and attributes
-come ONLY from compiled CLI grammar or explicit resource metadata. Unknown paths
-are quarantined under __unclassified__; unknown tails are retained as unparsed
-lines on the known node. Neither names nor subnodes are guessed or learned from
-neighboring lines. The semantic object graph lives separately in topology/.
-Losslessness concerns the input, not device capture completeness: the flat source
+Line-complete (masked): every 'configure ...' line of the input is stored once on
+some leaf, its tokens re-joined with single blanks and secrets masked. Other lines
+(echo, '#' delimiters, blanks) are not configuration and are not kept. Paths and
+attributes come ONLY from compiled CLI grammar or explicit resource metadata.
+Unknown paths are quarantined under __unclassified__; unknown tails are retained as
+unparsed lines on the known node. Neither names nor subnodes are guessed or learned
+from neighboring lines. The semantic object graph lives separately in topology/.
+Completeness concerns the input, not device capture completeness: the flat source
 omits evidenced IHUB port/LAG/service sections. Their read-only typed projections
 live in ihub_config.py and use separately declared hierarchical sources.
 
-Secrets are masked in the tokens *before* any structuring, so neither path keys, nor
-attribute values, nor stored lines can carry a cleartext secret or encrypted
-credential. Only device-masked ('plain:******') placeholders are kept.
+Secrets are masked in the tokens *before* any structuring, so path keys, attribute
+values and stored lines all see the same masked tokens. The masking is heuristic,
+not a guarantee: it covers values behind secret keywords, any plain:/encrypted:
+credential (also behind 'md5:'-style prefixes or fused 'keyword=value'), and reuse
+of such a secret as a whole token or ':'/'='-delimited segment elsewhere. A secret
+under an unrecognised keyword, or embedded in free text, can still pass. Only
+device-masked ('plain:******') placeholders are kept. Each distinct secret becomes
+one numbered placeholder ('<redacted:N>'), so instances whose identity is a secret
+stay distinct; equal numbers reveal only that two values were equal.
 
 This is the schema-less "root" view; the resource families remain the typed view of the
 parts they model. gap_report compares the two.
@@ -35,18 +43,37 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config_tre
 )
 
 REDACTED = "<redacted>"
-_TOKEN_RE = re.compile(r'"[^"]*"|\S+')
-# Keywords whose following token is a secret value. Exact names (plus -pwd/-password/
-# -secret endings) rather than suffixes such as "auth"/"key": alarm names like
-# "reg-auth" or "ground-key" are identities, and masking after them destroyed data.
+# A token is a run of unquoted characters and quoted strings, so a quoted value
+# glued to a prefix (password="plain:x", plain:"two words") stays one token.
+# An unbalanced quote falls back to a plain whitespace-delimited token.
+_TOKEN_RE = re.compile(r'(?:[^\s"]+|"[^"]*")+|\S+')
+# Keywords whose following token is a secret value. Exact names plus endings,
+# rather than loose suffixes such as "auth"/"key": alarm names like "reg-auth" or
+# "ground-key" are identities, and masking after them destroyed data. A "-key"
+# ending is a secret only behind a credential qualifier (md5-key, secret-key, ...);
+# "key-type" or "ground-key" are not.
 _SECRET_WORDS = frozenset(("password", "passwd", "secret", "community", "key", "auth-key", "priv-key",
                            "auth-password", "priv-password", "encryption-key", "shared-secret", "psk"))
-_SECRET_ENDINGS = ("-pwd", "-password", "-passwd", "-secret")
+_SECRET_COMPACT = frozenset(("password", "passwd", "secret", "community"))  # pass-word, sec_ret
+_SECRET_ENDINGS = ("-pwd", "-password", "-passwd", "-secret", "-community", "-psk")
+_SECRET_KEY = re.compile(r"(?:[a-z0-9]+-)*(?:md5|sha|sha1|sha256|sha512|hmac|secret|shared|pre-shared|auth|"
+                         r"authentication|priv|privacy|encryption|crypto|psk|wpa|wpa2)-key")
+# Enumerated keyword values a secret parameter accepts that are not secrets
+# themselves (e.g. 'operator X password prompt' asks for the password
+# interactively). They stay readable and are never masked elsewhere.
+_NON_SECRET_VALUES = frozenset(("prompt", "none", "no", "plain", "encrypted", "default", "disable",
+                                "disabled", "enable", "enabled", "null", "not-applicable", "auto"))
+# 'plain:' / 'encrypted:' credential markers, at the token start or after ':', '='
+# or a quote (md5:plain:x, sha1:encrypted:0x.., password="plain:x").
+_CREDENTIAL = re.compile(r'(?i)(?:^|(?<=[:="]))(?:plain|encrypted):')
+_PLACEHOLDER = re.compile(r"<redacted(?::\d+)?>")
 
 
 def _is_secret(word):
-    word = str(word).lower()
-    return word in _SECRET_WORDS or word.endswith(_SECRET_ENDINGS)
+    word = str(word).lower().replace("_", "-")
+    if word in _SECRET_WORDS or word.replace("-", "") in _SECRET_COMPACT or word.endswith(_SECRET_ENDINGS):
+        return True
+    return bool(_SECRET_KEY.fullmatch(word))
 
 
 def _tokens(line):
@@ -106,20 +133,29 @@ def _unquote(v):
 
 
 def _redact(name, value):
-    if isinstance(value, str) and (value.lower().startswith("encrypted:") or
-                                 (_is_secret(name) and not _is_masked_placeholder(value))):
+    if not isinstance(value, str) or _PLACEHOLDER.fullmatch(value):
+        return value
+    if _CREDENTIAL.search(_unquote(value)) and not _is_masked_placeholder(value):
+        return REDACTED
+    if _is_secret(name) and not _is_masked_placeholder(value) and value not in _NON_SECRET_VALUES:
         return REDACTED
     return value
 
 
 def _is_masked_placeholder(value):
-    return bool(re.fullmatch(r"plain:\*+", _unquote(value)))
+    """A device-masked credential: 'plain:******' (optionally behind 'md5:' etc.)."""
+    match = _CREDENTIAL.search(_unquote(value))
+    if match is None or match.group(0).lower() != "plain:":
+        return False
+    return bool(re.fullmatch(r"\*+", _unquote(value)[match.end():].strip('"')))
 
 
-# A secret seen on one line is masked wherever else it appears inside a token. Very
-# short values are left out: masking every occurrence of e.g. 'ab' would destroy
-# unrelated data, and real secrets are longer.
-_MIN_KNOWN_SECRET = 3
+# A secret seen on one line is masked wherever else it appears as a whole token or
+# a ':'/'='-delimited segment of one (e.g. a community inside 'v2c:<community>').
+# Substrings and '-' segments are not matched: a community 'public' must not turn a
+# VLAN name 'public-internet' into a different identity. Very short and purely
+# numeric values are not propagated: 'key 100' would otherwise mask every VLAN 100.
+_MIN_KNOWN_SECRET = 4
 
 
 def _is_policy_node(tokens, i):
@@ -128,57 +164,146 @@ def _is_policy_node(tokens, i):
 
 
 def _holds_secret(tokens, i):
-    """Whether tokens[i + 1] is a cleartext secret: the value of a secret keyword."""
+    """Whether tokens[i + 1] is a secret: the value of a secret keyword."""
     if i + 1 >= len(tokens) or _is_policy_node(tokens, i) or not _is_secret(tokens[i]):
         return False
-    return tokens[i + 1] != "no" and not _is_masked_placeholder(tokens[i + 1])
+    value = tokens[i + 1]
+    return (value not in _NON_SECRET_VALUES and not _is_masked_placeholder(value)
+            and not _PLACEHOLDER.fullmatch(value))
+
+
+def _fused(token):
+    """('password=', 'value') for a fused 'keyword=value' token with a secret keyword."""
+    keyword, sep, value = token.partition("=")
+    if sep and value and _is_secret(keyword):
+        return keyword + sep, value
+    return None
+
+
+def _cleartext(value):
+    """The secret part of a value: unquoted, after any 'md5:plain:' style prefix."""
+    value = _unquote(value)
+    marker = None
+    for marker in _CREDENTIAL.finditer(value):
+        pass
+    if marker is not None and marker.group(0).lower() == "plain:":
+        value = _unquote(value[marker.end():])
+    return value
+
+
+def _registrable(value):
+    return (len(value) >= _MIN_KNOWN_SECRET and not value.isdigit() and value.lower() not in _NON_SECRET_VALUES
+            and not _CREDENTIAL.search(value) and not _PLACEHOLDER.fullmatch(value) and not re.fullmatch(r"\*+", value))
 
 
 def _known_secrets(token_lists):
-    """Cleartext secret values seen behind a secret keyword anywhere in the input."""
+    """Cleartext secret values seen anywhere in the input (to mask their reuse)."""
     known = set()
     for tokens in token_lists:
-        for i in range(len(tokens)):
+        for i, token in enumerate(tokens):
+            candidates = []
             if _holds_secret(tokens, i):
-                value = _unquote(tokens[i + 1])
-                if not value.lower().startswith("encrypted:") and len(value) >= _MIN_KNOWN_SECRET:
-                    known.add(value)
+                candidates.append(tokens[i + 1])
+            fused = _fused(token)
+            if fused:
+                candidates.append(fused[1])
+            if token == "snmp-version" and i + 1 < len(tokens):
+                parts = split_snmp_version(_unquote(tokens[i + 1]))
+                if parts:
+                    candidates.append(parts[1])
+            match = _CREDENTIAL.search(token)
+            if match and not _is_masked_placeholder(token):
+                candidates.append(token[match.start():])
+            known.update(v for v in (_cleartext(c) for c in candidates) if _registrable(v))
     return known
 
 
-def _redact_tokens(tokens, known=()):
-    """Strip encrypted credentials before structuring, even at unknown CLI paths.
+class _Masker(object):
+    """Masks secrets with numbered placeholders, one number per distinct secret.
 
-    Secret values are masked; only actual device-masked placeholders are retained.
-    ``known`` are cleartext secrets seen elsewhere in the same input (e.g. an SNMP
-    community): they are masked wherever they reappear inside another token.
+    Distinct numbers keep instances distinct when a secret is part of an identity
+    (two SNMP communities with the same host address stay two tree leaves).
     """
-    out = [REDACTED if _unquote(t).lower().startswith("encrypted:") else t for t in tokens]
-    for i, token in enumerate(out):
-        if token == "snmp-version" and i + 1 < len(out):
-            parts = split_snmp_version(_unquote(out[i + 1]))
-            if parts:
-                out[i + 1] = parts[0] + REDACTED
-        elif _holds_secret(out, i):
-            out[i + 1] = REDACTED
-    for secret in sorted(known, key=len, reverse=True):
-        out = [t.replace(secret, REDACTED) if secret in t and t != REDACTED else t for t in out]
-    return out
+
+    def __init__(self, known=()):
+        self.known = frozenset(known)
+        self.numbers = {}
+
+    def placeholder(self, value):
+        key = _cleartext(value)
+        if key not in self.numbers:
+            self.numbers[key] = len(self.numbers) + 1
+        return "<redacted:%d>" % self.numbers[key]
+
+    def credential(self, token):
+        """Mask a token's plain:/encrypted: credential, keeping a 'md5:' style prefix."""
+        if _PLACEHOLDER.fullmatch(token) or _is_masked_placeholder(token):
+            return token
+        inner = _unquote(token)
+        match = _CREDENTIAL.search(inner)
+        if not match:
+            return token
+        prefix = inner[:match.start()]
+        if prefix.endswith('"'):
+            prefix = prefix[:-1]
+        return prefix + self.placeholder(inner[match.start():])
+
+    def segments(self, token):
+        """Mask known secrets as a whole token or ':'/'='-delimited segments."""
+        if not self.known or _PLACEHOLDER.fullmatch(token):
+            return token
+        if _unquote(token) in self.known:
+            return self.placeholder(token)
+        parts = re.split(r"([:=])", token)
+        masked = [self.placeholder(part) if part in self.known or _unquote(part) in self.known else part
+                  for part in parts]
+        return "".join(masked)
+
+    def tokens(self, tokens):
+        out = list(tokens)
+        for i, token in enumerate(out):
+            if _PLACEHOLDER.fullmatch(token):
+                continue
+            if token == "snmp-version" and i + 1 < len(out):
+                parts = split_snmp_version(_unquote(out[i + 1]))
+                if parts:
+                    out[i + 1] = parts[0] + self.placeholder(parts[1])
+            elif _holds_secret(out, i):
+                out[i + 1] = self.placeholder(out[i + 1])
+            fused = _fused(token)
+            if fused and not _is_masked_placeholder(fused[1]) and fused[1] not in _NON_SECRET_VALUES:
+                out[i] = fused[0] + self.placeholder(fused[1])
+                continue
+            out[i] = self.segments(self.credential(out[i]))
+        return out
+
+
+def _redact_tokens(tokens, known=()):
+    """Mask secrets in one line's tokens before structuring, even at unknown CLI paths.
+
+    Heuristic, not a proof: values behind secret keywords, any plain:/encrypted:
+    credential (also behind 'md5:'/'sha1:' prefixes or fused 'kw=value'), and the
+    ``known`` cleartext secrets seen elsewhere in the same input are masked. Only
+    device-masked placeholders ('plain:******') are kept.
+    """
+    return _Masker(known).tokens(tokens)
 
 
 def redacted_token_lines(text):
     """Token lists (without 'configure') of every configure line, secrets masked.
 
-    Two passes: secrets found behind secret keywords on any line are masked wherever
-    else they appear, so a secret embedded in another value never survives.
+    Two passes: secrets found anywhere (behind secret keywords or as credentials)
+    are collected first, then masked wherever they reappear as a whole token or a
+    ':'/'='-delimited segment. One distinct secret maps to one numbered placeholder
+    ('<redacted:N>') across the whole input.
     """
     raw = []
     for line in str(text or "").splitlines():
         line = line.strip()
         if line.startswith("configure "):
             raw.append(_tokens(line)[1:])
-    known = _known_secrets(raw)
-    return [_redact_tokens(tokens, known) for tokens in raw]
+    masker = _Masker(_known_secrets(raw))
+    return [masker.tokens(tokens) for tokens in raw]
 
 
 class _Line(object):
@@ -243,7 +368,7 @@ def _parsed_lines(text):
 
 
 def parse_config_tree(text):
-    """Nested tree of the whole flat configuration. Lossless (raw lines kept, masked).
+    """Nested tree of the whole flat configuration. Line-complete (masked).
 
     Leaves are {"__config__": {"attrs": {...}, "lines": [...], "node": "<keyword path>",
     "source": "grammar" | "resource" | "unclassified"}} under declared CLI paths.

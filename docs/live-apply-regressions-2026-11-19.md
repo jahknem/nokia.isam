@@ -94,7 +94,10 @@ connection plugin also passed.
 
 The final full unit tree, including connection plugins and private-capture replay,
 passed on both Ansible Core **2.19.12** and **2.21.6**: **2,914 passed, 14 skipped,
-247 subtests passed per core**. The 50 new regression cases are included in these
+247 subtests passed per core** (point-in-time result for this 2026-11-19 follow-up,
+`TESTPATH=tests/unit` with `ISAM_ROOT_CAPTURES` set; later commits add tests, and
+without the private captures their tests skip, so the totals are not expected to
+reproduce on a later checkout). The 50 new regression cases are included in these
 totals, not additional tests to add again. Private captures were selected with
 `ISAM_ROOT_CAPTURES`; no capture content was added to the repository.
 

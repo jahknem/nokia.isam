@@ -46,6 +46,19 @@ def test_unknown_configuration_is_partial_and_does_not_export_unknown_secret_val
     assert "SUPER_SECRET" not in json.dumps(parsed)
 
 
+@pytest.mark.parametrize("raw, value", [
+    ("Bob's", "Bob's"),                          # unquoted apostrophe is literal, not shell quoting
+    ('"Bob\'s uplink"', "Bob's uplink"),
+    ("C:\\\\lab\\\\port", "C:\\\\lab\\\\port"),      # backslashes are kept, not consumed
+    ('"a\\\\b c"', "a\\\\b c"),
+])
+def test_ihub_tokens_keep_apostrophes_and_backslashes(raw, value):
+    text = config().replace('description "LAB optical port"', "description " + raw)
+    ports = parse_ihub_config(text, "ihub_ports")
+    assert ports["coverage"]["complete"]
+    assert ports["config"][0]["description"] == value
+
+
 def test_future_service_is_a_gap_not_a_silently_empty_complete_projection():
     text = config().replace("vpls 200 customer 10 v-vpls vlan 200 create", "vprn 200 customer 10 create")
     parsed = parse_ihub_config(text, "ihub_services")

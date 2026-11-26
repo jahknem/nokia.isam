@@ -80,8 +80,8 @@ def test_secret_community_is_redacted_but_masked_password_kept():
     tree = parse_config_tree(SAMPLE)
     # Both parts of the composite community identity belong to the CLI path.
     community = tree["system"]["security"]["snmp"]["community"]
-    assert list(community) == ["<redacted>"]
-    leaf = community["<redacted>"]["host-address"]["10.0.0.1/32"]["__config__"]
+    assert list(community) == ["<redacted:1>"]
+    leaf = community["<redacted:1>"]["host-address"]["10.0.0.1/32"]["__config__"]
     assert leaf["attrs"] == {}
     assert leaf["source"] == "resource"
     assert "public" not in all_values(tree)
@@ -103,17 +103,17 @@ def test_redaction_cleartext_and_encrypted_masked_placeholders_kept():
         assert secret not in values
         assert not any(secret in str(v) for v in values)
     op = tree["system"]["security"]["operator"]["isadmin"]["__config__"]
-    assert op["attrs"] == {"password": "<redacted>", "prompt": "%i"}
+    assert op["attrs"] == {"password": "<redacted:2>", "prompt": "%i"}
     assert tree["system"]["security"]["operator"]["other"]["__config__"]["attrs"]["password"] == "plain:****"
     pppoe = tree["pppoe-client"]["interface"]["1/1/1/1"]["client-id"]["1"]["__config__"]
-    assert pppoe["attrs"]["password"] == "<redacted>" and pppoe["source"] == "grammar"
+    assert pppoe["attrs"]["password"] == "<redacted:4>" and pppoe["source"] == "grammar"
 
 
 def test_resource_schema_nests_lowercase_identity_and_stays_lossless():
     line = "configure system security operator isadmin password encrypted:aa:bb prompt %i"
     tree = parse_config_tree(line)
     leaf = tree["system"]["security"]["operator"]["isadmin"]["__config__"]
-    assert leaf["lines"] == [line.replace("encrypted:aa:bb", "<redacted>")]
+    assert leaf["lines"] == [line.replace("encrypted:aa:bb", "<redacted:1>")]
     assert leaf["node"] == "system security operator"
 
 
@@ -359,7 +359,7 @@ def test_encrypted_credentials_are_removed_even_at_unknown_paths():
     assert "encrypted:" not in output
     assert "hash-one" not in output and "hash-two" not in output and "hash-three" not in output
     assert "clear-password" not in output
-    assert "<redacted>" in output
+    assert "<redacted:1>" in output
 
 
 def test_resource_paths_do_not_depend_on_identity_spelling_or_line_order():
@@ -375,7 +375,7 @@ def test_resource_paths_do_not_depend_on_identity_spelling_or_line_order():
     tree = parse_config_tree(text)
     security = tree["system"]["security"]
     user = security["ssh"]["sftp-user"]["lowercase"]["__config__"]
-    assert user["attrs"] == {"password": "<redacted>"}
+    assert user["attrs"] == {"password": "<redacted:1>"}
     assert user["node"] == "system security ssh sftp-user"
     assert security["snmp"]["view"]["lowercase"]["subtree"]["*"]["__config__"]["attrs"] == {"type": "include"}
     assert security["filetransfer"]["__config__"]["attrs"] == {"protocol": "ftp"}
@@ -459,11 +459,11 @@ def test_community_embedded_in_snmp_version_is_masked():
         "configure system security snmp notify-profile prof1 snmp-version v2c:privcomm",
         "configure system security snmp notify-profile prof2 snmp-version v1:other-only-here",
         "configure system security snmp notify-profile prof3 snmp-version v3",
-        "configure equipment ont interface 1/1/1/1/1 desc1 note-privcomm-ref",
+        "configure equipment ont interface 1/1/1/1/1 desc1 privcomm",
     ])
     out = json.dumps(parse_config_tree(text))
     assert "privcomm" not in out and "other-only-here" not in out
-    assert "v2c:<redacted>" in out and "v1:<redacted>" in out
+    assert "v2c:<redacted:1>" in out and "v1:<redacted:2>" in out
     assert '"snmp-version": "v3"' in out  # a plain version stays readable
 
 

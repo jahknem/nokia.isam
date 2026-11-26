@@ -34,9 +34,19 @@ def ont_table(*identities):
     return "\n".join(lines)
 
 
+# The device closes every flat configure reply with this delimiter (see
+# tests/fixtures/bridges/targeted-present); a reply without it may be truncated.
+TERMINATOR = "#" + "-" * 79
+
+
+def flat(*lines):
+    """A complete flat-config reply: the given lines plus the terminal delimiter."""
+    return "\n".join([line.rstrip("\n") for line in lines] + [TERMINATOR])
+
+
 def slot_config(*identities):
-    return "\n".join("configure equipment ont slot %s planned-card-type ethernet plndnumdataports 1" % i
-                     for i in identities)
+    return flat(*("configure equipment ont slot %s planned-card-type ethernet plndnumdataports 1" % i
+                  for i in identities))
 
 
 def test_successful_ont_enumeration_filters_device_wide_source_by_pon():
@@ -80,7 +90,7 @@ def test_slot_enumeration_ignores_non_slot_nodes():
 
 def test_malformed_slot_identity_is_rejected():
     with pytest.raises(UnknownIdentity):
-        parse_ont_slots("configure equipment ont slot bad-id planned-card-type ethernet", ONT)
+        parse_ont_slots(flat("configure equipment ont slot bad-id planned-card-type ethernet"), ONT)
 
 
 def test_failed_enumeration_cannot_report_children():
@@ -122,7 +132,7 @@ def test_successful_discovery_certifies_only_the_enumerated_subtree():
     g = attach_discovery(g, [
         parse_ont_serials(ont_table(ONT), PON),
         parse_ont_slots(slot_config(SLOT), ONT),
-        enumerate_children("ont_slot", SLOT, "uni", "#----------------"),
+        enumerate_children("ont_slot", SLOT, "uni", TERMINATOR),
     ])
     manifest = coverage(g, "pon", PON)
     assert manifest["complete"] is True
@@ -176,7 +186,7 @@ def test_uni_enumeration_filters_family_source_by_slot():
     cfg = ("configure ethernet ont 1/1/5/1/3/1/1 admin-state up\n"
            "configure ethernet ont 1/1/5/1/3/2/1 admin-state up\n"
            "configure ethernet ont 1/1/5/1/6/1/1 admin-state up\n")
-    item = enumerate_children("ont_slot", SLOT, "uni", cfg)
+    item = enumerate_children("ont_slot", SLOT, "uni", flat(cfg))
     assert item["status"] == "ok" and item["read_scope"] == "family"
     assert item["children"] == [SLOT + "/1"]
     assert item["command"] == "info configure ethernet ont flat"
@@ -186,23 +196,23 @@ def test_card_children_filter_each_source_by_card():
     pon_cfg = ("configure pon interface 1/1/2/1 admin-state up\n"
                "configure pon interface 1/1/2/2 admin-state up\n"
                "configure pon interface 1/1/3/1 admin-state up\n")
-    assert enumerate_children("card", "lt:1/1/2", "pon", pon_cfg)["children"] == ["1/1/2/1", "1/1/2/2"]
+    assert enumerate_children("card", "lt:1/1/2", "pon", flat(pon_cfg))["children"] == ["1/1/2/1", "1/1/2/2"]
     xdsl_cfg = "configure xdsl line 1/1/3/1 service-profile 13\nconfigure xdsl line 1/1/4/1 service-profile 13\n"
-    assert enumerate_children("card", "lt:1/1/3", "xdsl_line", xdsl_cfg)["children"] == ["1/1/3/1"]
+    assert enumerate_children("card", "lt:1/1/3", "xdsl_line", flat(xdsl_cfg))["children"] == ["1/1/3/1"]
     eth_cfg = "configure ethernet line 1/1/8/1 port-type uni\nconfigure ethernet line 1/1/9/1 port-type uni\n"
-    assert enumerate_children("card", "lt:1/1/8", "ethernet_port", eth_cfg)["children"] == ["1/1/8/1"]
+    assert enumerate_children("card", "lt:1/1/8", "ethernet_port", flat(eth_cfg))["children"] == ["1/1/8/1"]
     cage_cfg = "configure interface cage lt:1/1/2:cage:1 description x\nconfigure interface cage lt:1/1/3:cage:1 description x\n"
-    assert enumerate_children("card", "lt:1/1/2", "cage", cage_cfg)["children"] == ["lt:1/1/2:cage:1"]
+    assert enumerate_children("card", "lt:1/1/2", "cage", flat(cage_cfg))["children"] == ["lt:1/1/2:cage:1"]
 
 
 def test_recognized_empty_source_confirms_absence_for_card_child():
-    item = enumerate_children("card", "lt:1/1/2", "pon", "#----------------")
+    item = enumerate_children("card", "lt:1/1/2", "pon", TERMINATOR)
     assert item["status"] == "ok" and item["children"] == []
 
 
 def test_malformed_child_identity_in_source_is_rejected():
     with pytest.raises(UnknownIdentity):
-        enumerate_children("card", "lt:1/1/2", "pon", "configure pon interface bad-id admin-state up")
+        enumerate_children("card", "lt:1/1/2", "pon", flat("configure pon interface bad-id admin-state up"))
 
 
 def test_unknown_child_kind_has_no_source():
@@ -225,7 +235,8 @@ def test_unimplemented_relation_is_a_capability_gap_not_missing_read(monkeypatch
                                                               "transceiver", "channel_pair"}
 
 
-@pytest.mark.parametrize("output", ["", "unexpected text", "Error: truncated", "configure pon interface "])
+@pytest.mark.parametrize("output", ["", "unexpected text", "Error: truncated", "configure pon interface ",
+                                    flat("unexpected text"), flat("configure pon interface ")])
 def test_invalid_source_is_not_confirmed_absence(output):
     with pytest.raises(UnknownIdentity):
         enumerate_children("card", "lt:1/1/2", "pon", output)
@@ -242,7 +253,7 @@ def test_invalid_relation_is_rejected_even_with_no_children():
     with pytest.raises(UnknownIdentity):
         adapter_for("ont", "pon")
     with pytest.raises(UnknownIdentity):
-        enumerate_children("ont", ONT, "pon", "#----------------")
+        enumerate_children("ont", ONT, "pon", TERMINATOR)
     with pytest.raises(UnknownIdentity):
         result("ont", ONT, "pon", "ok", command="info configure pon interface flat", read_scope="family")
 
@@ -254,6 +265,7 @@ def test_equipment_hierarchy_uses_explicit_ids_and_implicit_rack_from_shelf():
               "configure equipment slot lt:2/3/5 planned-type fglt-b\n"
               "configure equipment slot vlt:2/3/63 unlock\n"
               "configure equipment ont interface 2/3/5/1/1 admin-state down\n")
+    output = flat(output)
     assert enumerate_children("msan", "", "rack", output)["children"] == ["2"]
     assert enumerate_children("rack", "2", "shelf", output)["children"] == ["2/3"]
     assert enumerate_children("msan", "", "card", output)["children"] == ["nt-a"]
@@ -266,8 +278,9 @@ def test_bonding_and_lag_sources_do_not_confuse_underlying_ports():
     output = ("configure interface port bonding:1/1/3/1 user test\n"
               "configure interface port xdsl-line:1/1/3/1 admin-up\n"
               "configure interface port bonding:1/1/4/1 admin-up\n")
+    output = flat(output)
     assert enumerate_children("card", "lt:1/1/3", "bonding_group", output)["children"] == ["1/1/3/1"]
-    output = "configure link-agg group 1/1/8/1 port 1/1/8/2\nconfigure link-agg port 1/1/8/2 passive-lacp\n"
+    output = flat("configure link-agg group 1/1/8/1 port 1/1/8/2\nconfigure link-agg port 1/1/8/2 passive-lacp")
     assert enumerate_children("card", "lt:1/1/8", "lag", output)["children"] == ["1/1/8/1"]
 
 
@@ -325,7 +338,7 @@ def test_incomplete_equipment_identity_cannot_confirm_absence(output):
     child_kind = {"shelf": "shelf", "slot": "card", "applique": "applique"}[kind]
     parent_kind, identity = ("rack", "1") if child_kind == "shelf" else ("msan", "")
     with pytest.raises(UnknownIdentity):
-        enumerate_children(parent_kind, identity, child_kind, output)
+        enumerate_children(parent_kind, identity, child_kind, flat(output))
 
 
 # --- Channel pairs, transceiver inventory and UNI VLAN ports -------------------
@@ -355,7 +368,7 @@ def test_channel_pair_enumeration_filters_family_source_by_card():
            "configure channel-pair interface 1/1/9/1 label pair-one\n"
            "configure channel-pair interface 1/1/9/2 label pair-two\n"
            "configure channel-pair interface 1/1/10/1 label other-card\n")
-    item = enumerate_children("card", "lt:1/1/9", "channel_pair", cfg)
+    item = enumerate_children("card", "lt:1/1/9", "channel_pair", flat(cfg))
     assert item["status"] == "ok" and item["read_scope"] == "family"
     assert item["children"] == ["1/1/9/1", "1/1/9/2"]
     assert item["command"] == "info configure channel-pair interface flat"
@@ -503,7 +516,7 @@ def test_uni_subtree_coverage_includes_bridge_and_vlan_port_relations():
     g = attach_discovery(g, [
         parse_ont_serials(ont_table(ONT), PON),
         parse_ont_slots(slot_config(SLOT), ONT),
-        enumerate_children("ont_slot", SLOT, "uni", "configure ethernet ont %s admin-state up" % UNI),
+        enumerate_children("ont_slot", SLOT, "uni", flat("configure ethernet ont %s admin-state up" % UNI)),
     ])
     manifest = coverage(g, "pon", PON)
     assert manifest["complete"] is False
@@ -526,3 +539,39 @@ def test_coverage_flags_documented_only_adapters_without_blocking():
     assert all(d["child_kind"] == "channel_pair" for d in manifest["documented_only"])
     # The flag is informational: it does not by itself make coverage incomplete.
     assert manifest["complete"] is False  # still false because reads are missing
+
+
+# --- Flat replies must be complete --------------------------------------------
+
+PON_LINES = ["configure pon interface 1/1/5/%d admin-state up" % n for n in range(1, 9)]
+
+
+@pytest.mark.parametrize("output", [
+    "\n".join(PON_LINES[:3]),                          # truncated after 3 of 8 lines
+    "\n".join(PON_LINES),                              # every line but no terminator
+    "# comment only",
+    'echo "pon"',
+    TERMINATOR + "\n" + "\n".join(PON_LINES[:3]),     # header delimiter, body cut short
+    "#-----",                                           # too short to be the delimiter
+])
+def test_flat_reply_without_terminal_delimiter_is_not_ok(output):
+    with pytest.raises(UnknownIdentity, match="terminal delimiter"):
+        enumerate_children("card", "lt:1/1/5", "pon", output)
+
+
+def test_flat_reply_with_terminal_delimiter_enumerates_every_line():
+    item = enumerate_children("card", "lt:1/1/5", "pon", flat(*PON_LINES) + "\n\n")
+    assert item["status"] == "ok" and len(item["children"]) == 8
+
+
+def test_ont_slot_reply_without_terminal_delimiter_cannot_confirm_absence():
+    with pytest.raises(UnknownIdentity, match="terminal delimiter"):
+        parse_ont_slots("configure equipment ont interface %s desc1 x" % ONT, ONT)
+    with pytest.raises(UnknownIdentity, match="terminal delimiter"):
+        parse_ont_slots("\n".join(slot_config(SLOT).splitlines()[:-1]), ONT)
+    assert parse_ont_slots(flat("configure equipment ont interface %s desc1 x" % ONT), ONT)["children"] == []
+
+
+def test_equipment_racks_require_the_terminal_delimiter():
+    with pytest.raises(UnknownIdentity, match="terminal delimiter"):
+        enumerate_children("msan", "", "rack", "configure equipment shelf 1/1 planned-type nfxs-b")

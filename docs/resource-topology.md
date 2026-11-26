@@ -224,8 +224,11 @@ as `unsupported`/`error` and must never be interpreted as an empty child list.
 children, ok" for a populated PON; the fail-closed contract and live verification
 caught this. Malformed identities in the source are rejected, not filtered.)
 Blank or unexpected replies cannot confirm absence. The ONT table requires its
-recognized header and matching `interface count` footer. A recognized empty
-configuration header is distinct from a blank/truncated response.
+recognized header and matching `interface count` footer. A flat configuration
+source (`info configure ... flat`) must end with the device's terminal
+`#-----...` delimiter, which it prints even for an empty family; a reply without
+it (cut short, or only comments/echo lines) raises instead of reporting `ok`, so
+a truncated reply never yields a partial child list or confirmed absence.
 
 `attach_discovery(graph, results)` attaches fresh evidence; `coverage(graph, kind,
 identity)` returns a recursive certificate. A root is `complete` only when every

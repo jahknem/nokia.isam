@@ -338,14 +338,25 @@ def evidence_for(kind, child_kind):
     return None
 
 
+# The device closes every flat 'info configure ... flat' reply with a delimiter
+# line (tests/fixtures/bridges/targeted-present, equipment/slot-flat-detail),
+# also when the family is empty. It is the flat counterpart of a table's count
+# footer: without it a reply may be cut short, so it cannot confirm absence.
+_FLAT_TERMINATOR = re.compile(r"#-{10,}")
+
+
 def _config_identities(output, prefix, child_kind, family_prefix=None):
     """Child identities from flat configure lines under a fixed CLI prefix.
 
-    A line whose identity does not parse as the child kind is a malformed source
-    (rejected), not silently skipped; lines under other prefixes are ignored.
+    The reply must end with the device's terminal delimiter; a reply without it
+    (truncated, comment/echo-only) is not a complete source. A line whose identity
+    does not parse as the child kind is a malformed source (rejected), not silently
+    skipped; lines under other prefixes of the same family are ignored.
     """
     if not isinstance(output, str) or not output.strip():
         raise UnknownIdentity("Enumeration source is blank; absence is not confirmed")
+    if not _FLAT_TERMINATOR.fullmatch(output.strip().splitlines()[-1].strip()):
+        raise UnknownIdentity("Enumeration source has no terminal delimiter; the reply may be truncated")
     family_prefix = family_prefix or prefix
     identities = set()
     for raw_line in (output or "").splitlines():

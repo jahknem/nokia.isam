@@ -98,6 +98,37 @@ return value on targeted reads.
   channel. The error names the command positions only, never the command
   text, which may contain passwords.
 
+### Root tree, discovery and IHUB parsing fixes
+
+- Topology discovery: a flat configuration source (`info configure ... flat`)
+  must end with the device's terminal `#-----` delimiter. A truncated or
+  comment/echo-only reply was reported `ok` with a partial or empty child list;
+  it now fails instead of confirming children or their absence.
+- Root config tree masking (heuristic, as before — not a guarantee):
+  - Not masked any more: enumerated non-secret values of secret parameters
+    (`password prompt` kept its value and its operator's `prompt` attribute
+    was lost), and reuse of a known secret as a substring or `-` part of other
+    values (a community `public` corrupted the VLAN name `public-internet`; a
+    `key 100` masked VLAN 100). Reuse is masked only as a whole token or a
+    `:`/`=`-delimited segment; values under 4 characters or purely numeric are
+    not propagated.
+  - Newly masked: `plain:`/`encrypted:` credentials behind a prefix
+    (`md5:plain:…`, `sha1:encrypted:…`; the prefix is kept), fused
+    `keyword=value` and quoted values (`password="plain:…"`,
+    `password plain:"two words"`), bare reuse of a `plain:`-prefixed secret,
+    and dashed secret keywords (`pass-word`, `secret-key`, `md5-key`,
+    `read-community`; `key-type` and alarm names like `ground-key` stay readable).
+  - Each distinct secret is one numbered placeholder (`<redacted:N>`, was
+    `<redacted>`), so two SNMP communities with the same host address remain
+    two leaves.
+  - "Lossless" is now stated as line-complete (masked): every `configure` line
+    is stored once, whitespace-normalised; other lines are not configuration.
+    A handwritten synthetic root fixture (`tests/fixtures/config_tree/synthetic-root`)
+    tests masking and line-completeness against the raw input in CI.
+- IHUB configuration: lines are tokenized like the device (`"…"` or a blank-free
+  run), not by POSIX shell rules: an unquoted apostrophe (`description Bob's`)
+  no longer fails the whole read, and backslashes are kept.
+
 ## 1.0.0 (unreleased)
 
 Major-version preparation, not a published release. This line incorporates the
@@ -558,7 +589,7 @@ this new artifact. NOC remains unchanged.
   of inferred write syntax. Diagnostic output still needs review before sharing
   because unknown CLI syntax can be misinterpreted by the heuristic fallback.
 - Root config tree: `isam_facts` subset `config_tree` reads `info configure flat` once
-  and parses the whole configuration into a nested, lossless tree
+  and parses the whole configuration into a nested, line-complete (masked) tree
   (`ansible_net_config_tree`), keyed by CLI path with attributes at the leaves. Every
   line is kept, including parts no resource family models yet. `config_tree_detail:
   true` reads `info configure detail flat` instead (also unset defaults; several times
