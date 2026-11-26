@@ -123,6 +123,32 @@ command (reset their attributes), values shown for unset (`none`, `not-applicabl
 
 Compare typed values (ints as ints); do not paper over type differences with `str()`.
 
+### Command safety
+
+No command containing a control character (U+0000-U+001F, U+007F) leaves the
+collection. A raw new line or carriage return ends the command and starts another one,
+a tab triggers command completion, and keys such as control-u/-w/-x edit or cancel the
+line (ISAM CLI guide, `1_-_ISAMCLI.pdf`, "Basic Type Formatting Rules" and "Command
+Repetition"). `cli_safety.check_cli_commands` runs in three places:
+`IsamResourceModule._compact`, which every path that shows or sends commands goes
+through; `facts_base.targeted_commands` and `get_scoped_config`, for targeted reads; and
+the cliconf plugin (`edit_config`, `get`, `send_command`) as a backstop. The error names
+command positions only, never command text, which may contain secrets. Families need no
+local check; action modules still validate identifiers strictly (`validate_identifier`).
+
+Quoting inside values (an open item). The CLI guide says that a printable string must be
+in double quotes if it contains `"`, `\`, `?`, `#`, a space, a tab, a carriage return or a
+new line. Inside the string, `"` and `\` must be escaped with `\`, and `\r`, `\t` and `\n`
+are the escaped forms of carriage return, tab and new line. Three quoting helpers escape
+`"` as `\"`, which matches the guide: `attribute_table.quote_value`, the vlans name in
+`rm_templates/vlans.py` (`_name_setval`) and `rm_templates/system_security.py`
+(`_quote`). None of them escapes a backslash. `quote_value` and `_quote` also do not quote
+a value because of `?`, and `quote_value` does not quote it because of `\` either. So a
+value with a backslash or a question mark can be read differently by the device: `?`
+outside quotes opens the online help. No fixture or live capture shows a value with an
+embedded `\"` or `\`. This has not been checked on a device; confirm it there before
+changing the quoting.
+
 `system`'s uniform settings use shared `Attr` definitions and clause helpers too, but
 retain their explicit orchestration: node-id prefixes, syslog instance attributes and
 sync-if-timing's bindings/references do not share the simple table-family state model.

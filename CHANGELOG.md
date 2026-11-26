@@ -70,6 +70,21 @@ return value on targeted reads.
   `confirmed_absent` from the catalog), `gathered` matches the full baseline,
   and a partial request fails before any read.
 
+### CLI command safety
+
+- A module value containing a control character (new line, carriage return,
+  tab, any other C0 character or DEL) can no longer inject CLI input: such a
+  value used to end the command and start a second one (for example
+  `admin equipment reboot-isam`), even in read-only `gathered`. Commands are
+  now checked centrally (`module_utils/network/isam/cli_safety.py`) in three
+  places. `IsamResourceModule` fails the module before commands are shown or
+  sent, in every state (including `rendered` and the offline renders).
+  Targeted reads (`facts_base.targeted_commands` and `get_scoped_config`) fail
+  before any read is sent. The cliconf plugin refuses the whole candidate in
+  `edit_config`, `get` and `send_command` before it writes anything to the
+  channel. The error names the command positions only, never the command
+  text, which may contain passwords.
+
 ## 1.0.0 (unreleased)
 
 Major-version preparation, not a published release. This line incorporates the
