@@ -5,9 +5,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import re
-import shlex
-
 __metaclass__ = type
 
 """
@@ -25,7 +22,10 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.vlans import (
     VLAN_DEFAULTS,
+    VLAN_FLAG_KEYWORDS,
+    VLAN_VALUE_KEYWORDS,
     VlansTemplate,
+    split_cli_tokens,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.vlans.vlans import (
     VlansArgs,
@@ -75,70 +75,38 @@ class VlansFacts(object):
             vlans_parser.validate_config(self.argument_spec, {"config": objs}, redact=True)
         ) or {}
 
-        facts['vlans'] = [dict((key, value) for key, value in entry.items() if VLAN_DEFAULTS.get(key) != value)
+        # device defaults (flags off included) are not reported
+        facts['vlans'] = [dict((key, value) for key, value in entry.items()
+                               if value is not False and VLAN_DEFAULTS.get(key) != value)
                           for entry in params.get('config') or []]
         ansible_facts['ansible_network_resources'].update(facts)
 
         return ansible_facts
 
-    def _flatten_config(self, data):
-        if any(line.strip().startswith("configure vlan id ") for line in (data or "").splitlines()):
-            result = []
-            flag_keys = {
-                "sntp-proxy", "vmac-not-in-opt61", "drly-srv-usr-side", "dhcp-opt82-nni",
-                "dhcp-opt82-uplink", "relay-id-dhcp", "dhcp-linerate", "pppoe-linerate",
-                "dhcpv6-linerate", "pppoe-l2-encaps", "dhcp-l2-encaps", "dhcpv6-l2-encaps",
-                "l2-encaps1", "pppoer-vlanaware", "dhcpr-vlanaware", "dhcpv6r-vlanaware",
-                "dhcpv6-relay-id", "dhcpv6-trst-port", "vmac-translation", "vmac-dnstr-filter",
-                "icmpv6-sec-fltr", "l2cp-transparent", "ipv4-mcast-ctrl", "ipv6-mcast-ctrl",
-                "mac-mcast-ctrl", "dis-proto-rip", "proto-ntp", "dis-ip-antispoof",
-                "unknown-unicast", "pt2ptgem-flooding", "mac-movement-ctrl", "arp-snooping",
-                "arp-polling", "mac-unauth",
-            }
-            value_keys = {
-                "mode", "name", "priority", "new-broadcast", "protocol-filter", "pppoe-relay-tag",
-                "new-secure-fwd", "aging-time", "in-qos-prof-name", "dhcp-opt82-ext",
-                "circuit-id-dhcp", "remote-id-dhcp", "circuit-id-pppoe", "remote-id-pppoe",
-                "dhcpv6-itf-id", "dhcpv6-remote-id", "enterprise-number", "arp-polling-ip",
-                "cvlan4095passthru",
-            }
-            for line in data.splitlines():
-                line = line.strip()
-                if not line.startswith("configure vlan id "):
-                    continue
-                match = re.match(r"configure vlan id (\S+)\s+(.*)", line)
-                if not match:
-                    result.append(line)
-                    continue
-                vlan_id, body = match.groups()
-                tokens = shlex.split(body)
-                result.append("id {0}".format(vlan_id))
-                for negate, key, value in iter_cli_fields(
-                    tokens,
-                    bool_fields=flag_keys,
-                    value_fields=value_keys,
-                ):
-                    if value is None:
-                        result.append("  {0}{1}".format("no " if negate else "", key))
-                    else:
-                        result.append("  {0}{1} {2}".format("no " if negate else "", key, value))
-            return result
-        lines = []
+    @staticmethod
+    def _flatten_config(data):
+        """One line per attribute, 'configure vlan id <id> [no] <kw> [<value>]', from the
+        packed flat lines or the hierarchical form ('id <id> ...' with indented attributes)."""
+        flat = []
         current_id = None
-        for line in (data or "").splitlines():
-            stripped = line.strip()
-            if not stripped or stripped.startswith("#") or stripped.startswith("echo"):
+        for raw in (data or "").splitlines():
+            line = raw.strip()
+            if not line or line.startswith(("#", "echo")) or line in ("configure", "configure vlan", "exit"):
                 continue
-            if stripped in ("configure", "configure vlan", "exit"):
-                continue
-
-            if stripped.startswith("id "):
-                parts = stripped.split()
-                if len(parts) > 1:
-                    current_id = parts[1]
-                lines.append(stripped)
-            elif current_id and line[:1].isspace():
-                lines.append("id {0} {1}".format(current_id, stripped))
-            else:
-                lines.append(stripped)
-        return lines
+            if line.startswith("configure vlan id "):
+                flat.append(line)
+            elif line.startswith("id "):
+                current_id = line.split()[1]
+                flat.append("configure vlan " + line)
+            elif current_id and raw[:1].isspace():
+                flat.append("configure vlan id %s %s" % (current_id, line))
+        result = []
+        for line in flat:
+            parts = line.split(None, 4)  # configure vlan id <id> [<attributes>]
+            vlan_id, body = parts[3], parts[4] if len(parts) > 4 else ""
+            result.append("configure vlan id %s" % vlan_id)
+            # values are unquoted here once; the parsers take the rest of the line as is
+            for negate, key, value in iter_cli_fields(split_cli_tokens(body), bool_fields=VLAN_FLAG_KEYWORDS,
+                                                      value_fields=VLAN_VALUE_KEYWORDS):
+                result.append(" ".join(w for w in ("configure vlan id", vlan_id, "no" if negate else "", key, value or "") if w))
+        return result

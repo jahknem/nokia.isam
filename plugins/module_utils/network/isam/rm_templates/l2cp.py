@@ -5,6 +5,10 @@ import re
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import parse_cli_fields
 
 
+class MissingMandatory(ValueError):
+    """A rendered entry lacks a value its creation command requires."""
+
+
 class L2cpTemplate(object):
     def parse(self, config):
         result = []
@@ -70,8 +74,9 @@ class L2cpSessionTemplate(object):
         for item in config or []:
             name = str(item["name"])
             if item.get("bras_ip_address") is None:
-                commands.append("configure l2cp no session %s" % name)
-                continue
+                # bras-ip-address is mandatory when a session is created (CLI guide 39,
+                # lab ISAM); rendering an entry never turns into its removal
+                raise MissingMandatory("l2cp session %s: bras_ip_address is mandatory to render a session" % name)
             command = ["configure", "l2cp", "session", name, "bras-ip-address", str(item["bras_ip_address"])]
             for field, cli_name in cli_fields:
                 if item.get(field) is not None:
@@ -95,9 +100,9 @@ class L2cpUserPortTemplate(object):
     def render(self, config):
         commands = []
         for item in config or []:
-            prefix = "configure l2cp user-port %s" % item["name"]
             if item.get("partition_id") is None:
-                commands.append("configure l2cp no user-port %s partition-id" % item["name"])
-            else:
-                commands.append(prefix + " partition-id " + str(item["partition_id"]))
+                # the assignment is the pair (user-port, partition-id); without the id there
+                # is nothing to render (and never a removal)
+                raise MissingMandatory("l2cp user-port %s: partition_id is mandatory to render an assignment" % item["name"])
+            commands.append("configure l2cp user-port %s partition-id %s" % (item["name"], item["partition_id"]))
         return commands
