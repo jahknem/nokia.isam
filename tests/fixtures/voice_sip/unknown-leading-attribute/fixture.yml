@@ -1,0 +1,7 @@
+schema_version: 1
+resource: voice_sip
+device_type: Nokia ISAM
+software_version: synthetic-forward-compatibility
+command: info configure voice sip flat
+captured_at: '2026-11-19'
+source: synthetic-regression

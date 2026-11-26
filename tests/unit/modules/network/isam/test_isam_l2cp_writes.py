@@ -172,3 +172,31 @@ class TestL2cpUserPortWrites(_Base):
             "configure l2cp no user-port 1/1/1/2 partition-id 8",
         ])
         self.commands("deleted", [{"name": "1/1/1/9"}])
+
+
+def test_rendered_never_turns_a_partial_entry_into_a_removal(monkeypatch):
+    """A session needs bras_ip_address and an assignment its partition_id to be created;
+    rendered fails naming the missing field instead of rendering the removal form."""
+    from .module_runner import run_module
+
+    result = run_module(monkeypatch, "isam_l2cp_session", {"state": "rendered", "config": [{"name": "1", "alive_timer": "300"}]})
+    assert result.get("failed") and "bras_ip_address is mandatory" in result["msg"]
+    result = run_module(monkeypatch, "isam_l2cp_user_port", {"state": "rendered", "config": [{"name": "1/1/1/1"}]})
+    assert result.get("failed") and "partition_id is mandatory" in result["msg"]
+    assert run_module(monkeypatch, "isam_l2cp", {"state": "rendered", "config": [{"name": "l2cp"}]})["rendered"] == []
+    # complete entries render their creation commands
+    assert run_module(monkeypatch, "isam_l2cp_session", {"state": "rendered", "config": [
+        {"name": "1", "bras_ip_address": "192.0.2.10", "alive_timer": "300"}]})["rendered"] == [
+        "configure l2cp session 1 bras-ip-address 192.0.2.10 alive-timer 300"]
+    assert run_module(monkeypatch, "isam_l2cp_user_port", {"state": "rendered", "config": [
+        {"name": "1/1/1/1", "partition_id": "7"}]})["rendered"] == ["configure l2cp user-port 1/1/1/1 partition-id 7"]
+
+
+def test_l2cp_families_use_the_common_lifecycle():
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.l2cp.l2cp import L2cp
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.l2cp_session.l2cp_session import L2cpSession
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.l2cp_user_port.l2cp_user_port import L2cpUserPort
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
+
+    for cls in (L2cp, L2cpSession, L2cpUserPort):
+        assert cls.execute_module is IsamResourceModule.execute_module, cls

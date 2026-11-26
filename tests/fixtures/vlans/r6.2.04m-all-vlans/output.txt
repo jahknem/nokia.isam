@@ -1,0 +1,90 @@
+configure vlan id 99 mode residential-bridge name MGMT-1 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 99 dhcp-opt82-ext add-or-forward circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 110 mode residential-bridge name HSI-1 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 110 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 120 mode residential-bridge name VOICE-1 priority 5 new-secure-fwd enable aging-time 60000 in-qos-prof-name name:Default_TC5
+configure vlan id 120 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 130 mode residential-bridge name IPTV-1 priority 4 new-secure-fwd enable in-qos-prof-name name:Default_TC4
+configure vlan id 130 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 199 mode residential-bridge new-broadcast enable new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 231 mode residential-bridge name IPTV-2 priority 4 new-secure-fwd enable in-qos-prof-name name:Default_TC4
+configure vlan id 231 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 310 mode residential-bridge name HSI-2 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 310 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 311 mode residential-bridge name HSI-3 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 311 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 320 mode residential-bridge name VOICE-2 new-secure-fwd enable aging-time 60000 in-qos-prof-name name:Default_TC0
+configure vlan id 320 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 321 mode residential-bridge name VOICE-2 new-secure-fwd enable aging-time 60000 in-qos-prof-name name:Default_TC0
+configure vlan id 410 mode residential-bridge name HSI-4 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 410 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id dhcpv6-itf-id physical-id dhcpv6-remote-id customer-id
+configure vlan id 411 mode residential-bridge name HSI-5 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 411 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id dhcpv6-itf-id physical-id dhcpv6-remote-id customer-id
+configure vlan id 550 mode residential-bridge name HSI-6 pppoe-relay-tag configurable new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 550 circuit-id-pppoe physical-id remote-id-pppoe customer-id
+configure vlan id 551 mode residential-bridge name HSI-7 pppoe-relay-tag configurable new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 551 circuit-id-pppoe physical-id remote-id-pppoe customer-id
+configure vlan id 629 mode residential-bridge name TEST-1 in-qos-prof-name name:Default_TC0
+configure vlan id 629 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 631 mode residential-bridge name HSI-8 new-secure-fwd disable in-qos-prof-name name:Default_TC0
+configure vlan id 631 circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 699 mode residential-bridge name VOICE-3 priority 5 new-secure-fwd disable in-qos-prof-name name:Default_TC5
+configure vlan id 699 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 710 mode residential-bridge name HSI-9 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 710 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 711 mode residential-bridge name HSI-10 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 711 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 712 mode residential-bridge name HSI-11 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 712 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 713 mode residential-bridge name HSI-12 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 713 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 714 mode residential-bridge name HSI-13 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 714 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 715 mode residential-bridge name HSI-14 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 715 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 716 mode residential-bridge name HSI-15 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 716 dhcp-opt82-ext add-or-forward circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 717 mode residential-bridge name HSI-16 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 717 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 718 mode residential-bridge name HSI-17 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 718 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 719 mode residential-bridge name HSI-18 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 719 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 720 mode residential-bridge name VOICE-4 priority 5 new-secure-fwd enable aging-time 60000 in-qos-prof-name name:Default_TC5
+configure vlan id 720 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 721 mode residential-bridge name VOICE-5 priority 5 new-secure-fwd enable aging-time 60000 in-qos-prof-name name:Default_TC5
+configure vlan id 721 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 722 mode residential-bridge name VOICE-6 priority 5 new-secure-fwd enable aging-time 60000 in-qos-prof-name name:Default_TC0
+configure vlan id 722 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 723 mode residential-bridge name VOICE-7 priority 5 new-secure-fwd enable aging-time 60000 in-qos-prof-name name:Default_TC0
+configure vlan id 723 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 724 mode residential-bridge name VOICE-8 priority 5 new-secure-fwd enable aging-time 60000 in-qos-prof-name name:Default_TC0
+configure vlan id 724 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 725 mode residential-bridge name VOICE-9 priority 5 new-secure-fwd enable aging-time 60000 in-qos-prof-name name:Default_TC0
+configure vlan id 725 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 726 mode residential-bridge name VOICE-10 priority 5 new-secure-fwd enable aging-time 60000 in-qos-prof-name name:Default_TC0
+configure vlan id 726 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 727 mode residential-bridge name VOICE-11 priority 5 new-secure-fwd enable aging-time 60000 in-qos-prof-name name:Default_TC5
+configure vlan id 727 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 730 mode residential-bridge name IPTV-3 priority 4 new-secure-fwd enable in-qos-prof-name name:Default_TC4
+configure vlan id 730 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 731 mode residential-bridge name IPTV-4 priority 4 new-secure-fwd enable in-qos-prof-name name:Default_TC4
+configure vlan id 731 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 732 mode residential-bridge name IPTV-5 priority 4 new-secure-fwd enable in-qos-prof-name name:Default_TC4
+configure vlan id 732 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 740 mode residential-bridge name HSI-19 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 740 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 760 mode residential-bridge name TEST-2 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 760 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 800 mode residential-bridge name TEST-3 new-secure-fwd disable in-qos-prof-name name:Default_TC0
+configure vlan id 820 mode residential-bridge name VOICE-12 priority 5 new-secure-fwd enable aging-time 60000 in-qos-prof-name name:Default_TC5
+configure vlan id 820 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 1000 mode residential-bridge name HSI-20 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 1000 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id 1700 mode residential-bridge name HSI-21 new-secure-fwd enable in-qos-prof-name name:Default_TC0
+configure vlan id 1700 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id
+configure vlan id stacked:552:0 mode residential-bridge name TEST-4
+configure vlan id stacked:552:2 mode cross-connect name HSI-22 pppoe-relay-tag configurable in-qos-prof-name name:Default_TC0
+configure vlan id stacked:552:2 circuit-id-pppoe physical-id remote-id-pppoe customer-id
+configure vlan id stacked:552:3 mode cross-connect name HSI-22 pppoe-relay-tag configurable in-qos-prof-name name:Default_TC0
+configure vlan id stacked:552:3 circuit-id-pppoe physical-id remote-id-pppoe customer-id

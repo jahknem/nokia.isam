@@ -1,0 +1,3 @@
+configure voice sip vsp example future-timer 7 domain-name example.org ta4 5000
+configure voice sip lineid-syn-prof example future-option enabled pots-syntax "#"
+configure voice sip statistics stats-config future-flag per-line no per-board

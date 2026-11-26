@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.software_mngt.software_mngt import (
     Software_mngt,
 )
@@ -18,5 +20,6 @@ def test_deleted_oswp_preserves_unrequested_siblings():
     }
     resource.commands = []
     resource._tmplt = Software_mngtTemplate()
+    resource._module = SimpleNamespace(params={"config": {"oswp": [{"id": "1"}]}})
     resource.generate_commands()
     assert resource.commands == ["configure software-mngt no oswp 1"]
