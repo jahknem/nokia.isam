@@ -17,7 +17,7 @@ description:
   - I(clear_stats) is the operation and must be C(true). A bare C(admin ethernet statistics <stats-index>)
     without an operation only navigates to the interface in the admin hierarchy and performs no action, so it
     is rejected rather than reported as a change.
-version_added: 0.3.14
+version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:
   config:

@@ -47,7 +47,14 @@ options:
         type: str
         choices: [enable, disable]
         description: Multicast encryption setting.
-      auth_method: {type: str, description: PON authentication method.}
+      auth_method:
+        type: str
+        choices: [sn-slid, logical, loidpre, logical-std, loidpre-std, loid-sn-slid]
+        description:
+          - ONT authentication mode of the PON (C(auth-method)); device default C(sn-slid).
+          - C(sn-slid) serial number and SLID, C(logical) logical, C(loidpre) LOID-precedence mix,
+            C(logical-std) and C(loidpre-std) their standard variants, C(loid-sn-slid) LOID, serial number and SLID mixed.
+          - Can only be changed while the interface is administratively down.
       ponid_interval:
         type: int
         description: Interval to send GPON-ID PLOAM message in seconds.
@@ -62,9 +69,23 @@ options:
         type: int
         description: Maximum number of TCONT containers per upstream frame (0-64).
       max_ranging_onts: {type: int, description: Maximum number of ranging ONTs (0-128).}
-      pon_speed: {type: str, description: PON speed mode.}
-      burst_overhead: {type: str, description: Burst overhead mode.}
-      onu_prov_mode: {type: str, description: ONU provisioning mode.}
+      pon_speed:
+        type: str
+        choices: [nominal, 10g-10g, 10g-2.5g]
+        description:
+          - PON line rate (C(pon-speed)); device default C(nominal), the nominal rate of the PON technology.
+          - C(10g-10g) is 10G down / 10G up, C(10g-2.5g) 10G down / 2.5G up.
+      burst_overhead:
+        type: str
+        choices: [robust, reduced]
+        description: Burst mode overhead (C(burst-overhead)); device default C(robust).
+      onu_prov_mode:
+        type: str
+        choices: [semi-auto, auto]
+        description:
+          - ONU auto-provisioning mode (C(onu-prov-mode)); device default C(semi-auto).
+          - With C(semi-auto) the template file is named in the ONT configuration; with C(auto) it is selected
+            from the ONT type.
       admin_state:
         type: str
         choices: [up, down]
@@ -112,10 +133,148 @@ options:
           mode: {type: str, choices: [enable, disable, test], description: OTDR operating mode.}
       utilization:
         type: dict
-        description: PON and ONT utilization performance monitoring.
+        description: PON and ONT utilization performance monitoring (C(configure pon interface <idx> utilization)).
+        suboptions:
+          pon_pmcollect:
+            type: str
+            choices: [none, pm-enable, tca-enable, inherit]
+            description: PON utilization performance monitoring (C(pon-pmcollect)); C(inherit) (device default) takes the system-wide generic-pon value.
+          ont_pmcollect:
+            type: str
+            choices: [enable, disable, inherit]
+            description: Detailed per-ONT utilization performance monitoring (C(ont-pmcollect)); C(inherit) (device default) takes the system-wide generic-pon value.
+          ontbulk_pmcollect:
+            type: str
+            choices: [enable, disable]
+            description: ONT utilization PM bulk collection via BFMU (C(ontbulk-pmcollect)); device default C(disable).
+          threshold:
+            type: dict
+            description: Utilization TCA thresholds (C(utilization threshold)); every value is a number or C(disabled).
+            suboptions:
+              txmcutilhi:
+                type: str
+                description: Threshold on transmitted multicast utilization (percent, 0-100) raising the high-level alarm (C(txmcutilhi)), or C(disabled) (device default).
+              txmcutilmd:
+                type: str
+                description: Threshold on transmitted multicast utilization (percent, 0-100) raising the medium-level alarm (C(txmcutilmd)), or C(disabled) (device default).
+              txmcutillo:
+                type: str
+                description: Threshold on transmitted multicast utilization (percent, 0-100) raising the low-level alarm (C(txmcutillo)), or C(disabled) (device default).
+              txtotutilhi:
+                type: str
+                description: Threshold on total transmitted utilization (percent, 0-100) raising the high-level alarm (C(txtotutilhi)), or C(disabled) (device default).
+              txtotutilmd:
+                type: str
+                description: Threshold on total transmitted utilization (percent, 0-100) raising the medium-level alarm (C(txtotutilmd)), or C(disabled) (device default).
+              txtotutillo:
+                type: str
+                description: Threshold on total transmitted utilization (percent, 0-100) raising the low-level alarm (C(txtotutillo)), or C(disabled) (device default).
+              rxtotutilhi:
+                type: str
+                description: Threshold on total received utilization (percent, 0-100) raising the high-level alarm (C(rxtotutilhi)), or C(disabled) (device default).
+              rxtotutilmd:
+                type: str
+                description: Threshold on total received utilization (percent, 0-100) raising the medium-level alarm (C(rxtotutilmd)), or C(disabled) (device default).
+              rxtotutillo:
+                type: str
+                description: Threshold on total received utilization (percent, 0-100) raising the low-level alarm (C(rxtotutillo)), or C(disabled) (device default).
+              dbacongperiodhi:
+                type: str
+                description: Threshold on DBA congestion period (percent, 0-100) raising the high-level alarm (C(dbacongperiodhi)), or C(disabled) (device default).
+              dbacongperiodmd:
+                type: str
+                description: Threshold on DBA congestion period (percent, 0-100) raising the medium-level alarm (C(dbacongperiodmd)), or C(disabled) (device default).
+              dbacongperiodlo:
+                type: str
+                description: Threshold on DBA congestion period (percent, 0-100) raising the low-level alarm (C(dbacongperiodlo)), or C(disabled) (device default).
+              txucdropfrmhi:
+                type: str
+                description: Threshold on transmitted unicast dropped frames (0-1000000000) raising the high-level alarm (C(txucdropfrmhi)), or C(disabled) (device default).
+              txucdropfrmmd:
+                type: str
+                description: Threshold on transmitted unicast dropped frames (0-1000000000) raising the medium-level alarm (C(txucdropfrmmd)), or C(disabled) (device default).
+              txucdropfrmlo:
+                type: str
+                description: Threshold on transmitted unicast dropped frames (0-1000000000) raising the low-level alarm (C(txucdropfrmlo)), or C(disabled) (device default).
+              txmcdropfrmhi:
+                type: str
+                description: Threshold on transmitted multicast dropped frames (0-1000000000) raising the high-level alarm (C(txmcdropfrmhi)), or C(disabled) (device default).
+              txmcdropfrmmd:
+                type: str
+                description: Threshold on transmitted multicast dropped frames (0-1000000000) raising the medium-level alarm (C(txmcdropfrmmd)), or C(disabled) (device default).
+              txmcdropfrmlo:
+                type: str
+                description: Threshold on transmitted multicast dropped frames (0-1000000000) raising the low-level alarm (C(txmcdropfrmlo)), or C(disabled) (device default).
+              txbcdropfrmhi:
+                type: str
+                description: Threshold on transmitted broadcast dropped frames (0-1000000000) raising the high-level alarm (C(txbcdropfrmhi)), or C(disabled) (device default).
+              txbcdropfrmmd:
+                type: str
+                description: Threshold on transmitted broadcast dropped frames (0-1000000000) raising the medium-level alarm (C(txbcdropfrmmd)), or C(disabled) (device default).
+              txbcdropfrmlo:
+                type: str
+                description: Threshold on transmitted broadcast dropped frames (0-1000000000) raising the low-level alarm (C(txbcdropfrmlo)), or C(disabled) (device default).
+              rxtotdropfrmhi:
+                type: str
+                description: Threshold on total received dropped frames (0-1000000000) raising the high-level alarm (C(rxtotdropfrmhi)), or C(disabled) (device default).
+              rxtotdropfrmmd:
+                type: str
+                description: Threshold on total received dropped frames (0-1000000000) raising the medium-level alarm (C(rxtotdropfrmmd)), or C(disabled) (device default).
+              rxtotdropfrmlo:
+                type: str
+                description: Threshold on total received dropped frames (0-1000000000) raising the low-level alarm (C(rxtotdropfrmlo)), or C(disabled) (device default).
+              numtcint:
+                type: str
+                description: Contiguous 5-minute intervals (1-96) the non-DBA utilization thresholds must be exceeded before a TCA is raised or cleared (C(numtcint)); device default C(1).
+              numtcintdba:
+                type: str
+                description: Contiguous 5-minute intervals (1-96) the DBA congestion thresholds must be exceeded before a TCA is raised or cleared (C(numtcintdba)); device default C(1).
+              dbacongthresh:
+                type: str
+                description: DBA congestion threshold as a percentage (0-100) of the maximum consumable bandwidth (C(dbacongthresh)); device default C(90).
       deact_ont_tca:
         type: dict
-        description: Deactivated-ONT detection thresholds.
+        description: Deactivated-ONT detection for the PON (C(deact-ont-tca)).
+        suboptions:
+          mode:
+            type: str
+            choices: [disable, percent, number]
+            description: Detection mode (C(mode)); device default C(disable).
+          monitor_interval:
+            type: int
+            description: Detection interval in seconds (C(monitor-interval), 5-300); device default C(30).
+          threshold_percent:
+            type: dict
+            description: Thresholds in percent of the ONTs (C(threshold-percent)).
+            suboptions:
+              high:
+                type: int
+                description: Deactivated-ONT detection high threshold in percent (C(high), 1-100); device default C(90).
+              high_clr:
+                type: int
+                description: Deactivated-ONT detection high clear threshold in percent (C(high-clr), 1-100); device default C(90).
+              low:
+                type: int
+                description: Deactivated-ONT detection low threshold in percent (C(low), 1-100); device default C(40).
+              low_clr:
+                type: int
+                description: Deactivated-ONT detection low clear threshold in percent (C(low-clr), 1-100); device default C(40).
+          threshold_number:
+            type: dict
+            description: Thresholds as a number of ONTs (C(threshold-number)).
+            suboptions:
+              high:
+                type: int
+                description: Deactivated-ONT detection high threshold as a number of ONTs (C(high), 1-128); device default C(57).
+              high_clr:
+                type: int
+                description: Deactivated-ONT detection high clear threshold as a number of ONTs (C(high-clr), 1-128); device default C(57).
+              low:
+                type: int
+                description: Deactivated-ONT detection low threshold as a number of ONTs (C(low), 1-128); device default C(25).
+              low_clr:
+                type: int
+                description: Deactivated-ONT detection low clear threshold as a number of ONTs (C(low-clr), 1-128); device default C(25).
   running_config:
     description:
       - 'Native running configuration for parsed state.'
@@ -184,30 +343,44 @@ read_outcomes:
   returned: when I(state) is C(gathered) and the read is targeted
   type: dict
 # END read_outcomes
+# BEGIN resource_returns (generated by tools/sync_resource_return_docs.py; do not edit)
 before:
-  description: The configuration prior to module execution.
-  returned: when I(state) is C(merged), C(replaced), C(overridden), C(deleted)
+  description:
+  - The configuration before the module ran, in the format of I(config).
+  - With I(running_config) (offline preview) it is the supplied configuration.
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
 after:
-  description: The resulting configuration after module execution.
-  returned: when changed
+  description:
+  - The configuration read back from the device after the commands were sent, in the format of I(config).
+    In check mode nothing is sent, so it shows the unchanged configuration.
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted), commands were generated
+    and no I(running_config) was given
   type: list
 commands:
-  description: The set of commands pushed to the remote device.
-  returned: when I(state) is C(merged), C(replaced), C(overridden), C(deleted)
+  description:
+  - 'The commands sent to the device (in check mode: that would be sent).'
+  - With I(running_config) (offline preview) they are rendered only, never sent.
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
+  elements: str
 rendered:
-  description: The provided configuration rendered in device-native format.
+  description:
+  - The commands rendered from I(config) in device-native format, without a device (offline).
   returned: when I(state) is C(rendered)
   type: list
+  elements: str
 gathered:
-  description: Gathered resource facts.
+  description:
+  - The configuration read from the device, in the format of I(config).
   returned: when I(state) is C(gathered)
   type: list
 parsed:
-  description: Parsed structured data from I(running_config).
+  description:
+  - The I(running_config) text parsed into the format of I(config), without a device.
   returned: when I(state) is C(parsed)
   type: list
+# END resource_returns
 """
 
 from ansible.module_utils.basic import AnsibleModule

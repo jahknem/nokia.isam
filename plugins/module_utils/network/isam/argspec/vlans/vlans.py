@@ -158,6 +158,8 @@ class VlansArgs(object):  # pylint: disable=R0903
                 "cvlan4095passthru": {
                     "type": "str",
                     "choices": ["passthru", "not-applicable"],
+                    # "pass" in the name is not a password (validate-modules no_log check)
+                    "no_log": False,
                 },
                 "arp_snooping": {"aliases": ["arp-snooping"], "type": "bool"},
                 "arp_polling": {"aliases": ["arp-polling"], "type": "bool"},

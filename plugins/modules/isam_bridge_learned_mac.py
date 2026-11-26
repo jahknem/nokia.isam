@@ -19,7 +19,7 @@ description:
     C(admin bridge learned-unicast-mac <vlan-port> unicast-mac-address <mac>) without an operation only
     navigates to the entry in the admin hierarchy and performs no action, so it is rejected rather than
     reported as a change.
-version_added: 0.3.14
+version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:
   config:
