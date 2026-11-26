@@ -319,3 +319,11 @@ def test_standard_return_docs_are_in_sync():
     result = subprocess.run([sys.executable, str(ROOT / "tools" / "sync_resource_return_docs.py"), "--check"],
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, cwd=str(ROOT))
     assert result.returncode == 0, result.stdout
+
+
+def test_runtime_routes_and_groups_every_module():
+    runtime = yaml.safe_load((ROOT / "meta" / "runtime.yml").read_text())
+    assert sorted(runtime["action_groups"]["isam"]) == MODULE_NAMES
+    routing = runtime["plugin_routing"]["action"]
+    assert sorted(routing) == MODULE_NAMES
+    assert set(entry["redirect"] for entry in routing.values()) == {"nokia.isam.isam"}

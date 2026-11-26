@@ -1,12 +1,105 @@
 ---
 requires_ansible: ">=2.15.0"
+
+# module_defaults group: use "group/nokia.isam.isam" to set defaults for every module.
+action_groups:
+  isam:
+    - cli_config
+    - isam_alarm
+    - isam_ani_onts
+    - isam_arp_relay
+    - isam_bridge_learned_mac
+    - isam_bridges
+    - isam_cfm
+    - isam_channel_pair_pm
+    - isam_cwmp_plt
+    - isam_dhcp_relay
+    - isam_dhcp_relay_port_stats
+    - isam_dhcp_server
+    - isam_dist_service
+    - isam_efm_oam_interface
+    - isam_epon_interfaces
+    - isam_equipment
+    - isam_equipment_onts
+    - isam_equipment_replan
+    - isam_error
+    - isam_ethernet_line
+    - isam_ethernet_onts
+    - isam_ethernet_statistics
+    - isam_facts
+    - isam_generic_pon
+    - isam_igmp
+    - isam_ihub_lags
+    - isam_ihub_ports
+    - isam_ihub_services
+    - isam_interface_alarms
+    - isam_interface_cages
+    - isam_interfaces
+    - isam_iphost
+    - isam_ipv6_antispoofing_slot
+    - isam_l2cp
+    - isam_l2cp_session
+    - isam_l2cp_user_port
+    - isam_l2uni_onts
+    - isam_li_vlan
+    - isam_linetest
+    - isam_link_agg
+    - isam_mcast_control
+    - isam_mcast_general
+    - isam_multicast
+    - isam_nat
+    - isam_ngpon2_channel_groups
+    - isam_ntp_onts
+    - isam_pon_global
+    - isam_pon_interfaces
+    - isam_pppoe_client_interface
+    - isam_pppoe_client_ppp_profile
+    - isam_pppoel2_statistics
+    - isam_pppox_relay_global
+    - isam_qos_global
+    - isam_qos_interfaces
+    - isam_qos_maps
+    - isam_qos_profiles
+    - isam_qos_tca
+    - isam_security_ext_authenticator
+    - isam_software_mngt
+    - isam_system
+    - isam_system_security
+    - isam_topology_discovery
+    - isam_traps
+    - isam_trouble_shooting_pon
+    - isam_uni_onts
+    - isam_vlan_global
+    - isam_vlans
+    - isam_voice_sip
+    - isam_xdsl_boards
+    - isam_xdsl_bonding
+    - isam_xdsl_inm
+    - isam_xdsl_lines
+    - isam_xdsl_onts
+    - isam_xdsl_profiles
+    - isam_xdsl_system
+    - isam_xstp
+
+# Every module runs through the nokia.isam.isam action plugin (plugins/action/isam.py),
+# like the platform action plugins of other network collections. The plugin checks the
+# connection type, propagates check mode for direct execution and runs offline action
+# states (merged/replaced/overridden/deleted with running_config) without opening the
+# device connection. Modules that never take that offline path (isam_facts, cli_config,
+# the action modules, IHUB and isam_topology_discovery) are routed too: for them the
+# plugin only adds the connection check and netcommon direct execution (IHUB modules,
+# whose files do not import AnsibleModule, fall back to normal execution).
 plugin_routing:
   action:
+    cli_config:
+      redirect: nokia.isam.isam
     isam_alarm:
       redirect: nokia.isam.isam
     isam_ani_onts:
       redirect: nokia.isam.isam
     isam_arp_relay:
+      redirect: nokia.isam.isam
+    isam_bridge_learned_mac:
       redirect: nokia.isam.isam
     isam_bridges:
       redirect: nokia.isam.isam
@@ -17,6 +110,8 @@ plugin_routing:
     isam_cwmp_plt:
       redirect: nokia.isam.isam
     isam_dhcp_relay:
+      redirect: nokia.isam.isam
+    isam_dhcp_relay_port_stats:
       redirect: nokia.isam.isam
     isam_dhcp_server:
       redirect: nokia.isam.isam
@@ -38,9 +133,19 @@ plugin_routing:
       redirect: nokia.isam.isam
     isam_ethernet_onts:
       redirect: nokia.isam.isam
+    isam_ethernet_statistics:
+      redirect: nokia.isam.isam
+    isam_facts:
+      redirect: nokia.isam.isam
     isam_generic_pon:
       redirect: nokia.isam.isam
     isam_igmp:
+      redirect: nokia.isam.isam
+    isam_ihub_lags:
+      redirect: nokia.isam.isam
+    isam_ihub_ports:
+      redirect: nokia.isam.isam
+    isam_ihub_services:
       redirect: nokia.isam.isam
     isam_interface_alarms:
       redirect: nokia.isam.isam
@@ -100,11 +205,15 @@ plugin_routing:
       redirect: nokia.isam.isam
     isam_qos_tca:
       redirect: nokia.isam.isam
+    isam_security_ext_authenticator:
+      redirect: nokia.isam.isam
     isam_software_mngt:
       redirect: nokia.isam.isam
     isam_system:
       redirect: nokia.isam.isam
     isam_system_security:
+      redirect: nokia.isam.isam
+    isam_topology_discovery:
       redirect: nokia.isam.isam
     isam_traps:
       redirect: nokia.isam.isam
