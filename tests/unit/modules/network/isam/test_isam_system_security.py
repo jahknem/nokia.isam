@@ -536,3 +536,18 @@ def test_parse_quoted_segments_and_quoted_keyword_spelling():
     ], module=None).parse()
     assert got["general"] == {"login_banner": "hallo world", "welcome_banner": "x"}
     assert got["ssh"]["sftp_users"] == [{"name": "u", "auth_type": "password", "key_type": "rsa"}]
+
+
+def test_targeted_pae_port_with_defaults_only_is_found_by_its_detail_read(monkeypatch):
+    """DS-LIN-TEST-01 2026-11-26: 'pae port 1/1/8/1 flat' prints the header only; 'flat detail'
+    prints 'configure system security pae port 1/1/8/1 no initialize'."""
+    from .module_runner import run_module
+
+    device = {"info configure system security pae port 1/1/8/1 flat detail":
+              "configure system security pae port 1/1/8/1 no initialize\n"}
+    result = run_module(monkeypatch, "isam_system_security",
+                        {"state": "gathered", "config": {"pae": {"ports": [{"port": "1/1/8/1"}]}}}, device)
+    assert result["gathered"]["pae"]["ports"] == [{"port": "1/1/8/1"}]
+    absent = run_module(monkeypatch, "isam_system_security",
+                        {"state": "gathered", "config": {"pae": {"ports": [{"port": "1/1/8/1"}]}}}, {})
+    assert not (absent["gathered"].get("pae") or {}).get("ports")
