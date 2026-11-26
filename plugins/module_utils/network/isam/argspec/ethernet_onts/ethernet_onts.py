@@ -50,6 +50,35 @@ class Ethernet_ontsArgs(object):  # pylint: disable=R0903
                 "pwr_override": {"type": "str", "choices": ["enable", "disable"]},
                 "lpt_mode": {"type": "str", "choices": ["not-supported", "enabled", "disabled"]},
                 "admin_state": {"type": "str", "choices": ["up", "down"]},
+                "phy": {
+                    "type": "dict",
+                    "options": {
+                        "pm": {"type": "str", "choices": ["enable", "disable"]},
+                    },
+                },
+                "l2": {
+                    "type": "dict",
+                    "options": {
+                        "pm": {"type": "str", "choices": ["enable", "disable"]},
+                        "tca": {"type": "str", "choices": ["enable", "disable"]},
+                        "dropped_frames_up": {"type": "str"},
+                        "dropped_frames_dn": {"type": "str"},
+                        "pm_collect_ext": {
+                            "type": "dict",
+                            "options": {
+                                "pm_collect": {"type": "str", "choices": ["enable", "disable"]},
+                                "p_bits": {"type": "int"},
+                                "vlan_id": {"type": "int"},
+                            },
+                        },
+                    },
+                },
+                "cfm": {
+                    "type": "dict",
+                    "options": {
+                        "portshut_ais": {"type": "bool"},
+                    },
+                },
             },
         },
         "running_config": {"type": "str"},

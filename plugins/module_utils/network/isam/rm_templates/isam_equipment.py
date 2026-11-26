@@ -107,5 +107,162 @@ class Isam_equipmentTemplate(NetworkTemplate):
                 },
             },
         },
+        {
+            "name": "diagnostics_sfp.rssi_prof_id",
+            "compval": "rssi_prof_id",
+            "getval": re.compile(r"^configure\sequipment\sdiagnostics\ssfp\s(?P<id>\S+)\srssi-prof-id\s(?P<rssi_prof_id>\d+)$"),
+            "setval": "configure equipment diagnostics sfp {{ id }} rssi-prof-id {{ rssi_prof_id }}",
+            "remval": "configure equipment diagnostics sfp {{ id }} no rssi-prof-id",
+            "result": {
+                "diagnostics_sfp": {
+                    "{{ id }}": {"id": "{{ id }}", "rssi_prof_id": "{{ rssi_prof_id }}"},
+                },
+            },
+        },
+        {
+            "name": "diagnostics_sfp.rssi_state",
+            "compval": "rssi_state",
+            "getval": re.compile(r"^configure\sequipment\sdiagnostics\ssfp\s(?P<id>\S+)\srssi-state\s(?P<rssi_state>\S+)$"),
+            "setval": "configure equipment diagnostics sfp {{ id }} rssi-state {{ rssi_state }}",
+            "remval": "configure equipment diagnostics sfp {{ id }} no rssi-state",
+            "result": {
+                "diagnostics_sfp": {
+                    "{{ id }}": {"id": "{{ id }}", "rssi_state": "{{ rssi_state }}"},
+                },
+            },
+        },
+        {
+            "name": "protection_element.redcy_ctrl_status",
+            "compval": "redcy_ctrl_status",
+            "getval": re.compile(r"^configure\sequipment\sprotection-element\s(?P<id>\S+)\sredcy-ctrl-status\s(?P<redcy_ctrl_status>\S+)$"),
+            "setval": "configure equipment protection-element {{ id }} redcy-ctrl-status {{ redcy_ctrl_status }}",
+            "remval": "configure equipment protection-element {{ id }} no redcy-ctrl-status",
+            "result": {
+                "protection_elements": {
+                    "{{ id }}": {"id": "{{ id }}", "redcy_ctrl_status": "{{ redcy_ctrl_status }}"},
+                },
+            },
+        },
+        {
+            "name": "rack.description",
+            "compval": "description",
+            "getval": re.compile(r"^configure\sequipment\srack\s(?P<id>\S+)\sdescription\s(?P<description>.+)$"),
+            "setval": "configure equipment rack {{ id }} description {{ description }}",
+            "remval": "configure equipment rack {{ id }} no description",
+            "result": {
+                "racks": {
+                    "{{ id }}": {"id": "{{ id }}", "description": "{{ description }}"},
+                },
+            },
+        },
+        {
+            "name": "external_link_assign.remote",
+            "compval": "remote",
+            "getval": re.compile(r"^configure\sequipment\sexternal-link-assign\s(?P<id>\S+)\sremote\s(?P<remote>\S+)$"),
+            "setval": "configure equipment external-link-assign {{ id }} remote {{ remote }}",
+            "remval": "configure equipment external-link-assign {{ id }} no remote",
+            "result": {
+                "external_link_assigns": {
+                    "{{ id }}": {"id": "{{ id }}", "remote": "{{ remote }}"},
+                },
+            },
+        },
+        {
+            "name": "external_link_host.direction",
+            "compval": "direction",
+            "getval": re.compile(r"^configure\sequipment\sexternal-link-host\s(?P<id>\S+)\sdirection\s(?P<direction>\S+)$"),
+            "setval": "configure equipment external-link-host {{ id }} direction {{ direction }}",
+            "remval": "configure equipment external-link-host {{ id }} no direction",
+            "result": {
+                "external_link_hosts": {
+                    "{{ id }}": {"id": "{{ id }}", "direction": "{{ direction }}"},
+                },
+            },
+        },
+        {
+            "name": "envbox.enable_supervise",
+            "compval": "enable_supervise",
+            "getval": re.compile(r"^configure\sequipment\senvbox\s((?P<negate>no\senable-supervise)|enable-supervise)$"),
+            "setval": "configure equipment envbox enable-supervise",
+            "remval": "configure equipment envbox no enable-supervise",
+            "result": {
+                "envbox": {"enable_supervise": "{{ False if negate is defined else True }}"},
+            },
+        },
+        {
+            "name": "isam.description",
+            "compval": "description",
+            "getval": re.compile(r"^configure\sequipment\sisam\sdescription\s(?P<description>.+)$"),
+            "setval": "configure equipment isam description {{ description }}",
+            "remval": "configure equipment isam no description",
+            "result": {
+                "isam": {"description": "{{ description }}"},
+            },
+        },
     ]
     # fmt: on
+
+
+# Attributes read from 'info configure equipment ... detail' (help: configure equipment shelf/slot/applique).
+# (section, field, CLI name, device default); a value at its default is printed as 'no <attr>' and not reported.
+EQUIPMENT_VALUE_FIELDS = (
+    ("shelf", "class", "class", "main-ethernet"),
+    ("shelf", "mode", "mode", "no-extended-lt-slots"),
+    ("slot", "alarm_profile", "alarm-profile", "none"),
+    ("slot", "capab_profile", "capab-profile", "not_applicable"),
+    ("slot", "board_40gkr4", "board-40gkr4", "inherited"),
+    ("slot", "operational_mode", "operational-mode", "not-set"),
+    ("slot", "dual_host_ip", "dual-host-ip", "0.0.0.0"),
+    ("slot", "dual_host_loc", "dual-host-loc", "none"),
+    ("applique", "applique_profile", "applique-profile", "not_applicable"),
+)
+# (section, field, CLI name); default False ('no <attr>').
+EQUIPMENT_FLAG_FIELDS = (
+    ("shelf", "lock", "lock"),
+    ("slot", "power_down", "power-down"),
+)
+EQUIPMENT_SECTIONS = {"shelf": "shelves", "slot": "slots", "applique": "appliques"}
+
+
+def _equipment_value_parser(section, field, cli_name):
+    return {
+        "name": section + "." + field,
+        "compval": field,
+        "getval": re.compile(
+            r"^configure\sequipment\s" + section + r"\s(?P<id>\S+)\s" + re.escape(cli_name) + r"\s(?P<value>\S+)$"
+        ),
+        "setval": "configure equipment " + section + " {{ id }} " + cli_name + " {{ " + field + " }}",
+        "remval": "configure equipment " + section + " {{ id }} no " + cli_name,
+        "result": {
+            EQUIPMENT_SECTIONS[section]: {"{{ id }}": {"id": "{{ id }}", field: "{{ value }}"}},
+        },
+    }
+
+
+def _equipment_flag_parser(section, field, cli_name):
+    return {
+        "name": section + "." + field,
+        "compval": field,
+        "getval": re.compile(r"^configure\sequipment\s" + section + r"\s(?P<id>\S+)\s" + re.escape(cli_name) + r"$"),
+        "setval": "configure equipment " + section + " {{ id }} " + cli_name,
+        "remval": "configure equipment " + section + " {{ id }} no " + cli_name,
+        "result": {
+            EQUIPMENT_SECTIONS[section]: {"{{ id }}": {"id": "{{ id }}", field: True}},
+        },
+    }
+
+
+Isam_equipmentTemplate.PARSERS.extend(_equipment_value_parser(s, f, c) for s, f, c, _d in EQUIPMENT_VALUE_FIELDS)
+Isam_equipmentTemplate.PARSERS.extend(_equipment_flag_parser(s, f, c) for s, f, c in EQUIPMENT_FLAG_FIELDS)
+# configure equipment shelf (index) [ no description | description <Description-127> ]; quoted when it has spaces.
+Isam_equipmentTemplate.PARSERS.append(
+    {
+        "name": "shelf.description",
+        "compval": "description",
+        "getval": re.compile(r"^configure\sequipment\sshelf\s(?P<id>\S+)\sdescription\s(?P<description>.+)$"),
+        "setval": "configure equipment shelf {{ id }} description "
+                  "{{ '\"' + description + '\"' if ' ' in description or description == '' else description }}",
+        "remval": "configure equipment shelf {{ id }} no description",
+        "result": {"shelves": {"{{ id }}": {"id": "{{ id }}", "description": "{{ description }}"}}},
+    }
+)

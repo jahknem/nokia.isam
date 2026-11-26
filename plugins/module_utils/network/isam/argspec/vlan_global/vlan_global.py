@@ -16,6 +16,7 @@ class Isam_vlan_globalArgs(object):  # pylint: disable=R0903
                     "type": "dict",
                     "options": {
                         "drop_unknown_multicast": {"type": "bool"},
+                        "priority_policy": {"type": "str"},
                     },
                 },
                 "priority_regen": {

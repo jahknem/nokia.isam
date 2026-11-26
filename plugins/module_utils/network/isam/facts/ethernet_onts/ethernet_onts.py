@@ -17,15 +17,27 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
     utils,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
-    get_scoped_config,
+    get_targeted_config,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.ethernet_onts.ethernet_onts import (
     Ethernet_ontsArgs,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.ethernet_onts import (
+    ETHERNET_ONT_SUBNODE_FLAGS,
+    ETHERNET_ONT_SUBNODE_VALUES,
     Ethernet_ontsTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    iter_cli_fields,
+)
+
+# CLI node ('phy', 'l2', 'l2 pm-collect-ext', 'cfm') -> (value attributes, flag attributes)
+_SUBNODES = {}
+for _path, _node, _field, _cli, _value_re, _default in ETHERNET_ONT_SUBNODE_VALUES:
+    _SUBNODES.setdefault(_node, ([], []))[0].append(_cli)
+for _path, _node, _field, _cli in ETHERNET_ONT_SUBNODE_FLAGS:
+    _SUBNODES.setdefault(_node, ([], []))[1].append(_cli)
 
 
 class Ethernet_ontsFacts(object):
@@ -36,19 +48,10 @@ class Ethernet_ontsFacts(object):
         self.argument_spec = Ethernet_ontsArgs.argument_spec
 
     def get_config(self, connection):
-        """Wrapper method for `connection.get()`."""
-        config = self._module.params.get("config") or []
-        commands = [
-            "info configure ethernet ont %s flat detail" % item["uni_idx"]
-            for item in config
-        ]
-        return get_scoped_config(
-            self._module,
-            connection,
-            config,
-            "info configure ethernet ont flat",
-            commands,
-        )
+        """The whole resource, or only the ONTs named in config (targeted gathering)."""
+        return get_targeted_config(self._module, connection, "ethernet_onts", "info configure ethernet ont flat", {
+            "config": "info configure ethernet ont %s flat detail",
+        }, write_states=True)
 
     def populate_facts(self, connection, ansible_facts, data=None):
         """Populate the facts for Ethernet_onts network resource."""
@@ -60,7 +63,7 @@ class Ethernet_ontsFacts(object):
         data = self._flatten_config(data)
 
         ethernet_onts_parser = Ethernet_ontsTemplate(lines=data, module=self._module)
-        objs = list(ethernet_onts_parser.parse().values())
+        objs = [self._drop_subnode_defaults(obj) for obj in ethernet_onts_parser.parse().values()]
 
         ansible_facts["ansible_network_resources"].pop("ethernet_onts", None)
         params = utils.remove_empties(
@@ -71,6 +74,17 @@ class Ethernet_ontsFacts(object):
         ansible_facts["ansible_network_resources"].update(facts)
 
         return ansible_facts
+
+    @staticmethod
+    def _drop_subnode_defaults(obj):
+        """Sub-node attributes printed with their device default value are not reported."""
+        for path, _node, field, _cli, _value_re, default in ETHERNET_ONT_SUBNODE_VALUES:
+            node = obj
+            for key in path.split("."):
+                node = node.get(key) if isinstance(node, dict) else None
+            if isinstance(node, dict) and field in node and str(node[field]) == str(default):
+                node.pop(field)
+        return obj
 
     def _count_spaces(self, line):
         return len(line) - len(line.lstrip(" "))
@@ -119,7 +133,10 @@ class Ethernet_ontsFacts(object):
         flat_config = []
         for leaf in root.leaves:
             line = " ".join(node.name for node in leaf.path)
-            if line.startswith("configure ethernet ont "):
+            subnode = self._split_subnode_line(line.split()) if line.startswith("configure ethernet ont ") else None
+            if subnode is not None:
+                flat_config.extend(subnode)
+            elif line.startswith("configure ethernet ont "):
                 flat_config.append(line)
             elif line.startswith("configure "):
                 flat_config.append(line)
@@ -132,11 +149,33 @@ class Ethernet_ontsFacts(object):
         "pse-pw-priority", "pwr-override", "lpt-mode", "admin-state",
     }
 
+    @staticmethod
+    def _split_subnode_line(tokens):
+        """'configure ethernet ont <uni> l2 no pm tca enable ...' -> one line per set attribute.
+
+        None when the line is not a sub-node line. 'no <attr>' (the default) gives no line;
+        unknown keywords are skipped.
+        """
+        if len(tokens) < 5 or tokens[4] not in ("phy", "l2", "cfm"):
+            return None
+        node_len = 6 if tokens[4] == "l2" and len(tokens) > 5 and tokens[5] == "pm-collect-ext" else 5
+        node = " ".join(tokens[4:node_len])
+        values, flags = _SUBNODES.get(node, ((), ()))
+        prefix = " ".join(tokens[:node_len])
+        return [
+            prefix + " " + key + ("" if value is None else " " + value)
+            for negate, key, value in iter_cli_fields(tokens[node_len:], bool_fields=flags, value_fields=values)
+            if not negate
+        ]
+
     def _split_packed_line(self, line):
         try:
             tokens = shlex.split(line)
         except ValueError:
             return [line]
+        subnode = self._split_subnode_line(tokens)
+        if subnode is not None:
+            return subnode
         starts = [
             index for index, token in enumerate(tokens[4:], 4)
             if (token in self._PACKED_WORDS and (index == 4 or tokens[index - 1] != "no"))

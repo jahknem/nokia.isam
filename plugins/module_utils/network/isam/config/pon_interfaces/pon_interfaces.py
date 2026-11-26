@@ -6,7 +6,7 @@ __metaclass__ = type
 
 from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import dict_merge
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import ResourceModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.pon_interfaces import (
     NAME_DEPENDENT_DEFAULTS,
@@ -43,7 +43,7 @@ def _without_defaults(entry, keep=()):
     return out
 
 
-class Pon_interfaces(ResourceModule):
+class Pon_interfaces(IsamResourceModule):
     """The isam_pon_interfaces config class."""
 
     COMPACT_COMMAND_SCOPES = (
@@ -120,14 +120,6 @@ class Pon_interfaces(ResourceModule):
                 "interface.deact_ont_tca.%s.%s" % (section, field)
                 for field in ("high", "high_clr", "low", "low_clr")
             )
-
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
 
     def generate_commands(self):
         haved = {entry["name"]: _without_defaults(entry) for entry in self.have}
