@@ -15,7 +15,12 @@ short_description: Manage Nokia ISAM LineTest configuration
 description:
   - Supports declarative single LineTest session and parameter configuration
     (C(configure linetest single ltsession) and C(configure linetest single ltparm)).
-  - Sends only configuration commands; it does not execute LineTest actions.
+  - A session exists only after C(session-cmd create) and is removed with C(session-cmd destroy).
+    C(merged), C(replaced) and C(overridden) send C(session-cmd create) for a requested session that
+    does not exist, before its attributes; C(deleted) and C(overridden) send C(session-cmd destroy)
+    only for existing sessions. No other LineTest action (such as C(starttest)) is sent, and
+    C(rendered) renders the declarative attributes only.
+  - Parameters of a session that neither exists nor is requested in I(config) are rejected.
   - Omitted options are not rendered or reset with C(merged). With C(replaced) or
     C(overridden), omitted configured C(group_opt), C(busy_overwrite) and C(force_measure)
     are reset using their trailing C(no) form. Unchanged parameters emit no commands.

@@ -235,6 +235,61 @@ def test_named_field_deletion_does_not_shutdown_or_remove_ont(monkeypatch, capsy
     assert connection.writes == [result["commands"]]
 
 
+TWO_ONTS = ("configure equipment ont interface 1/1/6/1/1 sw-ver-pland auto admin-state up\n"
+            "configure equipment ont slot 1/1/6/1/1/1 planned-card-type ethernet plndnumdataports 1 admin-state up\n"
+            "configure equipment ont interface 1/1/6/1/2 sw-ver-pland auto admin-state up\n"
+            "configure equipment ont slot 1/1/6/1/2/1 planned-card-type ethernet plndnumdataports 1 admin-state up\n")
+KEEP_FIRST = {"interfaces": [{"ont_idx": "1/1/6/1/1", "sw_ver_pland": "auto", "admin_state": "up"}],
+              "slots": [{"ont_slot_idx": "1/1/6/1/1/1", "planned_card_type": "ethernet",
+                         "plndnumdataports": 1, "admin_state": "up"}]}
+
+
+def test_overridden_removes_extra_ont_like_deleted(monkeypatch, capsys):
+    # The device refuses to delete an ONT/slot that is not admin down, and an ONT that
+    # still has slots: overridden needs the same prelude and order as deleted.
+    result, _ = invoke(monkeypatch, capsys, isam_equipment_onts, KEEP_FIRST, "overridden", TWO_ONTS)
+    assert result["commands"] == [
+        "configure equipment ont interface 1/1/6/1/2 admin-state down",
+        "configure equipment ont slot 1/1/6/1/2/1 admin-state down",
+        "configure equipment ont no slot 1/1/6/1/2/1",
+        "configure equipment ont no interface 1/1/6/1/2",
+    ]
+
+
+def test_overridden_removes_extra_slot_of_kept_ont_after_shutdown(monkeypatch, capsys):
+    config = {"interfaces": KEEP_FIRST["interfaces"] + [
+        {"ont_idx": "1/1/6/1/2", "sw_ver_pland": "auto", "admin_state": "up"}], "slots": KEEP_FIRST["slots"]}
+    result, _ = invoke(monkeypatch, capsys, isam_equipment_onts, config, "overridden", TWO_ONTS)
+    assert result["commands"] == [
+        "configure equipment ont slot 1/1/6/1/2/1 admin-state down",
+        "configure equipment ont no slot 1/1/6/1/2/1",
+    ]
+
+
+def test_overridden_verifies_shutdown_before_any_removal(monkeypatch, capsys):
+    connection = ShutdownConnection()
+    monkeypatch.setattr(equipment_onts.time, "sleep", lambda seconds: connection.events.append(("sleep", seconds)))
+    create = "configure equipment ont interface 1/1/6/1/9 sw-ver-pland auto"
+    result, _ = invoke(monkeypatch, capsys, isam_equipment_onts,
+                       {"interfaces": [{"ont_idx": "1/1/6/1/9", "sw_ver_pland": "auto"}]}, "overridden",
+                       check_mode=False, connection=connection)
+    assert result["commands"] == SHUTDOWNS + REMOVALS + [create]
+    assert connection.writes == [[command] for command in SHUTDOWNS + REMOVALS + [create]]
+    first_removal = connection.events.index(("write", [REMOVALS[0]]))
+    assert sum(event[0] == "sleep" for event in connection.events[:first_removal]) == 2
+
+
+def test_deleted_ont_by_identity_removes_its_slots_first(monkeypatch, capsys):
+    result, _ = invoke(monkeypatch, capsys, isam_equipment_onts, {"interfaces": [{"ont_idx": "1/1/6/1/2"}]},
+                       "deleted", TWO_ONTS)
+    assert result["commands"] == [
+        "configure equipment ont interface 1/1/6/1/2 admin-state down",
+        "configure equipment ont slot 1/1/6/1/2/1 admin-state down",
+        "configure equipment ont no slot 1/1/6/1/2/1",
+        "configure equipment ont no interface 1/1/6/1/2",
+    ]
+
+
 @pytest.mark.parametrize("state", ["merged", "replaced", "rendered"])
 def test_severity_no_value_is_not_replayed_onto_a_new_target(monkeypatch, capsys, state):
     name = "vlan-port:1/1/6/1/1/1/1:99"

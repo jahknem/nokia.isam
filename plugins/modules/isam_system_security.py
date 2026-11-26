@@ -25,6 +25,11 @@ description:
     reset attribute by attribute with C(no <attr>).
   - With I(state=deleted) and I(config), only the sections named in I(config) are deleted; an SNMP view,
     notify view or community given by name alone matches all its subtrees or host addresses.
+    An entry given by its identity alone is removed (or, if fixed, fully reset); an entry or
+    settings block naming attributes resets only those attributes.
+  - Passwords and secrets are never readable from the device, so C(replaced) and C(overridden)
+    keep them when an entry omits them; they are only changed when given.
+  - C(overridden) fails instead of removing a profile that a kept operator still uses.
 version_added: 0.3.14
 author: Jan Kühnemund (@jahknem)
 options:

@@ -427,6 +427,8 @@ options:
     - Deleting an ONT (C(interfaces)) removes its C(loops) and C(pm_collects) settings with it; no reset is sent for them.
     - With C(deleted) and no I(config), or an empty I(config), all gathered ONT interfaces, slots and software-control entries are removed. Interfaces are shut down before slots and interfaces are removed. This is destructive; provide explicit identities to limit deletion.
     - Whole-entry C(deleted) reasserts C(admin-state down) separately for each removed interface and slot, even if gathered down. Before any removal, live execution waits one second and checks targeted detail readback, up to five times. Unconfirmed shutdown or a read error stops deletion; commands are never retried. Named-setting deletion does not shut down the parent object.
+    - C(overridden) removes ONT interfaces and slots not given in I(config) the same way (shutdown, readback, then slots before interfaces).
+    - Removing an ONT interface (C(deleted) by identity, or C(overridden)) also removes that ONT's slots first; the device refuses to delete an ONT that still has slots.
     - Check mode reports the same shutdown/removal plan but does not write, wait or perform readiness polling. A write or verification failure reports accepted and pending commands; read back the device before deciding whether to retry.
     - Interface and slot C(admin_state) commands are emitted separately from other creation or update parameters.
     type: str
