@@ -43,24 +43,25 @@ DETAIL_DEFAULTS = "\n".join([
     + " no tpid no inner-pbit-remark no groupid no usacceptframetype no oltregenprofile",
 ])
 
-# Same port, every new attribute set (help syntax; VLAN-port values are synthetic).
+# Same port, every new attribute set to a non-default value (CLI guide 3HH-08079-FCEH-TCZZA
+# syntax and value ranges; the values are synthetic).
 DETAIL_SET = "\n".join([
     P + " no default-priority no mac-learn-off max-unicast-mac 5 no qos-profile no prio-regen-prof no prio-regen-name"
     " no max-committed-mac no mirror-mode no mirror-vlan outervlancapture 100 direction ingress no pvid-tagging-flag"
-    " no ds-pbit-mode default-tpid 8100",
+    " no ds-pbit-mode default-tpid 9100",
     P + " vlan-tpid0 0 tpid 88a8",
     P + " vlan-tpid1 1 tpid 9100",
     P + " pvid 99",
     P + " vlan-id 10 tag single-tagged l2fwder-vlan 710 vlan-scope local " + VLAN_DEFAULTS
-    + " tpid 8100 inner-pbit-remark 3 groupid 7 usacceptframetype single-tagged oltregenprofile name:R1",
+    + " tpid 8100 inner-pbit-remark remark groupid 7 usacceptframetype untagged oltregenprofile enabled",
     P + " vlan-id 99 no tag no l2fwder-vlan no vlan-scope " + VLAN_DEFAULTS
     + " no tpid no inner-pbit-remark no groupid no usacceptframetype no oltregenprofile",
 ])
 
-NEW_PORT = {"outervlancapture": 100, "direction": "ingress", "default_tpid": "8100",
+NEW_PORT = {"outervlancapture": 100, "direction": "ingress", "default_tpid": "9100",
             "vlan_tpid0": {"tpid": "88a8"}, "vlan_tpid1": {"tpid": "9100"}}
-NEW_VLAN = {"tpid": "8100", "inner_pbit_remark": "3", "groupid": "7",
-            "usacceptframetype": "single-tagged", "oltregenprofile": "name:R1"}
+NEW_VLAN = {"tpid": "8100", "inner_pbit_remark": "remark", "groupid": "7",
+            "usacceptframetype": "untagged", "oltregenprofile": "enabled"}
 
 
 def _port(text):
@@ -132,11 +133,11 @@ class TestBridgesGaps(_Base):
 
     def test_rendered_forms(self):
         rendered = self._run("rendered", self._full_config())["rendered"]
-        assert P + " max-unicast-mac 5 outervlancapture 100 direction ingress default-tpid 8100" in rendered
+        assert P + " max-unicast-mac 5 outervlancapture 100 direction ingress default-tpid 9100" in rendered
         assert P + " vlan-tpid0 0 tpid 88a8" in rendered
         assert P + " vlan-tpid1 1 tpid 9100" in rendered
-        assert (P + " vlan-id 10 tag single-tagged l2fwder-vlan 710 vlan-scope local tpid 8100 inner-pbit-remark 3"
-                " groupid 7 usacceptframetype single-tagged oltregenprofile name:R1") in rendered
+        assert (P + " vlan-id 10 tag single-tagged l2fwder-vlan 710 vlan-scope local tpid 8100 inner-pbit-remark remark"
+                " groupid 7 usacceptframetype untagged oltregenprofile enabled") in rendered
 
     def test_round_trip_rendered_reparses(self):
         rendered = self._run("rendered", self._full_config())["rendered"]
@@ -191,7 +192,7 @@ class TestBridgesGaps(_Base):
             P + " no mac-learn-off"]
 
     def test_deleted_named_new_attributes(self):
-        config = {"port": [{"port": "1/1/8/1", "default_tpid": "8100", "outervlancapture": 100,
+        config = {"port": [{"port": "1/1/8/1", "default_tpid": "9100", "outervlancapture": 100,
                             "vlan_tpid0": {"tpid": "88a8"}}]}
         commands = self._run("deleted", config, DETAIL_SET)["commands"]
         assert commands == [P + " no outervlancapture no default-tpid", P + " vlan-tpid0 0 no tpid"]
@@ -316,3 +317,78 @@ class TestBridgesMergeAndFlags(TestBridgesGaps):
         text = " ".join(result["rendered"])
         assert "prior-best-effort" in text and "prior-best-effort True" not in text
         assert "True" not in text and "False" not in text
+
+
+class TestBridgesDeletedNamedAttributes(TestBridgesGaps):
+    """deleted: a VLAN entry naming attributes resets only them; the port is removed
+    only for its identity alone or a whole entry (state contract)."""
+
+    U = "configure bridge port 1/1/1/1"
+    DEVICE = "\n".join([
+        U + " max-unicast-mac 5",
+        U + " vlan-id 100 tag single-tagged usacceptframetype untagged groupid 7",
+        U + " vlan-id 100 static-user ip-address 10.0.0.1",
+        U + " pvid 100",
+    ])
+
+    def test_naming_a_vlan_attribute_resets_only_that_attribute(self):
+        config = {"port": [{"port": "1/1/1/1", "vlan_id": [{"id": "100", "usacceptframetype": "all"}]}]}
+        assert self._run("deleted", config, self.DEVICE)["commands"] == [self.U + " vlan-id 100 no usacceptframetype"]
+        config = {"port": [{"port": "1/1/1/1", "vlan_id": [{"id": "100", "groupid": "7", "tag": "single-tagged"}]}]}
+        assert self._run("deleted", config, self.DEVICE)["commands"] == [self.U + " vlan-id 100 no tag no groupid"]
+
+    def test_naming_a_static_user_removes_only_that_address(self):
+        config = {"port": [{"port": "1/1/1/1", "vlan_id": [{"id": "100", "static_user": [{"ip_address": "10.0.0.1"}]}]}]}
+        assert self._run("deleted", config, self.DEVICE)["commands"] == [
+            self.U + " vlan-id 100 static-user no ip-address 10.0.0.1"]
+
+    def test_a_port_field_with_all_vlans_resets_the_field_and_removes_the_named_vlans(self):
+        config = {"port": [{"port": "1/1/1/1", "max_unicast_mac": 5, "vlan_id": [{"id": "100"}]}]}
+        assert self._run("deleted", config, self.DEVICE)["commands"] == [
+            self.U + " no max-unicast-mac", self.U + " no vlan-id 100"]
+
+    def test_identity_alone_and_whole_entry_remove_the_port(self):
+        removal = ["configure bridge no port 1/1/1/1"]
+        assert self._run("deleted", {"port": [{"port": "1/1/1/1"}]}, self.DEVICE)["commands"] == removal
+        gathered = self._run("gathered", {"port": [{"port": "1/1/1/1"}]}, self.DEVICE)["gathered"]
+        assert self._run("deleted", gathered, self.DEVICE)["commands"] == removal
+        # every VLAN by its identity alone and no port setting named
+        assert self._run("deleted", {"port": [{"port": "1/1/1/1", "vlan_id": [{"id": "100"}]}]},
+                         "\n".join([self.U + " vlan-id 100", self.U + " pvid 100"]))["commands"] == removal
+
+
+class TestBridgesDefaultsAreUnset(TestBridgesGaps):
+    """CLI guide defaults (default-tpid 8100, usacceptframetype all, ...) and False flags
+    count as unset: not reported, not reset, an explicit default sends nothing when the
+    device has it."""
+
+    U = "configure bridge port 1/1/1/1"
+    EXPLICIT_DEFAULTS = "\n".join([
+        U + " no mac-learn-off max-unicast-mac 5 outervlancapture 0 direction bidirection default-tpid 8100",
+        U + " vlan-tpid0 0 tpid 8100",
+        U + " vlan-tpid1 1 tpid 0",
+        U + " vlan-id 100 tag single-tagged no prior-best-effort inner-pbit-remark untouched groupid 0"
+        " usacceptframetype all oltregenprofile disabled",
+        U + " pvid 100",
+    ])
+
+    def test_defaults_are_not_reported(self):
+        for state, key in (("gathered", "gathered"),):
+            port = self._run(state, {"port": [{"port": "1/1/1/1"}]}, self.EXPLICIT_DEFAULTS)[key]["port"][0]
+            assert port == {"port": "1/1/1/1", "max_unicast_mac": 5, "pvid": 100,
+                            "vlan_id": [{"id": "100", "tag": "single-tagged"}]}
+        assert "mac_learn_off" not in _port(DETAIL_DEFAULTS)
+
+    def test_replaced_does_not_reset_defaults_the_device_prints(self):
+        config = {"port": [{"port": "1/1/1/1", "max_unicast_mac": 5, "pvid": 100,
+                            "vlan_id": [{"id": "100", "tag": "single-tagged"}]}]}
+        assert self._run("replaced", config, self.EXPLICIT_DEFAULTS)["commands"] == []
+
+    def test_an_explicit_default_is_idempotent_and_resets_a_non_default(self):
+        config = {"port": [{"port": "1/1/1/1", "default_tpid": "8100", "vlan_tpid0": {"tpid": "8100"},
+                            "vlan_id": [{"id": "100", "usacceptframetype": "all"}]}]}
+        assert self._run("merged", config, self.EXPLICIT_DEFAULTS)["commands"] == []
+        changed = self.EXPLICIT_DEFAULTS.replace("default-tpid 8100", "default-tpid 9100").replace(
+            "usacceptframetype all", "usacceptframetype untagged")
+        assert self._run("merged", config, changed)["commands"] == [
+            self.U + " default-tpid 8100", self.U + " vlan-id 100 usacceptframetype all"]

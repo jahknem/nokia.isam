@@ -279,9 +279,9 @@ class BridgesTemplate(NetworkTemplate):
             "remval": "configure bridge port {{ id }} no default-tpid",
             "result": {"port": {"{{ id }}": {"default_tpid": "{{ default_tpid }}"}}},
         },
-        # "configure bridge port <port> vlan-tpid<n> <n> [no] tpid <hex>" as printed by
-        # "info configure bridge port <port> flat detail". The set/removal forms repeat
-        # the read form (unverified on a device beyond the read).
+        # "configure bridge port <port> vlan-tpid0 0 [ no tpid | tpid <Vlan::Tpid> ]" and
+        # "... vlan-tpid1 1 ..." (CLI guide 3HH-08079-FCEH-TCZZA, chapters 25 and 26), the
+        # form "info configure bridge port <port> flat detail" prints.
         {
             "name": "vlan_tpid0",
             "compval": "vlan_tpid0.tpid",
@@ -791,8 +791,8 @@ class BridgesTemplate(NetworkTemplate):
 
 # VLAN-port attributes printed by "info configure bridge port <port> flat detail"
 # ("no inner-pbit-remark no groupid no usacceptframetype no oltregenprofile" when at
-# their defaults). No local help text: the "[no] <name> <value>" set/removal forms
-# follow the sibling attributes and are unverified on a device.
+# their defaults). Set/removal forms "[ no <name> | <name> <value> ]" from the CLI guide
+# (3HH-08079-FCEH-TCZZA 24.4 "Bridge Port to VLAN Association Configuration Command").
 _VLAN_VALUE_ATTRIBUTES = (
     ("inner_pbit_remark", "inner-pbit-remark"),
     ("groupid", "groupid"),
@@ -810,3 +810,39 @@ for _key, _cli in _VLAN_VALUE_ATTRIBUTES:
         "remval": "configure bridge port {{ id }} vlan-id {{ vlan_id }} no %s" % _cli,
         "result": {"port": {"{{ id }}": {"vlan": {"{{ vlan_id }}": {_key: "{{ value }}"}}}}},
     })
+
+
+# Device defaults of the attributes above (CLI guide 3HH-08079-FCEH-TCZZA, "optional
+# parameter with default"): a value equal to its default counts as unset. Facts do not
+# report it (the device prints "no <kw>" for it in detail, nothing in flat) and a request
+# naming it changes nothing when the device has the default already.
+PORT_DEFAULTS = {
+    "outervlancapture": 0,
+    "direction": "bidirection",
+    "default_tpid": "8100",
+}
+PORT_SUBNODE_DEFAULTS = {
+    "vlan_tpid0": {"tpid": "8100"},
+    "vlan_tpid1": {"tpid": "0"},
+}
+VLAN_DEFAULTS = {
+    "inner_pbit_remark": "untouched",
+    "groupid": "0",
+    "usacceptframetype": "all",
+    "oltregenprofile": "disabled",
+}
+
+
+def without_bridge_defaults(entry, defaults, subnode_defaults=None):
+    """entry without values equal to their device default and without False flags
+    (every flag of the family is off by default)."""
+    result = {}
+    for key, value in (entry or {}).items():
+        if value is False or (key in defaults and str(defaults[key]) == str(value)):
+            continue
+        if subnode_defaults and key in subnode_defaults and isinstance(value, dict):
+            value = without_bridge_defaults(value, subnode_defaults[key])
+            if not value:
+                continue
+        result[key] = value
+    return result

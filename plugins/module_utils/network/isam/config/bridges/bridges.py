@@ -28,11 +28,16 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
     Facts,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
+    covers_entry,
     normalize_bridge_vlan_alias,
     normalize_resource_keys,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.bridges import (
+    PORT_DEFAULTS,
+    PORT_SUBNODE_DEFAULTS,
+    VLAN_DEFAULTS,
     BridgesTemplate,
+    without_bridge_defaults,
 )
 
 
@@ -295,40 +300,64 @@ class Bridges(IsamResourceModule):
         return indexed
 
     def _delete_bridge_port(self, port_name, want, have, want_vlans, have_vlans):
+        """deleted for one requested port: an identity alone (or a whole entry) removes
+        the port; named attributes reset only themselves.
+
+        A VLAN entry is whole when it carries just its id or names every attribute the
+        VLAN has (covers_entry); it is removed ("no vlan-id"). The port itself is removed
+        when the request names only the port, or names every port setting it has and
+        every VLAN on it as a whole entry (e.g. as gathered).
+        """
         if not have:
             return
-        # A whole entry removes the port with everything on it: the identity alone,
-        # or a request naming every VLAN the port has (e.g. as gathered). Port
-        # settings do not decide it: a "detail" read reports defaults the request
-        # never names.
-        port_fields = {"port", "id", "vlan_id", "vlan"}
-        named = {key for key, value in want.items() if key not in port_fields and value is not None}
-        if (not named and not want_vlans) or (want_vlans and set(map(str, have_vlans)) <= set(map(str, want_vlans))):
+        port_keys = ("port", "id", "vlan_id", "vlan")
+        want_fields = dict((k, v) for k, v in want.items() if k not in port_keys)
+        have_fields = without_bridge_defaults(
+            dict((k, v) for k, v in have.items() if k not in port_keys), PORT_DEFAULTS, PORT_SUBNODE_DEFAULTS)
+        named_fields = set(k for k, v in want_fields.items() if v is not None)
+
+        whole_vlans = set()
+        for vid, want_vlan in want_vlans.items():
+            have_vlan = have_vlans.get(vid)
+            if have_vlan is not None and covers_entry(
+                    want_vlan, without_bridge_defaults(have_vlan, VLAN_DEFAULTS), ("id",)):
+                whole_vlans.add(str(vid))
+
+        if not named_fields and not want_vlans:
             self.commands.append("configure bridge no port %s" % port_name)
             return
-        requested_vlans = set(want_vlans)
-        requested_port_fields = {
-            key for key, value in want.items()
-            if key not in {"port", "id", "vlan_id"} and value is not None
-        }
-        if requested_port_fields:
-            selected = {
-                key: value for key, value in have.items()
-                if key in requested_port_fields
-            }
-            for field, value in iteritems(selected):
-                if field in PORT_PARSERS:
-                    if field == "pvid":
-                        self.commands.append(
-                            "configure bridge port %s no pvid" % port_name
-                        )
-                    else:
-                        self.addcmd({"id": port_name, field: value}, field, negate=True)
-        for vid in sorted(requested_vlans, key=str):
-            if vid in have_vlans:
-                self.commands.append(
-                    "configure bridge port %s no vlan-id %s" % (port_name, vid)
-                )
+        all_vlans_whole = set(map(str, have_vlans)) <= whole_vlans
+        if all_vlans_whole and covers_entry(want_fields, have_fields, ()) and (want_vlans or not have_vlans):
+            self.commands.append("configure bridge no port %s" % port_name)
+            return
+
+        for field in PORT_PARSERS:  # the device's order
+            if field not in named_fields or field not in have_fields:
+                continue
+            if field == "pvid":
+                self.commands.append("configure bridge port %s no pvid" % port_name)
+            else:
+                self.addcmd(dict(have_fields, id=port_name), field, negate=True)
+
+        for vid in sorted(want_vlans, key=str):
+            if vid not in have_vlans:
+                continue
+            if str(vid) in whole_vlans:
+                self.commands.append("configure bridge port %s no vlan-id %s" % (port_name, vid))
+                continue
+            self._reset_vlan_attributes(port_name, vid, want_vlans[vid], have_vlans[vid])
+
+    def _reset_vlan_attributes(self, port_name, vid, want_vlan, have_vlan):
+        """deleted: reset only the attributes a VLAN entry names (and remove the
+        static-user addresses it names, CLI guide 24: "static-user no ip-address")."""
+        named = set(k for k, v in want_vlan.items() if k != "id" and v is not None)
+        have_vlan = self._normalize_vlan(port_name, vid, without_bridge_defaults(have_vlan, VLAN_DEFAULTS))
+        keep = dict((k, v) for k, v in have_vlan.items() if k not in named or k in ("id", "vlan_id"))
+        self.compare(parsers=VLAN_PARSERS, want=keep, have=have_vlan)
+        if "static_user" in named:
+            for ip_address in sorted(self._static_user_addresses(want_vlan) & self._static_user_addresses(have_vlan)):
+                self.commands.append("configure bridge port %s vlan-id %s static-user no ip-address %s"
+                                     % (port_name, vid, ip_address))
 
     @staticmethod
     def _without_default_off(data, keys):
@@ -346,12 +375,30 @@ class Bridges(IsamResourceModule):
             if not (v is False and (k in keys or k.replace("-", "_") in keys))
         }
 
+    @staticmethod
+    def _without_held_defaults(want, have, defaults, subnode_defaults=None):
+        """An explicit default the device already has (have without defaults lacks the
+        key) is no change; against a non-default value it resets to the default."""
+        if not isinstance(want, dict):
+            return want
+        result = {}
+        for key, value in want.items():
+            if key in defaults and value is not None and str(defaults[key]) == str(value) and key not in have:
+                continue
+            if subnode_defaults and key in subnode_defaults and isinstance(value, dict):
+                value = Bridges._without_held_defaults(value, have.get(key) or {}, subnode_defaults[key])
+                if not value:
+                    continue
+            result[key] = value
+        return result
+
     def _compare_port_fields(self, want, have):
         # Targeted deletion runs before this so defaults cannot reset unrelated settings.
         port_start = len(self.commands)
+        have = without_bridge_defaults(have, PORT_DEFAULTS, PORT_SUBNODE_DEFAULTS)
         if self.state != "rendered":  # rendered has no device state: "no <flag>" stays explicit
             want = self._without_default_off(want, PORT_DEFAULT_OFF_FLAGS)
-        have = self._without_default_off(have, PORT_DEFAULT_OFF_FLAGS)
+            want = self._without_held_defaults(want, have, PORT_DEFAULTS, PORT_SUBNODE_DEFAULTS)
         self.compare(parsers=PORT_PARSERS, want=want, have=have)
         return self._defer_pvid_commands(port_start)
 
@@ -394,6 +441,9 @@ class Bridges(IsamResourceModule):
         # Decide on the raw gathered entry: _normalize_vlan stamps addressing
         # keys, so the normalized dict is never empty.
         vlan_exists = bool(have_vlan)
+        have_vlan = without_bridge_defaults(have_vlan, VLAN_DEFAULTS)
+        if self.state != "rendered":
+            want_vlan = self._without_held_defaults(want_vlan, have_vlan, VLAN_DEFAULTS)
         want_vlan = self._normalize_vlan(port_name, vid, want_vlan)
         have_vlan = self._normalize_vlan(port_name, vid, have_vlan)
         vlan_start = len(self.commands)

@@ -290,7 +290,7 @@ def test_qos_scoped_reply_with_foreign_lines_is_parsed(monkeypatch):
 def test_bridge_detail_defaults_do_not_prevent_removing_a_full_port(monkeypatch):
     # A scoped "flat detail" read reports defaults (prior_* false, ...) a gathered
     # full-family read does not contain; naming every VLAN still means the whole port.
-    detail = CONFIGS["bridges"] + "\n" + "configure bridge port %s mac-learn-off no prior-best-effort" % UNI
+    detail = CONFIGS["bridges"] + "\n" + "configure bridge port %s no mac-learn-off no prior-best-effort" % UNI
     gathered = selected(call_module(monkeypatch, "bridges")["gathered"])
     assert call_module(monkeypatch, "bridges", gathered, "deleted", running=detail)["commands"] == [
         "configure bridge no port %s" % UNI,
