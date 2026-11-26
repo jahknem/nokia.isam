@@ -153,19 +153,18 @@ class TestIsamXstpModule(TestIsamModule):
 
     def test_isam_xstp_parsed_capture_lines(self):
         """Every 'configure xstp' line of the lab capture is parsed, nothing is dropped."""
-        import os
+        from . import lab_captures
 
-        capture = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..",
-                               "local_captures", "DS-LIN-TEST-01", "info_configure_flat.txt")
-        if not os.path.exists(capture):
-            self.skipTest("lab capture not available")
-        with open(capture) as handle:
-            lines = [line.rstrip() for line in handle if line.startswith("configure xstp ")]
+        lines = [line.rstrip() for line in lab_captures.configured().splitlines() if line.startswith("configure xstp ")]
         port_lines = [line for line in lines if line.startswith("configure xstp port ")]
         self.assertTrue(port_lines)
         set_module_args(dict(running_config="\n".join(lines), state="parsed"), ignore_provider_arg)
         result = self.execute_module(changed=False)
-        self.assertEqual(result["parsed"]["general"], {"enable_stp": True, "region_name": "00:00:5e:00:53:01"})
+        # The region name is device-specific (it defaults to a bridge MAC): take it from the capture.
+        general = [line.split() for line in lines if line.startswith("configure xstp general ")]
+        self.assertEqual(len(general), 1)
+        region = general[0][general[0].index("region-name") + 1]
+        self.assertEqual(result["parsed"]["general"], {"enable_stp": True, "region_name": region})
         expected = sorted(
             ({"port": line.split()[3], "path_cost": int(line.split()[5])} for line in port_lines),
             key=lambda item: item["port"],

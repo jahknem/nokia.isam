@@ -12,14 +12,7 @@ from ansible_collections.nokia.isam.tests.unit.compat.mock import patch
 
 from .isam_module import TestIsamModule, set_module_args
 
-# Lab captures (info configure detail flat / info configure flat) in the sibling
-# pon-migration-planner checkout; the capture tests skip when they are absent.
-CAPTURES = os.environ.get("ISAM_ROOT_CAPTURES") or os.path.join(
-    os.path.dirname(os.path.realpath(__file__)),
-    *([os.pardir] * 6 + ["pon-migration-planner", ".local"])
-)
-DETAIL = os.path.join(CAPTURES, "root-detail-flat.txt")
-CONFIGURED = os.path.join(CAPTURES, "root-flat.txt")
+from . import lab_captures
 
 DETAIL_LINES = "\n".join([
     "configure equipment ont interface 1/1/2/1/1 sw-ver-pland auto sernum GNXS:00000001 no desc1 log-auth-pwd plain:****** no vtfd",
@@ -81,12 +74,9 @@ def _relevant(line):
     return node, ident, sub, pairs
 
 
-@pytest.mark.parametrize("capture", [DETAIL, CONFIGURED])
+@pytest.mark.parametrize("capture", lab_captures.NAMES)
 def test_real_captures_parse_and_validate_completely(capture):
-    if not os.path.exists(capture):
-        pytest.skip("capture %s not available" % capture)
-    with open(capture) as handle:
-        lines = [line.rstrip() for line in handle if line.startswith("configure equipment ont ")]
+    lines = [line.rstrip() for line in lab_captures.read(capture).splitlines() if line.startswith("configure equipment ont ")]
     assert lines
     facts = Equipment_ontsFacts(module=None)
     parsed = facts._parse_config("\n".join(lines))
@@ -120,12 +110,10 @@ def test_real_captures_parse_and_validate_completely(capture):
 
 
 def test_detail_and_configured_captures_gather_the_same():
-    if not (os.path.exists(DETAIL) and os.path.exists(CONFIGURED)):
-        pytest.skip("captures not available")
     results = []
-    for capture in (DETAIL, CONFIGURED):
-        with open(capture) as handle:
-            text = "\n".join(line.rstrip() for line in handle if line.startswith("configure equipment ont "))
+    for capture in lab_captures.NAMES:
+        text = "\n".join(line.rstrip() for line in lab_captures.read(capture).splitlines()
+                         if line.startswith("configure equipment ont "))
         ansible_facts = {"ansible_network_resources": {}}
         Equipment_ontsFacts(module=None).populate_facts(None, ansible_facts, data=text)
         results.append(ansible_facts["ansible_network_resources"]["equipment_onts"])

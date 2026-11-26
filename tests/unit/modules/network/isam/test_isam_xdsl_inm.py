@@ -20,7 +20,6 @@ from .isam_module import TestIsamModule, set_module_args
 from . import lab_captures
 
 ignore_provider_arg = True
-CAPTURE = lab_captures.DETAIL
 
 INM_DEFAULTS = "no inm-mode no inm-eq-inp-mode no ins-sensitivity no inm-cluster-cont no inm-iat-offset no inm-iat-step"
 INM_ATTRS = ("inm_mode", "inm_eq_inp_mode", "ins_sensitivity", "inm_cluster_cont", "inm_iat_offset", "inm_iat_step")
@@ -111,12 +110,11 @@ PREFIXES = {
 }
 
 
-@pytest.mark.skipif(not CAPTURE.exists(), reason="lab capture not available")
 def test_every_capture_line_of_the_regions_parses():
     """Every line of the three prefixes in the detail capture parses completely."""
 
     counts = dict((prefix, 0) for prefix in PREFIXES)
-    for line in CAPTURE.read_text().splitlines():
+    for line in lab_captures.detail().splitlines():
         for prefix, template in PREFIXES.items():
             if not line.startswith(prefix):
                 continue
@@ -333,12 +331,11 @@ class TestIsamXdslSystem(_Base):
         assert result["commands"] == ["configure xdsl system auto-port-reset no enable"]
 
 
-@pytest.mark.skipif(not CAPTURE.exists(), reason="lab capture not available")
 def test_capture_lines_are_all_matched_by_the_snapshot_tracker():
     """gather_configuration path: no 'unmatched configuration' warning for these regions."""
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts import facts_base
 
-    data = CAPTURE.read_text()
+    data = lab_captures.detail()
     for prefix, template in PREFIXES.items():
         selected = [line for line in data.splitlines() if line.startswith(prefix)]
         with facts_base.track_network_template_matches() as matched:
@@ -350,16 +347,14 @@ def test_capture_lines_are_all_matched_by_the_snapshot_tracker():
 class TestCaptureParsed(_Base):
     module = isam_xdsl_inm
 
-    @pytest.mark.skipif(not CAPTURE.exists(), reason="lab capture not available")
     def test_parsed_capture(self):
-        lines = [line for line in CAPTURE.read_text().splitlines() if line.startswith("configure xdsl imp-noise-sensor ")]
+        lines = [line for line in lab_captures.detail().splitlines() if line.startswith("configure xdsl imp-noise-sensor ")]
         parsed = self.run_state("parsed", False, running_config="\n".join(lines))["parsed"]
         assert len(parsed["near_end"]) == 96 and len(parsed["far_end"]) == 96
         assert all(set(entry) == {"name"} for entry in parsed["near_end"] + parsed["far_end"])
 
-    @pytest.mark.skipif(not CAPTURE.exists(), reason="lab capture not available")
     def test_parsed_capture_onts_and_system(self):
-        text = CAPTURE.read_text().splitlines()
+        text = lab_captures.detail().splitlines()
         self.module = isam_xdsl_onts
         onts = [line for line in text if line.startswith("configure xdsl ont interface ")]
         assert len(self.run_state("parsed", False, running_config="\n".join(onts))["parsed"]) == 75

@@ -15,7 +15,6 @@ from . import lab_captures
 from .isam_module import TestIsamModule, set_module_args
 
 ignore_provider_arg = True
-CAPTURE = lab_captures.DETAIL
 
 
 def test_template_parses_subregions():
@@ -129,9 +128,8 @@ def test_community_strings_are_registered_for_redaction():
     assert "example-ro" in module.no_log_values
 
 
-@pytest.mark.skipif(not CAPTURE.exists(), reason="lab capture not available")
 def test_capture_registers_secrets_for_redaction():
-    lines = [l for l in CAPTURE.read_text().splitlines() if l.startswith("configure system security ")]
+    lines = [l for l in lab_captures.detail().splitlines() if l.startswith("configure system security ")]
     module, parsed = _parsed_with_module(lines)
     assert parsed.get("operators")
     assert parsed.get("snmp_communities")
@@ -147,8 +145,6 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
     LISTS,
     SETTINGS,
 )
-
-CONFIGURED = CAPTURE.parent / "root-flat.txt"
 
 # non-default lines covering every slice-2 node (no real secrets)
 SLICE2 = [
@@ -256,10 +252,9 @@ def test_view_and_community_composite_identity():
         "configure system security snmp no community c1 host-address 10.0.0.2/32"
 
 
-@pytest.mark.skipif(not CAPTURE.exists(), reason="lab capture not available")
-@pytest.mark.parametrize("name", ["root-detail-flat.txt", "root-flat.txt"])
+@pytest.mark.parametrize("name", lab_captures.NAMES)
 def test_capture_every_security_line_is_parsed(name):
-    lines = [l for l in (CAPTURE.parent / name).read_text().splitlines() if l.startswith("configure system security ")]
+    lines = [l for l in lab_captures.read(name).splitlines() if l.startswith("configure system security ")]
     got, unparsed = _parse(lines)
     # no silent drops: every line maps to a node (only the count is shown, lines may hold secrets)
     missed = len(unparsed)
@@ -269,7 +264,7 @@ def test_capture_every_security_line_is_parsed(name):
     assert missed == 0, "%d rendered lines not parsed back" % missed
     same = _comparable(again) == _comparable(got)  # a bool: a diff could show secrets
     assert same, "render round trip differs"
-    if name == "root-detail-flat.txt":
+    if name == lab_captures.DETAIL_NAME:
         assert len(lines) == 679
         assert len(got["pae"]["ports"]) == 204
         assert len(got["peripheral_mgnt"]["mac_filters"]) == 20
@@ -278,11 +273,10 @@ def test_capture_every_security_line_is_parsed(name):
         assert len(got["slots"]) == 2 and len(got["domains"]) == 1
 
 
-@pytest.mark.skipif(not CAPTURE.exists(), reason="lab capture not available")
 def test_capture_registers_slice2_secrets_for_redaction():
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.system_security.system_security import Isam_system_securityArgs
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.system_security.system_security import Isam_system_securityFacts
-    lines = [l for l in CAPTURE.read_text().splitlines() if l.startswith("configure system security ")]
+    lines = [l for l in lab_captures.detail().splitlines() if l.startswith("configure system security ")]
     set_module_args(dict(running_config="\n".join(lines), state="parsed"), ignore_provider_arg)
     module = basic.AnsibleModule(argument_spec=Isam_system_securityArgs.argument_spec, supports_check_mode=True)
     facts = {"ansible_network_resources": {}}

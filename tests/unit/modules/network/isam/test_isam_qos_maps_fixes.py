@@ -6,7 +6,6 @@ import pytest
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.qos_maps import Qos_mapsTemplate
 from . import lab_captures
 
-CAPTURE = lab_captures.CONFIGURED
 
 
 def test_bare_and_attributed_ctrl_pkt_parse():
@@ -34,9 +33,8 @@ def test_dscp_map_renders_dot1p_value():
     assert cmd == "configure qos dscp-map-dot1p 0 dot1p-value 0"
 
 
-@pytest.mark.skipif(not CAPTURE.exists(), reason="lab capture not available")
 def test_capture_ctrl_pkt_lines_all_parse():
-    lines = [l for l in CAPTURE.read_text().splitlines()
+    lines = [l for l in lab_captures.configured().splitlines()
              if l.startswith(("configure qos up-ctrl-pkt ", "configure qos dn-ctrl-pkt "))]
     got = Qos_mapsTemplate(lines=lines, module=None).parse()
     assert len(got["up_ctrl_pkt"]) + len(got["dn_ctrl_pkt"]) == len(lines)

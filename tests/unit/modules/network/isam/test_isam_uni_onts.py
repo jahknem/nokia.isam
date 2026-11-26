@@ -15,7 +15,6 @@ from . import lab_captures
 
 
 ignore_provider_arg = True
-CAPTURE = lab_captures.DETAIL
 PREFIX = "configure uni ont tc-layer "
 UNI = "1/1/2/1/1/1/1"
 UNI2 = "1/1/2/1/100/1/1"
@@ -40,9 +39,8 @@ def test_template_ignores_other_families():
     assert parser.parse() == {}
 
 
-@pytest.mark.skipif(not CAPTURE.exists(), reason="device capture not available")
 def test_every_capture_line_parses():
-    lines = [line.strip() for line in CAPTURE.read_text().splitlines() if line.startswith(PREFIX)]
+    lines = [line.strip() for line in lab_captures.detail().splitlines() if line.startswith(PREFIX)]
     assert len(lines) == 73
     for line in lines:
         parser = Uni_ontsTemplate(lines=[line])

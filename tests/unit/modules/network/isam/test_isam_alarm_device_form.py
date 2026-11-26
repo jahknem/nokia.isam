@@ -1,7 +1,7 @@
 """isam_alarm against the real 'info configure alarm flat' form (R6.2.04m lab capture).
 
-The fixture tests/fixtures/alarm/r6.2.04m/output.txt holds the alarm part of
-local_captures/DS-LIN-TEST-01/info_configure_flat.txt verbatim.
+The fixture tests/fixtures/alarm/r6.2.04m/output.txt holds the alarm part of the
+lab device's 'info configure flat' capture verbatim.
 """
 
 from __future__ import absolute_import, division, print_function

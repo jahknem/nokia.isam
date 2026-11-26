@@ -16,9 +16,6 @@ from .isam_module import TestIsamModule, set_module_args
 from . import lab_captures
 
 ignore_provider_arg = True
-CAPTURE_DIR = lab_captures.CAPTURE_DIR
-DETAIL = CAPTURE_DIR / "root-detail-flat.txt"
-CONFIGURED = CAPTURE_DIR / "root-flat.txt"
 PREFIX = "configure system sync-if-timing"
 
 # non-default lines covering every node
@@ -66,17 +63,16 @@ def test_render_round_trip():
     assert again == sync
 
 
-@pytest.mark.skipif(not DETAIL.exists(), reason="lab capture not available")
-@pytest.mark.parametrize("path", [DETAIL, CONFIGURED])
+@pytest.mark.parametrize("path", lab_captures.NAMES)
 def test_capture_every_line_is_parsed(path):
-    lines = [line for line in path.read_text().splitlines() if line.startswith(PREFIX + " ")]
+    lines = [line for line in lab_captures.read(path).splitlines() if line.startswith(PREFIX + " ")]
     assert lines
     sync, unknown = _parse(lines)
     assert unknown == []
     # and rendering what was parsed gives the same structure back (facts drop empty blocks)
     again, unknown = _parse(render_sync_if_timing(sync))
     assert unknown == [] and remove_empties(again) == remove_empties(sync)
-    if path == DETAIL:
+    if path == lab_captures.DETAIL_NAME:
         assert len(lines) == 24
         assert len(sync["ssm"]) == 6 and len(sync["synce"]) == 2 and len(sync["ssmout_synce"]) == 10
 

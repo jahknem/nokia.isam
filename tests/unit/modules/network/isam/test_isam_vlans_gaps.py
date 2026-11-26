@@ -93,18 +93,9 @@ class TestVlansGaps(_Base):
 
 # Gap report of the lab capture --------------------------------------------------------
 
-CAPTURES = os.environ.get("ISAM_ROOT_CAPTURES") or os.path.join(
-    os.path.dirname(os.path.realpath(__file__)),
-    *([os.pardir] * 6 + ["pon-migration-planner", ".local"])
-)
+from . import lab_captures
 
-
-def _capture(name):
-    path = os.path.join(CAPTURES, name)
-    if not os.path.exists(path):
-        pytest.skip("lab capture not available")
-    with open(path, errors="replace") as handle:
-        return handle.read()
+_capture = lab_captures.read
 
 
 def test_capture_gap_report_empty():
@@ -115,7 +106,7 @@ def test_capture_gap_report_empty():
     assert entry["unmodelled"] == {} and not entry.get("value_like")
 
 
-@pytest.mark.parametrize("name", ["root-detail-flat.txt", "root-flat.txt"])
+@pytest.mark.parametrize("name", lab_captures.NAMES)
 def test_capture_every_token_is_modelled_and_read_into_its_field(name):
     """Each "configure vlan id" token of the capture belongs to a modelled option and
     each value lands in that option of the facts; "no X" reads as False or the default."""

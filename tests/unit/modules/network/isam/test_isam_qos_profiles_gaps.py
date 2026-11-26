@@ -247,10 +247,7 @@ class TestQosProfilesGaps(_Base):
 
 # Gap report of the lab capture --------------------------------------------------------
 
-CAPTURES = os.environ.get("ISAM_ROOT_CAPTURES") or os.path.join(
-    os.path.dirname(os.path.realpath(__file__)),
-    *([os.pardir] * 6 + ["pon-migration-planner", ".local"])
-)
+from . import lab_captures
 
 # False positives: the report compares snake_case CLI names with option keys, but
 # these options keep the CLI spelling (snake_case is an alias). Shaper "type" is
@@ -259,9 +256,7 @@ _FALSE_POSITIVE_RENAMES = {("qos profiles shaper", "type"): "shaper-type"}
 
 
 def _detail_report():
-    path = os.path.join(CAPTURES, "root-detail-flat.txt")
-    if not os.path.exists(path):
-        pytest.skip("lab capture not available")
+    path = lab_captures.path(lab_captures.DETAIL_NAME)
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam import config_tree
 
     with open(path, errors="replace") as handle:

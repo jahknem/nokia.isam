@@ -246,17 +246,9 @@ def test_unknown_keywords_never_fail_and_stay_commands():
 
 
 # ---------------------------------------------------------------- lab capture
-CAPTURE = os.path.join(
-    os.environ.get("ISAM_ROOT_CAPTURES") or os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), *([os.pardir] * 6 + ["pon-migration-planner", ".local"])),
-    "root-detail-flat.txt",
-)
-def _read(name):
-    path = os.path.join(os.path.dirname(CAPTURE), name)
-    if not os.path.exists(path):
-        pytest.skip("lab capture not available")
-    with open(path, errors="replace") as handle:
-        return handle.read()
+from . import lab_captures  # noqa: E402
+
+_read = lab_captures.read
 
 
 def _cross_check(tree_node, schema, facts, checked, root=False):
@@ -291,7 +283,6 @@ def _cross_check(tree_node, schema, facts, checked, root=False):
                     _cross_check(entry_node, sub, entries.get(index) or {}, checked)
 
 
-@pytest.mark.skipif(not os.path.exists(CAPTURE), reason="lab capture not available")
 def test_detail_capture_gap_report_tree_and_parser_agree():
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import select_resource_config
 
@@ -313,13 +304,12 @@ def test_detail_capture_gap_report_tree_and_parser_agree():
     assert len(checked) > 500
 
 
-@pytest.mark.skipif(not os.path.exists(CAPTURE), reason="lab capture not available")
 def test_detail_and_configured_capture_parse_alike():
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import select_resource_config
 
     template = Xdsl_profilesTemplate()
     parsed = [template.normalize(template.parse(select_resource_config(_read(name), "xdsl_profiles")))
-              for name in ("root-detail-flat.txt", "root-flat.txt")]
+              for name in lab_captures.NAMES]
     assert parsed[0] == parsed[1]
     assert not any(profile.get("commands") for profiles in parsed[0].values() for profile in profiles)
     lines = [line for key, profiles in parsed[0].items() for profile in profiles for line in template.render_profile(key, profile)]
