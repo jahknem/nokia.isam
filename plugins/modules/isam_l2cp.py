@@ -31,7 +31,7 @@ options:
         type: str
         required: true
       partition_type:
-        description: Partition type.
+        description: 'DSLAM partitioning of L2CP (C(partition-type)): C(no-partition) (device default) or C(fixed-assigned).'
         type: str
         choices: [no-partition, fixed-assigned]
   running_config:

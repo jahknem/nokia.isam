@@ -55,7 +55,7 @@ options:
             description: Number of test parameters.
           test_mode:
             type: str
-            description: Test mode.
+            description: 'Test mode of the session (C(test-mode)): C(single) (ends after one run), C(interactive) or C(cablepair).'
             choices: [single, interactive, cablepair]
           inactive_timer:
             type: str
@@ -87,7 +87,7 @@ options:
           test_name:
             type: str
             required: true
-            description: Test name.
+            description: 'Line test to run with this parameter entry (C(ltparm <session> test-name <name>)), for example C(ac-voltage-ab).'
           value1:
             type: str
             description: Test parameter value 1.

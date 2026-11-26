@@ -57,7 +57,7 @@ options:
         description: Enable EFM OAM on the interface.
       passive_mode:
         type: bool
-        description: Passive mode.
+        description: 'Run EFM OAM in passive mode (C(passive-mode)); otherwise the interface is active.'
       keep_alive_intvl:
         type: str
         description: Keep-alive interval.

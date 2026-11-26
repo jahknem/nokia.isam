@@ -30,7 +30,7 @@ options:
         type: str
         required: true
       polling_period:
-        description: Polling period.
+        description: 'Discovery window for ONT registration (C(polling-period), 10-65540); device default C(1000).'
         type: int
       dba_polling0:
         description: DBA polling value 0.

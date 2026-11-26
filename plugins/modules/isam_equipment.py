@@ -140,7 +140,7 @@ options:
             description: RSSI profile index.
             type: int
           rssi_state:
-            description: RSSI state.
+            description: 'Enable or disable the RSSI function of the uplink SFP (C(rssi-state)); device default C(disable).'
             type: str
       protection_elements:
         description: Protection element entries.

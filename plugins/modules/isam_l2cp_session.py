@@ -39,10 +39,10 @@ options:
         description: BRAS IP address (a session without it is deleted).
         type: str
       gsmp_version:
-        description: GSMP version.
+        description: 'GSMP protocol version (C(gsmp-version)); device default C(3). Not modifiable after creation.'
         type: str
       gsmp_sub_version:
-        description: GSMP sub version.
+        description: 'GSMP protocol sub-version (C(gsmp-sub-version)); device default C(1). Not modifiable after creation.'
         type: str
       encap_type:
         description: Encapsulation type.
@@ -57,7 +57,7 @@ options:
         type: str
         choices: [disabled, enabled]
       alive_timer:
-        description: Alive timer.
+        description: 'Adjacency protocol watchdog alive time in units of 100 ms (C(alive-timer), 1-255); device default C(250).'
         type: str
       port_reprt_shaper:
         description: Port report shaper.
@@ -66,25 +66,25 @@ options:
         description: Aggregate report shaper.
         type: str
       tcp_retry_time:
-        description: TCP retry time.
+        description: 'Time between two TCP connection setup attempts in units of 100 ms (C(tcp-retry-time), 0-255); device default C(10).'
         type: str
       gsmp_retry_time:
-        description: GSMP retry time.
+        description: 'Time between two GSMP/L2CP connection setup attempts in units of 100 ms (C(gsmp-retry-time), 0-255); device default C(10).'
         type: str
       dslam_name:
-        description: DSLAM name.
+        description: 'L2CP name of the DSLAM (C(dslam-name)), a MAC-address-like string; device default C(00:00:00:00:00:00). Not modifiable after creation.'
         type: str
       partition_id:
         description: Partition identifier.
         type: str
       window_size:
-        description: Window size.
+        description: 'Maximum number of unacknowledged request messages in a window (C(window-size)); device default C(10).'
         type: str
       tcp_port:
-        description: TCP port.
+        description: 'TCP port of the session to the peer (C(tcp-port)); device default C(6068). Not modifiable after creation.'
         type: str
       router_instance:
-        description: Router instance.
+        description: 'Router instance used to reach the peer (C(router-instance)); device default C(base). Not modifiable after creation.'
         type: str
       sig_partition_id:
         description: Signal the partition identifier.

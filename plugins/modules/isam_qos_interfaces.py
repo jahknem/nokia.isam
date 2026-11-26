@@ -87,7 +87,7 @@ options:
         description: GEM sharing setting.
         type: str
       scheduler_mode:
-        description: Scheduler mode.
+        description: 'Scheduler mode of the interface (C(scheduler-mode)): C(subscriber-hierarchy) (device default), C(service-hierarchy) or C(service-flat).'
         type: str
       mc_scheduler_node:
         description: Multicast scheduler node reference.

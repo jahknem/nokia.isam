@@ -30,7 +30,7 @@ options:
         description: Distributed service identifier.
       service_type:
         type: str
-        description: Service type.
+        description: 'Service type of the distributed service (C(service-type)), for example C(epipe), C(tls), C(vprn) or C(ies); device default C(apipe).'
         choices: [unknown, epipe, p3pipe, tls, vprn, ies, mirror, apipe, fpipe, ipipe, cpipe]
       qos_profile:
         type: str

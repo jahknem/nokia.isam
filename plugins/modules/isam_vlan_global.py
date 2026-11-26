@@ -48,7 +48,7 @@ options:
             type: int
             required: true
           profile_name:
-            description: Profile name.
+            description: 'Name of the priority regeneration profile (C(profile-name)); mandatory at creation.'
             type: str
           pbit0:
             description: Regenerated priority for incoming p-bit 0.

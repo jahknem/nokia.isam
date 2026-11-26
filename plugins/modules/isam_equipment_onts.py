@@ -313,7 +313,7 @@ options:
             type: str
             required: true
           planned_card_type:
-            description: Planned card type.
+            description: 'Planned card type of the ONT slot (C(planned-card-type)), for example C(ethernet), C(pots) or C(veip); mandatory at creation, cannot be modified.'
             type: str
           plndnumdataports:
             description: Planned number of data ports.
@@ -322,7 +322,7 @@ options:
             description: Planned number of voice ports.
             type: int
           port_type:
-            description: Port type.
+            description: 'Port type of the ONT card (C(port-type)): C(uni) (device default) or C(nni); cannot be modified.'
             type: str
           transp_mode_rem:
             description: Transparent mode remote setting.
@@ -347,7 +347,7 @@ options:
             description: Hardware version match.
             type: str
           ont_variant:
-            description: ONT variant.
+            description: 'Planned variant of the ONT hardware version (C(ont-variant)), for example C(DO) for data-only, C(SIP) or C(H.248) ONTs.'
             type: str
           plnd_sw_version:
             description: Planned software version.

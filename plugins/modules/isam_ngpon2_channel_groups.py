@@ -33,7 +33,7 @@ options:
         description: Channel group name.
         type: str
       polling_period:
-        description: Polling period.
+        description: 'Period between auto-detection procedures on each pair of the group, in tenths of a second (C(polling-period), 1-864000); device default C(100).'
         type: int
       raman_reduct:
         description: Raman reduction.
