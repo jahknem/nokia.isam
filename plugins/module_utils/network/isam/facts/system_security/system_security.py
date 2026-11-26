@@ -38,7 +38,8 @@ _TARGETED = {
     "domains": "info configure system security domain %s flat",
     "slots": "info configure system security slot %s flat",
     # The device rejects 'ssh sftp-user <name>' (invalid token): read the small ssh
-    # node and keep only the named users (get_config).
+    # node and keep only the named users (get_config); each user's existence is decided
+    # from its own line in that reply (_has_sftp_user), not from the reply as a whole.
     "ssh.sftp_users": lambda name: [_SSH_COMMAND],
     "filetransfer.servers": "info configure system security filetransfer server %s flat",
     "peripheral_mgnt.mac_filters": "info configure system security peripheral-mgnt mac-filter %s flat",
@@ -51,15 +52,29 @@ _TARGETED = {
 }
 
 
+def _is_sftp_user_line(line, user):
+    wanted = "%ssftp-user %s" % (_SSH_PREFIX, user)
+    line = line.strip()
+    return line == wanted or line.startswith(wanted + " ")
+
+
+def _has_sftp_user(reply, user):
+    """Whether the ssh node's reply configures the named sftp user.
+
+    The ssh node is read once for every requested sftp user, so a non-empty reply
+    proves nothing about one user: each is present only when its own line is there.
+    """
+    return any(_is_sftp_user_line(line, user) for line in str(reply or "").splitlines())
+
+
 def _only_sftp_users(data, users):
     """Of the ssh node's lines (read for targeted sftp users), keep the named users only.
 
     Lines of other targeted sections pass unchanged.
     """
-    wanted = tuple("%ssftp-user %s" % (_SSH_PREFIX, user) for user in users)
     kept = [line for line in str(data or "").splitlines()
             if not line.strip().startswith(_SSH_PREFIX)
-            or any(line.strip() == w or line.strip().startswith(w + " ") for w in wanted)]
+            or any(_is_sftp_user_line(line, user) for user in users)]
     return "\n".join(kept) + ("\n" if kept else "")
 
 
@@ -72,7 +87,8 @@ class Isam_system_securityFacts(object):
 
     def get_config(self, connection):
         data = get_targeted_config(self._module, connection, "isam_system_security",
-                                   "info configure system security flat", _TARGETED)
+                                   "info configure system security flat", _TARGETED,
+                                   instance_checks={"ssh.sftp_users": _has_sftp_user})
         users = requested_identities(self._module, "isam_system_security", "ssh.sftp_users")
         if users and self._module.params.get("state") == "gathered":
             data = _only_sftp_users(data, users)

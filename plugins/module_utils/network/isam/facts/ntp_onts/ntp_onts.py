@@ -18,13 +18,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
     utils,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
-    assert_targeted_request,
-    finish_targeted_outcomes,
-    get_scoped_config,
-    requested_identities,
-    selector_key,
-    targeted_explicit,
-    targeted_outcomes,
+    get_targeted_config,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.ntp_onts.ntp_onts import (
@@ -44,29 +38,9 @@ class Ntp_ontsFacts(object):
 
     def get_config(self, connection):
         """The whole resource, or only the NTP ONTs named in config (targeted gathering)."""
-        assert_targeted_request(self._module, "ntp_onts", ("config",))
-        collector = targeted_outcomes(self._module, "ntp_onts")
-        commands = []
-        selectors = {}
-        for ont in requested_identities(self._module, "ntp_onts"):
-            command = "info configure ntp ont %s flat" % ont
-            commands.append(command)
-            selectors[command] = ("config", selector_key(ont))
-        data = get_scoped_config(
-            self._module,
-            connection,
-            None,
-            "info configure ntp flat",
-            commands,
-            bare_commands=commands,
-            outcomes=collector,
-            selectors=selectors,
-            # An explicit gathered request that names instances must not silently widen
-            # to the whole-family read when none of them became a read command.
-            require_targeted=targeted_explicit(self._module, "config"),
-        )
-        finish_targeted_outcomes(self._module, collector)
-        return data
+        return get_targeted_config(self._module, connection, "ntp_onts", "info configure ntp flat", {
+            "config": "info configure ntp ont %s flat",
+        }, write_states=True, bare_sections=("config",))
 
     def populate_facts(self, connection, ansible_facts, data=None):
         """Populate the facts for Ntp_onts network resource."""

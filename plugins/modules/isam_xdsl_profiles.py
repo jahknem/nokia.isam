@@ -957,9 +957,12 @@ read_outcomes:
     - When one instance is addressed by several reads, it is reported C(confirmed_absent)
       only if every read confirmed absence; a single present read proves presence; a
       failed read is reported as C(failed); anything less is C(unknown).
-    - The parse axis (C(complete), C(partial), C(failed) or C(unverified)) is reported at
-      resource level under C(parse); C(unverified) means the parser did not record its
-      coverage of the reply.
+    - The parse axis (C(failed) or C(unverified)) is reported at resource level under
+      C(parse); C(failed) means the family parser could not process the reply,
+      C(unverified) that no parser records its coverage of the reply (a read never claims
+      a complete parse).
+    - A named instance the device rejected (C(invalid token)) is missing from C(gathered)
+      exactly like an absent one; the module also warns, naming the rejected selectors.
     - The output is sanitized to stable enums, the section, the selector, and an error
       class; raw device text is never recorded. A failed targeted read fails the module
       carrying this same sanitized result.

@@ -273,26 +273,72 @@ def unwrap_response(data):
     return data
 
 
+_QUOTED = re.compile(r'"[^"]*"')
+
+# Missing-dependency phrases -> the dependency_gap label recorded in read_outcomes.
+# "interface index cannot be calculated": dhcp-relay/arp-relay answer a port that the
+# device cannot resolve to an interface this way (live, DS-LIN-TEST-01, commit
+# 5ea59f6b). The evidence shows the PORT could not be resolved, not that the relay
+# instance on an existing port is absent, so it is a dependency signal: the relay
+# instance's existence stays unknown. Write-state reads still drop such a reply
+# (_is_absent_error), as before.
+_DEPENDENCY_GAPS = (
+    ("lower-interface does not exist", "lower-interface"),
+    ("interface index cannot be calculated", "interface-index"),
+)
+
+
+def _device_message_lines(text):
+    """The lines of a reply or error text that can carry a device message, lower-cased.
+
+    Configuration content is never a device message: flat configuration lines
+    ('configure ...'), indented hierarchical lines, comments and echo lines are skipped,
+    and quoted values (descriptions, names) are blanked, so an instance whose description
+    reads "instance does not exist" is not mistaken for the device's error. Device errors
+    are printed unindented ('Error : instance does not exist'; a raised transport error
+    may carry the bare phrase, tests/fixtures/bridges/targeted-absent).
+    """
+    for raw in str(text or "").splitlines():
+        line = raw.strip()
+        if not line:
+            continue
+        lowered = line.lower()
+        if raw[:1].isspace() and not lowered.startswith("error"):
+            continue
+        if lowered.startswith(("configure ", "#", "echo")):
+            continue
+        yield _QUOTED.sub('""', lowered)
+
+
+def _device_says(text, phrase):
+    return any(phrase in line for line in _device_message_lines(text))
+
+
 def _is_instance_absent(text):
     """The device says the ADDRESSED instance does not exist -- a confirmed absence of
-    that instance. (dhcp-relay/arp-relay answer a port with no such relay interface this
-    way; that is the relay instance itself, not a dependency.)"""
-    text = text.lower()
-    return ("instance does not exist" in text or "specified instance does not exist" in text
-            or "interface index cannot be calculated" in text)
+    that instance."""
+    return _device_says(text, "instance does not exist")
+
+
+def _dependency_gap(text):
+    """The dependency_gap label when the device reports a MISSING DEPENDENCY (e.g. a
+    lower-interface), else None. The addressed instance's own existence is NOT
+    established by this reply: it stays unknown, never confirmed absent."""
+    for phrase, label in _DEPENDENCY_GAPS:
+        if _device_says(text, phrase):
+            return label
+    return None
 
 
 def _is_dependency_absent(text):
-    """The device reports a MISSING DEPENDENCY (e.g. a lower-interface). The addressed
-    instance's own existence is NOT established by this reply: it stays unknown, never
-    confirmed absent."""
-    return "lower-interface does not exist" in text.lower()
+    """Whether the device reports a missing dependency (see _dependency_gap)."""
+    return _dependency_gap(text) is not None
 
 
 def _is_absent_error(text):
-    """Union of the two absence signals, kept for the read control flow (a reply matching
-    either is dropped from the gathered output). Do not use this to label an instance
-    absent: use _is_instance_absent / _is_dependency_absent for that distinction."""
+    """Union of the absence signals, kept for the read control flow (a reply matching
+    any is dropped from the read output; write-state reads rely on this). Do not use
+    this to label an instance absent: use _is_instance_absent / _dependency_gap."""
     return _is_instance_absent(text) or _is_dependency_absent(text)
 
 
@@ -301,7 +347,27 @@ def _is_unsupported_node(text):
     disambiguated: the firmware may not know the node, or the selector/command may be
     invalid. For a read that means 'nothing configured here' (existence unknown), not a
     failure; a write must still surface it."""
-    return "invalid token" in text.lower()
+    return _device_says(text, "invalid token")
+
+
+def _record_absence(outcomes, entries, text):
+    """Record the outcome of an absence reply for every selector a command serves."""
+    gap = _dependency_gap(text)
+    for section, selector in entries:
+        if gap is None:
+            outcomes.record(section, selector, "ok", "confirmed_absent")
+        else:
+            outcomes.record(section, selector, "ok", "unknown", dependency_gap=gap)
+
+
+def _failure_message(resource, kind, cls, entries=()):
+    """A sanitized failure message: the resource, the selectors and the error class --
+    never raw device or transport text (read_outcomes is documented as safe to
+    publish, and the module message travels with it)."""
+    names = ", ".join(
+        "%s %s" % (section, selector) if section else str(selector)
+        for section, selector in entries if selector is not None)
+    return "%s of %s failed (%s)%s" % (kind, resource, cls, " for " + names if names else "")
 
 
 def _bare_instance(connection, command, silent=False):
@@ -321,7 +387,7 @@ def _bare_instance(connection, command, silent=False):
     try:
         response = connection.get(command + " detail")
     except Exception as exc:  # absent instance or unsupported node: nothing to return
-        if _is_absent_error(str(exc)) or "invalid token" in str(exc).lower():
+        if _is_absent_error(str(exc)) or _is_unsupported_node(str(exc)):
             return ""
         raise
     for line in response.splitlines():
@@ -335,7 +401,7 @@ def _bare_instance(connection, command, silent=False):
 
 def get_scoped_config(module, connection, config, fallback_command, commands, safe_states=None,
                       bare_commands=(), silent_bare_commands=(), outcomes=None, selectors=None,
-                      require_targeted=False):
+                      require_targeted=False, instance_checks=None):
     """Read only explicitly addressed resource identities when it is safe.
 
     Resource modules can compare merged/replaced/explicitly deleted entries
@@ -349,10 +415,18 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
     Identical commands are sent once (several identities can share one read).
 
     outcomes: an optional ReadOutcomeCollector; when given, each read records its
-    command/existence outcome (sanitized). The returned string is unchanged, so
-    existing callers that pass no collector are byte-for-byte unaffected.
-    selectors: optional {command: (section, selector)} to label each recorded
-    outcome with the config section and instance identity the command addresses.
+    command/existence outcome (sanitized) for every selector it serves. The returned
+    string is unchanged, so existing callers that pass no collector are byte-for-byte
+    unaffected.
+    selectors: optional {command: [(section, selector), ...]} labeling each command with
+    the config sections and instance identities it addresses (one recorded outcome per
+    selector; a single (section, selector) tuple is accepted for one selector).
+    instance_checks: optional {(section, selector): callable(reply) -> bool} deciding
+    the existence of an instance from its command's reply when the reply alone does not
+    (a command that reads a whole node for an instance list): present when the check
+    holds, else unknown -- never confirmed_absent. A command serving several selectors
+    without checks cannot attribute a non-empty reply to any one of them, so they are
+    recorded unknown rather than present.
     require_targeted: when True, a targeted read that produces no targeted commands
     raises instead of silently widening to the whole-family fallback read.
     """
@@ -370,43 +444,48 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
     if state not in safe_states:
         return connection.get(fallback_command)
     selectors = selectors or {}
+    instance_checks = instance_checks or {}
+    resource = getattr(outcomes, "resource", None)
     scoped_results = []
     reading = state == "gathered"
     for command in list(dict.fromkeys(commands)):
-        section, selector = selectors.get(command, (None, None))
+        entries = selectors.get(command, [(None, None)])
+        if isinstance(entries, tuple):
+            entries = [entries]
+        entries = list(dict.fromkeys(entries))
         try:
             response = connection.get(command)
         except Exception as exc:  # connection plugins surface device errors here
             text = str(exc)
             if _is_absent_error(text):
                 if outcomes is not None:
-                    if _is_instance_absent(text):
-                        outcomes.record(section, selector, "ok", "confirmed_absent")
-                    else:
-                        outcomes.record(section, selector, "ok", "unknown", dependency_gap="lower-interface")
+                    _record_absence(outcomes, entries, text)
                 continue
             if reading and _is_unsupported_node(text):
                 if outcomes is not None:
-                    outcomes.record(section, selector, "rejected", "unknown")
+                    for section, selector in entries:
+                        outcomes.record(section, selector, "rejected", "unknown")
                 continue
             if outcomes is not None:
-                outcomes.record(section, selector, "failed", "unknown", error_class_value=error_class(text))
+                cls = error_class(text)
+                for section, selector in entries:
+                    outcomes.record(section, selector, "failed", "unknown", error_class_value=cls)
                 # A recorded failure must not be silently lost: fail the module carrying the
                 # sanitized per-selector outcomes. fail_json raises SystemExit, which no
                 # `except Exception` in a facts get_facts can swallow, so the outcomes reach
-                # the result even when a family has its own exception handling.
-                module.fail_json(msg=str(exc), read_outcomes=_finalize_collector(outcomes))
+                # the result even when a family has its own exception handling. The message
+                # is sanitized like the outcomes: no raw device/transport text.
+                module.fail_json(msg=_failure_message(resource, "targeted read", cls, entries),
+                                 read_outcomes=_finalize_collector(outcomes))
             raise
         if _is_absent_error(response):
             if outcomes is not None:
-                if _is_instance_absent(response):
-                    outcomes.record(section, selector, "ok", "confirmed_absent")
-                else:
-                    outcomes.record(section, selector, "ok", "unknown", dependency_gap="lower-interface")
+                _record_absence(outcomes, entries, response)
             continue
         if reading and _is_unsupported_node(response):
             if outcomes is not None:
-                outcomes.record(section, selector, "rejected", "unknown")
+                for section, selector in entries:
+                    outcomes.record(section, selector, "rejected", "unknown")
             continue
         reply = _targeted_reply(command, response)
         if not reply.strip() and (command in bare_commands or command in silent_bare_commands):
@@ -417,12 +496,21 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
                 # there must be recorded and fail the module carrying the outcomes, not
                 # bypass the failure-outcome handling.
                 if outcomes is not None:
-                    outcomes.record(section, selector, "failed", "unknown",
-                                    error_class_value=error_class(str(exc)))
-                    module.fail_json(msg=str(exc), read_outcomes=_finalize_collector(outcomes))
+                    cls = error_class(str(exc))
+                    for section, selector in entries:
+                        outcomes.record(section, selector, "failed", "unknown", error_class_value=cls)
+                    module.fail_json(msg=_failure_message(resource, "targeted read", cls, entries),
+                                     read_outcomes=_finalize_collector(outcomes))
                 raise
         if outcomes is not None:
-            outcomes.record(section, selector, "ok", "present" if reply.strip() else "unknown")
+            shared = len(entries) > 1
+            for section, selector in entries:
+                check = instance_checks.get((section, selector))
+                if check is not None:
+                    present = bool(reply.strip()) and bool(check(reply))
+                else:
+                    present = bool(reply.strip()) and not shared
+                outcomes.record(section, selector, "ok", "present" if present else "unknown")
         scoped_results.append(reply)
     return "\n".join(scoped_results)
 
@@ -557,15 +645,35 @@ def targeted_outcomes(module, resource):
 def finish_targeted_outcomes(module, collector):
     """Finalize a targeted read's collector and stash it on the module for the result.
 
-    Records the default parse outcome (unverified) when the parser recorded none, and
-    stashes the sanitized result on ``module._isam_read_outcomes`` (surfaced centrally by
-    the resource module's result). A no-op when there is no collector (whole-family or
+    Records the default parse outcome (unverified) when none was recorded, and stashes
+    the sanitized result on ``module._isam_read_outcomes`` (surfaced centrally by the
+    resource module's result). A no-op when there is no collector (whole-family or
     non-gathered read). Returns the sanitized result, or None.
+
+    Named instances the device rejected ("invalid token") are missing from
+    ``gathered`` exactly like absent ones; only read_outcomes tells them apart. So
+    that a consumer of ``gathered`` alone is not misled, a module warning names the
+    rejected selectors (user-supplied identities, no device text). The read does not
+    fail: callers rely on the per-selector outcomes.
     """
     result = _finalize_collector(collector)
     if module is not None and result is not None:
         module._isam_read_outcomes = result
+        _warn_rejected(module, result)
     return result
+
+
+def _warn_rejected(module, result):
+    rejected = [outcome for outcome in result.get("outcomes", ())
+                if outcome.get("command") == "rejected" and outcome.get("selector") is not None]
+    warn = getattr(module, "warn", None)
+    if not rejected or not callable(warn):
+        return
+    names = ", ".join(
+        "%s %s" % (outcome["section"], outcome["selector"]) if outcome.get("section") else str(outcome["selector"])
+        for outcome in rejected)
+    warn("targeted read of %s: the device rejected the read of %s (invalid token); their existence "
+         "is unknown and they are missing from gathered (see read_outcomes)" % (result.get("resource"), names))
 
 
 def targeted_explicit(module, section="config"):
@@ -580,10 +688,10 @@ def targeted_explicit(module, section="config"):
     return bool(_section_items(params.get("config"), section))
 
 
-def _has_targeted_entries(module, resource, formats):
-    """Whether config names at least one instance in a targeted section -- an explicit
+def _has_targeted_entries(module, sections):
+    """Whether config names at least one instance in any of ``sections`` -- an explicit
     targeted request -- regardless of whether the identities became read commands."""
-    return any(targeted_explicit(module, section) for section in formats)
+    return any(targeted_explicit(module, section) for section in sections)
 
 
 def targeted_read_gaps(module, resource, sections):
@@ -647,32 +755,56 @@ def selector_key(identity):
     return "/".join(str(value) for value in identity) if isinstance(identity, (tuple, list)) else str(identity)
 
 
+def _identity_commands(form, identity):
+    """The read commands one format produces for one identity."""
+    if callable(form):
+        return list(form(identity))
+    return [form % (identity if isinstance(identity, tuple) else (identity,))]
+
+
 def _targeted_selectors(module, resource, formats):
-    """A {command: (section, selector)} map labeling each targeted read command with
-    the config section and instance identity it addresses."""
-    selectors = {}
+    """A {command: [(section, selector), ...]} map labeling each targeted read command
+    with every config section and instance identity it addresses. Several identities
+    can share one read command (a section read through its whole node); each keeps its
+    own entry, so one outcome is recorded per selector."""
+    selectors = {}  # type: dict
     for section, form in formats.items():
         for identity in requested_identities(module, resource, section):
-            key = selector_key(identity)
-            if callable(form):
-                for command in form(identity):
-                    selectors[command] = (section, key)
-            else:
-                command = form % (identity if isinstance(identity, tuple) else (identity,))
-                selectors[command] = (section, key)
+            entry = (section, selector_key(identity))
+            for command in _identity_commands(form, identity):
+                entries = selectors.setdefault(command, [])
+                if entry not in entries:
+                    entries.append(entry)
     return selectors
 
 
+def _targeted_instance_checks(module, resource, instance_checks):
+    """{(section, selector): callable(reply) -> bool} from per-section checks
+    {section: callable(reply, identity) -> bool}."""
+    checks = {}
+    for section, check in (instance_checks or {}).items():
+        for identity in requested_identities(module, resource, section):
+            checks[(section, selector_key(identity))] = (
+                lambda reply, _check=check, _identity=identity: _check(reply, _identity))
+    return checks
+
+
 def get_targeted_config(module, connection, resource, fallback, formats, write_states=False, bare_sections=(),
-                        silent_bare_sections=()):
+                        silent_bare_sections=(), instance_checks=None):
     """The whole resource, or only the instances named in config with state gathered.
 
     fallback: command for the whole resource, or a callable(connection) reading it.
+    formats: instance list -> command format with one %s per identity field, or a
+    callable returning the commands for one identity.
     write_states: also compare merged/replaced/deleted against only the named
     instances (only for resources made of instance lists, where that is exact).
     bare_sections: lists whose whole read shows unconfigured instances as their bare
     path (see get_scoped_config bare_commands); silent_bare_sections likewise, for
     nodes whose detail read prints nothing either (silent_bare_commands).
+    instance_checks: {section: callable(reply, identity) -> bool} for sections whose
+    read command returns more than the addressed instance (a whole node shared by
+    every identity of the section): the instance is present when the check finds it in
+    the reply, else unknown (see get_scoped_config instance_checks).
 
     A targeted gathered read reports sanitized per-selector read outcomes: a collector
     is created for gathered reads, threaded into the read, and stashed on the module for
@@ -688,7 +820,7 @@ def get_targeted_config(module, connection, resource, fallback, formats, write_s
     if state not in states:
         return fallback(connection) if callable(fallback) else connection.get(fallback)
     commands = targeted_commands(module, resource, formats)
-    explicit = state == "gathered" and _has_targeted_entries(module, resource, formats)
+    explicit = state == "gathered" and _has_targeted_entries(module, formats)
     if explicit:
         assert_targeted_request(module, resource, list(formats))
     if not commands and not explicit:
@@ -711,7 +843,7 @@ def get_targeted_config(module, connection, resource, fallback, formats, write_s
                                  silent_bare_commands=section_commands(silent_bare_sections),
                                  outcomes=collector,
                                  selectors=_targeted_selectors(module, resource, formats),
-                                 require_targeted=explicit)
+                                 instance_checks=_targeted_instance_checks(module, resource, instance_checks))
     finally:
         finish_targeted_outcomes(module, collector)
     return data
@@ -768,7 +900,7 @@ def get_whole_node_targeted(module, connection, resource, command, sections, par
     """
     if module is None or (module.params or {}).get("state") != "gathered":
         return connection.get(command)
-    if not _has_targeted_entries(module, resource, sections):
+    if not _has_targeted_entries(module, sections):
         # No instances named: the whole node is read, as before, with no outcomes.
         return connection.get(command)
     assert_targeted_request(module, resource, sections)
@@ -776,6 +908,7 @@ def get_whole_node_targeted(module, connection, resource, command, sections, par
     requested = [(section, identity)
                  for section in sections
                  for identity in requested_identities(module, resource, section)]
+    requested_keys = [(section, selector_key(identity)) for section, identity in requested]
 
     def record_all(command_status, existence, **kwargs):
         for section, identity in requested:
@@ -786,25 +919,23 @@ def get_whole_node_targeted(module, connection, resource, command, sections, par
             response = unwrap_response(connection.get(command)) or ""
         except Exception as exc:  # connection plugins surface device errors here
             text = str(exc)
-            if _is_instance_absent(text):
-                # The device says the node does not exist: nothing under it can be.
-                record_all("ok", "confirmed_absent")
-                return ""
-            if _is_dependency_absent(text):
-                record_all("ok", "unknown", dependency_gap="lower-interface")
+            if _is_absent_error(text):
+                # The device says the node does not exist (nothing under it can be),
+                # or that a dependency is missing (existence unknown).
+                _record_absence(collector, requested_keys, text)
                 return ""
             if _is_unsupported_node(text):
                 record_all("rejected", "unknown")
                 return ""
-            record_all("failed", "unknown", error_class_value=error_class(text))
+            cls = error_class(text)
+            record_all("failed", "unknown", error_class_value=cls)
             # A recorded failure must not be silently lost: fail the module carrying
-            # the sanitized per-selector outcomes (see get_scoped_config).
-            module.fail_json(msg=str(exc), read_outcomes=_finalize_collector(collector))
-        if _is_instance_absent(response):
-            record_all("ok", "confirmed_absent")
-            return ""
-        if _is_dependency_absent(response):
-            record_all("ok", "unknown", dependency_gap="lower-interface")
+            # the sanitized per-selector outcomes (see get_scoped_config); the message
+            # carries no raw device/transport text.
+            module.fail_json(msg=_failure_message(resource, "whole-node read", cls, requested_keys),
+                             read_outcomes=_finalize_collector(collector))
+        if _is_absent_error(response):
+            _record_absence(collector, requested_keys, response)
             return ""
         if _is_unsupported_node(response):
             record_all("rejected", "unknown")
@@ -819,10 +950,10 @@ def get_whole_node_targeted(module, connection, resource, command, sections, par
             # whole-family read.
             collector.record_parse("failed")
             record_all("ok", "unknown")
-            detail = str(exc).split("\n")[0] or "the parser raised"
+            # The parser's message may quote reply lines: name its class only.
             module.fail_json(
                 msg="whole-node read of %s: the device replied but the catalog "
-                    "could not be parsed: %s" % (resource, detail),
+                    "could not be parsed (%s)" % (resource, type(exc).__name__),
                 read_outcomes=_finalize_collector(collector))
         for section, identity in requested:
             if _catalog_contains(catalog, resource, section, identity):

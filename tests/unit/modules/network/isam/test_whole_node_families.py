@@ -275,7 +275,8 @@ def test_interface_alarms_parse_failure_is_classified(monkeypatch):
                         {"state": "gathered", "config": [{"name": "eont"}]}, device)
     assert result.get("failed"), result
     assert "could not be parsed" in result["msg"]
-    assert "catalog shape changed" in result["msg"]
+    assert "catalog shape changed" not in result["msg"]
+    assert "(ValueError)" in result["msg"]
     assert result["read_outcomes"]["parse"] == "failed"
     (outcome,) = outcomes(result)
     assert outcome["command"] == "ok"
@@ -433,7 +434,8 @@ def test_vlan_global_parse_failure_is_classified(monkeypatch):
                         {"state": "gathered", "config": {"priority_regen": [{"id": 1}]}}, device)
     assert result.get("failed"), result
     assert "could not be parsed" in result["msg"]
-    assert "catalog shape changed" in result["msg"]
+    assert "catalog shape changed" not in result["msg"]
+    assert "(ValueError)" in result["msg"]
     assert result["read_outcomes"]["parse"] == "failed"
     (outcome,) = outcomes(result)
     assert outcome["command"] == "ok"

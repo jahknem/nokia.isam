@@ -3,11 +3,16 @@
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Sanitized read-outcome records for targeted reads.
 
-A read has three independent axes, set by different stages:
+A read has three independent axes:
 
 * ``command``   -- did the CLI command run?           (set by the read path)
 * ``existence`` -- does the addressed instance exist?  (set by the read path)
-* ``parse``     -- was the reply fully parsed?        (set by the parser)
+* ``parse``     -- could the reply be parsed?         (resource level)
+
+The parse axis is coarse: ``failed`` when the family parser raised on the reply
+(whole-node reads, which parse inside the read path), otherwise ``unverified``
+-- no parser records its coverage of the reply, so a read never claims a
+complete parse.
 
 Only ``existence: confirmed_absent`` -- the device's explicit
 "instance does not exist" signal *about the addressed instance* -- may be
@@ -39,9 +44,7 @@ EXISTENCE_PRESENT = "present"
 EXISTENCE_CONFIRMED_ABSENT = "confirmed_absent"
 EXISTENCE_UNKNOWN = "unknown"
 
-# Parsing axis.
-PARSE_COMPLETE = "complete"
-PARSE_PARTIAL = "partial"
+# Parsing axis (see the module docstring: only these two are produced).
 PARSE_FAILED = "failed"
 PARSE_UNVERIFIED = "unverified"
 
@@ -81,6 +84,11 @@ class ReadOutcomeCollector(object):
         self._resource = resource
         self._entries = {}
         self._parse = {}
+
+    @property
+    def resource(self):
+        """The resource family this collector records outcomes for."""
+        return self._resource
 
     def record(self, section, selector, command_status, existence, error_class_value=None,
                dependency_gap=None):
@@ -160,7 +168,7 @@ class ReadOutcomeCollector(object):
         """
         outcomes = [self._resolve(entry) for entry in
                     (self._entries[key] for key in sorted(
-                        self._entries, key=lambda key: (key[1] is not None, key[0] or "", key[1] or "")))]
+                        self._entries, key=lambda key: (key[1] != _WHOLE, key[0] or "", key[1])))]
         result = {"resource": self._resource, "outcomes": outcomes}
         if self._parse:
             if len(self._parse) == 1 and _RESOURCE in self._parse:
