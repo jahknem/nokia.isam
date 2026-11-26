@@ -19,6 +19,9 @@ class Qos_maps(IsamResourceModule):
 
     IDENTITIES = {"tc_map_dot1p": "dot1p", "dscp_map_dot1p": "dscp",
                   "up_ctrl_pkt": "protocol", "dn_ctrl_pkt": "protocol"}
+    # Fields the device needs to set an entry (the identity is always needed).
+    REQUIRED = {"tc_map_dot1p": ("dot1p", "tc"), "dscp_map_dot1p": ("dscp", "dot1p"),
+                "up_ctrl_pkt": ("protocol",), "dn_ctrl_pkt": ("protocol",)}
 
     def __init__(self, module):
         super(Qos_maps, self).__init__(
@@ -34,6 +37,11 @@ class Qos_maps(IsamResourceModule):
         return entry.get(cls.IDENTITIES[field])
 
     def _add_commands(self, entries, field):
+        for entry in entries or []:
+            missing = [f for f in self.REQUIRED[field] if entry.get(f) is None]
+            if missing:
+                self._module.fail_json(msg="qos %s entry %s needs %s to be set on the device"
+                                           % (field, self._key(entry, field), " and ".join(missing)))
         self._map_commands(entries, field)
 
     def _del_commands(self, entries, field):

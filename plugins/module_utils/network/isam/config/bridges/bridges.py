@@ -183,7 +183,7 @@ class Bridges(IsamResourceModule):
         if self.state == "overridden" or (self.state == "deleted" and not self.want):
             for k, have in iteritems(haved):
                 if k not in wantd:
-                    self._compare(want={}, have=have)
+                    self._remove_unwanted_port(k, have)
 
         for k, want in iteritems(wantd):
             self._compare(want=want, have=haved.pop(k, {}))
@@ -298,6 +298,13 @@ class Bridges(IsamResourceModule):
                 if vid not in indexed:
                     indexed[vid] = normalize_bridge_vlan_alias(entry)
         return indexed
+
+    def _remove_unwanted_port(self, port_name, have):
+        """overridden (and unqualified deleted): a device port the request does not
+        mention is removed as a whole. The parser has no removal form for a port
+        entry, so the CLI form is rendered here, as in _delete_bridge_port."""
+        if have:
+            self.commands.append("configure bridge no port %s" % port_name)
 
     def _delete_bridge_port(self, port_name, want, have, want_vlans, have_vlans):
         """deleted for one requested port: an identity alone (or a whole entry) removes
