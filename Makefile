@@ -1,10 +1,12 @@
-.PHONY: test lint compile doc clean setup typecheck coverage check check-all gather-all bridges-outcomes
+.PHONY: live-env test lint compile doc clean setup typecheck coverage check check-all gather-all bridges-outcomes
 
 COLLECTIONS_PATH ?= /tmp/opencode
 COLLECTION_LINK := $(COLLECTIONS_PATH)/ansible_collections/nokia/isam
 ANSIBLE ?= $(shell if [ -x .venv/bin/ansible ]; then printf '%s' .venv/bin/ansible; else command -v ansible; fi)
-INVENTORY ?= /path/to/inventory.yaml
-VAULT_PASS ?= /path/to/.vault_pass
+# Live targets (gather-all, bridges-outcomes) need these; set them in your
+# environment or on the command line, e.g. make gather-all INVENTORY=... VAULT_PASS=...
+INVENTORY ?=
+VAULT_PASS ?=
 TARGET ?= DS-LIN-TEST-01
 MODULES := $(patsubst plugins/modules/%.py,%,$(wildcard plugins/modules/isam_*.py))
 RESOURCE_MODULES := $(filter-out isam_facts isam_security_ext_authenticator,$(MODULES))
@@ -45,7 +47,10 @@ doc:
 		echo "  OK nokia.isam.isam_network_cli" || { echo "  FAIL nokia.isam.isam_network_cli"; failed=1; }; \
 	exit $$failed
 
-gather-all:
+live-env:
+	@test -n "$(INVENTORY)" -a -n "$(VAULT_PASS)" || { echo "Set INVENTORY and VAULT_PASS for live targets"; exit 2; }
+
+gather-all: live-env
 	@failed=0; for m in $(RESOURCE_MODULES); do \
 		o=/tmp/opencode/live_$${m}_gathered.out; \
 		ANSIBLE_COLLECTIONS_PATH=$(COLLECTIONS_PATH) $(ANSIBLE) -i $(INVENTORY) $(TARGET) \
@@ -56,7 +61,7 @@ gather-all:
 		else printf '  FAIL %s (rc=%s)\n' "$$m" $$rc; failed=1; fi; \
 	done; exit $$failed
 
-bridges-outcomes: setup
+bridges-outcomes: setup live-env
 	@echo "Run the live bridges read-outcome regression (read-only). Requires live MSAN access."
 	@ANSIBLE_COLLECTIONS_PATH=$(COLLECTIONS_PATH) $(ANSIBLE) -i $(INVENTORY) -l $(TARGET) \
 		-e isam_test_hosts=$(TARGET) --vault-password-file $(VAULT_PASS) \
