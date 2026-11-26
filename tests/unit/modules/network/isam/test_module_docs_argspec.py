@@ -327,3 +327,23 @@ def test_runtime_routes_and_groups_every_module():
     routing = runtime["plugin_routing"]["action"]
     assert sorted(routing) == MODULE_NAMES
     assert set(entry["redirect"] for entry in routing.values()) == {"nokia.isam.isam"}
+
+
+@pytest.mark.parametrize("name", MODULE_NAMES)
+def test_module_layout(name):
+    # validate-modules: imports below DOCUMENTATION/EXAMPLES/RETURN; the __main__ guard must
+    # come last, after every import (AnsiballZ runs the module as __main__).
+    tree = ast.parse((MODULES / ("%s.py" % name)).read_text())
+    docs = [node.lineno for node in tree.body if isinstance(node, ast.Assign)
+            and getattr(node.targets[0], "id", None) in ("DOCUMENTATION", "EXAMPLES", "RETURN")]
+    imports = [node.lineno for node in tree.body if isinstance(node, (ast.Import, ast.ImportFrom))
+               and not (isinstance(node, ast.ImportFrom) and node.module == "__future__")]
+    assert min(imports) > max(docs), "imports before the documentation"
+    guard = [node for node in tree.body if isinstance(node, ast.If) and "__name__" in ast.unparse(node.test)]
+    assert guard and guard[-1] is tree.body[-1], "the __main__ guard must be the last statement"
+
+
+@pytest.mark.parametrize("name", MODULE_NAMES)
+def test_no_dead_module_description(name):
+    # a second, stale description string next to DOCUMENTATION drifts silently
+    assert "MODULE_DESCRIPTION" not in _blocks(name) and "\nMODULE_DESCRIPTION = " not in (MODULES / ("%s.py" % name)).read_text()

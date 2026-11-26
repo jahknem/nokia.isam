@@ -5,7 +5,6 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import re
 
 DOCUMENTATION = """
 module: isam_pon_interfaces
@@ -382,6 +381,8 @@ parsed:
   type: list
 # END resource_returns
 """
+
+import re
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.pon_interfaces.pon_interfaces import Pon_interfacesArgs

@@ -1,10 +1,5 @@
 #!/usr/bin/python
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.mcast_control.mcast_control import Mcast_controlArgs
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.mcast_control.mcast_control import Mcast_control
-
-
 DOCUMENTATION = """
 ---
 module: isam_mcast_control
@@ -262,6 +257,10 @@ parsed:
 # END resource_returns
 """
 
+from ansible.module_utils.basic import AnsibleModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.mcast_control.mcast_control import Mcast_controlArgs
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.mcast_control.mcast_control import Mcast_control
+
 
 def main():
     module = AnsibleModule(
@@ -278,9 +277,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-MODULE_DESCRIPTION = """
-module: isam_mcast_control
-short_description: Manage Nokia ISAM multicast control
-description: Manage Nokia ISAM multicast control using configure mcast-control.
-"""

@@ -24,6 +24,7 @@ options:
     default: true
 attributes:
   check_mode:
+    description: Lists the commands that would be sent without sending them.
     support: full
 """
 

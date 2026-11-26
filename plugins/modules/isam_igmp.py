@@ -1,10 +1,5 @@
 #!/usr/bin/python
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.igmp.igmp import IgmpArgs
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.igmp.igmp import Igmp
-
-
 DOCUMENTATION = """
 ---
 module: isam_igmp
@@ -263,6 +258,10 @@ parsed:
 # END resource_returns
 """
 
+from ansible.module_utils.basic import AnsibleModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.igmp.igmp import IgmpArgs
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.igmp.igmp import Igmp
+
 
 def main():
     module = AnsibleModule(
@@ -279,9 +278,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-MODULE_DESCRIPTION = """
-module: isam_igmp
-short_description: Manage Nokia ISAM IGMP
-description: Manage Nokia ISAM IGMP using the configure igmp command family.
-"""

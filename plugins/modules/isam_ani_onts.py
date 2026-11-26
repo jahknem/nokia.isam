@@ -174,9 +174,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-MODULE_DESCRIPTION = """
-module: isam_ani_onts
-short_description: Manage Nokia ISAM ANI ONT thresholds
-description: Manage Nokia ISAM ANI ONT thresholds.
-"""
