@@ -76,6 +76,10 @@ interfaces and documentation").
   documentation matches the argspec (`rendered`/`parsed` states, the
   `insert-mirror-vlan` and `filtervlanandpbit` choices; device defaults are no
   longer documented as option defaults).
+- `isam_system_security`: option descriptions written from the CLI guide; its docs
+  match the argspec (enforced by the contract tests once the module is registered).
+- `isam_security_ext_authenticator`: the undocumented, unused `provider` option is
+  removed.
 
 ## 1.0.0 (unreleased)
 
@@ -301,6 +305,60 @@ intentional. This section lists the ONT/access families of that line.
   assertion is replaced with a concrete identity/value check
   (`partition_type: fixed-assigned`), with the fixture data corrected against
   the CLI guide.
+
+### New module isam_system_security
+
+- New resource `isam_system_security` (slice 1): operators, profiles (permissions as a
+  dict), SNMP communities/views/managers/notify-profiles, RADIUS auth-servers/policies/
+  auth-super-user/dyn-auth-clients. Targeted gathering by name; secret values (operator
+  passwords, RADIUS secrets, SNMP community strings) registered for redaction. Derived
+  from real device output (this tree is not in rm_models).
+- Slice 2: SNMP notify-views, domains, SSH (server profile, access, SFTP users), file
+  transfer (servers), TACACS, LI, password policy, default profile, slots,
+  peripheral-management MAC filters, PAE (802.1X) port access and per-port
+  authenticator / ext-authenticator, and the general settings line. Slice-1 fixes: SNMP
+  communities are keyed by name and host-address, views by name and subtree; removals use
+  the device form (`snmp no view X subtree S`); `deleted` with config only touches the
+  named sections; values with spaces are quoted; replaced/overridden reset omitted
+  attributes. All 679 security lines of the lab detail capture parse.
+- RADIUS policies preserve multiple servers in `servers[]` (indexed by `index`); legacy
+  flat server fields map to server 1. Dynamic authorization clients expose `admin_down`.
+- Global value options fixed (`isam_system_security`): password `mixed_case`, ssh access
+  `debug`/`debugkernel`, filetransfer `tftp_rollovr` (int) — options modelled as on/off
+  flags that take values per the CLI guide; before, a set value was read as `true`.
+- Targeted reads: `ssh.sftp_users` uses the ssh node (the device rejects
+  `ssh sftp-user <name>` with `invalid token`) and keeps only the named users' lines.
+- Targeted read commands refuse identities carrying control characters before anything
+  is sent (this family's own check until the central targeted-read enforcement lands in
+  `facts_base` with the read-outcomes work).
+
+### Secret handling (isam_system_security)
+
+- Fixed redacted gathered-facts replay in `system_security`: device masks and Ansible's
+  `VALUE_SPECIFIED_IN_NO_LOG_PARAMETER` preserve existing secrets rather than generating
+  placeholder credential commands. Masked credentials are omitted from unrelated updates
+  and rejected when creating/rendering entries; concrete credential updates still work.
+  Redacted identities are never guessed: merged/replaced leave those entries unchanged
+  with a warning, while destructive states, rendering and targeted gathering reject them.
+  Embedded redacted notify-profile communities preserve the existing SNMP version only.
+- The SNMP community inside a notify profile's `snmp-version v1:<community>` is
+  registered as a no_log value even when a targeted read does not read the community
+  list, so it is masked in module output.
+- `isam_system_security` SNMP views: the device stores well-known numeric OIDs under
+  their MIB names (`1.3.6.1.2.1` -> `mib_2`, ...); merged re-sent them every run. The
+  15 verified names are compared as equal to their OIDs.
+
+### isam_security_ext_authenticator on the shared action base
+
+- `isam_security_ext_authenticator` now runs on the shared `IsamActionModule` base
+  (check mode, one command per transaction, responses and failure propagation).
+  **Bug fix:** with `clear_statistics: false` it sent the bare resource path
+  `admin security ext-authenticator <port>` (which only navigates the admin hierarchy,
+  CLI guide global commands) and reported `changed: true`; it now rejects an entry
+  without the `clear-statistics` operation.
+- The unreachable ext-authenticator facts/template (and its synthetic
+  command-as-facts fixture) are removed; ext-authenticator remains action-only and
+  gathers nothing.
 
 ## 0.3.14 — A slice of π, without the breaking crust
 
