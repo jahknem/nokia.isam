@@ -69,3 +69,67 @@ def test_verification_exception_retains_execution_context_without_retry(monkeypa
     assert result["response"] == ["accepted"] * 3
     assert "do not blindly retry" in result["msg"]
     assert connection.calls == [[command] for command in COMMANDS]
+
+
+SCHEMA = {"commands", "sent", "accepted", "completed", "failed_command", "pending", "failure_phase",
+          "completion_status", "response", "changed"}
+
+
+def test_execution_failure_uses_the_shared_schema(monkeypatch, capsys):
+    connection = Connection(fail_on=COMMANDS[1])
+    monkeypatch.setattr(action_module, "get_resource_connection", lambda module: connection)
+    result = invoke(capsys)
+    assert SCHEMA <= set(result)
+    assert result["failure_phase"] == "execution"
+    assert result["completion_status"] == "unknown"
+    assert result["sent"] == COMMANDS[:2]
+    assert result["accepted"] == [COMMANDS[0]]
+    # the default verify trusts the transport: accepted counts as completed
+    assert result["completed"] == [COMMANDS[0]]
+
+
+def test_execution_failure_with_own_verify_does_not_claim_completion(monkeypatch, capsys):
+    # verify never ran for the accepted commands, so their completion is unknown
+    connection = Connection(fail_on=COMMANDS[1])
+    monkeypatch.setattr(action_module, "get_resource_connection", lambda module: connection)
+    monkeypatch.setattr(Isam_security_ext_authenticator, "verify", lambda self, commands, response: None)
+    result = invoke(capsys)
+    assert result["accepted"] == [COMMANDS[0]]
+    assert result["completed"] == []
+
+
+def test_verification_failure_uses_the_shared_schema(monkeypatch, capsys):
+    connection = Connection()
+    monkeypatch.setattr(action_module, "get_resource_connection", lambda module: connection)
+
+    def fail_verification(self, commands, response):
+        raise RuntimeError("follow-up read unavailable")
+
+    monkeypatch.setattr(Isam_security_ext_authenticator, "verify", fail_verification)
+    result = invoke(capsys)
+    assert SCHEMA <= set(result)
+    assert result["sent"] == result["accepted"] == COMMANDS
+
+
+def test_connection_failure_uses_the_shared_schema(monkeypatch, capsys):
+    def no_connection(module):
+        raise RuntimeError("socket missing")
+
+    monkeypatch.setattr(action_module, "get_resource_connection", no_connection)
+    result = invoke(capsys)
+    assert SCHEMA <= set(result)
+    assert result["failure_phase"] == "connection"
+    assert result["completion_status"] == "not_started"
+    assert result["sent"] == result["accepted"] == result["completed"] == []
+    assert result["pending"] == COMMANDS and result["changed"] is False
+
+
+def test_success_reports_the_same_outcome_fields(monkeypatch, capsys):
+    connection = Connection()
+    monkeypatch.setattr(action_module, "get_resource_connection", lambda module: connection)
+    set_module_args({"config": [{"port": "1/1/6/1", "clear_statistics": True}], "_ansible_check_mode": False}, True)
+    with pytest.raises(SystemExit) as exited:
+        isam_security_ext_authenticator.main()
+    result = json.loads(capsys.readouterr().out)
+    assert exited.value.code == 0
+    assert result["sent"] == result["accepted"] == result["completed"] == [COMMANDS[0]]

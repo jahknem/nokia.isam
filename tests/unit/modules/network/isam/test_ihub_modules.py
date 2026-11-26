@@ -85,11 +85,32 @@ class TestIhubReadModules(TestIsamModule):
         self.failed()
         self.get_conn.assert_not_called()
 
-    def test_check_mode_does_not_read(self):
+    def test_check_mode_reads_like_a_normal_run(self):
+        # read-only modules never write, so check mode returns the same data
         set_module_args({"state": "gathered", "allow_broad_read": True, "_ansible_check_mode": True}, ignore_provider=True)
         result = self.execute_module(changed=False)
-        self.assertTrue(result["skipped"])
+        self.assertNotIn("skipped", result)
+        self.assertEqual(self.commands, ["info configure"])
+        self.assertEqual(len(result["gathered"]), 5)
+        self.assertEqual(result["ansible_facts"]["ansible_network_resources"]["ihub_ports"], result["gathered"])
+
+    def test_parsed_does_not_publish_facts(self):
+        set_module_args({"state": "parsed", "running_config": self.text}, ignore_provider=True)
+        result = self.execute_module(changed=False)
+        self.assertTrue(result["parsed"])
+        self.assertNotIn("ansible_facts", result)
+
+    def test_selection_accepts_only_identity_keys(self):
+        set_module_args({"state": "gathered", "allow_broad_read": True,
+                         "config": [{"id": "nt-a:xfp:2", "description": "ignored before"}]}, ignore_provider=True)
+        result = self.failed()
+        self.assertIn("description", result["msg"])
         self.get_conn.assert_not_called()
+
+    def test_lag_selection_no_longer_requires_nested_fields(self):
+        self.module = isam_ihub_lags
+        set_module_args({"state": "gathered", "allow_broad_read": True, "config": [{"id": "1"}]}, ignore_provider=True)
+        self.execute_module(changed=False)
 
     def test_wrong_family_source_fails_not_empty(self):
         self.text = 'echo "port-protection"\n----------'

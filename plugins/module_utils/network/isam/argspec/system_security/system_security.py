@@ -26,7 +26,8 @@ def _ssh_server_profile():
     opts = {
         "server_retries": {"type": "int"},
         "idle_timeout": {"type": "int"},
-        "server_host_key": {"type": "str"},
+        # host key algorithm name, not a key (explicit no_log=False for validate-modules)
+        "server_host_key": {"type": "str", "no_log": False},
     }
     for flag in _SSH_DISABLE_FLAGS:
         opts[flag] = {"type": "bool"}
@@ -56,7 +57,7 @@ class Isam_system_securityArgs(object):
                     "description": {"type": "str"},
                     "slot_numbering": {"type": "str"},
                     "prompt": {"type": "str"},
-                    "password_timeout": {"type": "str"},
+                    "password_timeout": {"type": "str", "no_log": False},  # days, not a secret
                     "terminal_timeout": {"type": "str"},
                     "permissions": {"type": "dict"},
                 }),
@@ -183,7 +184,7 @@ class Isam_system_securityArgs(object):
                         "name": {"type": "str", "required": True},
                         "password": {"type": "str", "no_log": True},
                         "auth_type": {"type": "str"},
-                        "key_type": {"type": "str"},
+                        "key_type": {"type": "str", "no_log": False},  # key algorithm name
                     }),
                 }),
                 "tacacs": _dct({
@@ -217,7 +218,7 @@ class Isam_system_securityArgs(object):
                         "user_name": {"type": "str"},
                         "password": {"type": "str", "no_log": True},
                         "auth_type": {"type": "str"},
-                        "key_type": {"type": "str"},
+                        "key_type": {"type": "str", "no_log": False},  # key algorithm name
                     }),
                 }),
                 "peripheral_mgnt": _dct({

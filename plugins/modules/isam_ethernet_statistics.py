@@ -17,7 +17,7 @@ description:
   - I(clear_stats) is the operation and must be C(true). A bare C(admin ethernet statistics <stats-index>)
     without an operation only navigates to the interface in the admin hierarchy and performs no action, so it
     is rejected rather than reported as a change.
-version_added: 0.3.14
+version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:
   config:
@@ -72,6 +72,41 @@ response:
   returned: when not check mode
   type: list
   elements: str
+sent:
+  description: Commands handed to the device (on failure, up to and including I(failed_command)).
+  returned: when commands were sent (not in check mode), and on failure
+  type: list
+  elements: str
+accepted:
+  description: Commands the device answered without a recognised error.
+  returned: when commands were sent (not in check mode), and on failure
+  type: list
+  elements: str
+completed:
+  description:
+    - Commands confirmed to have taken effect. Without a module-specific completion check
+      an accepted command counts as completed.
+    - On a failure, completion of everything else is unknown; read the device back before retrying.
+  returned: when commands were sent (not in check mode), and on failure
+  type: list
+  elements: str
+failed_command:
+  description: The command that failed; its outcome is unknown (it may have executed). Null when no command failed.
+  returned: on failure
+  type: str
+pending:
+  description: Commands never sent because of the failure.
+  returned: on failure
+  type: list
+  elements: str
+failure_phase:
+  description: Where the run failed, C(connection), C(execution) or C(verification).
+  returned: on failure
+  type: str
+completion_status:
+  description: C(not_started) when nothing was sent, otherwise C(unknown).
+  returned: on failure
+  type: str
 """
 
 from ansible.module_utils.basic import AnsibleModule

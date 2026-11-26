@@ -87,11 +87,12 @@ class FactsArgs(object):  # pylint: disable=R0903
         'xstp',
     ]
 
+    # The values are validated by Facts (netcommon's gen_runable), not by argspec choices:
+    # each value may also be given as an exclusion ("!interfaces"), which choices cannot
+    # express. ``choices`` stays the documented list of resource names.
     argument_spec = {
-        'gather_subset': dict(default=['!all'], type='list'),
-        'gather_network_resources': dict(choices=choices,
-                                          type='list'),
+        'gather_subset': dict(default=['!all'], type='list', elements='str'),
+        'gather_network_resources': dict(type='list', elements='str'),
         'gather_configuration': dict(default=False, type='bool'),
         'config_tree_detail': dict(default=False, type='bool'),
-        'provider': dict(type='dict', no_log=True),
     }

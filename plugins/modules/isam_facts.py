@@ -17,6 +17,7 @@ DOCUMENTATION = """
 module: isam_facts
 short_description: Get facts about isam devices.
 version_added: "1.0.0"
+author: Jan Kühnemund (@jahknem)
 description:
   - Collects facts from network devices running the isam operating
     system. This module places the facts gathered in the fact tree keyed by the
@@ -28,7 +29,11 @@ options:
       - Selects read-only operational facts to gather. Use C(!all) followed
         by one or more operational subsets for a focused query. C(all)
         gathers every operational subset. Values can be excluded with an
-        initial C(M(!)).
+        initial C(!).
+      - 'Operational subsets: C(active_alarms), C(config_tree), C(dhcp_relay),
+        C(equipment_status), C(interface_status), C(ont_ranging_status), C(ont_serials),
+        C(ont_software_status), C(ont_status), C(pon_pm_status), C(pon_status),
+        C(software_status).'
       - C(ont_serials) returns an MSAN-wide ONT serial index under
         C(ansible_net_ont_serials). It issues C(show equipment ont interface),
         which is markedly cheaper than expanding the whole
@@ -37,29 +42,30 @@ options:
         implement the command reports a warning; callers that depend on the
         index for a safety decision must treat a missing index as a failure
         rather than as "no ONTs configured".
-    required: false
+    type: list
+    elements: str
     default: ['!all']
-    version_added: "2.2"
   gather_network_resources:
     description:
       - Selects configuration/resource facts such as interfaces and vlans.
         Operational status, counters, alarms, and sessions belong in
-        C(gather_subset) instead.
-        Can specify a list of values to include a larger subset. Values
-        can also be used with an initial C(M(!)) to specify that a
-        specific subset should not be collected.
-    required: false
-    version_added: "2.9"
+        I(gather_subset) instead.
+      - C(all) selects every resource. A value with an initial C(!) excludes that
+        resource; a list of exclusions only (for example C(!interfaces)) selects every
+        other resource, like C([all, "!interfaces"]).
+      - 'Resources: C(alarm), C(ani_onts), C(bridges), C(dhcp_server), C(equipment_onts), C(equipment_replan), C(ethernet_line), C(ethernet_onts), C(generic_pon), C(interface_alarms), C(interface_cages), C(interfaces), C(iphost), C(isam_equipment), C(isam_dhcp_server), C(isam_dhcp_relay), C(isam_arp_relay), C(isam_cfm), C(efm_oam_interface), C(isam_ipv6_antispoofing_slot), C(isam_dist_service), C(l2cp), C(l2cp_session), C(l2cp_user_port), C(linetest), C(ngpon2_channel_groups), C(epon_interfaces), C(channel_pair_pm), C(isam_traps), C(isam_vlan_global), C(li_vlan), C(link_agg), C(mcast_general), C(igmp), C(mcast_control), C(multicast), C(ntp_onts), C(pon_interfaces), C(qos_global), C(cwmp_plt), C(error), C(nat), C(pon_global), C(pppox_relay_global), C(trouble_shooting_pon), C(qos_interfaces), C(qos_maps), C(qos_profiles), C(qos_tca), C(xdsl_inm), C(xdsl_onts), C(xdsl_system), C(l2uni_onts), C(uni_onts), C(software_mngt), C(system), C(isam_system_security), C(vlans), C(voice_sip), C(xdsl_boards), C(xdsl_bonding), C(xdsl_lines), C(xdsl_profiles), C(xstp).'
+      - Unknown names fail the module (validated by the facts class, so that exclusions
+        are accepted).
+    type: list
+    elements: str
   gather_configuration:
     description:
       - Read the access-side flat configuration once and pass it to each selected
         resource parser. This avoids one device request per resource.
       - On evidenced firmware this source omits IHUB port, LAG and service configuration.
         The explicit read-only IHUB family modules use separate hierarchical sources.
-    required: false
     default: false
     type: bool
-    version_added: "1.1.0"
   config_tree_detail:
     description:
       - With the C(config_tree) subset, read C(info configure detail flat) instead of
@@ -73,61 +79,57 @@ options:
         C(source) is C(grammar), C(resource) (resource-backed CLI metadata), or
         C(unclassified). Unknown paths are retained under C(__unclassified__)
         without guessed nesting. Unknown attribute tails are preserved in
-         C(unparsed); they are never inferred as fields or child nodes.
+        C(unparsed); they are never inferred as fields or child nodes.
       - C(ansible_net_config_tree_source) records the flat source and its known IHUB
         omissions. Lossless input parsing is not a whole-device completeness claim.
-    required: false
     default: false
     type: bool
-    version_added: "0.3.14"
+    version_added: "1.0.0"
 """
 
 EXAMPLES = """
-# Gather all facts
-- isam_facts:
+- name: Gather all resource facts
+  nokia.isam.isam_facts:
     gather_network_resources: all
 
-# Collect only the interfaces facts
-- isam_facts:
+- name: Collect only the interfaces facts
+  nokia.isam.isam_facts:
     gather_network_resources:
       - interfaces
 
-# Gather operational DHCP relay information
-- isam_facts:
+- name: Gather operational DHCP relay information
+  nokia.isam.isam_facts:
     gather_subset:
       - "!all"
       - dhcp_relay
 
-# Do not collect interfaces facts
-- isam_facts:
+- name: Collect every resource except interfaces
+  nokia.isam.isam_facts:
     gather_network_resources:
+      - all
       - "!interfaces"
 
-# Collect interfaces and minimal default facts
-- isam_facts:
-    gather_network_resources: interfaces
-
-# Read one complete configuration and reuse it for multiple resource parsers
-- isam_facts:
+- name: Read one complete configuration and reuse it for several resource parsers
+  nokia.isam.isam_facts:
     gather_configuration: true
-
-# Read the whole configuration as a nested, lossless tree (ansible_net_config_tree).
-# Schema-less: every line is kept, including parts no resource family models yet.
-- isam_facts:
-    gather_subset:
-      - "!all"
-      - config_tree
-
-# The same, including unset defaults (full configurable surface; much larger)
-- isam_facts:
-    gather_subset:
-      - "!all"
-      - config_tree
-    config_tree_detail: true
     gather_network_resources:
       - interfaces
       - pon_interfaces
       - equipment_onts
+
+# Schema-less: every line is kept, including parts no resource family models yet.
+- name: Read the whole configuration as a nested, lossless tree (ansible_net_config_tree)
+  nokia.isam.isam_facts:
+    gather_subset:
+      - "!all"
+      - config_tree
+
+- name: The same, including unset defaults (full configurable surface; much larger)
+  nokia.isam.isam_facts:
+    gather_subset:
+      - "!all"
+      - config_tree
+    config_tree_detail: true
 """
 
 RETURN = """

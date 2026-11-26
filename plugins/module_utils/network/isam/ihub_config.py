@@ -284,8 +284,7 @@ def run_module(resource, argument_spec):
             module.fail_json(msg="running_config is only valid with state=parsed", changed=False)
         if (source["read_scope"] == "device" or module.params.get("config") is not None) and not module.params["allow_broad_read"]:
             module.fail_json(msg="This request requires a whole-source read (%s); set allow_broad_read=true" % source["read_scope"], changed=False)
-        if module.check_mode:
-            module.exit_json(changed=False, skipped=True, source=source, msg="check_mode_does_not_read_ihub_configuration")
+        # Read-only: the module never changes the device, so check mode reads like a normal run.
         try:
             text = get_resource_connection(module).get(source["command"])
             source["collected_at"] = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
@@ -309,6 +308,8 @@ def run_module(resource, argument_spec):
                                 for section in ("customers", "services")}
         else:
             parsed["config"] = select(parsed["config"], selection, ("id",))
-    key = "parsed" if module.params["state"] == "parsed" else "gathered"
-    module.exit_json(changed=False, source=source, coverage=parsed["coverage"], **{key: parsed["config"]},
+    if module.params["state"] == "parsed":
+        # Offline text is not the device's state: it is never published as facts.
+        module.exit_json(changed=False, source=source, coverage=parsed["coverage"], parsed=parsed["config"])
+    module.exit_json(changed=False, source=source, coverage=parsed["coverage"], gathered=parsed["config"],
                      ansible_facts={"ansible_network_resources": {resource: parsed["config"]}})

@@ -33,8 +33,10 @@ display = Display()
 
 class ActionModule(ActionNetworkModule):
     # Action states given running_config render against it offline (no device). Run them
-    # in-process without opening the persistent connection, exactly like rendered.
-    OFFLINE_ACTION_STATES = ("merged", "replaced", "overridden", "deleted", "purged")
+    # in-process without opening the persistent connection, exactly like rendered. These are
+    # the resource modules' action states (IsamResourceModule.ACTION_STATES); no module has
+    # a "purged" state.
+    OFFLINE_ACTION_STATES = ("merged", "replaced", "overridden", "deleted")
 
     def run(self, tmp=None, task_vars=None):
         del tmp  # tmp no longer has any effect
@@ -43,7 +45,7 @@ class ActionModule(ActionNetworkModule):
         self._config_module = True if module_name in ["isam_config", "config"] else False
 
         if self._task.args.get("state") in self.OFFLINE_ACTION_STATES and self._task.args.get("running_config"):
-            return self._run_offline()
+            return self._run_offline(task_vars)
 
         persistent_connection = self._play_context.connection.split(".")[-1]
         warnings = []
@@ -66,13 +68,14 @@ class ActionModule(ActionNetworkModule):
                 result["warnings"] = warnings
         return result
 
-    def _run_offline(self):
+    def _run_offline(self, task_vars=None):
         """Execute an offline action state in-process, never opening the device connection.
 
         Reuses netcommon's module loader and in-process executor but skips its connection
-        setup (``_patch_update_module`` reads ``self._connection.socket_path``, which starts
-        the persistent SSH session). The module's own offline path renders the commands from
-        ``running_config`` without a device.
+        setup (``_patch_update_module`` hands the module the persistent connection's socket,
+        and any use of it starts the SSH session). The module's own offline path renders the commands from
+        ``running_config`` without a device. The ``_ansible_*`` arguments (check and diff mode,
+        no_log, verbosity, ...) are set exactly as for any other module run.
         """
         import copy
 
@@ -92,8 +95,10 @@ class ActionModule(ActionNetworkModule):
                 module._raw_result = o
 
         args = copy.deepcopy(self._task.args)
-        args["_ansible_check_mode"] = bool(self._task.check_mode)
-        args["_ansible_no_log"] = bool(self._task.no_log)
+        self._update_module_args(self._task.action, args, task_vars or {})
+        # No device socket: an offline run must never reach the persistent connection (a
+        # socket path would let a stray connection lookup log in to the device).
+        args["_ansible_socket"] = None
         _OfflineModule.params = args
         module.AnsibleModule = _OfflineModule
         return self._exec_module(module)

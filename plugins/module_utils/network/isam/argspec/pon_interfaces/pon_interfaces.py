@@ -16,22 +16,22 @@ class Pon_interfacesArgs(object):  # pylint: disable=R0903
                 "name": {"type": "str", "required": True},
                 "label": {"type": "str"},
                 "fec_dn": {"type": "str", "choices": ["enable", "disable"]},
-                "ber_calc_period": {"type": "int", "min": 1, "max": 864000},
-                "polling_period": {"type": "int", "min": 1, "max": 864000},
-                "sig_degrade_th": {"type": "int", "min": 4, "max": 10},
-                "sig_fail_th": {"type": "int", "min": 3, "max": 8},
+                "ber_calc_period": {"type": "int"},
+                "polling_period": {"type": "int"},
+                "sig_degrade_th": {"type": "int"},
+                "sig_fail_th": {"type": "int"},
                 "raman_reduct": {"type": "str", "choices": ["enable", "disable"]},
-                "closest_ont": {"type": "int", "min": 0, "max": 40},
+                "closest_ont": {"type": "int"},
                 "diff_reach": {"type": "int", "choices": [20, 34, 40]},
                 "pon_tag": {"type": "str"},
                 "pon_id": {"type": "str"},
                 "mcast_encrypt": {"type": "str", "choices": ["enable", "disable"]},
                 "auth_method": {"type": "str", "choices": ["sn-slid", "logical", "loidpre", "logical-std", "loidpre-std", "loid-sn-slid"]},
-                "ponid_interval": {"type": "int", "min": 0, "max": 60},
+                "ponid_interval": {"type": "int"},
                 "ponid_odn": {"type": "str", "choices": ["a", "b", "bplus", "c", "cplus", "auto"]},
                 "ponid_identifier": {"type": "str"},
-                "max_ranging_onts": {"type": "int", "min": 0, "max": 128},
-                "tconts_per_frame": {"type": "int", "min": 0, "max": 64},
+                "max_ranging_onts": {"type": "int"},
+                "tconts_per_frame": {"type": "int"},
                 "pon_speed": {"type": "str", "choices": ["nominal", "10g-10g", "10g-2.5g"]},
                 "burst_overhead": {"type": "str", "choices": ["robust", "reduced"]},
                 "onu_prov_mode": {"type": "str", "choices": ["semi-auto", "auto"]},
@@ -111,18 +111,18 @@ class Pon_interfacesArgs(object):  # pylint: disable=R0903
                     "type": "dict",
                     "options": {
                         "mode": {"type": "str", "choices": ["disable", "percent", "number"]},
-                        "monitor_interval": {"type": "int", "min": 5, "max": 300},
+                        "monitor_interval": {"type": "int"},
                         "threshold_percent": {
                             "type": "dict",
                             "options": {
-                                field: {"type": "int", "min": 1, "max": 100}
+                                field: {"type": "int"}
                                 for field in ("high", "high_clr", "low", "low_clr")
                             },
                         },
                         "threshold_number": {
                             "type": "dict",
                             "options": {
-                                field: {"type": "int", "min": 1, "max": 128}
+                                field: {"type": "int"}
                                 for field in ("high", "high_clr", "low", "low_clr")
                             },
                         },

@@ -23,7 +23,7 @@ EQUIPMENT = {"interfaces": [{"ont_idx": "1/1/6/1/1", "sernum": "ALCL:F0000001", 
                         "plndnumdataports": 1, "admin_state": "up"}]}
 
 
-def _run_playbook(tasks, extra_vars):
+def _run_playbook(tasks, extra_vars, play_header=""):
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp)
         inventory = {"all": {"hosts": {"OFFLINE": {
@@ -31,7 +31,7 @@ def _run_playbook(tasks, extra_vars):
             "ansible_network_os": "nokia.isam.isam", "ansible_user": "x", "ansible_password": "y",
             "ansible_connect_timeout": 3, "ansible_command_timeout": 5}}}}
         (root / "inventory.json").write_text(json.dumps(inventory))
-        (root / "play.yml").write_text("- hosts: OFFLINE\n  gather_facts: false\n  tasks:\n" + tasks)
+        (root / "play.yml").write_text("- hosts: OFFLINE\n  gather_facts: false\n" + play_header + "  tasks:\n" + tasks)
         (root / "vars.json").write_text(json.dumps(extra_vars))
         env = {**os.environ, "ANSIBLE_HOST_KEY_CHECKING": "False", "ANSIBLE_LOCAL_TEMP": str(root / "tmp"),
                "ANSIBLE_INVENTORY_ENABLED": "yaml", "ANSIBLE_NOCOWS": "1"}
@@ -70,3 +70,30 @@ def test_rendered_still_works_via_playbook():
     )
     done = _run_playbook(tasks, {})
     assert done.returncode == 0, done.stdout + done.stderr
+    assert "All assertions passed" in done.stdout
+
+
+def test_module_defaults_group_and_offline_config_via_playbook():
+    # meta/runtime.yml action_groups: group/nokia.isam.isam reaches every module; a merged
+    # request with config + running_config renders offline (no connection to the host).
+    ihub = (Path(__file__).parents[4] / "fixtures/ihub_configuration/observed-shapes/output.txt").read_text()
+    tasks = (
+        "    - nokia.isam.isam_vlans:\n"
+        "        config: [{id: '100', name: Changed}]\n"
+        "        running_config: \"configure vlan id 100 mode residential-bridge name Home\\n\"\n"
+        "      register: merged\n"
+        "    - nokia.isam.isam_ihub_ports:\n"
+        "        state: parsed\n"
+        "        running_config: \"{{ ihub }}\"\n"
+        "      register: ihub_parsed\n"
+        "    - ansible.builtin.assert:\n"
+        "        that:\n"
+        "          - merged.changed == false\n"
+        "          - \"merged.commands == ['configure vlan id 100 name Changed']\"\n"
+        "          - ihub_parsed.parsed | length == 5\n"
+        "          - ihub_parsed.ansible_facts is not defined\n"
+    )
+    play = "  module_defaults:\n    group/nokia.isam.isam:\n      state: merged\n"
+    done = _run_playbook(tasks, {"ihub": ihub}, play_header=play)
+    assert done.returncode == 0, done.stdout + done.stderr
+    assert "All assertions passed" in done.stdout

@@ -36,11 +36,14 @@ explicit `False` in `rendered`, and packing commands per node
 
 An action state (`merged`/`replaced`/`overridden`/`deleted`) given `running_config`
 renders against that configuration as the current state instead of reading the device,
-and never sends commands. `running_config` is the canonical resource JSON or CLI text
-(as for `parsed`). `deleted` with `running_config` and no `config` renders the removal of
-everything in it — the offline counterpart of `rendered` for deletions (NOC move/copy/delete
-previews). `config` and `running_config` remain mutually exclusive, so the offline form
-used in practice is `deleted` + `running_config`.
+and never sends commands. `running_config` is the canonical resource JSON (as `gathered`
+returns it; validated and type-coerced against the `config` options) or CLI text (as for
+`parsed`). With `config` the request is reconciled against it exactly as against a device
+holding that configuration (`test_offline_action_equivalence.py`). `deleted` with
+`running_config` and no `config` renders the removal of everything in it — the offline
+counterpart of `rendered` for deletions (NOC move/copy/delete previews). `config` and
+`running_config` are therefore not mutually exclusive; every resource module documents the
+offline meaning in its `running_config` option.
 
 Shared helpers implement these rules; use them instead of local variants:
 `deleted_targets` (what an instance keeps on `deleted`), `covers_entry` (whether a
@@ -182,10 +185,15 @@ not proof of completion.
   commands) and is not an action -- reject it, do not report a change. Validate every
   identifier with `validate_identifier` before interpolating it (rejects whitespace,
   control characters and command separators, so inventory data cannot inject CLI tokens).
-- Commands are sent **one per transaction**. A failure reports partial execution:
-  `completed`, `failed_command` (outcome **unknown** -- it may have executed; do not blindly retry)
-  and `pending` (never sent). This matters for non-idempotent operations. The cost is a
-  fresh shell per command. `failed` is reserved for Ansible's failure boolean.
+- Commands are sent **one per transaction**. Every result uses one schema: `sent`,
+  `accepted` and `completed` (on success all three are the commands), and on failure
+  additionally `failed_command` (outcome **unknown** -- it may have executed; do not blindly
+  retry), `pending` (never sent), `failure_phase` (`connection`, `execution` or
+  `verification`) and `completion_status` (`not_started` or `unknown`). After an execution
+  failure the accepted commands count as `completed` only if the module keeps the default
+  `verify`; with its own completion check they are reported in `accepted` only. This matters
+  for non-idempotent operations. The cost is a fresh shell per command. `failed` is reserved
+  for Ansible's failure boolean.
 - `send_command` (optional override) sends one command. Override it for operations that
   expect a **transport loss** (a reboot drops the SSH session before returning) or an
   **interactive confirmation prompt** -- handle those *during* execution, not in `verify`,
@@ -194,8 +202,8 @@ not proof of completion.
 - `verify` (optional override) checks completion from the responses; the default trusts the
   transport. Override it for operations needing a confirmation, a reconnect or a follow-up
   read. Raise an exception on verification failure so the base can report commands,
-  responses, `accepted`, `pending: []`, `completed: []`, `failure_phase: verification`
-  and `completion_status: unknown`. No command is retried. Never assume success just
+  responses, `sent`/`accepted` (all commands), `pending: []`, `completed: []`,
+  `failure_phase: verification` and `completion_status: unknown`. No command is retried. Never assume success just
   because a command was sent.
 
 `changed` defaults to "an operation was sent", which suits state-changing operations
