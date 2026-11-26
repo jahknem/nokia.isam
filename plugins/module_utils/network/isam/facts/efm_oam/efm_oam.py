@@ -3,13 +3,7 @@ from __future__ import absolute_import, division, print_function
 from ansible.module_utils.common.text.converters import to_text
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.facts.facts import get_resource_connection
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
-    assert_targeted_request,
-    finish_targeted_outcomes,
-    get_scoped_config,
-    requested_identities,
-    selector_key,
-    targeted_explicit,
-    targeted_outcomes,
+    get_targeted_config,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.efm_oam import EfmOamTemplate
 
@@ -21,28 +15,9 @@ class EfmOamFacts(object):
 
     def get_config(self, connection):
         """The whole resource, or only the interfaces named in config (targeted gathering)."""
-        assert_targeted_request(self._module, "efm_oam_interface", ("config",))
-        collector = targeted_outcomes(self._module, "efm_oam_interface")
-        commands = []
-        selectors = {}
-        for name in requested_identities(self._module, "efm_oam_interface"):
-            command = "info configure efm-oam interface %s flat" % name
-            commands.append(command)
-            selectors[command] = ("config", selector_key(name))
-        data = get_scoped_config(
-            self._module,
-            connection,
-            None,
-            "info configure efm-oam interface flat",
-            commands,
-            outcomes=collector,
-            selectors=selectors,
-            # An explicit gathered request that names instances must not silently widen
-            # to the whole-family read when none of them became a read command.
-            require_targeted=targeted_explicit(self._module, "config"),
-        )
-        finish_targeted_outcomes(self._module, collector)
-        return data
+        return get_targeted_config(self._module, connection, "efm_oam_interface", "info configure efm-oam interface flat", {
+            "config": "info configure efm-oam interface %s flat",
+        }, write_states=True)
 
     def get_facts(self, resource_facts_type=None, data=None, **kwargs):
         resource = (resource_facts_type or ["efm_oam_interface"])[0]

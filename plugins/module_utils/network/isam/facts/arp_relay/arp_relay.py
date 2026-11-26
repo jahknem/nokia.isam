@@ -5,13 +5,7 @@ from __future__ import absolute_import, division, print_function
 from ansible.module_utils.common.text.converters import to_text
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.facts.facts import get_resource_connection
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
-    assert_targeted_request,
-    finish_targeted_outcomes,
-    get_scoped_config,
-    requested_identities,
-    selector_key,
-    targeted_explicit,
-    targeted_outcomes,
+    get_targeted_config,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.arp_relay import Isam_arp_relayTemplate
@@ -26,28 +20,9 @@ class Isam_arp_relayFacts(object):
 
     def get_config(self, connection):
         """The whole resource, or only the ports named in config (targeted gathering)."""
-        assert_targeted_request(self._module, "isam_arp_relay", ("config",))
-        collector = targeted_outcomes(self._module, "isam_arp_relay")
-        commands = []
-        selectors = {}
-        for port in requested_identities(self._module, "isam_arp_relay"):
-            command = "info configure arp-relay statistics %s flat" % port
-            commands.append(command)
-            selectors[command] = ("config", selector_key(port))
-        data = get_scoped_config(
-            self._module,
-            connection,
-            None,
-            "info configure arp-relay flat",
-            commands,
-            outcomes=collector,
-            selectors=selectors,
-            # An explicit gathered request that names instances must not silently widen
-            # to the whole-family read when none of them became a read command.
-            require_targeted=targeted_explicit(self._module, "config"),
-        )
-        finish_targeted_outcomes(self._module, collector)
-        return data
+        return get_targeted_config(self._module, connection, "isam_arp_relay", "info configure arp-relay flat", {
+            "config": "info configure arp-relay statistics %s flat",
+        }, write_states=True)
 
     def populate_facts(self, connection, ansible_facts, data=None):
         if data is None:

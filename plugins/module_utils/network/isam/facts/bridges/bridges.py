@@ -25,10 +25,8 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common imp
     parse_cli_key_values,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
-    assert_targeted_request,
-    finish_targeted_outcomes,
-    get_scoped_config,
-    targeted_outcomes,
+    get_targeted_config,
+    targeted_commands,
 )
 
 
@@ -63,47 +61,23 @@ class BridgesFacts(object):
         self.argument_spec = BridgesArgs.argument_spec
 
     def get_config(self, connection):
-        config = self._module.params.get("config") or {}
-        ports = config.get("port", []) if isinstance(config, dict) else config
-        ports = ports or []
-        assert_targeted_request(self._module, "bridges", ("port",))
         # A gathered read must match the complete read's compact form: 'flat detail' also
         # prints every default ("no <attr>"), which the complete read omits, so the two would
         # parse into different configurations. Writes keep the detail form.
         suffix = "flat" if self._module.params.get("state") == "gathered" else "flat detail"
-        commands = []
-        selectors = {}
-        for item in ports:
-            port_id = item.get("port") or item.get("id")
-            if port_id:
-                command = "info configure bridge port %s %s" % (port_id, suffix)
-                commands.append(command)
-                selectors[command] = ("port", port_id)
-        collector = targeted_outcomes(self._module, "bridges")
-        data = get_scoped_config(
-            self._module,
-            connection,
-            config,
-            "info configure bridge flat",
-            commands,
-            outcomes=collector,
-            selectors=selectors,
-            # A gathered read that names port entries is explicitly targeted: if none of
-            # them can become a read command, fail rather than silently widen to the whole
-            # family.
-            require_targeted=bool(ports),
-        )
-        if commands:
+        formats = {"port": "info configure bridge port %s " + suffix}
+        # _parse_bridge_config processes lines independently and silently skips lines it
+        # does not recognize, and the read is combined across ports; it cannot demonstrate
+        # full coverage of the owned lines, so the parse outcome is unverified (the default
+        # finish_targeted_outcomes records).
+        data = get_targeted_config(self._module, connection, "bridges", "info configure bridge flat", formats,
+                                   write_states=True)
+        if targeted_commands(self._module, "bridges", formats):
             data = "\n".join(
                 line for line in data.splitlines()
                 if not line.startswith("configure bridge ageing-time ")
                 and not line.startswith("configure bridge no ageing-time")
             )
-        # _parse_bridge_config processes lines independently and silently skips lines it
-        # does not recognize, and the read is combined across ports; it cannot demonstrate
-        # full coverage of the owned lines, so the parse outcome is unverified (the default
-        # finish_targeted_outcomes records).
-        finish_targeted_outcomes(self._module, collector)
         return data
 
     def populate_facts(self, connection, ansible_facts, data=None):
