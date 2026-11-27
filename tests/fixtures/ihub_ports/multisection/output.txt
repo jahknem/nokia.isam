@@ -1,0 +1,51 @@
+====================================================================
+Ports on NT
+====================================================================
+Port             Admin Link Port    Cfg  Oper LAG/ Port Port Port
+Id               State      State   MTU  MTU  Bndl Mode Encp Type
+--------------------------------------------------------------------
+nt:vp:1          Up    Yes  Up      1518 1518    - accs dotq vport
+nt:mc:1          Up    Yes  Up      1518 1518    - accs dotq vport
+
+====================================================================
+Ports on NT-A
+====================================================================
+Port             Admin Link Port    Cfg  Oper LAG/ Port Port Port
+Id               State      State   MTU  MTU  Bndl Mode Encp Type
+--------------------------------------------------------------------
+nt-a:eth:1       Down  No   Down    9212 9212    - accs dotq xcme
+nt-a:xfp:1       Up    Yes  Link Up 9212 9212    7 accs dotq gige
+nt-a:xfp:2       Down  No   Down    9212 9212    - accs dotq gige
+
+====================================================================
+Ports on NT-B
+====================================================================
+Port             Admin Link Port    Cfg  Oper LAG/ Port Port Port
+Id               State      State   MTU  MTU  Bndl Mode Encp Type
+--------------------------------------------------------------------
+nt-b:xfp:1       Down  No   Down    9212 9212    - accs dotq gige
+
+====================================================================
+Ports on LT
+====================================================================
+Port             Admin Link Port    Cfg  Oper LAG/ Port Port Port
+Id               State      State   MTU  MTU  Bndl Mode Encp Type
+--------------------------------------------------------------------
+lt:1/1/1         Up    Yes  Up      9212 9212    - accs dotq lt
+
+====================================================================
+Ports on NTIO-1
+====================================================================
+Port             Admin Link Port    Cfg  Oper LAG/ Port Port Port
+Id               State      State   MTU  MTU  Bndl Mode Encp Type
+--------------------------------------------------------------------
+ntio-1:sfp:2     Down  No   Down    9212 9212    - accs dotq xcme
+
+====================================================================
+Ports on NT-A
+====================================================================
+Port             Admin Link Port    Cfg  Oper LAG/ Port Port Port
+Id               State      State   MTU  MTU  Bndl Mode Encp Type
+--------------------------------------------------------------------
+nt-a:AI:1        Down  No   Down    9212 9212    - accs dotq gige
+====================================================================

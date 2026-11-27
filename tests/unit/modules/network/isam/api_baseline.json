@@ -220,6 +220,36 @@
    },
    "sha256": "02dbaf522af8b35b91f550e8c50770ecde4bdfae1ac507f5bb384186195df560"
   },
+  "isam_ihub_lags": {
+   "constraints": "dc662e510fb27395fea2f7684a64e67bcbfe43447ccd5e485d814aead009ef80",
+   "options": {
+    "allow_broad_read": "cf06f58d3331bc04a13e32e5552f68731d69fafe14979041cf532675766064ba",
+    "config": "dd1675c3f403808859be32410f444b0ae5363af473e34d337ce131ee990e86b9",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "e6afb0586c6ca7925a9cf76a91b7afeefff27b294f193ad3841076b7e23d8769"
+   },
+   "sha256": "89c19a9eca4b17f88646ca9fe7deaf089a1bf747417dda5b203b32377d3203f5"
+  },
+  "isam_ihub_ports": {
+   "constraints": "dc662e510fb27395fea2f7684a64e67bcbfe43447ccd5e485d814aead009ef80",
+   "options": {
+    "allow_broad_read": "cf06f58d3331bc04a13e32e5552f68731d69fafe14979041cf532675766064ba",
+    "config": "dd1675c3f403808859be32410f444b0ae5363af473e34d337ce131ee990e86b9",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "e6afb0586c6ca7925a9cf76a91b7afeefff27b294f193ad3841076b7e23d8769"
+   },
+   "sha256": "89c19a9eca4b17f88646ca9fe7deaf089a1bf747417dda5b203b32377d3203f5"
+  },
+  "isam_ihub_services": {
+   "constraints": "dc662e510fb27395fea2f7684a64e67bcbfe43447ccd5e485d814aead009ef80",
+   "options": {
+    "allow_broad_read": "cf06f58d3331bc04a13e32e5552f68731d69fafe14979041cf532675766064ba",
+    "config": "1df26441675c7da6a35a027e0a76cab46edbe4fca82ce5a9fc772bffd6284d62",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "e6afb0586c6ca7925a9cf76a91b7afeefff27b294f193ad3841076b7e23d8769"
+   },
+   "sha256": "43620a9d130ba04b2c71160fceb0d80581528aa7c5fc7eb61e3973c9af8dbc26"
+  },
   "isam_interface_alarms": {
    "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
    "options": {
@@ -515,6 +545,16 @@
    },
    "sha256": "1396082bbf58385389d917fe8a73ed057e40c8f3ffd29b5a62a64a828d2f16ce"
   },
+  "isam_topology_discovery": {
+   "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
+   "options": {
+    "allow_broad_read": "cf06f58d3331bc04a13e32e5552f68731d69fafe14979041cf532675766064ba",
+    "child_kind": "ce79ce696ab1874390821387823f0db46c42f8e964b17691433008a721bbcc44",
+    "identity": "67b2393e5d1040555fa96db6aee4efc57286e983f5cb5a8863bfbbba40c08f9e",
+    "kind": "98da258e388c20a18285cc8e4f40043c05b000cf39f566f0f0648ec870c367f2"
+   },
+   "sha256": "9fc2cb192ef41f8084016971cf368dca10c8d3ea425773787f6c52838af66833"
+  },
   "isam_traps": {
    "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
    "options": {
@@ -669,6 +709,9 @@
   "isam_facts",
   "isam_generic_pon",
   "isam_igmp",
+  "isam_ihub_lags",
+  "isam_ihub_ports",
+  "isam_ihub_services",
   "isam_interface_alarms",
   "isam_interface_cages",
   "isam_interfaces",
@@ -702,6 +745,7 @@
   "isam_software_mngt",
   "isam_system",
   "isam_system_security",
+  "isam_topology_discovery",
   "isam_traps",
   "isam_trouble_shooting_pon",
   "isam_uni_onts",

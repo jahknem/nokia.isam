@@ -425,6 +425,39 @@ intentional. This section lists the ONT/access families of that line.
   is treated as "nothing configured here" and skipped, not raised. Write
   states still surface the error.
 
+### New read-only modules (topology and IHUB)
+
+- `isam_topology_discovery`: enumerates the direct children of one object in
+  the semantic topology graph, read-only (check mode reads like a normal run).
+  Where the ISAM has no scoped "list children" command, the module reads the
+  smallest whole source containing the children, records its breadth in
+  `read_scope`, and requires explicit `allow_broad_read` consent for a
+  device/family-wide source. A failed or unsupported enumeration is reported
+  as such (error class and exception type, never raw exception text) and is
+  never an empty child list.
+- `isam_ihub_ports`, `isam_ihub_lags`, `isam_ihub_services`: read-only IHUB
+  configuration families from the evidenced hierarchical CLI sources
+  (`info configure`, `info configure service`), which the flat root source
+  omits. The device-wide port and LAG sources require explicit
+  `allow_broad_read=true`; services have a verified family source. The
+  modules never write: they accept only identity keys in their `config`
+  selection, check mode reads like a normal run, and `parsed` no longer
+  sets `ansible_facts`.
+- `plugins/filter/topology.py`: playbook access to the versioned topology
+  catalog and the known-read plan (`docs/resource-topology.md`,
+  `docs/ihub-configuration.md`, `docs/targeted-gathering.md`,
+  `tools/topology_report.py`).
+
+### Discovery and IHUB parsing fixes
+
+- Topology discovery: a flat configuration source (`info configure ... flat`)
+  must end with the device's terminal `#-----` delimiter. A truncated or
+  comment/echo-only reply was reported `ok` with a partial or empty child list;
+  it now fails instead of confirming children or their absence.
+- IHUB configuration: lines are tokenized like the device (`"…"` or a blank-free
+  run), not by POSIX shell rules: an unquoted apostrophe (`description Bob's`)
+  no longer fails the whole read, and backslashes are kept.
+
 ## 0.3.14 — A slice of π, without the breaking crust
 
 Patch release based on 0.3.13. Existing module names, option names, types,
