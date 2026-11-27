@@ -130,6 +130,13 @@ class Qos_interfaces(IsamResourceModule):
                         want.pop(key)
                 elif value == "none" and have.get(key) is None:
                     want.pop(key)
+            if (self.state in ("replaced", "overridden") and want.get("scheduler_node") is None
+                    and have.get("scheduler_node") is not None and (have.get("queue") or want.get("queue"))):
+                # Same device rule as deleted (QOS MGT error 52, lab ISAM): an interface
+                # with downstream queues needs its scheduler node, so it is kept.
+                self._module.warn("qos interface %s keeps scheduler-node %s: it is required while the "
+                                  "interface has queues" % (have.get("name"), have["scheduler_node"]))
+                want["scheduler_node"] = have["scheduler_node"]
             self.compare(parsers=self.top_parsers, want=want, have=have)
         for list_name, parsers in iteritems(self.list_parsers):
             self._compare_list(list_name, parsers, want, have)

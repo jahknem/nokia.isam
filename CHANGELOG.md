@@ -28,11 +28,13 @@ interfaces and documentation").
   calculated" is a missing dependency (`dependency_gap: interface-index`,
   existence `unknown`), not a confirmed absence; write states still drop
   such a reply, as before.
-- `confirmed_absent` is the only outcome consumers may act on: it is the
-  device's explicit "instance does not exist" signal about that instance.
-  `unknown` (a header-only reply, an invalid-token rejection, a missing
-  dependency, or a failed read) is never treated as absence — keep, do not
-  remove, configuration for `unknown` instances.
+- `confirmed_absent` is the only outcome consumers may act on: the device's
+  explicit "instance does not exist" about that instance, or the header only
+  in both `flat` and `flat detail` (docs/targeted-read-contract.md).
+  `unknown` (an invalid-token rejection, a missing dependency, another
+  instance's line, a section whose reads never show it, or a failed read) is
+  never treated as absence — keep, do not remove, configuration for `unknown`
+  instances.
 - An explicit targeted request is never served partially or silently widened:
   a request that cannot be read in full (a named instance without an identity)
   fails before any command is sent, and a failed read fails the module
@@ -64,6 +66,11 @@ interfaces and documentation").
 
 ### Module interfaces and documentation
 
+- `config` and `running_config` are no longer mutually exclusive in any
+  resource module that offers the offline preview (an action state with
+  `running_config` renders against it), including the grammar-table families,
+  `isam_ethernet_line` and the QoS families; their API baseline constraints
+  changed accordingly.
 - Documentation matches the argspec of the ONT/access modules: `isam_ntp_onts`
   documented options it does not have; `isam_pon_interfaces` and
   `isam_ani_onts` options were undocumented. The standard resource RETURN
@@ -78,8 +85,26 @@ interfaces and documentation").
   longer documented as option defaults).
 - `isam_system_security`: option descriptions written from the CLI guide; its docs
   match the argspec (enforced by the contract tests once the module is registered).
+- `isam_system_security`: `overridden` fails, before anything is sent, instead of
+  removing a RADIUS auth server a kept RADIUS policy references, or a RADIUS policy
+  the auth-super-user operator-policy or a kept domain references.
 - `isam_security_ext_authenticator`: the undocumented, unused `provider` option is
   removed.
+
+### Review follow-ups
+
+- `isam_software_mngt`: an OSWP slot (1 or 2) is never removed (`no oswp N` is
+  not a device form); its resettable attributes (`activate`, `auto-verify`,
+  `on-schedule-time`) return to their defaults instead. `admin-state` changes
+  only when named; `activate` and `auto-verify enabled` are never sent unless
+  named.
+- `isam_linetest`: `overridden` fails before any command when it would write a
+  parameter to a session it destroys.
+- Settings blocks (`isam_pppox_relay_global`, `isam_nat`, `isam_error`,
+  `isam_cwmp_plt`, `isam_pon_global`): `deleted` with config resets only the
+  named attributes.
+- `isam_xdsl_lines`, `isam_ethernet_line`: the docs warn that `overridden` and an
+  identity-only `deleted` send `no admin-up` (the line goes down).
 
 ## 1.0.0 (unreleased)
 
@@ -154,6 +179,11 @@ intentional. This section lists the ONT/access families of that line.
   DSL/NNI/protocol ctrl-pkt policers, `pbit_scheduling` and `upstr_prot_dsl`. Reading
   `general` needs `info configure qos flat` (the node has no own `info` path), so it is
   only read when in scope; per-node reads replace absent nodes with empty settings.
+- `isam_qos_global` and `isam_qos_maps` `overridden` act only on the named sections
+  (an empty dict or list names a section): overriding `general` no longer resets line
+  cards, policers or pbit scheduling nor removes ctrl-pkt policers, and overriding
+  `tc_map_dot1p` no longer removes the dscp and ctrl-pkt entries. Within a named list
+  section, entries not given are still removed or reset.
 
 ### QoS: profile and map rework
 
@@ -164,11 +194,16 @@ intentional. This section lists the ONT/access families of that line.
   invalid `no` resets (warned), profile deletion emits no trailing field resets, and
   `use-dei` renders as a bare flag. Options keep their historical CLI spelling; the
   snake_case spelling of every CLI-named option is accepted as an alias, and all options
-  are documented.
+  are documented. The packed command names each parameter once (a request omitting a
+  mandatory parameter sent the changed one twice), and the documentation states that
+  `overridden`/`deleted` remove profiles without checking whether they are in use.
 - Breaking: `isam_qos_maps` models `up-ctrl-pkt`/`dn-ctrl-pkt` in the real device form
   (`<protocol> [dscp <n>] [pbit <n>] [tc <n>]`; was `queue`/`profile`), requires the
   fields the device needs to set an entry, and renders `dscp-map-dot1p ... dot1p-value`
   (was `dot1p`). `deleted` removes only the named entries, not whole map families.
+  `replaced`/`overridden` reset the ctrl-pkt parameters an entry omits with the inline
+  `no dscp`/`no pbit`/`no tc` form (they never converged before), and device defaults
+  (`dscp -1`, `pbit 7`, `tc -1`) count as unset when comparing.
 
 ### QoS: interfaces
 
@@ -176,8 +211,9 @@ intentional. This section lists the ONT/access families of that line.
   safety). Detail placeholders (`none`, `not-applicable`) no longer become removal
   commands: `not-applicable` is never sent (a real target value is kept), unset
   `none`/`not-applicable` top-level and queue settings render no resets, and an explicit
-  `none` still clears a configured profile. `deleted` keeps the `scheduler_node` an
-  interface with downstream queues requires (warned). Facts read targeted (`state:
+  `none` still clears a configured profile. `deleted`, `replaced` and `overridden`
+  keep the `scheduler_node` an interface with downstream queues requires (warned; the
+  device rejects its removal, QOS MGT error 52). Facts read targeted (`state:
   gathered` with `config` reads only the named interfaces); the module documents the
   QoS-before-bridge prerequisites (QOS MGT error 41, VLAN MGT error 277).
 
@@ -232,7 +268,7 @@ intentional. This section lists the ONT/access families of that line.
   they are now strings with the guide's choices and defaults (setting any of
   them never worked before). Commands are packed like the device's two printed
   lines; a bare flag at the end of a command was sent separately before.
-- `isam_voice_sip` rebuilt on one grammar table (`VOICE_SIP_NODES`) that
+- `isam_voice_sip` rebuilt on one grammar table (`TABLE` in `rm_templates/voice_sip.py`) that
   generates the argspec and documentation and drives the facts and config.
   ~70 options modelled as on/off flags are values per the CLI guide (e.g. vsp
   `ta4`, `tinfo`, `digit_send_mode`, register/redundancy timers and modes,
@@ -246,7 +282,7 @@ intentional. This section lists the ONT/access families of that line.
   `fail_x_type`, not a field) is removed and `start_time`/`end_time` are ints.
   Parse -> render -> parse of the lab capture round-trips; merged/replaced of
   the gathered facts send nothing.
-- `isam_software_mngt` rebuilt on one grammar table (`SOFTWARE_MNGT_NODES`)
+- `isam_software_mngt` rebuilt on one grammar table (`TABLE` in `rm_templates/software_mngt.py`)
   generating the argspec and documentation and driving facts and config (the
   hand-written facts parser and the fragile ordered-regex template are gone).
   oswp `activate`/`auto-verify` (enums), `on-schedule-time` (datetime) and
@@ -270,8 +306,9 @@ intentional. This section lists the ONT/access families of that line.
   quotes begins a comment. A shared test checks that each table, its argspec
   and its documentation agree.
 - `isam_linetest` migrated onto `IsamResourceModule`, so it shares the
-  standard facts gathering, check-mode write path and before/after result. Its
-  device rules are unchanged and now pinned by tests across every state:
+  standard facts gathering, check-mode write path and before/after result. It
+  now creates a requested session that does not exist (`session-cmd create`);
+  its other device rules are unchanged and pinned by tests across every state:
   sessions are destroyed with `session-cmd destroy` (never rendered as
   configuration), parameters have no delete command (delete their session),
   and `group-opt`/`busy-overwrite`/`force-measure` reset with a trailing `no`.
@@ -286,7 +323,8 @@ intentional. This section lists the ONT/access families of that line.
   verified), the bare service line was not read. `isam_l2cp` and
   `isam_ipv6_antispoofing_slot` merged reset an unnamed setting;
   `isam_ipv6_antispoofing_slot` replaced reset unlisted slots. Facts of these
-  families no longer report device defaults.
+  families no longer report device defaults (`isam_dist_service` still reports
+  its `service_type`).
 
 ### Lab validation
 
@@ -422,8 +460,8 @@ intentional. This section lists the ONT/access families of that line.
   the complete read, not `flat detail` (which prints every default and parsed
   into a different configuration). Write states keep the detail form.
 - For `gathered` reads, a node the firmware does not know (`invalid token`)
-  is treated as "nothing configured here" and skipped, not raised. Write
-  states still surface the error.
+  is skipped, not raised; `read_outcomes` reports the instance `rejected` with
+  existence `unknown` (never absent). Write states still surface the error.
 
 ### New read-only modules (topology and IHUB)
 

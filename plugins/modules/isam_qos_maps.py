@@ -101,6 +101,12 @@ options:
     description:
     - Desired resource state.
     - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(tc_map_dot1p[].dot1p) and C(dscp_map_dot1p[].dscp) and C(up_ctrl_pkt[].protocol) and C(dn_ctrl_pkt[].protocol) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with only default values is read with C(flat detail) and returned with its identity only, and C(read_outcomes) reports each named instance present or confirmed absent where the device allows it. Without I(config) the whole resource is read.
+    - C(replaced) makes the named entries exactly as given and removes the entries of a named map
+      that are not given; maps not named are left alone. C(overridden) does the same (an empty list
+      names a map and removes all its entries); maps not named are left alone.
+    - With C(replaced) and C(overridden) a ctrl-pkt entry is set exactly as given; C(dscp), C(pbit) and C(tc)
+      it omits return to the device default with the inline C(no) form (e.g. C(up-ctrl-pkt igmp no dscp tc 7)).
+      Values equal to the device default (C(dscp) -1, C(pbit) 7, C(tc) -1) count as unset when comparing.
     - With C(deleted) and I(config), only the sections and instances named in I(config) are deleted or reset; other sections are left alone. Without I(config) everything is deleted. Naming an entry by its identity alone is enough.
     type: str
     default: merged

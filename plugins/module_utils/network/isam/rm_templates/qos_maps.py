@@ -46,11 +46,17 @@ class Qos_mapsTemplate(NetworkTemplate):
         return "configure qos no dscp-map-dot1p {0}".format(data["dscp"])
 
     @classmethod
-    def _render_ctrl_pkt(cls, node, data):
+    def _render_ctrl_pkt(cls, node, data, reset=()):
+        """Set the given parameters; ``reset`` names parameters to return to their
+        default with the inline ``no <param>`` form (CLI help, configure qos
+        up-ctrl-pkt/dn-ctrl-pkt: ``[ no dscp | dscp <v> ] [ no pbit | pbit <v> ]
+        [ no tc | tc <v> ]``)."""
         cmd = "configure qos {0} {1}".format(node, data["protocol"])
         for attr in ("dscp", "pbit", "tc"):
             if data.get(attr) is not None:
                 cmd += " {0} {1}".format(attr, data[attr])
+            elif attr in reset:
+                cmd += " no {0}".format(attr)
         return cmd
 
     @classmethod
@@ -79,8 +85,8 @@ class Qos_mapsTemplate(NetworkTemplate):
 
         tc_re = re.compile(r"^tc-map-dot1p\s+(?P<dot1p>\d+)\s+tc\s+(?P<tc>\d+)(?:\s+dpcolor\s+(?P<dpcolor>\S+))?(?:\s+policer-color\s+(?P<policer_color>\S+))?\s*$")
         dscp_re = re.compile(r"^dscp-map-dot1p\s+(?P<dscp>\S+)\s+(?:dot1p|dot1p-value)\s+(?P<dot1p>\d+)\s*$")
-        up_ctrl_re = re.compile(r"^up-ctrl-pkt\s+(?P<protocol>\S+)(?:\s+dscp\s+(?P<dscp>\d+))?(?:\s+pbit\s+(?P<pbit>\d+))?(?:\s+tc\s+(?P<tc>\d+))?\s*$")
-        dn_ctrl_re = re.compile(r"^dn-ctrl-pkt\s+(?P<protocol>\S+)(?:\s+dscp\s+(?P<dscp>\d+))?(?:\s+pbit\s+(?P<pbit>\d+))?(?:\s+tc\s+(?P<tc>\d+))?\s*$")
+        up_ctrl_re = re.compile(r"^up-ctrl-pkt\s+(?P<protocol>\S+)(?:\s+dscp\s+(?P<dscp>-?\d+))?(?:\s+pbit\s+(?P<pbit>-?\d+))?(?:\s+tc\s+(?P<tc>-?\d+))?\s*$")
+        dn_ctrl_re = re.compile(r"^dn-ctrl-pkt\s+(?P<protocol>\S+)(?:\s+dscp\s+(?P<dscp>-?\d+))?(?:\s+pbit\s+(?P<pbit>-?\d+))?(?:\s+tc\s+(?P<tc>-?\d+))?\s*$")
 
         for raw_line in self._lines:
             stripped = raw_line.strip()

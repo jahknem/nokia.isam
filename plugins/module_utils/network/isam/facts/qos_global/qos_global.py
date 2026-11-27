@@ -49,12 +49,12 @@ class Qos_globalFacts(object):
         self.argument_spec = Qos_globalArgs.argument_spec
 
     def sections_in_scope(self):
-        """Sections the module needs: the named ones for merged/replaced/deleted/gathered
-        with config, otherwise all (overridden, deleted/gathered without config, isam_facts)."""
+        """Sections the module needs: the named ones for merged/replaced/overridden/deleted/
+        gathered with config, otherwise all (deleted/gathered without config, isam_facts)."""
         params = getattr(self._module, "params", None) or {}
         config = params.get("config")
         state = params.get("state", "merged")
-        if self._module is None or not isinstance(config, dict) or state not in ("merged", "replaced", "deleted", "gathered"):
+        if self._module is None or not isinstance(config, dict) or state not in ("merged", "replaced", "overridden", "deleted", "gathered"):
             return list(SECTIONS)
         named = [section for section in SECTIONS if config.get(section) is not None]
         return named or list(SECTIONS)

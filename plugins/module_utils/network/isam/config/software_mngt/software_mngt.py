@@ -32,3 +32,63 @@ class Software_mngt(TableResourceModule):
     def generate_commands(self):
         super(Software_mngt, self).generate_commands()
         warn_retained_on_delete(self)
+
+    # An OSWP is a fixed slot (index 1 or 2) and has no removal command: the CLI guide
+    # (software-mngt, section 20.3) has no 'no oswp' form. deleted (identity alone or
+    # without config) and overridden (an OSWP not given) reset its removable attributes
+    # instead: 'no activate' / 'no auto-verify' / 'no on-schedule-time' return to
+    # 'manually' / 'disabled' / unset, so nothing ever activates or verifies a software
+    # package unless a request names it. admin-state is not reset implicitly (an
+    # operational switch); it changes only when named.
+    _IMPLICIT_RESET_SKIP = ("admin_state",)
+
+    def _keep_omitted(self, node, want, have):
+        """replaced/overridden: a named OSWP keeps the device's admin-state when the
+        request omits it (review of #19: it was reset with 'no admin-state')."""
+        haved = dict((str(entry[node.identity]), entry) for entry in have)
+        kept = []
+        for entry in want:
+            current = haved.get(str(entry[node.identity]), {})
+            entry = dict(entry)
+            for key in self._IMPLICIT_RESET_SKIP:
+                if entry.get(key) is None and current.get(key) is not None:
+                    entry[key] = current[key]
+            kept.append(entry)
+        return kept
+
+    def _compare_instances(self, node, want, have):
+        if node.key == "oswp" and self.state in ("replaced", "overridden"):
+            want = self._keep_omitted(node, want, have)
+        if node.key != "oswp" or self.state not in ("deleted", "overridden"):
+            return super(Software_mngt, self)._compare_instances(node, want, have)
+        ident = node.identity
+        wantd = dict((str(entry[ident]), entry) for entry in want)
+        haved = dict((str(entry[ident]), entry) for entry in have)
+        if self.state == "overridden":
+            for name, have_entry in haved.items():
+                if name not in wantd:
+                    self._reset_oswp(node, name, set(), have_entry)
+            for name, want_entry in wantd.items():
+                self.commands.extend(self.TABLE.diff_commands(
+                    node, name, want_entry, haved.get(name, {}), "overridden"))
+            return
+        for name, have_entry in haved.items():
+            if wantd and name not in wantd:
+                continue
+            want_entry = wantd.get(name) or {}
+            named = set(key for key, value in want_entry.items() if key != ident and value is not None)
+            self._reset_oswp(node, name, named, have_entry)
+
+    def _reset_oswp(self, node, name, named, have_entry):
+        """Reset the named attributes of OSWP name (all resettable ones when none is named)."""
+        if named:
+            keep = dict((key, value) for key, value in have_entry.items() if key not in named)
+        else:
+            keep = dict((key, value) for key, value in have_entry.items()
+                        if key in self._IMPLICIT_RESET_SKIP or key == node.identity)
+            fixed = [attr.cli for attr in node.attrs
+                     if not attr.removable and have_entry.get(attr.option) is not None]
+            if fixed:
+                self._module.warn("oswp %s has no removal form in ISAM CLI (fixed slot); its resettable "
+                                  "attributes are reset, %s retained" % (name, ", ".join(fixed)))
+        self.commands.extend(self.TABLE.diff_commands(node, name, keep, have_entry, "replaced"))

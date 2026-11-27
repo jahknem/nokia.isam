@@ -8,6 +8,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_m
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import requested_sections
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.qos_maps import (
     Qos_mapsTemplate,
@@ -22,6 +23,9 @@ class Qos_maps(IsamResourceModule):
     # Fields the device needs to set an entry (the identity is always needed).
     REQUIRED = {"tc_map_dot1p": ("dot1p", "tc"), "dscp_map_dot1p": ("dscp", "dot1p"),
                 "up_ctrl_pkt": ("protocol",), "dn_ctrl_pkt": ("protocol",)}
+    # ctrl-pkt parameter defaults (CLI help, configure qos up-ctrl-pkt/dn-ctrl-pkt);
+    # a value equal to its default counts as unset when comparing.
+    CTRL_PKT_DEFAULTS = {"dscp": -1, "pbit": 7, "tc": -1}
 
     def __init__(self, module):
         super(Qos_maps, self).__init__(
@@ -56,6 +60,24 @@ class Qos_maps(IsamResourceModule):
         for entry in entries or []:
             self.commands.append(renderer(entry))
 
+    @classmethod
+    def _comparable(cls, entry, field):
+        if entry is None or field not in ("up_ctrl_pkt", "dn_ctrl_pkt"):
+            return entry
+        return dict((k, v) for k, v in entry.items()
+                    if v is not None and cls.CTRL_PKT_DEFAULTS.get(k, object()) != v)
+
+    def _set_ctrl_pkt(self, entry, have_entry, field):
+        """replaced/overridden: an entry is exactly as given, so parameters the device
+        has but the request omits are reset with the inline 'no <param>' form;
+        without it the device keeps them and the state never converges."""
+        reset = ()
+        if self.state in ("replaced", "overridden") and have_entry:
+            reset = tuple(attr for attr in self._comparable(have_entry, field)
+                          if attr in self.CTRL_PKT_DEFAULTS and entry.get(attr) is None)
+        node = field.replace("_", "-")
+        self.commands.append(Qos_mapsTemplate._render_ctrl_pkt(node, entry, reset))
+
     def generate_commands(self):
         # Reconciliation builds merged entries without modifying the user's request.
         wantd = dict(self.want or {})
@@ -84,11 +106,12 @@ class Qos_maps(IsamResourceModule):
             self.commands = list(dict.fromkeys(self.commands))
             return
 
-        # overridden: remove entire fields present in have but absent from want
+        # overridden acts only on the named maps (docs/development-style.md): a map that
+        # is not named is left alone; a map named with an empty list loses every entry.
         if self.state == "overridden":
-            for field in haved:
-                if field not in wantd:
-                    self._del_commands(haved.get(field), field)
+            for field in requested_sections(self._module):
+                if field in self.IDENTITIES:
+                    wantd.setdefault(field, [])
 
         # replaced/overridden: for each field in want, delete sub-entries
         # present in have but absent from want, then add/update entries to match want.
@@ -111,7 +134,10 @@ class Qos_maps(IsamResourceModule):
             for entry in want_list:
                 k = self._key(entry, field)
                 have_entry = next((e for e in have_list if self._key(e, field) == k), None)
-                if have_entry != entry:
-                    self._add_commands([entry], field)
+                if self._comparable(have_entry, field) != self._comparable(entry, field):
+                    if field in ("up_ctrl_pkt", "dn_ctrl_pkt"):
+                        self._set_ctrl_pkt(entry, have_entry, field)
+                    else:
+                        self._add_commands([entry], field)
 
         self.commands = list(dict.fromkeys(self.commands))

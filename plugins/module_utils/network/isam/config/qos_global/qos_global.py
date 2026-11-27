@@ -124,16 +124,11 @@ class Qos_global(IsamResourceModule):
                     self._reset_settings(section, have.get(section))
             return
 
+        # replaced and overridden act only on the named sections (an empty dict/list
+        # names a section); overridden additionally removes unnamed list entries.
+        named = self._named_sections()
         for section in SECTIONS:
-            in_want = section in want
-            if self.state == "overridden" and not in_want:
-                if section in LIST_NODES:
-                    for ident, entry in sorted(self._index(section, have.get(section)).items()):
-                        self._remove_entry(section, ident, entry)
-                else:
-                    self._reset_settings(section, have.get(section))
-                continue
-            if not in_want:
+            if section not in want and section not in named:
                 continue
             reset = self.state in ("replaced", "overridden")
             if section in LIST_NODES:

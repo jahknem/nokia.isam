@@ -577,16 +577,38 @@ def _timestamp(value):
     return parsed.astimezone(timezone.utc)
 
 
-def attach_discovery(graph, results):
+def _freshness(now, max_age_seconds, collected_since):
+    """Validated (now, maximum age, collected since) of the freshness rule."""
+    if (not isinstance(max_age_seconds, (int, float)) or isinstance(max_age_seconds, bool)
+            or not math.isfinite(max_age_seconds) or max_age_seconds < 0):
+        raise ValueError("Discovery maximum age must be nonnegative")
+    since = _timestamp(collected_since) if collected_since is not None else None
+    return _timestamp(now or utc_now()), max_age_seconds, since
+
+
+def _is_fresh(item, freshness):
+    """Whether a discovery result is fresh evidence: not older than the maximum age,
+    not more than 5 seconds in the future, and not collected before collected_since."""
+    now, max_age_seconds, since = freshness
+    collected = _timestamp(item["collected_at"])
+    return ((now - collected).total_seconds() <= max_age_seconds
+            and (collected - now).total_seconds() <= 5
+            and (since is None or collected >= since))
+
+
+def attach_discovery(graph, results, now=None, max_age_seconds=300, collected_since=None):
     """Attach fresh direct-neighbor evidence to an observed graph.
 
     Successful results replace the cached child set for exactly that relation;
     failed results leave the old observations visible but mark the relation
     stale.  The graph remains non-executable until every required relation in
-    the selected subtree has a successful fresh result.
+    the selected subtree has a successful fresh result.  Owner resolution uses
+    only evidence that is fresh by the rule coverage() applies (now,
+    max_age_seconds, collected_since).
     """
     if graph.get("schema_version") != SCHEMA_VERSION:
         raise ValueError("Unsupported topology graph version")
+    freshness = _freshness(now, max_age_seconds, collected_since)
     nodes = {node["key"]: dict(node) for node in graph["nodes"]}
     edges = {(edge["source"], edge["relation"], edge["target"]) for edge in graph["edges"]}
     evidence = {(item["parent"], item["child_kind"]): item for item in graph.get("discovery", [])}
@@ -599,7 +621,7 @@ def attach_discovery(graph, results):
         for item in ready:
             pending.remove(item)
             _attach_one(item, nodes, edges, evidence, incoming)
-    gaps = _resolve_owners(nodes, edges, evidence, graph.get("gaps", []))
+    gaps = _resolve_owners(nodes, edges, evidence, graph.get("gaps", []), freshness)
     graph = dict(graph)
     graph["gaps"] = gaps
     graph["nodes"] = sorted(nodes.values(), key=lambda node: node["key"])
@@ -609,7 +631,7 @@ def attach_discovery(graph, results):
     return graph
 
 
-def _resolve_owners(nodes, edges, evidence, gaps):
+def _resolve_owners(nodes, edges, evidence, gaps, freshness):
     """Configuration whose owner was unknown or ambiguous, resolved by discovered objects.
 
     build_graph knows only the objects that configuration names: 'ethernet-line:X'
@@ -623,7 +645,9 @@ def _resolve_owners(nodes, edges, evidence, gaps):
              for source, relation, target in edges if relation == "configures"
              for edge_target in (nodes[target],)}
     for item in evidence.values():
-        if item.get("status") == "ok":
+        # A stale result (an earlier batch) no longer proves the object exists, and
+        # the 'configures' edge written below is permanent.
+        if item.get("status") == "ok" and _is_fresh(item, freshness):
             known.update((item["child_kind"], _hashable(child)) for child in item.get("children", ()))
     decoders = {(b["resource"], b["section"]): b["decoder"] for b in export_catalog()["bindings"]}
     remaining = []
@@ -692,11 +716,7 @@ def coverage(graph, kind, identity, now=None, max_age_seconds=300, collected_sin
     """
     if graph.get("schema_version") != SCHEMA_VERSION:
         raise ValueError("Unsupported topology graph version")
-    if (not isinstance(max_age_seconds, (int, float)) or isinstance(max_age_seconds, bool)
-            or not math.isfinite(max_age_seconds) or max_age_seconds < 0):
-        raise ValueError("Discovery maximum age must be nonnegative")
-    now = _timestamp(now or utc_now())
-    since = _timestamp(collected_since) if collected_since is not None else None
+    freshness = _freshness(now, max_age_seconds, collected_since)
     nodes = {node["key"]: node for node in graph["nodes"]}
     root = node_key(kind, identity)
     if root not in nodes:
@@ -733,9 +753,7 @@ def coverage(graph, kind, identity, now=None, max_age_seconds=300, collected_sin
                 missing.append(dict(relation, reason="discovery_missing"))
             elif item["status"] != "ok":
                 failed.append(dict(relation, reason=item["status"], error=item.get("error")))
-            elif ((now - _timestamp(item["collected_at"])).total_seconds() > max_age_seconds
-                  or (_timestamp(item["collected_at"]) - now).total_seconds() > 5
-                  or (since is not None and _timestamp(item["collected_at"]) < since)):
+            elif not _is_fresh(item, freshness):
                 missing.append(dict(relation, reason="discovery_stale"))
             else:
                 ok.append(dict(relation, read_scope=item.get("read_scope")))

@@ -260,6 +260,10 @@ options:
   state:
     description:
     - The state of the configuration after module completion.
+    - B(WARNING) - C(overridden) resets every line not listed in I(config), and C(deleted) resets every line
+      named by its identity alone (every line without I(config)). The reset includes C(no admin-up), which
+      takes those lines administratively down and drops their service. List every line that must stay up
+      (with C(admin_up=true)), or name single attributes with C(deleted).
     - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(if_index) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with only default values is read with C(flat detail) and returned with its identity only, and C(read_outcomes) reports each named instance present or confirmed absent where the device allows it. Without I(config) the whole resource is read.
     type: str
     choices:

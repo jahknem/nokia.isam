@@ -28,7 +28,7 @@ notes:
   - The bare C(configure qos) settings (I(general)) have no CLI node of their own; reading
     them takes C(info configure qos flat), which also returns all QoS interface, profile, TCA
     and map lines. That read is only made when I(general) is in scope (no I(config),
-    I(config.general) given, or I(state=overridden)); otherwise one
+    I(config.general) given); otherwise one
     C(info configure qos <node> flat) per section is read.
 options:
   config:
@@ -177,8 +177,10 @@ options:
     description:
     - The state the configuration should be left in.
     - C(merged) sets the given options. C(replaced) also resets the options a given section
-      or line card omits; ctrl-pkt-policer entries not named are kept. C(overridden) also
-      resets every section and line card not given and removes ctrl-pkt-policer entries not given.
+      or line card omits; ctrl-pkt-policer entries not named are kept. C(overridden) acts only on the
+      sections it names (an empty dict or list names the whole section); within a named section it
+      also resets the line cards not given and removes the ctrl-pkt-policer entries not given.
+      Sections not named are left alone.
     - C(deleted) without I(config) resets everything to the defaults and removes all ctrl-pkt-policer
       entries; with I(config) only the sections it names (an empty dict or list names the whole
       section), for I(line_cards) and I(ctrl_pkt_policer) only the named entries if any are named.

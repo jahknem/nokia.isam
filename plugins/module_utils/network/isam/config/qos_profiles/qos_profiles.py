@@ -95,10 +95,20 @@ class Qos_profiles(IsamResourceModule):
             return
         data = dict(have)
         data.update(want)
+        # The profile line carries the mandatory parameters with the desired value
+        # (want over have); a per-field command for one of them must not repeat the
+        # keyword. Each per-field command is '<kw> [<value>]' or 'no <kw>'.
+        inline = set(field for field in Qos_profilesTemplate._INLINE_ORDER.get(data.get("profile_type"), ())
+                     if data.get(field) is not None)
         parts = []
-        for part in [Qos_profilesTemplate._render_profile_line(data)[len(path):].strip()] + \
-                [c[len(path):].strip() for c in mine]:
-            if part and part not in parts:
+        line = Qos_profilesTemplate._render_profile_line(data)[len(path):].strip()
+        if line:
+            parts.append(line)
+        for command in mine:
+            part = command[len(path):].strip()
+            tokens = part.split()
+            keyword = tokens[1] if tokens[:1] == ["no"] and len(tokens) > 1 else (tokens or [None])[0]
+            if part and keyword not in inline and part not in parts:
                 parts.append(part)
         others = [c for c in new if c not in mine]
         self.commands[before:] = others + [" ".join([path] + parts)]

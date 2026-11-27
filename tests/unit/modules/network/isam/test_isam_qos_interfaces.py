@@ -263,3 +263,19 @@ class TestIsamQosInterfacesModule(TestIsamModule):
         # queues (QOS MGT error 52, lab ISAM): it is kept, with a warning.
         result = self.execute_module(changed=False)
         self.assertEqual(result["commands"], [])
+
+    def test_isam_qos_interfaces_replaced_overridden_keep_scheduler_with_queues(self):
+        # replaced/overridden follow the deleted rule: an interface with downstream
+        # queues keeps its scheduler node (QOS MGT error 52, lab ISAM), with a warning.
+        for state, config in (
+            ("replaced", [{"name": "1/1/2/1/1/1/1", "cac_profile": "name:Other"}]),
+            ("overridden", [{"name": "1/1/2/1/1/1/1", "cac_profile": "name:Other"}]),
+            ("overridden", [{"name": "1/1/9/1/1/1/1", "cac_profile": "name:Other"}]),
+        ):
+            self.get_config.return_value = QOS_CONFIG
+            set_module_args(dict(config=config, state=state), ignore_provider_arg)
+            with patch.object(isam_qos_interfaces.AnsibleModule, "warn") as warn:
+                result = self.execute_module(changed=True)
+            self.assertFalse(any("scheduler-node" in command for command in result["commands"]),
+                             (state, result["commands"]))
+            self.assertTrue(any("scheduler-node" in call[0][0] for call in warn.call_args_list), state)

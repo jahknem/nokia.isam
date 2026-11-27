@@ -95,8 +95,11 @@ options:
   state:
     description:
       - The state of the configuration after module completion.
-      - C(replaced) reconciles named OSWP entries and leaves unnamed OSWPs untouched;
-        only C(overridden) removes OSWPs absent from the requested configuration.
+      - C(replaced) reconciles named OSWP entries and leaves unnamed OSWPs untouched.
+      - An OSWP is a fixed slot (1 or 2) without removal command, so it is never removed. C(overridden) (an OSWP
+        not given) and C(deleted) (an OSWP named by its identity alone, or no I(config)) reset its C(activate),
+        C(auto-verify) and C(on-schedule-time) instead; values without removal form are retained with a warning and
+        C(admin-state) changes only when named. C(activate) and C(auto-verify enabled) are never sent unless named.
       - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by
         C(oswp[].id) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with only default values is read with C(flat detail) and returned with its identity only, and C(read_outcomes) reports each named instance present or confirmed absent where the device allows it. Without
         I(config) the whole resource is read.

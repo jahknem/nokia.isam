@@ -357,6 +357,19 @@ def _record_absence(outcomes, entries, text, unobservable=False):
             outcomes.record(section, selector, "ok", "unknown", dependency_gap=gap)
 
 
+def _record_whole_node_absence(outcomes, resource, entries, text):
+    """_record_absence for a whole-node read: sections under the unobservable policy
+    (targeted.ABSENCE_POLICY) are never confirmed absent here either."""
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.targeted import absence_policy
+
+    unobservable = [entry for entry in entries if absence_policy(resource, entry[0]) == "unobservable"]
+    observable = [entry for entry in entries if entry not in unobservable]
+    if observable:
+        _record_absence(outcomes, observable, text)
+    if unobservable:
+        _record_absence(outcomes, unobservable, text, True)
+
+
 def _failure_message(resource, kind, cls, entries=()):
     """A sanitized failure message: the resource, the selectors and the error class --
     never raw device or transport text (read_outcomes is documented as safe to
@@ -394,14 +407,15 @@ def _probe_detail(connection, command, policy=None):
         if _is_instance_absent(str(exc)):
             return "", "unknown" if policy == "unobservable" else "confirmed_absent"
         if _is_absent_error(str(exc)):
-            return "", "unknown"  # a missing dependency (lower interface): not this instance
+            # a missing dependency (lower interface): not this instance; keep the label
+            return "", "dependency:%s" % (_dependency_gap(str(exc)) or "unknown")
         if _is_unsupported_node(str(exc)):
             return "", "rejected"
         raise
     if _is_instance_absent(response):
         return "", "unknown" if policy == "unobservable" else "confirmed_absent"
     if _is_absent_error(response):
-        return "", "unknown"
+        return "", "dependency:%s" % (_dependency_gap(response) or "unknown")
     if _is_unsupported_node(response):
         return "", "rejected"
     for line in response.splitlines():
@@ -529,7 +543,9 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
         # For gathered single-instance reads, presence with default values is a
         # shared read semantic, not a per-family opt-in. Shared-node reads need
         # their instance checks instead; their path is not an instance identity.
-        single = len(entries) == 1 and not instance_checks
+        # Decided per command: an instance check of another section's command must
+        # not switch off this command's detail probe.
+        single = len(entries) == 1 and not any(entry in instance_checks for entry in entries)
         empty_absent = command in empty_absent_commands and single
         probe = reading and single and not empty_absent
         probed = None
@@ -570,6 +586,11 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
                     existence = "confirmed_absent"
                 else:
                     existence = "unknown"
+                if not present and probed and probed.startswith("dependency:"):
+                    gap = probed[len("dependency:"):]
+                    outcomes.record(section, selector, "ok", "unknown",
+                                    **({"dependency_gap": gap} if gap != "unknown" else {}))
+                    continue
                 outcomes.record(section, selector, "rejected" if probed == "rejected" else "ok", existence)
         scoped_results.append(reply)
     return "\n".join(scoped_results)
@@ -990,7 +1011,7 @@ def get_whole_node_targeted(module, connection, resource, command, sections, par
             if _is_absent_error(text):
                 # The device says the node does not exist (nothing under it can be),
                 # or that a dependency is missing (existence unknown).
-                _record_absence(collector, requested_keys, text)
+                _record_whole_node_absence(collector, resource, requested_keys, text)
                 return ""
             if _is_unsupported_node(text):
                 record_all("rejected", "unknown")
@@ -1003,7 +1024,7 @@ def get_whole_node_targeted(module, connection, resource, command, sections, par
             module.fail_json(msg=_failure_message(resource, "whole-node read", cls, requested_keys),
                              read_outcomes=_finalize_collector(collector))
         if _is_absent_error(response):
-            _record_absence(collector, requested_keys, response)
+            _record_whole_node_absence(collector, resource, requested_keys, response)
             return ""
         if _is_unsupported_node(response):
             record_all("rejected", "unknown")

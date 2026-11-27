@@ -21,7 +21,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 class Pppox_relay_global(IsamResourceModule):
     """The isam_pppox_relay_global config class (settings block ``configure pppox-relay cross-connect global-session``).
 
-    Nothing can be removed; ``deleted`` resets the attributes to the device
+    Nothing can be removed; ``deleted`` resets the named attributes (all without config) to the device
     defaults (``no <attribute>``), ``overridden`` behaves like ``replaced``.
     """
 

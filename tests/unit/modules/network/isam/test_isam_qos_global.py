@@ -245,18 +245,23 @@ class TestIsamQosGlobalModule(TestIsamModule):
             "configure qos ctrl-pkt-policer arp no sustained-rate",
         ]
 
-    def test_overridden_resets_everything_not_given(self):
+    def test_overridden_acts_only_on_named_sections(self):
+        # docs/development-style.md: with a dict config only the named sections are
+        # overridden; overriding general must not reset line cards, the policers,
+        # pbit scheduling or remove ctrl-pkt-policer entries.
         self._device(CONFIGURED)
-        result = self._run(True, state="overridden", config={"general": {"atm_overhead_fact": 80, "enable_alignment": True,
-                                                                         "cac_mode": "alr"},
-                                                             "ctrl_pkt_policer": [{"protocol": "arp", "sustained_rate": 30}]})
+        result = self._run(True, state="overridden", config={"general": {"cac_mode": "alr"}})
+        assert result["commands"] == ["configure qos no atm-overhead-fact no enable-alignment"]
+
+    def test_overridden_named_list_removes_unnamed_entries(self):
+        self._device(CONFIGURED)
+        result = self._run(True, state="overridden", config={
+            "ctrl_pkt_policer": [{"protocol": "arp", "sustained_rate": 30}],
+            "line_cards": [],
+        })
         assert result["commands"] == [
             "configure qos global lt:1/1/2 no queue-stats no dsload-thresh no part-buf-thresh",
-            "configure qos dsl-ctrl-pkt-policer no sustained-rate no protocol-ctrl",
-            "configure qos nni-ctrl-pkt-policer no burst-size",
             "configure qos no ctrl-pkt-policer igmp",
-            "configure qos pbit-scheduling no sc-rb-dn",
-            "configure qos upstr-prot-dsl no enable",
         ]
 
     def test_overridden_idempotent(self):

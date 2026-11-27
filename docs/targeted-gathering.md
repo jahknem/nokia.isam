@@ -207,10 +207,15 @@ targeted gathering does not apply to them.
 ## Behavior notes
 
 * **Attribute-free instances.** An instance with only default values answers
-  a scoped `flat` read with only the header, like a non-existing one. Every
-  family re-checks such a reply with `flat detail`: the instance's line means
-  `present` (returned as its bare line, defaults are not configuration); the
-  header only again, or "instance does not exist", means `confirmed_absent`.
+  a scoped `flat` read with only the header, like a non-existing one. Such a
+  reply is re-checked with `flat detail`: the instance's line means `present`
+  (returned as its bare line, defaults are not configuration); the header only
+  again, or "instance does not exist", means `confirmed_absent`. Families whose
+  single read already is `flat detail` (bridge ports, ONT interfaces and slots,
+  equipment slots, PON interfaces) and sections in `empty_absent_sections`
+  (every instance prints mandatory attributes) skip the second read with the
+  same outcomes: a header-only reply is `confirmed_absent`, the instance's line
+  is `present`.
   Exceptions are data in `targeted.ABSENCE_POLICY` (`silent`: a switch without
   attributes, present unless the device says it does not exist; `unobservable`:
   never present or absent). See [targeted-read-contract.md](targeted-read-contract.md).

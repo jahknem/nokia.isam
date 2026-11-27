@@ -90,15 +90,19 @@ class Linetest(IsamResourceModule):
             for item in desired.get("parameters") or []
         }
         if state == "overridden":
-            commands.extend(
-                "configure linetest single ltsession %s session-cmd destroy" % session_id
-                for session_id in current_sessions
-                if session_id not in desired_sessions
-            )
+            destroyed = [session_id for session_id in current_sessions if session_id not in desired_sessions]
             # Destroying a session also removes its parameters. Only parameters
             # omitted from a retained session would need an unsupported deletion.
             if any(key[0] in desired_sessions for key in set(current_parameters) - desired_parameters):
                 self._module.fail_json(msg="LineTest parameters have no supported delete command; delete their session instead")
+            commands.extend("configure linetest single ltsession %s session-cmd destroy" % session_id
+                            for session_id in destroyed)
+            # The rest is compared with what remains after the destroys: a parameter of a
+            # destroyed session that is not requested again must not be written to it.
+            current = {
+                "sessions": [item for item in current.get("sessions", []) if item["session_id"] not in destroyed],
+                "parameters": [item for item in current.get("parameters", []) if item["session_id"] not in destroyed],
+            }
         return commands + self._diff_commands(current, desired)
 
     def _diff_commands(self, current, desired):
@@ -112,7 +116,8 @@ class Linetest(IsamResourceModule):
         for item in desired.get("parameters") or []:
             if item["session_id"] not in current_sessions and item["session_id"] not in requested:
                 self._module.fail_json(
-                    msg="LineTest session %s does not exist; add it to sessions to create it before setting its parameters"
+                    msg="LineTest session %s does not exist (or overridden destroys it); add it to sessions "
+                        "to create or keep it before setting its parameters"
                         % item["session_id"])
         for item in desired.get("sessions") or []:
             if item["session_id"] not in current_sessions:

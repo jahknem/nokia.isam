@@ -114,8 +114,10 @@ class Xdsl_boards(IsamResourceModule):
     def _reset_board(self, want, have):
         """A board has no removal command ("configure xdsl no board" is an invalid token,
         lab ISAM): its attributes are reset, only the named ones when want names any.
-        A named sub-node (vect_fallback, auto_port_reset) resets only its named
-        attributes; named without attributes, the whole sub-node."""
+        A sub-node (vect_fallback, auto_port_reset) given with attributes resets only
+        those attributes. Empty values name nothing: a sub-node given without
+        attributes (``vect_fallback: {}``) is not named, so a request with only that
+        is identity-only and resets the whole board, not just the sub-node."""
         named = self._named(want, "board_id")
         if not named:
             keep = {}

@@ -171,6 +171,54 @@ class TestIsamQosMapsModule(TestIsamModule):
             self.assertNotIn("up-ctrl-pkt", cmd)
             self.assertNotIn("dn-ctrl-pkt", cmd)
 
+    def _maps_conn(self):
+        class FakeConn:
+            _map = {
+                "info configure qos tc-map-dot1p flat": "tc-map-dot1p 0 tc 0\ntc-map-dot1p 7 tc 7\n",
+                "info configure qos dscp-map-dot1p flat": "dscp-map-dot1p EF dot1p 5\n",
+                "info configure qos up-ctrl-pkt flat": "up-ctrl-pkt dhcp dscp 46 pbit 5 tc 7\n",
+                "info configure qos dn-ctrl-pkt flat": "dn-ctrl-pkt dhcp tc 3\n",
+            }
+
+            def get(self, cmd):
+                return self._map.get(cmd, "")
+
+        self.get_resource_connection_facts.return_value = FakeConn()
+
+    def test_isam_qos_maps_overridden_acts_only_on_named_maps(self):
+        # docs/development-style.md: overriding tc_map_dot1p alone must not remove the
+        # dscp and ctrl-pkt entries.
+        self._maps_conn()
+        set_module_args(dict(state="overridden", config={"tc_map_dot1p": [{"dot1p": 0, "tc": 0}]}),
+                        ignore_provider_arg)
+        self.execute_module(changed=True, commands=["configure qos no tc-map-dot1p 7"])
+
+    def test_isam_qos_maps_overridden_empty_list_clears_named_map(self):
+        self._maps_conn()
+        set_module_args(dict(state="overridden", config={
+            "tc_map_dot1p": [{"dot1p": 0, "tc": 0}, {"dot1p": 7, "tc": 7}], "dn_ctrl_pkt": []}),
+            ignore_provider_arg)
+        result = self.execute_module(changed=True)
+        self.assertEqual(len(result["commands"]), 1)
+        self.assertIn("dn-ctrl-pkt", result["commands"][0])
+
+    def test_isam_qos_maps_replaced_ctrl_pkt_resets_omitted_parameters(self):
+        # The device keeps dscp unless it is reset; 'no dscp' is the inline removal
+        # form (CLI help). Without it replaced reported a change on every run.
+        for state in ("replaced", "overridden"):
+            self._maps_conn()
+            set_module_args(dict(state=state, config={"up_ctrl_pkt": [{"protocol": "dhcp", "tc": 7}]}),
+                            ignore_provider_arg)
+            self.execute_module(changed=True, commands=["configure qos up-ctrl-pkt dhcp no dscp no pbit tc 7"])
+
+    def test_isam_qos_maps_ctrl_pkt_default_values_converge(self):
+        # Device defaults (dscp -1, pbit 7, tc -1) count as unset when comparing.
+        self._maps_conn()
+        set_module_args(dict(state="replaced", config={
+            "up_ctrl_pkt": [{"protocol": "dhcp", "dscp": 46, "pbit": 5, "tc": 7}],
+            "dn_ctrl_pkt": [{"protocol": "dhcp", "tc": 3, "pbit": 7}]}), ignore_provider_arg)
+        self.execute_module(changed=False)
+
     def test_isam_qos_maps_gathered_empty(self):
         class FakeConn:
             def get(self, cmd):
