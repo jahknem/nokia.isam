@@ -52,8 +52,11 @@ def test_argument_surface_matches_0_3_13_except_device_defaults():
                 "software_mngt", "vlans", "voice_sip", "system_security", "security_ext_authenticator",
                 "bridge_learned_mac", "cwmp_plt", "dhcp_relay_port_stats", "error", "ethernet_statistics",
                 "nat", "pppox_relay_global", "xdsl_boards", "xdsl_inm", "xdsl_lines", "xdsl_onts",
-                "xdsl_profiles", "xdsl_system"}
-    specs = dict((path, spec) for path, spec in specs.items() if path.split("/")[-2] not in migrated)
+                "xdsl_profiles", "xdsl_system",
+                "ihub_common", "ihub_lags", "ihub_ports", "ihub_services"}
+    # A shared argspec at the top of argspec/ (ihub_common.py) is named by its file stem.
+    specs = dict((path, spec) for path, spec in specs.items()
+                 if path.split("/")[-2] not in migrated and Path(path).stem not in migrated)
     # The same 33 argspecs computed from tag 0.3.13 give this hash.
     assert len(specs) == 33
     assert hashlib.sha256(json.dumps(specs, sort_keys=True).encode()).hexdigest() == (
@@ -70,6 +73,10 @@ def test_module_inventory_matches_0_3_13():
         "plugins/modules/isam_qos_global.py",
         "plugins/modules/isam_qos_tca.py",
         "plugins/modules/isam_system_security.py",
+        "plugins/modules/isam_ihub_lags.py",
+        "plugins/modules/isam_ihub_ports.py",
+        "plugins/modules/isam_ihub_services.py",
+        "plugins/modules/isam_topology_discovery.py",
         "plugins/modules/isam_bridge_learned_mac.py",
         "plugins/modules/isam_cwmp_plt.py",
         "plugins/modules/isam_dhcp_relay_port_stats.py",
@@ -84,7 +91,7 @@ def test_module_inventory_matches_0_3_13():
         "plugins/modules/isam_uni_onts.py",
     }
     pre_split = [path for path in paths if path not in added_by_the_split]
-    assert len(paths) == len(pre_split) + 17
+    assert len(paths) == len(pre_split) + 21
     assert hashlib.sha256("\n".join(pre_split).encode()).hexdigest() == (
         "88ec8c7f4f4ed973e1ddd0591b2f137aada9331d42e9e633307a7f257b9d8827")
 
