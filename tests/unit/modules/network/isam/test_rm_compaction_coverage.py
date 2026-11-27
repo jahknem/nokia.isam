@@ -16,10 +16,12 @@ SCOPED_RMS = {
     "Ngpon2_channel_groups",
     "Pon_global",
     "Pon_interfaces",
+    "Pppox_relay_global",
     "Qos_interfaces",
     "Trouble_shooting_pon",
     "Vlans",
     "Xdsl_boards",
+    "Xdsl_inm",
     "Xdsl_lines",
 }
 
@@ -68,14 +70,12 @@ UNSCOPED_RMS = {
     "PppoeClient": "custom renderer emits complete object commands",
     "Pppoel2": "per-interface operations use distinct verbs",
     "Qos_global": "custom renderer already packs one command per section/line card",
-    "Pppox_relay_global": "single global option",
     "Qos_maps": "map entries are separate operations",
     "Qos_tca": "per-queue attributes are separate set/reset commands",
     "Qos_profiles": "profile renderer already emits atomic profile commands",
     "Xdsl_profiles": "profile commands have distinct nested scopes",
     "Xdsl_bonding": "single global option",
     "Uni_onts": "single field per UNI",
-    "Xdsl_inm": "single global option",
     "Xdsl_onts": "single attribute per ONT",
     "Xdsl_system": "single global option",
     "Xstp": "global and per-port scopes differ",
@@ -83,8 +83,13 @@ UNSCOPED_RMS = {
 
 
 def _resource_module_classes():
+    return set(_resource_module_scopes())
+
+
+def _resource_module_scopes():
+    """{class name: whether the class body assigns COMPACT_COMMAND_SCOPES}."""
     root = Path(__file__).resolve().parents[5] / "plugins/module_utils/network/isam/config"
-    classes = set()
+    classes = {}
     for path in root.rglob("*.py"):
         tree = ast.parse(path.read_text())
         for node in ast.walk(tree):
@@ -94,7 +99,10 @@ def _resource_module_classes():
                 (isinstance(base, ast.Name) and base.id in {"ResourceModule", "IsamResourceModule", "TableResourceModule", "_Base"})
                 for base in node.bases
             ):
-                classes.add(node.name)
+                classes[node.name] = any(
+                    isinstance(stmt, ast.Assign) and any(
+                        isinstance(target, ast.Name) and target.id == "COMPACT_COMMAND_SCOPES" for target in stmt.targets)
+                    for stmt in node.body)
     return classes
 
 
@@ -102,3 +110,10 @@ def test_every_resource_module_has_an_explicit_compaction_disposition():
     resource_modules = _resource_module_classes()
     assert resource_modules == SCOPED_RMS | set(UNSCOPED_RMS) | set(TABLE_RMS)
     assert all(UNSCOPED_RMS.values())
+
+
+def test_compaction_dispositions_match_the_classes():
+    # a class listed as unscoped must not define compaction scopes, a scoped one must
+    scopes = _resource_module_scopes()
+    assert sorted(name for name in UNSCOPED_RMS if scopes.get(name)) == []
+    assert sorted(name for name in SCOPED_RMS if not scopes.get(name)) == []
