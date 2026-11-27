@@ -307,16 +307,22 @@ class Isam_system_security(IsamResourceModule):
     def _check_profiles_in_use(self, wantd, haved, want, have):
         """overridden must not remove a profile a kept operator still uses.
 
-        Kept operators are the requested ones; one that omits its profile keeps the
-        device's (operators have no profile reset). Removing the profile under it would
-        leave the operator without a valid profile, so refuse instead of guessing an order.
+        Kept operators are the requested ones when the request names operators (one that
+        omits its profile keeps the device's: operators have no profile reset), and every
+        device operator when it does not (an unnamed list type is left alone). Removing
+        the profile under one would leave it without a valid profile, so refuse instead
+        of guessing an order.
         """
         removed = set(key[0] for key in haved if not _named(key, wantd))
         if not removed:
             return
         current = self._index("operators", _get(have, "operators"))
+        if _get(want, "operators", _MISSING) is _MISSING:
+            kept = current
+        else:
+            kept = self._index("operators", self._wanted_entries["operators"])
         in_use = []
-        for key, operator in self._index("operators", self._wanted_entries["operators"]).items():
+        for key, operator in kept.items():
             profile = operator.get("profile") or current.get(key, {}).get("profile")
             if profile in removed:
                 in_use.append("%s (operator %s)" % (profile, key[0]))

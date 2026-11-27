@@ -462,6 +462,19 @@ class TestIsamSystemSecurityStateContract(TestIsamModule):
                                           "profiles": [{"name": "spare"}]}, failed=True)
         assert "admin" in result["msg"] and "isadmin" in result["msg"]
 
+    def test_overridden_of_profiles_alone_refuses_a_profile_device_operators_use(self):
+        # operators are not named, so all of them stay: their profile must stay too
+        # (review of #12: isadmin and noc both use 'admin').
+        result = self._run("overridden", {"profiles": [{"name": "spare", "description": "unused",
+                                                        "permissions": {"aaa": "read"}}]}, failed=True)
+        assert "admin" in result["msg"] and "isadmin" in result["msg"] and "noc" in result["msg"]
+
+    def test_overridden_of_profiles_alone_removes_an_unused_profile(self):
+        result = self._run("overridden", {"profiles": [{"name": "admin", "description": "admin group",
+                                                        "permissions": {"aaa": "write"}}]})
+        assert "configure system security no profile spare" in result["commands"]
+        assert not any("no operator" in cmd for cmd in result["commands"])
+
     def test_overridden_leaves_list_types_the_request_does_not_name(self):
         # A request tuning only the password policy must not remove operators, SNMP
         # communities, RADIUS servers, sftp users or reset 802.1X ports (review of #12).
