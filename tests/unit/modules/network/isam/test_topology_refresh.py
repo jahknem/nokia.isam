@@ -450,3 +450,33 @@ def test_a_gpon_sfp_has_its_diagnostics_entry_with_defaults():
     diag = [s for s in result["sections"] if s["section"] == "diagnostics_sfp"]
     assert len(diag) == 16 and {s["status"] for s in diag} == {"present"}
     assert result["complete"], result["gaps"][:5]
+
+
+# -- partial refresh -------------------------------------------------------------------
+
+def test_wanted_sections_expand_a_family_and_refuse_unknown_names():
+    assert refresh.wanted_sections(None) is None
+    assert refresh.wanted_sections(["equipment_onts"]) == {
+        "equipment_onts.%s" % s for s in FAMILIES["equipment_onts"]["sections"]}
+    assert refresh.wanted_sections(["trouble_shooting_pon.threshold.interfaces"]) == {
+        "trouble_shooting_pon.threshold.interfaces"}
+    for bad in (["nope"], ["equipment_onts.nope"]):
+        with pytest.raises(ValueError):
+            refresh.wanted_sections(bad)
+
+
+def test_a_partial_refresh_reads_only_its_sections_and_is_complete_for_them():
+    root = ("ont", ONT)
+    reads, _ = refresh.configuration_reads(refresh.known_objects(root, ont_discovery()), sections=["uni_onts"])
+    assert [(r["resource"], r["section"]) for r in reads] == [("uni_onts", "config")]
+    # Only the kinds on the way to a UNI are enumerated.
+    first, _ = refresh.discovery_requests(root, [], sections=["uni_onts"])
+    assert [r["child_kind"] for r in first] == ["ont_slot"]
+    later, _ = refresh.discovery_requests(root, ont_discovery()[:2], sections=["uni_onts"])
+    assert later == []  # no bridge ports for a UNI section
+    discoveries = ont_discovery()[:2]
+    results = ctx(root) + answer(reads)
+    result = refresh.evaluate(root, discoveries, results, now=NOW, sections=["uni_onts"])
+    assert result["complete"], result["gaps"]
+    assert result["sections_requested"] == ["uni_onts.config"]
+    assert {s["resource"] for s in result["sections"]} == {"uni_onts"}

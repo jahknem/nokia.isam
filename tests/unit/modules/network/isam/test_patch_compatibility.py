@@ -90,9 +90,10 @@ def test_module_inventory_matches_0_3_13():
         "plugins/modules/isam_trouble_shooting_pon.py",
         "plugins/modules/isam_uni_onts.py",
         "plugins/modules/isam_read.py",
+        "plugins/modules/isam_refresh.py",
     }
     pre_split = [path for path in paths if path not in added_by_the_split]
-    assert len(paths) == len(pre_split) + 22
+    assert len(paths) == len(pre_split) + 23
     assert hashlib.sha256("\n".join(pre_split).encode()).hexdigest() == (
         "88ec8c7f4f4ed973e1ddd0591b2f137aada9331d42e9e633307a7f257b9d8827")
 
