@@ -90,6 +90,7 @@ options:
     - The state the configuration should be left in.
     - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(name) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with only default values is read with C(flat detail) and returned with its identity only, and C(read_outcomes) reports each named instance present or confirmed absent where the device allows it. Without I(config) the whole resource is read.
     - With C(merged), C(replaced) or C(deleted) and I(config), the current configuration is likewise read only for the named instances.
+    - C(deleted) never brings an interface up. An ONT or VLAN-port interface the device creates with C(admin-up) stays down when it was set down; name I(admin_up) with C(merged) to bring it up.
     type: str
     choices:
     - merged

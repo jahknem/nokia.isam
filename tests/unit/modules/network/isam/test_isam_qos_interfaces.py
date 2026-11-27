@@ -356,3 +356,10 @@ def test_a_value_a_lag_only_displays_is_not_rendered_without_a_device(monkeypatc
     assert not result.get("failed"), result.get("msg")
     assert result["rendered"] == ["configure qos interface 1/1/8/6 cac-profile name:FD_Default"]
     assert any("ds_num_queue" in w for w in result["_warnings"]), result["_warnings"]
+
+
+def test_deleted_never_resets_a_value_a_lag_only_displays(monkeypatch):
+    for config in ([{"name": "1/1/8/6"}], [{"name": "1/1/8/6", "ds_num_queue": "8"}]):
+        result = run_module(monkeypatch, "isam_qos_interfaces", {"state": "deleted", "config": config}, LAG_DEVICE)
+        assert not result.get("failed"), result.get("msg")
+        assert not [c for c in result["commands"] if "ds-num-queue" in c], result["commands"]

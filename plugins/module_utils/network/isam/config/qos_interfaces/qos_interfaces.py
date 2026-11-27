@@ -208,6 +208,9 @@ class Qos_interfaces(IsamResourceModule):
         if not any(value is not None for key, value in want.items() if key not in {"name", "id"}):
             requested = {self._tmplt.get_parser(parser)["compval"] for parser in self.top_parsers}
         name = have.get("name", want.get("name"))
+        # A value the kind only displays cannot be set, so it is not reset either (a LAG's
+        # ds-num-queue: setting it is refused with QOS MGT error 45; never sent).
+        requested -= set(READ_ONLY.get(interface_kind(name), ()))
         for field in sorted(requested):
             value = have.get(field)
             # 'none'/'not-applicable' mean nothing is configured; resetting them is

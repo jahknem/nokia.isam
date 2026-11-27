@@ -103,9 +103,10 @@ Gaps found while porting (not topology code; each its own PR):
   48 groups and the board present, one discovery request.
 - ~~The QoS guard that refuses settings an interface kind never accepts~~: ported to
   `isam_qos_interfaces` (`fix/qos-refused-settings`).
-- `isam_interfaces` `deleted` does not restore `admin-up` where the device default is
-  up (ONT and VLAN-port interfaces); `isam_link_agg` `deleted` does not reset
-  `load-sharing-policy`/`mode`. Reset forms unverified on a device.
+- `isam_interfaces` `deleted` does not restore `admin-up` (decided: `deleted` never
+  brings an interface up; documented). `isam_link_agg` resets `load-sharing-policy` and
+  `mode` by setting `mac-src`/`static` (no `no` form; lab write 2026-11-28,
+  `fix/lab-verified-resets`).
 
 ## Terms
 

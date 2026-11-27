@@ -22,7 +22,8 @@ class Link_agg(ResourceModule):
 
     COMPACT_COMMAND_SCOPES = (
         r"^(?P<scope>configure link-agg port \S+) (?P<suffix>.+)$",
-        r"^(?P<scope>configure link-agg group \S+) (?P<suffix>(?!port(?:\s|$)).+)$",
+        # Adding and removing a member port stay their own lines ('port X' / 'no port X').
+        r"^(?P<scope>configure link-agg group \S+) (?P<suffix>(?!(?:no\s+)?port(?:\s|$)).+)$",
     )
 
     GROUP_FIELDS = [
@@ -34,6 +35,12 @@ class Link_agg(ResourceModule):
         "mode",
         "master_iwf",
     ]
+
+    # Group settings without a 'no' form ('no load-sharing-policy', 'no mode': invalid
+    # token, lab write 2026-11-28 on the service-free LAG 1/1/6/36, restored): reset by
+    # setting the value every untouched LAG shows (all 72 LAGs of the lab's NELT-B card).
+    # swo_revert and master_iwf are not reset (not verified; master_iwf differs by card).
+    SET_DEFAULTS = {"load_sharing_policy": "mac-src", "mode": "static"}
 
     def __init__(self, module):
         super(Link_agg, self).__init__(
@@ -179,7 +186,7 @@ class Link_agg(ResourceModule):
                     )
                 )
             elif field not in want and have.get(field) is not None and self.state in ["replaced", "overridden"]:
-                self._delete_group_field(group_id, field)
+                self._delete_group_field(group_id, field, have)
 
         want_ports = set(want.get("ports", []))
         have_ports = set(have.get("ports", []))
@@ -213,6 +220,9 @@ class Link_agg(ResourceModule):
             return
         if field in ["max_active_port", "swo_threshold", "priority"]:
             self.commands.append("configure link-agg group {0} no {1}".format(group_id, field.replace("_", "-")))
+        elif field in self.SET_DEFAULTS and have.get(field) not in (None, self.SET_DEFAULTS[field]):
+            self.commands.append("configure link-agg group {0} {1} {2}".format(
+                group_id, field.replace("_", "-"), self.SET_DEFAULTS[field]))
 
     def _index_by_id(self, data):
         return {entry["id"]: entry for entry in data or [] if entry.get("id")}
