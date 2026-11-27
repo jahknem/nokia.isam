@@ -17,50 +17,47 @@ necessary to bring the current configuration to its desired end-state is
 created.
 """
 
-from ansible.module_utils.six import iteritems
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import quote_cli_value
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    dict_merge,
-)
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+import re
+
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import covers_entry, deleted_targets
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.vlans import (
+    VLAN_ATTRS,
     VLAN_DEFAULTS,
+    VLAN_LINE_KEYWORDS,
     VlansTemplate,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import covers_entry, deleted_targets
+
+SET_ONLY = tuple(option for option, _cli, kind, _default in VLAN_ATTRS if kind == "set_only")
+
+
+def _is_default(key, value):
+    """A device default equals an unset value (flags: off)."""
+    return value is False or VLAN_DEFAULTS.get(key) == value
 
 
 def _without_defaults(entry):
-    return {key: value for key, value in entry.items() if value is not None and VLAN_DEFAULTS.get(key) != value}
+    return dict((key, value) for key, value in entry.items() if value is not None and not _is_default(key, value))
 
 
-def _quote_name(value):
-    return quote_cli_value(value)
+def _named(entry):
+    """The attributes a request names (explicit defaults and False included)."""
+    return dict((key, value) for key, value in entry.items() if value is not None)
 
 
-class Vlans(ResourceModule):
+class Vlans(IsamResourceModule):
     """
     The isam_vlans config class
     """
 
-    COMPACT_COMMAND_SCOPES = (
-        (
-            r"^(?P<scope>configure vlan id \S+) (?P<suffix>(?!dhcp-opt82-ext(?:\s|$)|dhcp-opt82-nni(?:\s|$)|dhcp-opt82-uplink(?:\s|$)|circuit-id-dhcp(?:\s|$)|remote-id-dhcp(?:\s|$)|relay-id-dhcp(?:\s|$)|dhcpv6-(?:itf-id|remote-id|relay-id|trst-port)(?:\s|$)|circuit-id-pppoe(?:\s|$)|remote-id-pppoe(?:\s|$)|enterprise-number(?:\s|$)|.*-linerate(?:\s|$)|.*-l2-encaps(?:\s|$)|.*-vlanaware(?:\s|$)).+)$",
-            "vlan-core",
-        ),
-        (
-            r"^(?P<scope>configure vlan id \S+) (?P<suffix>(?:dhcp-opt82-ext|dhcp-opt82-nni|dhcp-opt82-uplink|circuit-id-dhcp|remote-id-dhcp|relay-id-dhcp|dhcpv6-(?:itf-id|remote-id|relay-id|trst-port)|enterprise-number|(?:dhcp|pppoe|dhcpv6)-linerate|(?:pppoe|dhcp|dhcpv6)-l2-encaps|(?:pppoer|dhcpr|dhcpv6r)-vlanaware)\b.+)$",
-            "vlan-dhcp",
-        ),
-        (
-            r"^(?P<scope>configure vlan id \S+) (?P<suffix>(?:circuit-id-pppoe|remote-id-pppoe)\b.+)$",
-            "vlan-pppoe",
-        ),
+    # one command per printed line of the device (two per VLAN), from the attribute table
+    COMPACT_COMMAND_SCOPES = tuple(
+        (r"^(?P<scope>configure vlan id \S+) (?P<suffix>(?:no )?(?:%s)(?:\s.*)?)$" % "|".join(re.escape(kw) for kw in keywords),
+         "vlan-line-%d" % number)
+        for number, keywords in enumerate(VLAN_LINE_KEYWORDS, 1)
     )
 
     def __init__(self, module):
@@ -71,178 +68,49 @@ class Vlans(ResourceModule):
             resource="vlans",
             tmplt=VlansTemplate(),
         )
-        self.parsers = [
-            "id",
-            "id_with_mode",
-            "name",
-            "mode",
-            "sntp-proxy",
-            "priority",
-            "vmac-not-in-opt61",
-            "new-broadcast",
-            "protocol-filter",
-            "pppoe-relay-tag",
-            "drly-srv-usr-side",
-            "new-secure-fwd",
-            "aging-time",
-            "l2cp-transparent",
-            "in-qos-prof-name",
-            "ipv4-mcast-ctrl",
-            "ipv6-mcast-ctrl",
-            "mac-mcast-ctrl",
-            "dis-proto-rip",
-            "proto-ntp",
-            "dis-ip-antispoof",
-            "unknown-unicast",
-            "pt2ptgem-flooding",
-            "mac-movement-ctrl",
-            "cvlan4095passthru",
-            "arp-snooping",
-            "arp-polling",
-            "arp-polling-ip",
-            "mac-unauth",
-            "dhcp-opt82-ext",
-            "dhcp-opt82-nni",
-            "dhcp-opt82-uplink",
-            "circuit-id-dhcp",
-            "remote-id-dhcp",
-            "relay-id-dhcp",
-            "dhcp-linerate", "pppoe-linerate", "dhcpv6-linerate",
-            "pppoe-l2-encaps", "dhcp-l2-encaps", "dhcpv6-l2-encaps", "l2-encaps1",
-            "pppoer-vlanaware", "dhcpr-vlanaware", "dhcpv6r-vlanaware",
-            "circuit-id-pppoe",
-            "remote-id-pppoe",
-            "dhcpv6-itf-id", "dhcpv6-remote-id",
-            "dhcpv6-relay-id", "dhcpv6-trst-port",
-            "enterprise-number",
-            "icmpv6-sec-fltr",
-            "vmac-translation",
-            "vmac-dnstr-filter",
-        ]
-
-    def execute_module(self):
-        """ Execute the module
-
-        :rtype: A dictionary
-        :returns: The result from module execution
-        """
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
+        self.parsers = [option for option, _cli, _kind, _default in VLAN_ATTRS]
 
     def generate_commands(self):
-        """ Generate configuration commands to send based on
-            want, have and desired state.
+        """Generate the commands that bring the VLANs from have to want.
+
+        want stays raw: an explicit default (or False) names the attribute and means
+        "reset to the default" (merged sets it, deleted resets only it). have has its
+        defaults removed, so a default the device already has sends nothing.
         """
-        if self.state == "rendered":
-            rendered = self._render_vlan_config(
-                self._module.params.get("config") or self.want
-            )
-            self.commands = rendered
-            self.result["rendered"] = rendered
-            return
+        wantd = dict((str(entry["id"]), _named(entry)) for entry in self.want or [])
+        haved = dict((str(entry["id"]), _without_defaults(entry)) for entry in self.have or [])
 
-        if self.state in ("merged", "replaced", "overridden", "deleted"):
-            commands = self._generate_vlan_state_commands()
-            self.commands = commands
-            self.result["commands"] = commands
-            return
-
-        wantd = {entry['id']: entry for entry in self.want}
-        haved = {entry['id']: entry for entry in self.have}
-
-        # if state is merged, merge want onto have and then compare
-        if self.state == "merged":
-            wantd = dict_merge(haved, wantd)
-
-        # if state is deleted, empty out wantd and set haved to wantd
         if self.state == "deleted":
-            haved = {
-                k: v for k, v in iteritems(haved) if k in wantd or not wantd
-            }
-            wantd = {}
-
-        # remove superfluous config for overridden and deleted
-        if self.state in ["overridden", "deleted"]:
-            for k, have in iteritems(haved):
-                if k not in wantd:
-                    self._compare(want={}, have=have)
-
-        for k, want in iteritems(wantd):
-            self._compare(want=want, have=haved.pop(k, {}))
-
-    def _compare(self, want, have):
-        """Leverages the base class `compare()` method and
-           populates the list of commands to be run by comparing
-           the `want` and `have` data with the `parsers` defined
-           for the Vlans network resource.
-        """
-        self.compare(parsers=self.parsers, want=want, have=have)
-
-    def _render_vlan_config(self, config):
-        commands = []
-        for vlan in config or []:
-            if not vlan.get("mode"):
-                self._module.fail_json(msg="Creating a VLAN requires mode.")
-            prefix = "configure vlan id {0}".format(vlan["id"])
-            for field in self.parsers:
-                if field in ("id", "id_with_mode") or vlan.get(field) is None:
-                    continue
-                value = vlan[field]
-                if field == "name":
-                    value = _quote_name(value)
-                if value is False:
-                    commands.append("{0} no {1}".format(prefix, field))
-                elif value is True:
-                    commands.append("{0} {1}".format(prefix, field))
+            # an identity (or a full entry) removes the VLAN; named settings reset only
+            # themselves (naming "name" or a default must not delete the VLAN); absent
+            # VLANs are skipped
+            for target, have in deleted_targets(wantd, haved, ("id",)):
+                if covers_entry(wantd.get(str(have["id"]), {}), have, ("id",)):
+                    self.addcmd(have, "id", True)
                 else:
-                    commands.append("{0} {1} {2}".format(prefix, field, value))
-        return commands
-
-    def _generate_vlan_state_commands(self):
-        want = {str(item["id"]): _without_defaults(item) for item in self.want or []}
-        have = {str(item["id"]): _without_defaults(item) for item in self.have or []}
-        commands = []
-
-        if self.state == "deleted":
-            for target, current in deleted_targets(want, have, ("id",)):
-                vlan_id = str(current["id"])
-                if covers_entry(want.get(vlan_id, {}), current, ("id",)):
-                    commands.append("configure vlan no id {0}".format(vlan_id))
-                    continue
-                for field in sorted(set(current) - set(target)):
-                    commands.append("configure vlan id {0} no {1}".format(vlan_id, field))
-            return commands
+                    self.compare(parsers=self.parsers, want=target, have=have)
+            return
 
         if self.state == "overridden":
-            for vlan_id in have:
-                if vlan_id not in want:
-                    commands.append("configure vlan no id {0}".format(vlan_id))
+            for vlan_id, have in haved.items():
+                if vlan_id not in wantd:
+                    self.addcmd(have, "id", True)
 
-        for vlan_id, desired in want.items():
-            current = have.get(vlan_id, {})
-            if not current and not desired.get("mode"):
-                self._module.fail_json(msg="Creating a VLAN requires mode.")
-            if self.state == "replaced":
-                for field in current:
-                    if field not in desired and field not in ("id", "mode"):
-                        commands.append("configure vlan id {0} no {1}".format(vlan_id, field))
-            elif self.state == "merged":
-                desired = dict(current, **desired)
-
-            for field, value in desired.items():
-                if field == "id" or value is None:
-                    continue
-                if value == current.get(field):
-                    continue
-                if value is False:
-                    commands.append("configure vlan id {0} no {1}".format(vlan_id, field))
-                elif value is True:
-                    commands.append("configure vlan id {0} {1}".format(vlan_id, field))
-                else:
-                    rendered = _quote_name(value) if field == "name" else value
-                    commands.append("configure vlan id {0} {1} {2}".format(vlan_id, field, rendered))
-        return commands
+        rendering = self.state == "rendered"
+        for vlan_id, want in wantd.items():
+            have = haved.get(vlan_id, {})
+            if not have and not rendering and want.get("mode") is None:
+                # mode is a mandatory parameter of a new VLAN (CLI guide)
+                self._module.fail_json(msg="vlan %s does not exist; mode is required to create it" % vlan_id)
+            if not rendering:
+                # an explicit default the device already has is no change
+                want = dict((key, value) for key, value in want.items() if key in have or not _is_default(key, value))
+            if self.state == "merged":
+                want = dict(have, **want)
+            elif not rendering:
+                # attributes without removal form (mode) stay when not named
+                want = dict(dict((k, have[k]) for k in SET_ONLY if k in have), **want)
+            before = len(self.commands)
+            self.compare(parsers=self.parsers, want=want, have=have)
+            if not have and not rendering and len(self.commands) == before:
+                self.addcmd(want, "id", False)  # a new VLAN with only default settings

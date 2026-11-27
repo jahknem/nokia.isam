@@ -16,10 +16,13 @@ module: isam_l2cp_session
 short_description: Manages Nokia ISAM L2CP sessions.
 description:
   - Manages C(configure l2cp session) on Nokia ISAM.
-  - The write states read C(info configure l2cp session flat) and compare against it, attributes at their device default included;
-    a device error fails the module.
+  - The write states read C(info configure l2cp session flat) and compare against it; an unset attribute equals its device
+    default. A device error fails the module.
   - I(bras_ip_address) is mandatory to create a session; for an existing session it is taken from the device when not given.
     Deletion removes whole sessions (C(no session <index>)).
+  - Only I(alive_timer) and I(tcp_retry_time) can be changed on an existing session (C(session <index> alive-timer <value>)).
+    All other attributes, I(bras_ip_address) included, are set when the session is created; a different value for an
+    existing session fails the module before any change (delete the session first).
 version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:
@@ -36,73 +39,61 @@ options:
         description: BRAS IP address (a session without it is deleted).
         type: str
       gsmp_version:
-        description: GSMP version.
+        description: 'GSMP protocol version (C(gsmp-version)); device default C(3). Not modifiable after creation.'
         type: str
-        default: "3"
       gsmp_sub_version:
-        description: GSMP sub version.
+        description: 'GSMP protocol sub-version (C(gsmp-sub-version)); device default C(1). Not modifiable after creation.'
         type: str
-        default: "1"
       encap_type:
         description: Encapsulation type.
         type: str
-        default: "tcp"
         choices: [tcp]
       topo_discovery:
         description: Topology discovery.
         type: str
-        default: "enabled"
         choices: [disabled, enabled]
       layer2_oam:
         description: Layer 2 OAM.
         type: str
-        default: "enabled"
         choices: [disabled, enabled]
       alive_timer:
-        description: Alive timer.
+        description: 'Adjacency protocol watchdog alive time in units of 100 ms (C(alive-timer), 1-255); device default C(250).'
         type: str
-        default: "250"
       port_reprt_shaper:
         description: Port report shaper.
         type: str
-        default: "10"
       aggr_reprt_shaper:
         description: Aggregate report shaper.
         type: str
-        default: "10"
       tcp_retry_time:
-        description: TCP retry time.
+        description: 'Time between two TCP connection setup attempts in units of 100 ms (C(tcp-retry-time), 0-255); device default C(10).'
         type: str
-        default: "10"
       gsmp_retry_time:
-        description: GSMP retry time.
+        description: 'Time between two GSMP/L2CP connection setup attempts in units of 100 ms (C(gsmp-retry-time), 0-255); device default C(10).'
         type: str
-        default: "10"
       dslam_name:
-        description: DSLAM name.
+        description: 'L2CP name of the DSLAM (C(dslam-name)), a MAC-address-like string; device default C(00:00:00:00:00:00). Not modifiable after creation.'
         type: str
-        default: "00 : 00 : 00"
       partition_id:
         description: Partition identifier.
         type: str
-        default: "0"
       window_size:
-        description: Window size.
+        description: 'Maximum number of unacknowledged request messages in a window (C(window-size)); device default C(10).'
         type: str
-        default: "10"
       tcp_port:
-        description: TCP port.
+        description: 'TCP port of the session to the peer (C(tcp-port)); device default C(6068). Not modifiable after creation.'
         type: str
-        default: "6068"
       router_instance:
-        description: Router instance.
+        description: 'Router instance used to reach the peer (C(router-instance)); device default C(base). Not modifiable after creation.'
         type: str
-        default: "base"
       sig_partition_id:
         description: Signal the partition identifier.
         type: bool
   running_config:
-    description: Native C(info configure ... flat) output to parse with I(state=parsed).
+    description:
+      - 'Native C(info configure ... flat) output to parse with I(state=parsed).'
+      - 'With I(state) C(merged), C(replaced), C(overridden) or C(deleted), the current configuration to render against instead of reading the device (offline preview): this CLI text, or the canonical resource JSON as returned by C(gathered) (validated against the I(config) options).'
+      - 'Offline, no command is sent and nothing is read from the device; the result holds the C(commands) that would be sent and C(before) (the supplied configuration), with C(changed) false.'
     type: str
   state:
     description:
@@ -133,30 +124,75 @@ EXAMPLES = """
 """
 
 RETURN = """
+# BEGIN read_outcomes (synced from plugins/doc_fragments/read_outcomes.py; do not edit)
+read_outcomes:
+  description:
+    - Sanitized per-instance read outcomes for a targeted read (I(state) is C(gathered)
+      and I(config) names instances).
+    - Each outcome names the config section that addressed the instance (for example
+      C(config)) and the selector -- the instance identity, a composite identity
+      recorded joined by C(/). Instances in different sections that share an identity
+      value are different instances and are reported separately.
+    - Each outcome records the command axis (C(ok), C(rejected) or C(failed)) and the
+      instance-existence axis (C(present), C(confirmed_absent) or C(unknown)).
+    - Only C(confirmed_absent) -- the device's explicit "instance does not exist" signal
+      about that instance -- is evidence the instance is gone. C(unknown) (a header-only
+      reply, an invalid-token rejection, a missing dependency, or a failed read) is never
+      treated as absence; keep, do not remove, configuration for C(unknown) instances.
+    - When one instance is addressed by several reads, it is reported C(confirmed_absent)
+      only if every read confirmed absence; a single present read proves presence; a
+      failed read is reported as C(failed); anything less is C(unknown).
+    - The parse axis (C(failed) or C(unverified)) is reported at resource level under
+      C(parse); C(failed) means the family parser could not process the reply,
+      C(unverified) that no parser records its coverage of the reply (a read never claims
+      a complete parse).
+    - A named instance the device rejected (C(invalid token)) is missing from C(gathered)
+      exactly like an absent one; the module also warns, naming the rejected selectors.
+    - The output is sanitized to stable enums, the section, the selector, and an error
+      class; raw device text is never recorded. A failed targeted read fails the module
+      carrying this same sanitized result.
+  version_added: 1.1.0
+  returned: when I(state) is C(gathered) and the read is targeted
+  type: dict
+# END read_outcomes
+# BEGIN resource_returns (generated by tools/sync_resource_return_docs.py; do not edit)
 before:
-  description: The configuration prior to module execution.
+  description:
+  - The configuration before the module ran, in the format of I(config).
+  - With I(running_config) (offline preview) it is the supplied configuration.
   returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
 after:
-  description: The resulting configuration after module execution.
-  returned: when changed
+  description:
+  - The configuration read back from the device after the commands were sent, in the format of I(config).
+    In check mode nothing is sent, so it shows the unchanged configuration.
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted), commands were generated
+    and no I(running_config) was given
   type: list
 commands:
-  description: The set of commands pushed to the remote device.
+  description:
+  - 'The commands sent to the device (in check mode: that would be sent).'
+  - With I(running_config) (offline preview) they are rendered only, never sent.
   returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
+  elements: str
 rendered:
-  description: The provided configuration in device-native format.
+  description:
+  - The commands rendered from I(config) in device-native format, without a device (offline).
   returned: when I(state) is C(rendered)
   type: list
+  elements: str
 gathered:
-  description: Facts gathered from the remote device as structured data.
+  description:
+  - The configuration read from the device, in the format of I(config).
   returned: when I(state) is C(gathered)
   type: list
 parsed:
-  description: Native config parsed into structured data.
+  description:
+  - The I(running_config) text parsed into the format of I(config), without a device.
   returned: when I(state) is C(parsed)
   type: list
+# END resource_returns
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -165,7 +201,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.l2c
 
 
 def main():
-    module = AnsibleModule(argument_spec=L2cpSessionArgs.argument_spec, mutually_exclusive=[["config", "running_config"]], required_if=[
+    module = AnsibleModule(argument_spec=L2cpSessionArgs.argument_spec, required_if=[
         ["state", "merged", ["config"]], ["state", "replaced", ["config"]], ["state", "overridden", ["config"]],
         ["state", "rendered", ["config"]], ["state", "parsed", ["running_config"]]], supports_check_mode=True)
     module.exit_json(**L2cpSession(module).execute_module())

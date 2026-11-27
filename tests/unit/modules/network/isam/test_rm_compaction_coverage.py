@@ -27,6 +27,8 @@ SCOPED_RMS = {
 # nothing left to compact (module_utils/network/isam/attribute_table.py).
 TABLE_RMS = {
     "Generic_pon": "attribute table packs one line per PON settings scope",
+    "Isam_voice_sip": "attribute table packs one line per SIP object scope",
+    "Software_mngt": "attribute table packs one line per database/OSWP scope",
 }
 
 # These RMs have been audited and intentionally have no compactable
@@ -49,13 +51,13 @@ UNSCOPED_RMS = {
     "Isam_equipment": "different hardware object scopes",
     "Isam_ipv6_antispoofing_slot": "single field per slot",
     "Isam_system": "separate system subcommands",
-    "Isam_voice_sip": "distinct SIP object scopes",
     "Isam_vlan_global": "global singleton/list scopes already atomic",
     "L2cp": "custom atomic renderer",
     "L2cpSession": "distinct session operations",
     "L2cpUserPort": "distinct user-port operations",
     "L2uni_onts": "custom renderer already packs one command per UNI scope",
     "Li_vlan": "single VLAN field",
+    "Linetest": "custom renderer emits complete per-field session/parameter commands; destroy is atomic",
     "Mcast_control": "live output only confirms context selector",
     "Multicast": "live output only confirms context selector",
     "Ntp_onts": "per-ONT fields are separate command verbs",
@@ -65,7 +67,6 @@ UNSCOPED_RMS = {
     "Qos_maps": "map entries are separate operations",
     "Qos_tca": "per-queue attributes are separate set/reset commands",
     "Qos_profiles": "profile renderer already emits atomic profile commands",
-    "Software_mngt": "database and OSWP renderers already group supported options",
     "Xdsl_profiles": "profile commands have distinct nested scopes",
     "Xdsl_bonding": "single global option",
     "Uni_onts": "single field per UNI",

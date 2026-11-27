@@ -45,9 +45,9 @@ class TestIsamVlansModule(TestIsamModule):
               new-broadcast enable
               protocol-filter pass-pppoe-ipoe
               dhcp-opt82-ext enable
-              relay-id-dhcp
-              dhcp-linerate
-              pppoe-l2-encaps
+              relay-id-dhcp relay-id
+              dhcp-linerate addactuallinerate
+              pppoe-l2-encaps add
               in-qos-prof-name qprof1
             """
         )
@@ -66,12 +66,13 @@ class TestIsamVlansModule(TestIsamModule):
         self.assertEqual(v.get("id"), "100")
         self.assertEqual(v.get("mode"), "residential-bridge")
         self.assertEqual(v.get("name"), "HomeNet")
-        self.assertEqual(v.get("new-broadcast"), "enable")
-        self.assertEqual(v.get("protocol-filter"), "pass-pppoe-ipoe")
-        self.assertTrue(v.get("relay-id-dhcp"))
-        self.assertTrue(v.get("dhcp-linerate"))
-        self.assertTrue(v.get("pppoe-l2-encaps"))
-        self.assertEqual(v.get("in-qos-prof-name"), "qprof1")
+        self.assertEqual(v.get("new_broadcast"), "enable")
+        self.assertEqual(v.get("protocol_filter"), "pass-pppoe-ipoe")
+        # values, not flags (CLI guide; lab ISAM)
+        self.assertEqual(v.get("relay_id_dhcp"), "relay-id")
+        self.assertEqual(v.get("dhcp_linerate"), "addactuallinerate")
+        self.assertEqual(v.get("pppoe_l2_encaps"), "add")
+        self.assertEqual(v.get("in_qos_prof_name"), "qprof1")
 
     def test_isam_vlans_gathered_empty(self):
         # test gathered with empty device output -> empty list
@@ -89,7 +90,7 @@ class TestIsamVlansModule(TestIsamModule):
         running = dedent(
             """
             configure vlan id 100 mode residential-bridge name Home priority 5 new-secure-fwd enable aging-time 60000 in-qos-prof-name name:Default_TC0 sntp-proxy vmac-not-in-opt61
-            configure vlan id 100 dhcp-opt82-ext add-or-forward circuit-id-dhcp physical-id remote-id-dhcp customer-id relay-id-dhcp dhcpv6-itf-id physical-id dhcpv6-remote-id customer-id
+            configure vlan id 100 dhcp-opt82-ext add-or-forward circuit-id-dhcp physical-id remote-id-dhcp customer-id relay-id-dhcp relay-id dhcpv6-itf-id physical-id dhcpv6-remote-id customer-id
             configure vlan id stacked:552:2 mode cross-connect name Stacked pppoe-relay-tag configurable circuit-id-pppoe physical-id remote-id-pppoe customer-id
             """
         )
@@ -98,14 +99,14 @@ class TestIsamVlansModule(TestIsamModule):
         vlans = {entry["id"]: entry for entry in result["parsed"]}
 
         self.assertEqual(vlans["100"]["priority"], 5)
-        self.assertEqual(vlans["100"]["aging-time"], 60000)
-        self.assertTrue(vlans["100"]["sntp-proxy"])
-        self.assertTrue(vlans["100"]["vmac-not-in-opt61"])
-        self.assertEqual(vlans["100"]["dhcp-opt82-ext"], "add-or-forward")
-        self.assertTrue(vlans["100"]["relay-id-dhcp"])
-        self.assertEqual(vlans["100"]["dhcpv6-itf-id"], "physical-id")
-        self.assertEqual(vlans["100"]["dhcpv6-remote-id"], "customer-id")
-        self.assertEqual(vlans["stacked:552:2"]["pppoe-relay-tag"], "configurable")
+        self.assertEqual(vlans["100"]["aging_time"], 60000)
+        self.assertTrue(vlans["100"]["sntp_proxy"])
+        self.assertTrue(vlans["100"]["vmac_not_in_opt61"])
+        self.assertEqual(vlans["100"]["dhcp_opt82_ext"], "add-or-forward")
+        self.assertEqual(vlans["100"]["relay_id_dhcp"], "relay-id")
+        self.assertEqual(vlans["100"]["dhcpv6_itf_id"], "physical-id")
+        self.assertEqual(vlans["100"]["dhcpv6_remote_id"], "customer-id")
+        self.assertEqual(vlans["stacked:552:2"]["pppoe_relay_tag"], "configurable")
 
         negative = dedent(
             """
@@ -117,8 +118,8 @@ class TestIsamVlansModule(TestIsamModule):
         set_module_args(dict(running_config=negative, state="parsed"), ignore_provider_arg)
         result = self.execute_module(changed=False)
         vlan = result["parsed"][0]
-        self.assertFalse(vlan["sntp-proxy"])
-        self.assertFalse(vlan["relay-id-dhcp"])
+        self.assertFalse(vlan.get("sntp_proxy"))  # off is the default: not reported
+        self.assertFalse(vlan.get("relay_id_dhcp"))
 
     def test_isam_vlans_rendered_smoke(self):
         set_module_args(
@@ -141,7 +142,7 @@ class TestIsamVlansModule(TestIsamModule):
         self.assertIn("rendered", result)
         self.assertIsInstance(result.get("rendered"), list)
         self.assertIn(
-            "configure vlan id 100 name HomeNet mode residential-bridge sntp-proxy priority 5 new-secure-fwd enable",
+            "configure vlan id 100 mode residential-bridge name HomeNet sntp-proxy priority 5 new-secure-fwd enable",
             result["rendered"],
         )
 
@@ -168,7 +169,7 @@ class TestIsamVlansModule(TestIsamModule):
         self.assertEqual(
             rendered,
             [
-                "configure vlan id 410 name HSI-4 mode residential-bridge new-secure-fwd enable in-qos-prof-name name:Default_TC0",
+                "configure vlan id 410 mode residential-bridge name HSI-4 new-secure-fwd enable in-qos-prof-name name:Default_TC0",
                 "configure vlan id 410 dhcp-opt82-ext enable circuit-id-dhcp physical-id remote-id-dhcp customer-id",
             ],
         )
@@ -180,8 +181,8 @@ class TestIsamVlansModule(TestIsamModule):
         parsed = self.execute_module(changed=False)["parsed"][0]
         self.assertEqual(parsed["mode"], "residential-bridge")
         self.assertEqual(parsed["name"], "HSI-4")
-        self.assertEqual(parsed["dhcp-opt82-ext"], "enable")
-        self.assertEqual(parsed["circuit-id-dhcp"], "physical-id")
+        self.assertEqual(parsed["dhcp_opt82_ext"], "enable")
+        self.assertEqual(parsed["circuit_id_dhcp"], "physical-id")
 
     def test_isam_vlans_parsed_requires_running_config(self):
         set_module_args(dict(state="parsed"), ignore_provider_arg)
@@ -228,8 +229,9 @@ class TestIsamVlansModule(TestIsamModule):
             ignore_provider_arg,
         )
         result = self.execute_module(changed=True)
+        # mode is mandatory and has no "no" form (CLI guide); it stays
         self.assertIn(
-            "configure vlan id 100 no priority no new-secure-fwd name Changed",
+            "configure vlan id 100 name Changed no priority no new-secure-fwd",
             result["commands"],
         )
         self.assertTrue(any("no priority" in command for command in result["commands"]))

@@ -222,7 +222,15 @@ def test_voice_fixture_is_parseable():
     descriptor, output = fixture_bundle("voice_sip", "r6.2.04m")
     parsed = Isam_voice_sipTemplate(lines=output.splitlines()).parse()
     assert descriptor["software_version"] == "R6.2.04m"
-    assert any(entry["name"] == "vsp1" for entry in parsed["vsp"])
+    vsp = next(entry for entry in parsed["vsp"] if entry["name"] == "vsp1")
+    # value attributes at default read as unset (None), timers as ints (not bool)
+    assert vsp["ta4"] is None and vsp["admin_status"] is None
+    assert vsp["timer_b"] == 32000 and vsp["timer_t1"] == 500
+    assert parsed["redundancy_cmd"][0]["fail_x_type"] == "geo-fail-over"
+    assert parsed["statistics"]["per_line"] is True and parsed["statistics"]["out_any_rsp"] is True
+    assert parsed["statistics"]["stats_5min_config"] is None
+    cas = parsed["cas_nsm_prof"][0]
+    assert cas["international_prefix"] == "#" and cas["outg_cpn_length"] == 0
 
 
 def test_software_fixture_is_parseable():
@@ -230,6 +238,9 @@ def test_software_fixture_is_parseable():
     parsed = Software_mngtTemplate(lines=output.splitlines()).parse()
     assert descriptor["device_type"] == "Nokia ISAM 7330 FTTN"
     assert len(parsed["oswp"]) == 2
+    assert parsed["oswp"][0]["id"] == "1"
+    assert parsed["sw_replacement_mode"]["mode"] == "upgrade-via-standby"
+    assert parsed["database"]["backup"] == "activate:192.0.2.1:backup/"
 
 
 def test_pon_variant_fixture_is_parseable():
@@ -259,7 +270,7 @@ def test_vlan_live_flat_fixture_is_parseable():
 
     assert descriptor["command"] == "info configure vlan id flat"
     assert parsed[99]["mode"] == "residential-bridge"
-    assert parsed[99]["dhcp-opt82-ext"] == "add-or-forward"
+    assert parsed[99]["dhcp_opt82_ext"] == "add-or-forward"
     assert parsed[120]["priority"] == 5
 
 
@@ -852,7 +863,7 @@ def test_l2cp_synthetic_fixture_is_parseable():
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.l2cp import L2cpTemplate
     parsed = L2cpTemplate().parse(output)
     assert descriptor["command"] == "info configure l2cp flat"
-    assert len(parsed) >= 0
+    assert parsed == [{"name": "l2cp", "partition_type": "fixed-assigned"}]
 
 
 def test_l2cp_session_synthetic_fixture_is_parseable():
