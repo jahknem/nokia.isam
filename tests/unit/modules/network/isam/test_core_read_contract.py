@@ -154,3 +154,71 @@ def test_incomplete_or_injected_selector_sends_no_commands(config):
         get_targeted_config(module, device, "interfaces", "info configure example flat",
                             {"config": "info configure example interface %s flat"})
     assert device.commands == []
+
+
+DETAIL_COMMAND = COMMAND + " detail"
+
+
+def read_detail(reply, **kwargs):
+    """A gathered single-instance read whose command already is 'flat detail'."""
+    device = SimpleNamespace(commands=[])
+
+    def get(command):
+        device.commands.append(command)
+        return command + "\n" + reply
+    device.get = get
+    collector = ReadOutcomeCollector("example")
+    module = SimpleNamespace(params={"state": "gathered"})
+    result = get_scoped_config(module, device, None, None, [DETAIL_COMMAND],
+                               outcomes=collector, selectors={DETAIL_COMMAND: [("config", "1/1/1/1")]}, **kwargs)
+    return result, collector.to_result()["outcomes"][0], device.commands
+
+
+@pytest.mark.parametrize("reply", ["", "#----------------\n"])
+def test_a_header_only_detail_read_is_confirmed_absent_without_a_second_read(reply):
+    result, outcome, commands = read_detail(reply)
+    assert result == "" and commands == [DETAIL_COMMAND]
+    assert outcome["existence"] == "confirmed_absent"
+
+
+def test_a_detail_read_with_the_instance_is_present():
+    _, outcome, _ = read_detail(PATH + " no enabled\n")
+    assert outcome["existence"] == "present"
+
+
+@pytest.mark.parametrize("policy", ["silent_bare_commands", "unobservable_commands"])
+def test_a_header_only_detail_read_under_a_policy_proves_nothing(policy):
+    _, outcome, _ = read_detail("", **{policy: (DETAIL_COMMAND,)})
+    assert outcome["existence"] == "unknown"
+
+
+def test_a_header_only_detail_read_in_a_write_state_is_not_classified():
+    collector = ReadOutcomeCollector("example")
+    module = SimpleNamespace(params={"state": "merged"})
+    device = SimpleNamespace(get=lambda command: command + "\n")
+    get_scoped_config(module, device, None, None, [DETAIL_COMMAND],
+                      outcomes=collector, selectors={DETAIL_COMMAND: [("config", "1/1/1/1")]})
+    assert collector.to_result()["outcomes"][0]["existence"] == "unknown"
+
+
+@pytest.mark.parametrize("facts_path, cls, resource, config, command", [
+    ("bridges.bridges", "BridgesFacts", "isam_bridges", {"port": [{"port": "1/1/5/1/4/1/1"}]},
+     "info configure bridge port 1/1/5/1/4/1/1 flat detail"),
+    ("qos_interfaces.qos_interfaces", "Qos_interfacesFacts", "isam_qos_interfaces", [{"name": "1/1/5/1/4/1/1"}],
+     "info configure qos interface 1/1/5/1/4/1/1 flat"),
+])
+def test_bridges_and_qos_interfaces_record_targeted_outcomes(facts_path, cls, resource, config, command):
+    # Header only (DS-LIN-TEST-01 2026-11-27, missing ONT 1/1/5/1/4): confirmed absent.
+    import importlib
+    facts = getattr(importlib.import_module(
+        "ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts." + facts_path), cls)
+    sent = []
+
+    def get(cmd):
+        sent.append(cmd)
+        return cmd + "\n#----------------\n"
+    module = SimpleNamespace(params={"state": "gathered", "config": config})
+    facts(module).get_config(SimpleNamespace(get=get))
+    assert sent[0] == command
+    outcomes = module._isam_read_outcomes["outcomes"]
+    assert [(o["selector"], o["existence"]) for o in outcomes] == [("1/1/5/1/4/1/1", "confirmed_absent")]

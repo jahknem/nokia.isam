@@ -417,9 +417,12 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
     deletion still require the complete family to identify entries to remove.
 
     Gathered single-instance flat reads automatically probe a header-only reply
-    with flat detail. An exact instance path proves presence; empty detail stays
-    unknown. Defaults are not copied into desired configuration. Shared-node
-    reads with instance_checks retain their explicit per-instance semantics.
+    with flat detail (_probe_detail). An exact instance path proves presence; the
+    header only or "instance does not exist" proves absence; a gathered
+    single-instance read that is already 'flat detail' proves absence by its
+    header alone (docs/targeted-read-contract.md). Defaults are not copied into
+    desired configuration. Shared-node reads with instance_checks retain their
+    explicit per-instance semantics.
 
     bare_commands: the single reads of lists whose whole read shows an instance
     without configured attributes as its bare path; for these an empty reply is
@@ -513,7 +516,14 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
         empty_absent = command in empty_absent_commands and single
         probe = reading and single and not empty_absent
         probed = None
-        if not reply.strip() and (probe or command in bare_commands or command in silent_bare_commands):
+        detail_read = command.startswith("info configure ") and command.endswith(" flat detail")
+        if not reply.strip() and detail_read:
+            # Already the second step of the rule: 'flat detail' prints every existing
+            # instance, so the header alone proves absence (not for the silent and
+            # unobservable policies, whose header is no evidence).
+            if probe and command not in silent_bare_commands and command not in unobservable_commands:
+                probed = "confirmed_absent"
+        elif not reply.strip() and (probe or command in bare_commands or command in silent_bare_commands):
             policy = ("silent" if command in silent_bare_commands
                       else "unobservable" if command in unobservable_commands else None)
             try:

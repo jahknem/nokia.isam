@@ -9,7 +9,7 @@ __metaclass__ = type
 from anytree import Node
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
-    get_scoped_config,
+    get_targeted_config,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.qos_interfaces.qos_interfaces import Qos_interfacesArgs
@@ -24,18 +24,9 @@ class Qos_interfacesFacts(object):
         self.argument_spec = Qos_interfacesArgs.argument_spec
 
     def get_config(self, connection):
-        config = self._module.params.get("config") or []
-        commands = [
-            "info configure qos interface %s flat" % item["name"]
-            for item in config
-        ]
-        return get_scoped_config(
-            self._module,
-            connection,
-            config,
-            "info configure qos interface flat",
-            commands,
-        )
+        return get_targeted_config(self._module, connection, "qos_interfaces", "info configure qos interface flat", {
+            "config": "info configure qos interface %s flat",
+        }, write_states=True)
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}

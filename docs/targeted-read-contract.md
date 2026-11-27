@@ -19,6 +19,10 @@ one of three outcomes:
 | header only | a missing dependency (`lower-interface does not exist`) or another instance's line | unknown |
 | `invalid token` / other device error | – | unknown, command rejected |
 
+Families whose single read already is `flat detail` (bridge ports, ONT
+interfaces and slots, equipment slots, PON interfaces) skip the second read: their
+header-only reply is confirmed absence, their instance line is presence.
+
 `flat` prints only values that differ from the default, so an instance with
 defaults only answers like a missing one. `flat detail` prints every existing
 instance with its defaults; for a default-only instance the helper returns the
