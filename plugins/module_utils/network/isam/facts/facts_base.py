@@ -342,7 +342,7 @@ def _record_absence(outcomes, entries, text, unobservable=False):
     """
     gap = _dependency_gap(text)
     for section, selector in entries:
-        if unobservable:
+        if gap is None and unobservable:
             outcomes.record(section, selector, "ok", "unknown")
         elif gap is None:
             outcomes.record(section, selector, "ok", "confirmed_absent")
