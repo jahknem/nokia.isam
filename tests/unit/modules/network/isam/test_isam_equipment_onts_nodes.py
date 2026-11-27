@@ -41,7 +41,7 @@ def parse(text):
     return Equipment_ontsFacts(module=None)._parse_config(text)
 
 
-def test_detail_output_parses_new_fields_and_drops_defaults():
+def test_detail_output_parses_new_fields_and_keeps_default_only_nodes():
     parsed = parse(DETAIL_LINES)
     interface = parsed["interfaces"][0]
     assert interface["sernum"] == "GNXS:00000001"
@@ -52,9 +52,15 @@ def test_detail_output_parses_new_fields_and_drops_defaults():
     assert sw_ctrls[1]["pland_cfgfile2"] == "CFG2"
     assert "pland_cfgfile1" not in sw_ctrls[1]
     assert sw_ctrls[2]["delay_act"] == {"at": "2026-01-01:00:00:00"}
-    # Loop/pm-collect nodes with only defaults (no <attr> or the default value) are not reported.
-    assert parsed["loops"] == [{"ont_idx": "1/1/2/1/2", "loop_detect": "enable", "loop_portautoshut": "disable"}]
-    assert parsed["pm_collects"] == [{"ont_idx": "1/1/2/1/2", "xg_pm_collect": "enable"}]
+    # Loop/pm-collect nodes with only defaults (no <attr> or the default value) exist:
+    # they stay as identity-only entries, defaults are not reported as configuration
+    # (docs/targeted-read-contract.md).
+    loops = dict((entry["ont_idx"], entry) for entry in parsed["loops"])
+    assert loops["1/1/2/1/2"] == {"ont_idx": "1/1/2/1/2", "loop_detect": "enable", "loop_portautoshut": "disable"}
+    assert all(entry == {"ont_idx": ident} for ident, entry in loops.items() if ident != "1/1/2/1/2")
+    pm_collects = dict((entry["ont_idx"], entry) for entry in parsed["pm_collects"])
+    assert pm_collects["1/1/2/1/2"] == {"ont_idx": "1/1/2/1/2", "xg_pm_collect": "enable"}
+    assert all(entry == {"ont_idx": ident} for ident, entry in pm_collects.items() if ident != "1/1/2/1/2")
 
 
 def _relevant(line):
@@ -153,7 +159,9 @@ class TestIsamEquipmentOntsNodes(TestIsamModule):
     def test_gathered_detail_output_does_not_fail(self):
         result = self.run_state("gathered", changed=False)
         assert result["gathered"]["sw_ctrls"][1]["delay_act"] == {"at": "2026-01-01:00:00:00"}
-        assert result["gathered"]["loops"][0]["ont_idx"] == "1/1/2/1/2"
+        loops = dict((entry["ont_idx"], entry) for entry in result["gathered"]["loops"])
+        assert loops["1/1/2/1/2"]["loop_detect"] == "enable"
+        assert loops["1/1/2/1/1"] == {"ont_idx": "1/1/2/1/1"}
 
     def test_rendered_new_fields(self):
         result = self.run_state("rendered", {

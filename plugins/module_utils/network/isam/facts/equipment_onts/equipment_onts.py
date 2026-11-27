@@ -181,11 +181,6 @@ class Equipment_ontsFacts(object):
             else:
                 self.unknown.append((line, tokens[0]))
 
-        for section in ("loops", "pm_collects"):
-            # These nodes exist with every ONT; one with only default values
-            # (all "no <attr>", as detail prints it) has nothing to report.
-            for identity in [ident for ident, entry in entries[section].items() if len(entry) == 1]:
-                del entries[section][identity]
         return dict((section, list(entries[section].values())) for section in SECTIONS)
 
     def _apply(self, nodes, entries, kind, identity, tokens, line):
