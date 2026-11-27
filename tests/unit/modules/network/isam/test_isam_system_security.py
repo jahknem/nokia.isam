@@ -458,8 +458,25 @@ class TestIsamSystemSecurityStateContract(TestIsamModule):
         assert "configure system security no profile admin" not in result["commands"]
 
     def test_overridden_refuses_to_remove_profile_of_kept_operator(self):
-        result = self._run("overridden", {"operators": [{"name": "isadmin", "profile": "admin"}]}, failed=True)
+        result = self._run("overridden", {"operators": [{"name": "isadmin", "profile": "admin"}],
+                                          "profiles": [{"name": "spare"}]}, failed=True)
         assert "admin" in result["msg"] and "isadmin" in result["msg"]
+
+    def test_overridden_leaves_list_types_the_request_does_not_name(self):
+        # A request tuning only the password policy must not remove operators, SNMP
+        # communities, RADIUS servers, sftp users or reset 802.1X ports (review of #12).
+        result = self._run("overridden", {"password": {"min_length": 9}})
+        # only the named block is overridden (its omitted attributes reset)
+        assert result["commands"] and all(cmd.startswith("configure system security password ")
+                                          for cmd in result["commands"]), result["commands"]
+        assert "configure system security password min-length 9" in result["commands"]
+
+    def test_overridden_overrides_a_named_list_type(self):
+        result = self._run("overridden", {"operators": [{"name": "isadmin", "profile": "admin"}],
+                                          "profiles": [{"name": "admin", "description": "admin group",
+                                                        "permissions": {"aaa": "write"}}]})
+        assert "configure system security no operator noc" in result["commands"]
+        assert not any(" snmp " in cmd or " radius " in cmd or "sftp-user" in cmd for cmd in result["commands"])
 
     def test_overridden_refuses_profile_kept_operator_inherits_from_device(self):
         # the operator omits its profile: replaced keeps the device's (no 'no profile' reset

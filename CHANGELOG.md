@@ -327,10 +327,11 @@ intentional. This section lists the ONT/access families of that line.
   `debug`/`debugkernel`, filetransfer `tftp_rollovr` (int) — options modelled as on/off
   flags that take values per the CLI guide; before, a set value was read as `true`.
 - Targeted reads: `ssh.sftp_users` uses the ssh node (the device rejects
-  `ssh sftp-user <name>` with `invalid token`) and keeps only the named users' lines.
-- Targeted read commands refuse identities carrying control characters before anything
-  is sent (this family's own check until the central targeted-read enforcement lands in
-  `facts_base` with the read-outcomes work).
+  `ssh sftp-user <name>` with `invalid token`), keeps only the named users' lines and
+  reports each user present or unknown (never confirmed absent).
+- `overridden` acts only on the list types and settings blocks named in `config`; an
+  unnamed type is left alone (overriding every type would remove all operators, SNMP
+  access and RADIUS servers of a request that only tunes, e.g., the password policy).
 
 ### Secret handling (isam_system_security)
 

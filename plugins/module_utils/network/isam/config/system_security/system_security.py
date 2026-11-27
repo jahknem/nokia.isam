@@ -236,7 +236,11 @@ class Isam_system_security(IsamResourceModule):
                     self._reset_named(section, ident, wanted, entry)
             return
 
-        if self.state == "overridden":
+        if self.state == "overridden" and _get(want, section, _MISSING) is not _MISSING:
+            # Only a list type the request names is overridden: one not mentioned is
+            # left alone, as settings blocks are (_settings_commands). Overriding every
+            # type would remove all operators, SNMP access and RADIUS servers of a
+            # request that only tunes, e.g., the password policy.
             if section == "profiles":
                 self._check_profiles_in_use(wantd, haved, want, have)
             for key, entry in haved.items():
