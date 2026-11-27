@@ -164,6 +164,11 @@ intentional. This section lists the ONT/access families of that line.
   DSL/NNI/protocol ctrl-pkt policers, `pbit_scheduling` and `upstr_prot_dsl`. Reading
   `general` needs `info configure qos flat` (the node has no own `info` path), so it is
   only read when in scope; per-node reads replace absent nodes with empty settings.
+- `isam_qos_global` and `isam_qos_maps` `overridden` act only on the named sections
+  (an empty dict or list names a section): overriding `general` no longer resets line
+  cards, policers or pbit scheduling nor removes ctrl-pkt policers, and overriding
+  `tc_map_dot1p` no longer removes the dscp and ctrl-pkt entries. Within a named list
+  section, entries not given are still removed or reset.
 
 ### QoS: profile and map rework
 

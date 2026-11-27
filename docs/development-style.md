@@ -36,8 +36,7 @@ explicit `False` in `rendered`, and packing commands per node
 
 Overriding only the named sections keeps a request that names one section from removing or
 resetting every other one (e.g. all operators and SNMP access in `isam_system_security`, or the
-card type and admin state of every xDSL board). Still to be aligned with this rule:
-`isam_qos_global` and `isam_qos_maps` reset unnamed sections on `overridden`.
+card type and admin state of every xDSL board).
 
 An action state (`merged`/`replaced`/`overridden`/`deleted`) given `running_config`
 renders against that configuration as the current state instead of reading the device,

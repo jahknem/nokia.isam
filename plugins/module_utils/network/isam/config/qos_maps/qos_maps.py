@@ -8,6 +8,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_m
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import requested_sections
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.qos_maps import (
     Qos_mapsTemplate,
@@ -84,11 +85,12 @@ class Qos_maps(IsamResourceModule):
             self.commands = list(dict.fromkeys(self.commands))
             return
 
-        # overridden: remove entire fields present in have but absent from want
+        # overridden acts only on the named maps (docs/development-style.md): a map that
+        # is not named is left alone; a map named with an empty list loses every entry.
         if self.state == "overridden":
-            for field in haved:
-                if field not in wantd:
-                    self._del_commands(haved.get(field), field)
+            for field in requested_sections(self._module):
+                if field in self.IDENTITIES:
+                    wantd.setdefault(field, [])
 
         # replaced/overridden: for each field in want, delete sub-entries
         # present in have but absent from want, then add/update entries to match want.
