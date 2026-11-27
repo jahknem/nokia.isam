@@ -184,8 +184,9 @@ options:
       section), for I(line_cards) and I(ctrl_pkt_policer) only the named entries if any are named.
     - With C(gathered) and I(config.line_cards), only the named line cards are read from the device,
       selected by C(name) (targeted gathering). Other fields are ignored and absent line cards are
-      not returned; a line card with nothing configured answers like an absent one and is not
-      returned either. With other sections in I(config) only those sections are read; without
+      not returned; a line card with only default values is read with C(flat detail) and returned
+      with its name only, and C(read_outcomes) reports each named line card present or confirmed
+      absent where the device allows it. With other sections in I(config) only those sections are read; without
       I(config) the whole resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]

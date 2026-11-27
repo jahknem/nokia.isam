@@ -130,8 +130,10 @@ class TestIsamQosGlobalModule(TestIsamModule):
 
     # ----- parsing ---------------------------------------------------------------------
     def test_parsed_detail_defaults_are_not_reported(self):
+        # Defaults are not configuration; the line card entries themselves exist and
+        # stay as their names (docs/targeted-read-contract.md).
         parsed = self._run(False, running_config=DETAIL, state="parsed")["parsed"]
-        assert parsed == {}
+        assert parsed == {"line_cards": [{"name": "lt:1/1/2"}, {"name": "lt:1/1/3"}]}
 
     def test_parsed_values(self):
         parsed = self._run(False, running_config=CONFIGURED + DETAIL.splitlines()[1] + "\n", state="parsed")["parsed"]
@@ -293,8 +295,24 @@ class TestIsamQosGlobalModule(TestIsamModule):
     def test_gathered_whole(self):
         conn = self._device(DETAIL + CONFIGURED)
         gathered = self._run(False, state="gathered")["gathered"]
-        assert gathered == CONFIGURED_FACTS
+        # lt:1/1/3 has only defaults: present with its name
+        assert gathered == dict(CONFIGURED_FACTS, line_cards=CONFIGURED_FACTS["line_cards"] + [{"name": "lt:1/1/3"}])
         assert set(conn.commands) == {"info configure qos flat"}
+
+    def test_a_default_only_line_card_is_gathered_with_its_name(self):
+        # 'flat' prints the header only, 'flat detail' the card with its defaults (review of #13).
+        class Device(object):
+            commands = []
+
+            def get(self, command, *a, **k):
+                self.commands.append(command)
+                if command.endswith(" detail"):
+                    return command + "\nconfigure qos global lt:1/1/3 no buffer-tca dsload-thresh 0\n"
+                return command + "\n#------\n"
+        self.get_resource_connection_facts.return_value = Device()
+        result = self._run(False, state="gathered", config={"line_cards": [{"name": "1/1/3"}]})
+        assert result["gathered"] == {"line_cards": [{"name": "lt:1/1/3"}]}
+        assert result["read_outcomes"]["outcomes"][0]["existence"] == "present"
 
     def test_gathered_named_line_card(self):
         conn = self._device(CONFIGURED + "configure qos global lt:1/1/3 buffer-tca\n")

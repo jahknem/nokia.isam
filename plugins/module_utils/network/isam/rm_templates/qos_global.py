@@ -139,9 +139,11 @@ def _scan(section, tokens, entry):
 
 
 def strip_defaults(parsed):
-    """Drop values equal to the known defaults; line cards left without a value are dropped.
+    """Drop values equal to the known defaults.
 
-    ctrl-pkt-policer entries are created per protocol and stay even with defaults only.
+    A line card or ctrl-pkt-policer entry left without a value stays as its identity:
+    the entry exists (created with its card / per protocol), its defaults are not
+    configuration (docs/targeted-read-contract.md).
     """
     result = {}
     for section in SECTIONS:
@@ -154,8 +156,6 @@ def strip_defaults(parsed):
             items = []
             for item in value:
                 kept = dict((k, v) for k, v in item.items() if k == key or v != defaults.get(k))
-                if section == "line_cards" and len(kept) == 1:
-                    continue
                 items.append(kept)
             if items:
                 result[section] = items
