@@ -196,9 +196,12 @@ class TestIsamXdslInm(_Base):
         assert result["commands"] == ["configure xdsl imp-noise-sensor near-end 1/1/3/1 no inm-eq-inp-mode"]
 
     def test_overridden_resets_other_sensors(self):
+        # Only named sides are overridden (docs/development-style.md): far_end is named,
+        # so its sensor returns to the given state (here: identity only, all defaults).
         self.device(self.DEVICE)
         result = self.run_state("overridden", True, config={
             "near_end": [{"name": "1/1/3/1", "inm_eq_inp_mode": "1", "inm_iat_offset": "5"}],
+            "far_end": [{"name": "1/1/3/1"}],
         })
         assert result["commands"] == ["configure xdsl imp-noise-sensor far-end 1/1/3/1 no inm-cluster-cont"]
 

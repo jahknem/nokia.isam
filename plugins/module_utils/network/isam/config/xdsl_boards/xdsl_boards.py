@@ -67,6 +67,7 @@ class Xdsl_boards(IsamResourceModule):
             "vp_board",
             self._compare_vp_board,
             delete_all or bool(want.get("vp_boards")),
+            reset=self._reset_vp_board,
         )
 
     def _compare_section(self, want_list, have_list, key, parser_prefix, compare, requested=True, reset=None):
@@ -89,7 +90,10 @@ class Xdsl_boards(IsamResourceModule):
                     remove(wantd.get(item_key, {}), have)
             return
 
-        if self.state in ["overridden"]:
+        if self.state == "overridden" and requested:
+            # Only a section the request names is overridden (docs/development-style.md):
+            # overriding only boards must not remove every vp-board, nor the reverse
+            # reset every board's card type and admin state.
             for item_key, have in iteritems(haved):
                 if item_key not in wantd:
                     remove({}, have)
@@ -103,14 +107,55 @@ class Xdsl_boards(IsamResourceModule):
 
     _resetting = False
 
+    @staticmethod
+    def _named(want, identity):
+        return [field for field, value in want.items() if field != identity and value not in (None, {}, [])]
+
     def _reset_board(self, want, have):
         """A board has no removal command ("configure xdsl no board" is an invalid token,
-        lab ISAM): its attributes are reset, only the named ones when want names any."""
-        named = [field for field, value in want.items() if field != "board_id" and value not in (None, {}, [])]
-        keep = dict((field, value) for field, value in have.items() if named and field not in named)
+        lab ISAM): its attributes are reset, only the named ones when want names any.
+        A named sub-node (vect_fallback, auto_port_reset) resets only its named
+        attributes; named without attributes, the whole sub-node."""
+        named = self._named(want, "board_id")
+        if not named:
+            keep = {}
+        else:
+            subnodes = set(node for node, _keyword, _attrs in BOARD_SUBNODES)
+            keep = dict((field, value) for field, value in have.items() if field not in named)
+            for node in subnodes & set(named):
+                wnode = want.get(node) or {}
+                fields = [f for f, v in wnode.items() if v is not None]
+                if fields and isinstance(have.get(node), dict):
+                    keep[node] = dict((f, v) for f, v in have[node].items() if f not in fields)
         self._resetting = True
         try:
             self._compare_board(dict(keep, board_id=have["board_id"]), have)
+        finally:
+            self._resetting = False
+
+    def _reset_vp_board(self, want, have):
+        """deleted of a vp-board: an identity alone removes it; named attributes or
+        vp-links reset only those (a named link without attributes: all its
+        attributes); vp-links that are not named stay as they are."""
+        named = self._named(want, "vp_board_id")
+        if not named:
+            self.addcmd(have, "vp_board", negate=True)
+            return
+        keep = dict((field, value) for field, value in have.items()
+                    if field not in named and field != "vp_links")
+        wlinks = dict((link["link_id"], link) for link in want.get("vp_links") or [])
+        links = []
+        for link in have.get("vp_links") or []:
+            wlink = wlinks.get(link["link_id"])
+            if wlink is None:
+                links.append(link)
+                continue
+            fields = [f for f, v in wlink.items() if f != "link_id" and v is not None]
+            links.append(dict((f, v) for f, v in link.items() if f == "link_id" or (fields and f not in fields)))
+        keep["vp_links"] = links
+        self._resetting = True
+        try:
+            self._compare_vp_board(dict(keep, vp_board_id=have["vp_board_id"]), have)
         finally:
             self._resetting = False
 

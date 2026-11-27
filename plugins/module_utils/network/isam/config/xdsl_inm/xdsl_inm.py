@@ -79,7 +79,8 @@ class Xdsl_inm(IsamResourceModule):
                             self._reset(side, entry["name"], attr)
                 continue
 
-            if self.state == "overridden":
+            if self.state == "overridden" and side in want:
+                # Only a side the request names is overridden (docs/development-style.md).
                 for name, entry in iteritems(haved):
                     if name not in wantd:
                         self._reset_all(side, entry)

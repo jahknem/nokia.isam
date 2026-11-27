@@ -246,8 +246,9 @@ class Xdsl_profilesTemplate(object):
                 profile_id = _to_int(tokens[1])
                 header = (profile_type, profile_id, indent)
                 stack = []
-                if len(tokens) > 2:
-                    yield profile_type, profile_id, tokens[2:]
+                # A bare profile line (only defaults, as the detail probe returns it)
+                # still names an existing profile: keep it as its id (read contract).
+                yield profile_type, profile_id, tokens[2:]
                 continue
             if header is None or indent <= header[2]:
                 continue

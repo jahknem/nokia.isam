@@ -71,6 +71,14 @@ class Xdsl_linesFacts(object):
         data = self._flatten_config(data)
         xdsl_lines_parser = Xdsl_linesTemplate(lines=data, module=self._module)
         objs = [self._canonicalize_entry(item) for item in xdsl_lines_parser.parse().values()]
+        # A bare line (only defaults: what the detail probe returns for a default-only
+        # line) names an existing line: keep it as its identity (read contract).
+        known = set(item.get("name") for item in objs)
+        for line in data:
+            match = re.match(r"^configure xdsl line (\S+)$", str(line).strip())
+            if match and match.group(1) not in known:
+                objs.append({"name": match.group(1)})
+                known.add(match.group(1))
 
         ansible_facts["ansible_network_resources"].pop("xdsl_lines", None)
         params = utils.remove_empties(

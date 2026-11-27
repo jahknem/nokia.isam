@@ -29,14 +29,15 @@ explicit `False` in `rendered`, and packing commands per node
 |---|---|
 | `merged` | Sets what is given; leaves everything else. Lists of entries merge by identity. |
 | `replaced` | The named instances end up exactly as given; unnamed attributes return to the device default. |
-| `overridden` | As replaced, and instances not given are reset or removed. |
+| `overridden` | As replaced, and instances not given are reset or removed. With a dict config only the named sections are overridden; a section that is not named is left alone. |
 | `deleted` | Without config: every instance. With config: the named instances; an identity alone resets/removes the instance, named attributes reset only themselves. With a dict config only the named sections are touched (`requested_sections`). |
 | `rendered` | Renders exactly what is given, an explicit `False` as its `no` form. No device. |
 | `parsed`, `gathered` | Facts; unset/default values are not reported. |
 
-Exception: `isam_system_security` overrides only the list types and settings blocks named
-in `config` (a whole-resource override of a request naming one block would remove every
-operator, SNMP community and RADIUS server and can lock out device access).
+Overriding only the named sections keeps a request that names one section from removing or
+resetting every other one (e.g. all operators and SNMP access in `isam_system_security`, or the
+card type and admin state of every xDSL board). Still to be aligned with this rule:
+`isam_qos_global` and `isam_qos_maps` reset unnamed sections on `overridden`.
 
 An action state (`merged`/`replaced`/`overridden`/`deleted`) given `running_config`
 renders against that configuration as the current state instead of reading the device,
