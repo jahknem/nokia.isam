@@ -211,7 +211,7 @@ DSL_AND_PON = ["slip", "sw-loopback", "pon:1/1/2/1", "pon:1/1/2/2", "bundle:1/1/
 
 def test_card_children_filter_each_source_by_card():
     # The port table lists every port, also those with default values only (flat config
-    # missed 32 of 48 xdsl lines on DS-ALT1-01, 2026-11-26).
+    # missed 32 of 48 xdsl lines on production MSAN A, 2026-11-26).
     table = port_table(DSL_AND_PON, spin={"slip", "pon:1/1/2/1", "xdsl-line:1/1/3/1"})
     assert enumerate_children("card", "lt:1/1/2", "pon", table)["children"] == ["1/1/2/1", "1/1/2/2"]
     assert enumerate_children("card", "lt:1/1/3", "xdsl_line", table)["children"] == ["1/1/3/1"]
@@ -224,6 +224,16 @@ def test_card_children_filter_each_source_by_card():
 def test_a_port_table_whose_count_differs_from_its_rows_is_rejected():
     with pytest.raises(UnknownIdentity):
         enumerate_children("card", "lt:1/1/3", "xdsl_line", port_table(DSL_AND_PON, count=len(DSL_AND_PON) + 1))
+
+
+@pytest.mark.parametrize("child_kind", ["xdsl_line", "ethernet_port"])
+def test_an_unrecognized_port_name_rejects_the_table(child_kind):
+    # Review of #16: spinner residue without a following space ('/xdsl-line:...') is not
+    # stripped; skipping the row lost xdsl line 2 and reported its EFM facet as an
+    # Ethernet port, with the footer count still matching.
+    names = ["xdsl-line:1/1/3/1", "/xdsl-line:1/1/3/2", "ethernet-line:1/1/3/1", "ethernet-line:1/1/3/2"]
+    with pytest.raises(UnknownIdentity):
+        enumerate_children("card", "lt:1/1/3", child_kind, port_table(names))
 
 
 def test_spinner_residue_is_removed_but_separator_lines_are_kept():
@@ -611,7 +621,7 @@ def _card_graph(card, entries):
 
 def test_discovered_ports_resolve_configuration_whose_owner_configuration_alone_cannot_name():
     # A DSL line whose only entry is its EFM facet's admin-up (32 of 48 NDLT-F lines on
-    # DS-ALT1-01): configuration alone cannot tell an xDSL line from an Ethernet port.
+    # production MSAN A): configuration alone cannot tell an xDSL line from an Ethernet port.
     g = _card_graph("lt:1/1/3", [{"name": "ethernet-line:1/1/3/2", "admin_up": True}])
     facet = node_key("configuration", ("interfaces", "config", "ethernet-line:1/1/3/2"))
     assert [gap["reason"] for gap in g["gaps"] if gap.get("node") == facet] == ["unknown_owner"]

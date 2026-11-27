@@ -171,8 +171,8 @@ SOURCES = {
     },
     # The ports of a card come from the operational port table, which lists every port
     # the card has, also those with default values only. Flat configuration omits these:
-    # 2026-11-26, DS-ALT1-01 NDLT-F 16 of 48 xdsl lines in 'info configure xdsl line
-    # flat', DS-MKK-RON1-01 47 of 48 lines and 0 of 48 bonding groups in 'interface port'
+    # 2026-11-26, production MSAN A NDLT-F 16 of 48 xdsl lines in 'info configure xdsl line
+    # flat', production MSAN B 47 of 48 lines and 0 of 48 bonding groups in 'interface port'
     # (port table and config agreed for pon, ethernet-line and la-group on 4 devices).
     "pon": {
         "parents": ("card",),
@@ -397,6 +397,12 @@ def _despin(output):
     return _SPINNER.sub("", output) if isinstance(output, str) else output
 
 
+# Port names of the operational port table: '<type>:<address>', or one of the
+# single-word ports seen on the fleet (read-only captures 2026-11-26, 107 MSANs).
+_PORT_NAME = re.compile(r"^[a-z][a-z0-9-]*:[^\s:\\|/-][^\s]*$")
+_PORT_WORDS = frozenset(("slip", "sw-loopback"))
+
+
 def _port_identities(output, source, child_kind):
     """Ports of one type from the operational port table, with a matching footer count."""
     from ansible_collections.nokia.isam.plugins.module_utils.tables import parse_status_table
@@ -411,6 +417,12 @@ def _port_identities(output, source, child_kind):
     names = {row.get("port") for row in rows}
     if None in names or "" in names:
         raise UnknownIdentity("Port table row has no port")
+    # Every row must be a recognized port name, or the table is not understood: a
+    # skipped row (e.g. spinner residue without a following space,
+    # '/xdsl-line:1/1/3/2') would drop a port while the footer count still matches.
+    unknown = [name for name in names if not _PORT_NAME.match(name) and name not in _PORT_WORDS]
+    if unknown:
+        raise UnknownIdentity("Port table has %d unrecognized port name(s)" % len(unknown))
     prefix, facet = source["port_prefix"], source.get("facet_of")
     identities = set()
     for name in names:
@@ -602,7 +614,7 @@ def _resolve_owners(nodes, edges, evidence, gaps):
 
     build_graph knows only the objects that configuration names: 'ethernet-line:X'
     is an xDSL line's EFM facet on a DSL card and an Ethernet port on an Ethernet
-    card, and a line with only that entry cannot be told apart (on DS-ALT1-01, 32 of
+    card, and a line with only that entry cannot be told apart (on production MSAN A, 32 of
     48 NDLT-F lines). A fresh successful enumeration proves which object exists; the
     owner is attached only when the decoder then finds exactly one. Everything else
     stays a gap. Returns the remaining gaps.

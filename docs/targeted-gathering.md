@@ -65,18 +65,20 @@ ONT id), and those are different instances, reported separately via
     failure message is sanitized the same way: it names the resource, the
     selectors and the error class, never the raw device or transport text.
 * **Existence axis** — does the addressed instance exist?
-  * `present` — the read returned configuration for the instance (including
-    the bare instance line for families that re-check attribute-free
-    instances, see below).
+  * `present` — the read returned configuration for the instance, or its
+    line under `flat detail` (an instance with only default values, returned
+    as its bare line, see below).
   * `confirmed_absent` — the device's explicit "instance does not exist"
-    signal **about the addressed instance**. This is the only outcome that is
-    evidence an instance is gone.
-  * `unknown` — anything else: a header-only reply (an instance without
-    configured attributes answers like a non-existing one), an
-    `invalid token` rejection, a missing *dependency* (e.g. a lower-interface
-    does not exist, which says nothing about the addressed instance), or a
-    failed read. `unknown` is **never** absence; consumers must keep, not
-    remove, configuration for `unknown` instances.
+    **about the addressed instance**, or the header only in both `flat` and
+    `flat detail` (`flat detail` prints every existing instance). This is the
+    only outcome that is evidence an instance is gone. The rule and its
+    evidence: [targeted-read-contract.md](targeted-read-contract.md).
+  * `unknown` — anything else: an `invalid token` rejection, a missing
+    *dependency* (e.g. a lower-interface does not exist, which says nothing
+    about the addressed instance), another instance's line, a section whose
+    reads never show it (policy `unobservable`), or a failed read. `unknown`
+    is **never** absence; consumers must keep, not remove, configuration for
+    `unknown` instances.
 * **Parse axis** — reported at resource level under `parse`
   (`failed` | `unverified`). `failed` means the family parser could not
   process the reply (whole-node reads, see below); `unverified` means no
@@ -204,14 +206,14 @@ targeted gathering does not apply to them.
 
 ## Behavior notes
 
-* **Attribute-free instances.** An instance without configured attributes
-  answers a scoped read with only the header, exactly like a non-existing
-  one. Families whose instances can exist attribute-free re-check with
-  `flat detail` and report them `present` with their bare line: `alarm`
-  (custom profiles), `isam_dist_service`, `isam_qos_maps` (control-packet
-  entries), `isam_traps` (managers) and `isam_trouble_shooting_pon`
-  (interfaces). In all other families such an instance is reported
-  `unknown` — never `confirmed_absent`, and never `present`.
+* **Attribute-free instances.** An instance with only default values answers
+  a scoped `flat` read with only the header, like a non-existing one. Every
+  family re-checks such a reply with `flat detail`: the instance's line means
+  `present` (returned as its bare line, defaults are not configuration); the
+  header only again, or "instance does not exist", means `confirmed_absent`.
+  Exceptions are data in `targeted.ABSENCE_POLICY` (`silent`: a switch without
+  attributes, present unless the device says it does not exist; `unobservable`:
+  never present or absent). See [targeted-read-contract.md](targeted-read-contract.md).
 * **Dependencies.** If the device reports that a *dependency* of the
   addressed instance is missing, the instance's own existence is `unknown`
   with a `dependency_gap`; the read is not an error. `lower-interface`: the

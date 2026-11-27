@@ -150,8 +150,8 @@ platform/firmware; narrower alternatives still need separate validation.
 The ports of a card come from the operational port table (`pon:`, `xdsl-line:`,
 `ethernet-line:`, `bonding:`, `la-group:` rows, matching `port count : N` footer):
 it lists every port the card has, also those with default values only, which flat
-configuration omits (read-only 2026-11-26: DS-ALT1-01 showed 16 of 48 NDLT-F lines
-in `info configure xdsl line flat`, DS-MKK-RON1-01 47 of 48 lines and none of its
+configuration omits (read-only 2026-11-26: production MSAN A showed 16 of 48 NDLT-F lines
+in `info configure xdsl line flat`, production MSAN B 47 of 48 lines and none of its
 48 bonding groups in `info configure interface port flat`; for `pon:`,
 `ethernet-line:` on Ethernet cards and `la-group:` port table and configuration
 agreed on four devices). On a DSL card `ethernet-line:X` is the EFM facet of
@@ -242,7 +242,7 @@ a truncated reply never yields a partial child list or confirmed absence.
 configuration whose owner was `unknown_owner` or `ambiguous_owner`: configuration
 alone names only the objects it addresses (`ethernet-line:X` with no other entry
 cannot be told apart between an xDSL line's facet and an Ethernet port; 32 of 48
-NDLT-F lines on DS-ALT1-01 have only that entry). An owner is attached when the
+NDLT-F lines on production MSAN A have only that entry). An owner is attached when the
 decoder finds exactly one among the configured and freshly discovered objects; a
 bare index two discovered objects share stays a gap. `coverage(graph, kind,
 identity)` returns a recursive certificate. A root is `complete` only when every
@@ -445,9 +445,9 @@ are not accepted by the access-side `show interface port`/`stack` commands:
 * The access-side `configure interface port` (13.2) and `show interface port`
   (126.4) index formats define no NT faceplate-port identity;
   `configure ethernet line` (43.2) is LT-slot `rack/shelf/slot/port` only.
-* A successful access-side interface-port capture on DS-FLO-01 (FANT-F +
+* A successful access-side interface-port capture on production MSAN C (FANT-F +
   FGLT-D) contains pon/ont/uni/vlan-port configuration and no NT port entries.
-  DS-BAN-BLE-01 has only been checked with `show equipment slot`; that read
+  production MSAN D has only been checked with `show equipment slot`; that read
   establishes its FANT-F/FGLT-D equipment, not its port configuration.
 
 These are **access-CLI observations, not evidence that configurable NT uplinks
@@ -457,7 +457,7 @@ lists `configure port`, `show port`, `configure lag` and `show lag`. Therefore
 access-side interface-port absence cannot establish IHUB port absence. The
 read-only `show port` capture on 2026-11-21 confirms the IHUB identities:
 DS-LIN-TEST-01 has 14 optical faceplate ports (4 each on `nt-a`/`nt-b`, 6 on
-`ntio-1`), while DS-FLO-01 has 8 (4 on each NT). A scoped `show port nt-a:xfp:3`
+`ntio-1`), while production MSAN C has 8 (4 on each NT). A scoped `show port nt-a:xfp:3`
 also succeeds on the lab, reporting an up 10-Gbps Ethernet interface in access
 mode with 802.1q encapsulation. `show lag` reports two IHUB LAG IDs on the lab;
 these are not the LT `link-agg` groups and no membership/configuration mapping
@@ -466,7 +466,7 @@ Do not assume access-side bridge/VLAN-port relationships apply to IHUB services,
 or conflate equipment inventory and interface configuration solely because
 their identifier strings may coincide.
 
-A bounded read-only legacy comparison on DS-ALT1-01 (NetBox platform
+A bounded read-only legacy comparison on production MSAN A (NetBox platform
 `r5-1-02`, NANT-E with NDPS-C/NDLT-F/FGLT-B) also accepts `show port` and
 produces 14 optical positions through the same strict parser (4 per NT,
 6 on NTIO-1). This is evidence for that observed format, not a guarantee across
@@ -484,7 +484,7 @@ IHUB routing, QoS, system/security and other domains remain in
 IHUB object plans carry `configuration_coverage_partial`. Physical discovery
 or a fully parsed lab projection never closes these configuration gaps.
 
-A second read-only reference attempt on DS-FLO-01 timed out after 180 seconds on
+A second read-only reference attempt on production MSAN C timed out after 180 seconds on
 the full snapshot. Smaller reads successfully gathered the two named controller
 slots, but the Ethernet-family read failed in the existing parser with
 `'NoneType' object has no attribute 'leaves'`. This is a failed read, not proof of
