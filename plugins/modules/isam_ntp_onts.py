@@ -69,6 +69,7 @@ options:
     - The state the configuration should be left in.
     - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(ont_id) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with only default values is read with C(flat detail) and returned with its identity only, and C(read_outcomes) reports each named instance present or confirmed absent where the device allows it. Without I(config) the whole resource is read.
     - With C(merged), C(replaced) or C(deleted) and I(config), the current configuration is likewise read only for the named instances.
+    - The NTP ONT entry exists as long as its ONT (C(configure ntp no ont) has no effect on the device), so C(deleted) and C(overridden) reset its attributes instead of removing it.
     type: str
     choices:
       - merged
@@ -88,7 +89,7 @@ EXAMPLES = """
       - ont_id: 1/1/1
         client_state: "on"
         config_mode: manual
-        server1_ip_addr: 10.0.0.1
+        server1_ip_addr: 192.0.2.1
         oper_mode: unicast
     state: rendered
 

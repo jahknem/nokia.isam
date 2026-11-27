@@ -83,9 +83,11 @@ options:
         with I(config) only the named counter interfaces and threshold ports (and the interval when given).
       - With C(gathered) and I(config), only the instances named in I(config) are read from the device,
         selected by C(interfaces[].name) and C(threshold.interfaces[].name) (targeted gathering).
-        Other fields are ignored and absent instances are not returned; an instance with nothing
-        configured answers like an absent one and is not returned either. Without I(config) the whole
-        resource is read.
+        Other fields are ignored and absent instances are not returned; an instance with only default
+        values is read with C(flat detail) and returned with its identity only (statistics interfaces,
+        a switch without attributes, are present unless the device says "instance does not exist").
+        C(read_outcomes) reports each named instance present or confirmed absent. Without I(config) the
+        whole resource is read.
     type: str
     choices:
       - merged

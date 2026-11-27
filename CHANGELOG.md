@@ -3,9 +3,10 @@
 ## 1.1.0 (unreleased)
 
 Completes targeted gathering for the ONT/access families. No schema changes to
-`gathered`, write states, or whole-family reads: without `config` a read does
-exactly what 1.0.0 does, and write states are unchanged. The only addition is
-the `read_outcomes` return value on targeted reads.
+`gathered` or whole-family reads: without `config` a read does exactly what
+1.0.0 does. Additions: the `read_outcomes` return value on targeted reads, and
+for `isam_bridges` the offline preview with `running_config` (see "Module
+interfaces and documentation").
 
 ### Read outcomes (`read_outcomes`)
 

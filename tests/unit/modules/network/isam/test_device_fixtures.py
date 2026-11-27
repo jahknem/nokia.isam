@@ -926,3 +926,15 @@ def test_linetest_fixture_is_parseable():
     assert parsed["parameters"][0]["session_id"] == "1/1/1/1"
     assert parsed["parameters"][0]["test_name"] == "resistance"
     assert parsed["parameters"][0]["value1"] == "1000"
+
+
+def test_trouble_shooting_pon_isolated_write_fixture_is_parseable():
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.trouble_shooting_pon.trouble_shooting_pon import to_config
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.trouble_shooting_pon import (
+        Trouble_shooting_ponTemplate,
+    )
+    descriptor, output = fixture_bundle("trouble_shooting_pon", "isolated-write-r6.2.04m")
+    assert descriptor["command"] == "info configure flat"
+    config = to_config(Trouble_shooting_ponTemplate(lines=output.splitlines()).parse())
+    assert config["interfaces"] == [{"name": "1/1/6/2"}]
+    assert config["threshold"]["interfaces"] == [{"name": "1/1/6/2", "bw_th_up": 100000, "bw_th_dn": 250000}]

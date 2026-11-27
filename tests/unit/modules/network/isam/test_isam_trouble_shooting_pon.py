@@ -14,7 +14,7 @@ def _answer(flat, detail):
 
 
 def test_a_default_only_threshold_is_present_with_its_identity(monkeypatch):
-    # Live (DS-LIN-TEST-01 2026-11-27, PON 1/1/5/1): 'flat' prints the header only,
+    # Live (lab ISAM 2026-11-27): 'flat' prints the header only,
     # 'flat detail' the entry with "no bw-th-up no bw-th-dn". The parser crashed on
     # the bare path the probe returns.
     case = CASES["trouble_shooting_pon:threshold.interfaces"]

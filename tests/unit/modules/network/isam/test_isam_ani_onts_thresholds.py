@@ -2,10 +2,11 @@
 from .module_runner import run_module
 
 ONT = "1/1/6/1/1"
-# Created with every ONT (lab DS-LIN-TEST-01 2026-11-27): the whole read shows the
+# Created with every ONT (lab ISAM, 2026-11-27): the whole read shows the
 # bare entry; thresholds appear once set.
 BARE = "configure ani ont tca-thresh %s\n" % ONT
 SET = "configure ani ont tca-thresh %s lower-optical-th -28\n" % ONT
+SET_BOTH = "configure ani ont tca-thresh %s lower-optical-th -30 upper-optical-th -8\n" % ONT
 
 
 
@@ -24,8 +25,9 @@ def test_merged_with_the_set_value_is_idempotent(monkeypatch):
 
 def test_replaced_resets_an_unrequested_threshold(monkeypatch):
     result = run_module(monkeypatch, "isam_ani_onts",
-                        {"state": "replaced", "config": [{"ont_idx": ONT, "upper_optical_th": "-8"}]}, SET)
-    assert result["commands"] == ["configure ani ont tca-thresh %s no lower-optical-th upper-optical-th -8" % ONT]
+                        {"state": "replaced", "config": [{"ont_idx": ONT}]}, SET_BOTH)
+    # back to the defaults together: upper must never be below lower (GPON MGT error 238)
+    assert result["commands"] == ["configure ani ont tca-thresh %s no lower-optical-th no upper-optical-th" % ONT]
 
 
 def test_merged_creates_a_missing_entry(monkeypatch):

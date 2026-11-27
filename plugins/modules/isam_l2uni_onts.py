@@ -100,8 +100,9 @@ options:
     - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by
       C(uni_idx) in C(performance_monitor) and C(tc_layer_threshold) (targeted gathering, one
       C(info configure l2uni ont performance-monitor <uni> flat) or C(info configure l2uni ont tc-layer-threshold <uni> flat)
-      read per UNI). Other fields are ignored and absent instances are not returned; an instance with nothing configured
-      answers like an absent one and is not returned either. Without I(config) the whole resource is read.
+      read per UNI). Other fields are ignored and absent instances are not returned; an instance with only default
+      values is read with C(flat detail) and returned with its identity only, and C(read_outcomes) reports each named
+      instance present or confirmed absent where the device allows it. Without I(config) the whole resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
     default: merged
