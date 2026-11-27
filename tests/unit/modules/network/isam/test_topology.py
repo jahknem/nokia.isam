@@ -4,7 +4,7 @@ import json
 import pytest
 
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology import export_catalog
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.catalogs import equipment
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.objects import OBJECTS
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.graph import build_graph, node_key, plan_known_reads
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.identity import UnknownIdentity, decode
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.targeted import TARGETED_GATHER
@@ -33,7 +33,7 @@ def edge(graph, source, relation, target):
 
 def test_catalog_reuses_targeted_identities_and_only_stores_direct_neighbors():
     catalog = export_catalog()
-    assert "parents" not in equipment.DISCOVERY["ont"]
+    assert "parents" not in OBJECTS["ont"]
     for binding in catalog["bindings"]:
         if binding["resource"] in TARGETED_GATHER:
             assert binding["identity"] == TARGETED_GATHER[binding["resource"]][binding["section"]]
@@ -143,7 +143,7 @@ def test_unmapped_section_mechanism_still_reports_scope(monkeypatch):
     # Every current section is bound; the fail-closed mechanism must still work
     # for any future object-owned section awaiting a decoder.
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam import targeted
-    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.catalogs import scopes
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology import scopes
     monkeypatch.setitem(targeted.TARGETED_GATHER["equipment_onts"], "future_list", "id")
     monkeypatch.setitem(scopes.OBJECT_OWNED_PENDING, "equipment_onts", ("future_list",))
     data = sample()
@@ -249,7 +249,7 @@ def test_bound_sections_are_object_owned_and_global_sections_are_not_objects():
 
 
 def test_scope_conflict_is_a_catalog_error():
-    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.catalogs import scopes
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology import scopes
     bindings = [{"resource": "system", "section": "sntp.servers"}]
     with pytest.raises(ValueError):
         scopes.section_scopes(bindings)
@@ -395,22 +395,22 @@ def test_bare_bridge_address_follows_the_verified_attachment_rule():
     assert edge(graph, ("lag", "1/1/8/1"), "contains", ("bridge_port", ("lag", "1/1/8/1")))
     assert edge(graph, ("bridge_port", ("lag", "1/1/8/1")), "contains", ("vlan_port", ("lag", "1/1/8/1", "99")))
     assert not edge(graph, ("ethernet_port", "1/1/8/1"), "contains", ("bridge_port", ("lag", "1/1/8/1")))
-    # QoS bare names remain unresolved between the physical port and the LAG:
-    # the stack table does not evidence the QoS session layer. The config stays
-    # reachable from both candidates rather than being dropped.
+    # A bare QoS name where a LAG exists belongs to the LAG (live 2026-11-25: with
+    # its port moved into another LAG, QoS on the address is refused with QOS MGT
+    # error 216 "QoS cannot be configured on the lag without physical port").
     data["qos_interfaces"] = [{"name": "1/1/8/1"}]
     graph = build_graph(data, "M")
-    gap = next(g for g in graph["gaps"] if g["resource"] == "qos_interfaces")
-    assert gap["reason"] == "ambiguous_owner"
-    assert {tuple(c) for c in gap["candidates"]} == {("ethernet_port", "1/1/8/1"), ("lag", "1/1/8/1")}
-    # DSL: bonding groups never own bridge ports; a bare QoS name at a bonded
-    # line address is unresolved between the line and the bonding group.
+    assert not [g for g in graph["gaps"] if g["resource"] == "qos_interfaces"]
+    assert edge(graph, ("configuration", ("qos_interfaces", "config", "1/1/8/1")), "configures", ("lag", "1/1/8/1"))
+    # DSL: a QoS index is the physical port or la-group of a user port (device
+    # help; only the bare form is accepted, live 2026-11-25), never a bonding
+    # group. A bare QoS name at a bonded line address belongs to the line.
     data = {"xdsl_lines": [{"name": "1/1/3/1"}],
             "xdsl_bonding": {"groups": [{"group_id": "1/1/3/1"}]},
             "qos_interfaces": [{"name": "1/1/3/1"}]}
-    gap = next(g for g in build_graph(data, "M")["gaps"] if g["resource"] == "qos_interfaces")
-    assert gap["reason"] == "ambiguous_owner"
-    assert {tuple(c) for c in gap["candidates"]} == {("xdsl_line", "1/1/3/1"), ("bonding_group", "1/1/3/1")}
+    graph = build_graph(data, "M")
+    assert not [g for g in graph["gaps"] if g["resource"] == "qos_interfaces"]
+    assert edge(graph, ("configuration", ("qos_interfaces", "config", "1/1/3/1")), "configures", ("xdsl_line", "1/1/3/1"))
 
 
 @pytest.mark.parametrize("value,kind,parent", [
@@ -498,38 +498,46 @@ def test_ethernet_line_typed_name_is_the_line_facet_not_an_aggregate():
                 "configures", ("bonding_group", "1/1/3/1"))
 
 
-def test_candidate_owned_qos_is_read_from_either_owner_without_selecting_the_other():
+def test_bare_qos_on_an_ethernet_card_is_read_with_the_lag_not_the_port():
     data = {"ethernet_line": [{"if_index": "1/1/8/1"}],
             "link_agg": {"groups": [{"id": "1/1/8/1", "ports": ["1/1/8/1"]}]},
             "qos_interfaces": [{"name": "1/1/8/1", "cac_profile": "name:FD_Default"}],
             "qos_profiles": [{"profile_type": "cac", "name": "FD_Default"}]}
     graph = build_graph(data, "M")
     qos_config = node_key("configuration", ("qos_interfaces", "config", "1/1/8/1"))
-    for kind in ("lag", "ethernet_port"):
-        plan = plan_known_reads(graph, kind, "1/1/8/1")
-        # The shared QoS read unit is included no matter which candidate is refreshed.
-        assert {"resource": "qos_interfaces", "section": "config", "ids": ["1/1/8/1"]} in plan["reads"]
-        assert qos_config in plan["nodes"]
-        assert qos_config in plan["unresolved_ownership"]
-        assert not plan["complete"] and not plan["executable"]
-        # The other candidate object is NOT pulled into the subtree.
-        other = "ethernet_port" if kind == "lag" else "lag"
-        assert node_key(other, "1/1/8/1") not in plan["nodes"]
-        # Its referenced profile definition is still resolved forwards.
-        assert {"resource": "qos_profiles", "section": "config", "ids": [["cac", "FD_Default"]]} in plan["reads"]
-    # A single canonical QoS object exists, not one per candidate.
-    assert sum(1 for n in graph["nodes"] if n["kind"] == "configuration"
-               and n["resource"] == "qos_interfaces" and n["identity"] == "1/1/8/1") == 1
+    lag = plan_known_reads(graph, "lag", "1/1/8/1")
+    assert {"resource": "qos_interfaces", "section": "config", "ids": ["1/1/8/1"]} in lag["reads"]
+    assert qos_config in lag["nodes"] and qos_config not in lag["unresolved_ownership"]
+    assert {"resource": "qos_profiles", "section": "config", "ids": [["cac", "FD_Default"]]} in lag["reads"]
+    assert qos_config not in plan_known_reads(graph, "ethernet_port", "1/1/8/1")["nodes"]
+
+
+def test_unresolved_user_port_ownership_is_read_from_either_candidate():
+    # The candidate mechanism stays for user-port families whose bare address
+    # can still name several objects (here a DSL line and its bonding group).
+    data = {"xdsl_lines": [{"name": "1/1/3/1"}],
+            "xdsl_bonding": {"groups": [{"group_id": "1/1/3/1"}]},
+            "efm_oam_interface": [{"name": "1/1/3/1"}]}
+    graph = build_graph(data, "M")
+    gap = next(g for g in graph["gaps"] if g["resource"] == "efm_oam_interface")
+    assert gap["reason"] == "ambiguous_owner"
+    config = node_key("configuration", ("efm_oam_interface", "config", "1/1/3/1"))
+    for kind in ("xdsl_line", "bonding_group"):
+        plan = plan_known_reads(graph, kind, "1/1/3/1")
+        assert config in plan["nodes"] and config in plan["unresolved_ownership"]
+        assert not plan["complete"]
 
 
 def test_candidate_owners_helper_only_reports_bare_shared_addresses():
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.identity import candidate_owners
-    known = {("xdsl_line", "1/1/3/1"), ("bonding_group", "1/1/3/1"), ("lag", "1/1/8/1")}
-    assert candidate_owners("qos_interface", "1/1/3/1", known) == [("bonding_group", "1/1/3/1"), ("xdsl_line", "1/1/3/1")]
+    known = {("xdsl_line", "1/1/3/1"), ("bonding_group", "1/1/3/1"), ("lag", "1/1/8/1"), ("ethernet_port", "1/1/8/1")}
+    assert candidate_owners("qos_interface", "1/1/3/1", known) == [("xdsl_line", "1/1/3/1")]
+    assert candidate_owners("user_port", "1/1/3/1", known) == [("bonding_group", "1/1/3/1"), ("xdsl_line", "1/1/3/1")]
     assert candidate_owners("qos_interface", "1/1/8/1", known) == [("lag", "1/1/8/1")]
+    assert candidate_owners("user_port", "1/1/8/1", known) == [("ethernet_port", "1/1/8/1"), ("lag", "1/1/8/1")]
     assert candidate_owners("qos_interface", "1/1/5/1/3/1/1", known) == []
     assert candidate_owners("qos_interface", "vlan-port:1/1/3/1:99", known) == []
-    assert candidate_owners("qos_tca", ("1/1/3/1", 0), known) == [("bonding_group", "1/1/3/1"), ("xdsl_line", "1/1/3/1")]
+    assert candidate_owners("qos_tca", ("1/1/3/1", 0), known) == [("xdsl_line", "1/1/3/1")]
 
 
 def test_discovery_evidence_separates_live_verified_from_documented():

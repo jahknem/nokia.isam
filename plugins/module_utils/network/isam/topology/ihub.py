@@ -9,7 +9,14 @@ alone is not an independent inventory count or configuration certificate.
 
 import re
 
+from ..ihub_config import READS
 from .identity import UnknownIdentity, decode
+
+# IHUB families are whole-source reads, NOT targeted-gather promises.
+READ_CAPABILITIES = {
+    resource: dict(source, instance_selection="whole_source_filter_only", states=["gathered", "parsed"])
+    for resource, source in READS.items()
+}
 
 
 def optical_ports(output, owner=None):
@@ -72,3 +79,17 @@ LAG membership and service configuration are deliberately not inferred here.
         # section is not proof that its optical child set is empty.
         raise UnknownIdentity("IHUB port inventory has no section for the requested owner")
     return sorted(ports)
+
+
+def sap_endpoint(identity):
+    from .identity import _valid_vlan
+    if not isinstance(identity, str):
+        raise UnknownIdentity("Unsupported IHUB SAP identity")
+    port, _, vlan = identity.rpartition(":")
+    # The lab contains nt-a:xfp:4:0 and nt-a:eth:1:0 SAPs. Accept the
+    # evidenced IHUB encapsulation token without inventing an access VLAN 0.
+    if vlan != "0" and not _valid_vlan(vlan):
+        raise UnknownIdentity("Unsupported IHUB SAP encapsulation")
+    if port.startswith("lag-"):
+        return decode("ihub_lag", port[4:])
+    return decode("ihub_port", port)

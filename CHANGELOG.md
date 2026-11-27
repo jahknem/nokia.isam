@@ -106,6 +106,35 @@ interfaces and documentation").
 - `isam_xdsl_lines`, `isam_ethernet_line`: the docs warn that `overridden` and an
   identity-only `deleted` send `no admin-up` (the line goes down).
 
+### Topology refresh
+
+- New module `isam_read`: several isolated reads on one MSAN in one task (whole
+  families, named instances of one instance list, or operational subsets), each with
+  its own outcome: `returned_ids`, `confirmed_absent_ids`, `unverified_ids`, and
+  `dependency_gaps` for unverified instances whose read named a missing object they
+  depend on. Credentials are removed (argspec `no_log` fields and known secret names);
+  warnings are reduced to stable categories.
+- `topology.refresh`: the complete refresh of an ONT, PON or card in rounds (context,
+  discovery, configuration reads, referenced definitions) and its evaluation: every
+  applicable (object, section) is present, confirmed absent or a named gap.
+  - An entry the device creates with its object is present with defaults only when
+    the object exists, and absent when it is proven absent.
+  - A dependency gap ("lower-interface does not exist") is absent when the object it
+    hangs on, or an ancestor, is proven absent; otherwise a labelled gap.
+  - Card-type rules (`topology/cards.py`): child kinds per card type, sections that
+    do not apply, entries created with the card; from a read-only fleet survey.
+- The topology catalog is derived from one relations file per family
+  (`relations/`): identity, object kind, `creates`, `created_with`, `references`,
+  `requires`, observability, with their evidence. `export_catalog()` is unchanged
+  for every existing key and adds `creates`, `created_with` and `requires`.
+- Write order and dependency graph (`topology/write_order.py`, `dependencies.py`) with
+  the filters `isam_write_steps` and `isam_dependency_graph`.
+- Behaviour change in owner resolution: a bare QoS index belongs to the LAG where one
+  exists (QOS MGT error 216, lab 2026-11-25) and is never a bonding group (the device
+  accepts only the bare form for QoS); before, both were reported as ambiguous.
+- Test: every `created_with` section is reset, never removed, by its module in
+  `deleted` and `overridden`.
+
 ## 1.0.0 (unreleased)
 
 Major-version preparation, not a published release. Schema changes are

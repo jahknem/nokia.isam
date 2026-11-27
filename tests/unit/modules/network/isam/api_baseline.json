@@ -511,6 +511,13 @@
    },
    "sha256": "835eec11b5f8285b323a1b7041808291964305c3988bb265eafff38469fd1449"
   },
+  "isam_read": {
+   "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
+   "options": {
+    "reads": "603f93ee6b5467a645447c6d89160211d8a217f49ce6903b34f68a66033f7b4c"
+   },
+   "sha256": "22f3084005a41af3a515f5e38f7326b9f8f53d74619eee28ef40d5a318631425"
+  },
   "isam_security_ext_authenticator": {
    "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
    "options": {
@@ -741,6 +748,7 @@
   "isam_qos_maps",
   "isam_qos_profiles",
   "isam_qos_tca",
+  "isam_read",
   "isam_security_ext_authenticator",
   "isam_software_mngt",
   "isam_system",

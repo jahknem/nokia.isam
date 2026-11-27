@@ -1,14 +1,16 @@
 """Versioned Nokia object relationships. No CLI execution or Ansible dependency.
 
-The catalog supplements TARGETED_GATHER (identities/read capabilities), not the
-CLI syntax tree. Unmapped syntax/identities never acquire a guessed owner.
+The catalog is derived: relations/<family>.py says what each family addresses,
+creates, references and requires; objects.py says which device objects exist
+and what they contain. Unmapped syntax/identities never acquire a guessed owner.
 """
 
 from copy import deepcopy
 
+from ..relations import FAMILIES
 from ..targeted import TARGETED_GATHER
-from .catalogs import access, equipment, profiles, scopes, services
-from .catalogs import ihub as ihub_catalog
+from . import ihub, scopes
+from .objects import OBJECTS
 
 SCHEMA_VERSION = 1
 
@@ -16,12 +18,17 @@ SCHEMA_VERSION = 1
 def export_catalog():
     """JSON-compatible direct neighbors and resource bindings for consumers."""
     bindings = []
-    for domain in (equipment, access, services):
-        for resource, section, decoder in domain.BINDINGS:
-            bindings.append({"resource": resource, "section": section,
-                             "identity": TARGETED_GATHER[resource][section], "decoder": decoder})
-    bindings.extend(deepcopy(ihub_catalog.BINDINGS))
-    objects = deepcopy(dict(equipment.DISCOVERY, **dict(access.DISCOVERY, **ihub_catalog.DISCOVERY)))
+    for resource, family in sorted(FAMILIES.items()):
+        for section, spec in family["sections"].items():
+            if "object" not in spec:
+                continue
+            if family.get("source") == "ihub":
+                bindings.append({"resource": resource, "section": section, "identity": deepcopy(spec["identity"]),
+                                 "decoder": spec["object"], "read_scope": "all"})
+            else:
+                bindings.append({"resource": resource, "section": section,
+                                 "identity": TARGETED_GATHER[resource][section], "decoder": spec["object"]})
+    objects = deepcopy(OBJECTS)
     for obj in objects.values():
         obj["parents"] = []
     for kind, obj in objects.items():
@@ -69,6 +76,36 @@ def export_catalog():
         else:
             model = {"scope": scope, "model": "unimplemented", "reason": "object_binding_missing"}
         models["%s.%s" % (resource, section)] = model
+    # Option name -> profile type, for the families whose options name profiles.
+    profile_references = {resource: dict(FAMILIES[family["profile_references"]]["reference_fields"])
+                          for resource, family in sorted(FAMILIES.items()) if family.get("profile_references")}
+    typed_references, creates, created_with, requires = [], {}, [], []
+    for resource, family in sorted(FAMILIES.items()):
+        for section, spec in family["sections"].items():
+            for field, target in spec.get("references", {}).items():
+                target_resource, target_section = target.split(".", 1)
+                typed_references.append({"resource": resource, "section": section, "field": field,
+                                         "target_resource": target_resource, "target_section": target_section})
+            # The command of this section creates the object; every other family
+            # addressing the kind configures an existing one.
+            if spec.get("creates"):
+                if spec["object"] in creates:
+                    raise ValueError("Two sections create object kind %s" % spec["object"])
+                creates[spec["object"]] = {"resource": resource, "section": section}
+            # Entries the device creates itself with an object, at these defaults.
+            for entry in spec.get("created_with", ()):
+                created_with.append({"resource": resource, "section": section, "identity": spec["identity"],
+                                     "prefix": entry["prefix"], "object": entry["object"],
+                                     "default": deepcopy(entry["default"])})
+            # Sections that must be written before this one (and removed after it).
+            for need in spec.get("requires", ()):
+                target_resource, target_section = need["section"].split(".", 1)
+                if target_section not in FAMILIES[target_resource]["sections"]:
+                    raise ValueError("%s.%s requires the unknown section %s" % (resource, section, need["section"]))
+                requires.append({"resource": resource, "section": section,
+                                 "target_resource": target_resource, "target_section": target_section,
+                                 "target_kind": need.get("kind"), "source_kind": need.get("for"),
+                                 "evidence": need["evidence"]})
     return {"schema_version": SCHEMA_VERSION, "bindings": deepcopy(bindings), "objects": objects,
             "relationships_exhaustive": False,
             # TARGETED_GATHER covers access-side resource families, not every
@@ -76,11 +113,12 @@ def export_catalog():
             # parsers. Fully binding its sections does not close these domains.
             "unmodeled_configuration_domains": ["ihub_router", "ihub_qos", "ihub_system_security", "ihub_other_domains"],
             "partial_configuration_domains": ["ihub_ports", "ihub_lags", "ihub_services"],
-            "configuration_read_capabilities": deepcopy(ihub_catalog.READ_CAPABILITIES),
-            "profile_references": deepcopy(services.PROFILE_REFERENCES),
-            "typed_references": [{"resource": resource, "section": section, "field": field,
-                                  "target_resource": target, "target_section": target_section}
-                                 for resource, section, field, target, target_section in profiles.REFERENCES],
+            "configuration_read_capabilities": deepcopy(ihub.READ_CAPABILITIES),
+            "profile_references": profile_references,
+            "typed_references": typed_references,
+            "creates": creates,
+            "created_with": created_with,
+            "requires": requires,
             "global_resources": list(scopes.GLOBAL_RESOURCES),
             "global_settings": deepcopy(scopes.GLOBAL_SETTINGS),
             "section_scopes": {"%s.%s" % key: value for key, value in sorted(section_scope.items())},

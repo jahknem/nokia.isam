@@ -21,10 +21,13 @@ refresh jobs, timestamps and plan-read scheduling are not changed by this work.
 
 ## Direct-neighbor catalogs
 
-`catalogs/equipment.py`, `catalogs/access.py` and `catalogs/services.py` declare
-direct neighbors and resource-to-object bindings. `export_catalog()` derives
-reverse parent links; do not maintain transitive ancestors/descendants or a second
-copy of identity fields. Resource identity fields are taken from `TARGETED_GATHER`.
+`topology/objects.py` declares the object kinds and their direct children;
+`relations/<family>.py` (one file per family, see `relations/README.md`) binds each
+instance list to the object kind it configures, and records `creates`,
+`created_with`, `references` and `requires` with their evidence. `export_catalog()`
+derives the bindings and reverse parent links from both; do not maintain transitive
+ancestors/descendants. Resource identity fields are taken from `TARGETED_GATHER`, which
+`test_relations.py` keeps in step with the relations.
 
 `identity.py` implements explicit identity forms and immediate physical parents.
 In particular:
@@ -363,12 +366,12 @@ on the lab; neither is assumed here.
 ## Configuration scope classification
 
 Not all configuration belongs to a physical descendant subtree.
-`catalogs/scopes.py` classifies **every** `TARGETED_GATHER` section into one of
+`topology/scopes.py` classifies **every** `TARGETED_GATHER` section into one of
 three scopes, exported as `section_scopes`:
 
 | Scope | Meaning | Refresh behavior |
 | --- | --- | --- |
-| `object_owned` | Instance config owned by a physical object (bound via `BINDINGS`) | Read per descendant in a recursive refresh |
+| `object_owned` | Instance config owned by a physical object (bound by its `relations/` file) | Read per descendant in a recursive refresh |
 | `device_global` | Device-wide settings, no physical owner (system, security, software, alarms, traps, global QoS maps, VLANs, ...) | Read once for a full-MSAN refresh; a scoped subtree does not claim it |
 | `shared_profile` | Named definitions referenced by object config (xDSL/QoS/voice profiles) | Read once, deduplicated; never pull in other consumers |
 
