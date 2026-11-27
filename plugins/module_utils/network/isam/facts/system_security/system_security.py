@@ -6,7 +6,6 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.cli_safety import check_cli_commands
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
     get_targeted_config,
     requested_identities,
@@ -52,26 +51,14 @@ _TARGETED = {
 }
 
 
-def _safe(form):
-    """Refuse a read command that carries a control character before it is sent
-    (UnsafeCliCommandError, a ValueError: the facts layer fails the module; the
-    message names positions only, never the command text). This is this family's
-    own check until the central one lands in facts_base.targeted_commands with the
-    read-outcomes work."""
-    def build(identity):
-        commands = form(identity) if callable(form) else [
-            form % (identity if isinstance(identity, tuple) else (identity,))]
-        return check_cli_commands(commands, "targeted read of isam_system_security")
-    return build
-
-
-_TARGETED = dict((section, _safe(form)) for section, form in _TARGETED.items())
-
-
 def _is_sftp_user_line(line, user):
     wanted = "%ssftp-user %s" % (_SSH_PREFIX, user)
     line = line.strip()
     return line == wanted or line.startswith(wanted + " ")
+
+
+def _has_sftp_user(reply, user):
+    return any(_is_sftp_user_line(line, user) for line in str(reply or "").splitlines())
 
 
 def _only_sftp_users(data, users):
@@ -94,7 +81,10 @@ class Isam_system_securityFacts(object):
 
     def get_config(self, connection):
         data = get_targeted_config(self._module, connection, "isam_system_security",
-                                   "info configure system security flat", _TARGETED)
+                                   "info configure system security flat", _TARGETED,
+                                   # sftp users are read from the shared ssh node: a user is
+                                   # present when its line is there, otherwise unknown.
+                                   instance_checks={"ssh.sftp_users": _has_sftp_user})
         users = requested_identities(self._module, "isam_system_security", "ssh.sftp_users")
         if users and self._module.params.get("state") == "gathered":
             data = _only_sftp_users(data, users)

@@ -49,12 +49,12 @@ def test_argument_surface_matches_0_3_13_except_device_defaults():
                 "interface_alarms", "isam_equipment", "vlan_global", "ntp_onts",
                 "pon_interfaces", "pon_global", "trouble_shooting_pon", "l2uni_onts", "uni_onts",
                 "qos_global", "qos_interfaces", "qos_maps", "qos_profiles", "qos_tca",
-                "software_mngt", "vlans", "voice_sip"}
+                "software_mngt", "vlans", "voice_sip", "system_security", "security_ext_authenticator"}
     specs = dict((path, spec) for path, spec in specs.items() if path.split("/")[-2] not in migrated)
-    # The same 37 argspecs computed from tag 0.3.13 give this hash.
-    assert len(specs) == 37
+    # The same 36 argspecs computed from tag 0.3.13 give this hash.
+    assert len(specs) == 36
     assert hashlib.sha256(json.dumps(specs, sort_keys=True).encode()).hexdigest() == (
-        "ffb0022713eab0152a8b8ab73b3cd9c91b3c18c87f0cc1f64ea46c770191b2dc")
+        "7dd07445eaea094870871353a17b744d0b1d22d214685526f91695e3668dec95")
 
 
 def test_module_inventory_matches_0_3_13():
@@ -66,11 +66,12 @@ def test_module_inventory_matches_0_3_13():
         "plugins/modules/isam_pon_global.py",
         "plugins/modules/isam_qos_global.py",
         "plugins/modules/isam_qos_tca.py",
+        "plugins/modules/isam_system_security.py",
         "plugins/modules/isam_trouble_shooting_pon.py",
         "plugins/modules/isam_uni_onts.py",
     }
     pre_split = [path for path in paths if path not in added_by_the_split]
-    assert len(paths) == len(pre_split) + 6
+    assert len(paths) == len(pre_split) + 7
     assert hashlib.sha256("\n".join(pre_split).encode()).hexdigest() == (
         "88ec8c7f4f4ed973e1ddd0591b2f137aada9331d42e9e633307a7f257b9d8827")
 
