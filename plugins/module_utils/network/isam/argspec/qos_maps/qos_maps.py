@@ -22,14 +22,16 @@ class Qos_mapsArgs(object):  # pylint: disable=R0903
 
     _up_ctrl_pkt_options = {
         "protocol": {"type": "str", "required": True},
-        "queue": {"type": "int"},
-        "profile": {"type": "str"},
+        "dscp": {"type": "int"},
+        "pbit": {"type": "int"},
+        "tc": {"type": "int"},
     }
 
     _dn_ctrl_pkt_options = {
         "protocol": {"type": "str", "required": True},
-        "queue": {"type": "int"},
-        "profile": {"type": "str"},
+        "dscp": {"type": "int"},
+        "pbit": {"type": "int"},
+        "tc": {"type": "int"},
     }
 
     argument_spec = {

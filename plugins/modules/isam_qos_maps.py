@@ -64,12 +64,15 @@ options:
             type: str
             description: Protocol name (e.g. C(arp), C(dhcp), C(pppoe)).
             required: true
-          queue:
+          dscp:
             type: int
-            description: Queue index.
-          profile:
-            type: str
-            description: Profile name.
+            description: DSCP value.
+          pbit:
+            type: int
+            description: Priority bit (802.1p).
+          tc:
+            type: int
+            description: Traffic class.
       dn_ctrl_pkt:
         type: list
         elements: dict
@@ -79,19 +82,26 @@ options:
             type: str
             description: Protocol name.
             required: true
-          queue:
+          dscp:
             type: int
-            description: Queue index.
-          profile:
-            type: str
-            description: Profile name.
+            description: DSCP value.
+          pbit:
+            type: int
+            description: Priority bit (802.1p).
+          tc:
+            type: int
+            description: Traffic class.
   running_config:
+    description:
+      - 'Output from C(info configure qos), used with state C(parsed).'
+      - 'With I(state) C(merged), C(replaced), C(overridden) or C(deleted), the current configuration to render against instead of reading the device (offline preview): this CLI text, or the canonical resource JSON as returned by C(gathered) (validated against the I(config) options).'
+      - 'Offline, no command is sent and nothing is read from the device; the result holds the C(commands) that would be sent and C(before) (the supplied configuration), with C(changed) false.'
     type: str
-    description: Output from C(info configure qos), used with state C(parsed).
   state:
     description:
     - Desired resource state.
     - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(tc_map_dot1p[].dot1p) and C(dscp_map_dot1p[].dscp) and C(up_ctrl_pkt[].protocol) and C(dn_ctrl_pkt[].protocol) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with only default values is read with C(flat detail) and returned with its identity only, and C(read_outcomes) reports each named instance present or confirmed absent where the device allows it. Without I(config) the whole resource is read.
+    - With C(deleted) and I(config), only the sections and instances named in I(config) are deleted or reset; other sections are left alone. Without I(config) everything is deleted. Naming an entry by its identity alone is enough.
     type: str
     default: merged
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
@@ -137,39 +147,83 @@ EXAMPLES = """
     config:
       up_ctrl_pkt:
         - protocol: dhcp
-          queue: 0
-          profile: default
+          dscp: 46
+          tc: 7
       dn_ctrl_pkt:
         - protocol: dhcp
-          queue: 0
-          profile: default
+          tc: 3
 """
 
 RETURN = """
+# BEGIN read_outcomes (synced from plugins/doc_fragments/read_outcomes.py; do not edit)
+read_outcomes:
+  description:
+    - Sanitized per-instance read outcomes for a targeted read (I(state) is C(gathered)
+      and I(config) names instances).
+    - Each outcome names the config section that addressed the instance (for example
+      C(config)) and the selector -- the instance identity, a composite identity
+      recorded joined by C(/). Instances in different sections that share an identity
+      value are different instances and are reported separately.
+    - Each outcome records the command axis (C(ok), C(rejected) or C(failed)) and the
+      instance-existence axis (C(present), C(confirmed_absent) or C(unknown)).
+    - Only C(confirmed_absent) -- the device's explicit "instance does not exist" signal
+      about that instance -- is evidence the instance is gone. C(unknown) (a header-only
+      reply, an invalid-token rejection, a missing dependency, or a failed read) is never
+      treated as absence; keep, do not remove, configuration for C(unknown) instances.
+    - When one instance is addressed by several reads, it is reported C(confirmed_absent)
+      only if every read confirmed absence; a single present read proves presence; a
+      failed read is reported as C(failed); anything less is C(unknown).
+    - The parse axis (C(failed) or C(unverified)) is reported at resource level under
+      C(parse); C(failed) means the family parser could not process the reply,
+      C(unverified) that no parser records its coverage of the reply (a read never claims
+      a complete parse).
+    - A named instance the device rejected (C(invalid token)) is missing from C(gathered)
+      exactly like an absent one; the module also warns, naming the rejected selectors.
+    - The output is sanitized to stable enums, the section, the selector, and an error
+      class; raw device text is never recorded. A failed targeted read fails the module
+      carrying this same sanitized result.
+  version_added: 1.1.0
+  returned: when I(state) is C(gathered) and the read is targeted
+  type: dict
+# END read_outcomes
+# BEGIN resource_returns (generated by tools/sync_resource_return_docs.py; do not edit)
 before:
-  description: Configuration prior to module execution.
-  returned: when state is merged, replaced, overridden, or deleted
+  description:
+  - The configuration before the module ran, in the format of I(config).
+  - With I(running_config) (offline preview) it is the supplied configuration.
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: dict
 after:
-  description: Configuration after module execution.
-  returned: when changed
+  description:
+  - The configuration read back from the device after the commands were sent, in the format of I(config).
+    In check mode nothing is sent, so it shows the unchanged configuration.
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted), commands were generated
+    and no I(running_config) was given
   type: dict
 commands:
-  description: Commands sent to the device or produced in check mode.
-  returned: when state is merged, replaced, overridden, or deleted
+  description:
+  - 'The commands sent to the device (in check mode: that would be sent).'
+  - With I(running_config) (offline preview) they are rendered only, never sent.
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
+  elements: str
 rendered:
-  description: Rendered device-native commands.
-  returned: when state is rendered
+  description:
+  - The commands rendered from I(config) in device-native format, without a device (offline).
+  returned: when I(state) is C(rendered)
   type: list
+  elements: str
 gathered:
-  description: Gathered structured QoS maps data.
-  returned: when state is gathered
+  description:
+  - The configuration read from the device, in the format of I(config).
+  returned: when I(state) is C(gathered)
   type: dict
 parsed:
-  description: Parsed structured QoS maps data.
-  returned: when state is parsed
+  description:
+  - The I(running_config) text parsed into the format of I(config), without a device.
+  returned: when I(state) is C(parsed)
   type: dict
+# END resource_returns
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -184,7 +238,6 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.qos
 def main():
     module = AnsibleModule(
         argument_spec=Qos_mapsArgs.argument_spec,
-        mutually_exclusive=[["config", "running_config"]],
         required_if=[
             ["state", "merged", ["config"]],
             ["state", "replaced", ["config"]],

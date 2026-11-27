@@ -7,9 +7,7 @@ __metaclass__ = type
 from copy import deepcopy
 
 from ansible.module_utils.six import iteritems
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
 )
@@ -19,7 +17,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 )
 
 
-class Qos_profiles(ResourceModule):
+class Qos_profiles(IsamResourceModule):
     """The isam_qos_profiles config class."""
 
     # Fields the device refuses to change on an existing profile -> their default
@@ -35,14 +33,6 @@ class Qos_profiles(ResourceModule):
             tmplt=Qos_profilesTemplate(),
         )
         self.parsers = list(Qos_profilesTemplate._FIELDS)
-
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
 
     @staticmethod
     def _key(entry):

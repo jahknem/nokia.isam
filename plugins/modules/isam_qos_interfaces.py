@@ -87,7 +87,7 @@ options:
         description: GEM sharing setting.
         type: str
       scheduler_mode:
-        description: Scheduler mode.
+        description: 'Scheduler mode of the interface (C(scheduler-mode)): C(subscriber-hierarchy) (device default), C(service-hierarchy) or C(service-flat).'
         type: str
       mc_scheduler_node:
         description: Multicast scheduler node reference.
@@ -168,13 +168,20 @@ options:
             description: Queue weight.
             type: int
   running_config:
-    description: Device-native running configuration for parsed state.
+    description:
+      - 'Device-native running configuration for parsed state.'
+      - 'With I(state) C(merged), C(replaced), C(overridden) or C(deleted), the current configuration to render against instead of reading the device (offline preview): this CLI text, or the canonical resource JSON as returned by C(gathered) (validated against the I(config) options).'
+      - 'Offline, no command is sent and nothing is read from the device; the result holds the C(commands) that would be sent and C(before) (the supplied configuration), with C(changed) false.'
     type: str
   state:
     description:
     - The state the configuration should be left in.
     - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(name) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with only default values is read with C(flat detail) and returned with its identity only, and C(read_outcomes) reports each named instance present or confirmed absent where the device allows it. Without I(config) the whole resource is read.
     - With C(merged), C(replaced) or C(deleted) and I(config), the current configuration is likewise read only for the named instances.
+    - C(deleted) resets the named settings, or every setting for an interface named by C(name) alone. Values the device shows for an unset setting (C(none), C(not-applicable)) are not reset. An interface with downstream queues (e.g. an ONT UNI) keeps its C(scheduler_node), with a warning; the device requires one while queues exist and the queues themselves cannot be removed.
+    - The device changes upstream-queue parameters only while no bridge VLAN uses the queue (C(QOS MGT error 41)); change them before attaching VLANs on the UNI.
+    - C(not-applicable) is a detail-output placeholder, not a settable value. It is never sent, and unset C(none)/C(not-applicable) top-level or queue settings do not generate resets. Explicit C(none) still clears a configured profile that supports that value.
+    - Provision upstream-queue bandwidth profiles before calling C(nokia.isam.isam_bridges) to attach VLANs (C(VLAN MGT error 277)). Separate module calls are executed in playbook order; this module does not reorder other tasks or create missing profiles implicitly.
     type: str
     default: merged
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]
@@ -198,30 +205,75 @@ EXAMPLES = """
 """
 
 RETURN = """
+# BEGIN read_outcomes (synced from plugins/doc_fragments/read_outcomes.py; do not edit)
+read_outcomes:
+  description:
+    - Sanitized per-instance read outcomes for a targeted read (I(state) is C(gathered)
+      and I(config) names instances).
+    - Each outcome names the config section that addressed the instance (for example
+      C(config)) and the selector -- the instance identity, a composite identity
+      recorded joined by C(/). Instances in different sections that share an identity
+      value are different instances and are reported separately.
+    - Each outcome records the command axis (C(ok), C(rejected) or C(failed)) and the
+      instance-existence axis (C(present), C(confirmed_absent) or C(unknown)).
+    - Only C(confirmed_absent) -- the device's explicit "instance does not exist" signal
+      about that instance -- is evidence the instance is gone. C(unknown) (a header-only
+      reply, an invalid-token rejection, a missing dependency, or a failed read) is never
+      treated as absence; keep, do not remove, configuration for C(unknown) instances.
+    - When one instance is addressed by several reads, it is reported C(confirmed_absent)
+      only if every read confirmed absence; a single present read proves presence; a
+      failed read is reported as C(failed); anything less is C(unknown).
+    - The parse axis (C(failed) or C(unverified)) is reported at resource level under
+      C(parse); C(failed) means the family parser could not process the reply,
+      C(unverified) that no parser records its coverage of the reply (a read never claims
+      a complete parse).
+    - A named instance the device rejected (C(invalid token)) is missing from C(gathered)
+      exactly like an absent one; the module also warns, naming the rejected selectors.
+    - The output is sanitized to stable enums, the section, the selector, and an error
+      class; raw device text is never recorded. A failed targeted read fails the module
+      carrying this same sanitized result.
+  version_added: 1.1.0
+  returned: when I(state) is C(gathered) and the read is targeted
+  type: dict
+# END read_outcomes
+# BEGIN resource_returns (generated by tools/sync_resource_return_docs.py; do not edit)
 before:
-  description: Configuration prior to module execution.
-  returned: when state is merged, replaced, overridden, deleted
+  description:
+  - The configuration before the module ran, in the format of I(config).
+  - With I(running_config) (offline preview) it is the supplied configuration.
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
 after:
-  description: Configuration after module execution.
-  returned: when changed
+  description:
+  - The configuration read back from the device after the commands were sent, in the format of I(config).
+    In check mode nothing is sent, so it shows the unchanged configuration.
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted), commands were generated
+    and no I(running_config) was given
   type: list
 commands:
-  description: Commands sent to the device or produced in check mode.
-  returned: always, except when state is gathered
+  description:
+  - 'The commands sent to the device (in check mode: that would be sent).'
+  - With I(running_config) (offline preview) they are rendered only, never sent.
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
-gathered:
-  description: Gathered structured QoS interface data.
-  returned: when state is gathered
-  type: list
+  elements: str
 rendered:
-  description: Rendered device-native commands.
-  returned: when state is rendered
+  description:
+  - The commands rendered from I(config) in device-native format, without a device (offline).
+  returned: when I(state) is C(rendered)
+  type: list
+  elements: str
+gathered:
+  description:
+  - The configuration read from the device, in the format of I(config).
+  returned: when I(state) is C(gathered)
   type: list
 parsed:
-  description: Parsed structured QoS interface data.
-  returned: when state is parsed
+  description:
+  - The I(running_config) text parsed into the format of I(config), without a device.
+  returned: when I(state) is C(parsed)
   type: list
+# END resource_returns
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -232,7 +284,6 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.config.qos
 def main():
     module = AnsibleModule(
         argument_spec=Qos_interfacesArgs.argument_spec,
-        mutually_exclusive=[["config", "running_config"]],
         required_if=[
             ["state", "merged", ["config"]],
             ["state", "replaced", ["config"]],
