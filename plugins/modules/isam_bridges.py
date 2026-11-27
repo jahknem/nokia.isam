@@ -30,7 +30,6 @@ options:
         description:
         - "optional parameter with default value: 300"
         - ageing timeout for dynamic macentries
-        default: 300
       port:
         type: list
         elements: dict
@@ -130,6 +129,7 @@ options:
             choices:
             - 'disable'
             - 'overwrite-outer-vlan'
+            - 'insert-mirror-vlan'
           mirror-vlan:
             aliases: [mirror_vlan]
             type: int
@@ -158,6 +158,7 @@ options:
             - 'auto'
             - 'translated'
             - 'transparency'
+            - 'filtervlanandpbit'
           vlan_id:
             type: list
             elements: dict
@@ -212,52 +213,48 @@ options:
                 description:
                 - 'optional parameter with default value: "none"'
                 - 'the qos policy'
-                default: none
               qos_profile:
                 type: str
                 description:
                 - 'optional parameter with default value: "none"'
                 - 'the qos profile'
-                default: none
               prior_best_effort:
-                type: boolean
+                type: bool
                 description:
                 - 'optional parameter with default value: false'
                 - 'enable best effort priority (value: 0)'
-                default: False
               prior_background:
-                type: boolean
+                type: bool
                 description:
                 - 'optional parameter with default value: false'
                 - 'enable background priority (value: 1)'
-                default: False
               prior_spare:
-                type: boolean
+                type: bool
                 description:
                 - 'optional parameter'
                 - 'enable spare priority (value: 2)'
               prior_exc_effort:
-                type: boolean
+                type: bool
                 description:
                 - 'optional parameter'
                 - 'enable excellen effort priority (value: 3)'
               prior_ctrl_load:
-                type: boolean
+                type: bool
                 description:
                 - 'optional parameter'
                 - 'enable controlled load priority (value: 4)'
               prior_less_100ms:
-                type: boolean
+                type: bool
                 description:
                 - 'optional parameter'
                 - 'enable less than 100ms latency and jitter priority (value: 5)'
               prior_less_10ms:
-                type: boolean
+                type: bool
                 description:
                 - 'optional parameter'
                 - 'enable less than 10ms latency and jitter priority (value: 6)'
               prior_nw_ctrl:
-                type: boolean
+                type: bool
                 description:
                 - 'optional parameter'
                 - 'enable network controlled priority (value: 7)'
@@ -335,7 +332,15 @@ options:
     - replaced
     - overridden
     - deleted
+    - rendered
+    - parsed
     default: merged
+  running_config:
+    description:
+      - 'Device-native configuration to parse when state is parsed.'
+      - 'With I(state) C(merged), C(replaced), C(overridden) or C(deleted), the current configuration to render against instead of reading the device (offline preview): this CLI text, or the canonical resource JSON as returned by C(gathered) (validated against the I(config) options).'
+      - 'Offline, no command is sent and nothing is read from the device; the result holds the C(commands) that would be sent and C(before) (the supplied configuration), with C(changed) false.'
+    type: str
 """
 
 EXAMPLES = """
@@ -405,50 +410,75 @@ EXAMPLES = """
 """
 
 RETURN = """
+# BEGIN read_outcomes (synced from plugins/doc_fragments/read_outcomes.py; do not edit)
+read_outcomes:
+  description:
+    - Sanitized per-instance read outcomes for a targeted read (I(state) is C(gathered)
+      and I(config) names instances).
+    - Each outcome names the config section that addressed the instance (for example
+      C(config)) and the selector -- the instance identity, a composite identity
+      recorded joined by C(/). Instances in different sections that share an identity
+      value are different instances and are reported separately.
+    - Each outcome records the command axis (C(ok), C(rejected) or C(failed)) and the
+      instance-existence axis (C(present), C(confirmed_absent) or C(unknown)).
+    - Only C(confirmed_absent) -- the device's explicit "instance does not exist" signal
+      about that instance -- is evidence the instance is gone. C(unknown) (a header-only
+      reply, an invalid-token rejection, a missing dependency, or a failed read) is never
+      treated as absence; keep, do not remove, configuration for C(unknown) instances.
+    - When one instance is addressed by several reads, it is reported C(confirmed_absent)
+      only if every read confirmed absence; a single present read proves presence; a
+      failed read is reported as C(failed); anything less is C(unknown).
+    - The parse axis (C(failed) or C(unverified)) is reported at resource level under
+      C(parse); C(failed) means the family parser could not process the reply,
+      C(unverified) that no parser records its coverage of the reply (a read never claims
+      a complete parse).
+    - A named instance the device rejected (C(invalid token)) is missing from C(gathered)
+      exactly like an absent one; the module also warns, naming the rejected selectors.
+    - The output is sanitized to stable enums, the section, the selector, and an error
+      class; raw device text is never recorded. A failed targeted read fails the module
+      carrying this same sanitized result.
+  version_added: 1.1.0
+  returned: when I(state) is C(gathered) and the read is targeted
+  type: dict
+# END read_outcomes
+# BEGIN resource_returns (generated by tools/sync_resource_return_docs.py; do not edit)
 before:
-  description: The configuration prior to the module execution.
+  description:
+  - The configuration before the module ran, in the format of I(config).
+  - With I(running_config) (offline preview) it is the supplied configuration.
   returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: dict
-  sample: >
-    This output will always be in the same format as the
-    module argspec.
 after:
-  description: The resulting configuration after module execution.
-  returned: when changed
+  description:
+  - The configuration read back from the device after the commands were sent, in the format of I(config).
+    In check mode nothing is sent, so it shows the unchanged configuration.
+  returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted), commands were generated
+    and no I(running_config) was given
   type: dict
-  sample: >
-    This output will always be in the same format as the
-    module argspec.
 commands:
-  description: The set of commands pushed to the remote device.
+  description:
+  - 'The commands sent to the device (in check mode: that would be sent).'
+  - With I(running_config) (offline preview) they are rendered only, never sent.
   returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
-  sample:
-    - sample command 1
-    - sample command 2
-    - sample command 3
+  elements: str
 rendered:
-  description: The provided configuration in the task rendered in device-native format (offline).
+  description:
+  - The commands rendered from I(config) in device-native format, without a device (offline).
   returned: when I(state) is C(rendered)
   type: list
-  sample:
-    - sample command 1
-    - sample command 2
-    - sample command 3
+  elements: str
 gathered:
-  description: Facts about the network resource gathered from the remote device as structured data.
+  description:
+  - The configuration read from the device, in the format of I(config).
   returned: when I(state) is C(gathered)
-  type: list
-  sample: >
-    This output will always be in the same format as the
-    module argspec.
+  type: dict
 parsed:
-  description: The device native config provided in I(running_config) option parsed into structured data as per module argspec.
+  description:
+  - The I(running_config) text parsed into the format of I(config), without a device.
   returned: when I(state) is C(parsed)
-  type: list
-  sample: >
-    This output will always be in the same format as the
-    module argspec.
+  type: dict
+# END resource_returns
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -468,7 +498,6 @@ def main():
     """
     module = AnsibleModule(
         argument_spec=BridgesArgs.argument_spec,
-        mutually_exclusive=[["config", "running_config"]],
         required_if=[
             ["state", "merged", ["config"]],
             ["state", "replaced", ["config"]],

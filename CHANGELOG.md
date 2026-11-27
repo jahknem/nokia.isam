@@ -68,6 +68,13 @@ the `read_outcomes` return value on targeted reads.
   `isam_ani_onts` options were undocumented. The standard resource RETURN
   values (`before`, `after`, `commands`, `rendered`, `gathered`, `parsed`)
   carry a generated, argspec-checked doc block in every module.
+- `isam_bridges` moves to the shared resource base: targeted `gathered` reads
+  return `read_outcomes` (a missing bridge port is `confirmed_absent`), and
+  `running_config` with an action state renders an offline preview, so
+  `config` and `running_config` are no longer mutually exclusive. Its
+  documentation matches the argspec (`rendered`/`parsed` states, the
+  `insert-mirror-vlan` and `filtervlanandpbit` choices; device defaults are no
+  longer documented as option defaults).
 
 ## 1.0.0 (unreleased)
 

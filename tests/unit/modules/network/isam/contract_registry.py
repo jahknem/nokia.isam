@@ -13,6 +13,7 @@ completeness test: ``CONTRACT_MODULES`` must equal the module inventory.
 
 CONTRACT_MODULES = frozenset({
     "isam_ani_onts",
+    "isam_bridges",
     "isam_equipment",
     "isam_equipment_onts",
     "isam_equipment_replan",
