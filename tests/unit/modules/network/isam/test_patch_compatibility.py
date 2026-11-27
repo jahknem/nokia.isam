@@ -52,15 +52,15 @@ def test_argument_surface_matches_0_3_13_except_device_defaults():
                 "software_mngt", "vlans", "voice_sip", "system_security", "security_ext_authenticator",
                 "bridge_learned_mac", "cwmp_plt", "dhcp_relay_port_stats", "error", "ethernet_statistics",
                 "nat", "pppox_relay_global", "xdsl_boards", "xdsl_inm", "xdsl_lines", "xdsl_onts",
-                "xdsl_profiles", "xdsl_system",
+                "xdsl_profiles", "xdsl_system", "xdsl_bonding",
                 "ihub_common", "ihub_lags", "ihub_ports", "ihub_services"}
     # A shared argspec at the top of argspec/ (ihub_common.py) is named by its file stem.
     specs = dict((path, spec) for path, spec in specs.items()
                  if path.split("/")[-2] not in migrated and Path(path).stem not in migrated)
-    # The same 33 argspecs computed from tag 0.3.13 give this hash.
-    assert len(specs) == 33
+    # The same 32 argspecs computed from tag 0.3.13 give this hash.
+    assert len(specs) == 32
     assert hashlib.sha256(json.dumps(specs, sort_keys=True).encode()).hexdigest() == (
-        "6f5e85c25d01f89f6fb4defda4e4df16d38da19f2de9d37f58012a98c2904b54")
+        "b1c922472918f807d2be7dcf2154de4fb9721f3e964941c85581f99e2456e55e")
 
 
 def test_module_inventory_matches_0_3_13():

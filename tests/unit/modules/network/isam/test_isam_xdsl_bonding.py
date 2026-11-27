@@ -127,3 +127,45 @@ class TestIsamXdslBondingModule(TestIsamModule):
             result["commands"],
             ["configure xdsl-bonding no group-assembly-time"],
         )
+
+
+# -- bonding groups and boards (read only) ------------------------------------------------
+
+import pytest  # noqa: E402
+
+from .module_runner import run_module  # noqa: E402
+
+# 'info configure xdsl-bonding flat detail' on the lab (2026-11-27), shape only.
+DETAIL = "\n".join([
+    "configure xdsl-bonding group-assembly-time 0 no ptm-init-mode",
+    "configure xdsl-bonding group 1/1/3/1 no group-profile no group-rtx-profile",
+    "configure xdsl-bonding group 1/1/3/1 no up",
+    "configure xdsl-bonding group 1/1/3/2 group-profile name:BOND-1 no group-rtx-profile",
+    "configure xdsl-bonding group 1/1/3/2 up",
+    "configure xdsl-bonding board 1/1/3 vect-fallback no group-profile no group-rtx-profile",
+    "#------------------------------------------------------------",
+])
+
+
+def test_groups_and_boards_are_parsed_also_with_default_values_only(monkeypatch):
+    result = run_module(monkeypatch, "isam_xdsl_bonding", {"state": "parsed", "running_config": DETAIL})
+    parsed = result["parsed"]
+    assert parsed["group_assembly_time"] == 0
+    assert parsed["groups"] == [{"group_id": "1/1/3/1", "up": False},
+                                {"group_id": "1/1/3/2", "group_profile": "name:BOND-1", "up": True}]
+    assert parsed["boards"] == [{"board_id": "1/1/3", "vect_fallback": True}]
+
+
+@pytest.mark.parametrize("state", ["merged", "replaced", "overridden", "deleted", "rendered"])
+def test_writing_groups_or_boards_fails_before_any_command(monkeypatch, state):
+    config = {"groups": [{"group_id": "1/1/3/1", "up": True}]}
+    result = run_module(monkeypatch, "isam_xdsl_bonding", {"state": state, "config": config}, DETAIL)
+    assert result.get("failed") and "not written" in result["msg"], result
+    assert not result.get("commands") and not result.get("rendered")
+
+
+def test_overridden_assembly_time_leaves_groups_and_boards_alone(monkeypatch):
+    result = run_module(monkeypatch, "isam_xdsl_bonding",
+                        {"state": "overridden", "config": {"group_assembly_time": 50}}, DETAIL)
+    assert not result.get("failed"), result.get("msg")
+    assert result["commands"] == ["configure xdsl-bonding group-assembly-time 50"]

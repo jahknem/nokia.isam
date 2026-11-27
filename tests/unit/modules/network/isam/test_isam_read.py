@@ -312,10 +312,11 @@ def test_a_vlan_port_without_pppoe_client_answers_with_the_header_and_is_absent(
 
 
 def test_default_only_xdsl_parts_are_present_through_their_detail_read(monkeypatch):
-    # Live 2026-11-26, NDLT-F: INM sensors print the header only in flat and their line
-    # with defaults in flat detail. (xdsl_bonding groups/boards behave the same on the
-    # device, but isam_xdsl_bonding does not parse them yet: outside the contract scope.)
-    cases = [("xdsl_inm", "near_end", "1/1/3/1", "configure xdsl imp-noise-sensor near-end 1/1/3/1 no inm-mode")]
+    # Live 2026-11-26, NDLT-F: bonding group, bonding board and INM sensors print the header
+    # only in flat and their line with defaults in flat detail.
+    cases = [("xdsl_bonding", "groups", "1/1/3/1", "configure xdsl-bonding group 1/1/3/1 no group-profile"),
+             ("xdsl_bonding", "boards", "1/1/3", "configure xdsl-bonding board 1/1/3 vect-fallback"),
+             ("xdsl_inm", "near_end", "1/1/3/1", "configure xdsl imp-noise-sensor near-end 1/1/3/1 no inm-mode")]
     for resource, section, ident, line in cases:
         read = [{"resource": resource, "section": section, "ids": [ident]}]
 

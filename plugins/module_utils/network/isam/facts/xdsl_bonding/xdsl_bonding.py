@@ -8,6 +8,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
     utils,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_targeted_config,
     unwrap_response,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.xdsl_bonding.xdsl_bonding import (
@@ -15,6 +16,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.xd
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_bonding import (
     Xdsl_bondingTemplate,
+    parse_sections,
 )
 
 
@@ -26,13 +28,19 @@ class Xdsl_bondingFacts(object):
         self.argument_spec = Xdsl_bondingArgs.argument_spec
 
     def get_config(self, connection):
-        return connection.get("info configure xdsl-bonding")
+        """The whole family (flat), or only the groups/boards named in config (targeted)."""
+        return get_targeted_config(self._module, connection, "xdsl_bonding", "info configure xdsl-bonding flat", {
+            "groups": "info configure xdsl-bonding group %s flat",
+            "boards": "info configure xdsl-bonding board %s flat",
+        })
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}
 
         if not data:
             data = self.get_config(connection)
+        if isinstance(data, tuple):
+            data = data[0]
         data = unwrap_response(data)
 
         data = self._flatten_config(data)
@@ -42,6 +50,8 @@ class Xdsl_bondingFacts(object):
         objs = {
             "group_assembly_time": parsed.get("group_assembly_time"),
         }
+        for section, entries in parse_sections(data).items():
+            objs[section] = [entries[key] for key in sorted(entries)]
 
         ansible_facts["ansible_network_resources"].pop("xdsl_bonding", None)
         params = utils.remove_empties(
@@ -66,7 +76,8 @@ class Xdsl_bondingFacts(object):
             if not stripped or stripped.startswith("echo") or stripped.startswith("#"):
                 continue
 
-            if line.startswith("configure xdsl-bonding group-assembly-time"):
+            if line.startswith(("configure xdsl-bonding group-assembly-time", "configure xdsl-bonding group ",
+                                "configure xdsl-bonding board ")):
                 flat_config.append(line)
                 continue
 
