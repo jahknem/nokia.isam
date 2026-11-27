@@ -100,6 +100,16 @@ def test_lt_overridden_session_removal_also_removes_its_parameters(monkeypatch):
     assert result["commands"] == ["configure linetest single ltsession 1 session-cmd destroy"]
 
 
+def test_lt_overridden_never_writes_to_a_destroyed_session(monkeypatch):
+    # Session 2 exists but is not requested: overridden destroys it, so a parameter for
+    # it cannot be written afterwards. Fail before any command.
+    result = _lt(monkeypatch, "overridden", {
+        "sessions": [{"session_id": "9", "timeout_period": "60"}],
+        "parameters": [{"session_id": "2", "test_name": "resist-tr(ohm)", "value1": "1"}]})
+    assert result.get("failed") and "session 2 does not exist" in result["msg"]
+    assert not result.get("commands")
+
+
 def test_lt_rendered_is_configuration_only(monkeypatch):
     # Ansible-injected None options are omissions, not reset requests.
     rendered = _lt(monkeypatch, "rendered", {"sessions": [{"session_id": "1", "timeout_period": "120"}]})["rendered"]
