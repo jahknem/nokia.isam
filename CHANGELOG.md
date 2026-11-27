@@ -199,6 +199,19 @@ interfaces and documentation").
   entry naming every attribute and every server with all its attributes (a gathered
   entry), as before.
 
+### Lab-verified resets (lab write 2026-11-28, everything restored, snapshot identical)
+
+- `isam_link_agg`: `deleted`, and `replaced`/`overridden` omitting them, return
+  `load_sharing_policy` and `mode` to `mac-src`/`static` by setting them: the device has
+  no `no load-sharing-policy`/`no mode` (invalid token). A group already at those values
+  gets no command. Adding and removing a member port stay their own lines (no longer
+  packed with other group settings).
+- `isam_qos_interfaces`: `deleted` never resets a value a kind only displays (a LAG's
+  `ds_num_queue`; setting it is refused with QOS MGT error 45).
+- `isam_qos_maps`: the ctrl-pkt reset form (`no dscp`/`no pbit`/`no tc`, alone or
+  combined) is verified on the device; which values a protocol accepts depends on the NT.
+- `isam_interfaces`: documented that `deleted` never brings an interface up.
+
 ## 1.0.0 (unreleased)
 
 Major-version preparation, not a published release. Schema changes are

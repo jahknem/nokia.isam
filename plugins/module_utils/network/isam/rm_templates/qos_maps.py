@@ -50,7 +50,10 @@ class Qos_mapsTemplate(NetworkTemplate):
         """Set the given parameters; ``reset`` names parameters to return to their
         default with the inline ``no <param>`` form (CLI help, configure qos
         up-ctrl-pkt/dn-ctrl-pkt: ``[ no dscp | dscp <v> ] [ no pbit | pbit <v> ]
-        [ no tc | tc <v> ]``)."""
+        [ no tc | tc <v> ]``). Lab write 2026-11-28: ``no dscp``, ``no pbit``, ``no tc``
+        are accepted alone and combined, and ``no tc`` returns a set ``lacp tc 3`` to the
+        default. Which values a protocol accepts depends on the NT (there only ``lacp tc``;
+        the rest answer QOS MGT error 238/239, which the module reports)."""
         cmd = "configure qos {0} {1}".format(node, data["protocol"])
         for attr in ("dscp", "pbit", "tc"):
             if data.get(attr) is not None:
