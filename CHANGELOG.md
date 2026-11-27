@@ -178,6 +178,7 @@ interfaces and documentation").
   An `overridden` that removes a policy and the server it uses (or `deleted` of
   everything) no longer has the device refuse the server removal midway. The check
   that refuses removing an entry a kept referrer still names is unchanged.
+
 ### QoS interface write guard
 
 - `isam_qos_interfaces` refuses, before anything is rendered or sent, a setting the
