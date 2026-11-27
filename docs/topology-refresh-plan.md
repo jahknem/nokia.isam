@@ -62,9 +62,17 @@ Still open:
    model. Fleet evidence for the rules: read-only fleet survey, 2026-11-26.
 10. **Performance**: the card-refresh and partial-query plans below. Step 1 (each
    discovery source once per round: `isam_topology_discovery` `requests`) is done on
-   `perf/shared-discovery`. Lab benchmark (read-only, 2026-11-27, NDLT-F `lt:1/1/3`,
-   bridge-port round of 48 lines): 48 single calls 396 s, one `requests` call 15.6 s,
-   identical results (48 of 48 `ok`).
+   `perf/shared-discovery`, together with step 2 (one session: `isam_refresh`) and
+   partial refreshes (`sections`). Lab benchmarks (read-only, DS-LIN-TEST-01,
+   2026-11-27):
+
+   | Measurement | Before | After |
+   | --- | --- | --- |
+   | bridge-port round of 48 lines, NDLT-F `lt:1/1/3` | 48 single calls, 396 s | one `requests` call, 15.6 s (identical results) |
+   | ONT `1/1/5/1/3`, complete | 92 s, 6 gaps | `isam_refresh` 28.7 s (19.5 s in the module), 3 source reads, 5 gaps (`isam_dhcp_relay` not observable) |
+   | NDLT-F card `lt:1/1/3`, complete | 1100 s (850 s discovery, 99 source reads), 342 gaps | `isam_refresh` 294 s, 3 source reads, 150 gaps: 102 `isam_dhcp_relay` not observable, 48 `xdsl_bonding.groups` unverified (not parsed, see gaps above) |
+
+   The card's remaining time is its 1138 targeted reads (~270 s): step 3.
 
 Gaps found while porting (not topology code; each its own PR):
 
