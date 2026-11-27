@@ -28,11 +28,13 @@ interfaces and documentation").
   calculated" is a missing dependency (`dependency_gap: interface-index`,
   existence `unknown`), not a confirmed absence; write states still drop
   such a reply, as before.
-- `confirmed_absent` is the only outcome consumers may act on: it is the
-  device's explicit "instance does not exist" signal about that instance.
-  `unknown` (a header-only reply, an invalid-token rejection, a missing
-  dependency, or a failed read) is never treated as absence — keep, do not
-  remove, configuration for `unknown` instances.
+- `confirmed_absent` is the only outcome consumers may act on: the device's
+  explicit "instance does not exist" about that instance, or the header only
+  in both `flat` and `flat detail` (docs/targeted-read-contract.md).
+  `unknown` (an invalid-token rejection, a missing dependency, another
+  instance's line, a section whose reads never show it, or a failed read) is
+  never treated as absence — keep, do not remove, configuration for `unknown`
+  instances.
 - An explicit targeted request is never served partially or silently widened:
   a request that cannot be read in full (a named instance without an identity)
   fails before any command is sent, and a failed read fails the module
@@ -64,6 +66,11 @@ interfaces and documentation").
 
 ### Module interfaces and documentation
 
+- `config` and `running_config` are no longer mutually exclusive in any
+  resource module that offers the offline preview (an action state with
+  `running_config` renders against it), including the grammar-table families,
+  `isam_ethernet_line` and the QoS families; their API baseline constraints
+  changed accordingly.
 - Documentation matches the argspec of the ONT/access modules: `isam_ntp_onts`
   documented options it does not have; `isam_pon_interfaces` and
   `isam_ani_onts` options were undocumented. The standard resource RETURN
@@ -232,7 +239,7 @@ intentional. This section lists the ONT/access families of that line.
   they are now strings with the guide's choices and defaults (setting any of
   them never worked before). Commands are packed like the device's two printed
   lines; a bare flag at the end of a command was sent separately before.
-- `isam_voice_sip` rebuilt on one grammar table (`VOICE_SIP_NODES`) that
+- `isam_voice_sip` rebuilt on one grammar table (`TABLE` in `rm_templates/voice_sip.py`) that
   generates the argspec and documentation and drives the facts and config.
   ~70 options modelled as on/off flags are values per the CLI guide (e.g. vsp
   `ta4`, `tinfo`, `digit_send_mode`, register/redundancy timers and modes,
@@ -246,7 +253,7 @@ intentional. This section lists the ONT/access families of that line.
   `fail_x_type`, not a field) is removed and `start_time`/`end_time` are ints.
   Parse -> render -> parse of the lab capture round-trips; merged/replaced of
   the gathered facts send nothing.
-- `isam_software_mngt` rebuilt on one grammar table (`SOFTWARE_MNGT_NODES`)
+- `isam_software_mngt` rebuilt on one grammar table (`TABLE` in `rm_templates/software_mngt.py`)
   generating the argspec and documentation and driving facts and config (the
   hand-written facts parser and the fragile ordered-regex template are gone).
   oswp `activate`/`auto-verify` (enums), `on-schedule-time` (datetime) and
@@ -270,8 +277,9 @@ intentional. This section lists the ONT/access families of that line.
   quotes begins a comment. A shared test checks that each table, its argspec
   and its documentation agree.
 - `isam_linetest` migrated onto `IsamResourceModule`, so it shares the
-  standard facts gathering, check-mode write path and before/after result. Its
-  device rules are unchanged and now pinned by tests across every state:
+  standard facts gathering, check-mode write path and before/after result. It
+  now creates a requested session that does not exist (`session-cmd create`);
+  its other device rules are unchanged and pinned by tests across every state:
   sessions are destroyed with `session-cmd destroy` (never rendered as
   configuration), parameters have no delete command (delete their session),
   and `group-opt`/`busy-overwrite`/`force-measure` reset with a trailing `no`.
@@ -286,7 +294,8 @@ intentional. This section lists the ONT/access families of that line.
   verified), the bare service line was not read. `isam_l2cp` and
   `isam_ipv6_antispoofing_slot` merged reset an unnamed setting;
   `isam_ipv6_antispoofing_slot` replaced reset unlisted slots. Facts of these
-  families no longer report device defaults.
+  families no longer report device defaults (`isam_dist_service` still reports
+  its `service_type`).
 
 ### Lab validation
 
@@ -422,8 +431,8 @@ intentional. This section lists the ONT/access families of that line.
   the complete read, not `flat detail` (which prints every default and parsed
   into a different configuration). Write states keep the detail form.
 - For `gathered` reads, a node the firmware does not know (`invalid token`)
-  is treated as "nothing configured here" and skipped, not raised. Write
-  states still surface the error.
+  is skipped, not raised; `read_outcomes` reports the instance `rejected` with
+  existence `unknown` (never absent). Write states still surface the error.
 
 ### New read-only modules (topology and IHUB)
 
