@@ -5,20 +5,18 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from copy import deepcopy
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import deleted_targets, requested_sections
 
 from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import dict_merge
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import deleted_targets, requested_sections
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.vlan_global import (
     Isam_vlan_globalTemplate,
 )
 
 
-class Isam_vlan_global(ResourceModule):
+class Isam_vlan_global(IsamResourceModule):
     """The isam_vlan_global config class."""
 
     def __init__(self, module):
@@ -31,6 +29,7 @@ class Isam_vlan_global(ResourceModule):
         )
         self.dict_parsers = {
             "broadcast_frames": [
+                "broadcast_frames.priority_policy",
                 "broadcast_frames.drop_unknown_multicast",
             ],
             "tpid": [
@@ -48,14 +47,6 @@ class Isam_vlan_global(ResourceModule):
         self.want = self._normalize_config(self.want)
         self.have = self._normalize_config(self.have)
         self.before = deepcopy(self.have)
-
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
 
     def generate_commands(self):
         want = self.want or {}

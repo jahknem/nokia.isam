@@ -8,17 +8,24 @@ from copy import deepcopy
 
 from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import dict_merge
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import requested_sections
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.isam_equipment import (
+    EQUIPMENT_FLAG_FIELDS,
+    EQUIPMENT_SECTIONS,
+    EQUIPMENT_VALUE_FIELDS,
     Isam_equipmentTemplate,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import requested_sections
+
+# section -> {field: device default}; a requested default equals an absent value.
+_DEFAULTS = {}
+for _section, _field, _cli, _default in EQUIPMENT_VALUE_FIELDS:
+    _DEFAULTS.setdefault(EQUIPMENT_SECTIONS[_section], {})[_field] = _default
+_DEFAULTS.setdefault("shelves", {})["description"] = ""
 
 
-class Isam_equipment(ResourceModule):
+class Isam_equipment(IsamResourceModule):
     """The isam_equipment config class."""
 
     def __init__(self, module):
@@ -37,22 +44,30 @@ class Isam_equipment(ResourceModule):
                 "protection_group.admin_status",
                 "protection_group.eps_quenchfactor",
             ],
+            "diagnostics_sfp": ["diagnostics_sfp.rssi_prof_id", "diagnostics_sfp.rssi_state"],
+            "protection_elements": ["protection_element.redcy_ctrl_status"],
+            "racks": ["rack.description"],
+            "external_link_assigns": ["external_link_assign.remote"],
+            "external_link_hosts": ["external_link_host.direction"],
+        }
+        for _section, _field, _cli, _default in EQUIPMENT_VALUE_FIELDS:
+            self.parsers[EQUIPMENT_SECTIONS[_section]].append(_section + "." + _field)
+        for _section, _field, _cli in EQUIPMENT_FLAG_FIELDS:
+            self.parsers[EQUIPMENT_SECTIONS[_section]].append(_section + "." + _field)
+        self.parsers["shelves"].append("shelf.description")
+        self.singleton_parsers = {
+            "envbox": ["envbox.enable_supervise"],
+            "isam": ["isam.description"],
         }
         self.want = self._normalize_config(self.want)
         self.have = self._normalize_config(self.have)
         self.before = deepcopy(self.have)
 
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     def generate_commands(self):
         want = self.want or {}
         have = self.have or {}
+        # deleted with config acts on the named sections only (naming one applique must
+        # not unplan the shelf or the slots)
         requested = requested_sections(self._module) if self.state == "deleted" else set()
 
         for section, parsers in iteritems(self.parsers):
@@ -63,6 +78,9 @@ class Isam_equipment(ResourceModule):
 
             if self.state == "merged":
                 wantd = dict_merge(haved, wantd)
+            if section in _DEFAULTS:
+                wantd = dict((k, self._strip_defaults(section, v)) for k, v in iteritems(wantd))
+                haved = dict((k, self._strip_defaults(section, v)) for k, v in iteritems(haved))
 
             if self.state == "deleted":
                 haved = {k: v for k, v in iteritems(haved) if k in wantd or not wantd}
@@ -75,6 +93,25 @@ class Isam_equipment(ResourceModule):
 
             for key, entry in iteritems(wantd):
                 self._compare_planned(entry, haved.pop(key, {}), section, parsers)
+
+        for section, parsers in iteritems(self.singleton_parsers):
+            if requested and section not in requested:
+                continue
+            wantd = want.get(section) or {}
+            haved = have.get(section) or {}
+            if self.state == "merged":
+                wantd = dict_merge(haved, wantd)
+            if self.state == "deleted":
+                self._compare_entry({}, haved, parsers)
+            elif self.state == "overridden" and not wantd:
+                self._compare_entry({}, haved, parsers)
+            else:
+                self._compare_entry(wantd, haved, parsers)
+
+    @staticmethod
+    def _strip_defaults(section, entry):
+        defaults = _DEFAULTS[section]
+        return dict((k, v) for k, v in iteritems(entry) if k not in defaults or v != defaults[k])
 
     def _compare_entry(self, want, have, parsers):
         self.compare(parsers=parsers, want=want, have=have)

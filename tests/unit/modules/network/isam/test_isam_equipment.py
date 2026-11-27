@@ -150,14 +150,16 @@ class TestIsamEquipmentModule(TestIsamModule):
         output = (Path(__file__).parents[4] / "fixtures/equipment/slot-flat-detail/output.txt").read_text()
         set_module_args(dict(state="parsed", running_config=output), ignore_provider_arg)
         result = self.execute_module(changed=False)
-        self.assertEqual(result["parsed"], {"slots": [dict(id="lt:1/1/5", planned_type="fglt-b", unlock=True)]})
+        self.assertEqual(result["parsed"], {"slots": [dict(id="lt:1/1/5", planned_type="fglt-b", unlock=True,
+                                                             capab_profile="fttu_lt", operational_mode="gpon")]})
         self.get_config.assert_not_called()
 
     def test_isam_equipment_parsed_live_hierarchical_slot(self):
         output = (Path(__file__).parents[4] / "fixtures/equipment/slot-hierarchical-detail/output.txt").read_text()
         set_module_args(dict(state="parsed", running_config=output), ignore_provider_arg)
         result = self.execute_module(changed=False)
-        self.assertEqual(result["parsed"], {"slots": [dict(id="lt:1/1/5", planned_type="fglt-b", unlock=True)]})
+        self.assertEqual(result["parsed"], {"slots": [dict(id="lt:1/1/5", planned_type="fglt-b", unlock=True,
+                                                             capab_profile="fttu_lt", operational_mode="gpon")]})
         self.get_config.assert_not_called()
 
     def test_isam_equipment_compact_all_resource_types(self):
@@ -172,7 +174,7 @@ class TestIsamEquipmentModule(TestIsamModule):
         result = self.execute_module(changed=False)
         self.assertEqual(result["parsed"], {
             "shelves": [dict(id="1/1", planned_type="nfxs-b")],
-            "slots": [dict(id="lt:1/1/5", planned_type="fglt-b", unlock=False),
+            "slots": [dict(id="lt:1/1/5", planned_type="fglt-b", unlock=False, capab_profile="fttu_lt"),
                       dict(id="lt:1/1/6", planned_type="fglt-d", unlock=True)],
             "appliques": [dict(id="ntio-1", planned_type="ncnc-d")],
             "protection_groups": [dict(id=33, admin_status="lock", eps_quenchfactor=0)],
@@ -201,7 +203,7 @@ class TestIsamEquipmentModule(TestIsamModule):
             "configure equipment slot lt:1/1/5 planned-type fglt-b no unlock capab-profile unlock\n"
         )), ignore_provider_arg)
         self.assertEqual(self.execute_module(changed=False)["parsed"], {
-            "slots": [dict(id="lt:1/1/5", planned_type="fglt-b", unlock=False)],
+            "slots": [dict(id="lt:1/1/5", planned_type="fglt-b", unlock=False, capab_profile="unlock")],
         })
 
     def test_isam_equipment_scoped_header_and_unrelated_context(self):

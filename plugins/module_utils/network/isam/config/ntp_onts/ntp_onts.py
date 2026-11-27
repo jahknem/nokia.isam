@@ -14,9 +14,7 @@ The isam_ntp_onts config file.
 """
 
 from ansible.module_utils.six import iteritems
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_merge,
 )
@@ -32,7 +30,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 )
 
 
-class Ntp_onts(ResourceModule):
+class Ntp_onts(IsamResourceModule):
     """
     The isam_ntp_onts config class
     """
@@ -56,15 +54,6 @@ class Ntp_onts(ResourceModule):
             "ntp_ont.key",
         ]
 
-    def execute_module(self):
-        """Execute the module."""
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
-
     def generate_commands(self):
         """Generate configuration commands to send based on want, have and state."""
         wantd = self._index_by_ont_id(self.want)
@@ -74,14 +63,16 @@ class Ntp_onts(ResourceModule):
             wantd = dict_merge(haved, wantd)
 
         if self.state == "deleted":
-            # A whole entry (identity only, or every configured attribute) removes the
-            # NTP ONT object; otherwise only the named attributes are removed.
+            # The NTP ONT entry exists as long as its ONT, and "configure ntp no ont"
+            # is accepted but changes nothing (lab DS-LIN-TEST-01 2026-11-27: present
+            # before any write; after "no ont" still present with client-state on).
+            # Deleting resets the named attributes, every set one for a whole entry.
             for k, have in iteritems(haved):
                 if wantd and k not in wantd:
                     continue
                 want = wantd.get(k, {})
                 if covers_entry(want, have, ("ont_id",)):
-                    self.addcmd(have, "ntp_ont", negate=True)
+                    self._compare(want={}, have=have)
                 else:
                     named = {key: value for key, value in iteritems(have) if key == "ont_id" or want.get(key) is not None}
                     self._compare(want={}, have=named)
@@ -90,7 +81,7 @@ class Ntp_onts(ResourceModule):
         if self.state == "overridden":
             for k, have in iteritems(haved):
                 if k not in wantd:
-                    self.addcmd(have, "ntp_ont", negate=True)
+                    self._compare(want={}, have=have)
 
         for k, want in iteritems(wantd):
             have = haved.pop(k, {})

@@ -63,7 +63,8 @@ class TestIsamFactsModule(TestIsamModule):
         result = self.execute_module(changed=False)
         self.assertEqual(connection.commands, ["info configure equipment flat"])
         self.assertEqual(result["ansible_facts"]["ansible_network_resources"]["isam_equipment"], {
-            "slots": [dict(id="lt:1/1/5", planned_type="fglt-b", unlock=True)],
+            "slots": [dict(id="lt:1/1/5", planned_type="fglt-b", unlock=True,
+                           capab_profile="fttu_lt", operational_mode="gpon")],
         })
 
     def test_isam_facts_bridges_port_vlan(self):

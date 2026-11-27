@@ -121,3 +121,75 @@ Ethernet_ontsTemplate.PARSERS.extend(
         _value_parser("lpt_mode", "lpt-mode"),
     ]
 )
+
+
+# Sub-nodes of the UNI (CLI reference "ONT Ethernet Port Configuration"):
+#   configure ethernet ont (uni-idx) phy [ no pm | pm <enable|disable> ]
+#   configure ethernet ont (uni-idx) l2 [ no pm | pm <x> ] [ no tca | tca <x> ]
+#       [ no dropped-frames-up | dropped-frames-up <disable|0..4294967295> ] [ no dropped-frames-dn | ... ]
+#   configure ethernet ont (uni-idx) l2 pm-collect-ext [ no pm-collect | pm-collect <x> ]
+#       [ no p-bits | p-bits <int> ] [ no vlan-id | vlan-id <0..4092> ]
+#   configure ethernet ont (uni-idx) cfm [ [ no ] portshut-ais ]
+# (path, CLI node, field, CLI name, value regex, device default); defaults ('no <attr>') are not reported.
+ETHERNET_ONT_SUBNODE_VALUES = (
+    ("phy", "phy", "pm", "pm", r"\S+", "disable"),
+    ("l2", "l2", "pm", "pm", r"\S+", "disable"),
+    ("l2", "l2", "tca", "tca", r"\S+", "disable"),
+    ("l2", "l2", "dropped_frames_up", "dropped-frames-up", r"\S+", "disable"),
+    ("l2", "l2", "dropped_frames_dn", "dropped-frames-dn", r"\S+", "disable"),
+    ("l2.pm_collect_ext", "l2 pm-collect-ext", "pm_collect", "pm-collect", r"\S+", "disable"),
+    ("l2.pm_collect_ext", "l2 pm-collect-ext", "p_bits", "p-bits", r"\d+", 255),
+    ("l2.pm_collect_ext", "l2 pm-collect-ext", "vlan_id", "vlan-id", r"\d+", 0),
+)
+ETHERNET_ONT_SUBNODE_FLAGS = (
+    ("cfm", "cfm", "portshut_ais", "portshut-ais"),
+)
+
+
+def _nested(path, leaf):
+    """{'l2': {'pm_collect_ext': leaf}} for path 'l2.pm_collect_ext'."""
+    for key in reversed(path.split(".")):
+        leaf = {key: leaf}
+    return leaf
+
+
+def _subnode_value_parser(path, node, field, cli_name, value_re):
+    scope = "configure ethernet ont {{ uni_idx }} " + node + " "
+    result = {"uni_idx": "{{ uni_idx }}"}
+    result.update(_nested(path, {field: "{{ " + field + " }}"}))
+    return {
+        "name": "ont." + path + "." + field,
+        "compval": path + "." + field,
+        "getval": re.compile(
+            r"^configure\sethernet\sont\s(?P<uni_idx>\S+)\s" + r"\s".join(re.escape(part) for part in node.split())
+            + r"\s" + re.escape(cli_name) + r"\s(?P<" + field + r">" + value_re + r")$"
+        ),
+        "setval": scope + cli_name + " {{ " + path + "." + field + " }}",
+        "remval": scope + "no " + cli_name,
+        "result": {"{{ uni_idx }}": result},
+    }
+
+
+def _subnode_flag_parser(path, node, field, cli_name):
+    scope = "configure ethernet ont {{ uni_idx }} " + node + " "
+    result = {"uni_idx": "{{ uni_idx }}"}
+    result.update(_nested(path, {field: True}))
+    return {
+        "name": "ont." + path + "." + field,
+        "compval": path + "." + field,
+        "getval": re.compile(
+            r"^configure\sethernet\sont\s(?P<uni_idx>\S+)\s" + re.escape(node) + r"\s" + re.escape(cli_name) + r"$"
+        ),
+        "setval": scope + cli_name,
+        "remval": scope + "no " + cli_name,
+        "result": {"{{ uni_idx }}": result},
+    }
+
+
+Ethernet_ontsTemplate.PARSERS.extend(
+    _subnode_value_parser(path, node, field, cli, value_re)
+    for path, node, field, cli, value_re, _default in ETHERNET_ONT_SUBNODE_VALUES
+)
+Ethernet_ontsTemplate.PARSERS.extend(
+    _subnode_flag_parser(path, node, field, cli) for path, node, field, cli in ETHERNET_ONT_SUBNODE_FLAGS
+)

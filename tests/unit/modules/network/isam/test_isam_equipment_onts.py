@@ -148,6 +148,11 @@ class TestIsamEquipmentOntsModule(TestIsamModule):
         self.assertEqual(result["gathered"]["interfaces"][0]["sernum"], "ALCL:00000002")
 
     def test_isam_equipment_onts_deleted_preserves_interface_and_slot_siblings(self):
+        self.get_resource_connection.return_value.get.return_value = (
+            "configure equipment ont interface 1/1/5/1/1 admin-state down\n"
+            "configure equipment ont slot 1/1/5/1/1/1 admin-state down\n"
+            "configure equipment ont slot 1/1/5/1/1/2 admin-state down\n"
+        )
         self.get_config.return_value = dedent(
             """
             configure equipment
@@ -159,6 +164,8 @@ class TestIsamEquipmentOntsModule(TestIsamModule):
             slot 1/1/5/1/1/1 planned-card-type ethernet
             exit
             slot 1/1/5/1/1/2 planned-card-type ethernet
+            exit
+            slot 1/1/5/1/2/1 planned-card-type ethernet
             exit
             exit
             """
@@ -180,14 +187,21 @@ class TestIsamEquipmentOntsModule(TestIsamModule):
             [
                 "configure equipment ont interface 1/1/5/1/1 admin-state down",
                 "configure equipment ont slot 1/1/5/1/1/1 admin-state down",
+                # the removed ONT's unnamed slot goes too: the device refuses to
+                # delete an ONT that still has slots
+                "configure equipment ont slot 1/1/5/1/1/2 admin-state down",
                 "configure equipment ont no slot 1/1/5/1/1/1",
+                "configure equipment ont no slot 1/1/5/1/1/2",
                 "configure equipment ont no interface 1/1/5/1/1",
             ],
         )
+        # the sibling ONT and its slot are untouched
         self.assertFalse(any("1/1/5/1/2" in command for command in result["commands"]))
-        self.assertFalse(any("1/1/5/1/1/2" in command for command in result["commands"]))
 
     def test_isam_equipment_onts_deleted_brings_up_interface_delete_safely(self):
+        self.get_resource_connection.return_value.get.return_value = (
+            "configure equipment ont interface 1/1/5/1/100 admin-state down\n"
+        )
         self.get_config.return_value = dedent(
             """
             configure equipment

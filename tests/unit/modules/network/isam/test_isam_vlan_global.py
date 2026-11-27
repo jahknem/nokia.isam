@@ -110,12 +110,9 @@ class TestIsamVlanGlobalModule(TestIsamModule):
 
     def test_isam_vlan_global_parsed_capture_priority_regen_lines(self):
         """Every 'configure vlan priority-regen' line of the lab capture is parsed completely."""
-        capture = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..",
-                               "local_captures", "DS-LIN-TEST-01", "info_configure_flat.txt")
-        if not os.path.exists(capture):
-            self.skipTest("lab capture not available")
-        with open(capture) as handle:
-            lines = [line.rstrip() for line in handle if line.startswith("configure vlan priority-regen ")]
+        from . import lab_captures
+
+        lines = [line.rstrip() for line in lab_captures.configured().splitlines() if line.startswith("configure vlan priority-regen ")]
         self.assertTrue(lines)
         set_module_args(dict(state="parsed", running_config="\n".join(lines)), ignore_provider_arg)
         result = self.execute_module(changed=False)

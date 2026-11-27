@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-import shlex
+import re
 
 __metaclass__ = type
 
@@ -16,9 +16,21 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.equipment_onts.equipment_onts import (
     Equipment_ontsArgs,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
-    parse_cli_key_values,
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.equipment_onts import (
+    INTERFACE_SUBNODES,
+    LOOP_FIELDS,
+    PM_COLLECT_FIELDS,
+    SW_CTRL_EXTRA_FIELDS,
+    SW_CTRL_SUBNODES,
 )
+
+_TOKEN = re.compile(r'"[^"]*"|\S+')
+SECTIONS = ("interfaces", "slots", "sw_ctrls", "loops", "pm_collects")
+
+
+def _cli_fields(names, defaults=None):
+    """{CLI attribute: (field, default or None)} for names given as CLI attributes."""
+    return dict((name, (name.replace("-", "_"), (defaults or {}).get(name))) for name in names)
 
 
 class Equipment_ontsFacts(object):
@@ -35,6 +47,8 @@ class Equipment_ontsFacts(object):
                 "interfaces": "info configure equipment ont interface %s flat detail",
                 "slots": "info configure equipment ont slot %s flat detail",
                 "sw_ctrls": "info configure equipment ont sw-ctrl %s flat",
+                "loops": "info configure equipment ont loop %s flat",
+                "pm_collects": "info configure equipment ont pm-collect %s flat",
             })
         config = self._module.params.get("config") or {}
         commands = []
@@ -46,8 +60,9 @@ class Equipment_ontsFacts(object):
             commands.append(
                 "info configure equipment ont slot %s flat detail" % item["ont_slot_idx"]
             )
-        # Software-control entries are not scoped by an ONT identity.
-        if config.get("sw_ctrls"):
+        # Software-control entries are not scoped by an ONT identity; loop and
+        # pm-collect entries are only read per instance with state gathered.
+        if config.get("sw_ctrls") or config.get("loops") or config.get("pm_collects"):
             commands = []
         return get_scoped_config(
             self._module,
@@ -73,96 +88,10 @@ class Equipment_ontsFacts(object):
         ansible_facts["ansible_network_resources"].update(facts)
         return ansible_facts
 
-    def _parse_config(self, config):
-        result = {"interfaces": [], "slots": [], "sw_ctrls": []}
-        current = None
-        current_type = None
-
-        if not config:
-            return result
-
-        lines = [line.strip() for line in str(config).splitlines() if line.strip()]
-        if any(line.startswith("configure equipment ont ") for line in lines):
-            expanded = []
-            for line in lines:
-                if line.startswith("configure equipment ont "):
-                    expanded.extend(self._split_interface_line(line.replace("configure equipment ont ", "", 1)))
-            config = "\n".join(expanded)
-
-        for raw_line in config.splitlines():
-            line = raw_line.strip()
-            if not line or line.startswith("#") or line.startswith("echo"):
-                continue
-            if line in ("configure equipment", "ont"):
-                continue
-            if line == "exit":
-                if current is not None:
-                    result[current_type].append(current)
-                    current = None
-                    current_type = None
-                continue
-
-            parts = line.split()
-            if parts[0] == "interface" and len(parts) >= 2:
-                if (
-                    current_type == "interfaces"
-                    and current is not None
-                    and current.get("ont_idx") == parts[1]
-                ):
-                    if parts[2:] and not any(word in self._INTERFACE_WORDS for word in parts[2:]):
-                        continue
-                    self._set_pairs(current, parts[2:])
-                    continue
-                if current is not None:
-                    result[current_type].append(current)
-                current_type = "interfaces"
-                current = {"ont_idx": parts[1]}
-                self._set_pairs(current, parts[2:])
-            elif parts[0] == "slot" and len(parts) >= 2:
-                if (
-                    current_type == "slots"
-                    and current is not None
-                    and current.get("ont_slot_idx") == parts[1]
-                ):
-                    if parts[2:] and not any(word in self._SLOT_WORDS for word in parts[2:]):
-                        continue
-                    self._set_pairs(current, parts[2:])
-                    continue
-                if current is not None:
-                    result[current_type].append(current)
-                current_type = "slots"
-                current = {"ont_slot_idx": parts[1]}
-                self._set_pairs(current, parts[2:])
-            elif parts[0] == "sw-ctrl" and len(parts) >= 2:
-                if (
-                    current_type == "sw_ctrls"
-                    and current is not None
-                    and current.get("sw_ctrl_id") == int(parts[1])
-                ):
-                    self._set_pairs(current, parts[2:])
-                    continue
-                if current is not None:
-                    result[current_type].append(current)
-                current_type = "sw_ctrls"
-                current = {"sw_ctrl_id": int(parts[1])}
-                self._set_pairs(current, parts[2:])
-            elif current is not None:
-                words = (
-                    self._INTERFACE_WORDS
-                    if current_type == "interfaces"
-                    else self._SLOT_WORDS
-                    if current_type == "slots"
-                    else self._SW_CTRL_WORDS
-                )
-                if any(word in words for word in parts):
-                    self._set_pairs(current, parts)
-
-        if current is not None:
-            result[current_type].append(current)
-
-        return result
-
-    _INTERFACE_WORDS = {
+    # Node schema: kind -> (section, identity field, int identity, {CLI attr: (field, default)},
+    # {sub-node CLI token: (key, {CLI attr: (field, default)})}). A field at its default
+    # (non-None) is not reported; tokens that are no known attribute are dropped.
+    _INTERFACE_WORDS = (
         "sw-ver-pland", "battery-bkup", "berint", "desc1", "desc2", "provversion",
         "sernum", "subslocid", "fec-up", "bridge-map-mode", "pwr-shed-prof-id",
         "ont-enable", "p2p-enable", "optics-hist", "sw-dnload-version", "plnd-var",
@@ -172,46 +101,127 @@ class Equipment_ontsFacts(object):
         "us-tcpolice-mode", "planned-us-rate", "oltdscppbitalign", "ratelimit-us-dhcp",
         "ratelimit-us-arp", "flush-mac", "template-name", "evtocd", "vtfd",
         "slid-visibility", "pwr-shed-prof-name", "admin-state",
-    }
-    _SLOT_WORDS = {
+    )
+    _SLOT_WORDS = (
         "planned-card-type", "plndnumdataports", "plndnumvoiceports",
         "port-type", "transp-mode-rem", "no-mcast-control", "admin-state",
-    }
-    _SW_CTRL_WORDS = {
+    )
+    _SW_CTRL_WORDS = (
         "hw-version", "ont-variant", "plnd-sw-version", "plnd-sw-ver-conf",
         "sw-dwload-ver",
-    }
+    ) + tuple(cli for _field, cli in SW_CTRL_EXTRA_FIELDS)
+    _INT_FIELDS = ("plndnumdataports", "plndnumvoiceports")
 
-    def _split_interface_line(self, line):
-        tokens = shlex.split(line)
-        if len(tokens) < 4 or tokens[0] != "interface":
-            return [line]
-        starts = [
-            index for index, token in enumerate(tokens[2:], 2)
-            if (token in self._INTERFACE_WORDS and (index == 2 or tokens[index - 1] != "no"))
-            or (token == "no" and index + 1 < len(tokens) and tokens[index + 1] in self._INTERFACE_WORDS)
-        ]
-        if not starts:
-            return [line]
-        prefix = " ".join(tokens[:2])
-        segments = [
-            " ".join(tokens[start:end])
-            for start, end in zip(starts, starts[1:] + [len(tokens)])
-        ]
-        return [prefix + " " + segments[0]] + segments[1:]
-
-    def _set_pairs(self, item, parts):
-        if len(parts) >= 2 and parts[0] == "no" and (
-            parts[1] in self._INTERFACE_WORDS or parts[1] in self._SLOT_WORDS
-        ):
-            # An absent optional value must remain absent.  Passing None into
-            # Ansible choice validation is invalid for fields such as
-            # bridge-map-mode and admin-state.
-            return
-        item.update(
-            parse_cli_key_values(
-                parts,
-                int_fields=("plndnumdataports", "plndnumvoiceports"),
-                bare_keys_as_true=True,
-            )
+    @staticmethod
+    def _subs(subnodes):
+        return dict(
+            (cli, (key, dict((attr, (field, None)) for field, attr in fields)))
+            for key, cli, fields in subnodes
         )
+
+    @classmethod
+    def _nodes(cls):
+        return {
+            "interface": ("interfaces", "ont_idx", False, _cli_fields(cls._INTERFACE_WORDS), cls._subs(INTERFACE_SUBNODES)),
+            "slot": ("slots", "ont_slot_idx", False, _cli_fields(cls._SLOT_WORDS), {}),
+            "sw-ctrl": ("sw_ctrls", "sw_ctrl_id", True, _cli_fields(cls._SW_CTRL_WORDS), cls._subs(SW_CTRL_SUBNODES)),
+            "loop": ("loops", "ont_idx", False, dict((cli, (field, default)) for field, cli, default in LOOP_FIELDS), {}),
+            "pm-collect": ("pm_collects", "ont_idx", False, dict((cli, (field, default)) for field, cli, default in PM_COLLECT_FIELDS), {}),
+        }
+
+    def _parse_config(self, config):
+        """Parse flat (``configure equipment ont <node> <id> ...``) or block output.
+
+        Never fails on unknown keywords: tokens that are no modelled attribute are
+        dropped (and recorded in self.unknown for diagnostics).
+        """
+        self.unknown = []
+        nodes = self._nodes()
+        entries = dict((section, {}) for section in SECTIONS)
+
+        if not config:
+            return dict((section, []) for section in SECTIONS)
+
+        lines = [line.strip() for line in str(config).splitlines() if line.strip()]
+        flat = any(line.startswith("configure equipment ont ") for line in lines)
+        current = None  # (kind, identity) of the open block entry
+        sub = None  # sub-node CLI token opened on its own block line
+        for line in lines:
+            if line.startswith("#") or line.startswith("echo"):
+                continue
+            if flat:
+                if not line.startswith("configure equipment ont "):
+                    continue
+                tokens = _TOKEN.findall(line[len("configure equipment ont "):])
+                if len(tokens) >= 2 and tokens[0] in nodes:
+                    self._apply(nodes, entries, tokens[0], tokens[1], tokens[2:], line)
+                elif tokens:
+                    self.unknown.append((line, tokens[0]))
+                continue
+            if line in ("configure equipment", "ont", "configure equipment ont"):
+                continue
+            if line == "exit":
+                if sub is not None:
+                    sub = None
+                else:
+                    current = None
+                continue
+            tokens = _TOKEN.findall(line)
+            if len(tokens) >= 2 and tokens[0] in nodes:
+                current, sub = (tokens[0], tokens[1]), None
+                self._apply(nodes, entries, tokens[0], tokens[1], tokens[2:], line)
+            elif current is not None:
+                kind, identity = current
+                subs = nodes[kind][4]
+                if tokens[0] in subs and len(tokens) == 1:
+                    sub = tokens[0]
+                    continue
+                rest = [sub] + tokens if sub is not None and tokens[0] not in subs else tokens
+                self._apply(nodes, entries, kind, identity, rest, line)
+            else:
+                self.unknown.append((line, tokens[0]))
+
+        return dict((section, list(entries[section].values())) for section in SECTIONS)
+
+    def _apply(self, nodes, entries, kind, identity, tokens, line):
+        section, key, int_identity, fields, subs = nodes[kind]
+        if int_identity:
+            try:
+                identity = int(identity)
+            except ValueError:
+                self.unknown.append((line, identity))
+                return
+        entry = entries[section].setdefault(identity, {key: identity})
+        target = entry
+        if tokens and tokens[0] in subs:
+            sub_key, fields = subs[tokens[0]]
+            target = entry.setdefault(sub_key, {})
+            tokens = tokens[1:]
+        index = 0
+        while index < len(tokens):
+            negate = tokens[index] == "no"
+            key_index = index + 1 if negate else index
+            spec = fields.get(tokens[key_index]) if key_index < len(tokens) else None
+            if spec is None:
+                self.unknown.append((line, tokens[index]))
+                index += 1
+                continue
+            field, default = spec
+            if negate:
+                target.pop(field, None)
+                index = key_index + 1
+                continue
+            if key_index + 1 >= len(tokens):
+                self.unknown.append((line, tokens[key_index]))
+                break
+            value = tokens[key_index + 1].strip('"')
+            if field in self._INT_FIELDS:
+                try:
+                    value = int(value)
+                except ValueError:
+                    pass
+            if default is not None and value == default:
+                target.pop(field, None)
+            else:
+                target[field] = value
+            index = key_index + 2

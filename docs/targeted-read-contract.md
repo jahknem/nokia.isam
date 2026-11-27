@@ -55,11 +55,10 @@ No section broke the rule.
 
 | Policy | Meaning | Sections |
 | --- | --- | --- |
-| `silent` | a switch without attributes: present prints nothing, also with `detail`; only `instance does not exist` proves absence, so the header means present | `isam_arp_relay.config` |
+| `silent` | a switch without attributes: present prints nothing, also with `detail`; only `instance does not exist` proves absence, so the header means present | `isam_arp_relay.config`, `trouble_shooting_pon.interfaces` |
 | `unobservable` | every read answers the same whether the setting is on or off: never present or absent | `isam_dhcp_relay.config` |
 
-Family branches add their sections to the same table (e.g. ONT:
-`trouble_shooting_pon.interfaces`, `silent`). Each entry needs live evidence of
+Family branches add their sections to the same table. Each entry needs live evidence of
 both states; an entry is never inferred from one capture.
 
 `empty_absent_sections` remains for families whose read never needs the detail

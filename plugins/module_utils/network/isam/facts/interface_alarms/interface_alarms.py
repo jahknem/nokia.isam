@@ -10,6 +10,9 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common i
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.interface_alarms.interface_alarms import (
     Interface_alarmsArgs,
 )
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    get_whole_node_targeted,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.interface_alarms import (
     Interface_alarmsTemplate,
 )
@@ -23,29 +26,42 @@ class Interface_alarmsFacts(object):
         self.argument_spec = Interface_alarmsArgs.argument_spec
 
     def get_config(self, connection):
-        """The whole resource, or only the alarms named in config (targeted gathering).
+        """The whole node, read once; per-instance outcomes for a targeted request.
 
-        Same output format (not flat) as the whole-resource read.
+        The device has no single-instance read here: it only answers the whole
+        node, with flat 'configure interface alarm <name> ...' lines (or a
+        'configure interface' header + 'alarm <name>' blocks). An explicit
+        targeted request (state gathered, config names alarms) reads the node
+        once and reports per-instance read_outcomes from the parsed catalog
+        (get_whole_node_targeted): present when the catalog lists the alarm,
+        unknown when it does not. The gathered string stays the full catalog,
+        unfiltered.
         """
-        # The device has no single-instance read here: it always answers the whole
-        # node, with a 'configure interface' header and 'alarm <name>' blocks.
-        return connection.get("info configure interface alarm")
+        return get_whole_node_targeted(
+            self._module, connection, "interface_alarms", "info configure interface alarm",
+            ("config",), lambda data: self._parse_catalog(data)[0],
+        )
 
     @staticmethod
     def _canonicalize_entry(item):
         return dict(item)
+
+    def _parse_catalog(self, data):
+        """The parsed full catalog: (one entry per configured alarm, its parser)."""
+        if isinstance(data, tuple):
+            data = data[0]
+        lines = self._flatten_config(data)
+        parser = Interface_alarmsTemplate(lines=lines, module=self._module)
+        entries = [self._canonicalize_entry(item) for item in parser.parse().values()]
+        return entries, parser
 
     def populate_facts(self, connection, ansible_facts, data=None):
         facts = {}
 
         if not data:
             data = self.get_config(connection)
-        if isinstance(data, tuple):
-            data = data[0]
 
-        data = self._flatten_config(data)
-        parser = Interface_alarmsTemplate(lines=data, module=self._module)
-        objs = [self._canonicalize_entry(item) for item in parser.parse().values()]
+        objs, parser = self._parse_catalog(data)
 
         ansible_facts["ansible_network_resources"].pop("interface_alarms", None)
         params = utils.remove_empties(

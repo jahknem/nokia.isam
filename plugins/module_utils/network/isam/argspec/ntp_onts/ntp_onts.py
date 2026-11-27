@@ -27,7 +27,7 @@ class Ntp_ontsArgs(object):  # pylint: disable=R0903
                 "server2_ip_addr": {"type": "str"},
                 "server3_ip_addr": {"type": "str"},
                 "oper_mode": {"type": "str", "choices": ["unicast", "multicast", "broadcast"]},
-                "key_identifier": {"type": "int"},
+                "key_identifier": {"type": "int", "no_log": False},  # an index, not a secret
                 "key": {"type": "str", "no_log": True},
             },
         },

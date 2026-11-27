@@ -44,8 +44,10 @@ CONFIGS = {
         "configure qos interface %s upstream-queue 1 weight 6 bandwidth-profile name:Sibling" % UNI,
         "configure qos interface %s ds-rem-queue 0 priority 6 weight 34" % UNI,
     ]),
-    "ntp_onts": "configure ntp ont %s" % ONT,
-    "ani_onts": "configure ani ont tca-thresh %s" % ONT,
+    # Lives as long as its ONT, "configure ntp no ont" changes nothing: deleting resets.
+    "ntp_onts": "configure ntp ont %s client-state on" % ONT,
+    # The entry lives as long as its ONT: deleting resets a set threshold.
+    "ani_onts": "configure ani ont tca-thresh %s lower-optical-th -28" % ONT,
 }
 
 
@@ -143,7 +145,9 @@ def test_gathered_full_entry_is_idempotent_and_can_be_deleted(monkeypatch, famil
     elif family == "bridges":
         assert deleted["commands"] == ["configure bridge no port %s" % UNI]
     elif family == "ntp_onts":
-        assert deleted["commands"] == ["configure ntp no ont %s" % ONT]
+        assert deleted["commands"] == ["configure ntp ont %s no client-state" % ONT]
+    elif family == "ani_onts":
+        assert deleted["commands"] == ["configure ani ont tca-thresh %s no lower-optical-th" % ONT]
     elif family == "qos_interfaces":
         commands = deleted["commands"]
         # a UNI with queues keeps its scheduler node (the device refuses to remove it)
@@ -210,9 +214,15 @@ def test_masked_password_is_not_copied_but_an_explicit_password_is_rendered(monk
 
 
 def test_ntp_full_entry_and_partial_delete(monkeypatch):
-    running = CONFIGS["ntp_onts"] + " client-state on config-mode manual server1-ip-addr 192.0.2.1"
+    running = "configure ntp ont %s client-state on config-mode manual server1-ip-addr 192.0.2.1" % ONT
     data = selected(call_module(monkeypatch, "ntp_onts", running=running)["gathered"])
-    assert call_module(monkeypatch, "ntp_onts", data, "deleted", running)["commands"] == ["configure ntp no ont %s" % ONT]
+    assert call_module(monkeypatch, "ntp_onts", data, "deleted", running)["commands"] == [
+        "configure ntp ont %s no client-state" % ONT,
+        "configure ntp ont %s no config-mode" % ONT,
+        "configure ntp ont %s no server1-ip-addr" % ONT,
+    ]
+    # An entry at its defaults: nothing to delete.
+    assert call_module(monkeypatch, "ntp_onts", [{"ont_id": ONT}], "deleted", "configure ntp ont %s" % ONT)["commands"] == []
     result = call_module(monkeypatch, "ntp_onts", [{"ont_id": ONT, "client_state": "on"}], "deleted", running)
     assert result["commands"] == ["configure ntp ont %s no client-state" % ONT]
 
