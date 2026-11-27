@@ -34,6 +34,10 @@ explicit `False` in `rendered`, and packing commands per node
 | `rendered` | Renders exactly what is given, an explicit `False` as its `no` form. No device. |
 | `parsed`, `gathered` | Facts; unset/default values are not reported. |
 
+Exception: `isam_system_security` overrides only the list types and settings blocks named
+in `config` (a whole-resource override of a request naming one block would remove every
+operator, SNMP community and RADIUS server and can lock out device access).
+
 An action state (`merged`/`replaced`/`overridden`/`deleted`) given `running_config`
 renders against that configuration as the current state instead of reading the device,
 and never sends commands. `running_config` is the canonical resource JSON (as `gathered`

@@ -427,10 +427,9 @@
   "isam_security_ext_authenticator": {
    "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
    "options": {
-    "config": "67870dd8658198eb46e3eb358b5728109a77921b8bc175391535b7a4db4bf6df",
-    "provider": "7b870453fcf031bc004c5b9b4178a8794582a9776f85e8c9ba7649d9d3ea4631"
+    "config": "67870dd8658198eb46e3eb358b5728109a77921b8bc175391535b7a4db4bf6df"
    },
-   "sha256": "e9e57e08bbb44c3900783a03732921396a5a9143d52ffe0ca0ad4640039f5ba1"
+   "sha256": "90586e46c8891037dc623d6b431b438f4e942c34f67707fb79ea32c815d94cd2"
   },
   "isam_software_mngt": {
    "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
@@ -449,6 +448,15 @@
     "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
    },
    "sha256": "f60d0ce0865efc48784f9b5f6ddbadf315dcc373df84672c718dd5da4a8e049b"
+  },
+  "isam_system_security": {
+   "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
+   "options": {
+    "config": "4106c657093e783d472dd15cc3a3dca70384908959ef2ab1ded3cbe84c0bf475",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "1396082bbf58385389d917fe8a73ed057e40c8f3ffd29b5a62a64a828d2f16ce"
   },
   "isam_traps": {
    "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
@@ -602,6 +610,7 @@
   "isam_security_ext_authenticator",
   "isam_software_mngt",
   "isam_system",
+  "isam_system_security",
   "isam_traps",
   "isam_trouble_shooting_pon",
   "isam_uni_onts",

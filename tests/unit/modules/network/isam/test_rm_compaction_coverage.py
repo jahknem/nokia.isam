@@ -51,6 +51,7 @@ UNSCOPED_RMS = {
     "Isam_equipment": "different hardware object scopes",
     "Isam_ipv6_antispoofing_slot": "single field per slot",
     "Isam_system": "separate system subcommands",
+    "Isam_system_security": "custom renderer emits one command per security object",
     "Isam_vlan_global": "global singleton/list scopes already atomic",
     "L2cp": "custom atomic renderer",
     "L2cpSession": "distinct session operations",

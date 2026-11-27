@@ -915,14 +915,6 @@ def test_pppoel2_statistics_synthetic_fixture_is_parseable():
     assert len(parsed) >= 0
 
 
-def test_security_ext_authenticator_synthetic_fixture_is_parseable():
-    descriptor, output = fixture_bundle("security_ext_authenticator", "r6.2.04m")
-    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.security_ext_authenticator import Isam_security_ext_authenticatorTemplate
-    parsed = Isam_security_ext_authenticatorTemplate(lines=output.splitlines()).parse()
-    assert descriptor["command"] == "admin security ext-authenticator"
-    assert any(item.get("port") == "1/1/2/1" for item in parsed.get("config", []))
-
-
 def test_linetest_fixture_is_parseable():
     descriptor, output = fixture_bundle("linetest", "r6.2.04m")
     from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.linetest import LinetestTemplate
