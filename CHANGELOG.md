@@ -91,6 +91,21 @@ interfaces and documentation").
 - `isam_security_ext_authenticator`: the undocumented, unused `provider` option is
   removed.
 
+### Review follow-ups
+
+- `isam_software_mngt`: an OSWP slot (1 or 2) is never removed (`no oswp N` is
+  not a device form); its resettable attributes (`activate`, `auto-verify`,
+  `on-schedule-time`) return to their defaults instead. `admin-state` changes
+  only when named; `activate` and `auto-verify enabled` are never sent unless
+  named.
+- `isam_linetest`: `overridden` fails before any command when it would write a
+  parameter to a session it destroys.
+- Settings blocks (`isam_pppox_relay_global`, `isam_nat`, `isam_error`,
+  `isam_cwmp_plt`, `isam_pon_global`): `deleted` with config resets only the
+  named attributes.
+- `isam_xdsl_lines`, `isam_ethernet_line`: the docs warn that `overridden` and an
+  identity-only `deleted` send `no admin-up` (the line goes down).
+
 ## 1.0.0 (unreleased)
 
 Major-version preparation, not a published release. Schema changes are
