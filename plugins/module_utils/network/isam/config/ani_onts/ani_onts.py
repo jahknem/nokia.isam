@@ -52,5 +52,34 @@ class Ani_onts(IsamResourceModule):
                     self.commands.append("configure ani ont no tca-thresh %s" % have["ont_idx"])
 
         for key, want in iteritems(wantd):
-            have = haved.get(key, {})
-            self.compare(parsers=self.parsers, want=want, have=have)
+            self._compare_entry(want, haved.get(key, {}))
+
+    # The thresholds of one tca-thresh entry (the parser covers the whole line, so
+    # the base compare, keyed on tca_thresh, never saw a changed threshold: lab
+    # DS-LIN-TEST-01 2026-11-27, merged lower_optical_th on an existing entry sent
+    # nothing). "no <attr>" is the device's own form for the default (detail read).
+    THRESHOLDS = (("lower_optical_th", "lower-optical-th"), ("upper_optical_th", "upper-optical-th"),
+                  ("rssi_profile", "rssi-profile"))
+
+    @staticmethod
+    def _same(want, have):
+        try:
+            return float(want) == float(have)
+        except (TypeError, ValueError):
+            return str(want) == str(have)
+
+    def _compare_entry(self, want, have):
+        ont = want["ont_idx"]
+        if want.get("tca_thresh") is False:
+            if have:
+                self.commands.append("configure ani ont no tca-thresh %s" % ont)
+            return
+        parts = []
+        for field, cli in self.THRESHOLDS:
+            wanted, current = want.get(field), have.get(field)
+            if wanted is not None and (current is None or not self._same(wanted, current)):
+                parts.append("%s %s" % (cli, wanted))
+            elif wanted is None and current is not None and self.state in ("replaced", "overridden"):
+                parts.append("no %s" % cli)
+        if parts or not have:
+            self.commands.append(" ".join(["configure ani ont tca-thresh %s" % ont] + parts))
