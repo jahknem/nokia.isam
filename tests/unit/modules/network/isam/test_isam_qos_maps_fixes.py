@@ -38,3 +38,10 @@ def test_capture_ctrl_pkt_lines_all_parse():
              if l.startswith(("configure qos up-ctrl-pkt ", "configure qos dn-ctrl-pkt "))]
     got = Qos_mapsTemplate(lines=lines, module=None).parse()
     assert len(got["up_ctrl_pkt"]) + len(got["dn_ctrl_pkt"]) == len(lines)
+
+
+def test_negative_ctrl_pkt_values_keep_the_entry():
+    # Review of #19: '-1' (the dscp/tc default the CLI help names) did not match the
+    # parser, so the whole entry dropped out of the current state.
+    got = Qos_mapsTemplate(lines=["configure qos up-ctrl-pkt igmp dscp -1 pbit 7 tc -1"], module=None).parse()
+    assert [entry["protocol"] for entry in got["up_ctrl_pkt"]] == ["igmp"], got

@@ -101,3 +101,25 @@ class TestIsamSystemSecurityReferences(TestIsamModule):
         result = self._run({"radius_policies": [RADPOL, SPARE],
                             "domains": [{"name": "Dom1", "authenticator": "radius:Spare"}]}, failed=True)
         assert "DomPol (domain Dom1)" in result["msg"]
+
+
+    def test_an_accounting_server_reference_does_not_block_an_auth_server_removal(self):
+        # Review of #19: acc_server names a radius acc-server, a different object than
+        # the auth servers this module manages; an auth server of the same name may go.
+        device = "\n".join([
+            _SEC + "radius auth-server RADAuthServ1 router-instance base ip-address 192.0.2.1 secret encrypted:aa:bb",
+            _SEC + "radius auth-server RADAuthServ3 router-instance base ip-address 192.0.2.3 secret encrypted:ee:ff",
+            _SEC + "radius policy AccPol servers 1 acc-server name:RADAuthServ3 acc-router-inst base",
+        ]) + "\n"
+
+        class Conn:
+            def get(self, cmd):
+                return device
+        with patch("ansible_collections.ansible.netcommon.plugins.module_utils.network.common.facts.facts."
+                   "get_resource_connection") as conn:
+            conn.return_value = Conn()
+            # name a different server, so the auth-server list is overridden
+            set_module_args(dict(state="overridden", config={"radius_auth_servers": [_server(1)]}),
+                            ignore_provider_arg)
+            result = self.execute_module(changed=True)
+        assert "configure system security radius no auth-server RADAuthServ3" in result["commands"], result["commands"]

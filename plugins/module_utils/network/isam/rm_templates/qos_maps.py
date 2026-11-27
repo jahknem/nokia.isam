@@ -85,8 +85,8 @@ class Qos_mapsTemplate(NetworkTemplate):
 
         tc_re = re.compile(r"^tc-map-dot1p\s+(?P<dot1p>\d+)\s+tc\s+(?P<tc>\d+)(?:\s+dpcolor\s+(?P<dpcolor>\S+))?(?:\s+policer-color\s+(?P<policer_color>\S+))?\s*$")
         dscp_re = re.compile(r"^dscp-map-dot1p\s+(?P<dscp>\S+)\s+(?:dot1p|dot1p-value)\s+(?P<dot1p>\d+)\s*$")
-        up_ctrl_re = re.compile(r"^up-ctrl-pkt\s+(?P<protocol>\S+)(?:\s+dscp\s+(?P<dscp>\d+))?(?:\s+pbit\s+(?P<pbit>\d+))?(?:\s+tc\s+(?P<tc>\d+))?\s*$")
-        dn_ctrl_re = re.compile(r"^dn-ctrl-pkt\s+(?P<protocol>\S+)(?:\s+dscp\s+(?P<dscp>\d+))?(?:\s+pbit\s+(?P<pbit>\d+))?(?:\s+tc\s+(?P<tc>\d+))?\s*$")
+        up_ctrl_re = re.compile(r"^up-ctrl-pkt\s+(?P<protocol>\S+)(?:\s+dscp\s+(?P<dscp>-?\d+))?(?:\s+pbit\s+(?P<pbit>-?\d+))?(?:\s+tc\s+(?P<tc>-?\d+))?\s*$")
+        dn_ctrl_re = re.compile(r"^dn-ctrl-pkt\s+(?P<protocol>\S+)(?:\s+dscp\s+(?P<dscp>-?\d+))?(?:\s+pbit\s+(?P<pbit>-?\d+))?(?:\s+tc\s+(?P<tc>-?\d+))?\s*$")
 
         for raw_line in self._lines:
             stripped = raw_line.strip()

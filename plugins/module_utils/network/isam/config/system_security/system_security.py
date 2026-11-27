@@ -382,8 +382,9 @@ class Isam_system_security(IsamResourceModule):
             for name, current, wanted in self._kept("radius_policies", want, have):
                 for entry in (current, normalize_policy(wanted)):
                     for server in (entry or {}).get("servers") or []:
-                        for field in ("auth_server", "acc_server"):
-                            refs.append((_reference(server.get(field), "name:"), "policy %s" % name))
+                        # acc_server names an accounting server (radius acc-server), a
+                        # different object this module does not manage: no reference here.
+                        refs.append((_reference(server.get("auth_server"), "name:"), "policy %s" % name))
         else:
             for value in (_get(have, "radius_auth_super_user.operator_policy"),
                           _get(want, "radius_auth_super_user.operator_policy")):

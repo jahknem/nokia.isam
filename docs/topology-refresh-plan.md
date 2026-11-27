@@ -53,7 +53,7 @@ local paths before the first push (AGENTS.md, "Sanitization").
    `collected_since`) when it attaches discovery.
 6. **Card rules as data, one structure per kind.** Consolidate the keys in `cards.py`;
    move `_ALIASES` (prefixes such as `pon:`, `ont:`, `uni:`, `vlan:`) into the object
-   model. Fleet evidence for the rules: survey of 107 MSANs, 2026-11-26.
+   model. Fleet evidence for the rules: read-only fleet survey, 2026-11-26.
 7. **Relations and module semantics must agree.** The relations knew on 2026-11-25 that
    the ANI and NTP entries are created with the ONT, but the modules still sent
    `no tca-thresh` / `configure ntp no ont` (no effect on the device) until 2026-11-27. Add

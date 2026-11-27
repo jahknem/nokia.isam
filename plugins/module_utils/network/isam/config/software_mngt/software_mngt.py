@@ -42,7 +42,23 @@ class Software_mngt(TableResourceModule):
     # operational switch); it changes only when named.
     _IMPLICIT_RESET_SKIP = ("admin_state",)
 
+    def _keep_omitted(self, node, want, have):
+        """replaced/overridden: a named OSWP keeps the device's admin-state when the
+        request omits it (review of #19: it was reset with 'no admin-state')."""
+        haved = dict((str(entry[node.identity]), entry) for entry in have)
+        kept = []
+        for entry in want:
+            current = haved.get(str(entry[node.identity]), {})
+            entry = dict(entry)
+            for key in self._IMPLICIT_RESET_SKIP:
+                if entry.get(key) is None and current.get(key) is not None:
+                    entry[key] = current[key]
+            kept.append(entry)
+        return kept
+
     def _compare_instances(self, node, want, have):
+        if node.key == "oswp" and self.state in ("replaced", "overridden"):
+            want = self._keep_omitted(node, want, have)
         if node.key != "oswp" or self.state not in ("deleted", "overridden"):
             return super(Software_mngt, self)._compare_instances(node, want, have)
         ident = node.identity

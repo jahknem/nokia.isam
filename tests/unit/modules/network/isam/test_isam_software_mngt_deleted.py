@@ -68,3 +68,11 @@ def test_overridden_named_oswp_never_activates_unless_named():
     commands, _warnings = _run("overridden", {"oswp": [{"id": "2", "primary_file_server_id": "e"}]})
     _no_removal_or_activation(commands)
     assert "configure software-mngt oswp 2 primary-file-server-id e" in commands
+
+
+def test_replaced_and_overridden_keep_an_omitted_admin_state():
+    # Review of #19: a named OSWP without admin_state got 'no admin-state'.
+    for state in ("replaced", "overridden"):
+        commands, _warnings = _run(state, {"oswp": [{"id": "2", "primary_file_server_id": "c",
+                                                      "second_file_server_id": "d"}]})
+        assert not [c for c in commands if "admin-state" in c], (state, commands)
