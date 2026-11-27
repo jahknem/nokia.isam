@@ -75,9 +75,11 @@ local paths before the first push (AGENTS.md, "Sanitization").
   UNIs of an ONT slot, the xDSL lines of a card, the bridge ports of a line, the VLAN
   ports of a bridge port). An adapter per (parent kind, child kind) names the source
   (an operational table such as `show interface port` / `show interface stack`, or a
-  configuration family read) and its read scope (`device`, `family`, `instance`). Only an
+  configuration family read) and its read scope (`device`, `family` or `scoped`, as
+  `discovery.result()` accepts; every current adapter is `device` or `family`). Only an
   `ok` result -- source understood completely, footer count and terminator confirmed --
-  may say "exactly these children"; a failed or partial read never means "none".
+  may say "exactly these children"; a failed (`error`/`unsupported`) or not completely
+  understood source never means "none".
   Results carry their collection time, so stale evidence is not used.
 - **Configuration read**: what is configured on a known object, one outcome per
   (object, section): present, confirmed absent, or a gap with a reason.
@@ -120,7 +122,9 @@ Conclusions:
    NDLT-F card (~820 s). Read it once and enumerate both child kinds for every parent
    from it; likewise `show interface port` (xDSL lines and bonding groups share it).
    Expected: discovery from ~850 s to ~10–20 s. A source result carries its collection
-   time; reuse it within the run's freshness window only.
+   time; reuse it within the run's freshness window only. The planner must pass a window
+   that covers the whole run (`max_age_seconds` defaults to 300 s; today's card run took
+   ~1100 s), otherwise later rounds count as `discovery_stale`.
 2. **One session for the whole refresh.** Context round, discovery rounds, configuration
    and reference reads run in one module call (or one persistent connection) instead
    of one playbook per round. Expected: ~10–15 s saved per round (7 rounds for an ONT).
@@ -134,10 +138,23 @@ Conclusions:
      the family `flat` and probe only the instances missing from it with a targeted
      `flat detail`. Choose by measured size: the probe variant when `flat detail` is
      much larger than `flat` (EFM OAM: 54×), the family detail read otherwise.
+   - Conditions of the probe variant (see `docs/targeted-read-contract.md`):
+     - An instance missing from the family read counts as "flat shows nothing" only if
+       the family reply is complete (terminator confirmed); otherwise there are no probe
+       candidates and the section is a gap.
+     - Not for `ABSENCE_POLICY` sections: `silent` ones print nothing in `detail` even
+       when the instance exists; `unobservable` ones are never decidable.
+     - Families whose single read already is `flat detail` (bridge ports, ONT interfaces
+       and slots, equipment slots, PON interfaces) have no smaller `flat` to choose.
+     - Whole-family reads do not get the probe automatically; the planner issues it,
+       through a detail-only entry point (today's targeted helper sends `flat` first,
+       which would repeat it).
+     - A probe that hits a missing lower interface stays unknown (`dependency_gap`).
    - The threshold is a measured cost model per section (bytes of the family read vs.
-     instance count × targeted read time), recorded as data next to the card rules,
+     instance count × targeted read time), recorded as data next to the card rules (local `cards.py`),
      not a constant in code.
-4. **Skip what cannot apply.** Card rules already exclude sections per card type
+4. **Skip what cannot apply.** The card rules (local `cards.py`, not yet on `main`)
+   already exclude sections per card type
    (`not_applicable`); extend them with the measured "created with the card" entries so
    those are not read just to confirm defaults.
 5. **Benchmark before and after**, read-only: the NDLT-F card on the lab (`lt:1/1/3`) and
