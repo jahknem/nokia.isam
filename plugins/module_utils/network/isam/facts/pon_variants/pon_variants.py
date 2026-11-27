@@ -36,20 +36,28 @@ VARIANT_COMMANDS = {
 
 
 class _OptionalConnection(object):
-    """A platform without the feature ("invalid token") has no instances, also for single reads."""
+    """The whole read on a platform without the feature ("invalid token") has no instances.
 
-    def __init__(self, connection):
+    Only the whole-resource command is softened: a targeted single read passes the
+    rejection to the shared read, which records it as rejected / unknown -- never as
+    confirmed absence (docs/targeted-read-contract.md).
+    """
+
+    def __init__(self, connection, whole_command):
         self._connection = connection
+        self._whole = whole_command
 
     def get(self, command, *args, **kwargs):
-        return _get_optional_config(self._connection, command)
+        if command == self._whole:
+            return _get_optional_config(self._connection, command)
+        return self._connection.get(command, *args, **kwargs)
 
 
 def get_variant_config(module, connection, resource):
     """The whole resource, or only the instances named in config with state gathered."""
     full, single = VARIANT_COMMANDS[resource]
     module = module if getattr(module, "params", None) is not None else None
-    return get_targeted_config(module, _OptionalConnection(connection), resource, full, {"config": single})
+    return get_targeted_config(module, _OptionalConnection(connection, full), resource, full, {"config": single})
 
 
 # Lines owned by each resource; anything else in the input (e.g. a whole running

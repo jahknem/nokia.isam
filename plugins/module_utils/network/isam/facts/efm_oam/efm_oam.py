@@ -3,8 +3,7 @@ from __future__ import absolute_import, division, print_function
 from ansible.module_utils.common.text.converters import to_text
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.facts.facts import get_resource_connection
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
-    get_scoped_config,
-    requested_identities,
+    get_targeted_config,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.efm_oam import EfmOamTemplate
 
@@ -16,8 +15,8 @@ class EfmOamFacts(object):
 
     def get_config(self, connection):
         """The whole resource, or only the interfaces named in config (targeted gathering)."""
-        commands = ["info configure efm-oam interface %s flat" % name for name in requested_identities(self._module, "efm_oam_interface")]
-        return get_scoped_config(self._module, connection, None, "info configure efm-oam interface flat", commands)
+        return get_targeted_config(self._module, connection, "efm_oam_interface", "info configure efm-oam interface flat",
+                                   {"config": "info configure efm-oam interface %s flat"}, write_states=True)
 
     def get_facts(self, resource_facts_type=None, data=None, **kwargs):
         resource = (resource_facts_type or ["efm_oam_interface"])[0]

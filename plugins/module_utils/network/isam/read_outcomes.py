@@ -14,11 +14,13 @@ The parse axis is coarse: ``failed`` when the family parser raised on the reply
 -- no parser records its coverage of the reply, so a read never claims a
 complete parse.
 
-Only ``existence: confirmed_absent`` -- the device's explicit
-"instance does not exist" signal *about the addressed instance* -- may be
-treated as evidence an instance is gone. ``unknown`` (a header-only reply, an
-``invalid token`` rejection, a missing-dependency reply, or a failed read) is
-NEVER absence. Consumers must keep, not remove, configuration for ``unknown``.
+Only ``existence: confirmed_absent`` may be treated as evidence an instance is
+gone: the device's explicit "instance does not exist" *about the addressed
+instance*, or a header-only reply to its 'flat detail' read (see
+docs/targeted-read-contract.md). ``unknown`` (an ``invalid token`` rejection, a
+missing-dependency reply, another instance's line, an unobservable setting, or a
+failed read) is NEVER absence. Consumers must keep, not remove, configuration for
+``unknown``.
 
 Outcomes are per (config section, instance): two sections can name the same
 identity value (e.g. an equipment-ont interface and loop), and those are
@@ -137,7 +139,7 @@ class ReadOutcomeCollector(object):
             if entry["absent"] is None:
                 entry["absent"] = record
         elif entry["inconclusive"] is None:
-            # ok/unknown (header-only reply, missing dependency) or rejected:
+            # ok/unknown (missing dependency, unobservable setting) or rejected:
             # the first one stands, so a dependency gap is not lost.
             entry["inconclusive"] = record
 

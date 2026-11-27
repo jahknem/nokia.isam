@@ -186,7 +186,7 @@ options:
       - Desired resource state.
       - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by
         C(sntp.servers[].ip_address) and C(syslog.destinations[].name) and C(syslog.routes[].destination) (targeted
-        gathering). Other fields are ignored and absent instances are not returned; an instance with nothing configured answers like an absent one and is not returned either. Without I(config) the whole
+        gathering). Other fields are ignored and absent instances are not returned; an instance with only default values is read with C(flat detail) and returned with its identity only, and C(read_outcomes) reports each named instance present or confirmed absent where the device allows it. Without I(config) the whole
         resource is read.
     type: str
     choices: [merged, replaced, overridden, deleted, gathered, rendered, parsed]

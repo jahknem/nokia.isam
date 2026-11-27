@@ -25,7 +25,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common imp
     parse_cli_key_values,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
-    get_scoped_config,
+    get_targeted_config,
 )
 
 
@@ -55,21 +55,11 @@ class BridgesFacts(object):
 
     def get_config(self, connection):
         config = self._module.params.get("config") or {}
-        ports = config.get("port", []) if isinstance(config, dict) else config
-        ports = ports or []
-        commands = [
-            "info configure bridge port %s flat detail" % (item.get("port") or item.get("id"))
-            for item in ports
-            if item.get("port") or item.get("id")
-        ]
-        data = get_scoped_config(
-            self._module,
-            connection,
-            config,
-            "info configure bridge flat",
-            commands,
-        )
-        if commands:
+        ports = (config.get("port") if isinstance(config, dict) else config) or []
+        data = get_targeted_config(self._module, connection, "bridges", "info configure bridge flat", {
+            "port": "info configure bridge port %s flat detail",
+        }, write_states=True)
+        if any(item.get("port") for item in ports):
             data = "\n".join(
                 line for line in data.splitlines()
                 if not line.startswith("configure bridge ageing-time ")

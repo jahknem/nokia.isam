@@ -28,7 +28,7 @@ class AlarmFacts(object):
             "filters": self._filter_commands,
             "custom_profiles": "info configure alarm custom-profile %s flat",
             "hgutr069_custs": "info configure alarm hgutr069-cust %s flat",
-        }, bare_sections=("custom_profiles",))
+        })
 
     @staticmethod
     def _filter_commands(identity):
