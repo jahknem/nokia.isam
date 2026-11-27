@@ -47,9 +47,10 @@ local paths before the first push (AGENTS.md, "Sanitization").
 4. **Dependency gaps of a missing parent.** A bridge port or QoS entry of a missing UNI is
    read as `unknown` with `dependency_gap: lower-interface`. `evaluate()` must conclude
    "absent" when the parent object is confirmed absent, and keep the gap otherwise.
-5. **`_resolve_owners` on fresh evidence only** (review of #16): it builds the known
-   objects from every stored `ok` discovery result, stale ones from earlier batches
-   included, and writes permanent `configures` edges.
+5. **`_resolve_owners` on fresh evidence only** (review of #16) — done in the review
+   follow-up PR: `attach_discovery` applies the same freshness rule as `coverage()`.
+   The refresh planner must pass its run window (`now`, `max_age_seconds`,
+   `collected_since`) when it attaches discovery.
 6. **Card rules as data, one structure per kind.** Consolidate the keys in `cards.py`;
    move `_ALIASES` (prefixes such as `pon:`, `ont:`, `uni:`, `vlan:`) into the object
    model. Fleet evidence for the rules: survey of 107 MSANs, 2026-11-26.
