@@ -278,3 +278,46 @@ def test_an_unobservable_section_keeps_the_dependency_gap_label():
     _, outcomes = read(device, unobservable_commands=(COMMAND,))
     outcome = outcomes["outcomes"][0]
     assert outcome["existence"] == "unknown" and outcome.get("dependency_gap") == "lower-interface"
+
+
+@pytest.mark.parametrize("reply", ["Error : lower-interface does not exist", "Error : The interface index cannot be calculated"])
+def test_a_missing_dependency_on_the_detail_probe_keeps_its_label(reply):
+    _, outcomes = read(Device(reply))
+    outcome = outcomes["outcomes"][0]
+    assert outcome["existence"] == "unknown" and outcome["command"] == "ok"
+    assert outcome["dependency_gap"] in ("lower-interface", "interface-index")
+
+
+def test_an_instance_check_of_another_section_keeps_this_commands_probe():
+    # PAE ports and sftp users in one read: the sftp users' shared-node check must not
+    # switch off the PAE port's detail probe (review note on #12).
+    other = "info configure example shared flat"
+    sent = []
+
+    def get(cmd):
+        sent.append(cmd)
+        if cmd == COMMAND + " detail":
+            return cmd + "\n" + PATH + " no enabled\n"
+        return cmd + "\n#----------------\n"
+    collector = ReadOutcomeCollector("example")
+    module = SimpleNamespace(params={"state": "gathered"})
+    get_scoped_config(module, SimpleNamespace(get=get), None, None, [COMMAND, other], outcomes=collector,
+                      selectors={COMMAND: [("config", "1/1/1/1")], other: [("users", "u1")]},
+                      instance_checks={("users", "u1"): lambda reply: "u1" in reply})
+    assert COMMAND + " detail" in sent
+    outcomes = dict((o["selector"], o["existence"]) for o in collector.to_result()["outcomes"])
+    assert outcomes == {"1/1/1/1": "present", "u1": "unknown"}
+
+
+def test_a_whole_node_read_honours_the_unobservable_policy(monkeypatch):
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam import targeted
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts import facts_base
+    monkeypatch.setitem(targeted.ABSENCE_POLICY, "example_node", {"config": "unobservable"})
+    monkeypatch.setitem(targeted.TARGETED_GATHER, "example_node", {"config": "name"})
+    module = SimpleNamespace(params={"state": "gathered", "config": [{"name": "a"}]})
+
+    def get(cmd):
+        raise Exception("Error : instance does not exist")
+    facts_base.get_whole_node_targeted(module, SimpleNamespace(get=get), "example_node",
+                                       "info configure example flat", ["config"], lambda reply: [])
+    assert module._isam_read_outcomes["outcomes"][0]["existence"] == "unknown"
