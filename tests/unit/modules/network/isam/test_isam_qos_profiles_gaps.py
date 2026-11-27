@@ -231,6 +231,21 @@ class TestQosProfilesGaps(_Base):
         assert not any("no committed-burst-size" in c or "no logical-flow-type" in c for c in commands)
         assert any("committed-burst-size" in w for w in warnings)
 
+    def test_replaced_omitting_mandatory_sends_each_keyword_once(self):
+        # committed-burst-size is mandatory and kept from the device; the changed
+        # committed-info-rate was packed a second time behind the profile line.
+        result = self._run(
+            "replaced",
+            config=[{"profile_type": "policer", "name": "PT", "committed-info-rate": 3000}],
+            running=FULL_LINES,
+            changed=True,
+        )
+        command = profile_command(result["commands"], "policer PT")
+        tokens = command.split()
+        assert tokens.count("committed-info-rate") == 1, command
+        assert tokens.count("committed-burst-size") == 1, command
+        assert "committed-info-rate 3000 committed-burst-size 2000" in command
+
     def test_deleted_removes_profiles_only(self):
         result = self._run(
             "deleted",

@@ -179,7 +179,9 @@ intentional. This section lists the ONT/access families of that line.
   invalid `no` resets (warned), profile deletion emits no trailing field resets, and
   `use-dei` renders as a bare flag. Options keep their historical CLI spelling; the
   snake_case spelling of every CLI-named option is accepted as an alias, and all options
-  are documented.
+  are documented. The packed command names each parameter once (a request omitting a
+  mandatory parameter sent the changed one twice), and the documentation states that
+  `overridden`/`deleted` remove profiles without checking whether they are in use.
 - Breaking: `isam_qos_maps` models `up-ctrl-pkt`/`dn-ctrl-pkt` in the real device form
   (`<protocol> [dscp <n>] [pbit <n>] [tc <n>]`; was `queue`/`profile`), requires the
   fields the device needs to set an entry, and renders `dscp-map-dot1p ... dot1p-value`

@@ -763,7 +763,8 @@ options:
     description:
     - Desired resource state.
     - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by C(profile_type) and C(name) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with only default values is read with C(flat detail) and returned with its identity only, and C(read_outcomes) reports each named instance present or confirmed absent where the device allows it. Without I(config) the whole resource is read.
-    - All changes to one profile are sent as one command (the mandatory parameters followed by the changes), as the device validates parameters that depend on each other together.
+    - All changes to one profile are sent as one command (the mandatory parameters followed by the changes), as the device validates parameters that depend on each other together. Each parameter appears once in it; a mandatory parameter the request omits is kept with the device's value.
+    - C(overridden) and C(deleted) remove profiles (C(configure qos profiles no <type> <name>)) without checking whether interfaces or other profiles still use them; the device decides whether a profile in use can be removed and rejects the command otherwise.
     - The device does not allow changing the type of an existing shaper profile; the module fails before sending such a change (delete and create the profile instead).
     type: str
     default: merged
