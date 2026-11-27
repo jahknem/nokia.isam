@@ -328,3 +328,19 @@ class TestTopologyDiscoveryBatch(TestIsamModule):
         self.execute_module(failed=True)
         set_module_args(dict(kind="pon", identity=PON), ignore_provider=True)
         self.execute_module(failed=True)
+
+
+def test_a_record_is_dated_when_its_source_was_read_not_when_it_was_parsed(monkeypatch):
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology import source_reads
+    stamps = iter(["2026-11-27T10:00:00Z", "2026-11-27T10:09:00Z", "2026-11-27T10:09:30Z"])
+    monkeypatch.setattr(source_reads, "utc_now", lambda: next(stamps))
+    sources = {}
+
+    class Conn(object):
+        def get(self, command):
+            return STACK
+    requests = [source_reads.prepare("xdsl_line", "1/1/3/%d" % n, "bridge_port") for n in (1, 2)]
+    first = source_reads.enumerate_request(sources, Conn, requests[0], True)
+    second = source_reads.enumerate_request(sources, Conn, requests[1], True)
+    # One read at 10:00; the second record, parsed later from the cached reply, keeps it.
+    assert first["collected_at"] == second["collected_at"] == "2026-11-27T10:00:00Z"

@@ -144,6 +144,18 @@ interfaces and documentation").
   a partial refresh: only those sections are read, and discovery goes only as deep as
   the objects they configure. A discovery source that is not understood is a named
   gap, not a failed task. Returns run statistics (`stats`).
+- `isam_refresh` reads a section as one `flat detail` family read where the measured
+  read plan (`topology/family_reads.py`) says it is cheaper: PAE ports, EFM OAM, INM
+  sensors, L2CP user ports, PPPoE client interfaces, and interface ports from 40
+  instances (QoS interfaces stay targeted: 1 MB on a production MSAN). Presence comes
+  from the family's parser; absence only from a complete reply (terminal delimiter) in
+  which no line names the instance; every other instance is read targeted. Sections no
+  read can show (`observable: False`) are not read and stay named as not observable.
+  A requested section that configures nothing under the root is a gap
+  (`section_not_under_root`); a refresh that does not converge fails cleanly.
+- Discovery records are dated when their source was read, not when the cached reply
+  was parsed. In `isam_topology_discovery`, a connection failure is reported as a
+  `status: error` record (error class only), never as an empty child list.
 - `isam_topology_discovery`: `requests` enumerates several relations in one call and
   reads each source command once (results in `discoveries`). The bridge-port and
   VLAN-port rounds of a card read the interface stack once each instead of once per
