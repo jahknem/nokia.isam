@@ -38,6 +38,14 @@ def test_deleted_named_sub_node_attribute_resets_only_it(monkeypatch):
     assert got == ["configure xdsl board 1/1/1 vect-fallback no spectrum-profile"], got
 
 
+def test_deleted_empty_sub_node_counts_as_identity_only(monkeypatch):
+    # an empty value names nothing: 'vect_fallback: {}' is the identity alone and resets
+    # the whole board, as documented in Xdsl_boards._reset_board
+    got = commands(monkeypatch, "deleted", {"boards": [{"board_id": "1/1/1", "vect_fallback": {}}]})
+    assert got == commands(monkeypatch, "deleted", {"boards": [{"board_id": "1/1/1"}]}), got
+    assert any("vce-profile" in c for c in got), got
+
+
 def test_overridden_of_boards_leaves_vp_boards(monkeypatch):
     got = commands(monkeypatch, "overridden", {"boards": [{"board_id": "1/1/1", "card_type": "ndlt-f", "admin_state": "up",
                                                            "vce_profile": 10, "vect_fallback": {"spectrum_profile": 2, "rtx_profile": 3}}]})
