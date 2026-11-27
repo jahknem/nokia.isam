@@ -8,7 +8,8 @@ No CLI execution or Ansible dependency. A refresh runs in rounds:
    sections apply; without a context, or for an unknown planned type, nothing is
    assumed and the refresh names the gap.
 1. ``discovery_requests(root, results, context)`` names the direct-child enumerations still
-   needed (one ``isam_topology_discovery`` call each) for the objects known so far.
+   needed for the objects known so far: one ``isam_topology_discovery`` call per round
+   (``requests``), which reads every source command once for the whole round.
 2. ``configuration_reads(objects)`` names every configuration section that can
    configure each object kind (``relations/``), addressed by that object's own
    identity, as ``isam_read`` requests. Sections are read even when the previous

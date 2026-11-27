@@ -138,6 +138,10 @@ interfaces and documentation").
   side.
 - Test: every `created_with` section is reset, never removed, by its module in
   `deleted` and `overridden`.
+- `isam_topology_discovery`: `requests` enumerates several relations in one call and
+  reads each source command once (results in `discoveries`). The bridge-port and
+  VLAN-port rounds of a card read the interface stack once each instead of once per
+  line (96 reads of ~8.5 s on an NDLT-F card).
 
 ## 1.0.0 (unreleased)
 

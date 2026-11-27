@@ -60,7 +60,11 @@ Still open:
 6. **Card rules as data, one structure per kind.** Consolidate the keys in `cards.py`;
    move `_ALIASES` (prefixes such as `pon:`, `ont:`, `uni:`, `vlan:`) into the object
    model. Fleet evidence for the rules: read-only fleet survey, 2026-11-26.
-10. **Performance**: the card-refresh and partial-query plans below.
+10. **Performance**: the card-refresh and partial-query plans below. Step 1 (each
+   discovery source once per round: `isam_topology_discovery` `requests`) is done on
+   `perf/shared-discovery`. Lab benchmark (read-only, 2026-11-27, NDLT-F `lt:1/1/3`,
+   bridge-port round of 48 lines): 48 single calls 396 s, one `requests` call 15.6 s,
+   identical results (48 of 48 `ok`).
 
 Gaps found while porting (not topology code; each its own PR):
 
