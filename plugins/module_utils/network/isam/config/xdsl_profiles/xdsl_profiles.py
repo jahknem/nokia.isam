@@ -4,18 +4,16 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-from ansible.module_utils.six import iteritems
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_profiles import (
     PROFILE_TYPES,
+    SCHEMAS,
     Xdsl_profilesTemplate,
 )
 
 
-class Xdsl_profiles(ResourceModule):
+class Xdsl_profiles(IsamResourceModule):
     """The isam_xdsl_profiles config class."""
 
     def __init__(self, module):
@@ -67,7 +65,8 @@ class Xdsl_profiles(ResourceModule):
                 key = self.template.key_for(profile)
                 current = haved.get(key, {})
                 if replace:
-                    if self._without_empty(profile) != self._without_empty(current):
+                    # replaced keeps its behaviour: a differing profile is deleted and rendered in full.
+                    if self.template.canonical(profile_type, profile) != self.template.canonical(profile_type, current):
                         if current:
                             commands.append(self.template.delete_profile(profile_type, profile))
                         commands.extend(self.template.render_profile(profile_type, profile, full=True))
@@ -85,16 +84,18 @@ class Xdsl_profiles(ResourceModule):
         if want.get("name") and want.get("name") != have.get("name"):
             commands.append("%s name %s" % (prefix, want.get("name")))
 
-        scalar = dict(want)
-        wanted_commands = scalar.pop("commands", []) or []
-        scalar.pop("id", None)
-        scalar.pop("name", None)
-        for key, value in iteritems(scalar):
-            if value != have.get(key):
-                commands.extend(self.template.render_profile(profile_type, {"id": profile_id, key: value}, full=False))
+        schema = SCHEMAS[profile_type]
+        body = dict((k, v) for k, v in want.items() if k not in ("commands", "active"))
+        for line in self.template.diff_lines(schema, body, have):
+            commands.append("%s %s" % (prefix, line))
+        if want.get("active") is not None and bool(want["active"]) != bool(have.get("active")):
+            commands.append("%s %sactive" % (prefix, "" if want["active"] else "no "))
 
+        # Modelled commands were folded into options by normalize(); compare the rest
+        # also against the rendered state so a command the facts now model stays idempotent.
         have_commands = set(have.get("commands") or [])
-        for command in wanted_commands:
+        have_commands.update(self.template.render_lines(schema, have))
+        for command in want.get("commands") or []:
             if command not in have_commands:
                 commands.append("%s %s" % (prefix, command))
         return commands
@@ -132,6 +133,3 @@ class Xdsl_profiles(ResourceModule):
 
     def _index(self, profiles):
         return dict((self.template.key_for(profile), profile) for profile in profiles or [])
-
-    def _without_empty(self, profile):
-        return dict((k, v) for k, v in (profile or {}).items() if v is not None and v != [] and v != {})

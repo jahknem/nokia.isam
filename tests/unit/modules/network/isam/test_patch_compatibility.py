@@ -49,12 +49,15 @@ def test_argument_surface_matches_0_3_13_except_device_defaults():
                 "interface_alarms", "isam_equipment", "vlan_global", "ntp_onts",
                 "pon_interfaces", "pon_global", "trouble_shooting_pon", "l2uni_onts", "uni_onts",
                 "qos_global", "qos_interfaces", "qos_maps", "qos_profiles", "qos_tca",
-                "software_mngt", "vlans", "voice_sip", "system_security", "security_ext_authenticator"}
+                "software_mngt", "vlans", "voice_sip", "system_security", "security_ext_authenticator",
+                "bridge_learned_mac", "cwmp_plt", "dhcp_relay_port_stats", "error", "ethernet_statistics",
+                "nat", "pppox_relay_global", "xdsl_boards", "xdsl_inm", "xdsl_lines", "xdsl_onts",
+                "xdsl_profiles", "xdsl_system"}
     specs = dict((path, spec) for path, spec in specs.items() if path.split("/")[-2] not in migrated)
-    # The same 36 argspecs computed from tag 0.3.13 give this hash.
-    assert len(specs) == 36
+    # The same 33 argspecs computed from tag 0.3.13 give this hash.
+    assert len(specs) == 33
     assert hashlib.sha256(json.dumps(specs, sort_keys=True).encode()).hexdigest() == (
-        "7dd07445eaea094870871353a17b744d0b1d22d214685526f91695e3668dec95")
+        "6f5e85c25d01f89f6fb4defda4e4df16d38da19f2de9d37f58012a98c2904b54")
 
 
 def test_module_inventory_matches_0_3_13():
@@ -67,11 +70,21 @@ def test_module_inventory_matches_0_3_13():
         "plugins/modules/isam_qos_global.py",
         "plugins/modules/isam_qos_tca.py",
         "plugins/modules/isam_system_security.py",
+        "plugins/modules/isam_bridge_learned_mac.py",
+        "plugins/modules/isam_cwmp_plt.py",
+        "plugins/modules/isam_dhcp_relay_port_stats.py",
+        "plugins/modules/isam_error.py",
+        "plugins/modules/isam_ethernet_statistics.py",
+        "plugins/modules/isam_nat.py",
+        "plugins/modules/isam_pppox_relay_global.py",
+        "plugins/modules/isam_xdsl_inm.py",
+        "plugins/modules/isam_xdsl_onts.py",
+        "plugins/modules/isam_xdsl_system.py",
         "plugins/modules/isam_trouble_shooting_pon.py",
         "plugins/modules/isam_uni_onts.py",
     }
     pre_split = [path for path in paths if path not in added_by_the_split]
-    assert len(paths) == len(pre_split) + 7
+    assert len(paths) == len(pre_split) + 17
     assert hashlib.sha256("\n".join(pre_split).encode()).hexdigest() == (
         "88ec8c7f4f4ed973e1ddd0591b2f137aada9331d42e9e633307a7f257b9d8827")
 

@@ -62,3 +62,22 @@ Xdsl_linesArgs.argument_spec["config"]["options"].update(
         "vect_fallback": {"type": "str", "choices": ["auto", "forced"]},
     }
 )
+
+# configure xdsl line (if-index) tca-line-threshold: TCA thresholds per line (sub-node).
+XDSL_TCA_INTERVAL_FIELDS = (
+    "es_nearend", "ses_nearend", "uas_nearend", "leftr_nearend",
+    "es_farend", "ses_farend", "uas_farend", "leftr_farend",
+)
+XDSL_TCA_DAY_FIELDS = (
+    "leftr_day_nearend", "es_day_nearend", "ses_day_nearend", "uas_day_nearend",
+    "es_day_farend", "ses_day_farend", "uas_day_farend", "leftr_day_farend",
+)
+XDSL_TCA_REINIT_FIELDS = ("reinit", "reinit_day")
+XDSL_TCA_VALUE_FIELDS = XDSL_TCA_INTERVAL_FIELDS + XDSL_TCA_DAY_FIELDS + XDSL_TCA_REINIT_FIELDS
+
+_tca_options = {"enable": {"type": "bool"}}
+_tca_options.update({_field: {"type": "int"} for _field in XDSL_TCA_VALUE_FIELDS})
+Xdsl_linesArgs.argument_spec["config"]["options"]["tca_line_threshold"] = {
+    "type": "dict",
+    "options": _tca_options,
+}

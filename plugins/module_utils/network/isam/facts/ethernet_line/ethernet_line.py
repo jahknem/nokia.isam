@@ -5,6 +5,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
+
 
 __metaclass__ = type
 
@@ -84,6 +86,14 @@ class Ethernet_lineFacts(object):
         for item in objs:
             if "mau" in item:
                 item["mau"] = list(item["mau"].values())
+        # A bare line (only defaults: what the detail probe returns for a default-only
+        # line) names an existing line: keep it as its identity (read contract).
+        known = set(item.get("if_index") for item in objs)
+        for line in lines:  # before _split_attributes, which drops a line without attributes
+            match = re.match(r"^configure ethernet line (\S+)$", str(line).strip())
+            if match and match.group(1) not in known:
+                objs.append({"if_index": match.group(1)})
+                known.add(match.group(1))
 
         ansible_facts['ansible_network_resources'].pop('ethernet_line', None)
 

@@ -40,6 +40,13 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.l2un
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.uni_onts.uni_onts import Uni_ontsFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.pon_global.pon_global import Pon_globalFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.trouble_shooting_pon.trouble_shooting_pon import Trouble_shooting_ponFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.cwmp_plt.cwmp_plt import Cwmp_pltFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.error.error import ErrorFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.nat.nat import NatFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.pppox_relay_global.pppox_relay_global import Pppox_relay_globalFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_inm.xdsl_inm import Xdsl_inmFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_onts.xdsl_onts import Xdsl_ontsFacts
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.xdsl_system.xdsl_system import Xdsl_systemFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.ani_onts.ani_onts import Ani_ontsFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.dhcp_server.dhcp_server import Isam_dhcp_serverFacts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.dhcp_relay.dhcp_relay import Isam_dhcp_relayFacts
@@ -151,6 +158,13 @@ FACT_RESOURCE_SUBSETS = dict(
     qos_profiles=Qos_profilesFacts,
     qos_global=Qos_globalFacts,
     qos_tca=Qos_tcaFacts,
+    cwmp_plt=Cwmp_pltFacts,
+    error=ErrorFacts,
+    nat=NatFacts,
+    pppox_relay_global=Pppox_relay_globalFacts,
+    xdsl_inm=Xdsl_inmFacts,
+    xdsl_onts=Xdsl_ontsFacts,
+    xdsl_system=Xdsl_systemFacts,
     software_mngt=Software_mngtFacts,
     system=Isam_systemFacts,
     isam_system_security=Isam_system_securityFacts,

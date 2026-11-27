@@ -36,6 +36,13 @@
    },
    "sha256": "d7f9d577eedaa3537e28834d55c05782d85050ca029f2f0a97528d029b56a769"
   },
+  "isam_bridge_learned_mac": {
+   "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
+   "options": {
+    "config": "e0c5a957db41e0b9bb267f51a6a35f21cd493506af15315ff91e2b636c95d204"
+   },
+   "sha256": "4634783c98c2362ed047e4f3e2f0fbf9c53cfa32827eb2edd76910aae852395f"
+  },
   "isam_bridges": {
    "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
    "options": {
@@ -63,6 +70,15 @@
    },
    "sha256": "49798d979d6ab995a934b0029158f13a2779d464a34dcfc60e1ff4c3983174f9"
   },
+  "isam_cwmp_plt": {
+   "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
+   "options": {
+    "config": "71a94dc7f858b569eea8a70ad2a85bf993d4945f87e35e67b48f55034e025105",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "1526b258f43cdcec111beef06bb09a4f07b9b5455a923d4d74f99e04e82c737f"
+  },
   "isam_dhcp_relay": {
    "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
    "options": {
@@ -71,6 +87,13 @@
     "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
    },
    "sha256": "ebcc54cb6fa23c23940b782030c3b43f0eff2e06afc13446830c1e28c2912624"
+  },
+  "isam_dhcp_relay_port_stats": {
+   "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
+   "options": {
+    "config": "67870dd8658198eb46e3eb358b5728109a77921b8bc175391535b7a4db4bf6df"
+   },
+   "sha256": "90586e46c8891037dc623d6b431b438f4e942c34f67707fb79ea32c815d94cd2"
   },
   "isam_dhcp_server": {
    "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
@@ -135,14 +158,23 @@
    },
    "sha256": "1d4115b739f7e0f2efafb834be3ffcde558acc5112cecf58eac8d8369cdf7656"
   },
+  "isam_error": {
+   "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
+   "options": {
+    "config": "391316ef7da72c1a7a656886b84c42b86d4c5ca86113f1b5a8b498ee28731dcb",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "3d394dc1675d59e6f00ff6340ec46824befa2881269948673984e7b255e04143"
+  },
   "isam_ethernet_line": {
-   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
    "options": {
     "config": "0a80e247ffa3263e9ff42bcc91fc9f0f1278b400dc8b9ec8692718dadbb62ce2",
     "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
     "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
    },
-   "sha256": "ec38ea91a5d40e0ea8d4f71d0ea8c527291c968107171b3d80b358c3836f3fdd"
+   "sha256": "6bc6482452b9a9411c67216d7f12ffea31313c5413a52a67cc5136e54b900424"
   },
   "isam_ethernet_onts": {
    "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
@@ -152,6 +184,13 @@
     "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
    },
    "sha256": "df158daec5dea06818f819f301c99776f9b8c4e747fca7ca19eda10e600e221b"
+  },
+  "isam_ethernet_statistics": {
+   "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
+   "options": {
+    "config": "aae4e8d0384a0ec153656709bc444c967f05e01a2e4009e86bc54941f48af0c4"
+   },
+   "sha256": "621ed8468999a1c981b03b8715135fdca2bd9b4af3eca332a259ff1f32a1cdd1"
   },
   "isam_facts": {
    "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
@@ -316,6 +355,15 @@
    },
    "sha256": "cab05f2aabbb0d8cb30ee2a5326e3e6e645081ff0491029622bc6b2a2db847bc"
   },
+  "isam_nat": {
+   "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
+   "options": {
+    "config": "cf82a38367172251ca0cdfdb74281264bec7b827d1467b7c1418d1518170e85f",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "72bc5bf77190e7ad2089efa493ede6b42316f88f8d906a2c1242e147f6438949"
+  },
   "isam_ngpon2_channel_groups": {
    "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
    "options": {
@@ -378,6 +426,15 @@
     "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
    },
    "sha256": "e3376ad63444ca5b21d9e87d8c1065e5a584a379b58793d606b131009f374ec9"
+  },
+  "isam_pppox_relay_global": {
+   "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
+   "options": {
+    "config": "490cd7487462386776b4f74eb927d45c3839fbbf3b32bc3688889ab970c3dd07",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "04f9db35f14daf82ee07404f3a44acbd536ba44877fa03fccb1071f4620a1831"
   },
   "isam_qos_global": {
    "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
@@ -513,13 +570,13 @@
    "sha256": "29bae7d54412db7aaa40f52ebcae1c101b8e8028748e1dfadc40c3f5abd03d51"
   },
   "isam_xdsl_boards": {
-   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
    "options": {
-    "config": "27924013d5629c005bb7595af9cd3ee1242152f1305fbac460623baabbec6357",
+    "config": "7b933e68b715ebc80cd2fe11f7d358fa84788d6e5ee9b87ee9879962576ba617",
     "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
     "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
    },
-   "sha256": "fc059c9bee0d2f4feb24f01d15309b45fe43a0960970d4c08c7187bb242f652f"
+   "sha256": "8fe25dbdac723e6f57f4c3d58202bf61a743fcb68ca0e12f0e8df92702fb239d"
   },
   "isam_xdsl_bonding": {
    "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
@@ -530,23 +587,50 @@
    },
    "sha256": "b67cfd27d701a23a1186128d23e35e4a06284fe85fb98cf4078bd5103f09c90e"
   },
-  "isam_xdsl_lines": {
-   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+  "isam_xdsl_inm": {
+   "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
    "options": {
-    "config": "790b390a1b965bb476db36988d881325cbf9550c674fdb344a244e14e6487c63",
+    "config": "3e1369cee8d2c913b4d3e4ece4111156de664a2cc9a8501867f6ec7fa8fe0e9e",
     "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
     "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
    },
-   "sha256": "5bcd9276927f5f14f3784c070440d7517ecbaa098a7b48f6562b18dd9c970c9c"
+   "sha256": "66a7a0b848cda0c08169eb19f2be62b9a6a937a8ea4b1a88950f79de83b9943e"
+  },
+  "isam_xdsl_lines": {
+   "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
+   "options": {
+    "config": "53f5b748f142b384ba1aaa831477311896f7e0cbf05dd21fdfeb732482cdbf30",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "215953d4df4f887be5d516cba5dfc51d9e2cffbbd6c91d593f5b88f0fe0e55d5"
+  },
+  "isam_xdsl_onts": {
+   "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
+   "options": {
+    "config": "3761ffa73934ecfa6431dcaf522c4b3d75883350508d0812ffcde4074a9c9c21",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "8b842db74215110c41ec0b0675faf7eadb4c77af0e21f754eb434617d7c9efde"
   },
   "isam_xdsl_profiles": {
-   "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
+   "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
    "options": {
-    "config": "e3bf0c59e5f15fbe5c1b24926a3030ee7a920cb30ba2f0ea6fb90946abcc8427",
+    "config": "27f82bd4fe7d8484021e5cc4ea5d5f3db8177ff00f3fe3ee6ada4e891726c73f",
     "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
     "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
    },
-   "sha256": "c459b4b9cbf4da442fc35a402aac68ede558f0e356b4b338006cae2e68803875"
+   "sha256": "a8f3a171985a5a30a0e896404f79e2c317354e129b062f8b36e1895bc6377241"
+  },
+  "isam_xdsl_system": {
+   "constraints": "2a853d7c519ea4d0353bffbf38da84acd9167ba102f964f455d38a266697168e",
+   "options": {
+    "config": "5876ff1ca18c2fc358049cd09df37fc9145b04e4c2617d1e4d7d75f024cba955",
+    "running_config": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "state": "bdbfc055647ed514be681458c695602979633e80d2612cd0b1bc054c40dcbc78"
+   },
+   "sha256": "617f4043ad2f079873984dd1caaad9efa68447d7d90dff0f100b5ea67f8f38e6"
   },
   "isam_xstp": {
    "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
@@ -564,10 +648,13 @@
   "isam_alarm",
   "isam_ani_onts",
   "isam_arp_relay",
+  "isam_bridge_learned_mac",
   "isam_bridges",
   "isam_cfm",
   "isam_channel_pair_pm",
+  "isam_cwmp_plt",
   "isam_dhcp_relay",
+  "isam_dhcp_relay_port_stats",
   "isam_dhcp_server",
   "isam_dist_service",
   "isam_efm_oam_interface",
@@ -575,8 +662,10 @@
   "isam_equipment",
   "isam_equipment_onts",
   "isam_equipment_replan",
+  "isam_error",
   "isam_ethernet_line",
   "isam_ethernet_onts",
+  "isam_ethernet_statistics",
   "isam_facts",
   "isam_generic_pon",
   "isam_igmp",
@@ -595,6 +684,7 @@
   "isam_mcast_control",
   "isam_mcast_general",
   "isam_multicast",
+  "isam_nat",
   "isam_ngpon2_channel_groups",
   "isam_ntp_onts",
   "isam_pon_global",
@@ -602,6 +692,7 @@
   "isam_pppoe_client_interface",
   "isam_pppoe_client_ppp_profile",
   "isam_pppoel2_statistics",
+  "isam_pppox_relay_global",
   "isam_qos_global",
   "isam_qos_interfaces",
   "isam_qos_maps",
@@ -619,8 +710,11 @@
   "isam_voice_sip",
   "isam_xdsl_boards",
   "isam_xdsl_bonding",
+  "isam_xdsl_inm",
   "isam_xdsl_lines",
+  "isam_xdsl_onts",
   "isam_xdsl_profiles",
+  "isam_xdsl_system",
   "isam_xstp"
  ]
 }

@@ -361,6 +361,70 @@ intentional. This section lists the ONT/access families of that line.
   command-as-facts fixture) are removed; ext-authenticator remains action-only and
   gathers nothing.
 
+### New xDSL resources
+
+- `isam_xdsl_inm`: impulse noise sensors, near-end and far-end lists keyed by
+  name, targeted gathering per sensor.
+- `isam_xdsl_onts`: the xDSL ONT interface, keyed by `ont_idx`, targeted
+  gathering per ONT.
+- `isam_xdsl_system`: the xDSL system settings line (`auto-port-reset`).
+
+### xDSL boards, profiles and lines
+
+- Breaking: `isam_xdsl_boards` `vp_boards[].vp_link`/`lt_expect` (only the
+  last link survived) became `vp_boards[].vp_links[]` with `link_id` and
+  `lt_expect`. New board fields: vplt/vce/vect-class settings, `vect_fallback`
+  and `auto_port_reset`. `deleted`/`overridden` reset the board's attributes
+  instead of sending `configure xdsl no board`, which the device refuses;
+  `deleted` without config now removes all boards instead of silently doing
+  nothing.
+- `isam_xdsl_profiles` models the service/spectrum/DPBO/vectoring/VCE profile
+  attributes and indexed PSD/PBO sub-nodes; detail defaults no longer land in
+  `commands`, false flags are idempotent, and `deleted` with config touches
+  only the named profiles (it used to delete every profile of the other
+  types).
+- `isam_xdsl_lines`: xDSL line TCA thresholds modelled; targeted gathering by
+  line name.
+
+### Ethernet line rebuild
+
+- `isam_ethernet_line` rebuilt in the collection style: `power down` was read
+  as `up`, TCA settings were never rendered, MAU flags rendered with
+  underscores, `admin-up` was not read, and removal forms like
+  `configure ethernet no line <l> port-type` do not exist. One parser per
+  attribute, packed lines split on read and packed on write; `overridden`
+  resets unnamed lines, `deleted` resets named settings, an empty device
+  returns `[]`, and a port-type line without a `mau` block no longer crashes
+  the parser.
+
+### New operational action modules
+
+- Tier-1 operational action modules on `IsamActionModule` (one-shot
+  counter/MAC operations, guide-verified syntax, an explicit operation is
+  required, identifiers validated): `isam_ethernet_statistics`
+  (`admin ethernet statistics <index> clear-stats`),
+  `isam_dhcp_relay_port_stats` (`admin dhcp-relay port-stats <vlan-port>
+  clear-statistics`) and `isam_bridge_learned_mac` (`admin bridge
+  learned-unicast-mac <vlan-port> unicast-mac-address <mac> delete`, with
+  MAC-address validation). Check-mode verified on the lab ISAM; the
+  operations themselves are not executed without a per-action decision.
+
+### New global settings resources
+
+- New resources for small global settings: `isam_nat`, `isam_error`,
+  `isam_cwmp_plt` and `isam_pppox_relay_global`, each targeted by its single
+  settings node. Reading and writing `isam_nat` requires the CWMP platform to
+  be enabled on the device.
+
+### Targeted gathering consistency (Ethernet and xDSL lines)
+
+- A `gathered` read of an Ethernet line uses the same compact `flat` form as
+  the complete read, not `flat detail` (which prints every default and parsed
+  into a different configuration). Write states keep the detail form.
+- For `gathered` reads, a node the firmware does not know (`invalid token`)
+  is treated as "nothing configured here" and skipped, not raised. Write
+  states still surface the error.
+
 ## 0.3.14 — A slice of π, without the breaking crust
 
 Patch release based on 0.3.13. Existing module names, option names, types,

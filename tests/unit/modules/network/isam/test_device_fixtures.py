@@ -413,7 +413,10 @@ def test_xdsl_boards_live_flat_fixture_is_parseable():
     assert descriptor["command"] == "info configure xdsl board/vp-board flat"
     assert parsed["boards"][0]["board_id"] == "1/1/1"
     assert parsed["boards"][0]["vce_profile"] == "10"
-    assert parsed["vp_boards"][0]["vp_link"] == "2"
+    assert parsed["vp_boards"][0]["vp_links"] == [
+        {"link_id": "1", "lt_expect": "1/1/4"},
+        {"link_id": "2", "lt_expect": "1/1/3"},
+    ]
 
 
 def test_xdsl_bonding_live_flat_fixture_is_parseable():

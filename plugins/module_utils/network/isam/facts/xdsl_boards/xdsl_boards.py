@@ -4,10 +4,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+import shlex
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     utils,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    flatten_indented_tree,
     get_targeted_config,
     unwrap_response,
     validate_config_safe,
@@ -15,9 +18,73 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.fact
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.argspec.xdsl_boards.xdsl_boards import (
     Xdsl_boardsArgs,
 )
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import (
-    parse_cli_key_values,
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_boards import (
+    BOARD_ATTRS,
+    BOARD_INT_FIELDS,
+    BOARD_SUBNODES,
+    VP_BOARD_ATTRS,
+    VP_LINK_ATTRS,
 )
+
+
+def _tokens(text):
+    try:
+        return shlex.split(text)
+    except ValueError:
+        return text.split()
+
+
+def _grammar(attrs):
+    return dict((keyword, (field, kind)) for field, keyword, kind in attrs)
+
+
+_BOARD = _grammar(BOARD_ATTRS)
+_SUBNODES = dict((keyword, (field, _grammar(attrs))) for field, keyword, attrs in BOARD_SUBNODES)
+_VP_BOARD = _grammar(VP_BOARD_ATTRS)
+_VP_LINK = _grammar(VP_LINK_ATTRS)
+
+
+def _consume(tokens, index, grammar, target, stop=()):
+    """Read keyword tokens from ``index`` into ``target`` until a ``stop`` keyword.
+
+    ``no <keyword>`` is the default the detail output prints (and the removal
+    form), so it is not reported; neither is a flag in its negated form.
+    Unknown keywords are dropped (with the value that follows them, if any) so
+    a keyword this module does not model never fails the read.
+    Returns the index of the first unconsumed token.
+    """
+    while index < len(tokens):
+        token = tokens[index]
+        if token in stop:
+            return index
+        if token == "no":
+            index += 2
+            continue
+        known = grammar.get(token)
+        nxt = tokens[index + 1] if index + 1 < len(tokens) else None
+        takes_value = nxt is not None and nxt != "no" and nxt not in grammar and nxt not in stop
+        if known and known[1] == "flag":
+            target[known[0]] = True
+            index += 1
+        elif known:
+            if takes_value:
+                target[known[0]] = nxt
+                index += 2
+            else:
+                index += 1
+        else:
+            index += 2 if takes_value else 1
+    return index
+
+
+def config_lines(data):
+    """Stripped ``configure xdsl ...`` lines; indented output is flattened first."""
+    text = str(unwrap_response(data) or "")
+    stripped = [raw.strip() for raw in text.splitlines()]
+    if "exit" in stripped:
+        indented = "\n".join(raw for raw in text.splitlines() if raw.strip() and not raw.strip().startswith("#"))
+        stripped = flatten_indented_tree(indented) or []
+    return [line for line in stripped if line.startswith("configure xdsl ")]
 
 
 class Xdsl_boardsFacts(object):
@@ -60,60 +127,67 @@ class Xdsl_boardsFacts(object):
         return ansible_facts
 
     def _parse_config(self, config):
-        result = {"boards": [], "vp_boards": []}
-        current = None
-        current_type = None
+        boards = {}
+        vp_boards = {}
 
-        if not config:
-            return result
-
-        for raw_line in config.splitlines():
-            line = raw_line.strip()
-            if not line or line.startswith("#") or line.startswith("echo"):
+        for line in config_lines(config):
+            parts = _tokens(line[len("configure xdsl "):])
+            if len(parts) < 2:
                 continue
-            if line in ("configure xdsl",):
-                continue
-            if line.startswith("configure xdsl "):
-                line = line[len("configure xdsl "):]
-            if line == "exit":
-                if current is not None:
-                    result[current_type].append(current)
-                    current = None
-                    current_type = None
-                continue
+            if parts[0] == "board":
+                board = boards.setdefault(parts[1], {"board_id": parts[1]})
+                self._parse_board(board, parts, 2)
+            elif parts[0] == "vp-board":
+                vp_board = vp_boards.setdefault(parts[1], {"vp_board_id": parts[1]})
+                self._parse_vp_board(vp_board, parts, 2)
 
-            parts = line.split()
-            if parts[0] == "board" and len(parts) >= 2:
-                if current_type == "boards" and current is not None and current.get("board_id") == parts[1]:
-                    self._set_pairs(current, parts[2:])
-                    continue
-                if current is not None:
-                    result[current_type].append(current)
-                current_type = "boards"
-                current = {"board_id": parts[1]}
-                self._set_pairs(current, parts[2:])
-            elif parts[0] == "vp-board" and len(parts) >= 2:
-                if current_type == "vp_boards" and current is not None and current.get("vp_board_id") == parts[1]:
-                    self._set_pairs(current, parts[2:])
-                    continue
-                if current is not None:
-                    result[current_type].append(current)
-                current_type = "vp_boards"
-                current = {"vp_board_id": parts[1]}
-                self._set_pairs(current, parts[2:])
-            elif current is not None:
-                self._set_pairs(current, parts)
+        for board in boards.values():
+            for node, fields in BOARD_INT_FIELDS.items():
+                values = board.get(node) or {}
+                for field in fields:
+                    if field in values:
+                        try:
+                            values[field] = int(values[field])
+                        except (TypeError, ValueError):
+                            values.pop(field)
+            for node, _grammar_unused in _SUBNODES.values():
+                if not board.get(node):
+                    board.pop(node, None)
+        for vp_board in vp_boards.values():
+            if "vp_links" in vp_board:
+                vp_board["vp_links"] = [
+                    link for link in sorted(vp_board["vp_links"].values(), key=lambda x: _sort_key(x["link_id"]))
+                    if len(link) > 1
+                ]
+                if not vp_board["vp_links"]:
+                    vp_board.pop("vp_links")
 
-        if current is not None:
-            result[current_type].append(current)
+        return {"boards": list(boards.values()), "vp_boards": list(vp_boards.values())}
 
-        return result
+    @staticmethod
+    def _parse_board(board, parts, index):
+        stop = tuple(_SUBNODES)
+        grammar = _BOARD
+        target = board
+        while index < len(parts):
+            index = _consume(parts, index, grammar, target, stop)
+            if index < len(parts):
+                node, grammar = _SUBNODES[parts[index]]
+                target = board.setdefault(node, {})
+                index += 1
 
-    def _set_pairs(self, item, parts):
-        if len(parts) >= 2 and parts[0] == "no" and parts[1] == "admin-state":
-            item["admin_state"] = False
-            parts = parts[2:]
-        section = "boards" if "board_id" in item else "vp_boards"
-        options = self.argument_spec["config"]["options"][section]["options"]
-        parsed = parse_cli_key_values(parts, bare_keys_as_true=True)
-        item.update((key, value) for key, value in parsed.items() if key in options)
+    @staticmethod
+    def _parse_vp_board(vp_board, parts, index):
+        while index < len(parts):
+            index = _consume(parts, index, _VP_BOARD, vp_board, ("vp-link",))
+            if index + 1 < len(parts):
+                link_id = parts[index + 1]
+                links = vp_board.setdefault("vp_links", {})
+                link = links.setdefault(link_id, {"link_id": link_id})
+                index = _consume(parts, index + 2, _VP_LINK, link, ("vp-link",))
+            else:
+                break
+
+
+def _sort_key(value):
+    return (0, int(value), "") if str(value).isdigit() else (1, 0, str(value))

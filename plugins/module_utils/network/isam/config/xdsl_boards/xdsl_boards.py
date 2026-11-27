@@ -4,38 +4,36 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-from copy import deepcopy
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common import deleted_targets
-
 from ansible.module_utils.six import iteritems
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.xdsl_boards import (
+    BOARD_ATTRS,
+    BOARD_SUBNODES,
+    VP_BOARD_ATTRS,
+    VP_LINK_ATTRS,
     Xdsl_boardsTemplate,
 )
 
 
-class Xdsl_boards(ResourceModule):
+class Xdsl_boards(IsamResourceModule):
     """The isam_xdsl_boards config class."""
 
+    # First match wins: the sub-node and vp-link scopes must precede the
+    # board/vp-board scope, otherwise e.g. a board-level ``dpbo-profile`` would
+    # be appended to a ``vect-fallback`` command and land in the sub-node.
     COMPACT_COMMAND_SCOPES = (
-        r"^(?P<scope>configure xdsl board \S+) (?P<suffix>.+)$",
-        r"^(?P<scope>configure xdsl vp-board \S+) (?P<suffix>.+)$",
+        (r"^(?P<scope>configure xdsl board \S+ vect-fallback) (?P<suffix>.+)$", "vect_fallback"),
+        (r"^(?P<scope>configure xdsl board \S+ auto-port-reset) (?P<suffix>.+)$", "auto_port_reset"),
+        (r"^(?P<scope>configure xdsl vp-board \S+ vp-link \S+) (?P<suffix>.+)$", "vp_link"),
+        (r"^(?P<scope>configure xdsl board \S+) (?P<suffix>.+)$", "board"),
+        (r"^(?P<scope>configure xdsl vp-board \S+) (?P<suffix>.+)$", "vp_board"),
     )
 
-    BOARD_FIELDS = [
-        "admin_state",
-        "card_type",
-        "dpbo_profile",
-        "vce_profile",
-    ]
-    VP_BOARD_FIELDS = [
-        "admin_state",
-    ]
+    BOARD_FIELDS = [field for field, _keyword, _kind in BOARD_ATTRS]
+    VP_BOARD_FIELDS = [field for field, _keyword, _kind in VP_BOARD_ATTRS]
 
     def __init__(self, module):
         super(Xdsl_boards, self).__init__(
@@ -45,14 +43,6 @@ class Xdsl_boards(ResourceModule):
             resource="xdsl_boards",
             tmplt=Xdsl_boardsTemplate(),
         )
-
-    def execute_module(self):
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
 
     def generate_commands(self):
         want = self.want or {"boards": [], "vp_boards": []}
@@ -66,53 +56,153 @@ class Xdsl_boards(ResourceModule):
             have.get("boards") or [],
             "board_id",
             "board",
-            self.BOARD_FIELDS,
+            self._compare_board,
             delete_all or bool(want.get("boards")),
+            reset=self._reset_board,
         )
         self._compare_section(
             want.get("vp_boards") or [],
             have.get("vp_boards") or [],
             "vp_board_id",
             "vp_board",
-            self.VP_BOARD_FIELDS,
+            self._compare_vp_board,
             delete_all or bool(want.get("vp_boards")),
+            reset=self._reset_vp_board,
         )
 
-    def _compare_section(self, want_list, have_list, key, parser_prefix, fields, requested=True):
-        wantd = {entry[key]: entry for entry in want_list}
-        haved = {entry[key]: entry for entry in have_list}
+    def _compare_section(self, want_list, have_list, key, parser_prefix, compare, requested=True, reset=None):
+        """reset(want, have): remove an entry by resetting its attributes, for entries
+        without a removal command (xDSL boards); otherwise the entry's remval is used."""
+        wantd = dict((entry[key], entry) for entry in want_list)
+        haved = dict((entry[key], entry) for entry in have_list)
+
+        def remove(want, have):
+            if reset:
+                reset(want, have)
+            else:
+                self.addcmd(have, parser_prefix, negate=True)
 
         if self.state == "deleted":
             if not requested:
                 return
-            for target, have in deleted_targets(wantd, haved, (key,)):
-                self._reset_entry(target, have, parser_prefix, fields)
+            for item_key, have in iteritems(haved):
+                if not wantd or item_key in wantd:
+                    remove(wantd.get(item_key, {}), have)
             return
 
-        if self.state in ["overridden"]:
+        if self.state == "overridden" and requested:
+            # Only a section the request names is overridden (docs/development-style.md):
+            # overriding only boards must not remove every vp-board, nor the reverse
+            # reset every board's card type and admin state.
             for item_key, have in iteritems(haved):
                 if item_key not in wantd:
-                    self._reset_entry({}, have, parser_prefix, fields)
+                    remove({}, have)
 
         for item_key, want in iteritems(wantd):
-            have = haved.get(item_key, {})
-            desired = deepcopy(want)
-            if self.state == "merged" and have:
-                desired = deepcopy(have)
-                desired.update(want)
-            self._compare_entry(desired, have, parser_prefix, fields)
+            compare(want, haved.get(item_key, {}))
 
-    def _reset_entry(self, want, have, parser_prefix, fields):
-        """Boards cannot be removed: only their resettable settings are cleared."""
-        for field in fields:
-            if have.get(field) is not None and want.get(field) is None:
-                self.addcmd(have, "%s.%s" % (parser_prefix, field), negate=True)
+    @property
+    def _replacing(self):
+        return self.state in ("replaced", "overridden") or self._resetting
 
-    def _compare_entry(self, want, have, parser_prefix, fields):
-        for field in fields:
+    _resetting = False
+
+    @staticmethod
+    def _named(want, identity):
+        return [field for field, value in want.items() if field != identity and value not in (None, {}, [])]
+
+    def _reset_board(self, want, have):
+        """A board has no removal command ("configure xdsl no board" is an invalid token,
+        lab ISAM): its attributes are reset, only the named ones when want names any.
+        A named sub-node (vect_fallback, auto_port_reset) resets only its named
+        attributes; named without attributes, the whole sub-node."""
+        named = self._named(want, "board_id")
+        if not named:
+            keep = {}
+        else:
+            subnodes = set(node for node, _keyword, _attrs in BOARD_SUBNODES)
+            keep = dict((field, value) for field, value in have.items() if field not in named)
+            for node in subnodes & set(named):
+                wnode = want.get(node) or {}
+                fields = [f for f, v in wnode.items() if v is not None]
+                if fields and isinstance(have.get(node), dict):
+                    keep[node] = dict((f, v) for f, v in have[node].items() if f not in fields)
+        self._resetting = True
+        try:
+            self._compare_board(dict(keep, board_id=have["board_id"]), have)
+        finally:
+            self._resetting = False
+
+    def _reset_vp_board(self, want, have):
+        """deleted of a vp-board: an identity alone removes it; named attributes or
+        vp-links reset only those (a named link without attributes: all its
+        attributes); vp-links that are not named stay as they are."""
+        named = self._named(want, "vp_board_id")
+        if not named:
+            self.addcmd(have, "vp_board", negate=True)
+            return
+        keep = dict((field, value) for field, value in have.items()
+                    if field not in named and field != "vp_links")
+        wlinks = dict((link["link_id"], link) for link in want.get("vp_links") or [])
+        links = []
+        for link in have.get("vp_links") or []:
+            wlink = wlinks.get(link["link_id"])
+            if wlink is None:
+                links.append(link)
+                continue
+            fields = [f for f, v in wlink.items() if f != "link_id" and v is not None]
+            links.append(dict((f, v) for f, v in link.items() if f == "link_id" or (fields and f not in fields)))
+        keep["vp_links"] = links
+        self._resetting = True
+        try:
+            self._compare_vp_board(dict(keep, vp_board_id=have["vp_board_id"]), have)
+        finally:
+            self._resetting = False
+
+    def _compare_fields(self, want, have, attrs, parser_prefix, render_want, render_have):
+        """Set changed attributes; on replaced/overridden remove the unwanted ones.
+
+        Flags compare ``False`` equal to absent: their default (``no <flag>``)
+        is not reported by the facts. ``rendered`` has no device state to compare
+        with and renders an explicit ``False`` as ``no <flag>``.
+        """
+        for field, _keyword, kind in attrs:
             inw = want.get(field)
             inh = have.get(field)
+            if kind == "flag":
+                inw = None if inw is None else bool(inw)
+                inh = bool(inh) if self.state != "rendered" else inh
+                if inw is not None and inw != inh:
+                    self.addcmd(render_want, "%s.%s" % (parser_prefix, field))
+                elif inw is None and inh and self._replacing:
+                    self.addcmd(render_have, "%s.%s" % (parser_prefix, field), negate=True)
+                continue
             if inw is not None and inw != inh:
-                self.addcmd(want, "%s.%s" % (parser_prefix, field))
-            elif self.state in ("replaced", "overridden") and inw is None and inh is not None:
-                self.addcmd(have, "%s.%s" % (parser_prefix, field), negate=True)
+                self.addcmd(render_want, "%s.%s" % (parser_prefix, field))
+            elif inw is None and inh is not None and self._replacing:
+                self.addcmd(render_have, "%s.%s" % (parser_prefix, field), negate=True)
+
+    def _compare_board(self, want, have):
+        self._compare_fields(want, have, BOARD_ATTRS, "board", want, have)
+        for node, _keyword, attrs in BOARD_SUBNODES:
+            wnode = want.get(node) or {}
+            hnode = have.get(node) or {}
+            self._compare_fields(
+                wnode, hnode, attrs, "board.%s" % node,
+                {"board_id": want["board_id"], node: wnode},
+                {"board_id": want["board_id"], node: hnode},
+            )
+
+    def _compare_vp_board(self, want, have):
+        self._compare_fields(want, have, VP_BOARD_ATTRS, "vp_board", want, have)
+        wlinks = dict((link["link_id"], link) for link in want.get("vp_links") or [])
+        hlinks = dict((link["link_id"], link) for link in have.get("vp_links") or [])
+        for link_id in list(wlinks) + [k for k in hlinks if k not in wlinks]:
+            wlink = wlinks.get(link_id, {})
+            hlink = hlinks.get(link_id, {})
+            if link_id not in wlinks and not self._replacing:
+                continue
+            render = {"vp_board_id": want["vp_board_id"], "link_id": link_id}
+            wdata = dict(render, **wlink)
+            hdata = dict(render, **hlink)
+            self._compare_fields(wlink, hlink, VP_LINK_ATTRS, "vp_board.vp_links", wdata, hdata)
