@@ -271,3 +271,10 @@ def test_a_rejected_pon_variant_single_read_is_never_confirmed_absent(resource):
     # The whole read on such a platform stays empty, as before.
     whole = SimpleNamespace(params={"state": "gathered", "config": None})
     assert get_variant_config(whole, SimpleNamespace(get=get), resource) == ""
+
+
+def test_an_unobservable_section_keeps_the_dependency_gap_label():
+    device = SimpleNamespace(get=lambda command: (_ for _ in ()).throw(Exception("Error : lower-interface does not exist")))
+    _, outcomes = read(device, unobservable_commands=(COMMAND,))
+    outcome = outcomes["outcomes"][0]
+    assert outcome["existence"] == "unknown" and outcome.get("dependency_gap") == "lower-interface"
