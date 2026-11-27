@@ -118,6 +118,15 @@ def _masked_identity(section, entry):
                for field in LISTS[section][0])
 
 
+# Attributes replaced/overridden keep when a request omits them instead of resetting
+# them. An operator's profile is mandatory and only settable at creation (module
+# docs); 'operator <name> no profile' would fail mid-run or strip the operator's
+# access (review of #12). _check_profiles_in_use relies on this.
+KEPT_WHEN_OMITTED = {
+    "operators": ("profile",),
+}
+
+
 class Isam_system_security(IsamResourceModule):
     """The isam_system_security config class."""
 
@@ -278,7 +287,8 @@ class Isam_system_security(IsamResourceModule):
                 # Secrets are never readable (masked or encrypted in every read), so an
                 # omitted one is "keep as is", never "reset": 'no password' would strip
                 # an operator's or file-transfer user's credentials on every run.
-                for field in tuple(ident) + tuple(SECRET_FIELDS.get(section, ())):
+                for field in (tuple(ident) + tuple(SECRET_FIELDS.get(section, ()))
+                              + tuple(KEPT_WHEN_OMITTED.get(section, ()))):
                     stale.pop(field, None)
                 if stale:
                     stale.update(identity)

@@ -462,6 +462,15 @@ class TestIsamSystemSecurityStateContract(TestIsamModule):
                                           "profiles": [{"name": "spare"}]}, failed=True)
         assert "admin" in result["msg"] and "isadmin" in result["msg"]
 
+    def test_replaced_and_overridden_never_reset_an_operators_profile(self):
+        result = self._run("replaced", {"operators": [{"name": "isadmin", "description": "default administrator",
+                                                       "prompt": "%n>"}]}, changed=False)
+        assert not any(" operator " in cmd and " no profile" in cmd for cmd in result["commands"]), result["commands"]
+        result = self._run("overridden", {"operators": [{"name": "isadmin"}],
+                                          "profiles": [{"name": "admin", "description": "admin group",
+                                                        "permissions": {"aaa": "write"}}]})
+        assert not any(" operator " in cmd and " no profile" in cmd for cmd in result["commands"]), result["commands"]
+
     def test_overridden_of_profiles_alone_refuses_a_profile_device_operators_use(self):
         # operators are not named, so all of them stay: their profile must stay too
         # (review of #12: isadmin and noc both use 'admin').
