@@ -122,6 +122,9 @@ intentional. This section lists the ONT/access families of that line.
   instead of sending `no tca-thresh`, which left it in place and made
   `deleted` never idempotent. The upper threshold must not be below the lower
   one (GPON MGT error 238).
+- `isam_ntp_onts`: the NTP ONT entry also exists as long as its ONT, and
+  `configure ntp no ont` is accepted without any effect; `deleted` and
+  `overridden` reset the set attributes instead.
 - `isam_ethernet_onts` `deleted`: a UNI named by `uni_idx` alone resets the
   UNI, and a UNI named with settings resets only the named settings.
 - Whole-entry `equipment_onts` deletion reasserts shutdown even for

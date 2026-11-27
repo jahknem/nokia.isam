@@ -63,14 +63,16 @@ class Ntp_onts(IsamResourceModule):
             wantd = dict_merge(haved, wantd)
 
         if self.state == "deleted":
-            # A whole entry (identity only, or every configured attribute) removes the
-            # NTP ONT object; otherwise only the named attributes are removed.
+            # The NTP ONT entry exists as long as its ONT, and "configure ntp no ont"
+            # is accepted but changes nothing (lab DS-LIN-TEST-01 2026-11-27: present
+            # before any write; after "no ont" still present with client-state on).
+            # Deleting resets the named attributes, every set one for a whole entry.
             for k, have in iteritems(haved):
                 if wantd and k not in wantd:
                     continue
                 want = wantd.get(k, {})
                 if covers_entry(want, have, ("ont_id",)):
-                    self.addcmd(have, "ntp_ont", negate=True)
+                    self._compare(want={}, have=have)
                 else:
                     named = {key: value for key, value in iteritems(have) if key == "ont_id" or want.get(key) is not None}
                     self._compare(want={}, have=named)
@@ -79,7 +81,7 @@ class Ntp_onts(IsamResourceModule):
         if self.state == "overridden":
             for k, have in iteritems(haved):
                 if k not in wantd:
-                    self.addcmd(have, "ntp_ont", negate=True)
+                    self._compare(want={}, have=have)
 
         for k, want in iteritems(wantd):
             have = haved.pop(k, {})
