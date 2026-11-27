@@ -74,6 +74,27 @@ Still open:
 
    The card's remaining time is its 1138 targeted reads (~270 s): step 3.
 
+   Step 3 (family or targeted read per section, `topology/family_reads.py`), measured
+   read-only 2026-11-27 on the lab and on one production MSAN with eight LT cards
+   (family `flat detail` vs. one targeted read per instance of the card):
+
+   | Section | Targeted, 48-line card | Family, production |
+   | --- | --- | --- |
+   | `isam_system_security.pae.ports` | 43 s | 2.1 s (17 KB) |
+   | `xdsl_inm` near and far end | 29 s | 2.4 s (59 KB, one read) |
+   | `pppoe_client_interface` | 32 s | 0.9 s |
+   | `efm_oam_interface` | 14 s | 1.5 s (20 KB) |
+   | `l2cp_user_port` | 14 s | 0.9 s |
+   | `interfaces` (246 ids) | 41 s | 13.5 s (210 KB) |
+   | `qos_interfaces` (150 ids) | 47 s | 98.5 s (1 MB): stays targeted |
+
+   Result on the lab (`isam_refresh`, NDLT-F `lt:1/1/3`): 294 s -> 118 s, 7 family reads,
+   and all 1282 section outcomes identical to the targeted run; ONT `1/1/5/1/3` 28.7 s ->
+   25.1 s, 46 outcomes identical. `isam_dhcp_relay` (not observable) is no longer read.
+   Rendering on that production MSAN was 10-15 KB/s, faster than the 4 KB/s assumed
+   above; a family read covers the whole MSAN, so the minimum instance counts are per
+   section and conservative for larger MSANs.
+
 Gaps found while porting (not topology code; each its own PR):
 
 - `isam_xdsl_bonding` parses only `group_assembly_time`; `TARGETED_GATHER` lists

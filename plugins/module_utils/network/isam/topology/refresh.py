@@ -650,6 +650,12 @@ def evaluate(root, discovery_results, read_results, now=None, max_age_seconds=30
               "reason": "conflicting_existence"}
              for (kind, identity), state in sorted(existence.items(), key=repr) if state == "conflict"]
     gaps += [dict(item) for item in needs]
+    if requested is not None:
+        # A requested section that configures nothing under the root is not a question
+        # this refresh can answer: name it, so a wrong family name never reads as "done".
+        kinds = [root[0]] + descendants(root[0])
+        answerable = {"%s.%s" % (r, s) for kind in kinds for r, s, _d in applicable_sections(kind)}
+        gaps += [{"section": name, "reason": "section_not_under_root"} for name in sorted(requested - answerable)]
     excluded = [{"kind": kind, "identity": identity, "name": name, "reason": why}
                 for kind, identity in objects for name, why in sorted(not_applicable(kind, identity, context).items())]
     return {"refresh": REFRESH_VERSION, "root": list(_key(*root)), "complete": not gaps,

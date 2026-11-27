@@ -24,6 +24,12 @@ description:
   - Each discovery source is read once per task, however many objects are enumerated
     from it (for example one C(show interface stack) for the bridge and VLAN ports of
     every line of a card).
+  - A section the measured read plan marks as cheaper to read as a whole family (a
+    few small families, and interface ports from 40 instances) is read once with
+    C(flat detail) for all its instances. Presence comes from the family's parser,
+    absence only from a complete reply that names no line of the instance; every other
+    instance is read targeted. Sections no read can show are not read and named as
+    not observable.
   - With I(sections), only those configuration sections are read, and discovery only
     goes as deep as the objects they configure. In such a partial refresh
     C(complete) refers to the question asked.
@@ -105,8 +111,12 @@ refresh:
       description: Everything that kept the refresh incomplete, each with a reason.
       type: list
     sections_requested:
-      description: The sections of a partial refresh, or null.
+      description: >-
+        The sections of a partial refresh, or null for a complete one. A requested
+        section that configures nothing under the root is a gap
+        (C(section_not_under_root)).
       type: list
+      elements: str
     discovery:
       description: The discovery records (see isam_topology_discovery).
       type: list
@@ -150,7 +160,8 @@ def main():
     try:
         outcome = run(module, (params["kind"], params["identity"]), sections=params["sections"],
                       allow_broad_read=params["allow_broad_read"], data=params["return_data"])
-    except UnknownIdentity as exc:
+    except (UnknownIdentity, RuntimeError) as exc:
+        # RuntimeError: a refresh that does not converge (refresh_run.MAX_ROUNDS).
         module.fail_json(msg=str(exc), changed=False)
     module.exit_json(changed=False, refresh=outcome)
 

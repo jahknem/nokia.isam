@@ -25,6 +25,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.d
     parse_ont_serials,
     parse_ont_slots,
     result,
+    utc_now,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.identity import (
     UnknownIdentity,
@@ -83,9 +84,10 @@ def prepare(kind, identity, child_kind):
 def enumerate_request(sources, connection, request, allow_broad_read):
     """The discovery record of one prepared request.
 
-    ``sources`` caches each command's reply for this call: (response, status) or the
-    exception its read raised, so every request on one source sees the same reply and
-    the source is read once. Raises UnknownIdentity for a source not understood.
+    ``sources`` caches each command's reply for this call: (response, status, read at)
+    or the exception its read raised, so every request on one source sees the same reply
+    and the source is read once. A record's ``collected_at`` is the time the source was
+    read, not the time it was parsed. Raises UnknownIdentity for a source not understood.
     """
     kind, identity, child_kind, adapter = request
     command, read_scope = adapter["command"], adapter["read_scope"]
@@ -94,7 +96,8 @@ def enumerate_request(sources, connection, request, allow_broad_read):
                       error="broad_enumeration_requires_allow_broad_read")
     if command not in sources:
         try:
-            sources[command] = read_source(connection(), command)
+            response, status = read_source(connection(), command)
+            sources[command] = (response, status, utc_now())
         except Exception as exc:
             sources[command] = exc
     read = sources[command]
@@ -103,16 +106,19 @@ def enumerate_request(sources, connection, request, allow_broad_read):
         # stable error class and the exception type, as ihub_config does.
         return result(kind, identity, child_kind, "error", command=command, read_scope=read_scope,
                       error="%s (%s)" % (error_class(read), type(read).__name__))
-    response, read_status = read
+    response, read_status, read_at = read
     if read_status != "ok":
-        return result(kind, identity, child_kind, "unsupported", command=command,
+        return result(kind, identity, child_kind, "unsupported", command=command, collected_at=read_at,
                       read_scope=read_scope, error="enumeration_source_%s" % read_status)
     try:
         if (kind, child_kind) == ("pon", "ont"):
-            return parse_ont_serials(response, identity)
-        if (kind, child_kind) == ("ont", "ont_slot"):
-            return parse_ont_slots(response, identity)
-        return enumerate_children(kind, identity, child_kind, response)
+            found = parse_ont_serials(response, identity)
+        elif (kind, child_kind) == ("ont", "ont_slot"):
+            found = parse_ont_slots(response, identity)
+        else:
+            found = enumerate_children(kind, identity, child_kind, response)
+        found["collected_at"] = read_at
+        return found
     except UnknownIdentity:
         raise
     except Exception as exc:
