@@ -38,7 +38,8 @@ options:
       mode:
         type: str
         description:
-        - The mode of the VLAN
+        - The mode of the VLAN (mandatory when creating a VLAN, no removal form).
+        - With C(deleted), naming C(mode) among other set values keeps it and warns; it changes only when the VLAN is removed.
         choices:
         - cross-connect
         - residential-bridge

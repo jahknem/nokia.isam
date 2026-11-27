@@ -379,6 +379,18 @@ def test_vlan_deleted_named_setting_keeps_the_vlan_and_absent_vlans_are_skipped(
     assert deleted([{"id": 3999}]) == []
 
 
+def test_vlan_deleted_naming_only_mode_warns(monkeypatch):
+    """mode has no removal form: deleted naming it (and other settings) keeps the VLAN and
+    its mode and warns instead of silently doing nothing."""
+    for config in ([{"id": 110, "mode": "residential-bridge"}], [{"id": 110, "mode": "cross-connect"}]):
+        result = run_module(monkeypatch, "isam_vlans", {"state": "deleted", "config": config}, VLAN_110)
+        assert result["commands"] == []
+        assert any("mode" in warning and "no standalone removal form" in warning for warning in result["_warnings"])
+    result = run_module(monkeypatch, "isam_vlans", {"state": "deleted", "config": [{"id": 110, "mode": "residential-bridge"}],
+                                                    "running_config": VLAN_110})
+    assert result["commands"] == [] and any("mode" in warning for warning in result["_warnings"])
+
+
 def test_l2cp_merged_without_partition_type_keeps_it(monkeypatch):
     running = "configure l2cp partition-type fixed-assigned\n"
     assert run_module(monkeypatch, "isam_l2cp", {"state": "merged", "config": [{"name": "l2cp"}]}, running)["commands"] == []
