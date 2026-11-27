@@ -244,7 +244,10 @@ alone names only the objects it addresses (`ethernet-line:X` with no other entry
 cannot be told apart between an xDSL line's facet and an Ethernet port; 32 of 48
 NDLT-F lines on production MSAN A have only that entry). An owner is attached when the
 decoder finds exactly one among the configured and freshly discovered objects; a
-bare index two discovered objects share stays a gap. `coverage(graph, kind,
+bare index two discovered objects share stays a gap. "Freshly" is the rule
+`coverage` applies (`now`, `max_age_seconds`, `collected_since`, which
+`attach_discovery` accepts too): a stored result from an earlier batch that is no
+longer fresh does not resolve an owner. `coverage(graph, kind,
 identity)` returns a recursive certificate. A root is `complete` only when every
 required direct-neighbor relation in its subtree has a successful fresh result.
 The manifest distinguishes `ok`, `failed`, `missing` (adapter exists, not yet

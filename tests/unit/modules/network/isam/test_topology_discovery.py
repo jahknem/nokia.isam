@@ -631,6 +631,30 @@ def test_discovered_ports_resolve_configuration_whose_owner_configuration_alone_
     assert not [gap for gap in g["gaps"] if gap.get("node") == facet]
 
 
+def test_only_fresh_discovery_resolves_an_owner():
+    # A stale stored result (an earlier batch) is not evidence that the object still
+    # exists; the 'configures' edge would be permanent. Same rule as coverage().
+    g = _card_graph("lt:1/1/3", [{"name": "ethernet-line:1/1/3/2", "admin_up": True}])
+    facet = node_key("configuration", ("interfaces", "config", "ethernet-line:1/1/3/2"))
+    table = port_table(DSL_AND_PON + ["xdsl-line:1/1/3/2", "ethernet-line:1/1/3/2"])
+    stale = dict(enumerate_children("card", "lt:1/1/3", "xdsl_line", table), collected_at="2026-11-20T10:00:00Z")
+    g = attach_discovery(g, [stale], now="2026-11-20T10:10:00Z")
+    assert not [e for e in g["edges"] if e["source"] == facet and e["relation"] == "configures"]
+    assert [gap["reason"] for gap in g["gaps"] if gap.get("node") == facet] == ["unknown_owner"]
+    # A later batch with another fresh relation does not revive the stale result.
+    other = dict(enumerate_children("card", "lt:1/1/3", "bonding_group", port_table(DSL_AND_PON)),
+                 collected_at="2026-11-20T10:20:00Z")
+    g = attach_discovery(g, [other], now="2026-11-20T10:20:30Z")
+    assert not [e for e in g["edges"] if e["source"] == facet and e["relation"] == "configures"]
+    # collected_since excludes a result collected before it, even within the maximum age.
+    fresh = dict(stale, collected_at="2026-11-20T10:30:00Z")
+    held = attach_discovery(g, [fresh], now="2026-11-20T10:30:10Z", collected_since="2026-11-20T10:30:05Z")
+    assert not [e for e in held["edges"] if e["source"] == facet and e["relation"] == "configures"]
+    g = attach_discovery(g, [fresh], now="2026-11-20T10:30:10Z")
+    assert {"source": facet, "relation": "configures", "target": node_key("xdsl_line", "1/1/3/2")} in g["edges"]
+    assert not [gap for gap in g["gaps"] if gap.get("node") == facet]
+
+
 def test_on_an_ethernet_card_the_same_entry_belongs_to_the_ethernet_port():
     g = _card_graph("lt:1/1/8", [{"name": "ethernet-line:1/1/8/1", "admin_up": True}])
     g = attach_discovery(g, [enumerate_children("card", "lt:1/1/8", "ethernet_port", port_table(DSL_AND_PON))])
