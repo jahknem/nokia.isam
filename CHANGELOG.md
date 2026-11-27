@@ -179,6 +179,18 @@ interfaces and documentation").
   everything) no longer has the device refuse the server removal midway. The check
   that refuses removing an entry a kept referrer still names is unchanged.
 
+### QoS interface write guard
+
+- `isam_qos_interfaces` refuses, before anything is rendered or sent, a setting the
+  interface kind never accepts (relations `refuses`, live write on the lab
+  2026-11-25: e.g. a CAC profile on an ONT, QOS MGT error 42; an upstream queue count
+  on a UNI or a bare port, error 48). A value a kind only displays (a LAG's
+  `ds_num_queue`, error 45) never becomes a command: equal to or omitted against the
+  device's value it is left alone (no `no ds-num-queue` either), a different value is
+  refused, and without a device value (`rendered`) it is skipped with a warning. Check
+  mode and `rendered` show a refusal instead of an apply failing midway. The guard
+  existed on the old write-order line only.
+
 ## 1.0.0 (unreleased)
 
 Major-version preparation, not a published release. Schema changes are

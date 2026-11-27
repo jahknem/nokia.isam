@@ -9,9 +9,58 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import Facts
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templates.qos_interfaces import Qos_interfacesTemplate
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.relations.qos_interfaces import RELATIONS
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.identity import UnknownIdentity, decode, numeric
 
-
+# Attributes each interface kind never accepts, and values a kind shows but refuses to
+# set (relations/qos_interfaces.py, live write DS-LIN-TEST-01 2026-11-25).
+REFUSED = RELATIONS["sections"]["config"]["refuses"]
+READ_ONLY = RELATIONS["sections"]["config"]["read_only"]
 UNSET_VALUES = ("none", "not-applicable")
+
+
+def interface_kind(name):
+    """The object kind a QoS index addresses; "user_port" for a bare port address, else None."""
+    try:
+        return decode("qos_interface", name)[0]
+    except UnknownIdentity:
+        return "user_port" if isinstance(name, str) and numeric(name, 4) else None
+
+
+def without_read_only(name, want, have, warn=None):
+    """want for the values a kind shows but refuses to set (a LAG's ds_num_queue).
+
+    Where the device shows the value, want takes it unless it names a different one, so
+    neither a set nor a removal is generated (an idempotent run, or merged pulling every
+    device entry into want, stays without commands). A different value stays in want and
+    is refused by refused_settings. Without a device value to compare (rendered, a new
+    entry) the value is not sent, with a warning.
+    """
+    want = dict(want)
+    for field in READ_ONLY.get(interface_kind(name), ()):
+        if have.get(field) is not None:
+            if want.get(field) is None:
+                want[field] = have[field]
+        elif want.get(field) is not None:
+            want.pop(field)
+            if warn:
+                warn("qos interface %s: %s is shown on this kind of interface but cannot be set; "
+                     "not rendered" % (name, field))
+    return want
+
+
+def refused_settings(name, want, have):
+    """[(field, reason)] for settings of want the device refuses on this kind of interface.
+
+    Only settings that would be written count: unset values (None, False, none,
+    not-applicable) and values equal to have are never sent. A bare port address is a
+    DSL line or a LAG; both refuse the same ("user_port"). A value a kind only shows
+    counts when it differs from the device's (see without_read_only).
+    """
+    want = without_read_only(name, want, have)
+    refused = REFUSED.get(interface_kind(name), {})
+    return [(field, refused[field]) for field in sorted(refused)
+            if want.get(field) not in (None, False) + UNSET_VALUES and want.get(field) != have.get(field)]
 
 
 def _without_unset_values(entry):
@@ -137,6 +186,14 @@ class Qos_interfaces(IsamResourceModule):
                 self._module.warn("qos interface %s keeps scheduler-node %s: it is required while the "
                                   "interface has queues" % (have.get("name"), have["scheduler_node"]))
                 want["scheduler_node"] = have["scheduler_node"]
+            name = want.get("name", have.get("name"))
+            want = without_read_only(name, want, have, self._module.warn)
+            refused = refused_settings(name, want, have)
+            if refused:
+                # Refused before anything is written, so check mode and rendered report
+                # what the device would reject instead of an apply failing midway.
+                self._module.fail_json(msg="qos interface %s: the device refuses %s" % (
+                    name, "; ".join("%s (%s)" % item for item in refused)))
             self.compare(parsers=self.top_parsers, want=want, have=have)
         for list_name, parsers in iteritems(self.list_parsers):
             self._compare_list(list_name, parsers, want, have)
