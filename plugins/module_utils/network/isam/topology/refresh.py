@@ -8,7 +8,8 @@ No CLI execution or Ansible dependency. A refresh runs in rounds:
    sections apply; without a context, or for an unknown planned type, nothing is
    assumed and the refresh names the gap.
 1. ``discovery_requests(root, results, context)`` names the direct-child enumerations still
-   needed (one ``isam_topology_discovery`` call each) for the objects known so far.
+   needed for the objects known so far: one ``isam_topology_discovery`` call per round
+   (``requests``), which reads every source command once for the whole round.
 2. ``configuration_reads(objects)`` names every configuration section that can
    configure each object kind (``relations/``), addressed by that object's own
    identity, as ``isam_read`` requests. Sections are read even when the previous
@@ -273,20 +274,54 @@ def known_objects(root, discovery_results):
     return objects
 
 
-def discovery_requests(root, discovery_results, context=None):
+def wanted_sections(sections):
+    """None (everything) or the set of "resource.section" names a partial refresh asks for.
+
+    A bare resource name stands for all its sections. Raises ValueError for a name the
+    relations do not know.
+    """
+    if not sections:
+        return None
+    wanted = set()
+    for name in sections:
+        resource, _, section = str(name).partition(".")
+        family = FAMILIES.get(resource)
+        if family is None or (section and section not in family["sections"]):
+            raise ValueError("unknown resource section %r" % (name,))
+        wanted |= {"%s.%s" % (resource, s) for s in family["sections"]} if not section else {name}
+    return wanted
+
+
+def _traversed_kinds(root_kind, wanted):
+    """Child kinds a partial refresh must enumerate: the kinds the wanted sections
+    configure, and every kind on the way down to them. None: all."""
+    if wanted is None:
+        return None
+    below = descendants(root_kind)
+    targets = {kind for kind in [root_kind] + below
+               if any("%s.%s" % (r, s) in wanted for r, s, _d in applicable_sections(kind))}
+    return {kind for kind in below if kind in targets or targets & set(descendants(kind))}
+
+
+def discovery_requests(root, discovery_results, context=None, sections=None):
     """Enumerations still needed for the objects known so far.
 
     Returns (requests, unimplemented): requests are {"kind", "identity",
     "child_kind", "read_scope"}; a relation without an adapter is listed in
     unimplemented (a capability gap, never an empty child list). A child kind the
-    card-type rules exclude is neither (see not_applicable()).
+    card-type rules exclude is neither (see not_applicable()). With ``sections``
+    (a partial refresh) only the kinds those sections configure, and the kinds on
+    the way down to them, are enumerated.
     """
     done = {(_parent(item), item["child_kind"]) for item in discovery_results}
+    traversed = _traversed_kinds(root[0], wanted_sections(sections))
     requests, unimplemented = [], []
     for kind, identity in known_objects(root, discovery_results):
         excluded = not_applicable(kind, identity, context)
         for child_kind in OBJECTS.get(kind, {}).get("children", []):
             if ((kind, identity), child_kind) in done or child_kind in excluded:
+                continue
+            if traversed is not None and child_kind not in traversed:
                 continue
             try:
                 adapter = adapter_for(kind, child_kind)
@@ -299,20 +334,24 @@ def discovery_requests(root, discovery_results, context=None):
     return requests, unimplemented
 
 
-def configuration_reads(objects, context=None):
+def configuration_reads(objects, context=None, sections=None):
     """isam_read requests covering every applicable section of every object.
 
     One request per (resource, section) with the encoded ids; ``meta.objects`` maps
     each id to the objects it addresses (a bare user-port index can address a line
     and a bonding group at once: one read unit, both objects). Sections whose
     identity is composite beyond the object (e.g. a QoS queue) are returned in
-    ``needs_enumeration``: they stay gaps until their sub-instances are known.
+    ``needs_enumeration``: they stay gaps until their sub-instances are known. With
+    ``sections`` (a partial refresh) only those sections are read.
     """
+    wanted = wanted_sections(sections)
     grouped, needs = {}, []
     for kind, identity in objects:
         excluded = not_applicable(kind, identity, context)
         for resource, section, decoder in applicable_sections(kind):
             if "%s.%s" % (resource, section) in excluded:
+                continue
+            if wanted is not None and "%s.%s" % (resource, section) not in wanted:
                 continue
             field = (TARGETED_GATHER.get(resource) or {}).get(section)
             if not isinstance(field, str):
@@ -491,7 +530,7 @@ def _absent_lineage(owners, existence):
 
 
 def evaluate(root, discovery_results, read_results, now=None, max_age_seconds=300, collected_since=None,
-             context=None):
+             context=None, sections=None):
     """The refresh outcome of ``root`` from discovery and isam_read results.
 
     Every applicable (object, section) of every known object, and every referenced
@@ -500,13 +539,16 @@ def evaluate(root, discovery_results, read_results, now=None, max_age_seconds=30
     of a counted kind must number what its type has. Anything else is a gap with a
     reason. ``complete`` is True only without gaps. The context comes from the
     context read among ``read_results`` unless given; what the card-type rules
-    exclude is listed in ``not_applicable``, never as present or absent.
+    exclude is listed in ``not_applicable``, never as present or absent. With
+    ``sections`` the evaluation covers only those sections (and the objects they need):
+    ``complete`` then means complete for the question asked.
     """
+    requested = wanted_sections(sections)
     if context is None:
         context = context_from(read_results)
     discovery_results, stale = split_fresh(discovery_results, now, max_age_seconds, collected_since)
     objects = known_objects(root, discovery_results)
-    pending, missing_adapters = discovery_requests(root, discovery_results, context)
+    pending, missing_adapters = discovery_requests(root, discovery_results, context, sections)
     stale_relations = {(_parent(i), i["child_kind"]) for i in stale}
     gaps = [dict(item, reason="discovery_unimplemented") for item in missing_adapters]
     gaps += [dict({k: item[k] for k in ("kind", "identity", "child_kind")},
@@ -527,7 +569,7 @@ def evaluate(root, discovery_results, read_results, now=None, max_age_seconds=30
             gaps.append({"kind": "card", "identity": parent[1], "child_kind": item["child_kind"],
                          "expected": expected, "found": len(item.get("children") or ()),
                          "reason": "population_mismatch"})
-    wanted, needs = configuration_reads(objects, context)
+    wanted, needs = configuration_reads(objects, context, sections)
     results = {}
     for result in read_results:
         results.setdefault((result.get("resource"), result.get("section") or "config"), []).append(result)
@@ -611,5 +653,6 @@ def evaluate(root, discovery_results, read_results, now=None, max_age_seconds=30
     excluded = [{"kind": kind, "identity": identity, "name": name, "reason": why}
                 for kind, identity in objects for name, why in sorted(not_applicable(kind, identity, context).items())]
     return {"refresh": REFRESH_VERSION, "root": list(_key(*root)), "complete": not gaps,
+            "sections_requested": sorted(requested) if requested is not None else None,
             "objects": [list(key) for key in objects], "sections": sections,
             "references": references, "not_applicable": excluded, "gaps": deepcopy(gaps)}

@@ -518,6 +518,17 @@
    },
    "sha256": "22f3084005a41af3a515f5e38f7326b9f8f53d74619eee28ef40d5a318631425"
   },
+  "isam_refresh": {
+   "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
+   "options": {
+    "allow_broad_read": "cf06f58d3331bc04a13e32e5552f68731d69fafe14979041cf532675766064ba",
+    "identity": "67b2393e5d1040555fa96db6aee4efc57286e983f5cb5a8863bfbbba40c08f9e",
+    "kind": "adbfb4e34f4af43ff72edc27f404f447fe94d0c7e377956f3d99d21da93fab8a",
+    "return_data": "cf06f58d3331bc04a13e32e5552f68731d69fafe14979041cf532675766064ba",
+    "sections": "82a194722fdce5fa03f83ce5c83399f6b49fc7e972ce1e50219a1ec9b409f71a"
+   },
+   "sha256": "a217c3b95bded17baf079d17627a77d7c40dee4f07c15b6b22262bfd8691e883"
+  },
   "isam_security_ext_authenticator": {
    "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
    "options": {
@@ -553,14 +564,15 @@
    "sha256": "1396082bbf58385389d917fe8a73ed057e40c8f3ffd29b5a62a64a828d2f16ce"
   },
   "isam_topology_discovery": {
-   "constraints": "9793fdb5efe56064a3468b277143d9b6b9dae58b3ed51c4e61870db31499a9d6",
+   "constraints": "d2919ce3cdfd08032d93983fbd96a4f340907e84842d16d661e0bdc02348d425",
    "options": {
     "allow_broad_read": "cf06f58d3331bc04a13e32e5552f68731d69fafe14979041cf532675766064ba",
-    "child_kind": "ce79ce696ab1874390821387823f0db46c42f8e964b17691433008a721bbcc44",
-    "identity": "67b2393e5d1040555fa96db6aee4efc57286e983f5cb5a8863bfbbba40c08f9e",
-    "kind": "98da258e388c20a18285cc8e4f40043c05b000cf39f566f0f0648ec870c367f2"
+    "child_kind": "8eb0b38ceae6cd393cf33729609761c683c001840ebb3ce6804afa4600e4f992",
+    "identity": "e41032ef34804b217700822c86a8e69070e12b45d4a040540e2890c96ea1a1a5",
+    "kind": "a3f5ec465a4dc55409ed35a40e9b0ea209163382f580fbed526bd71bd35dc1d1",
+    "requests": "4486cb345df56dab1be79ee7bb25509d6fdb65a8354f41eabf0a6d12e4a6ebe6"
    },
-   "sha256": "9fc2cb192ef41f8084016971cf368dca10c8d3ea425773787f6c52838af66833"
+   "sha256": "7cfe46f2e869531f05bd96a5d752a8dba4fe1c08241489e4a26b62a237ce2169"
   },
   "isam_traps": {
    "constraints": "ef80c0ecd08be1325c04520c52e7c05bbd7e0f2ff10ea3bfb419e0277e73255a",
@@ -749,6 +761,7 @@
   "isam_qos_profiles",
   "isam_qos_tca",
   "isam_read",
+  "isam_refresh",
   "isam_security_ext_authenticator",
   "isam_software_mngt",
   "isam_system",

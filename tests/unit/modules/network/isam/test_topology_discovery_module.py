@@ -239,3 +239,92 @@ class TestTopologyDiscoveryModule(TestIsamModule):
                         ignore_provider=True)
         disc = self.execute_module(changed=False)["discovery"]
         self.assertEqual(disc["status"], "unsupported")
+
+
+STACK = "\n".join([
+    "===============================================================================================",
+    "stack table",
+    "===============================================================================================",
+    "higher                                         |lower                                          ",
+    "-----------------------------------------------+-----------------------------------------------",
+    "%-47s %-47s" % ("bridge-port:1/1/3/1", "ethernet-line:1/1/3/1"),
+    "%-47s %-47s" % ("vlan-port:1/1/3/1:99", "bridge-port:1/1/3/1"),
+    "-----------------------------------------------------------------------------------------------",
+    "stack count : 2",
+    "===============================================================================================",
+])
+
+
+class TestTopologyDiscoveryBatch(TestIsamModule):
+    """requests: several enumerations in one call, every source read once."""
+    module = isam_topology_discovery
+
+    def setUp(self):
+        super(TestTopologyDiscoveryBatch, self).setUp()
+        self.mock_conn = patch(
+            "ansible_collections.nokia.isam.plugins.modules.isam_topology_discovery.get_resource_connection")
+        self.get_conn = self.mock_conn.start()
+        self.commands = []
+
+    def tearDown(self):
+        super(TestTopologyDiscoveryBatch, self).tearDown()
+        self.mock_conn.stop()
+
+    def _conn(self, replies, exc=None):
+        commands = self.commands
+
+        class Conn:
+            def get(self, command):
+                commands.append(command)
+                if exc is not None:
+                    raise exc
+                return replies[command]
+        self.get_conn.return_value = Conn()
+
+    def test_one_source_is_read_once_for_every_request_and_results_keep_their_order(self):
+        self._conn({"show interface stack": STACK, "info configure equipment ont interface flat": ""})
+        requests = [{"kind": "xdsl_line", "identity": "1/1/3/%d" % n, "child_kind": "bridge_port"} for n in (1, 2)]
+        requests.append({"kind": "bridge_port", "identity": "xdsl_line:1/1/3/1", "child_kind": "vlan_port"})
+        set_module_args(dict(requests=requests, allow_broad_read=True), ignore_provider=True)
+        result = self.execute_module(changed=False)
+        self.assertNotIn("discovery", result)
+        first, second, vlans = result["discoveries"]
+        self.assertEqual(self.commands, ["show interface stack"])
+        self.assertEqual((first["status"], first["children"]), ("ok", [("xdsl_line", "1/1/3/1")]))
+        # The second line has no bridge port in the same, complete source: confirmed empty.
+        self.assertEqual((second["status"], second["children"]), ("ok", []))
+        self.assertEqual(second["parent"], '["xdsl_line","1/1/3/2"]')
+        self.assertEqual((vlans["status"], vlans["children"]), ("ok", [("xdsl_line", "1/1/3/1", "99")]))
+
+    def test_a_failed_source_read_is_an_error_for_every_request_on_it_and_read_once(self):
+        self._conn({}, exc=ConnectionError("Error : some device text"))
+        requests = [{"kind": "xdsl_line", "identity": "1/1/3/%d" % n, "child_kind": "bridge_port"} for n in (1, 2)]
+        set_module_args(dict(requests=requests, allow_broad_read=True), ignore_provider=True)
+        result = self.execute_module(changed=False)
+        self.assertEqual(self.commands, ["show interface stack"])
+        for disc in result["discoveries"]:
+            self.assertEqual((disc["status"], disc["children"]), ("error", []))
+            self.assertNotIn("device text", disc["error"])
+
+    def test_an_invalid_request_fails_the_call_before_any_read(self):
+        self._conn({"show interface stack": STACK})
+        requests = [{"kind": "xdsl_line", "identity": "1/1/3/1", "child_kind": "bridge_port"},
+                    {"kind": "xdsl_line", "identity": "not-a-line", "child_kind": "bridge_port"}]
+        set_module_args(dict(requests=requests, allow_broad_read=True), ignore_provider=True)
+        self.execute_module(failed=True)
+        self.assertEqual(self.commands, [])
+        self.get_conn.assert_not_called()
+
+    def test_without_permission_no_request_reads(self):
+        requests = [{"kind": "xdsl_line", "identity": "1/1/3/1", "child_kind": "bridge_port"}]
+        set_module_args(dict(requests=requests), ignore_provider=True)
+        (disc,) = self.execute_module(changed=False)["discoveries"]
+        self.assertEqual(disc["error"], "broad_enumeration_requires_allow_broad_read")
+        self.get_conn.assert_not_called()
+
+    def test_requests_and_a_single_relation_are_mutually_exclusive(self):
+        set_module_args(dict(kind="pon", identity=PON, child_kind="ont",
+                             requests=[{"kind": "pon", "identity": PON, "child_kind": "ont"}]), ignore_provider=True)
+        self.execute_module(failed=True)
+        set_module_args(dict(kind="pon", identity=PON), ignore_provider=True)
+        self.execute_module(failed=True)

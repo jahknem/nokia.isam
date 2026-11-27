@@ -138,6 +138,16 @@ interfaces and documentation").
   side.
 - Test: every `created_with` section is reset, never removed, by its module in
   `deleted` and `overridden`.
+- New module `isam_refresh`: the whole refresh of one object (ONT, PON, card, ...) in
+  one task on one connection: context, discovery rounds, configuration and reference
+  reads, evaluation. Every discovery source is read once per task. `sections` makes it
+  a partial refresh: only those sections are read, and discovery goes only as deep as
+  the objects they configure. A discovery source that is not understood is a named
+  gap, not a failed task. Returns run statistics (`stats`).
+- `isam_topology_discovery`: `requests` enumerates several relations in one call and
+  reads each source command once (results in `discoveries`). The bridge-port and
+  VLAN-port rounds of a card read the interface stack once each instead of once per
+  line (96 reads of ~8.5 s on an NDLT-F card).
 
 ## 1.0.0 (unreleased)
 
