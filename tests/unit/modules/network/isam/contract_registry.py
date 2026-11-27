@@ -46,6 +46,7 @@ CONTRACT_MODULES = frozenset({
     "isam_qos_maps",
     "isam_qos_profiles",
     "isam_qos_tca",
+    "isam_read",
     "isam_security_ext_authenticator",
     "isam_software_mngt",
     "isam_system_security",

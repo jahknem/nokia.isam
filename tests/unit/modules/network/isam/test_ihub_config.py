@@ -94,7 +94,7 @@ def test_ihub_capabilities_do_not_advertise_targeted_cli_reads():
 
 
 def test_ihub_zero_encapsulation_sap_references_a_port_not_access_vlan_zero():
-    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.catalogs.ihub import sap_endpoint
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.ihub import sap_endpoint
     assert sap_endpoint("nt-a:xfp:4:0") == ("uplink", "nt-a:xfp:4")
     assert sap_endpoint("nt-a:eth:1:0") == ("ihub_port", "nt-a:eth:1")
     with pytest.raises(ValueError):
