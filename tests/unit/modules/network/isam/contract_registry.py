@@ -58,6 +58,7 @@ CONTRACT_MODULES = frozenset({
     "isam_vlans",
     "isam_voice_sip",
     "isam_xdsl_boards",
+    "isam_xdsl_bonding",
     "isam_xdsl_inm",
     "isam_xdsl_lines",
     "isam_xdsl_onts",

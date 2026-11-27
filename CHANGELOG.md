@@ -161,6 +161,16 @@ interfaces and documentation").
   VLAN-port rounds of a card read the interface stack once each instead of once per
   line (96 reads of ~8.5 s on an NDLT-F card).
 
+### xDSL bonding
+
+- `isam_xdsl_bonding` reads bonding groups (`group_profile`, `group_rtx_profile`,
+  `up`) and boards (`vect_fallback`, `group_profile`, `group_rtx_profile`), also
+  targeted with `state: gathered` and `config` (with `read_outcomes`). Writing groups
+  or boards fails before any command (no write form verified on a device yet).
+- `group_assembly_time` is parsed also from `flat detail` output; the whole read is
+  `info configure xdsl-bonding flat`. The module renders action states offline against
+  `running_config` like the other families.
+
 ## 1.0.0 (unreleased)
 
 Major-version preparation, not a published release. Schema changes are

@@ -97,8 +97,10 @@ Still open:
 
 Gaps found while porting (not topology code; each its own PR):
 
-- `isam_xdsl_bonding` parses only `group_assembly_time`; `TARGETED_GATHER` lists
-  `groups`/`boards`, so their reads stay unverified (a refresh reports a gap).
+- ~~`isam_xdsl_bonding` parses only `group_assembly_time`~~: groups and boards are
+  read since `fix/xdsl-bonding-sections` (writes still refused). Lab 2026-11-27, partial
+  `isam_refresh` of NDLT-F `lt:1/1/3` with `sections: [xdsl_bonding]`: 33 s, complete,
+  48 groups and the board present, one discovery request.
 - The QoS guard that refuses settings an interface kind never accepts
   (`refused_settings`, `without_read_only`; live 2026-11-25, QOS MGT errors 45, 48, 216)
   exists only on the old `feature/write-order` lineage, not in `isam_qos_interfaces`

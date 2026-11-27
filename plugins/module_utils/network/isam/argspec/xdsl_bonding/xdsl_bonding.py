@@ -13,6 +13,26 @@ class Xdsl_bondingArgs(object):  # pylint: disable=R0903
             "type": "dict",
             "options": {
                 "group_assembly_time": {"type": "int"},
+                "groups": {
+                    "type": "list",
+                    "elements": "dict",
+                    "options": {
+                        "group_id": {"type": "str", "required": True},
+                        "group_profile": {"type": "str"},
+                        "group_rtx_profile": {"type": "str"},
+                        "up": {"type": "bool"},
+                    },
+                },
+                "boards": {
+                    "type": "list",
+                    "elements": "dict",
+                    "options": {
+                        "board_id": {"type": "str", "required": True},
+                        "vect_fallback": {"type": "bool"},
+                        "group_profile": {"type": "str"},
+                        "group_rtx_profile": {"type": "str"},
+                    },
+                },
             },
         },
         "running_config": {"type": "str"},
