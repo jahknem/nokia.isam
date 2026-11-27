@@ -38,7 +38,8 @@ options:
     description:
       - The state of the configuration after module completion.
       - This is a single settings block without instance lists; C(gathered) always reads it completely.
-      - Nothing can be removed. C(deleted) resets all attributes to the device defaults (C(no <attribute>));
+      - Nothing can be removed. C(deleted) resets the attributes named in I(config) to the device defaults
+        (C(no <attribute>)), and all attributes without I(config) or with an empty one;
         C(replaced) and C(overridden) reset the attributes omitted from I(config).
     type: str
     choices:

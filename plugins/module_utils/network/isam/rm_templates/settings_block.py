@@ -76,14 +76,20 @@ def settings_commands(state, want, have, attrs, render):
     render(option, value) returns the full command; value None is the reset form.
     have holds only non-default values (absent means the device default).
     merged sets what differs; replaced/overridden also reset what want omits;
-    deleted resets every non-default attribute. The per-attribute decision is the
+    deleted resets the attributes want names (any value, an explicit default too) or,
+    when want names none (no config, an empty block), every non-default attribute
+    (docs/development-style.md: named attributes reset only themselves). The
+    per-attribute decision is the
     shared core ``change`` (a default have value counts as absent); rendered keeps
     the settings-block form (every given non-default value, one command each).
     """
     want = want or {}
     have = have or {}
     commands = []
+    named = set(option for option, _cli, _kind, _default in attrs if want.get(option) is not None)
     for option, cli, kind, default in attrs:
+        if state == "deleted" and named and option not in named:
+            continue
         wv = want.get(option)
         hv = have.get(option)
         # Legacy settings blocks suppress defaults even in rendered. Unlike the

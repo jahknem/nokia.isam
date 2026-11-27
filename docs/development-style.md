@@ -98,6 +98,8 @@ A `NetworkTemplate`. Pick per node:
   `(option, keyword, kind, default)`. It is a compatibility wrapper over the attribute
   core, retaining one command per attribute, optional `configure` prefixes and the
   netcommon line tracker. Its legacy `rendered` path omits device-default values.
+  `deleted` follows the state table: named attributes reset only themselves; no config
+  or a block naming no attribute resets the whole block.
 
 The device prints all attributes of a node on one line. Attribute tables read that
 packed line directly; families using per-attribute netcommon parsers split it first

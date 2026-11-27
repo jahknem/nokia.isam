@@ -407,3 +407,20 @@ def test_ipv6_antispoofing_merged_keeps_and_replaced_resets_only_named_slots(mon
     assert commands("merged", [{"name": "1/1/6"}]) == []
     assert commands("replaced", [{"name": "1/1/6"}]) == ["configure ipv6-antispoofing slot 1/1/6 no bit-len"]
     assert commands("overridden", [{"name": "1/1/6", "bit_len": 128}]) == ["configure ipv6-antispoofing slot 1/1/7 no bit-len"]
+
+
+PPPOX_GLOBAL = "configure pppox-relay cross-connect global-session pado-timeout 7 pads-timeout 8 max-pad-attempts 4\n"
+
+
+def test_settings_block_deleted_resets_only_named_attributes(monkeypatch):
+    """Settings blocks reset every non-default attribute on deleted, whatever the request named."""
+    def deleted(config=None):
+        args = {"state": "deleted"} if config is None else {"state": "deleted", "config": config}
+        return run_module(monkeypatch, "isam_pppox_relay_global", args, PPPOX_GLOBAL)["commands"]
+
+    prefix = "configure pppox-relay cross-connect global-session "
+    assert deleted({"pado_timeout": 5}) == [prefix + "no pado-timeout"]
+    assert deleted({"pado_timeout": 3, "max_pad_attempts": 4}) == [prefix + "no pado-timeout no max-pad-attempts"]
+    everything = deleted()
+    assert everything == deleted({})
+    assert all(keyword in " ".join(everything) for keyword in ("no pado-timeout", "no pads-timeout", "no max-pad-attempts"))

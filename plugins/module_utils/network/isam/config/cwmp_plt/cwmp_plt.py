@@ -21,7 +21,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 class Cwmp_plt(IsamResourceModule):
     """The isam_cwmp_plt config class (settings block ``configure cwmp plt``).
 
-    Nothing can be removed; ``deleted`` resets the attributes to the device
+    Nothing can be removed; ``deleted`` resets the named attributes (all without config) to the device
     defaults (``no <attribute>``), ``overridden`` behaves like ``replaced``.
     """
 
