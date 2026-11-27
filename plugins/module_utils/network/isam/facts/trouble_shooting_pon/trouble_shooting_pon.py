@@ -22,14 +22,18 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 
 
 def to_config(parsed):
-    """Module config shape of a template parse; threshold entries at their defaults are dropped."""
+    """Module config shape of a template parse.
+
+    A threshold entry with only default values exists (every PON has one): it stays
+    as its identity, the defaults are not reported (docs/targeted-read-contract.md).
+    """
     config = {}
     if parsed.get("interfaces"):
         config["interfaces"] = list(parsed["interfaces"].values())
     threshold = {}
     if "interval" in parsed:
         threshold["interval"] = parsed["interval"]
-    entries = [entry for entry in parsed.get("thresholds", {}).values() if len(entry) > 1]
+    entries = list(parsed.get("thresholds", {}).values())
     if entries:
         threshold["interfaces"] = entries
     if threshold:

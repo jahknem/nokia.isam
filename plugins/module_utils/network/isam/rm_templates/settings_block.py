@@ -53,7 +53,7 @@ def convert(kind, value):
 
 def parse_clauses(rest, attrs):
     """{option: value} of the packed clauses, defaults and negated values dropped."""
-    raw = _parse_clauses(rest.split(), tuple(Attr(option, cli, kind, default) for option, cli, kind, default in attrs))
+    raw = _parse_clauses((rest or "").split(), tuple(Attr(option, cli, kind, default) for option, cli, kind, default in attrs))
     entry = {}
     for option, _cli, _kind, default in attrs:
         value = raw.get(option)
