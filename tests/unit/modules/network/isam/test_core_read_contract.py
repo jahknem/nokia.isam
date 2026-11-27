@@ -222,3 +222,51 @@ def test_bridges_and_qos_interfaces_record_targeted_outcomes(facts_path, cls, re
     assert sent[0] == command
     outcomes = module._isam_read_outcomes["outcomes"]
     assert [(o["selector"], o["existence"]) for o in outcomes] == [("1/1/5/1/4/1/1", "confirmed_absent")]
+
+
+def test_an_unobservable_setting_ignores_does_not_exist_on_the_first_read():
+    # dhcp-relay answers the same set or not; the explicit error on the plain read
+    # proves nothing either (review of #17).
+    device = SimpleNamespace(get=lambda command: (_ for _ in ()).throw(Exception("Error : instance does not exist")))
+    _, outcomes = read(device, unobservable_commands=(COMMAND,))
+    assert outcomes["outcomes"][0]["existence"] == "unknown"
+
+    class Replying(object):
+        def get(self, command):
+            return command + "\nError : instance does not exist\n"
+    _, outcomes = read(Replying(), unobservable_commands=(COMMAND,))
+    assert outcomes["outcomes"][0]["existence"] == "unknown"
+
+
+def test_a_read_in_detail_flat_form_gets_no_second_probe_and_its_header_proves_absence():
+    command = "info configure example interface 1/1/1/1 detail flat"
+    sent = []
+
+    def get(cmd):
+        sent.append(cmd)
+        return cmd + "\n#----------------\n"
+    collector = ReadOutcomeCollector("example")
+    module = SimpleNamespace(params={"state": "gathered"})
+    get_scoped_config(module, SimpleNamespace(get=get), None, None, [command],
+                      outcomes=collector, selectors={command: [("config", "1/1/1/1")]})
+    assert sent == [command]
+    assert collector.to_result()["outcomes"][0]["existence"] == "confirmed_absent"
+
+
+@pytest.mark.parametrize("resource", ["epon_interfaces", "channel_pair_pm", "ngpon2_channel_groups"])
+def test_a_rejected_pon_variant_single_read_is_never_confirmed_absent(resource):
+    # The platform refuses the node ("invalid token"): only the whole read means "no
+    # instances"; a targeted read is rejected / unknown (review of #17).
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.pon_variants.pon_variants import (
+        VARIANT_COMMANDS, get_variant_config)
+    full, single = VARIANT_COMMANDS[resource]
+
+    def get(cmd):
+        raise Exception("Error : invalid token")
+    module = SimpleNamespace(params={"state": "gathered", "config": [{"name": "1/1/5/1", "id": "1"}]})
+    get_variant_config(module, SimpleNamespace(get=get), resource)
+    outcome = module._isam_read_outcomes["outcomes"][0]
+    assert outcome["existence"] == "unknown" and outcome["command"] == "rejected"
+    # The whole read on such a platform stays empty, as before.
+    whole = SimpleNamespace(params={"state": "gathered", "config": None})
+    assert get_variant_config(whole, SimpleNamespace(get=get), resource) == ""

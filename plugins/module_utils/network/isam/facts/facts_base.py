@@ -260,8 +260,8 @@ _QUOTED = re.compile(r'"[^"]*"')
 # device cannot resolve to an interface this way (live, DS-LIN-TEST-01, commit
 # 5ea59f6b). The evidence shows the PORT could not be resolved, not that the relay
 # instance on an existing port is absent, so it is a dependency signal: the relay
-# instance's existence stays unknown. Write-state reads still drop such a reply
-# (_is_absent_error), as before.
+# instance's existence stays unknown. Write-state reads drop such a reply
+# (_is_absent_error) instead of failing on it.
 _DEPENDENCY_GAPS = (
     ("lower-interface does not exist", "lower-interface"),
     ("interface index cannot be calculated", "interface-index"),
@@ -330,11 +330,17 @@ def _is_unsupported_node(text):
     return _device_says(text, "invalid token")
 
 
-def _record_absence(outcomes, entries, text):
-    """Record the outcome of an absence reply for every selector a command serves."""
+def _record_absence(outcomes, entries, text, unobservable=False):
+    """Record the outcome of an absence reply for every selector a command serves.
+
+    unobservable: the section answers the same whether it is set or not
+    (targeted.ABSENCE_POLICY), so even "instance does not exist" proves nothing.
+    """
     gap = _dependency_gap(text)
     for section, selector in entries:
-        if gap is None:
+        if unobservable:
+            outcomes.record(section, selector, "ok", "unknown")
+        elif gap is None:
             outcomes.record(section, selector, "ok", "confirmed_absent")
         else:
             outcomes.record(section, selector, "ok", "unknown", dependency_gap=gap)
@@ -368,7 +374,7 @@ def _probe_detail(connection, command, policy=None):
       "unobservable" (every read answers the same in both states: unknown)
     - a rejection ("invalid token"): rejected; any other reply: unknown
     """
-    if not command.startswith("info configure ") or not command.endswith(" flat"):
+    if not command.startswith("info configure ") or not command.endswith(" flat") or " detail" in command:
         return "", "unknown"
     bare = command[len("info "):-len(" flat")]
     try:
@@ -480,7 +486,7 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
             text = str(exc)
             if _is_absent_error(text):
                 if outcomes is not None:
-                    _record_absence(outcomes, entries, text)
+                    _record_absence(outcomes, entries, text, command in unobservable_commands)
                 continue
             if reading and _is_unsupported_node(text):
                 if outcomes is not None:
@@ -501,7 +507,7 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
             raise
         if _is_absent_error(response):
             if outcomes is not None:
-                _record_absence(outcomes, entries, response)
+                _record_absence(outcomes, entries, response, command in unobservable_commands)
             continue
         if reading and _is_unsupported_node(response):
             if outcomes is not None:
@@ -516,7 +522,7 @@ def get_scoped_config(module, connection, config, fallback_command, commands, sa
         empty_absent = command in empty_absent_commands and single
         probe = reading and single and not empty_absent
         probed = None
-        detail_read = command.startswith("info configure ") and command.endswith(" flat detail")
+        detail_read = command.startswith("info configure ") and command.endswith((" flat detail", " detail flat"))
         if not reply.strip() and detail_read:
             # Already the second step of the rule: 'flat detail' prints every existing
             # instance, so the header alone proves absence (not for the silent and
