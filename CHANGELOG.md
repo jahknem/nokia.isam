@@ -184,6 +184,9 @@ intentional. This section lists the ONT/access families of that line.
   (`<protocol> [dscp <n>] [pbit <n>] [tc <n>]`; was `queue`/`profile`), requires the
   fields the device needs to set an entry, and renders `dscp-map-dot1p ... dot1p-value`
   (was `dot1p`). `deleted` removes only the named entries, not whole map families.
+  `replaced`/`overridden` reset the ctrl-pkt parameters an entry omits with the inline
+  `no dscp`/`no pbit`/`no tc` form (they never converged before), and device defaults
+  (`dscp -1`, `pbit 7`, `tc -1`) count as unset when comparing.
 
 ### QoS: interfaces
 

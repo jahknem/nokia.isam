@@ -104,6 +104,9 @@ options:
     - C(replaced) makes the named entries exactly as given and removes the entries of a named map
       that are not given; maps not named are left alone. C(overridden) does the same (an empty list
       names a map and removes all its entries); maps not named are left alone.
+    - With C(replaced) and C(overridden) a ctrl-pkt entry is set exactly as given; C(dscp), C(pbit) and C(tc)
+      it omits return to the device default with the inline C(no) form (e.g. C(up-ctrl-pkt igmp no dscp tc 7)).
+      Values equal to the device default (C(dscp) -1, C(pbit) 7, C(tc) -1) count as unset when comparing.
     - With C(deleted) and I(config), only the sections and instances named in I(config) are deleted or reset; other sections are left alone. Without I(config) everything is deleted. Naming an entry by its identity alone is enough.
     type: str
     default: merged

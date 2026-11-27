@@ -46,11 +46,17 @@ class Qos_mapsTemplate(NetworkTemplate):
         return "configure qos no dscp-map-dot1p {0}".format(data["dscp"])
 
     @classmethod
-    def _render_ctrl_pkt(cls, node, data):
+    def _render_ctrl_pkt(cls, node, data, reset=()):
+        """Set the given parameters; ``reset`` names parameters to return to their
+        default with the inline ``no <param>`` form (CLI help, configure qos
+        up-ctrl-pkt/dn-ctrl-pkt: ``[ no dscp | dscp <v> ] [ no pbit | pbit <v> ]
+        [ no tc | tc <v> ]``)."""
         cmd = "configure qos {0} {1}".format(node, data["protocol"])
         for attr in ("dscp", "pbit", "tc"):
             if data.get(attr) is not None:
                 cmd += " {0} {1}".format(attr, data[attr])
+            elif attr in reset:
+                cmd += " no {0}".format(attr)
         return cmd
 
     @classmethod
