@@ -91,11 +91,13 @@ fields; everything else in the entries is ignored:
     state: gathered
 ```
 
-Instances that do not exist are simply not returned ("instance does not exist" from the
-device); other device errors fail the task. The device answers an instance with nothing
-configured exactly like a non-existing one (only a header), so such instances are not
-returned either; they cannot be told apart from a single read. Without `config`, the whole resource is read,
-as before. `isam_facts` is unchanged and always reads whole resources.
+Instances that do not exist are not returned, and `read_outcomes` reports them
+`confirmed_absent`; other device errors fail the task. An instance with only default
+values answers the plain read like a missing one (only a header); the module then reads
+it with `flat detail`, which prints every existing instance, and returns it with its
+identity only (defaults are not reported as configuration). The rule and its evidence:
+`docs/targeted-read-contract.md`. Without `config`, the whole resource is read, as
+before. `isam_facts` is unchanged and always reads whole resources.
 
 Every instance list of every resource supports it; the lists and their identity
 fields are in `plugins/module_utils/network/isam/targeted.py` (`TARGETED_GATHER`): a
