@@ -97,3 +97,10 @@ def test_a_source_not_understood_is_a_named_gap_not_a_failed_task(monkeypatch):
     assert errors and {d["error"] for d in errors} == {"source_not_understood"}
     assert any(g.get("reason") == "discovery_error" for g in outcome["gaps"])
     assert not outcome["complete"]
+
+
+def test_a_refresh_that_does_not_converge_fails_cleanly(monkeypatch):
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology import refresh_run
+    monkeypatch.setattr(refresh_run, "MAX_ROUNDS", 0)
+    result, _sent = refresh(monkeypatch, {"kind": "ont", "identity": ONT})
+    assert result.get("failed") and "did not converge" in result["msg"], result

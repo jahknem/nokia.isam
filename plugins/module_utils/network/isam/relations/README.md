@@ -37,7 +37,7 @@ A section names an `"object"` or a `"scope"`:
 | `"scope": "device_global"` | Device-wide instances without a physical owner. |
 | `"scope": "shared_profile"` | Named definitions other configuration refers to. |
 | `"kinds": [kind, ...]` | With `"object"`: the only object kinds the section applies to, where the decoder could address more (e.g. PPPoE per `vlan_port`, not on a `pon:`/`ont:`/`uni:` interface). Without it every kind the decoder yields applies. |
-| `"observable": False` | The device accepts the configuration but shows it in no read: a refresh can find it present, never confirm it absent (an unconfirmed instance is the gap `not_observable`). |
+| `"observable": False` | The device accepts the configuration but shows it in no read: no read can show it present or absent, so `isam_refresh` does not read it and names every instance as the gap `not_observable`. |
 
 Relations to other things:
 

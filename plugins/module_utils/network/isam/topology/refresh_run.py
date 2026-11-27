@@ -42,6 +42,10 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.s
 MAX_ROUNDS = 20
 
 
+class RefreshNotConverged(Exception):
+    """Discovery or reference rounds still asked for more after MAX_ROUNDS."""
+
+
 def _utc(seconds):
     """ISO-8601 UTC with "Z", the form discovery timestamps use."""
     return datetime.fromtimestamp(seconds, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -148,7 +152,7 @@ def run(module, root, sections=None, allow_broad_read=False, data=False):
             break
         rounds += 1
         if rounds > MAX_ROUNDS:
-            raise RuntimeError("discovery did not converge in %d rounds" % MAX_ROUNDS)
+            raise RefreshNotConverged("discovery did not converge in %d rounds" % MAX_ROUNDS)
         for request in requests:
             prepared = prepare(request["kind"], request["identity"], request["child_kind"])
             try:
@@ -173,7 +177,7 @@ def run(module, root, sections=None, allow_broad_read=False, data=False):
             break
         reference_rounds += 1
         if reference_rounds > MAX_ROUNDS:
-            raise RuntimeError("reference reads did not converge in %d rounds" % MAX_ROUNDS)
+            raise RefreshNotConverged("reference reads did not converge in %d rounds" % MAX_ROUNDS)
         more, _status = read_all(module, pending)
         results += more
 

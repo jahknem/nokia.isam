@@ -37,7 +37,6 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.targeted i
 # ends), l2cp user-port and pppoe-client interface 0.9 s (header only), interface port
 # 13.5 s (210 KB); qos interface 98.5 s (1 MB, targeted stays cheaper).
 # min_ids: from how many instances of one refresh the family read is cheaper.
-_EVIDENCE = "read-only timing 2026-11-27, lab and one production MSAN (docs/topology-refresh-plan.md)"
 FAMILY_READS = {
     ("isam_system_security", "pae.ports"): {
         "command": "info configure system security pae port flat detail",
