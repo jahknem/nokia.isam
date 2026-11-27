@@ -112,6 +112,46 @@ def test_empty_absence_requires_explicit_single_instance_policy():
     assert device.commands == [COMMAND]
 
 
+def test_empty_absent_instance_line_is_present_without_a_detail_read():
+    device = Device(AssertionError("must not need a detail read"))
+    collector = ReadOutcomeCollector("example")
+    module = SimpleNamespace(params={"state": "gathered"})
+
+    def get(command):
+        device.commands.append(command)
+        return command + "\n" + PATH + " profile p1\n"
+
+    device.get = get
+    result = get_scoped_config(module, device, None, None, [COMMAND], outcomes=collector,
+                               selectors={COMMAND: [("config", "1/1/1/1")]},
+                               empty_absent_commands=(COMMAND,))
+    assert "profile p1" in result
+    assert collector.to_result()["outcomes"][0]["existence"] == "present"
+    assert device.commands == [COMMAND]
+
+
+@pytest.mark.parametrize("reply, existence", [
+    ("", "confirmed_absent"),
+    (PATH + " no enabled\n", "present"),
+])
+def test_a_single_flat_detail_read_skips_the_second_read(reply, existence):
+    # docs/targeted-gathering.md, "Attribute-free instances": families whose single
+    # read already is 'flat detail' reach the same outcomes without a second read.
+    command = COMMAND + " detail"
+    commands = []
+
+    def get(sent):
+        commands.append(sent)
+        return sent + "\n#----------------\n" + reply
+
+    collector = ReadOutcomeCollector("example")
+    module = SimpleNamespace(params={"state": "gathered"})
+    get_scoped_config(module, SimpleNamespace(get=get), None, None, [command], outcomes=collector,
+                      selectors={command: [("config", "1/1/1/1")]})
+    assert collector.to_result()["outcomes"][0]["existence"] == existence
+    assert commands == [command]
+
+
 def test_detail_transport_failure_is_sanitized_and_fails_the_read():
     saved = {}
 
