@@ -85,6 +85,9 @@ interfaces and documentation").
   longer documented as option defaults).
 - `isam_system_security`: option descriptions written from the CLI guide; its docs
   match the argspec (enforced by the contract tests once the module is registered).
+- `isam_system_security`: `overridden` fails, before anything is sent, instead of
+  removing a RADIUS auth server a kept RADIUS policy references, or a RADIUS policy
+  the auth-super-user operator-policy or a kept domain references.
 - `isam_security_ext_authenticator`: the undocumented, unused `provider` option is
   removed.
 

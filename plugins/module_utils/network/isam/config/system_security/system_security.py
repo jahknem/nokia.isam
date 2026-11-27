@@ -111,6 +111,19 @@ def _covers(ident, want, have):
     return not want or _named_values(want, have) == have
 
 
+def _reference(value, prefix):
+    """The object name in a reference value ('name:RAD1', 'radius:Pol1'); None for
+    unset, 'none' or a reference of another kind ('local'). A bare name counts for
+    'name:' references only (a request may omit the prefix the device prints)."""
+    if not isinstance(value, str) or not value:
+        return None
+    if value.startswith(prefix):
+        return value[len(prefix):] or None
+    if prefix != "name:" or ":" in value or value == "none":
+        return None
+    return value
+
+
 def _masked_identity(section, entry):
     # '*' is a real SNMP subtree identity (the whole view), not a hidden secret.
     return any(is_masked_secret(entry.get(field)) and not
@@ -252,6 +265,8 @@ class Isam_system_security(IsamResourceModule):
             # request that only tunes, e.g., the password policy.
             if section == "profiles":
                 self._check_profiles_in_use(wantd, haved, want, have)
+            elif section in ("radius_auth_servers", "radius_policies"):
+                self._check_radius_in_use(section, wantd, haved, want, have)
             for key, entry in haved.items():
                 if not _named(key, wantd):
                     self._remove(section, entry)
@@ -341,6 +356,60 @@ class Isam_system_security(IsamResourceModule):
                 msg="profiles: overridden would remove profile(s) still used by kept operators: %s. "
                     "Include the profile in config or move the operator to another profile first."
                     % ", ".join(sorted(in_use)))
+
+    def _kept(self, section, want, have):
+        """(identity, device entry, wanted entry) of the instances overridden keeps.
+
+        A list type the request does not name is left alone, so all its device entries
+        are kept; a named one keeps the requested entries only.
+        """
+        current = self._index(section, _get(have, section))
+        if _get(want, section, _MISSING) is _MISSING:
+            return [(key[0], entry, None) for key, entry in current.items()]
+        wanted = self._index(section, self._wanted_entries[section])
+        return [(key[0], current.get(key), entry) for key, entry in wanted.items()]
+
+    def _radius_references(self, section, want, have):
+        """[(referenced name, referrer)] to the instances of a RADIUS list type.
+
+        Both the device value and the requested value of a kept referrer count: the
+        removal is rendered before the referrer is updated (auth servers before
+        policies, policies before auth-super-user and domains), so a reference the
+        request moves away is still on the device when the removal is sent.
+        """
+        refs = []
+        if section == "radius_auth_servers":
+            for name, current, wanted in self._kept("radius_policies", want, have):
+                for entry in (current, normalize_policy(wanted)):
+                    for server in (entry or {}).get("servers") or []:
+                        for field in ("auth_server", "acc_server"):
+                            refs.append((_reference(server.get(field), "name:"), "policy %s" % name))
+        else:
+            for value in (_get(have, "radius_auth_super_user.operator_policy"),
+                          _get(want, "radius_auth_super_user.operator_policy")):
+                refs.append((_reference(value, "name:"), "auth-super-user operator-policy"))
+            for name, current, wanted in self._kept("domains", want, have):
+                for entry in (current, wanted):
+                    refs.append((_reference((entry or {}).get("authenticator"), "radius:"), "domain %s" % name))
+        return [(ref, referrer) for ref, referrer in refs if ref]
+
+    def _check_radius_in_use(self, section, wantd, haved, want, have):
+        """overridden must not remove a RADIUS server or policy something kept refers to.
+
+        The device refuses to delete a server a policy uses, or a policy still in use;
+        failing before anything is sent avoids stopping mid-run. Only names are
+        reported, never entry contents (secrets).
+        """
+        removed = set(key[0] for key in haved if not _named(key, wantd))
+        if not removed:
+            return
+        in_use = set("%s (%s)" % (ref, referrer)
+                     for ref, referrer in self._radius_references(section, want, have) if ref in removed)
+        if in_use:
+            self._module.fail_json(
+                msg="%s: overridden would remove entries still referenced by kept configuration: %s. "
+                    "Include them in config or move the reference in a separate run first."
+                    % (section, ", ".join(sorted(in_use))))
 
     def _nested_commands(self, section, identity, nested_want, nested_have):
         """Nested instance lists (radius policy servers) of one list entry.

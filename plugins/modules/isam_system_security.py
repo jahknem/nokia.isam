@@ -30,6 +30,11 @@ description:
   - Passwords and secrets are never readable from the device, so C(replaced) and C(overridden)
     keep them when an entry omits them; they are only changed when given.
   - C(overridden) fails instead of removing a profile that a kept operator still uses.
+  - C(overridden) fails instead of removing a RADIUS auth server that a kept RADIUS policy
+    references, or a RADIUS policy that the auth-super-user operator-policy or a kept domain
+    authenticator references. The device value and the requested value of a kept referrer
+    both count, because the removal is sent before the referrer is changed; move such a
+    reference in a separate run first.
 version_added: 1.0.0
 author: Jan Kühnemund (@jahknem)
 options:
@@ -785,7 +790,7 @@ options:
   state:
     description:
     - The state the configuration should be left in.
-    - C(overridden) acts only on the list types and settings blocks named in I(config); within a named list, entries that are not listed are removed; a list type or block that is not named is left alone. A profile that a kept operator uses is never removed (the module fails instead). To empty a list type use C(deleted).
+    - C(overridden) acts only on the list types and settings blocks named in I(config); within a named list, entries that are not listed are removed; a list type or block that is not named is left alone. A profile that a kept operator uses, a RADIUS auth server that a kept RADIUS policy uses, and a RADIUS policy that the auth-super-user operator-policy or a kept domain uses are never removed (the module fails instead). Kept means listed in I(config) for a named list type, and every device entry of a list type that is not named. To empty a list type use C(deleted).
     - C(deleted) without I(config) removes every operator, profile, SNMP, RADIUS, SSH and PAE entry and resets every settings block, which can lock out device access; name the sections to delete instead.
     - With C(gathered) and I(config), only the instances named in I(config) are read from the device, selected by their C(name) in each list (C(slot) in I(slots), C(server) in I(filetransfer.servers), C(index) in I(peripheral_mgnt.mac_filters), C(port) in I(pae.ports); an SNMP view, notify view or community is read with all its subtrees or host addresses) (targeted gathering). Other fields are ignored and absent instances are not returned; an instance with only default values is read with C(flat detail) and returned with its identity only, and C(read_outcomes) reports each named instance present or confirmed absent where the device allows it (an SFTP user, read from the shared ssh node, is present or unknown). Without I(config) the whole resource is read. Settings blocks (C(radius_auth_super_user), C(general), C(default_profile), C(password), C(ssh.server_profile), C(ssh.access), C(tacacs), C(li), the C(filetransfer) and C(pae) attributes) are read whole.
     type: str
