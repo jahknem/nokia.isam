@@ -87,6 +87,7 @@ def test_the_policies_come_from_the_central_table():
     assert absence_policy("isam_arp_relay", "config") == "silent"
     assert absence_policy("isam_dhcp_relay", "config") == "unobservable"
     assert absence_policy("efm_oam_interface", "config") is None
+    assert absence_policy("trouble_shooting_pon", "interfaces") == "silent"
 
 
 def test_shared_node_check_does_not_trigger_single_instance_probe():

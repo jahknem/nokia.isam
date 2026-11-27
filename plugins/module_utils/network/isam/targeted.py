@@ -149,6 +149,11 @@ ABSENCE_POLICY = {
     # switched on and off on a scratch VLAN port: flat, flat detail, the whole read
     # and 'show dhcp-relay port-stats' answered the same in both states (2026-11-26).
     "isam_dhcp_relay": {"config": "unobservable"},
+    # statistics collection on a PON is a switch without attributes: on prints the
+    # header only, also with detail; off answers "instance does not exist" (live write,
+    # DS-LIN-TEST-01 2026-11-18/19, card 6 PON 1/1/6/2;
+    # tests/fixtures/trouble_shooting_pon/isolated-write-r6.2.04m/).
+    "trouble_shooting_pon": {"interfaces": "silent"},
 }
 
 
