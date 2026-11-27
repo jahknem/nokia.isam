@@ -178,6 +178,14 @@ interfaces and documentation").
   An `overridden` that removes a policy and the server it uses (or `deleted` of
   everything) no longer has the device refuse the server removal midway. The check
   that refuses removing an entry a kept referrer still names is unchanged.
+### QoS interface write guard
+
+- `isam_qos_interfaces` refuses, before anything is rendered or sent, a setting the
+  interface kind never accepts (relations `refuses`, live write on the lab
+  2026-11-25: e.g. a CAC profile on an ONT, QOS MGT error 42; an upstream queue count
+  on a UNI or a bare port, error 48), and never sends a value a kind only displays (a
+  LAG's `ds_num_queue`, error 45). Check mode and `rendered` show the refusal instead
+  of an apply failing midway. The guard existed on the old write-order line only.
 
 ## 1.0.0 (unreleased)
 

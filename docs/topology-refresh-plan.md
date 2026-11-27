@@ -101,10 +101,8 @@ Gaps found while porting (not topology code; each its own PR):
   read since `fix/xdsl-bonding-sections` (writes still refused). Lab 2026-11-27, partial
   `isam_refresh` of NDLT-F `lt:1/1/3` with `sections: [xdsl_bonding]`: 33 s, complete,
   48 groups and the board present, one discovery request.
-- The QoS guard that refuses settings an interface kind never accepts
-  (`refused_settings`, `without_read_only`; live 2026-11-25, QOS MGT errors 45, 48, 216)
-  exists only on the old `feature/write-order` lineage, not in `isam_qos_interfaces`
-  on `main`.
+- ~~The QoS guard that refuses settings an interface kind never accepts~~: ported to
+  `isam_qos_interfaces` (`fix/qos-refused-settings`).
 - `isam_interfaces` `deleted` does not restore `admin-up` where the device default is
   up (ONT and VLAN-port interfaces); `isam_link_agg` `deleted` does not reset
   `load-sharing-policy`/`mode`. Reset forms unverified on a device.
