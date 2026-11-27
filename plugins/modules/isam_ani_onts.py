@@ -39,6 +39,8 @@ options:
           - Received optical level in dBm (-127 to 0.5) at which the ONT declares high received power
             (C(upper-optical-th)).
           - Device default C(0.5), meaning the ONT's internal choice.
+          - Must not be below I(lower_optical_th); the default C(0.5) counts as a value, so a lower
+            threshold back at its default needs the upper one at its default too (GPON MGT error 238).
       rssi_profile:
         type: int
         description: Index of the RSSI profile (C(rssi-profile), 0-200); device default C(0).
