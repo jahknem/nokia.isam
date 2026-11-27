@@ -69,6 +69,108 @@ local paths before the first push (AGENTS.md, "Sanitization").
    switches it off); whole-node reads honour `ABSENCE_POLICY`; a missing dependency on
    the detail probe keeps its `dependency_gap` label.
 
+## Terms
+
+- **Discovery**: finding which child objects exist under a parent (the ONTs of a PON, the
+  UNIs of an ONT slot, the xDSL lines of a card, the bridge ports of a line, the VLAN
+  ports of a bridge port). An adapter per (parent kind, child kind) names the source
+  (an operational table such as `show interface port` / `show interface stack`, or a
+  configuration family read) and its read scope (`device`, `family` or `scoped`, as
+  `discovery.result()` accepts; every current adapter is `device` or `family`). Only an
+  `ok` result -- source understood completely, footer count and terminator confirmed --
+  may say "exactly these children"; a failed (`error`/`unsupported`) or not completely
+  understood source never means "none".
+  Results carry their collection time, so stale evidence is not used.
+- **Configuration read**: what is configured on a known object, one outcome per
+  (object, section): present, confirmed absent, or a gap with a reason.
+- **Refresh**: discovery rounds (card → lines → bridge ports → VLAN ports), then the
+  configuration reads of every applicable section of every discovered object, then the
+  shared definitions they reference.
+
+## Performance: where the time goes and what to change
+
+Goal of the model: read only what a question needs, without whole families. Measured
+on DS-LIN-TEST-01 (2026-11-26/27) and in NOC (production MSAN, 2026-11-25):
+
+| Scope | Reads | Time | Where the time goes |
+| --- | --- | --- | --- |
+| one existing ONT, complete (46 sections) | 52 targeted reads | 92 s | 27 s reads, 38 s discovery; ~7 separate playbook runs, each with a new SSH login |
+| one missing ONT (8 sections) | 8 | 27 s | mostly overhead |
+| NDLT-F card, 48 lines (1282 sections) | 1147 ids | 1100 s | **850 s discovery**, 232 s reads |
+| whole lab configuration, `flat` + `flat detail` | 2 | 162 s | one session |
+| whole production MSAN refresh (NOC) | families | 578 s | 241 s of it QoS; targeted QoS 0.36 s per port (32 in 11.5 s) |
+
+Read sizes on the lab (`flat` / `flat detail`): xDSL lines 10.6 / 92 KB, bridge ports
+47 / 248 KB, QoS interfaces 187 / 277 KB, EFM OAM 0.3 / 17.6 KB. A large production MSAN
+renders configuration at about 4 KB/s (NOC), so a 250 KB detail read costs about a
+minute there; a targeted read costs 0.05–1 s.
+
+Conclusions:
+
+- For a few objects or a few values (one ONT, some UNIs, one setting across ports),
+  targeted reads win clearly; NOC already uses this for QoS.
+- The fixed cost per session (playbook start, inventory, SSH login: ~10–15 s) dominates
+  small refreshes: rounds must share one session.
+- For complete coverage of a large object (a card), 1147 single reads plus repeated
+  discovery lose against reading the families once. The planner has to choose per
+  section.
+
+### Plan: card refresh
+
+1. **Read each discovery source once per run.** The bridge-port and VLAN-port discovery
+   of every line reads the device-wide `show interface stack`: 96 reads of ~8.5 s for one
+   NDLT-F card (~820 s). Read it once and enumerate both child kinds for every parent
+   from it; likewise `show interface port` (xDSL lines and bonding groups share it).
+   Expected: discovery from ~850 s to ~10–20 s. A source result carries its collection
+   time; reuse it within the run's freshness window only. The planner must pass a window
+   that covers the whole run (`max_age_seconds` defaults to 300 s; today's card run took
+   ~1100 s), otherwise later rounds count as `discovery_stale`.
+2. **One session for the whole refresh.** Context round, discovery rounds, configuration
+   and reference reads run in one module call (or one persistent connection) instead
+   of one playbook per round. Expected: ~10–15 s saved per round (7 rounds for an ONT).
+3. **Family or targeted read, per section.** For each (resource, section) the planner
+   knows how many of the family's instances the refresh needs (e.g. all 48 lines of a
+   card). Above a threshold, read the family once and filter by the card's identities;
+   below it, read targeted.
+   - Absence must stay provable: a family `flat` read omits default-only instances
+     (16 of 48 NDLT-F lines on a production MSAN). Either read the family with
+     `flat detail` (lists every existing instance; larger, see sizes above), or read
+     the family `flat` and probe only the instances missing from it with a targeted
+     `flat detail`. Choose by measured size: the probe variant when `flat detail` is
+     much larger than `flat` (EFM OAM: 54×), the family detail read otherwise.
+   - Conditions of the probe variant (see `docs/targeted-read-contract.md`):
+     - An instance missing from the family read counts as "flat shows nothing" only if
+       the family reply is complete (terminator confirmed); otherwise there are no probe
+       candidates and the section is a gap.
+     - Not for `ABSENCE_POLICY` sections: `silent` ones print nothing in `detail` even
+       when the instance exists; `unobservable` ones are never decidable.
+     - Families whose single read already is `flat detail` (bridge ports, ONT interfaces
+       and slots, equipment slots, PON interfaces) have no smaller `flat` to choose.
+     - Whole-family reads do not get the probe automatically; the planner issues it,
+       through a detail-only entry point (today's targeted helper sends `flat` first,
+       which would repeat it).
+     - A probe that hits a missing lower interface stays unknown (`dependency_gap`).
+   - The threshold is a measured cost model per section (bytes of the family read vs.
+     instance count × targeted read time), recorded as data next to the card rules (local `cards.py`),
+     not a constant in code.
+4. **Skip what cannot apply.** The card rules (local `cards.py`, not yet on `main`)
+   already exclude sections per card type
+   (`not_applicable`); extend them with the measured "created with the card" entries so
+   those are not read just to confirm defaults.
+5. **Benchmark before and after**, read-only: the NDLT-F card on the lab (`lt:1/1/3`) and
+   one production card of each type (NDLT-F, FGLT-B, NELT-B), each as today's refresh,
+   with shared discovery sources, and with per-section family reads. Record wall time,
+   bytes read, sessions opened and the evaluation (gaps must not increase).
+
+### Plan: partial queries
+
+A "value query" entry point: given objects and attributes (or sections), plan only the
+sections that hold them, plus the discovery needed to identify the objects. The
+relations already map each object kind to its applicable (resource, section,
+identity); add the attribute → section mapping from the argspecs. Same outcome rules
+as the refresh (present / confirmed absent / gap), so a caller can act on the result
+without a complete refresh.
+
 ## Live evidence so far (DS-LIN-TEST-01)
 
 | Refresh | Result |
