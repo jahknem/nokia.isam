@@ -63,12 +63,10 @@ local paths before the first push (AGENTS.md, "Sanitization").
    VLAN 99 needed queue 0; VLAN 20 on L2 forwarder 699 needed queues 4 and 5 (the queue
    follows the VLAN's QoS mapping). The relation exists (`relations/bridges.py`);
    `write_order.py` must enforce it and the planner must name the queues.
-9. **Core follow-ups that affect the refresh** (shared read contract on `main`):
-   - the detail probe is disabled for every command of a read when any section has an
-     `instance_checks` entry (`single = ... and not instance_checks`); it should be
-     decided per command (seen with system security: PAE ports + sftp users);
-   - `get_whole_node_targeted` records absence without looking up `ABSENCE_POLICY`;
-   - a missing dependency reply to the detail probe loses its `dependency_gap` label.
+9. **Core follow-ups that affect the refresh** — done in the review follow-up PR: the
+   detail probe is decided per command (an instance check of another section no longer
+   switches it off); whole-node reads honour `ABSENCE_POLICY`; a missing dependency on
+   the detail probe keeps its `dependency_gap` label.
 
 ## Live evidence so far (DS-LIN-TEST-01)
 
