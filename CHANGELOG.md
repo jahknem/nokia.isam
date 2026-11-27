@@ -191,6 +191,14 @@ interfaces and documentation").
   mode and `rendered` show a refusal instead of an apply failing midway. The guard
   existed on the old write-order line only.
 
+### RADIUS policy servers in deleted
+
+- `isam_system_security` `deleted` naming servers of a RADIUS policy
+  (`{name: P, servers: [{index: 2}]}`) removes those server entries (`no servers 2`),
+  not the whole policy. The policy itself is removed by its identity alone, or by an
+  entry naming every attribute and every server with all its attributes (a gathered
+  entry), as before.
+
 ## 1.0.0 (unreleased)
 
 Major-version preparation, not a published release. Schema changes are
