@@ -133,7 +133,10 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
     get_resource_connection,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.identity import UnknownIdentity
-from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.refresh_run import run
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.refresh_run import (
+    RefreshNotConverged,
+    run,
+)
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.refresh import wanted_sections
 
 
@@ -160,8 +163,7 @@ def main():
     try:
         outcome = run(module, (params["kind"], params["identity"]), sections=params["sections"],
                       allow_broad_read=params["allow_broad_read"], data=params["return_data"])
-    except (UnknownIdentity, RuntimeError) as exc:
-        # RuntimeError: a refresh that does not converge (refresh_run.MAX_ROUNDS).
+    except (UnknownIdentity, RefreshNotConverged) as exc:
         module.fail_json(msg=str(exc), changed=False)
     module.exit_json(changed=False, refresh=outcome)
 
