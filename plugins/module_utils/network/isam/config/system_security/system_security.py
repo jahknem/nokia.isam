@@ -31,6 +31,12 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 _MISSING = object()
 
 
+# Removals emitted after everything else, in this order: a RADIUS policy is referenced by
+# domains and auth-super-user (which come later in LISTS and SETTINGS), an auth server by
+# policies. The device refuses to delete either while it is referenced.
+DEFERRED_REMOVALS = ("radius_policies", "radius_auth_servers")
+
+
 def _get(config, section, default=None):
     value = config or {}
     for part in section.split("."):
@@ -222,17 +228,25 @@ class Isam_system_security(IsamResourceModule):
         have = self.have or {}
         # Validate all identities before any reconciliation (especially overridden).
         self._wanted_entries = {section: self._visible_entries(section, _get(want, section)) for section in LISTS}
+        self._deferred = dict((section, []) for section in DEFERRED_REMOVALS)
         for section in LISTS:
             self._list_commands(section, want, have)
         for section in SETTINGS:
             self._settings_commands(section, want, have)
+        # Removed RADIUS policies and auth servers go last, policies before servers: by
+        # then every referrer (a domain, auth-super-user, a policy naming a server) is
+        # removed or updated, so the device does not refuse a removal midway.
+        for section in DEFERRED_REMOVALS:
+            self.commands.extend(self._deferred[section])
 
     def _remove(self, section, entry):
         tmplt = Isam_system_securityTemplate
         if LISTS[section][1] == "create":
-            self.commands.append(tmplt.render_remove(section, entry))
+            commands = [tmplt.render_remove(section, entry)]
         else:
-            self.commands.extend(tmplt.render_reset(section, entry))
+            commands = tmplt.render_reset(section, entry)
+        target = self._deferred[section] if section in self._deferred else self.commands
+        target.extend(commands)
 
     def _list_commands(self, section, want, have):
         tmplt = Isam_system_securityTemplate
@@ -372,10 +386,9 @@ class Isam_system_security(IsamResourceModule):
     def _radius_references(self, section, want, have):
         """[(referenced name, referrer)] to the instances of a RADIUS list type.
 
-        Both the device value and the requested value of a kept referrer count: the
-        removal is rendered before the referrer is updated (auth servers before
-        policies, policies before auth-super-user and domains), so a reference the
-        request moves away is still on the device when the removal is sent.
+        Both the device value and the requested value of a kept referrer count. Removals
+        are rendered last (DEFERRED_REMOVALS), after the referrers are updated, so the
+        device value is conservative; it is kept so a request never depends on that order.
         """
         refs = []
         if section == "radius_auth_servers":

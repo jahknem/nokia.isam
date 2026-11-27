@@ -171,6 +171,14 @@ interfaces and documentation").
   `info configure xdsl-bonding flat`. The module renders action states offline against
   `running_config` like the other families.
 
+### RADIUS removal order
+
+- `isam_system_security`: removals of RADIUS policies and auth servers are rendered
+  last, policies before servers, after domains, auth-super-user and every policy update.
+  An `overridden` that removes a policy and the server it uses (or `deleted` of
+  everything) no longer has the device refuse the server removal midway. The check
+  that refuses removing an entry a kept referrer still names is unchanged.
+
 ## 1.0.0 (unreleased)
 
 Major-version preparation, not a published release. Schema changes are

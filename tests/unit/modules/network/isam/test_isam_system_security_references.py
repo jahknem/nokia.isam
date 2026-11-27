@@ -123,3 +123,51 @@ class TestIsamSystemSecurityReferences(TestIsamModule):
                             ignore_provider_arg)
             result = self.execute_module(changed=True)
         assert "configure system security radius no auth-server RADAuthServ3" in result["commands"], result["commands"]
+
+
+# -- removal order: a referrer before what it refers to --------------------------------------
+
+from .module_runner import run_module  # noqa: E402
+
+
+def _order(commands, *fragments):
+    positions = []
+    for fragment in fragments:
+        hits = [i for i, c in enumerate(commands) if c.endswith(fragment)]
+        assert hits, (fragment, commands)
+        positions.append(hits[0])
+    return positions
+
+
+def test_overridden_removes_a_policy_before_the_server_it_uses(monkeypatch):
+    # The gap: P1 and the server S1 it uses both go in one overridden run. Rendered in
+    # list order (auth servers before policies), 'no auth-server S1' came first and the
+    # device refused it while P1 still named S1. Removals of policies and servers now go
+    # last, policies first.
+    device = "\n".join([
+        _SEC + "radius auth-server S1 router-instance base ip-address 192.0.2.1 secret encrypted:aa:bb",
+        _SEC + "radius auth-server S2 router-instance base ip-address 192.0.2.2 secret encrypted:cc:dd",
+        _SEC + "radius policy P1 servers 1 auth-server name:S1 auth-router-inst base",
+    ]) + "\n"
+    config = {"radius_auth_servers": [{"name": "S2", "router_instance": "base", "ip_address": "192.0.2.2",
+                                       "secret": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER"}],
+              "radius_policies": [{"name": "P2", "servers": [
+                  {"index": 1, "auth_server": "name:S2", "auth_router_inst": "base"}]}]}
+    result = run_module(monkeypatch, "isam_system_security", {"state": "overridden", "config": config}, device)
+    assert not result.get("failed"), result.get("msg")
+    commands = result["commands"]
+    create, policy, server = _order(commands, "radius policy P2 servers 1 auth-server name:S2 auth-router-inst base",
+                                    "radius no policy P1", "radius no auth-server S1")
+    assert create < policy < server, commands
+    assert commands[-2:] == [commands[policy], commands[server]], commands
+
+
+def test_deleting_everything_removes_referrers_first(monkeypatch):
+    result = run_module(monkeypatch, "isam_system_security", {"state": "deleted"}, "\n".join(DEVICE) + "\n")
+    assert not result.get("failed"), result.get("msg")
+    commands = result["commands"]
+    domain, policy, server = _order(commands, "no domain Dom1", "radius no policy DomPol",
+                                    "radius no auth-server RADAuthServ1")
+    assert domain < policy < server, commands
+    super_user = [i for i, c in enumerate(commands) if "auth-super-user" in c and " no " in c]
+    assert super_user and super_user[0] < policy, commands
