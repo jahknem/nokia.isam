@@ -313,6 +313,35 @@ def test_a_dependency_gap_without_a_proven_missing_object_stays_a_labelled_gap()
     assert qos["status"] == "gap" and qos["reason"] == "dependency_gap:interface-index", qos
 
 
+def test_conflicting_existence_is_a_gap_never_absent_nor_present():
+    # Fresh discovery shows the ONT's slot, UNI and bridge port, but the ONT's creating
+    # section says "confirmed absent" (deleted within the freshness window, or two
+    # sources that disagree): nothing below may be concluded from either side.
+    result = full_round(("ont", ONT), ont_discovery(), absent={("equipment_onts", "interfaces", ONT)},
+                        dependency={("bridges", "port", UNI): "lower-interface"})
+    bridge = next(s for s in result["sections"] if s["resource"] == "bridges" and s["section"] == "port")
+    assert bridge["status"] == "gap" and bridge["reason"] == "dependency_gap:lower-interface", bridge
+    assert not result["complete"]
+    # A PON refresh: the ONT is enumerated, its creating section says absent; the
+    # entries created with it are neither present nor absent.
+    root = ("pon", "1/1/7/16")
+    discoveries = [found("pon", "1/1/7/16", "ont", [ONT]), found("ont", ONT, "ont_slot", [])]
+    result = full_round(root, discoveries, absent={("equipment_onts", "interfaces", ONT)},
+                        unverified={("ani_onts", "config", ONT), ("ntp_onts", "config", ONT), ("xdsl_onts", "config", ONT)})
+    for resource in ("ani_onts", "ntp_onts", "xdsl_onts"):
+        entry = next(s for s in result["sections"] if s["resource"] == resource)
+        assert entry["status"] == "gap" and entry["reason"] == "conflicting_existence", entry
+    assert {"kind": "ont", "identity": ONT, "reason": "conflicting_existence"} in result["gaps"]
+    assert not result["complete"]
+
+
+def test_a_failed_context_read_leaves_no_partial_context():
+    good = ctx(("card", "lt:1/1/3"))
+    failed = [dict(good[0], status="error", error="read_failed")]
+    assert refresh.context_from(good + failed) == {"cards": {}, "nt": [], "read": False}
+    assert refresh.context_from(good)["read"] is True
+
+
 # -- card-type rules ---------------------------------------------------------------
 
 DSL = ("card", "lt:1/1/3")

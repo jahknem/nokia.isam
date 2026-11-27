@@ -56,8 +56,9 @@ _PREFIXED = {
 # A bare address: the device accepts no typed form here (QoS, user ports, MSTP
 # ports). Which object it names follows the live-verified rules in identity.py.
 _BARE = {
+    # Not ("qos_interface", "ethernet_port"): the bare QoS index of an Ethernet port is
+    # its LAG's (identity._qos_owner), which the refresh reads for the LAG.
     ("qos_interface", "uni"), ("qos_interface", "lag"), ("qos_interface", "xdsl_line"),
-    ("qos_interface", "ethernet_port"),
     ("user_port", "xdsl_line"), ("user_port", "ethernet_port"), ("user_port", "lag"),
     ("user_port", "bonding_group"),
     ("port_layer", "lag"), ("port_layer", "xdsl_line"), ("port_layer", "ethernet_port"),
@@ -139,7 +140,8 @@ def context_from(read_results):
         if not (result.get("meta") or {}).get("context"):
             continue
         if result.get("status") not in ("ok", "partial") or result.get("unverified_ids"):
-            return context
+            # One failed context read: no partial context from the others either.
+            return {"cards": {}, "nt": [], "read": False}
         data = result.get("data") or {}
         rows = data.get("slots", []) if isinstance(data, dict) else data
         planned = {row.get("id"): row.get("planned_type") for row in rows if isinstance(row, dict)}
@@ -397,31 +399,40 @@ def _created_with(spec, objects, value):
 
 
 def _object_existence(objects, raw, discovery_results):
-    """{(kind, identity): "present" | "absent"} for the objects a refresh can decide.
+    """{(kind, identity): "present" | "absent" | "conflict"} for the objects a refresh
+    can decide.
 
-    An object discovered as a child exists. Otherwise its creating section decides
-    (relations "creates": True, e.g. equipment_onts.interfaces for an ONT): present
-    or absent as read; an object whose creating section is a gap stays undecided.
+    An object discovered as a child exists; its creating section (relations "creates":
+    True, e.g. equipment_onts.interfaces for an ONT) says present or absent as read; an
+    object whose creating section is a gap stays undecided. Evidence that disagrees
+    (discovered, but its creating section confirmed absent: a race, or two sources that
+    differ) is a "conflict", never resolved in favour of either side.
     """
     state = {}
+
+    def note(key, value):
+        if state.get(key, value) != value:
+            state[key] = "conflict"
+        else:
+            state[key] = value
+
     for item in discovery_results:
         if item.get("status") == "ok":
             for child in item.get("children") or ():
-                state[(item["child_kind"], child if isinstance(child, str) else tuple(child))] = "present"
+                note((item["child_kind"], child if isinstance(child, str) else tuple(child)), "present")
     for read, value, status, _reason in raw:
         spec = FAMILIES[read["resource"]]["sections"][read["section"]]
         if not spec.get("creates") or status not in ("present", "absent"):
             continue
         for kind, identity in read["meta"]["objects"][value]:
             if kind == spec.get("object"):
-                key = (kind, identity if isinstance(identity, str) else tuple(identity))
-                state.setdefault(key, status)
+                note((kind, identity if isinstance(identity, str) else tuple(identity)), status)
     return state
 
 
 def _owner_state(spec, owners, value, existence):
-    """"present" / "absent" / None: the state of the object the device creates the
-    entry ``value`` with (see _created_with)."""
+    """"present" / "absent" / "conflict" / None: the state of the object the device
+    creates the entry ``value`` with (see _created_with)."""
     for entry in spec.get("created_with", ()):
         prefix = entry.get("prefix")
         if prefix is not None and not (isinstance(value, str) and value.startswith(prefix)):
@@ -460,12 +471,18 @@ def _classify(result, value):
 
 
 def _absent_lineage(owners, existence):
-    """Whether one of ``owners``, or one of their physical ancestors, is proven absent."""
+    """Whether one of ``owners``, or one of their physical ancestors, is proven absent.
+
+    The walk up stops at the first object known to exist or in conflict: an absent
+    ancestor above an object the device just showed is a conflict, not proof.
+    """
     for kind, identity in owners:
         while kind is not None:
             key = (kind, identity if isinstance(identity, str) else tuple(identity))
             if existence.get(key) == "absent":
                 return True
+            if existence.get(key) in ("present", "conflict"):
+                break
             try:
                 kind, identity = parent_of(kind, identity) or (None, None)
             except (TypeError, ValueError, IndexError, AttributeError):
@@ -547,6 +564,8 @@ def evaluate(root, discovery_results, read_results, now=None, max_age_seconds=30
                 # Its object is proven absent, so is the entry it would carry
                 # (live: 'interface port ont:<missing ONT>' answers the header only).
                 status, reason = "absent", None
+            elif owner == "conflict":
+                status, reason = "gap", "conflicting_existence"
         if reason and reason.startswith("dependency_gap:") and _absent_lineage(owners, existence):
             # The device cannot resolve an object this entry hangs on (a bridge port of
             # a UNI whose ONT does not exist: "lower-interface does not exist"); that
@@ -585,6 +604,9 @@ def evaluate(root, discovery_results, read_results, now=None, max_age_seconds=30
                 entry["reason"] = reason
                 gaps.append(dict(entry))
             references.append(entry)
+    gaps += [{"kind": kind, "identity": list(identity) if isinstance(identity, tuple) else identity,
+              "reason": "conflicting_existence"}
+             for (kind, identity), state in sorted(existence.items(), key=repr) if state == "conflict"]
     gaps += [dict(item) for item in needs]
     excluded = [{"kind": kind, "identity": identity, "name": name, "reason": why}
                 for kind, identity in objects for name, why in sorted(not_applicable(kind, identity, context).items())]

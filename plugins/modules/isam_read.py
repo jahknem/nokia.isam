@@ -125,8 +125,10 @@ reads:
         C(empty_response), C(collection_warning).
       type: list
     parse:
-      description: Parse outcome of a targeted read, when the family reports one.
-      type: str
+      description: >-
+        Parse outcome of a targeted read, when the family reports one: a string, or a
+        mapping per section when the read covers several (see read_outcomes).
+      type: raw
     error:
       description: For C(status=error), C(invalid_request), C(unsupported_resource) or C(read_failed).
       type: str

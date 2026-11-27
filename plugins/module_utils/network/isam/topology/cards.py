@@ -21,7 +21,7 @@ section as without rules and names the gap "card_type_unknown".
 
 Evidence (read-only unless stated): a survey of the production fleet, 2026-11-26
 (planned LT types fglt-d, ndlt-f, fglt-b, ndps-c, nelt-b; NT nant-e, fant-f, nant-a);
-per-type reads on DS-LIN-TEST-01 and six production MSANs covering every planned card
+per-type reads on DS-LIN-TEST-01 and production MSANs covering every planned card
 and NT type.
 """
 

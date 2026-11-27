@@ -53,14 +53,12 @@ def candidate_owners(decoder, value, known_ports=()):
 def _bare_port_kinds(decoder):
     """Object kinds a bare four-part port address can name for this decoder.
 
-    A QoS interface index is "the physical port or la-group of a user-port" (device help),
-    and the device accepts only the bare form for QoS (xdsl-line:, bonding:, la-group: are
-    invalid tokens; DS-LIN-TEST-01, 2026-11-25). A bare QoS address is therefore never a
-    bonding group, and where a LAG exists it is the LAG (see _qos_owner). Other user-port
-    families keep every candidate.
+    The device accepts only the bare form for QoS (xdsl-line:, bonding:, la-group: are
+    invalid tokens; DS-LIN-TEST-01, 2026-11-25). That shows the form, not the owner:
+    whether a bonded line's QoS belongs to the line or to its bonding group is not
+    verified, so both stay candidates. Where a LAG exists, the QoS is the LAG's (see
+    _qos_owner, live evidence).
     """
-    if decoder == "qos_interface":
-        return ("xdsl_line", "ethernet_port", "lag")
     return ("xdsl_line", "ethernet_port", "bonding_group", "lag")
 
 

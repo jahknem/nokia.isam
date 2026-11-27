@@ -353,8 +353,13 @@ reports it in `unresolved_ownership`, but never walks back to select the other
 candidate objects. This is bounded over-inclusion of one read unit, explicitly
 flagged — not a silent widening to the device, and not a completeness claim.
 
-On the lab snapshot this is 132 `ambiguous_owner` instances (96 DSL
-line/bonding, 36 Ethernet port/LAG), each with two candidates. Typed QoS names
+One case is resolved by a live write (lab, 2026-11-25): where a LAG exists at the
+address, the bare QoS index is the LAG's. With port 1/1/8/6 moved into LAG 1/1/8/5,
+the LAG's QoS bandwidth doubled, the entry 1/1/8/6 dropped to 0 and a QoS write on
+1/1/8/6 was refused ("QOS MGT error 216: QoS cannot be configured on the lag without
+physical port"); the device keeps a LAG for every Ethernet port, so on an Ethernet
+card the bare QoS index is the LAG (`identity._qos_owner`). On the lab snapshot the
+DSL line/bonding pairs (96) remain `ambiguous_owner` with two candidates. Typed QoS names
 (`pon:`, `ont:`, `vlan:`, 7-component UNI) still resolve exactly. Note (xDSL
 Bonding 35.5): a bonding group takes over the primary line's service and cannot
 be created if a service already sits on the secondary line, so for bonded DSL
@@ -522,10 +527,10 @@ Before enabling recursive refresh:
    (`epon:`/`eont:`/`ellid:`/`euni:`) removed as obsolete in favour of `pon:leg`
    on this NT generation. Do not add decoders for variant forms from documentation
    alone without confirming the target firmware still uses them; model them
-   evidence-first like the other adapters. Bare QoS names at shared line/aggregate
-   addresses are kept as candidate-owned configuration (132 `ambiguous_owner`
-   instances on the lab snapshot): readable from any candidate, flagged
-   unresolved, never guessed. Expand remaining profile/service reference rules
+   evidence-first like the other adapters. Bare QoS names at shared DSL line/bonding
+   addresses are kept as candidate-owned configuration (`ambiguous_owner`):
+   readable from any candidate, flagged unresolved, never guessed; at an Ethernet
+   port/LAG address the LAG owns them (live write, see above). Expand remaining profile/service reference rules
    and platform applicability with evidence; existing DSL/QoS references are not
    proof of exhaustive dependency coverage.
 3. Return discovery/result manifests with scope, collection/runtime revision,

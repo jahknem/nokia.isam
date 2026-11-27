@@ -130,8 +130,12 @@ interfaces and documentation").
 - Write order and dependency graph (`topology/write_order.py`, `dependencies.py`) with
   the filters `isam_write_steps` and `isam_dependency_graph`.
 - Behaviour change in owner resolution: a bare QoS index belongs to the LAG where one
-  exists (QOS MGT error 216, lab 2026-11-25) and is never a bonding group (the device
-  accepts only the bare form for QoS); before, both were reported as ambiguous.
+  exists (QOS MGT error 216, lab 2026-11-25); before, the Ethernet port and the LAG were
+  reported as ambiguous. A bare QoS index shared by a DSL line and its bonding group
+  stays ambiguous (owner not verified).
+- `evaluate()`: discovery and a creating section that disagree on an object's existence
+  are a `conflicting_existence` gap; nothing below that object is concluded from either
+  side.
 - Test: every `created_with` section is reset, never removed, by its module in
   `deleted` and `overridden`.
 
