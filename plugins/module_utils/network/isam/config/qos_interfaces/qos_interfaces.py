@@ -27,10 +27,26 @@ def interface_kind(name):
         return "user_port" if isinstance(name, str) and numeric(name, 4) else None
 
 
-def without_read_only(name, want):
-    """want without the values the device shows on this kind but refuses to set."""
-    fields = READ_ONLY.get(interface_kind(name), ())
-    return {key: value for key, value in want.items() if key not in fields}
+def without_read_only(name, want, have, warn=None):
+    """want for the values a kind shows but refuses to set (a LAG's ds_num_queue).
+
+    Where the device shows the value, want takes it unless it names a different one, so
+    neither a set nor a removal is generated (an idempotent run, or merged pulling every
+    device entry into want, stays without commands). A different value stays in want and
+    is refused by refused_settings. Without a device value to compare (rendered, a new
+    entry) the value is not sent, with a warning.
+    """
+    want = dict(want)
+    for field in READ_ONLY.get(interface_kind(name), ()):
+        if have.get(field) is not None:
+            if want.get(field) is None:
+                want[field] = have[field]
+        elif want.get(field) is not None:
+            want.pop(field)
+            if warn:
+                warn("qos interface %s: %s is shown on this kind of interface but cannot be set; "
+                     "not rendered" % (name, field))
+    return want
 
 
 def refused_settings(name, want, have):
@@ -38,9 +54,10 @@ def refused_settings(name, want, have):
 
     Only settings that would be written count: unset values (None, False, none,
     not-applicable) and values equal to have are never sent. A bare port address is a
-    DSL line or a LAG; both refuse the same ("user_port").
+    DSL line or a LAG; both refuse the same ("user_port"). A value a kind only shows
+    counts when it differs from the device's (see without_read_only).
     """
-    want = without_read_only(name, want)
+    want = without_read_only(name, want, have)
     refused = REFUSED.get(interface_kind(name), {})
     return [(field, refused[field]) for field in sorted(refused)
             if want.get(field) not in (None, False) + UNSET_VALUES and want.get(field) != have.get(field)]
@@ -170,7 +187,7 @@ class Qos_interfaces(IsamResourceModule):
                                   "interface has queues" % (have.get("name"), have["scheduler_node"]))
                 want["scheduler_node"] = have["scheduler_node"]
             name = want.get("name", have.get("name"))
-            want = without_read_only(name, want)
+            want = without_read_only(name, want, have, self._module.warn)
             refused = refused_settings(name, want, have)
             if refused:
                 # Refused before anything is written, so check mode and rendered report

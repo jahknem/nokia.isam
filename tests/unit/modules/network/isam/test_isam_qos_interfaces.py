@@ -303,9 +303,12 @@ def test_qos_settings_a_kind_never_accepts_are_refused_before_writing():
     assert refused_settings("ont:" + ONT, {"cac_profile": "name:X"}, {"cac_profile": "name:X"}) == []
     assert refused_settings("lt:1/1/8", {"us_num_queue": 8}, {}) == []
     # A LAG shows ds-num-queue 8 but refuses to set it (error 45): never sent, never refused.
-    assert refused_settings("1/1/8/6", {"ds_num_queue": 8}, {}) == []
-    assert without_read_only("1/1/8/6", {"name": "1/1/8/6", "ds_num_queue": 8}) == {"name": "1/1/8/6"}
-    assert without_read_only("pon:1/1/6/16", {"ds_num_queue": 8}) == {"ds_num_queue": 8}
+    assert refused_settings("1/1/8/6", {"ds_num_queue": "8"}, {}) == []
+    assert refused_settings("1/1/8/6", {"ds_num_queue": "8"}, {"ds_num_queue": "8"}) == []
+    assert [f for f, _ in refused_settings("1/1/8/6", {"ds_num_queue": "4"}, {"ds_num_queue": "8"})] == ["ds_num_queue"]
+    assert without_read_only("1/1/8/6", {"name": "1/1/8/6", "ds_num_queue": "8"}, {}) == {"name": "1/1/8/6"}
+    assert without_read_only("1/1/8/6", {"name": "1/1/8/6"}, {"ds_num_queue": "8"}) == {"name": "1/1/8/6", "ds_num_queue": "8"}
+    assert without_read_only("pon:1/1/6/16", {"ds_num_queue": "8"}, {}) == {"ds_num_queue": "8"}
     # A bare port address (DSL line or LAG): upstream queue count only on an ONT (error 48).
     assert [f for f, _ in refused_settings("1/1/8/6", {"us_num_queue": 8}, {})] == ["us_num_queue"]
     assert refused_settings("1/1/8/6", {"scheduler_node": "name:N", "cac_profile": "name:C"}, {}) == []
@@ -321,9 +324,35 @@ def test_a_refused_setting_fails_before_anything_is_rendered_or_sent(monkeypatch
         assert not result.get("commands") and not result.get("rendered")
 
 
-def test_a_value_a_lag_only_displays_is_never_sent(monkeypatch):
-    # Copying a gathered LAG entry renders everything else and skips ds-num-queue (error 45).
+LAG_DEVICE = "\n".join([
+    "configure qos interface 1/1/8/6 ds-num-queue 8",
+    "configure qos interface ont:%s us-num-queue 8" % ONT,
+]) + "\n"
+GATHERED = [{"name": "1/1/8/6", "ds_num_queue": "8"}, {"name": "ont:" + ONT, "us_num_queue": "8"}]
+
+
+def test_a_value_a_lag_only_displays_never_turns_into_a_command(monkeypatch):
+    # Every LAG shows ds-num-queue 8 and refuses to set it (QOS MGT error 45). Feeding the
+    # gathered entries back, or merging only the ONT (merged pulls every device entry in),
+    # must stay without commands -- neither a set nor a 'no ds-num-queue'.
+    for state, config in (("replaced", GATHERED), ("overridden", GATHERED), ("merged", GATHERED),
+                          ("merged", GATHERED[1:]), ("replaced", [{"name": "1/1/8/6"}])):
+        result = run_module(monkeypatch, "isam_qos_interfaces", {"state": state, "config": config}, LAG_DEVICE)
+        assert not result.get("failed"), (state, result.get("msg"))
+        assert result["commands"] == [], (state, config, result["commands"])
+
+
+def test_a_different_value_a_lag_only_displays_is_refused_not_dropped(monkeypatch):
+    result = run_module(monkeypatch, "isam_qos_interfaces", {"state": "replaced", "config": [
+        {"name": "1/1/8/6", "ds_num_queue": "4"}]}, LAG_DEVICE)
+    assert result.get("failed") and "ds_num_queue" in result["msg"] and "error 45" in result["msg"], result
+    assert not result.get("commands")
+
+
+def test_a_value_a_lag_only_displays_is_not_rendered_without_a_device(monkeypatch):
+    # Copying a gathered LAG entry renders everything else, skips ds-num-queue and says so.
     result = run_module(monkeypatch, "isam_qos_interfaces", {"state": "rendered", "config": [
         {"name": "1/1/8/6", "ds_num_queue": "8", "cac_profile": "name:FD_Default"}]})
     assert not result.get("failed"), result.get("msg")
     assert result["rendered"] == ["configure qos interface 1/1/8/6 cac-profile name:FD_Default"]
+    assert any("ds_num_queue" in w for w in result["_warnings"]), result["_warnings"]
