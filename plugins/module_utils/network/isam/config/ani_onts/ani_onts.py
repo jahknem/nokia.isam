@@ -41,18 +41,31 @@ class Ani_onts(IsamResourceModule):
                     wantd[key] = dict(have, **wantd[key])
 
         if self.state == "deleted":
+            # The entry belongs to the ONT: it exists from the ONT's creation to its
+            # removal, and "no tca-thresh" only resets it (lab DS-LIN-TEST-01
+            # 2026-11-27: present before any write, still present after
+            # "no tca-thresh" with every threshold at its default). Deleting resets
+            # the named thresholds (all of them for an identity-only entry).
             for key, have in iteritems(haved):
                 if key in wantd or not wantd:
-                    self.commands.append("configure ani ont no tca-thresh %s" % have["ont_idx"])
+                    want = wantd.get(key) or {}
+                    named = [field for field, _cli in self.THRESHOLDS if want.get(field) is not None]
+                    self._reset(have, named or [field for field, _cli in self.THRESHOLDS])
             return
 
-        if self.state in ["overridden", "deleted"]:
+        if self.state == "overridden":
             for key, have in iteritems(haved):
                 if key not in wantd:
-                    self.commands.append("configure ani ont no tca-thresh %s" % have["ont_idx"])
+                    self._reset(have, [field for field, _cli in self.THRESHOLDS])
 
         for key, want in iteritems(wantd):
             self._compare_entry(want, haved.get(key, {}))
+
+    def _reset(self, have, fields):
+        """'no <attr>' for every listed threshold the entry has set; nothing if none is."""
+        parts = ["no %s" % cli for field, cli in self.THRESHOLDS if field in fields and have.get(field) is not None]
+        if parts:
+            self.commands.append(" ".join(["configure ani ont tca-thresh %s" % have["ont_idx"]] + parts))
 
     # The thresholds of one tca-thresh entry (the parser covers the whole line, so
     # the base compare, keyed on tca_thresh, never saw a changed threshold: lab
@@ -71,8 +84,9 @@ class Ani_onts(IsamResourceModule):
     def _compare_entry(self, want, have):
         ont = want["ont_idx"]
         if want.get("tca_thresh") is False:
+            # The entry cannot be removed apart from its ONT: false resets it.
             if have:
-                self.commands.append("configure ani ont no tca-thresh %s" % ont)
+                self._reset(have, [field for field, _cli in self.THRESHOLDS])
             return
         parts = []
         for field, cli in self.THRESHOLDS:

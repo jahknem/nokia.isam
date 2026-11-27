@@ -31,3 +31,20 @@ def test_replaced_resets_an_unrequested_threshold(monkeypatch):
 def test_merged_creates_a_missing_entry(monkeypatch):
     result = run_module(monkeypatch, "isam_ani_onts", {"state": "merged", "config": [{"ont_idx": ONT}]}, "")
     assert result["commands"] == ["configure ani ont tca-thresh %s" % ONT]
+
+
+def test_deleted_resets_the_entry_instead_of_removing_it(monkeypatch):
+    # Lab: "no tca-thresh" leaves the entry (it lives as long as its ONT).
+    result = run_module(monkeypatch, "isam_ani_onts", {"state": "deleted", "config": [{"ont_idx": ONT}]}, SET)
+    assert result["commands"] == ["configure ani ont tca-thresh %s no lower-optical-th" % ONT]
+
+
+def test_deleted_of_an_entry_at_its_defaults_sends_nothing(monkeypatch):
+    result = run_module(monkeypatch, "isam_ani_onts", {"state": "deleted", "config": [{"ont_idx": ONT}]}, BARE)
+    assert result["commands"] == []
+
+
+def test_overridden_resets_unrequested_entries(monkeypatch):
+    other = "configure ani ont tca-thresh 1/1/6/1/2 upper-optical-th -8\n"
+    result = run_module(monkeypatch, "isam_ani_onts", {"state": "overridden", "config": [{"ont_idx": ONT}]}, BARE + other)
+    assert result["commands"] == ["configure ani ont tca-thresh 1/1/6/1/2 no upper-optical-th"]

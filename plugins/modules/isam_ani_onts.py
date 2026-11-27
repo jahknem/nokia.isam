@@ -26,7 +26,10 @@ options:
       tca_thresh:
         type: bool
         default: true
-        description: Enable the ANI ONT TCA threshold entry.
+        description:
+          - The ANI ONT TCA threshold entry. The device creates it with the ONT and removes it
+            only with the ONT; C(false), like I(state=deleted), resets its thresholds to the
+            defaults instead of removing it.
       lower_optical_th:
         type: str
         description:

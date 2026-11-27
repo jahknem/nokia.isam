@@ -45,7 +45,8 @@ CONFIGS = {
         "configure qos interface %s ds-rem-queue 0 priority 6 weight 34" % UNI,
     ]),
     "ntp_onts": "configure ntp ont %s" % ONT,
-    "ani_onts": "configure ani ont tca-thresh %s" % ONT,
+    # The entry lives as long as its ONT: deleting resets a set threshold.
+    "ani_onts": "configure ani ont tca-thresh %s lower-optical-th -28" % ONT,
 }
 
 
@@ -144,6 +145,8 @@ def test_gathered_full_entry_is_idempotent_and_can_be_deleted(monkeypatch, famil
         assert deleted["commands"] == ["configure bridge no port %s" % UNI]
     elif family == "ntp_onts":
         assert deleted["commands"] == ["configure ntp no ont %s" % ONT]
+    elif family == "ani_onts":
+        assert deleted["commands"] == ["configure ani ont tca-thresh %s no lower-optical-th" % ONT]
     elif family == "qos_interfaces":
         commands = deleted["commands"]
         # a UNI with queues keeps its scheduler node (the device refuses to remove it)

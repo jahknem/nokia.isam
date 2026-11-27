@@ -31,7 +31,7 @@ be included in the request. Bridge keys returned by facts, such as
 | `bridges` | Remove the whole port when the request names every VLAN of the port, or supplies only the port identity. Port settings do not decide it (a `detail` read reports defaults). |
 | `qos_interfaces` | Remove requested removable interface/queue attributes; never set values in `deleted`. |
 | `ntp_onts` | Remove the NTP ONT object for an identity-only or full-entry request, including a bare object without attributes. |
-| `ani_onts` | Remove the requested ONT TCA threshold entry. |
+| `ani_onts` | Reset the entry's set thresholds (`no lower-optical-th`, ...). The entry exists as long as its ONT; `no tca-thresh` does not remove it. |
 
 Partial bridge and NTP requests still remove only the selected settings/VLANs;
 unrequested siblings remain. A QoS nested queue identity selects that queue's

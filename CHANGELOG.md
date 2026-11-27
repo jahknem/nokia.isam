@@ -116,6 +116,12 @@ intentional. This section lists the ONT/access families of that line.
   `no subslocid` (which does not exist); `WILDCARD` (the device's unset value)
   counts as unset and a set value is kept. A `log-auth-pwd` shown masked no
   longer counts as configured.
+- `isam_ani_onts`: a changed threshold of an existing entry is sent (the
+  compare only looked at `tca_thresh`). The entry exists as long as its ONT,
+  so `deleted`, `overridden` and `tca_thresh: false` reset its thresholds
+  instead of sending `no tca-thresh`, which left it in place and made
+  `deleted` never idempotent. The upper threshold must not be below the lower
+  one (GPON MGT error 238).
 - `isam_ethernet_onts` `deleted`: a UNI named by `uni_idx` alone resets the
   UNI, and a UNI named with settings resets only the named settings.
 - Whole-entry `equipment_onts` deletion reasserts shutdown even for
