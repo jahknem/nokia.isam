@@ -171,3 +171,29 @@ def test_deleting_everything_removes_referrers_first(monkeypatch):
     assert domain < policy < server, commands
     super_user = [i for i, c in enumerate(commands) if "auth-super-user" in c and " no " in c]
     assert super_user and super_user[0] < policy, commands
+
+
+# -- deleted naming policy servers removes those servers, not the policy ------------------------
+
+def test_deleted_naming_a_policy_server_removes_that_server_only(monkeypatch):
+    device = "\n".join(DEVICE) + "\n"
+    for servers, expected in (([{"index": 2}], ["radius policy RADPol no servers 2"]),
+                              ([{"index": 1}, {"index": 2}], ["radius policy RADPol no servers 1",
+                                                              "radius policy RADPol no servers 2"])):
+        result = run_module(monkeypatch, "isam_system_security", {"state": "deleted", "config": {
+            "radius_policies": [{"name": "RADPol", "servers": servers}]}}, device)
+        assert not result.get("failed"), result.get("msg")
+        assert [c[len(_SEC):] for c in result["commands"]] == expected, result["commands"]
+
+
+def test_deleted_with_the_whole_gathered_policy_removes_the_policy(monkeypatch):
+    # Every attribute and every server with all its attributes: the instance is named.
+    device = "\n".join([_SEC + "radius policy DomPol servers 1 auth-server name:RADAuthServ1 auth-router-inst base"]) + "\n"
+    result = run_module(monkeypatch, "isam_system_security", {"state": "deleted", "config": {
+        "radius_policies": [DOMPOL]}}, device)
+    assert not result.get("failed"), result.get("msg")
+    assert [c[len(_SEC):] for c in result["commands"]] == ["radius no policy DomPol"], result["commands"]
+    # The identity alone still removes the policy, as before.
+    result = run_module(monkeypatch, "isam_system_security", {"state": "deleted", "config": {
+        "radius_policies": [{"name": "DomPol"}]}}, device)
+    assert [c[len(_SEC):] for c in result["commands"]] == ["radius no policy DomPol"], result["commands"]

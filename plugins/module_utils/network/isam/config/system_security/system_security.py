@@ -117,6 +117,35 @@ def _covers(ident, want, have):
     return not want or _named_values(want, have) == have
 
 
+def _fully_named(ident, want, have):
+    """Whether want names every attribute have carries (an identity alone does not)."""
+    want = dict((k, v) for k, v in (want or {}).items() if k not in ident and v is not None)
+    have = dict((k, v) for k, v in (have or {}).items() if k not in ident and v not in (None, [], {}))
+    return (bool(want) or not have) and _named_values(want, have) == have
+
+
+def _covers_instance(section, ident, want, have):
+    """_covers for an instance with nested instance lists (radius policy servers).
+
+    A request that names nested entries names those entries: the instance itself is
+    covered only when every attribute and every nested entry with all its attributes is
+    named (a gathered entry). ``{name: P, servers: [{index: 2}]}`` removes server 2 only.
+    """
+    want_main, want_nested = _split_nested(section, want)
+    if not any(value is not None for value in want_nested.values()):
+        return _covers(ident, want, have)
+    have_main, have_nested = _split_nested(section, have)
+    if not _fully_named(ident, want_main, have_main):
+        return False
+    for kw, id_field in NESTED.get(section, {}).items():
+        key = kw.replace("-", "_")
+        named = dict((child.get(id_field), child) for child in want_nested.get(key) or [])
+        for child in have_nested.get(key) or []:
+            if not _fully_named((id_field,), named.get(child.get(id_field)), child):
+                return False
+    return True
+
+
 def _reference(value, prefix):
     """The object name in a reference value ('name:RAD1', 'radius:Pol1'); None for
     unset, 'none' or a reference of another kind ('local'). A bare name counts for
@@ -265,7 +294,7 @@ class Isam_system_security(IsamResourceModule):
                 wanted = _want_for(key, wantd)
                 if wanted is None:
                     continue
-                if _covers(ident, wanted, entry):
+                if _covers_instance(section, ident, wanted, entry):
                     # an identity alone (or every present attribute) names the object
                     self._remove(section, entry)
                 else:
