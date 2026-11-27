@@ -186,8 +186,9 @@ intentional. This section lists the ONT/access families of that line.
   safety). Detail placeholders (`none`, `not-applicable`) no longer become removal
   commands: `not-applicable` is never sent (a real target value is kept), unset
   `none`/`not-applicable` top-level and queue settings render no resets, and an explicit
-  `none` still clears a configured profile. `deleted` keeps the `scheduler_node` an
-  interface with downstream queues requires (warned). Facts read targeted (`state:
+  `none` still clears a configured profile. `deleted`, `replaced` and `overridden`
+  keep the `scheduler_node` an interface with downstream queues requires (warned; the
+  device rejects its removal, QOS MGT error 52). Facts read targeted (`state:
   gathered` with `config` reads only the named interfaces); the module documents the
   QoS-before-bridge prerequisites (QOS MGT error 41, VLAN MGT error 277).
 
