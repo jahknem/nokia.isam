@@ -55,7 +55,7 @@ read_outcomes:
     - The output is sanitized to stable enums, the section, the selector, and an error
       class; raw device text is never recorded. A failed targeted read fails the module
       carrying this same sanitized result.
-  version_added: 1.1.0
+  version_added: 1.0.0
   returned: when I(state) is C(gathered) and the read is targeted
   type: dict
 # END read_outcomes

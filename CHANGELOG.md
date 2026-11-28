@@ -1,6 +1,32 @@
 # Changelog
 
-## 1.1.0 (unreleased)
+## 1.0.0
+
+First major release, combining the previously unpublished 1.0.0 and 1.1.0 work.
+This is a breaking upgrade from 0.3.14: review the schema and state-contract changes
+below before replaying older configuration. Targeted reads distinguish presence,
+confirmed absence and named gaps; topology refreshes discover and read an object's
+subtree. The ONT lifecycle is lab-verified: creation and deletion through NOC's real
+check/apply pipeline, read-back through NOC's reads, idempotence by a repeated NOC check, field changes
+through direct module runs (see `docs/live-validation-2026-11-28-ont-lifecycle.md`). Validation is
+configuration-plane evidence, not a claim of live subscriber traffic testing.
+
+### Upgrade and validation boundary
+
+- Configuration schemas and deletion semantics changed from 0.3.14. Use the current
+  argspecs, a fresh targeted read and check mode before applying an older plan.
+- ONT creation/removal, bridge VLAN transitions, UNI settings and QoS bindings were
+  exercised on scratch lab objects. Live service interruption, optical registration
+  and subscriber traffic are not covered by those configuration tests.
+- DHCP relay state is not observable on the tested firmware; a read reports a named
+  gap, never invented presence or absence. The QoS owner of a bonded xDSL line also
+  stays a named gap: the configuration plane cannot decide it
+  (`docs/live-validation-2026-11-28-bonded-qos.md`).
+- Some non-ONT families still use netcommon's resource base; they do not support the
+  offline removal preview or the migrated base's partial-execution reporting. The
+  module's RETURN documentation describes the supported behavior.
+
+### Owner-absence proofs
 
 - `isam_read`: a missing dependency can be resolved by a fresh, exact owner-existence
   read chosen from the shared relations and containment model. Only confirmed absence
@@ -8,12 +34,6 @@
   and conflicting evidence do not. Proof reads are reused within the batch, returned
   as `absence_evidence`, and never widen the requested data. This closes the bridge
   port left unverified after its UNI was removed, without a bridge-specific exception.
-
-Completes targeted gathering for the ONT/access families. No schema changes to
-`gathered` or whole-family reads: without `config` a read does exactly what
-1.0.0 does. Additions: the `read_outcomes` return value on targeted reads, and
-for `isam_bridges` the offline preview with `running_config` (see "Module
-interfaces and documentation").
 
 ### Read outcomes (`read_outcomes`)
 
@@ -287,11 +307,6 @@ NOC's change pipeline (plan reads → change set → check → apply with approv
 - `isam_qos_maps`: the ctrl-pkt reset form (`no dscp`/`no pbit`/`no tc`, alone or
   combined) is verified on the device; which values a protocol accepts depends on the NT.
 - `isam_interfaces`: documented that `deleted` never brings an interface up.
-
-## 1.0.0 (unreleased)
-
-Major-version preparation, not a published release. Schema changes are
-intentional. This section lists the ONT/access families of that line.
 
 ### ONT and access resource coverage
 

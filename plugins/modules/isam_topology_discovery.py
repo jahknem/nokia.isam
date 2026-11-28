@@ -33,7 +33,7 @@ description:
     with the same rules as a single call (C(discoveries), one record per request,
     in request order). A refresh round of one card (bridge ports of every line)
     then costs one read of the interface stack instead of one per line.
-version_added: "1.1.0"
+version_added: "1.0.0"
 author: Jan Kühnemund (@jahknem)
 options:
   kind:
