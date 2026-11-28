@@ -134,3 +134,47 @@ def test_isam_read_runs_an_exact_proof_read_and_keeps_the_public_request_scope(m
     assert read["resource"] == "bridges" and read["ids"] == [UNI]
     assert read["absence_evidence"][0]["owner"]["resource"] == "ethernet_onts"
     assert len(result["_sent"]) == 2
+
+
+def _present(resource, section, ids):
+    return answer({"kind": "configuration", "resource": resource, "section": section, "ids": ids}, "present")
+
+
+def _absent(resource, section, ids):
+    return answer({"kind": "configuration", "resource": resource, "section": section, "ids": ids}, "absent")
+
+
+def test_a_present_vlan_port_below_the_gap_blocks_the_absent_owner():
+    # review: a shown child of the bridge port means its UNI exists
+    results = [gap(), _present("interfaces", "config", ["vlan-port:%s:10" % UNI]), _absent("ethernet_onts", "config", [UNI])]
+    resolve_owner_absence(results, lambda req: pytest.fail("unnecessary read"))
+    assert results[0]["unverified_ids"] == [UNI] and results[0]["confirmed_absent_ids"] == []
+
+
+def test_a_present_sibling_blocks_an_absent_container():
+    results = [gap(), _present("interfaces", "config", ["uni:1/1/7/16/1/1/2"]),
+               _absent("equipment_onts", "interfaces", ["1/1/7/16/1"])]
+
+    def read(request):
+        return answer(request, "unknown")  # the UNI and the slot stay undecided
+
+    resolve_owner_absence(results, read)
+    assert results[0]["unverified_ids"] == [UNI]
+
+
+def test_an_ont_is_proven_by_the_section_that_creates_it():
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.absence import _source
+
+    assert _source("ont", "1/1/7/16/1") == {"kind": "configuration", "resource": "equipment_onts",
+                                             "section": "interfaces", "ids": ["1/1/7/16/1"]}
+
+
+def test_a_duplicate_id_is_confirmed_absent_once_and_collected_at_is_kept():
+    result = gap()
+    result["ids"] = [UNI, UNI]
+    result["unverified_ids"] = [UNI, UNI]
+    result["dependency_gaps"] = [{"id": UNI, "dependency_gap": "lower-interface"}] * 2
+    result["collected_at"] = "2026-11-28T00:00:00Z"
+    resolve_owner_absence([result], lambda req: answer(req, "absent"))
+    assert result["confirmed_absent_ids"] == [UNI] and result["unverified_ids"] == []
+    assert result["collected_at"] == "2026-11-28T00:00:00Z" and result["absence_evidence"][0]["checked_at"]

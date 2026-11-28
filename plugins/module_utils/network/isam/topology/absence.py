@@ -6,11 +6,17 @@ Present or contradictory evidence stops the walk. All evidence belongs to one re
 batch; nothing cached from a previous run is used.
 """
 
+import time
+
 from ..relations import FAMILIES
 from ..targeted import TARGETED_GATHER, absence_policy
 from .identity import UnknownIdentity, decode, parent_of
 from .objects import OBJECTS
 from .refresh import NotEncodable, encode
+
+
+def _now():
+    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
 
 def _key(kind, identity):
@@ -67,7 +73,11 @@ def _lineage(kind, identity):
 
 
 def _source(kind, identity):
-    """One exact authoritative existence read, selected from relation data."""
+    """One exact authoritative existence read, selected from relation data.
+
+    The section that creates the object is preferred; a section whose entries the
+    device creates with the object is the fallback."""
+    candidates = []
     for resource, family in sorted(FAMILIES.items()):
         if family.get("source") == "ihub":
             continue
@@ -84,8 +94,12 @@ def _source(kind, identity):
             except (NotEncodable, TypeError, ValueError):
                 continue
             if _defines(spec, kind, value) and absence_policy(resource, section) != "unobservable":
-                return {"kind": "configuration", "resource": resource, "section": section, "ids": [value]}
-    return None
+                creates = bool(spec.get("creates")) and spec.get("object") == kind
+                candidates.append((0 if creates else 1, resource, section, value))
+    if not candidates:
+        return None
+    _rank, resource, section, value = min(candidates)
+    return {"kind": "configuration", "resource": resource, "section": section, "ids": [value]}
 
 
 def resolve_owner_absence(results, read):
@@ -95,7 +109,22 @@ def resolve_owner_absence(results, read):
     batch. Public results keep their original order and requested scope. Neither a
     missing row, a rejected read nor a failed proof read can erase cached data.
     """
-    evidence, attempted = {}, set()
+    evidence, attempted, lineages = {}, set(), {}
+
+    def contradicted(ancestor):
+        """Whether present (or conflicting) evidence exists for the ancestor or anything
+        it contains: a shown child, sibling or descendant means the ancestor exists."""
+        for obj, (state, proof) in evidence.items():
+            if state == "absent":
+                continue
+            if obj not in lineages:
+                try:
+                    lineages[obj] = set(_key(k, i) for k, i in _lineage(*obj))
+                except (UnknownIdentity, TypeError, ValueError, IndexError):
+                    lineages[obj] = set([obj])
+            if ancestor in lineages[obj]:
+                return True
+        return False
 
     def note(result):
         for obj, state, proof in _objects(result):
@@ -121,7 +150,7 @@ def resolve_owner_absence(results, read):
         remaining = []
         for gap in result.get("dependency_gaps") or ():
             value, proof = gap.get("id"), None
-            if value not in result.get("unverified_ids", ()):
+            if value not in result.get("unverified_ids", ()) or value in result.get("confirmed_absent_ids", ()):
                 remaining.append(gap)
                 continue
             try:
@@ -145,14 +174,14 @@ def resolve_owner_absence(results, read):
                             break
                         state = evidence.get(obj)
                 if state:
-                    if state[0] == "absent":
+                    if state[0] == "absent" and not contradicted(obj):
                         proof = state[1]
-                    break  # present/conflict block an absent ancestor too
+                    break  # present/conflict (here or below) block an absent ancestor
             if proof is None:
                 remaining.append(gap)
             else:
-                result["unverified_ids"].remove(value)
+                result["unverified_ids"] = [item for item in result["unverified_ids"] if item != value]
                 result["confirmed_absent_ids"].append(value)
-                result.setdefault("absence_evidence", []).append({"id": value, "owner": proof})
+                result.setdefault("absence_evidence", []).append({"id": value, "owner": proof, "checked_at": _now()})
         if "dependency_gaps" in result:
             result["dependency_gaps"] = remaining

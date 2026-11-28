@@ -128,8 +128,11 @@ reads:
       description: >-
         Dependency gaps resolved by independent owner evidence: a list of C(id) and
         C(owner), naming the absent object's C(kind), C(identity), C(resource),
-        C(section) and exact selector C(id). Only present for resolved gaps. Auxiliary
-        proof reads do not add results or widen the requested configuration data.
+        C(section) and exact selector C(id), and C(checked_at). Only present for resolved
+        gaps. An owner counts as absent only if nothing in the batch shows it, one of its
+        children or a sibling below it present. Auxiliary proof reads do not add results
+        or widen the requested configuration data; C(collected_at) stays the time of the
+        read itself.
       type: list
     warnings:
       description: >-
