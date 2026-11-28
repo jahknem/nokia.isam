@@ -22,12 +22,12 @@ NOC at `main` `3e9b5a7`. Local `ansible-playbook` runs, no AWX.
 | Plan reads | NOC plan reads (`noc_canonical_read.yaml` → `isam_read`), `change_set.build` | source ONT read completely; target `confirmed_absent` |
 | Create | change set `create` → check → apply with approval fingerprints | 11 steps ok; approval gate matched exactly |
 | Idempotence | the same check again | 0 commands in all 11 steps |
-| Read-back | NOC targeted reads of the test ONT | equal to the change set in every field |
+| Read-back | NOC targeted reads of the test ONT | equal to the change set in every field of the test ONT's objects (the shared PON port it also names already existed and is not part of this read) |
 | Refresh | `isam_refresh` of the ONT | 8 objects, 24 sections present, 12 absent, 4 gaps (`isam_dhcp_relay`, not observable by design); 16.6 s |
 | Change | direct module runs (bridge partial merge, VLAN removal/restore, UNI customer info, ONT description, UNI admin state, QoS queue weights), each dry-run and allow-listed | all read back as written; the final `replaced` of each family sent 0 commands |
 | Delete | NOC `delete` plan → check → apply | all steps ok; `bridge no port` before the ONT; `equipment ont no slot` / `no interface` |
 | Absence | NOC targeted reads, `isam_refresh` | every family `confirmed_absent` except the bridge port (see below); refresh complete, 8 sections absent |
-| Postflight | captures | 0 of 4119 flat and 0 of 11809 detail lines differ |
+| Postflight | captures | 0 of 4119 flat and 0 of 11809 detail configuration lines differ (asynchronous alarm messages in the capture excluded) |
 
 ## Defects found and fixed
 

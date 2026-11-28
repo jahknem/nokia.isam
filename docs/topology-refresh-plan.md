@@ -326,7 +326,7 @@ without a complete refresh.
 (`ABSENCE_POLICY` `unobservable`). The ONT write path of every family was verified live on
 a scratch ONT (docs/live-validation-2026-11-27-ont.md), and the complete ONT lifecycle
 through NOC's change pipeline on 2026-11-28 (docs/live-validation-2026-11-28-ont-lifecycle.md:
-create, idempotence, read-back, change, delete, absence; device restored, 0 lines differ).
+create, idempotence, read-back, change, delete, absence; device restored, 0 configuration lines differ).
 
 ## Out of scope for the repository
 
