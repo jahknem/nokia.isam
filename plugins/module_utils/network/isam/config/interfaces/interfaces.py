@@ -19,9 +19,7 @@ created.
 
 from ansible.module_utils.six import iteritems
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.utils.utils import dict_merge
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (
-    ResourceModule,
-)
+from ansible_collections.nokia.isam.plugins.module_utils.network.isam.resource_module import IsamResourceModule
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts import (
     Facts,
 )
@@ -38,6 +36,15 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.rm_templat
 # comparison read ('no admin-up'); the plain read omits it, so false means unset.
 DEFAULT_OFF_FLAGS = ("admin_up", "link_updown_trap")
 
+# 'severity no-value' is what the device prints where no severity is set and none can be
+# (a VLAN port: "it is not possible to configure a severity on this interface", lab
+# 2026-11-28, both for setting and for 'no severity'). It is never sent and never reset.
+UNSET_SEVERITY = "no-value"
+
+
+def _without_unset_severity(entry):
+    return dict((k, v) for k, v in entry.items() if not (k == "severity" and v == UNSET_SEVERITY))
+
 
 def _without_false_flags(entry, keep=()):
     """entry without default-off flags set to False (flags in keep excepted)."""
@@ -45,7 +52,7 @@ def _without_false_flags(entry, keep=()):
                 if not (k in DEFAULT_OFF_FLAGS and v is False and k not in keep))
 
 
-class Interfaces(ResourceModule):
+class Interfaces(IsamResourceModule):
     """
     The isam_interfaces config class
     """
@@ -69,19 +76,6 @@ class Interfaces(ResourceModule):
             "severity",
             "port_type",
         ]
-
-    def execute_module(self):
-        """ Execute the module
-
-        :rtype: A dictionary
-        :returns: The result from module execution
-        """
-        if self.state == "rendered":
-            self.generate_commands()
-        elif self.state not in ["parsed", "gathered"]:
-            self.generate_commands()
-            self.run_commands()
-        return self.result
 
     def generate_commands(self):
         """ Generate configuration commands to send based on
@@ -126,7 +120,7 @@ class Interfaces(ResourceModule):
            the `want` and `have` data with the `parsers` defined
            for the Interfaces network resource.
         """
-        self.compare(parsers=self.parsers, want=want, have=have)
+        self.compare(parsers=self.parsers, want=_without_unset_severity(want), have=_without_unset_severity(have))
 
     def _index_by_id(self, data):
         indexed = {}

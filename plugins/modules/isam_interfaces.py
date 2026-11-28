@@ -81,8 +81,9 @@ options:
         default: uni
   running_config:
     description:
-    - This option is used only with state C(parsed).
-    - The value should be the output of C(info configure interface port flat).
+    - With state C(parsed), the configuration to parse; the value should be the output of C(info configure interface port flat).
+    - With state C(deleted) and no I(config), the current configuration for an offline preview of the removal of
+      everything in it (CLI text or the canonical resource JSON); nothing is read from or sent to the device.
     type: str
 
   state:

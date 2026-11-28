@@ -199,6 +199,26 @@ interfaces and documentation").
   entry naming every attribute and every server with all its attributes (a gathered
   entry), as before.
 
+### ONT lifecycle lab test (2026-11-28, card 7 test ONT, device restored: 0 differing lines)
+
+A complete customer ONT was created, read, changed and removed on the lab device through
+NOC's change pipeline (plan reads → change set → check → apply with approval). Fixed:
+
+- `isam_interfaces` reports read outcomes: a targeted read now records each port present,
+  confirmed absent ("instance does not exist") or unknown. It read through
+  `get_scoped_config` without an outcome collector, so `isam_read` reported every port
+  unverified, even ports the device said were gone. The config class now uses
+  `IsamResourceModule` like the other ONT families (read outcomes, command safety, and the
+  offline removal preview: `deleted` with `running_config` and no `config`).
+- `isam_interfaces`: `severity no-value` (no severity set, and none settable on a VLAN
+  port) is never sent, and a device value `no-value` is never reset; `deleted` sent
+  `no severity`, which the device refuses on VLAN ports ("it is not possible to configure
+  a severity on this interface"). A desired `no-value` on a port with a set severity
+  means unset and sends `no severity`.
+- `isam_bridges`: the port's TPID table (`vlan-tpid<n> <n> no tpid`, device-created,
+  printed only by detail reads) no longer becomes unknown fields (`vlan_tpid0: 0`) that
+  the argspec rejects; a set TPID is reported with a warning (not modelled).
+
 ### Deterministic command order (ONT lifecycle lab test 2026-11-28)
 
 - Every resource module sends the same commands in the same order for the same input,
