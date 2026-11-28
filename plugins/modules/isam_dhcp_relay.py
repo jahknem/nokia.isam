@@ -142,7 +142,6 @@ read_outcomes:
 before:
   description:
   - The configuration before the module ran, in the format of I(config).
-  - With I(running_config) (offline preview) it is the supplied configuration.
   returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
 after:
@@ -150,12 +149,10 @@ after:
   - The configuration read back from the device after the commands were sent, in the format of I(config).
     In check mode nothing is sent, so it shows the unchanged configuration.
   returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted), commands were generated
-    and no I(running_config) was given
   type: list
 commands:
   description:
   - 'The commands sent to the device (in check mode: that would be sent).'
-  - With I(running_config) (offline preview) they are rendered only, never sent.
   returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
   elements: str

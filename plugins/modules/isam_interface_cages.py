@@ -169,7 +169,8 @@ gathered:
   returned: when I(state) is C(gathered)
   type: list
 parsed:
-  description: []
+  description:
+  - The I(running_config) text parsed into the format of I(config), without a device.
   returned: when I(state) is C(parsed)
   type: list
 # END resource_returns

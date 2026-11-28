@@ -250,7 +250,8 @@ class IsamResourceModule(ResourceModule):
         already applied is lost (a NOC apply could not tell what to read back). Here a
         failure carries the shared partial-execution schema (as action_module and the ONT
         deletion): ``accepted`` (sent and accepted), ``failed_command`` (outcome unknown)
-        and ``pending`` (never sent); ``changed`` is true once anything was accepted.
+        and ``pending`` (never sent); ``changed`` is true once a command was sent, since
+        the failed one may have taken effect (as in the ONT deletion).
         """
         self._compact()
         if _offline_config(self):
@@ -272,7 +273,7 @@ class IsamResourceModule(ResourceModule):
                         "device state before retrying; the failed command may have taken effect."
                         % (self.__class__.__name__, index + 1, len(self.commands), exc, len(accepted),
                            len(self.commands) - index - 1),
-                    changed=bool(accepted),
+                    changed=True,
                     commands=self.commands,
                     accepted=list(accepted),
                     failed_command=command,

@@ -201,19 +201,24 @@ interfaces and documentation").
 
 ### Remaining gaps (2026-11-28)
 
-- Every resource module sends its commands one per transaction and, when the device
-  refuses one, reports the partial execution in the shared schema (as the action modules
-  and the ONT deletion): `accepted` (applied before it), `failed_command` (outcome
-  unknown), `pending` (never sent), `failure_phase: execution`; `changed` is true once a
-  command was accepted. Before, the failure named only the device message and which
-  commands had been applied was lost. Lab 2026-11-28: `isam_qos_maps` with an accepted and
+- Resource modules built on `IsamResourceModule` (every ONT family, QoS, xDSL, VLANs,
+  system security and the other migrated families) send their commands one per
+  transaction and, when the device refuses one, report the partial execution in the
+  shared schema (as the action modules and the ONT deletion): `accepted` (applied before
+  it), `failed_command` (outcome unknown), `pending` (never sent),
+  `failure_phase: execution`; `changed` is true, since the failed command may have taken
+  effect. Before, the failure named only the device message and which commands had been
+  applied was lost. The 20 families still on netcommon's `ResourceModule` (among them
+  `isam_link_agg`, `isam_system`, `isam_traps`, `isam_igmp`, `isam_xstp`) are unchanged. Lab 2026-11-28: `isam_qos_maps` with an accepted and
   a refused ctrl-pkt command reported exactly that (restored, snapshot identical).
 - `isam_link_agg`: `deleted`/`replaced`/`overridden` no longer re-send `no max-active-port`,
   `no swo-threshold` or `no priority` to a group that already shows them (read as 8/0/0).
   Documented that resetting `mode` was verified on a LAG with its own port only.
 - Generated module docs: `tools/sync_resource_return_docs.py` crashed on modules without
-  `RETURN` (`isam_igmp`, `isam_mcast_control`, which now have one) and documented offline
-  previews for a module without `running_config`; `tools/sync_read_outcomes_docs.py`
+  `RETURN` (`isam_igmp`, `isam_mcast_control`, which now have one); it documents the
+  offline removal preview only for modules that have it (built on `IsamResourceModule`,
+  `deleted` allowed without `config`), not for those on netcommon's base, which ignore
+  `running_config` in `deleted`; `tools/sync_read_outcomes_docs.py`
   could not insert its block into 8 targeted modules, and 21 modules carried an outdated
   text. All regenerated; the `docs` gate now runs both tools with `--check`.
 - The targeted syslog route read (`isam_system`, `syslog.routes`) answers present and

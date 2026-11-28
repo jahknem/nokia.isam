@@ -68,11 +68,27 @@ def test_a_refused_command_reports_accepted_failed_and_pending():
     assert failure["failure_phase"] == "execution" and "command 2 of 3 failed" in failure["msg"]
 
 
-def test_a_first_command_refused_changed_nothing():
+def test_a_first_command_refused_accepted_nothing_but_may_have_changed():
     obj, connection = resource(COMMANDS, refuse=COMMANDS[0])
     with pytest.raises(Failed) as raised:
         obj.run_commands()
-    assert raised.value.args[0]["changed"] is False and raised.value.args[0]["accepted"] == []
+    failure = raised.value.args[0]
+    assert failure["accepted"] == [] and failure["pending"] == COMMANDS[1:]
+    assert failure["changed"] is True  # the failed command's outcome is unknown
+
+
+def test_nothing_is_sent_offline_outside_action_states_or_without_commands():
+    obj, connection = resource(COMMANDS)
+    obj._module.params = {"running_config": "configure bridge port 1/1/7/16/1/1/1"}
+    obj.run_commands()
+    assert connection.sent == []
+    obj, connection = resource(COMMANDS)
+    obj.state = "rendered"
+    obj.run_commands()
+    assert connection.sent == [] and obj.changed is False
+    obj, connection = resource([])
+    obj.run_commands()
+    assert connection.sent == [] and obj.changed is False
 
 
 def test_all_accepted_sends_each_once_and_check_mode_sends_nothing():
