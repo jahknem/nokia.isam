@@ -6,8 +6,9 @@ First major release, combining the previously unpublished 1.0.0 and 1.1.0 work.
 This is a breaking upgrade from 0.3.14: review the schema and state-contract changes
 below before replaying older configuration. Targeted reads distinguish presence,
 confirmed absence and named gaps; topology refreshes discover and read an object's
-subtree. ONT create/read/change/delete through NOC's real check/apply pipeline is
-lab-verified (see `docs/live-validation-2026-11-28-ont-lifecycle.md`). Validation is
+subtree. The ONT lifecycle is lab-verified: creation and deletion through NOC's real
+check/apply pipeline, read-back and idempotence through NOC's reads, field changes
+through direct module runs (see `docs/live-validation-2026-11-28-ont-lifecycle.md`). Validation is
 configuration-plane evidence, not a claim of live subscriber traffic testing.
 
 ### Upgrade and validation boundary
