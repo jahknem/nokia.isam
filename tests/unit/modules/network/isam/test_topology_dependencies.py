@@ -104,11 +104,10 @@ def test_a_bare_port_address_is_placed_only_from_an_object_the_same_configuratio
     families["qos_interfaces"] = [{"name": "1/1/4/3"}]
     graph = dependency_graph(families)
     assert not graph["unplaced"] and "qos_interfaces.config:xdsl_line" in [node["id"] for node in graph["nodes"]]
-    # ... also where a bonding group shares the address: a bonding group owns no QoS index
-    # (live write 2026-11-28, identity._bare_port_kinds).
+    # ... and not placed where a bonding group shares the address (owner not verified).
     families["interfaces"].append({"name": "bonding:1/1/4/3"})
     graph = dependency_graph(families)
-    assert not graph["unplaced"] and "qos_interfaces.config:xdsl_line" in [node["id"] for node in graph["nodes"]]
+    assert [u["resource"] for u in graph["unplaced"]] == ["qos_interfaces"]
     # ... and on an Ethernet card the LAG the device keeps at that index (QOS MGT error 216, live 2026-11-25).
     families = {"link_agg": {"groups": [{"id": "1/1/8/6"}], "ports": [{"id": "1/1/8/6"}]},
                 "qos_interfaces": [{"name": "1/1/8/6"}]}

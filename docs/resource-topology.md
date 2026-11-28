@@ -364,9 +364,12 @@ DSL line/bonding pairs (96) remain `ambiguous_owner` with two candidates. Typed 
 Bonding 35.5): a bonding group takes over the primary line's service and cannot
 be created if a service already sits on the secondary line, so for bonded DSL
 the service-bearing endpoint may be the bonding group rather than the bare
-line; both remain candidates until proven. Definitive ownership needs platform
-documentation of the bare-index resolution rule or a controlled write experiment
-on the lab; neither is assumed here.
+line; both remain candidates until proven. A controlled write experiment (lab,
+2026-11-28, docs/live-validation-2026-11-28-bonded-qos.md) confirmed the service
+takeover in the interface stack but cannot decide the QoS owner on the configuration
+plane: every index has a line, a bonding group and one QoS entry, and a group's index
+is always also its primary line's. Deciding it needs traffic or operational data on an
+equipped NDLT card with two service-free lines.
 
 ## Configuration scope classification
 

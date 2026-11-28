@@ -199,18 +199,17 @@ interfaces and documentation").
   entry naming every attribute and every server with all its attributes (a gathered
   entry), as before.
 
-### QoS owner of a bonded xDSL line (lab write 2026-11-28, restored)
+### QoS owner of a bonded xDSL line: investigated, stays a named gap (lab write 2026-11-28, restored)
 
-- A bare QoS index on a bonded xDSL line is attributed to the line, never to the bonding
-  group, so it is no longer an `ambiguous_owner` gap. Evidence: on the service-free card 7,
-  planned as NDLT-F without a board, bonding group `1/1/7/5` was built with links
-  `1/1/7/5` and `1/1/7/6`. The group must start with its own line; another first link is
-  refused with XDSL MGT error 35. `ethernet-line:1/1/7/5` moved onto `bonding:1/1/7/5`, but
-  both lines kept their own QoS entries and both accepted a QoS write, unlike a LAG member
-  (error 216). The QoS command guide names the index "physical port or la-group". Other
-  user-port families keep the bonding group as a candidate. The card was restored by
-  unplanning it and replaying its original configuration; full flat and detail
-  captures were identical before and after.
+- A bare QoS index on a bonded xDSL line remains an `ambiguous_owner` gap (line or
+  bonding group). A scratch experiment on the service-free card 7 (temporarily planned
+  NDLT-F without a board, restored with identical full captures) showed that the
+  configuration plane cannot decide it: every index has a line, a bonding group and one
+  QoS entry; a group must start with its own line (XDSL MGT error 35 otherwise), so its
+  index is always also a line's; bonded member lines keep and accept their own QoS
+  entries, unlike LAG members (QOS MGT error 216). Deciding it needs traffic or
+  operational data on an equipped NDLT card with two service-free lines.
+  Details: `docs/live-validation-2026-11-28-bonded-qos.md`.
 
 ### Remaining gaps (2026-11-28)
 

@@ -51,9 +51,8 @@ Done in the topology PR:
 9. **Core follow-ups** (done in #19).
 
 Also in the topology PR: a bare QoS index belongs to the LAG where one exists (QOS MGT
-error 216, lab 2026-11-25); on a bonded DSL line it is the line's, never the bonding
-group's (live write 2026-11-28, scratch card 7 replanned NDLT-F and restored: the group's
-member lines kept and accepted their own QoS, while `ethernet-line:` moved onto `bonding:`). Conflicting existence evidence is a gap. `relations/` and
+error 216, lab 2026-11-25); a DSL line and its bonding group stay candidates (owner not
+verified on a device, open). Conflicting existence evidence is a gap. `relations/` and
 `TARGETED_GATHER` are kept in step by a test.
 
 Still open:
