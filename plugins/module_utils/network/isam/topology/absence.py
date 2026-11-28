@@ -6,6 +6,7 @@ Present or contradictory evidence stops the walk. All evidence belongs to one re
 batch; nothing cached from a previous run is used.
 """
 
+import json
 import time
 
 from ..relations import FAMILIES
@@ -13,6 +14,15 @@ from ..targeted import TARGETED_GATHER, absence_policy
 from .identity import UnknownIdentity, decode, parent_of
 from .objects import OBJECTS
 from .refresh import NotEncodable, encode
+
+
+def _walk_key(result, value):
+    """A hashable key for one gap of one result (a requested id may be a mapping)."""
+    try:
+        hash(value)
+        return id(result), value
+    except TypeError:
+        return id(result), json.dumps(value, sort_keys=True, default=str)
 
 
 def _now():
@@ -178,7 +188,7 @@ def resolve_owner_absence(results, read):
                         break
             if evidence.get(obj) is not None:
                 break
-        walks[(id(result), value)] = usable
+        walks[_walk_key(result, value)] = usable
 
     # Phase 2: decide. The first object of the walk with evidence decides: only an absent
     # one that nothing present or conflicting in the batch contradicts is a proof.
@@ -191,7 +201,7 @@ def resolve_owner_absence(results, read):
             if value in resolved:
                 continue
             if value in (result.get("unverified_ids") or ()) and value not in (result.get("confirmed_absent_ids") or ()):
-                for obj in walks.get((id(result), value), ()):
+                for obj in walks.get(_walk_key(result, value), ()):
                     state = evidence.get(obj)
                     if state:
                         if state[0] == "absent" and not contradicted(obj):

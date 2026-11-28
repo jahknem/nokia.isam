@@ -201,3 +201,19 @@ def test_a_duplicate_gap_leaves_no_stray_dependency_entry():
     result["dependency_gaps"] = [{"id": UNI, "dependency_gap": "lower-interface"}] * 2
     resolve_owner_absence([result], lambda req: answer(req, "absent"))
     assert result["dependency_gaps"] == [] and len(result["absence_evidence"]) == 1
+
+
+def test_a_mapping_form_id_stays_unverified_instead_of_failing(monkeypatch):
+    # review: ids may be mappings ({port: ...}); they are not decoded for a proof
+    from .module_runner import run_module
+
+    def device(command):
+        if command.startswith("info configure bridge port " + UNI):
+            return "Error : specified lower-interface does not exist\n"
+        return "Error : instance does not exist\n"
+
+    request = {"kind": "configuration", "resource": "bridges", "section": "port", "ids": [{"port": UNI}]}
+    result = run_module(monkeypatch, "isam_read", {"reads": [request]}, device)
+    assert not result.get("failed"), result.get("msg")
+    (read,) = result["reads"]
+    assert read["status"] == "ok" and read["unverified_ids"] == [{"port": UNI}]
