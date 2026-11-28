@@ -58,7 +58,10 @@ def _lineage(kind, identity):
         seen.add(_key(kind, identity))
         yield kind, identity
         parent = parent_of(kind, identity)
-        if parent is None or kind not in OBJECTS.get(parent[0], {}).get("children", ()):
+        if parent is None:
+            return
+        children = OBJECTS.get(parent[0], {}).get("children", ())
+        if not isinstance(children, (list, tuple)) or kind not in children:
             return
         kind, identity = parent
 
