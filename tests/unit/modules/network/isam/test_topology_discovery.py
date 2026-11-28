@@ -755,3 +755,37 @@ def test_many_uni_parents_use_the_device_stack_and_both_sources_attach():
     assert results[0]["read_scope"] == "device"
     g = attach_discovery(g, [json.loads(json.dumps(r)) for r in results])
     assert edge_exists(g, ("bridge_port", ("uni", UNI)), "contains", ("vlan_port", ("uni", UNI, "99")))
+
+
+def test_scoped_reads_map_device_answers_and_share_one_reply():
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.source_reads import (
+        enumerate_request, prepare, read_scoped)
+
+    class Conn(object):
+        def __init__(self, answer):
+            self.answer, self.sent = answer, []
+
+        def get(self, command):
+            self.sent.append(command)
+            if isinstance(self.answer, Exception):
+                raise self.answer
+            return self.answer
+
+    command = "info configure bridge port %s flat detail" % UNI
+    assert read_scoped(Conn("\nError : instance does not exist\n"), command) == ("", "none")
+    assert read_scoped(Conn(Exception("Error : instance does not exist")), command) == ("", "none")
+    assert read_scoped(Conn("Error : specified lower-interface does not exist"), command) == ("", "dependency")
+    assert read_scoped(Conn(Exception("Error : specified lower-interface does not exist")), command)[1] == "dependency"
+    assert read_scoped(Conn("invalid token"), command)[1] == "unsupported"
+    with pytest.raises(Exception):
+        read_scoped(Conn(Exception("connection lost")), command)
+    # one device read serves the bridge port and its VLAN ports
+    conn, sources = Conn(bridge_config(UNI, "99")), {}
+    bridge = enumerate_request(sources, lambda: conn, prepare("uni", UNI, "bridge_port"), False)
+    vlans = enumerate_request(sources, lambda: conn, prepare("bridge_port", ("uni", UNI), "vlan_port"), False)
+    assert conn.sent == [command]
+    assert bridge["children"] == [("uni", UNI)] and vlans["children"] == [("uni", UNI, "99")]
+    # a missing UNI is not 'no bridge port'
+    missing = enumerate_request({}, lambda: Conn("Error : specified lower-interface does not exist"),
+                                prepare("uni", UNI, "bridge_port"), False)
+    assert missing["status"] != "ok" and missing["children"] == []

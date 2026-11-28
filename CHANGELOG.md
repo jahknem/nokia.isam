@@ -7,7 +7,7 @@
 - The bridge port of a UNI and its VLAN ports are discovered from the bridge port's own
   `info configure bridge port <uni> flat detail` read instead of the device-wide
   `show interface stack` (7.5 of 15.4 s of an ONT refresh on the lab, 111 KB; larger on
-  production MSANs). Lab, template ONT: 16.4 s to 9 to 11 s, with identical objects,
+  production MSANs). Lab, template ONT: 16.4 s to 9.1 to 11.3 s, with identical objects,
   all 40 section outcomes and gaps; an absent ONT's refresh is unchanged and complete.
 - Read-only evidence: the lab's whole stack and its `flat detail` bridge configuration
   list the same 139 bridge ports and the same 359 VLAN ports. Absence follows the
