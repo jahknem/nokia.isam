@@ -25,7 +25,7 @@ class Igmp(ResourceModule):
         want = {"igmp": self.want or {}}
         have = {"igmp": self.have or {}}
         if self.state == "merged":
-            from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import dict_merge
+            from ansible_collections.nokia.isam.plugins.module_utils.network.isam.utils.utils import dict_merge
             want = dict_merge(have, want)
         if self.state == "deleted":
             want = {"igmp": {}}

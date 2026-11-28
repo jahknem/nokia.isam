@@ -199,6 +199,17 @@ interfaces and documentation").
   entry naming every attribute and every server with all its attributes (a gathered
   entry), as before.
 
+### Deterministic command order (ONT lifecycle lab test 2026-11-28)
+
+- Every resource module sends the same commands in the same order for the same input,
+  in every process. netcommon's `dict_merge` added new instances through a set
+  difference and merged lists through a set, so the order followed Python's per-process
+  hash seed. NOC fingerprints a check and writes only when the re-check is identical; its
+  apply gate refused a complete ONT creation on the lab device because `isam_interfaces`
+  and `isam_qos_interfaces` listed the same commands in another order. The collection now
+  uses its own order-preserving `dict_merge` (instances in the order given; lists as the
+  ordered union). `isam_arp_relay` `replaced`/`overridden` removes in device order.
+
 ### Lab-verified resets (lab write 2026-11-28, everything restored, snapshot identical)
 
 - `isam_link_agg`: `deleted`, and `replaced`/`overridden` omitting them, return
