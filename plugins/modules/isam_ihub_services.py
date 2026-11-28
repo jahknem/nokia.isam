@@ -10,7 +10,7 @@ description:
   - Reads the verified family-wide C(info configure service) source.
   - Parses observed customers, VPLS including V-VPLS VLAN identity, IES interfaces and SAPs.
   - Other service types or options remain explicit projection coverage gaps.
-version_added: "1.1.0"
+version_added: "1.0.0"
 author: Jan Kühnemund (@jahknem)
 extends_documentation_fragment: nokia.isam.ihub
 options:

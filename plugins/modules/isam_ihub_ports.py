@@ -10,7 +10,7 @@ description:
   - Reads the Port Configuration section of hierarchical C(info configure).
   - The verified source is device-wide and requires I(allow_broad_read=true).
   - Optical, internal and virtual IHUB ports remain separate from access-side interfaces and equipment inventory.
-version_added: "1.1.0"
+version_added: "1.0.0"
 author: Jan Kühnemund (@jahknem)
 extends_documentation_fragment: nokia.isam.ihub
 options:

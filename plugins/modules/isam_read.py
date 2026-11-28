@@ -33,7 +33,7 @@ description:
     identity, using the shared relation model. Only a confirmed absent owner proves
     the dependent entry absent. Present, conflicting, failed or ambiguous evidence
     leaves it unverified. Proof reads are reused within this batch, never across runs.
-version_added: "1.1.0"
+version_added: "1.0.0"
 author: Jan Kühnemund (@jahknem)
 options:
   reads:

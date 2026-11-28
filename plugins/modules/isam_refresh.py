@@ -34,7 +34,7 @@ description:
     goes as deep as the objects they configure. In such a partial refresh
     C(complete) refers to the question asked.
   - This module never writes configuration; check mode reads like a normal run.
-version_added: "1.1.0"
+version_added: "1.0.0"
 author: Jan Kühnemund (@jahknem)
 options:
   kind:
