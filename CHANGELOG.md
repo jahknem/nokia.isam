@@ -208,11 +208,13 @@ NOC's change pipeline (plan reads → change set → check → apply with approv
   confirmed absent ("instance does not exist") or unknown. It read through
   `get_scoped_config` without an outcome collector, so `isam_read` reported every port
   unverified, even ports the device said were gone. The config class now uses
-  `IsamResourceModule` like the other ONT families (read outcomes, command safety,
-  offline action states).
+  `IsamResourceModule` like the other ONT families (read outcomes, command safety, and the
+  offline removal preview: `deleted` with `running_config` and no `config`).
 - `isam_interfaces`: `severity no-value` (no severity set, and none settable on a VLAN
-  port) is never sent and never reset; `deleted` sent `no severity`, which the device
-  refuses on VLAN ports ("it is not possible to configure a severity on this interface").
+  port) is never sent, and a device value `no-value` is never reset; `deleted` sent
+  `no severity`, which the device refuses on VLAN ports ("it is not possible to configure
+  a severity on this interface"). A desired `no-value` on a port with a set severity
+  means unset and sends `no severity`.
 - `isam_bridges`: the port's TPID table (`vlan-tpid<n> <n> no tpid`, device-created,
   printed only by detail reads) no longer becomes unknown fields (`vlan_tpid0: 0`) that
   the argspec rejects; a set TPID is reported with a warning (not modelled).
