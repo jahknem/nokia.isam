@@ -54,11 +54,20 @@ def _bare_port_kinds(decoder):
     """Object kinds a bare four-part port address can name for this decoder.
 
     The device accepts only the bare form for QoS (xdsl-line:, bonding:, la-group: are
-    invalid tokens; DS-LIN-TEST-01, 2026-11-25). That shows the form, not the owner:
-    whether a bonded line's QoS belongs to the line or to its bonding group is not
-    verified, so both stay candidates. Where a LAG exists, the QoS is the LAG's (see
-    _qos_owner, live evidence).
+    invalid tokens; DS-LIN-TEST-01, 2026-11-25). Where a LAG exists, the QoS is the
+    LAG's (see _qos_owner, live evidence).
+
+    A bonding group never owns a QoS index. Live write DS-LIN-TEST-01 2026-11-28 on the
+    scratch card 7 planned NDLT-F (restored, captures identical): group 1/1/7/5 with
+    links 1/1/7/5 and 1/1/7/6 (a group starts with its own line; another first link is
+    refused, XDSL MGT error 35). The stack moved ethernet-line:1/1/7/5 onto bonding:1/1/7/5,
+    but both lines kept their own QoS entry and both accepted a QoS write (queue 0
+    weight), unlike a LAG member (error 216). The QoS command guide names the index
+    "physical port or la-group", never a bonding group. Other user-port families keep
+    the bonding group as a candidate.
     """
+    if decoder == "qos_interface":
+        return ("xdsl_line", "ethernet_port", "lag")
     return ("xdsl_line", "ethernet_port", "bonding_group", "lag")
 
 
