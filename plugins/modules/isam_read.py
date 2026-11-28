@@ -28,6 +28,11 @@ description:
     C(no_log) and common credential names). Warnings are reduced to stable categories;
     the device's own text is never returned.
   - This module never writes configuration.
+  - A missing dependency is not absence by itself. For a dependency gap, this module
+    can read an authoritative section of the object's containment lineage by exact
+    identity, using the shared relation model. Only a confirmed absent owner proves
+    the dependent entry absent. Present, conflicting, failed or ambiguous evidence
+    leaves it unverified. Proof reads are reused within this batch, never across runs.
 version_added: "1.1.0"
 author: Jan Kühnemund (@jahknem)
 options:
@@ -118,6 +123,13 @@ reads:
         Unverified instances whose read named a missing object they depend on
         (C(lower-interface), C(interface-index)): a list of C(id) and
         C(dependency_gap). Present only when there is one.
+      type: list
+    absence_evidence:
+      description: >-
+        Dependency gaps resolved by independent owner evidence: a list of C(id) and
+        C(owner), naming the absent object's C(kind), C(identity), C(resource),
+        C(section) and exact selector C(id). Only present for resolved gaps. Auxiliary
+        proof reads do not add results or widen the requested configuration data.
       type: list
     warnings:
       description: >-

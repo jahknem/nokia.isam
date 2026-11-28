@@ -2,6 +2,13 @@
 
 ## 1.1.0 (unreleased)
 
+- `isam_read`: a missing dependency can be resolved by a fresh, exact owner-existence
+  read chosen from the shared relations and containment model. Only confirmed absence
+  proves the dependent entry absent; missing output, failed reads, ambiguous ownership
+  and conflicting evidence do not. Proof reads are reused within the batch, returned
+  as `absence_evidence`, and never widen the requested data. This closes the bridge
+  port left unverified after its UNI was removed, without a bridge-specific exception.
+
 Completes targeted gathering for the ONT/access families. No schema changes to
 `gathered` or whole-family reads: without `config` a read does exactly what
 1.0.0 does. Additions: the `read_outcomes` return value on targeted reads, and

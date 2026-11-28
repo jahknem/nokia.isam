@@ -429,7 +429,13 @@ def read_one(module, read):
 
 def read_all(module, reads):
     """The results of every read, in request order, and an overall status."""
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.absence import resolve_owner_absence
+
     results = [read_one(module, read) for read in reads or []]
+    resolve_owner_absence(results, lambda request: read_one(module, request))
+    for result in results:
+        if result.get("absence_evidence"):
+            result["collected_at"] = _now()
     statuses = set(item.get("status") for item in results)
     overall = "ok" if statuses <= {"ok"} else ("error" if statuses == {"error"} else "partial")
     return results, overall

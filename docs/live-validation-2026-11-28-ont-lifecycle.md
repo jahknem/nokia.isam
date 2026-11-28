@@ -43,9 +43,11 @@ NOC at `main` `3e9b5a7`. Local `ansible-playbook` runs, no AWX.
 
 ## Open
 
-- **Bridge port after its UNI is removed**: the device answers "specified lower-interface
-  does not exist". By the read contract that is a dependency gap, not absence, so the
-  bridge port stays `unverified` in NOC's reads (the refresh proves it absent through
-  the missing ONT). Whether a missing lower interface may prove the absence of the
-  bridge port on that same port is a contract decision.
+- **Bridge port after its UNI is removed (resolved after this run)**: the device answers
+  "specified lower-interface does not exist". That remains a dependency gap by itself.
+  `isam_read` now reads an authoritative owner section by exact identity, selected from
+  the shared relation model. An independently confirmed absent UNI proves its bridge
+  port absent; a present, failed, ambiguous or conflicting owner does not. A subsequent
+  lab read confirmed the removed bridge port absent and the existing template ports
+  present. No device configuration was changed for this verification.
 - **QoS owner of a bonded line**: still needs two service-free xDSL lines.
