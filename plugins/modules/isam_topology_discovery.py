@@ -87,8 +87,8 @@ options:
         for this relation. Without permission, returns unsupported without
         issuing enumeration commands. Merely requesting a scoped root does not
         authorize reading its siblings' configuration.
-      - Not needed for a scoped source, which reads only the parent itself: the bridge
-        port of a UNI and that bridge port's VLAN ports, up to 32 UNIs per call.
+      - Not needed for a scoped source, which reads only the parent itself (the bridge
+        port of a UNI and that bridge port's VLAN ports, up to 32 UNIs per call).
     type: bool
     default: false
 """
