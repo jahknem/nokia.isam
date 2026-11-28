@@ -324,7 +324,9 @@ without a complete refresh.
 
 `isam_dhcp_relay` stays a named gap: every read answers the same whether it is set or not
 (`ABSENCE_POLICY` `unobservable`). The ONT write path of every family was verified live on
-a scratch ONT (docs/live-validation-2026-11-27-ont.md).
+a scratch ONT (docs/live-validation-2026-11-27-ont.md), and the complete ONT lifecycle
+through NOC's change pipeline on 2026-11-28 (docs/live-validation-2026-11-28-ont-lifecycle.md:
+create, idempotence, read-back, change, delete, absence; device restored, 0 lines differ).
 
 ## Out of scope for the repository
 
