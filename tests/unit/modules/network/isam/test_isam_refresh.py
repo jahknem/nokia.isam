@@ -104,3 +104,21 @@ def test_a_refresh_that_does_not_converge_fails_cleanly(monkeypatch):
     monkeypatch.setattr(refresh_run, "MAX_ROUNDS", 0)
     result, _sent = refresh(monkeypatch, {"kind": "ont", "identity": ONT})
     assert result.get("failed") and "did not converge" in result["msg"], result
+
+
+def test_an_ont_refresh_reads_its_uni_bridge_port_scoped_not_the_device_stack(monkeypatch):
+    # perf: 'show interface stack' took half of an ONT refresh on the lab
+    uni = "1/1/5/1/3/1/1"
+    seen = []
+
+    def device(command):
+        seen.append(command)
+        if command == "show interface stack":
+            raise AssertionError("the device-wide stack must not be read for one ONT")
+        if command == "info configure bridge port %s flat detail" % uni:
+            return "configure bridge port %s vlan-id 99\n#------------\n" % uni
+        return "echo x\n#------------\n"
+    result = run_module(monkeypatch, "isam_refresh", {"kind": "uni", "identity": uni}, device)
+    objects = [tuple(o) if isinstance(o[1], str) else (o[0], tuple(o[1])) for o in result["refresh"]["objects"]]
+    assert ("bridge_port", ("uni", uni)) in objects and ("vlan_port", ("uni", uni, "99")) in objects
+    assert seen.count("info configure bridge port %s flat detail" % uni) >= 1

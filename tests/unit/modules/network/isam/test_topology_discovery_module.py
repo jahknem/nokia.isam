@@ -153,44 +153,39 @@ class TestTopologyDiscoveryModule(TestIsamModule):
 
     def test_uni_bridge_port_enumeration_returns_tuple_identities(self):
         uni = "1/1/5/1/3/1/1"
-        table = "\n".join([
-            "===============================================================================================",
-            "stack table",
-            "===============================================================================================",
-            "higher                                         |lower                                          ",
-            "-----------------------------------------------+-----------------------------------------------",
-            "%-47s %-47s" % ("bridge-port:%s" % uni, "uni:%s" % uni),
-            "-----------------------------------------------------------------------------------------------",
-            "stack count : 1",
-            "===============================================================================================",
-        ])
-        self._conn(reply=table)
-        set_module_args(dict(kind="uni", identity=uni, child_kind="bridge_port", allow_broad_read=True),
-                      ignore_provider=True)
+        self._conn(reply="configure bridge port %s max-unicast-mac 5\n#------------------------------------------" % uni)
+        set_module_args(dict(kind="uni", identity=uni, child_kind="bridge_port"), ignore_provider=True)
         disc = self.execute_module(changed=False)["discovery"]
         self.assertEqual(disc["status"], "ok")
-        self.assertEqual(disc["read_scope"], "device")
+        self.assertEqual(disc["read_scope"], "scoped")
         self.assertEqual(disc["children"], [("uni", uni)])
+
+    def test_a_uni_without_bridge_port_has_no_children_and_a_missing_uni_is_a_gap(self):
+        uni = "1/1/5/1/3/1/1"
+        self._conn(reply="\nError : instance does not exist\n")
+        set_module_args(dict(kind="uni", identity=uni, child_kind="bridge_port"), ignore_provider=True)
+        disc = self.execute_module(changed=False)["discovery"]
+        self.assertEqual((disc["status"], disc["children"]), ("ok", []))
+        self._conn(reply="\nError : specified lower-interface does not exist\n")
+        set_module_args(dict(kind="uni", identity=uni, child_kind="bridge_port"), ignore_provider=True)
+        disc = self.execute_module(changed=False)["discovery"]
+        self.assertNotEqual(disc["status"], "ok")
+        self.assertEqual(disc["children"], [])
 
     def test_bridge_port_parent_identity_encoding_and_vlan_children(self):
         uni = "1/1/5/1/3/1/1"
-        table = "\n".join([
-            "===============================================================================================",
-            "stack table",
-            "===============================================================================================",
-            "higher                                         |lower                                          ",
-            "-----------------------------------------------+-----------------------------------------------",
-            "%-47s %-47s" % ("vlan-port:%s:99" % uni, "bridge-port:%s" % uni),
-            "%-47s %-47s" % ("vlan-port:%s:100" % uni, "bridge-port:%s" % uni),
-            "-----------------------------------------------------------------------------------------------",
-            "stack count : 2",
-            "===============================================================================================",
+        reply = "\n".join([
+            "configure bridge port %s no default-priority max-unicast-mac 5" % uni,
+            "configure bridge port %s vlan-id 99 tag single-tagged" % uni,
+            "configure bridge port %s vlan-id 100 tag single-tagged" % uni,
+            "#-------------------------------------------------------------------------------",
         ])
-        self._conn(reply=table)
-        set_module_args(dict(kind="bridge_port", identity="uni:%s" % uni, child_kind="vlan_port",
-                             allow_broad_read=True), ignore_provider=True)
+        self._conn(reply=reply)
+        # a UNI's bridge port is read scoped: no broad-read permission needed
+        set_module_args(dict(kind="bridge_port", identity="uni:%s" % uni, child_kind="vlan_port"), ignore_provider=True)
         disc = self.execute_module(changed=False)["discovery"]
         self.assertEqual(disc["status"], "ok")
+        self.assertEqual(disc["read_scope"], "scoped")
         self.assertEqual(disc["parent"], '["bridge_port",["uni","%s"]]' % uni)
         self.assertEqual(disc["children"], [("uni", uni, "100"), ("uni", uni, "99")])
 

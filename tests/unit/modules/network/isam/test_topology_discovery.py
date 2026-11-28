@@ -442,6 +442,70 @@ def test_transceiver_inventory_fail_closed(mutation):
         enumerate_children("card", "lt:1/1/8", "transceiver", table)
 
 
+def bridge_config(port, *vlans):
+    """A UNI bridge port's 'flat detail' reply (format live, DS-LIN-TEST-01 2026-11-28)."""
+    lines = ["configure bridge port %s no default-priority no mac-learn-off max-unicast-mac 5" % port,
+             "configure bridge port %s vlan-tpid0 0 no tpid" % port]
+    lines += ["configure bridge port %s vlan-id %s tag single-tagged no qos" % (port, vlan) for vlan in vlans]
+    return flat(*lines)
+
+
+def test_a_uni_bridge_port_and_its_vlan_ports_come_from_its_own_scoped_read():
+    reply = bridge_config(UNI, "10", "99", "stacked:100:200")
+    item = enumerate_children("uni", UNI, "bridge_port", reply)
+    assert item["status"] == "ok" and item["read_scope"] == "scoped"
+    assert item["command"] == "info configure bridge port %s flat detail" % UNI
+    assert item["children"] == [("uni", UNI)]
+    vlans = enumerate_children("bridge_port", ("uni", UNI), "vlan_port", reply)
+    assert vlans["read_scope"] == "scoped" and vlans["command"] == item["command"]
+    assert vlans["children"] == [("uni", UNI, "10"), ("uni", UNI, "99"), ("uni", UNI, "stacked:100:200")]
+    # header only: no bridge port, no VLAN ports (flat detail prints every existing instance)
+    assert enumerate_children("uni", UNI, "bridge_port", flat())["children"] == []
+    assert enumerate_children("bridge_port", ("uni", UNI), "vlan_port", flat())["children"] == []
+
+
+def test_the_scoped_bridge_read_drops_the_wrapped_command_echo():
+    # live reply shape (DS-LIN-TEST-01 2026-11-28): the echo wraps mid-word
+    command = "info configure bridge port %s flat detail" % UNI
+    reply = "\n".join([command[:-5], command[-5:], bridge_config(UNI, "10", "99")])
+    assert enumerate_children("uni", UNI, "bridge_port", reply)["children"] == [("uni", UNI)]
+    assert enumerate_children("bridge_port", ("uni", UNI), "vlan_port", reply)["children"] == [
+        ("uni", UNI, "10"), ("uni", UNI, "99")]
+    # an echo of another command is not stripped and fails closed
+    other = "\n".join(["info configure bridge port 1/1/5/1/1/1/2 flat detail", bridge_config(UNI, "10")])
+    with pytest.raises(UnknownIdentity):
+        enumerate_children("uni", UNI, "bridge_port", other)
+
+
+@pytest.mark.parametrize("reply", [
+    "configure bridge port %s max-unicast-mac 5" % UNI,                       # no terminator: may be truncated
+    "",                                                                         # blank
+    None,
+])
+def test_the_scoped_bridge_read_fails_closed_on_incomplete_replies(reply):
+    with pytest.raises(UnknownIdentity):
+        enumerate_children("uni", UNI, "bridge_port", reply)
+
+
+def test_the_scoped_bridge_read_fails_closed_on_other_lines_and_bad_vlans():
+    with pytest.raises(UnknownIdentity):
+        enumerate_children("uni", UNI, "bridge_port", flat("configure bridge port 1/1/5/1/1/1/2 max-unicast-mac 5"))
+    with pytest.raises(UnknownIdentity):
+        enumerate_children("bridge_port", ("uni", UNI), "vlan_port", flat("configure bridge port %s vlan-id x9" % UNI))
+
+
+def test_only_unambiguous_parents_use_the_scoped_source():
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.discovery import adapter_for
+    assert adapter_for("uni", "bridge_port", UNI)["read_scope"] == "scoped"
+    assert adapter_for("bridge_port", "vlan_port", ("uni", UNI))["read_scope"] == "scoped"
+    assert adapter_for("bridge_port", "vlan_port", "uni:%s" % UNI)["read_scope"] == "scoped"
+    for kind, identity in (("lag", "1/1/8/1"), ("xdsl_line", "1/1/3/1"), ("ethernet_port", "1/1/8/1")):
+        assert adapter_for(kind, "bridge_port", identity)["command"] == "show interface stack"
+        assert adapter_for("bridge_port", "vlan_port", (kind, identity))["command"] == "show interface stack"
+    # without the identity, the declared (device-wide) source, as before
+    assert adapter_for("uni", "bridge_port")["command"] == "show interface stack"
+
+
 def stack_table(*pairs):
     # Format live-verified on DS-LIN-TEST-01 (header, higher/lower columns,
     # "stack count : N" footer).
@@ -472,11 +536,10 @@ def test_bridge_port_enumeration_uses_the_typed_stack_lower_interface():
         ("vlan-port:%s:99" % UNI, "bridge-port:%s" % UNI),
         ("la-group:1/1/8/1", "ethernet-line:1/1/8/1"),
     )
-    item = enumerate_children("uni", UNI, "bridge_port", table)
+    item = enumerate_children("lag", "1/1/8/1", "bridge_port", table)
     assert item["status"] == "ok" and item["read_scope"] == "device"
-    assert item["children"] == [("uni", UNI)]
+    assert item["children"] == [("lag", "1/1/8/1")]
     assert item["command"] == "show interface stack"
-    assert enumerate_children("lag", "1/1/8/1", "bridge_port", table)["children"] == [("lag", "1/1/8/1")]
     # An xDSL line's bridge port stacks on its ethernet-line (EFM) facet.
     assert enumerate_children("xdsl_line", "1/1/3/1", "bridge_port", table)["children"] == [("xdsl_line", "1/1/3/1")]
     assert enumerate_children("ethernet_port", "1/1/8/1", "bridge_port", table)["children"] == []
@@ -490,23 +553,22 @@ def test_vlan_port_enumeration_filters_stack_by_bridge_port():
         ("vlan-port:%s:stacked:100:200" % UNI, "bridge-port:%s" % UNI),
         ("vlan-port:1/1/8/1:20", "bridge-port:1/1/8/1"),
     )
-    item = enumerate_children("bridge_port", "uni:%s" % UNI, "vlan_port", table)
-    assert item["status"] == "ok" and item["read_scope"] == "device"
-    assert item["children"] == [("uni", UNI, "100"), ("uni", UNI, "99"), ("uni", UNI, "stacked:100:200")]
-    assert item["parent"] == node_key("bridge_port", ("uni", UNI))
+    # A bridge port on a line or LAG keeps the stack (a bare address names several kinds).
     lag_item = enumerate_children("bridge_port", ("lag", "1/1/8/1"), "vlan_port", table)
+    assert lag_item["status"] == "ok" and lag_item["read_scope"] == "device"
     assert lag_item["children"] == [("lag", "1/1/8/1", "20")]
+    assert lag_item["parent"] == node_key("bridge_port", ("lag", "1/1/8/1"))
 
 
 def test_empty_stack_confirms_absence_and_round_trips():
     empty = stack_table()
-    assert enumerate_children("uni", UNI, "bridge_port", empty)["children"] == []
-    assert enumerate_children("bridge_port", ("uni", UNI), "vlan_port", empty)["children"] == []
+    assert enumerate_children("lag", "1/1/8/1", "bridge_port", empty)["children"] == []
+    assert enumerate_children("bridge_port", ("lag", "1/1/8/1"), "vlan_port", empty)["children"] == []
     g = build_graph({"equipment_onts": {"interfaces": [{"ont_idx": ONT}], "slots": [{"ont_slot_idx": SLOT}]},
                      "ethernet_onts": [{"uni_idx": UNI}], "pon_interfaces": [{"name": PON}]}, "M")
-    table = stack_table(("bridge-port:%s" % UNI, "uni:%s" % UNI), ("vlan-port:%s:99" % UNI, "bridge-port:%s" % UNI))
-    results = [enumerate_children("uni", UNI, "bridge_port", table),
-               enumerate_children("bridge_port", ("uni", UNI), "vlan_port", table)]
+    reply = bridge_config(UNI, "99")
+    results = [enumerate_children("uni", UNI, "bridge_port", reply),
+               enumerate_children("bridge_port", ("uni", UNI), "vlan_port", reply)]
     g = attach_discovery(g, [json.loads(json.dumps(r)) for r in results])
     assert edge_exists(g, ("uni", UNI), "contains", ("bridge_port", ("uni", UNI)))
     assert edge_exists(g, ("bridge_port", ("uni", UNI)), "contains", ("vlan_port", ("uni", UNI, "99")))
@@ -558,9 +620,9 @@ def test_uni_subtree_coverage_includes_bridge_and_vlan_port_relations():
     manifest = coverage(g, "pon", PON)
     assert manifest["complete"] is False
     assert any(m["parent"] == node_key("uni", UNI) and m["child_kind"] == "bridge_port" for m in manifest["missing"])
-    table = stack_table(("bridge-port:%s" % UNI, "uni:%s" % UNI), ("vlan-port:%s:99" % UNI, "bridge-port:%s" % UNI))
-    g = attach_discovery(g, [enumerate_children("uni", UNI, "bridge_port", table),
-                             enumerate_children("bridge_port", ("uni", UNI), "vlan_port", table)])
+    reply = bridge_config(UNI, "99")
+    g = attach_discovery(g, [enumerate_children("uni", UNI, "bridge_port", reply),
+                             enumerate_children("bridge_port", ("uni", UNI), "vlan_port", reply)])
     manifest = coverage(g, "pon", PON)
     assert manifest["complete"] is True
     assert node_key("vlan_port", ("uni", UNI, "99")) in manifest["nodes"]
@@ -671,3 +733,59 @@ def test_a_bare_index_two_discovered_objects_share_stays_ambiguous():
     node = node_key("configuration", ("efm_oam_interface", "config", "1/1/3/1"))
     assert [gap["reason"] for gap in g["gaps"] if gap.get("node") == node] in (["unknown_owner"], ["ambiguous_owner"])
     assert not [e for e in g["edges"] if e["source"] == node and e["relation"] == "configures"]
+
+
+def test_many_uni_parents_use_the_device_stack_and_both_sources_attach():
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.discovery import SCOPED_MAX_PARENTS
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.source_reads import (
+        prepare, scoped_allowed)
+    few = [("uni", "1/1/5/1/%d/1/1" % n, "bridge_port") for n in range(1, SCOPED_MAX_PARENTS + 1)]
+    assert scoped_allowed(few)
+    many = few + [("uni", "1/1/5/2/1/1/1", "bridge_port")]
+    assert not scoped_allowed(many)
+    # VLAN-port requests of the same bridge ports count once per UNI address
+    assert scoped_allowed(few + [("bridge_port", ("uni", i), "vlan_port") for _k, i, _c in few])
+    assert prepare("uni", UNI, "bridge_port", scoped=False)[3]["command"] == "show interface stack"
+    # a stack-based result for a UNI still attaches to the graph (both sources are declared)
+    g = build_graph({"equipment_onts": {"interfaces": [{"ont_idx": ONT}], "slots": [{"ont_slot_idx": SLOT}]},
+                     "ethernet_onts": [{"uni_idx": UNI}], "pon_interfaces": [{"name": PON}]}, "M")
+    table = stack_table(("bridge-port:%s" % UNI, "uni:%s" % UNI), ("vlan-port:%s:99" % UNI, "bridge-port:%s" % UNI))
+    results = [enumerate_children("uni", UNI, "bridge_port", table, scoped=False),
+               enumerate_children("bridge_port", ("uni", UNI), "vlan_port", table, scoped=False)]
+    assert results[0]["read_scope"] == "device"
+    g = attach_discovery(g, [json.loads(json.dumps(r)) for r in results])
+    assert edge_exists(g, ("bridge_port", ("uni", UNI)), "contains", ("vlan_port", ("uni", UNI, "99")))
+
+
+def test_scoped_reads_map_device_answers_and_share_one_reply():
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.source_reads import (
+        enumerate_request, prepare, read_scoped)
+
+    class Conn(object):
+        def __init__(self, answer):
+            self.answer, self.sent = answer, []
+
+        def get(self, command):
+            self.sent.append(command)
+            if isinstance(self.answer, Exception):
+                raise self.answer
+            return self.answer
+
+    command = "info configure bridge port %s flat detail" % UNI
+    assert read_scoped(Conn("\nError : instance does not exist\n"), command) == ("", "none")
+    assert read_scoped(Conn(Exception("Error : instance does not exist")), command) == ("", "none")
+    assert read_scoped(Conn("Error : specified lower-interface does not exist"), command) == ("", "dependency")
+    assert read_scoped(Conn(Exception("Error : specified lower-interface does not exist")), command)[1] == "dependency"
+    assert read_scoped(Conn("invalid token"), command)[1] == "unsupported"
+    with pytest.raises(Exception):
+        read_scoped(Conn(Exception("connection lost")), command)
+    # one device read serves the bridge port and its VLAN ports
+    conn, sources = Conn(bridge_config(UNI, "99")), {}
+    bridge = enumerate_request(sources, lambda: conn, prepare("uni", UNI, "bridge_port"), False)
+    vlans = enumerate_request(sources, lambda: conn, prepare("bridge_port", ("uni", UNI), "vlan_port"), False)
+    assert conn.sent == [command]
+    assert bridge["children"] == [("uni", UNI)] and vlans["children"] == [("uni", UNI, "99")]
+    # a missing UNI is not 'no bridge port'
+    missing = enumerate_request({}, lambda: Conn("Error : specified lower-interface does not exist"),
+                                prepare("uni", UNI, "bridge_port"), False)
+    assert missing["status"] != "ok" and missing["children"] == []

@@ -23,7 +23,8 @@ description:
     A gap is never interpreted as empty.
   - Each discovery source is read once per task, however many objects are enumerated
     from it (for example one C(show interface stack) for the bridge and VLAN ports of
-    every line of a card).
+    every line of a card). The bridge port and VLAN ports of up to 32 UNIs are read
+    from each UNI's own bridge configuration instead (scoped, no device-wide table).
   - A section the measured read plan marks as cheaper to read as a whole family (a
     few small families, and interface ports from 40 instances) is read once with
     C(flat detail) for all its instances. Presence comes from the family's parser,

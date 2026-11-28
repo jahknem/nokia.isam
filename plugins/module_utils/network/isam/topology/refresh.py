@@ -313,6 +313,8 @@ def discovery_requests(root, discovery_results, context=None, sections=None):
     (a partial refresh) only the kinds those sections configure, and the kinds on
     the way down to them, are enumerated.
     """
+    from .source_reads import scoped_allowed
+
     done = {(_parent(item), item["child_kind"]) for item in discovery_results}
     traversed = _traversed_kinds(root[0], wanted_sections(sections))
     requests, unimplemented = [], []
@@ -324,13 +326,19 @@ def discovery_requests(root, discovery_results, context=None, sections=None):
             if traversed is not None and child_kind not in traversed:
                 continue
             try:
-                adapter = adapter_for(kind, child_kind)
+                adapter = adapter_for(kind, child_kind, identity)
             except UnknownIdentity:
                 unimplemented.append({"kind": kind, "identity": identity, "child_kind": child_kind})
                 continue
             requests.append({"kind": kind, "identity": identity, "child_kind": child_kind,
                              "read_scope": adapter.get("read_scope"),
-                             "evidence": evidence_for(kind, child_kind)})
+                             "evidence": evidence_for(kind, child_kind, identity)})
+    # Report the source a round actually uses (refresh_run decides scoped per round).
+    if not scoped_allowed([(r["kind"], r["identity"], r["child_kind"]) for r in requests]):
+        for request in requests:
+            if request["read_scope"] == "scoped":
+                request["read_scope"] = adapter_for(request["kind"], request["child_kind"]).get("read_scope")
+                request["evidence"] = evidence_for(request["kind"], request["child_kind"])
     return requests, unimplemented
 
 

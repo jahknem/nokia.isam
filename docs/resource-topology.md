@@ -148,7 +148,8 @@ platform/firmware; narrower alternatives still need separate validation.
 | Card → channel pair (NGPON2) | `info configure channel-pair interface flat` | `family` |
 | Card / applique → transceiver cage | `show equipment transceiver-inventory` | `device` |
 | Controller card / NTIO applique → IHUB optical faceplate port (`uplink`) | `show port` | `device` |
-| Port → bridge port / bridge port → VLAN port | `show interface stack` | `device` |
+| UNI → bridge port / its bridge port → VLAN port, up to 32 UNIs per call | `info configure bridge port <uni> flat detail` | `scoped` |
+| Port → bridge port / bridge port → VLAN port (lines, LAGs; more UNIs) | `show interface stack` | `device` |
 
 The ports of a card come from the operational port table (`pon:`, `xdsl-line:`,
 `ethernet-line:`, `bonding:`, `la-group:` rows, matching `port count : N` footer):

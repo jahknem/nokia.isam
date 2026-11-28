@@ -35,6 +35,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.i
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.source_reads import (
     enumerate_request,
     prepare,
+    scoped_allowed,
 )
 
 # A refresh never loops forever: discovery has as many rounds as the object model is
@@ -153,8 +154,9 @@ def run(module, root, sections=None, allow_broad_read=False, data=False):
         rounds += 1
         if rounds > MAX_ROUNDS:
             raise RefreshNotConverged("discovery did not converge in %d rounds" % MAX_ROUNDS)
+        scoped = scoped_allowed([(r["kind"], r["identity"], r["child_kind"]) for r in requests])
         for request in requests:
-            prepared = prepare(request["kind"], request["identity"], request["child_kind"])
+            prepared = prepare(request["kind"], request["identity"], request["child_kind"], scoped)
             try:
                 found = enumerate_request(sources, connection, prepared, allow_broad_read)
             except UnknownIdentity:

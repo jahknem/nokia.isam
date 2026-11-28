@@ -1,5 +1,24 @@
 # Changelog
 
+## Unreleased
+
+### Faster ONT refresh: scoped bridge-port discovery
+
+- The bridge port of a UNI and its VLAN ports are discovered from the bridge port's own
+  `info configure bridge port <uni> flat detail` read instead of the device-wide
+  `show interface stack` (7.5 of 15.4 s of an ONT refresh on the lab, 111 KB; larger on
+  production MSANs). Lab, template ONT: 16.4 s to 9.1 to 11.3 s, with identical objects,
+  all 40 section outcomes and gaps; an absent ONT's refresh is unchanged and complete.
+- Read-only evidence: the lab's whole stack and its `flat detail` bridge configuration
+  list the same 139 bridge ports and the same 359 VLAN ports. Absence follows the
+  targeted-read contract (header only or "instance does not exist": none; a missing
+  lower interface: a gap). The command echo is stripped strictly; anything else in
+  the reply fails closed as a named discovery gap.
+- Bare line/LAG addresses keep the stack (an Ethernet port and its LAG share the
+  address; only the stack's typed lower layer tells which carries the bridge port). With
+  more than 32 UNIs in one discovery round the single stack read is cheaper and used.
+  A scoped read needs no `allow_broad_read`.
+
 ## 1.0.0
 
 First major release, combining the previously unpublished 1.0.0 and 1.1.0 work.
