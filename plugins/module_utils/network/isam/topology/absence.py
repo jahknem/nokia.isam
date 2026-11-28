@@ -141,47 +141,69 @@ def resolve_owner_absence(results, read):
                 if isinstance(value, str):
                     attempted.add((result["resource"], result.get("section") or "config", value))
 
+    def gaps():
+        """(result, gap) for every dependency gap that may be resolved."""
+        for result in results:
+            if result.get("status") != "ok":
+                continue
+            section = result.get("section") or "config"
+            spec = _spec(result["resource"], section)
+            if spec.get("observable", True) is False or absence_policy(result["resource"], section) == "unobservable":
+                continue
+            for gap in result.get("dependency_gaps") or ():
+                yield result, spec, gap
+
+    # Phase 1: every proof read of the batch, so that phase 2 decides every gap on the
+    # complete evidence (a later read showing something present under an ancestor also
+    # blocks a gap examined earlier). A failed proof read ends that gap's walk.
+    walks = {}
+    for result, spec, gap in gaps():
+        value = gap.get("id")
+        try:
+            lineage = list(_lineage(*decode(spec.get("object"), value)))
+        except (UnknownIdentity, TypeError, ValueError, IndexError):
+            continue
+        usable = []
+        for kind, identity in lineage:
+            obj = _key(kind, identity)
+            usable.append(obj)
+            request = _source(kind, identity)
+            if evidence.get(obj) is None and request is not None:
+                source = (request["resource"], request["section"], request["ids"][0])
+                if source not in attempted:
+                    attempted.add(source)
+                    answer = read(request)
+                    note(answer)
+                    if answer.get("status") != "ok":
+                        break
+            if evidence.get(obj) is not None:
+                break
+        walks[(id(result), value)] = usable
+
+    # Phase 2: decide. The first object of the walk with evidence decides: only an absent
+    # one that nothing present or conflicting in the batch contradicts is a proof.
     for result in results:
-        if result.get("status") != "ok":
+        if "dependency_gaps" not in result:
             continue
-        spec = _spec(result["resource"], result.get("section") or "config")
-        if spec.get("observable", True) is False or absence_policy(result["resource"], result.get("section") or "config") == "unobservable":
-            continue
-        remaining = []
-        for gap in result.get("dependency_gaps") or ():
+        remaining, resolved = [], []
+        for gap in result["dependency_gaps"]:
             value, proof = gap.get("id"), None
-            if value not in result.get("unverified_ids", ()) or value in result.get("confirmed_absent_ids", ()):
-                remaining.append(gap)
+            if value in resolved:
                 continue
-            try:
-                owner = decode(spec.get("object"), value)
-                lineage = list(_lineage(*owner))
-            except (UnknownIdentity, TypeError, ValueError, IndexError):
-                remaining.append(gap)
-                continue
-            for kind, identity in lineage:
-                obj = _key(kind, identity)
-                state = evidence.get(obj)
-                # The failed section itself cannot serve as its own proof.
-                request = _source(kind, identity)
-                if state is None and request is not None:
-                    source = (request["resource"], request["section"], request["ids"][0])
-                    if source not in attempted:
-                        attempted.add(source)
-                        answer = read(request)
-                        note(answer)
-                        if answer.get("status") != "ok":
-                            break
-                        state = evidence.get(obj)
-                if state:
-                    if state[0] == "absent" and not contradicted(obj):
-                        proof = state[1]
-                    break  # present/conflict (here or below) block an absent ancestor
+            if value in (result.get("unverified_ids") or ()) and value not in (result.get("confirmed_absent_ids") or ()):
+                for obj in walks.get((id(result), value), ()):
+                    state = evidence.get(obj)
+                    if state:
+                        if state[0] == "absent" and not contradicted(obj):
+                            proof = state[1]
+                        break
             if proof is None:
                 remaining.append(gap)
-            else:
-                result["unverified_ids"] = [item for item in result["unverified_ids"] if item != value]
-                result["confirmed_absent_ids"].append(value)
-                result.setdefault("absence_evidence", []).append({"id": value, "owner": proof, "checked_at": _now()})
-        if "dependency_gaps" in result:
-            result["dependency_gaps"] = remaining
+                continue
+            resolved.append(value)
+            result["unverified_ids"] = [item for item in result["unverified_ids"] if item != value]
+            result["confirmed_absent_ids"].append(value)
+            # resolved_at: when this proof was accepted (the owner read may be older,
+            # within the same batch); collected_at stays the time of the read itself.
+            result.setdefault("absence_evidence", []).append({"id": value, "owner": proof, "resolved_at": _now()})
+        result["dependency_gaps"] = remaining

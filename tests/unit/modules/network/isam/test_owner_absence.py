@@ -177,4 +177,27 @@ def test_a_duplicate_id_is_confirmed_absent_once_and_collected_at_is_kept():
     result["collected_at"] = "2026-11-28T00:00:00Z"
     resolve_owner_absence([result], lambda req: answer(req, "absent"))
     assert result["confirmed_absent_ids"] == [UNI] and result["unverified_ids"] == []
-    assert result["collected_at"] == "2026-11-28T00:00:00Z" and result["absence_evidence"][0]["checked_at"]
+    assert result["collected_at"] == "2026-11-28T00:00:00Z" and result["absence_evidence"][0]["resolved_at"]
+
+
+def test_a_later_proof_read_showing_a_sibling_present_also_blocks_an_earlier_gap():
+    # review: decisions follow all proof reads of the batch, whatever the gap order
+    gap2 = gap("1/1/7/16/1/1/2")
+
+    def read(request):
+        if request["resource"] == "ethernet_onts" and request["ids"] == ["1/1/7/16/1/1/2"]:
+            return answer(request, "present")
+        if request["section"] == "slots":
+            return answer(request, "absent")
+        return answer(request, "unknown")
+
+    first = gap()
+    resolve_owner_absence([first, gap2], read)
+    assert first["unverified_ids"] == [UNI] and gap2["unverified_ids"] == ["1/1/7/16/1/1/2"]
+
+
+def test_a_duplicate_gap_leaves_no_stray_dependency_entry():
+    result = gap()
+    result["dependency_gaps"] = [{"id": UNI, "dependency_gap": "lower-interface"}] * 2
+    resolve_owner_absence([result], lambda req: answer(req, "absent"))
+    assert result["dependency_gaps"] == [] and len(result["absence_evidence"]) == 1
