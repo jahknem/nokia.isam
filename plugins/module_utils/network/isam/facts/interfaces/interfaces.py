@@ -29,7 +29,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.common imp
     normalize_resource_keys,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
-    get_scoped_config,
+    get_targeted_config,
     unwrap_response,
 )
 
@@ -88,18 +88,15 @@ class InterfacesFacts(object):
         return entry
 
     def get_config(self, connection):
-        config = self._module.params.get("config") or []
-        commands = [
-            "info configure interface port %s detail flat" % item["name"]
-            for item in config
-        ]
-        return get_scoped_config(
-            self._module,
-            connection,
-            config,
-            "info configure interface port flat",
-            commands,
-        )
+        """The whole resource, or only the ports named in config (targeted reading).
+
+        Through get_targeted_config like the other families, so a targeted read reports
+        each port present, confirmed absent ("instance does not exist") or unknown; the
+        direct get_scoped_config call recorded no outcome, and isam_read reported every
+        port unverified, even one the device said was gone (lab, 2026-11-28)."""
+        return get_targeted_config(self._module, connection, "interfaces", "info configure interface port flat", {
+            "config": "info configure interface port %s detail flat",
+        }, write_states=True)
 
     def populate_facts(self, connection, ansible_facts, data=None):
         """ Populate the facts for Interfaces network resource

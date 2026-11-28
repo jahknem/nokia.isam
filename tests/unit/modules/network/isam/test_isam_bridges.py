@@ -526,3 +526,29 @@ class TestIsamBridgesModule(TestIsamModule):
             ["configure bridge port 1/1/8/1 no pvid"],
         )
         self.assertFalse(any("vlan-id" in command for command in result["commands"]))
+
+
+# -- TPID table entries (ONT lifecycle lab test 2026-11-28) ------------------------------------
+
+from .module_runner import run_module  # noqa: E402
+
+_TPID = ("configure bridge port 1/1/5/10/1/1/1 no mac-learn-off max-unicast-mac 5\n"
+         "configure bridge port 1/1/5/10/1/1/1 vlan-tpid0 0 no tpid\n"
+         "configure bridge port 1/1/5/10/1/1/1 vlan-tpid1 1 no tpid\n"
+         "configure bridge port 1/1/5/10/1/1/1 vlan-id 99\nconfigure bridge port 1/1/5/10/1/1/1 pvid 99\n")
+
+
+def test_default_tpid_entries_are_no_configuration(monkeypatch):
+    result = run_module(monkeypatch, "isam_bridges", {"state": "parsed", "running_config": _TPID})
+    (port,) = result["parsed"]["port"]
+    assert not [key for key in port if "tpid" in key], port
+    assert port["max_unicast_mac"] == 5 and port["pvid"] == 99
+    assert not result["_warnings"]
+
+
+def test_a_set_tpid_is_reported_not_turned_into_a_field(monkeypatch):
+    text = _TPID.replace("vlan-tpid1 1 no tpid", "vlan-tpid1 1 tpid 2")
+    result = run_module(monkeypatch, "isam_bridges", {"state": "parsed", "running_config": text})
+    (port,) = result["parsed"]["port"]
+    assert not [key for key in port if "tpid" in key], port
+    assert any("vlan-tpid1 sets a TPID" in warning for warning in result["_warnings"]), result["_warnings"]

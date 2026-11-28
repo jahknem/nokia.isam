@@ -242,3 +242,38 @@ class TestIsamInterfacesModule(TestIsamModule):
         result = self.execute_module(changed=True)
         self.assertTrue(any("1/1/8/1" in command for command in result["commands"]))
         self.assertFalse(any("1/1/8/2" in command for command in result["commands"]))
+
+
+# -- ONT lifecycle lab test 2026-11-28 ---------------------------------------------------------
+
+from .module_runner import run_module  # noqa: E402
+
+_VLAN_PORT = "configure interface port vlan-port:1/1/7/16/1/1/1:10 admin-up severity no-value\n"
+
+
+def test_unset_severity_is_never_reset_or_sent(monkeypatch):
+    name = "vlan-port:1/1/7/16/1/1/1:10"
+    deleted = run_module(monkeypatch, "isam_interfaces", {"state": "deleted", "config": [{"name": name}]}, _VLAN_PORT)
+    assert not [c for c in deleted["commands"] if "severity" in c], deleted["commands"]
+    merged = run_module(monkeypatch, "isam_interfaces", {"state": "merged", "config": [
+        {"name": name, "admin_up": True, "severity": "no-value"}]}, "")
+    assert merged["commands"] == ["configure interface port %s admin-up" % name], merged["commands"]
+
+
+def _absent(command):
+    return "\nError : The specified instance does not exist\n"
+
+
+def test_targeted_gathered_reports_ports_the_device_says_are_gone(monkeypatch):
+    names = ["ont:1/1/7/16/1", "uni:1/1/7/16/1/1/1", "vlan-port:1/1/7/16/1/1/1:10"]
+    result = run_module(monkeypatch, "isam_interfaces", {"state": "gathered", "config": [{"name": n} for n in names]}, _absent)
+    assert result["gathered"] == []
+    outcomes = {o["selector"]: o["existence"] for o in result["read_outcomes"]["outcomes"]}
+    assert outcomes == dict((n, "confirmed_absent") for n in names)
+
+
+def test_targeted_gathered_reports_a_present_port(monkeypatch):
+    result = run_module(monkeypatch, "isam_interfaces", {"state": "gathered", "config": [
+        {"name": "vlan-port:1/1/7/16/1/1/1:10"}]}, _VLAN_PORT)
+    outcomes = {o["selector"]: o["existence"] for o in result["read_outcomes"]["outcomes"]}
+    assert outcomes == {"vlan-port:1/1/7/16/1/1/1:10": "present"}

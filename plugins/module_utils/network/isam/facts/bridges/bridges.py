@@ -96,6 +96,11 @@ class BridgesFacts(object):
         ports = {}
         bridge_port_re = re.compile(r"^configure bridge port (?P<port>\S+)(?:\s+(?P<rest>.*))?$")
         bridge_vlan_re = re.compile(r"^configure bridge port (?P<port>\S+) vlan-id (?P<vlan_id>\S+)(?:\s+(?P<rest>.*))?$")
+        # The port's TPID table: device-created entries 'vlan-tpid<n> <n> no tpid', which
+        # only the detail read prints (139 bridge ports x 2 on the lab device, all at the
+        # default). Not modelled: a default entry is no configuration; a set TPID is
+        # reported with a warning instead of becoming an unknown field (vlan_tpid0: 0).
+        bridge_tpid_re = re.compile(r"^configure bridge port (?P<port>\S+) vlan-tpid(?P<index>\d+)(?:\s+(?P<rest>.*))?$")
 
         for raw_line in config.splitlines():
             line = raw_line.strip()
@@ -120,6 +125,14 @@ class BridgesFacts(object):
                 port_entry = ports.setdefault(port_id, {"port": port_id, "vlan_id": []})
                 vlan_entry = self._ensure_vlan_entry(port_entry, vlan_id)
                 self._apply_vlan_rest(vlan_entry, rest)
+                continue
+
+            tpid_match = bridge_tpid_re.match(line)
+            if tpid_match:
+                words = (tpid_match.group("rest") or "").split()
+                if "tpid" in words and words[words.index("tpid") - 1:words.index("tpid")] != ["no"]:
+                    self._module.warn("bridge port %s: vlan-tpid%s sets a TPID; the TPID table is not modelled "
+                                      "by isam_bridges and is not returned" % (tpid_match.group("port"), tpid_match.group("index")))
                 continue
 
             port_match = bridge_port_re.match(line)

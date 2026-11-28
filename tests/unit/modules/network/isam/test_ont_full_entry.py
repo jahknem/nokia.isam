@@ -140,7 +140,9 @@ def test_gathered_full_entry_is_idempotent_and_can_be_deleted(monkeypatch, famil
         assert set(deleted["commands"]) == {
             "configure interface port ont:%s no admin-up no link-updown-trap" % ONT,
             "configure interface port uni:%s no admin-up no user" % UNI,
-            "configure interface port vlan-port:%s:10 no admin-up no severity" % UNI,
+            # 'severity no-value' is unset and cannot be set on a VLAN port: never reset
+            # (the device refuses 'no severity' there, lab 2026-11-28).
+            "configure interface port vlan-port:%s:10 no admin-up" % UNI,
         }
     elif family == "bridges":
         assert deleted["commands"] == ["configure bridge no port %s" % UNI]
