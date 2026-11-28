@@ -71,8 +71,11 @@ def _source(kind, identity):
     for resource, family in sorted(FAMILIES.items()):
         if family.get("source") == "ihub":
             continue
+        targeted = TARGETED_GATHER.get(resource, {})
+        if not isinstance(targeted, dict):
+            continue
         for section, spec in sorted(family["sections"].items()):
-            if section not in TARGETED_GATHER.get(resource, {}):
+            if section not in targeted:
                 continue
             if "kinds" in spec and kind not in spec["kinds"]:
                 continue
