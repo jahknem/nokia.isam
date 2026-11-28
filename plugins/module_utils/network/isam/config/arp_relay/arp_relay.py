@@ -40,7 +40,7 @@ class Isam_arp_relay(ResourceModule):
             want = {name: {} for name in (want or have)}
         elif self.state in ("replaced", "overridden"):
             want = dict(want)
-            for name in set(have) - set(want):
+            for name in [name for name in have if name not in want]:
                 self._add_command(have[name], False)
 
         for name, item in want.items():
