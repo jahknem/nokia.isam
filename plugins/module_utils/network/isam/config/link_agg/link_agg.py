@@ -41,6 +41,9 @@ class Link_agg(ResourceModule):
     # setting the value every untouched LAG shows (all 72 LAGs of the lab's NELT-B card).
     # swo_revert and master_iwf are not reset (not verified; master_iwf differs by card).
     SET_DEFAULTS = {"load_sharing_policy": "mac-src", "mode": "static"}
+    # Settings with a 'no' form: the read reports 'no <setting>' as these values (the
+    # template's negate mapping), so a group showing them needs no reset.
+    NO_FORM_DEFAULTS = {"max_active_port": "8", "swo_threshold": "0", "priority": "0"}
 
     def __init__(self, module):
         super(Link_agg, self).__init__(
@@ -218,7 +221,9 @@ class Link_agg(ResourceModule):
         have = have or {}
         if have and have.get(field) is None:
             return
-        if field in ["max_active_port", "swo_threshold", "priority"]:
+        if field in self.NO_FORM_DEFAULTS:
+            if have and str(have.get(field)) == self.NO_FORM_DEFAULTS[field]:
+                return
             self.commands.append("configure link-agg group {0} no {1}".format(group_id, field.replace("_", "-")))
         elif field in self.SET_DEFAULTS and have.get(field) not in (None, self.SET_DEFAULTS[field]):
             self.commands.append("configure link-agg group {0} {1} {2}".format(

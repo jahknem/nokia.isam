@@ -205,9 +205,11 @@ read_outcomes:
       value are different instances and are reported separately.
     - Each outcome records the command axis (C(ok), C(rejected) or C(failed)) and the
       instance-existence axis (C(present), C(confirmed_absent) or C(unknown)).
-    - Only C(confirmed_absent) -- the device's explicit "instance does not exist" signal
-      about that instance -- is evidence the instance is gone. C(unknown) (a header-only
-      reply, an invalid-token rejection, a missing dependency, or a failed read) is never
+    - Only C(confirmed_absent) is evidence the instance is gone -- the device's explicit
+      "instance does not exist" about that instance, or a header-only reply to its
+      C(flat detail) read (which prints every existing instance, also one with defaults
+      only). C(unknown) (an invalid-token rejection, a missing dependency, another
+      instance's line, a setting whose reads never show it, or a failed read) is never
       treated as absence; keep, do not remove, configuration for C(unknown) instances.
     - When one instance is addressed by several reads, it is reported C(confirmed_absent)
       only if every read confirmed absence; a single present read proves presence; a
@@ -229,7 +231,7 @@ read_outcomes:
 before:
   description:
   - The configuration before the module ran, in the format of I(config).
-  - With I(running_config) (offline preview) it is the supplied configuration.
+  - With C(deleted) and I(running_config) (offline preview) it is the supplied configuration.
   returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: dict
 after:
@@ -242,7 +244,8 @@ after:
 commands:
   description:
   - 'The commands sent to the device (in check mode: that would be sent).'
-  - With I(running_config) (offline preview) they are rendered only, never sent.
+  - With C(deleted) and I(running_config) (offline preview of the removal) they are rendered only, never
+    sent.
   returned: when I(state) is C(merged), C(replaced), C(overridden) or C(deleted)
   type: list
   elements: str

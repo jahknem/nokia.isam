@@ -31,7 +31,7 @@ ACTION = ("merged", "replaced", "overridden", "deleted")
 TEXT = {
     "before": (
         ["The configuration before the module ran, in the format of I(config).",
-         "With I(running_config) (offline preview) it is the supplied configuration."],
+         "With C(deleted) and I(running_config) (offline preview) it is the supplied configuration."],
         "when I(state) is ACTION_STATES",
     ),
     "after": (
@@ -41,7 +41,7 @@ TEXT = {
     ),
     "commands": (
         ["The commands sent to the device (in check mode: that would be sent).",
-         "With I(running_config) (offline preview) they are rendered only, never sent."],
+         "With C(deleted) and I(running_config) (offline preview of the removal) they are rendered only, never sent."],
         "when I(state) is ACTION_STATES",
     ),
     "rendered": (
@@ -73,7 +73,27 @@ def _states_list(states):
     return names[0] if len(names) == 1 else "%s or %s" % (", ".join(names[:-1]), names[-1])
 
 
-def expected_entries(doc, existing):
+_CONFIG_IMPORT = re.compile(r"plugins\.module_utils\.network\.isam\.config\.(\w+)\.(\w+) import")
+_ISAM_BASE = re.compile(r"^class \w+\([^)]*\b(IsamResourceModule|TableResourceModule)\):", re.M)
+
+
+def previews_offline(source):
+    """Whether the module renders a removal offline from running_config.
+
+    Only config classes built on IsamResourceModule do (_offline_config), and only for
+    deleted, which must then be allowed without config. A module merely having the
+    running_config option (for parsed) does not: netcommon's ResourceModule ignores it
+    in deleted and works on the device."""
+    if "running_config" not in source or '["state", "deleted", ["config"]]' in source:
+        return False
+    match = _CONFIG_IMPORT.search(source)
+    if not match:
+        return False
+    config = ROOT / "plugins" / "module_utils" / "network" / "isam" / "config" / match.group(1) / (match.group(2) + ".py")
+    return config.exists() and bool(_ISAM_BASE.search(config.read_text()))
+
+
+def expected_entries(doc, existing, offline=True):
     options = doc.get("options") or {}
     states = (options.get("state") or {}).get("choices") or []
     config_type = (options.get("config") or {}).get("type", "str")
@@ -83,6 +103,10 @@ def expected_entries(doc, existing):
         if not any(state in states for state in STATE_OF[key]):
             continue
         description, returned = TEXT[key]
+        if not offline:
+            # Do not document an offline preview the module cannot do (previews_offline).
+            description = [line for line in description if "offline preview" not in line]
+            returned = returned.replace(" and no I(running_config) was given", "")
         entry = {"description": list(description),
                  "returned": returned.replace("ACTION_STATES", _states_list(actions) if actions else "")}
         if key in ("commands", "rendered"):
@@ -142,6 +166,7 @@ def render_block(entries):
 
 def sync_text(source):
     """(new_source, changed) for one module source; unchanged when it is not a resource module."""
+    original = source
     tree = ast.parse(source)
     doc_node, ret_node = _assignment(tree, "DOCUMENTATION"), _assignment(tree, "RETURN")
     doc = yaml.safe_load(doc_node.value.value) or {}
@@ -150,9 +175,18 @@ def sync_text(source):
         return source, False
     if "config" not in (doc.get("options") or {}):
         return source, False
+    if ret_node is None:
+        # A resource module without RETURN (isam_igmp, isam_mcast_control): create it
+        # right after EXAMPLES (or DOCUMENTATION), then fill it like any other.
+        anchor = _assignment(tree, "EXAMPLES") or doc_node
+        lines = source.split("\n")
+        at = anchor.end_lineno
+        source = "\n".join(lines[:at] + ["", 'RETURN = r"""', "# generated below", '"""'] + lines[at:])
+        tree = ast.parse(source)
+        ret_node = _assignment(tree, "RETURN")
     body = ret_node.value.value
     existing = yaml.safe_load(body) or {}
-    block = render_block(expected_entries(doc, existing))
+    block = render_block(expected_entries(doc, existing, previews_offline(original)))
     kept = []
     for key, lines in _chunks(body.strip("\n")):
         if key in KEYS:
@@ -169,7 +203,7 @@ def sync_text(source):
     quote = opening.group(2)
     new_lines = lines[:first] + ["%s%s" % (opening.group(1), quote)] + new_body.split("\n") + [quote] + lines[last + 1:]
     new_source = "\n".join(new_lines)
-    return new_source, new_source != source
+    return new_source, new_source != original
 
 
 def main(argv):
