@@ -324,13 +324,13 @@ def discovery_requests(root, discovery_results, context=None, sections=None):
             if traversed is not None and child_kind not in traversed:
                 continue
             try:
-                adapter = adapter_for(kind, child_kind)
+                adapter = adapter_for(kind, child_kind, identity)
             except UnknownIdentity:
                 unimplemented.append({"kind": kind, "identity": identity, "child_kind": child_kind})
                 continue
             requests.append({"kind": kind, "identity": identity, "child_kind": child_kind,
                              "read_scope": adapter.get("read_scope"),
-                             "evidence": evidence_for(kind, child_kind)})
+                             "evidence": evidence_for(kind, child_kind, identity)})
     return requests, unimplemented
 
 

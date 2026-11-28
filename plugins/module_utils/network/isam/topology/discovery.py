@@ -308,6 +308,48 @@ for _name, _source in SOURCES.items():
     _source["evidence"] = "live_verified" if _name in _LIVE_VERIFIED_SOURCES else "documented"
 
 
+# Scoped sources: one instance read instead of a device-wide table, where the address
+# alone names the parent. A UNI address (7 parts) is unambiguous, so its bridge port
+# and that bridge port's VLAN ports come from 'info configure bridge port <uni> flat
+# detail' instead of 'show interface stack' (the stack took 7.5 of 15.4 s of an ONT
+# refresh on the lab, 111 KB; production MSANs carry far more rows). Bare line/LAG
+# addresses stay on the stack: an Ethernet port and its LAG share the address, and only
+# the stack's typed lower layer tells which one carries the bridge port.
+# Evidence (read-only, DS-LIN-TEST-01 2026-11-28): the whole device's stack and its
+# 'flat detail' bridge configuration list the same 139 bridge ports and the same 359
+# VLAN ports (one per 'vlan-id' entry). Absence follows the targeted-read contract of
+# a 'flat detail' single read: header only or "instance does not exist" is none; a
+# missing lower interface is a gap.
+# Up to this many UNI parents in one discovery call the scoped reads are used (about
+# 0.23 s each on the lab); beyond it the one device-wide stack read (7.5 s on the lab
+# with 1103 rows, more on larger MSANs) is cheaper. A bridge port's VLAN ports reuse
+# its scoped reply (same command), so the cost is one read per UNI.
+SCOPED_MAX_PARENTS = 32
+
+SCOPED_SOURCES = {  # type: dict
+    ("uni", "bridge_port"): {"command": "info configure bridge port %s flat detail", "read_scope": "scoped",
+                             "kind": "bridge_config", "evidence": "live_verified"},
+    ("bridge_port", "vlan_port"): {"command": "info configure bridge port %s flat detail", "read_scope": "scoped",
+                                   "kind": "bridge_config", "evidence": "live_verified", "port_kinds": ("uni",)},
+}
+
+
+def _scoped_source(kind, child_kind, identity):
+    """The scoped source of one parent, with its command, or None."""
+    source = SCOPED_SOURCES.get((kind, child_kind))
+    if source is None or identity is None:
+        return None
+    if kind == "bridge_port":
+        port_kind, address = decode("bridge_port", identity)[1] if isinstance(identity, str) else tuple(identity)
+        if port_kind not in source["port_kinds"]:
+            return None
+    else:
+        address = identity
+    scoped = dict(source)  # type: dict
+    scoped["command"] = str(source["command"]) % (address,)
+    return scoped
+
+
 def _validate_parent(kind, identity):
     if kind == "msan":
         if identity == "":
@@ -318,8 +360,14 @@ def _validate_parent(kind, identity):
     raise UnknownIdentity("Unsupported discovery parent identity: %s" % kind)
 
 
-def adapter_for(kind, child_kind):
-    """The exact relation capability; never promote a child-only match."""
+def adapter_for(kind, child_kind, identity=None):
+    """The exact relation capability; never promote a child-only match.
+
+    With the parent's identity, a scoped source (SCOPED_SOURCES) is preferred where it
+    applies; its command names that parent."""
+    scoped = _scoped_source(kind, child_kind, identity)
+    if scoped is not None:
+        return scoped
     if (kind, child_kind) in ENUMERATION:
         command, read_scope = ENUMERATION[(kind, child_kind)]
         return {"command": command, "read_scope": read_scope}
@@ -329,12 +377,15 @@ def adapter_for(kind, child_kind):
     raise UnknownIdentity("No enumeration adapter for %s -> %s" % (kind, child_kind))
 
 
-def evidence_for(kind, child_kind):
+def evidence_for(kind, child_kind, identity=None):
     """Validation provenance of a relation's adapter, or None if unimplemented.
 
     "live_verified" means exercised read-only on a reference device;
     "documented" means derived from the CLI reference but not yet live-verified.
     """
+    scoped = _scoped_source(kind, child_kind, identity)
+    if scoped is not None:
+        return scoped.get("evidence", "documented")
     if (kind, child_kind) in ENUMERATION:
         return ENUMERATION_EVIDENCE.get((kind, child_kind), "documented")
     source = SOURCES.get(child_kind)
@@ -525,7 +576,49 @@ def _stack_vlan_children(pairs, identity):
     return sorted(children)
 
 
-def enumerate_children(kind, identity, child_kind, output):
+def _bridge_config_children(output, kind, identity, child_kind, command):
+    """The bridge port of a UNI, or its VLAN ports, from its own 'flat detail' read.
+
+    The reply must end with the device's terminator and every line must belong to the
+    addressed bridge port; a header-only reply means no bridge port (flat detail prints
+    every existing instance). "Instance does not exist" is handled by the caller."""
+    if kind == "bridge_port":
+        port_kind, address = identity
+    else:
+        port_kind, address = kind, identity
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import _strip_echo
+
+    output = _despin(output)
+    if not isinstance(output, str) or not output.strip():
+        raise UnknownIdentity("Bridge port read is blank; absence is not confirmed")
+    # The device echoes the command first, wrapped at the terminal width (live).
+    lines = [line.strip() for line in _strip_echo(command, output.splitlines()) if line.strip()]
+    if not lines:
+        raise UnknownIdentity("Bridge port read has no reply after the echo")
+    if not _FLAT_TERMINATOR.fullmatch(lines[-1]):
+        raise UnknownIdentity("Bridge port read has no terminal delimiter; the reply may be truncated")
+    prefix = "configure bridge port %s" % address
+    exists, vlans = False, set()
+    for line in lines:
+        if line.startswith(("#", "echo ")):
+            continue
+        if line != prefix and not line.startswith(prefix + " "):
+            raise UnknownIdentity("Bridge port read contains another instance's line")
+        exists = True
+        words = line[len(prefix):].split()
+        if words[:1] == ["vlan-id"]:
+            if len(words) < 2:
+                raise UnknownIdentity("Bridge port VLAN line has no VLAN")
+            suffix = _vlan_suffix("%s:%s" % (address, words[1]))
+            if suffix is None or suffix[0] != address:
+                raise UnknownIdentity("VLAN port identity is not a supported form: %s" % words[1])
+            vlans.add((port_kind, address, suffix[1]))
+    if child_kind == "bridge_port":
+        return [(port_kind, address)] if exists else []
+    return sorted(vlans)
+
+
+def enumerate_children(kind, identity, child_kind, output, scoped=True):
     """Enumerate one parent's children of one kind from a whole-source response.
 
     Returns a discovery result.  The source must be the one declared for the
@@ -535,8 +628,10 @@ def enumerate_children(kind, identity, child_kind, output):
     _validate_parent(kind, identity)
     if kind == "bridge_port" and isinstance(identity, str):
         identity = decode("bridge_port", identity)[1]
-    source = adapter_for(kind, child_kind)
-    if source["kind"] == "table":
+    source = adapter_for(kind, child_kind, identity if scoped else None)
+    if source["kind"] == "bridge_config":
+        children = _bridge_config_children(output, kind, identity, child_kind, source["command"])
+    elif source["kind"] == "table":
         identities = _table_identities(output, source, child_kind)
         children = [i for i in identities if parent_of(child_kind, i) == (kind, identity)]
     elif source["kind"] == "port_table":
@@ -689,8 +784,10 @@ def _attach_one(item, nodes, edges, evidence, incoming):
                      item["children"], item.get("command"), item["collected_at"], item.get("error"),
                      item.get("source", "collection"), item.get("read_scope"))
     if item["status"] == "ok":
-        adapter = adapter_for(parent_node["kind"], item["child_kind"])
-        if item["command"] != adapter["command"] or item["read_scope"] != adapter["read_scope"]:
+        declared = adapter_for(parent_node["kind"], item["child_kind"])
+        scoped = adapter_for(parent_node["kind"], item["child_kind"], parent_node["identity"])
+        if not any(item["command"] == adapter["command"] and item["read_scope"] == adapter["read_scope"]
+                   for adapter in (declared, scoped)):
             raise ValueError("Discovery result does not match the declared enumeration source")
     evidence[key] = checked
     if item["status"] == "ok":

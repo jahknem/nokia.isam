@@ -151,8 +151,8 @@ def test_a_section_no_read_can_show_is_not_read_and_named(monkeypatch):
     uni = "1/1/5/1/3/1/1"
 
     def device(command):
-        if command == "show interface stack":
-            return stack([("bridge-port:%s" % uni, "uni:%s" % uni), ("vlan-port:%s:99" % uni, "bridge-port:%s" % uni)])
+        if command == "info configure bridge port %s flat detail" % uni:
+            return "configure bridge port %s vlan-id 99\n#------------\n" % uni
         return "echo x\n#------------\n"
     result = run_module(monkeypatch, "isam_refresh", {"kind": "uni", "identity": uni, "allow_broad_read": True}, device)
     assert not [c for c in result["_sent"] if "dhcp-relay" in c], result["_sent"]

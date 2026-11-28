@@ -14,7 +14,9 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.facts.facts_base import (
+    _dependency_gap,
     _is_absent_error,
+    _is_instance_absent,
     _is_unsupported_node,
 )
 from ansible_collections.nokia.isam.plugins.module_utils.network.isam.read_outcomes import error_class
@@ -31,6 +33,25 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.i
     UnknownIdentity,
     decode,
 )
+
+
+def read_scoped(connection, command):
+    """Return (response, status) of a single-instance source: 'ok', 'none' (the device
+    says the instance does not exist: no children), 'dependency' (a missing lower
+    interface: unknown) or 'unsupported'."""
+    try:
+        response = connection.get(command)
+    except Exception as exc:
+        response = str(exc)
+        if not (_is_unsupported_node(response) or _is_absent_error(response)):
+            raise
+    if _is_unsupported_node(response):
+        return "", "unsupported"
+    if _dependency_gap(response):
+        return "", "dependency"
+    if _is_instance_absent(response):
+        return "", "none"
+    return response, "ok"
 
 
 def read_source(connection, command):
@@ -67,8 +88,28 @@ CHILD_KINDS = ["rack", "shelf", "card", "applique", "ont", "ont_slot", "uni", "p
                "bridge_port", "vlan_port", "uplink"]
 
 
-def prepare(kind, identity, child_kind):
+def scoped_allowed(requests):
+    """Whether the scoped sources are cheaper for this set of (kind, identity, child kind)
+    requests: up to SCOPED_MAX_PARENTS distinct UNI addresses (discovery.SCOPED_SOURCES)."""
+    from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.discovery import (
+        SCOPED_MAX_PARENTS, SCOPED_SOURCES,
+    )
+    addresses = set()
+    for kind, identity, child_kind in requests:
+        if (kind, child_kind) in SCOPED_SOURCES:
+            if kind == "bridge_port":
+                port_kind, address = decode("bridge_port", identity)[1] if isinstance(identity, str) else tuple(identity)
+                if port_kind != "uni":
+                    continue
+                identity = address
+            addresses.add(identity)
+    return len(addresses) <= SCOPED_MAX_PARENTS
+
+
+def prepare(kind, identity, child_kind, scoped=True):
     """(kind, parent identity, child kind, adapter) of one request; raises UnknownIdentity.
+
+    ``scoped``: use a scoped source where one applies (see scoped_allowed).
 
     A bridge-port parent is given as "<port kind>:<port identity>" (module parameter)
     or as the (port kind, port identity) pair the planner uses.
@@ -78,7 +119,7 @@ def prepare(kind, identity, child_kind):
     _validate_parent(kind, identity)
     if kind == "bridge_port":
         identity = decode("bridge_port", identity)[1]
-    return kind, identity, child_kind, adapter_for(kind, child_kind)
+    return kind, identity, child_kind, adapter_for(kind, child_kind, identity if scoped else None)
 
 
 def enumerate_request(sources, connection, request, allow_broad_read):
@@ -96,7 +137,8 @@ def enumerate_request(sources, connection, request, allow_broad_read):
                       error="broad_enumeration_requires_allow_broad_read")
     if command not in sources:
         try:
-            response, status = read_source(connection(), command)
+            reader = read_scoped if read_scope == "scoped" else read_source
+            response, status = reader(connection(), command)
             sources[command] = (response, status, utc_now())
         except Exception as exc:
             sources[command] = exc
@@ -107,6 +149,10 @@ def enumerate_request(sources, connection, request, allow_broad_read):
         return result(kind, identity, child_kind, "error", command=command, read_scope=read_scope,
                       error="%s (%s)" % (error_class(read), type(read).__name__))
     response, read_status, read_at = read
+    if read_status == "none":
+        # A scoped single-instance read: the device says the instance does not exist.
+        return result(kind, identity, child_kind, "ok", [], command=command, collected_at=read_at,
+                      read_scope=read_scope)
     if read_status != "ok":
         return result(kind, identity, child_kind, "unsupported", command=command, collected_at=read_at,
                       read_scope=read_scope, error="enumeration_source_%s" % read_status)
@@ -116,7 +162,8 @@ def enumerate_request(sources, connection, request, allow_broad_read):
         elif (kind, child_kind) == ("ont", "ont_slot"):
             found = parse_ont_slots(response, identity)
         else:
-            found = enumerate_children(kind, identity, child_kind, response)
+            found = enumerate_children(kind, identity, child_kind, response,
+                                       scoped=read_scope == "scoped")
         found["collected_at"] = read_at
         return found
     except UnknownIdentity:

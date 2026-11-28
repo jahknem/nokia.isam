@@ -87,6 +87,8 @@ options:
         for this relation. Without permission, returns unsupported without
         issuing enumeration commands. Merely requesting a scoped root does not
         authorize reading its siblings' configuration.
+      - Not needed for a scoped source, which reads only the parent itself: the bridge
+        port of a UNI and that bridge port's VLAN ports, up to 32 UNIs per call.
     type: bool
     default: false
 """
@@ -231,6 +233,7 @@ from ansible_collections.nokia.isam.plugins.module_utils.network.isam.topology.s
     KINDS,
     enumerate_request,
     prepare,
+    scoped_allowed,
 )
 
 
@@ -257,7 +260,8 @@ def main():
     wanted = params["requests"] if batch else [
         {"kind": params["kind"], "identity": params["identity"], "child_kind": params["child_kind"]}]
     try:
-        prepared = [prepare(item["kind"], item["identity"], item["child_kind"]) for item in wanted]
+        scoped = scoped_allowed([(item["kind"], item["identity"], item["child_kind"]) for item in wanted])
+        prepared = [prepare(item["kind"], item["identity"], item["child_kind"], scoped) for item in wanted]
     except UnknownIdentity as exc:
         module.fail_json(msg=str(exc), changed=False)
 
