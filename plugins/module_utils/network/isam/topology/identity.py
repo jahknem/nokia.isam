@@ -56,7 +56,9 @@ def _bare_port_kinds(decoder):
     The device accepts only the bare form for QoS (xdsl-line:, bonding:, la-group: are
     invalid tokens; DS-LIN-TEST-01, 2026-11-25). That shows the form, not the owner:
     whether a bonded line's QoS belongs to the line or to its bonding group is not
-    verified, so both stay candidates. Where a LAG exists, the QoS is the LAG's (see
+    verified, so both stay candidates. The configuration plane cannot decide it: the
+    device keeps a line, a bonding group and one QoS entry for every index (lab write
+    DS-LIN-TEST-01 2026-11-28, docs/live-validation-2026-11-28-bonded-qos.md). Where a LAG exists, the QoS is the LAG's (see
     _qos_owner, live evidence).
     """
     return ("xdsl_line", "ethernet_port", "bonding_group", "lag")

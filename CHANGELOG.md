@@ -199,6 +199,18 @@ interfaces and documentation").
   entry naming every attribute and every server with all its attributes (a gathered
   entry), as before.
 
+### QoS owner of a bonded xDSL line: investigated, stays a named gap (lab write 2026-11-28, restored)
+
+- A bare QoS index on a bonded xDSL line remains an `ambiguous_owner` gap (line or
+  bonding group). A scratch experiment on the service-free card 7 (temporarily planned
+  NDLT-F without a board, restored with identical full captures) showed that the
+  configuration plane cannot decide it: every index has a line, a bonding group and one
+  QoS entry; a group must start with its own line (XDSL MGT error 35 otherwise), so its
+  index is always also a line's; bonded member lines keep and accept their own QoS
+  entries, unlike LAG members (QOS MGT error 216). Deciding it needs traffic or
+  operational data on an equipped NDLT card with two service-free lines.
+  Details: `docs/live-validation-2026-11-28-bonded-qos.md`.
+
 ### Remaining gaps (2026-11-28)
 
 - Resource modules built on `IsamResourceModule` (every ONT family, QoS, xDSL, VLANs,
