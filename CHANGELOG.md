@@ -7,7 +7,7 @@ This is a breaking upgrade from 0.3.14: review the schema and state-contract cha
 below before replaying older configuration. Targeted reads distinguish presence,
 confirmed absence and named gaps; topology refreshes discover and read an object's
 subtree. The ONT lifecycle is lab-verified: creation and deletion through NOC's real
-check/apply pipeline, read-back and idempotence through NOC's reads, field changes
+check/apply pipeline, read-back through NOC's reads, idempotence by a repeated NOC check, field changes
 through direct module runs (see `docs/live-validation-2026-11-28-ont-lifecycle.md`). Validation is
 configuration-plane evidence, not a claim of live subscriber traffic testing.
 
