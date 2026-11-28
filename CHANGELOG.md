@@ -199,6 +199,26 @@ interfaces and documentation").
   entry naming every attribute and every server with all its attributes (a gathered
   entry), as before.
 
+### Remaining gaps (2026-11-28)
+
+- Every resource module sends its commands one per transaction and, when the device
+  refuses one, reports the partial execution in the shared schema (as the action modules
+  and the ONT deletion): `accepted` (applied before it), `failed_command` (outcome
+  unknown), `pending` (never sent), `failure_phase: execution`; `changed` is true once a
+  command was accepted. Before, the failure named only the device message and which
+  commands had been applied was lost. Lab 2026-11-28: `isam_qos_maps` with an accepted and
+  a refused ctrl-pkt command reported exactly that (restored, snapshot identical).
+- `isam_link_agg`: `deleted`/`replaced`/`overridden` no longer re-send `no max-active-port`,
+  `no swo-threshold` or `no priority` to a group that already shows them (read as 8/0/0).
+  Documented that resetting `mode` was verified on a LAG with its own port only.
+- Generated module docs: `tools/sync_resource_return_docs.py` crashed on modules without
+  `RETURN` (`isam_igmp`, `isam_mcast_control`, which now have one) and documented offline
+  previews for a module without `running_config`; `tools/sync_read_outcomes_docs.py`
+  could not insert its block into 8 targeted modules, and 21 modules carried an outdated
+  text. All regenerated; the `docs` gate now runs both tools with `--check`.
+- The targeted syslog route read (`isam_system`, `syslog.routes`) answers present and
+  confirmed absent on the lab device; no change needed.
+
 ### ONT lifecycle lab test (2026-11-28, card 7 test ONT, device restored: 0 differing lines)
 
 A complete customer ONT was created, read, changed and removed on the lab device through
@@ -237,8 +257,9 @@ NOC's change pipeline (plan reads → change set → check → apply with approv
   no `no load-sharing-policy`/`no mode` (invalid token). A group already at those values
   gets no command. Adding and removing a member port stay their own lines (no longer
   packed with other group settings).
-- `isam_qos_interfaces`: `deleted` never resets a value a kind only displays (a LAG's
-  `ds_num_queue`; setting it is refused with QOS MGT error 45).
+- `isam_qos_interfaces`: `deleted` never resets a value a kind only displays
+  (`ds_num_queue` of a user port, i.e. a bare port address such as a LAG or an xDSL line;
+  setting it on a LAG is refused with QOS MGT error 45).
 - `isam_qos_maps`: the ctrl-pkt reset form (`no dscp`/`no pbit`/`no tc`, alone or
   combined) is verified on the device; which values a protocol accepts depends on the NT.
 - `isam_interfaces`: documented that `deleted` never brings an interface up.

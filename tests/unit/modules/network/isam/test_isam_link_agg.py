@@ -214,3 +214,26 @@ def test_replaced_omitting_policy_and_mode_returns_them_to_their_defaults(monkey
     parsed = run_module(monkeypatch, "isam_link_agg", {"state": "parsed", "running_config": _LAG})["parsed"]
     again = run_module(monkeypatch, "isam_link_agg", {"state": "replaced", "config": parsed}, _LAG)
     assert again["commands"] == [], again["commands"]
+
+
+def test_settings_at_their_no_form_default_get_no_reset(monkeypatch):
+    # _LAG shows 'no max-active-port no swo-threshold no priority' (read as 8/0/0).
+    result = run_module(monkeypatch, "isam_link_agg", {"state": "deleted", "config": {"groups": [{"id": "1/1/6/36"}]}}, _LAG)
+    assert not [c for c in result["commands"] if "max-active-port" in c or "swo-threshold" in c or "priority" in c], \
+        result["commands"]
+
+
+def test_a_set_value_is_still_reset_with_its_no_form(monkeypatch):
+    lag = _LAG.replace("no max-active-port", "max-active-port 4").replace("no priority", "priority 7")
+    result = run_module(monkeypatch, "isam_link_agg", {"state": "deleted", "config": {"groups": [{"id": "1/1/6/36"}]}}, lag)
+    (line,) = [c for c in result["commands"] if " port " not in c]
+    assert " no max-active-port" in line and " no priority" in line and "swo-threshold" not in line, line
+
+
+def test_removing_a_member_port_stays_its_own_line(monkeypatch):
+    lag = _LAG + "configure link-agg group 1/1/6/36 port 1/1/6/35\n"
+    result = run_module(monkeypatch, "isam_link_agg", {"state": "replaced", "config": {"groups": [
+        {"id": "1/1/6/36", "ports": ["1/1/6/36"], "load_sharing_policy": "mac-src", "mode": "static"}]}}, lag)
+    assert "configure link-agg group 1/1/6/36 no port 1/1/6/35" in result["commands"], result["commands"]
+    assert all(c == "configure link-agg group 1/1/6/36 no port 1/1/6/35" or " port " not in c for c in result["commands"]), \
+        result["commands"]

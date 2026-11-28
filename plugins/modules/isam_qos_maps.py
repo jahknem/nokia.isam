@@ -172,9 +172,11 @@ read_outcomes:
       value are different instances and are reported separately.
     - Each outcome records the command axis (C(ok), C(rejected) or C(failed)) and the
       instance-existence axis (C(present), C(confirmed_absent) or C(unknown)).
-    - Only C(confirmed_absent) -- the device's explicit "instance does not exist" signal
-      about that instance -- is evidence the instance is gone. C(unknown) (a header-only
-      reply, an invalid-token rejection, a missing dependency, or a failed read) is never
+    - Only C(confirmed_absent) is evidence the instance is gone -- the device's explicit
+      "instance does not exist" about that instance, or a header-only reply to its
+      C(flat detail) read (which prints every existing instance, also one with defaults
+      only). C(unknown) (an invalid-token rejection, a missing dependency, another
+      instance's line, a setting whose reads never show it, or a failed read) is never
       treated as absence; keep, do not remove, configuration for C(unknown) instances.
     - When one instance is addressed by several reads, it is reported C(confirmed_absent)
       only if every read confirmed absence; a single present read proves presence; a

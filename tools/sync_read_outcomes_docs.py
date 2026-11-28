@@ -58,6 +58,11 @@ def _sync_module(text, block):
         return text[:match.start()] + block + "\n" + text[match.end():], "updated"
     if REF + "\n" in text:
         return text.replace(REF + "\n", block + "\n", 1), "updated"
+    # No block yet: append it at the end of the module's RETURN yaml.
+    match = re.search(r'^RETURN = r?("""|\'\'\')\n(.*?)\n?\1', text, re.S | re.M)
+    if match:
+        end = match.end(2)
+        return text[:end] + ("\n" if match.group(2).strip() else "") + block + text[end:], "updated"
     return text, "missing"
 
 

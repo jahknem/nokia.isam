@@ -83,6 +83,10 @@ def expected_entries(doc, existing):
         if not any(state in states for state in STATE_OF[key]):
             continue
         description, returned = TEXT[key]
+        if "running_config" not in options:
+            # Offline previews need the option; do not document what the module cannot do.
+            description = [line for line in description if "I(running_config)" not in line]
+            returned = returned.replace(" and no I(running_config) was given", "")
         entry = {"description": list(description),
                  "returned": returned.replace("ACTION_STATES", _states_list(actions) if actions else "")}
         if key in ("commands", "rendered"):
@@ -142,6 +146,7 @@ def render_block(entries):
 
 def sync_text(source):
     """(new_source, changed) for one module source; unchanged when it is not a resource module."""
+    original = source
     tree = ast.parse(source)
     doc_node, ret_node = _assignment(tree, "DOCUMENTATION"), _assignment(tree, "RETURN")
     doc = yaml.safe_load(doc_node.value.value) or {}
@@ -150,6 +155,15 @@ def sync_text(source):
         return source, False
     if "config" not in (doc.get("options") or {}):
         return source, False
+    if ret_node is None:
+        # A resource module without RETURN (isam_igmp, isam_mcast_control): create it
+        # right after EXAMPLES (or DOCUMENTATION), then fill it like any other.
+        anchor = _assignment(tree, "EXAMPLES") or doc_node
+        lines = source.split("\n")
+        at = anchor.end_lineno
+        source = "\n".join(lines[:at] + ["", 'RETURN = r"""', "# generated below", '"""'] + lines[at:])
+        tree = ast.parse(source)
+        ret_node = _assignment(tree, "RETURN")
     body = ret_node.value.value
     existing = yaml.safe_load(body) or {}
     block = render_block(expected_entries(doc, existing))
@@ -169,7 +183,7 @@ def sync_text(source):
     quote = opening.group(2)
     new_lines = lines[:first] + ["%s%s" % (opening.group(1), quote)] + new_body.split("\n") + [quote] + lines[last + 1:]
     new_source = "\n".join(new_lines)
-    return new_source, new_source != source
+    return new_source, new_source != original
 
 
 def main(argv):

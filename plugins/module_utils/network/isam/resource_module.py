@@ -243,12 +243,45 @@ class IsamResourceModule(ResourceModule):
             result["read_outcomes"] = outcomes
 
     def run_commands(self):
+        """Send the commands one per transaction; report a partial execution on failure.
+
+        netcommon sends the whole list in one edit_config call: when the device refuses a
+        command, the failure names only the device message, and which commands were
+        already applied is lost (a NOC apply could not tell what to read back). Here a
+        failure carries the shared partial-execution schema (as action_module and the ONT
+        deletion): ``accepted`` (sent and accepted), ``failed_command`` (outcome unknown)
+        and ``pending`` (never sent); ``changed`` is true once anything was accepted.
+        """
         self._compact()
         if _offline_config(self):
             # Offline preview: commands are rendered, never sent (also covers families
             # that override execute_module and call run_commands directly).
             return
-        return super(IsamResourceModule, self).run_commands()
+        if not self.commands or self.state not in self.ACTION_STATES:
+            return
+        if self._module.check_mode:
+            self.changed = True
+            return
+        accepted = []
+        for index, command in enumerate(self.commands):
+            try:
+                self._connection.edit_config(candidate=[command])
+            except Exception as exc:
+                self._module.fail_json(
+                    msg="%s: command %d of %d failed: %s. Accepted before it: %d; not sent: %d. Read back the "
+                        "device state before retrying; the failed command may have taken effect."
+                        % (self.__class__.__name__, index + 1, len(self.commands), exc, len(accepted),
+                           len(self.commands) - index - 1),
+                    changed=bool(accepted),
+                    commands=self.commands,
+                    accepted=list(accepted),
+                    failed_command=command,
+                    pending=self.commands[index + 1:],
+                    failure_phase="execution",
+                    completion_status="unknown",
+                )
+            accepted.append(command)
+        self.changed = True
 
 
 class TableResourceModule(IsamResourceModule):

@@ -397,9 +397,9 @@ class TestIsamBridgesModule(TestIsamModule):
             ignore_provider_arg,
         )
         result = self.execute_module(changed=True)
-        self.get_resource_connection.return_value.edit_config.assert_called_once_with(
-            candidate=result["commands"]
-        )
+        # One transaction per command, in order (partial-execution reporting).
+        calls = self.get_resource_connection.return_value.edit_config.call_args_list
+        assert [call.kwargs["candidate"] for call in calls] == [[command] for command in result["commands"]]
 
     def test_isam_bridges_bootstraps_service_vlans_with_requested_pvid(self):
         class FakeFactsConn:
